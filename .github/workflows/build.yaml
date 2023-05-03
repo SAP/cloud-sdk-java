@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  MAVEN_OPTS: "-Dmaven.repo.local=local_maven_repo/ -Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --errors --fail-at-end --show-version"
+
+jobs:
+
+  formatting:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+      - run: mvn $MVN_CLI_ARGS net.revelc.code.formatter:formatter-maven-plugin:2.22.0:validate
+
+  build:
+    name: Build, Test and Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+      - name: Build with Maven
+        run: mvn $MVN_CLI_ARGS verify
