@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "poc_pipeline"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
