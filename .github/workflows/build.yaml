@@ -27,15 +27,18 @@ jobs:
       - run: mvn $MVN_CLI_ARGS net.revelc.code.formatter:formatter-maven-plugin:2.22.0:validate
 
   build:
-    name: Build, Test and Verify
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '8', '17' ]
+    name: Build, Test and Verify JDK ${{ matrix.Java }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "17"
+          java-version: ${{ matrix.java }}
           cache: maven
       - name: Build with Maven
         run: mvn $MVN_CLI_ARGS verify
