@@ -29,6 +29,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         java: [ '17', '20' ]
     name: Build, Test and Verify JDK ${{ matrix.Java }}
