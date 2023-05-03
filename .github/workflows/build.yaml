@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '8', '17' ]
+        java: [ '11', '17' ]
     name: Build, Test and Verify JDK ${{ matrix.Java }}
     steps:
       - uses: actions/checkout@v3
