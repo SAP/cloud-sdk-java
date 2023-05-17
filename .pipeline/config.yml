@@ -1,0 +1,6 @@
+steps:
+  detectExecuteScan:
+    projectName: 'SHC - CLOUD SDK'
+    groups:
+      - 'CLOUD SDK 4.0'
+    serverUrl: 'https://sap.blackducksoftware.com/'
