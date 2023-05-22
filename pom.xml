@@ -1264,12 +1264,13 @@
 							</goals>
 						</execution>
 					</executions>
-					<configuration>
+					<!-- fixme: pipeline config-->
+					<!-- <configuration>
 						<destFile>${jacoco.executionDataFile}</destFile>
 						<dataFile>${jacoco.executionDataFile}</dataFile>
 						<includes>${jacoco.includes}</includes>
 						<excludes>${jacoco.excludes}</excludes>
-					</configuration>
+					</configuration> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1305,7 +1306,7 @@
 						</dependency>
 					</dependencies>
 					<configuration>
-						<configLocation>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-checkstyle.xml</configLocation>
+						<configLocation>${project.rootdir}/codestyle/checkstyle.xml</configLocation>
 						<linkXRef>false</linkXRef>
 						<includeResources>false</includeResources>
 						<includeTestResources>false</includeTestResources>
@@ -1317,8 +1318,9 @@
 					<artifactId>spotbugs-maven-plugin</artifactId>
 					<version>4.7.3.4</version>
 					<configuration>
-						<includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile>
-						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
+						<!-- fixme: pipeline config-->
+						<!-- <includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile> -->
+						<!-- <excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile> -->
 						<effort>Max</effort>
 						<threshold>Low</threshold>
 						<maxHeap>2048</maxHeap>
@@ -1330,8 +1332,9 @@
 					<version>3.20.0</version>
 					<configuration>
 						<rulesets>
-							<ruleset>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-pmd.xml</ruleset>
-							<ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset>
+							<!-- fixme: pipeline config-->
+							<!-- <ruleset>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-pmd.xml</ruleset> -->
+							<!-- <ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset> -->
 							<!-- content of the PMD default rule set for Java can be found here:
                                                         https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD
                                                          -->
