@@ -25,15 +25,15 @@ It used the following sub-scores:
     1.  **[Static analysis](#static-analysis)**: **0.0** (weight is 1.0)
         1.  **[How a project uses CodeQL](#how-a-project-uses-codeql)**: **0.0** (weight is 1.0)
             
-        1.  **[Bandit score](#bandit-score)**: **N/A** (weight is 0.35)
+        1.  **[Bandit score](#bandit-score)**: **0.0** (weight is 0.35)
             
         1.  **[FindSecBugs score](#findsecbugs-score)**: **0.0** (weight is 0.35)
             
-        1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **N/A** (weight is 0.35)
+        1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **0.0** (weight is 0.35)
             
         1.  **[GoSec score](#gosec-score)**: **N/A** (weight is 0.3)
             
-        1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **N/A** (weight is 0.2)
+        1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **0.0** (weight is 0.2)
             
     1.  **[Fuzzing](#fuzzing)**: **N/A** (weight is 1.0)
         
@@ -55,15 +55,15 @@ It used the following sub-scores:
         1.  **[Static analysis](#static-analysis)**: **0.0** (weight is 1.0)
             1.  **[How a project uses CodeQL](#how-a-project-uses-codeql)**: **0.0** (weight is 1.0)
                 
-            1.  **[Bandit score](#bandit-score)**: **N/A** (weight is 0.35)
+            1.  **[Bandit score](#bandit-score)**: **0.0** (weight is 0.35)
                 
             1.  **[FindSecBugs score](#findsecbugs-score)**: **0.0** (weight is 0.35)
                 
-            1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **N/A** (weight is 0.35)
+            1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **0.0** (weight is 0.35)
                 
             1.  **[GoSec score](#gosec-score)**: **N/A** (weight is 0.3)
                 
-            1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **N/A** (weight is 0.2)
+            1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **0.0** (weight is 0.2)
                 
         1.  **[Fuzzing](#fuzzing)**: **N/A** (weight is 1.0)
             
@@ -111,15 +111,15 @@ This sub-score is based on the following sub-scores:
 1.  **[Static analysis](#static-analysis)**: **0.0** (weight is 1.0)
     1.  **[How a project uses CodeQL](#how-a-project-uses-codeql)**: **0.0** (weight is 1.0)
         
-    1.  **[Bandit score](#bandit-score)**: **N/A** (weight is 0.35)
+    1.  **[Bandit score](#bandit-score)**: **0.0** (weight is 0.35)
         
     1.  **[FindSecBugs score](#findsecbugs-score)**: **0.0** (weight is 0.35)
         
-    1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **N/A** (weight is 0.35)
+    1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **0.0** (weight is 0.35)
         
     1.  **[GoSec score](#gosec-score)**: **N/A** (weight is 0.3)
         
-    1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **N/A** (weight is 0.2)
+    1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **0.0** (weight is 0.2)
         
 1.  **[Fuzzing](#fuzzing)**: **N/A** (weight is 1.0)
     
@@ -184,15 +184,15 @@ This sub-score is based on the following sub-score:
     1.  **[Static analysis](#static-analysis)**: **0.0** (weight is 1.0)
         1.  **[How a project uses CodeQL](#how-a-project-uses-codeql)**: **0.0** (weight is 1.0)
             
-        1.  **[Bandit score](#bandit-score)**: **N/A** (weight is 0.35)
+        1.  **[Bandit score](#bandit-score)**: **0.0** (weight is 0.35)
             
         1.  **[FindSecBugs score](#findsecbugs-score)**: **0.0** (weight is 0.35)
             
-        1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **N/A** (weight is 0.35)
+        1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **0.0** (weight is 0.35)
             
         1.  **[GoSec score](#gosec-score)**: **N/A** (weight is 0.3)
             
-        1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **N/A** (weight is 0.2)
+        1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **0.0** (weight is 0.2)
             
     1.  **[Fuzzing](#fuzzing)**: **N/A** (weight is 1.0)
         
@@ -323,15 +323,15 @@ This sub-score is based on the following sub-scores:
 
 1.  **[How a project uses CodeQL](#how-a-project-uses-codeql)**: **0.0** (weight is 1.0)
     
-1.  **[Bandit score](#bandit-score)**: **N/A** (weight is 0.35)
+1.  **[Bandit score](#bandit-score)**: **0.0** (weight is 0.35)
     
 1.  **[FindSecBugs score](#findsecbugs-score)**: **0.0** (weight is 0.35)
     
-1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **N/A** (weight is 0.35)
+1.  **[How a project uses Pylint](#how-a-project-uses-pylint)**: **0.0** (weight is 0.35)
     
 1.  **[GoSec score](#gosec-score)**: **N/A** (weight is 0.3)
     
-1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **N/A** (weight is 0.2)
+1.  **[How a project uses MyPy](#how-a-project-uses-mypy)**: **0.0** (weight is 0.2)
     
 
 
@@ -348,7 +348,7 @@ This sub-score is based on 2 features:
 
 
 1.  **Is it included to OSS-Fuzz?** No
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### Memory-safety testing
@@ -366,7 +366,7 @@ This sub-score is based on 4 features:
 1.  **Does it use AddressSanitizer?** unknown
 1.  **Does it use MemorySanitizer?** unknown
 1.  **Does it use UndefinedBehaviorSanitizer?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### nohttp tool
@@ -400,7 +400,7 @@ This sub-score is based on 4 features:
 1.  **Does it use Dependabot?** unknown
 1.  **Does it use GitHub as the main development platform?** Yes
 1.  **Package managers:** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### Snyk score
@@ -418,7 +418,7 @@ This sub-score is based on 4 features:
 1.  **Does it use GitHub as the main development platform?** Yes
 1.  **Does it use Snyk?** unknown
 1.  **Package managers:** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### OWASP Dependency Check score
@@ -452,16 +452,16 @@ This sub-score is based on 3 features:
 
 1.  **Does it run CodeQL scans?** unknown
 1.  **Does it use CodeQL checks for pull requests?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### Bandit score
 
-Score: **N/A**, confidence is 3.33 (low), weight is 0.35 (medium)
+Score: **0.0**, confidence is 3.33 (low), weight is 0.35 (medium)
 
 
 
-The score is N/A because the project uses languages that are not supported by Bandit.
+
 
 This sub-score is based on 3 features:
 
@@ -469,7 +469,7 @@ This sub-score is based on 3 features:
 
 1.  **If a project runs Bandit scan checks for commits:** unknown
 1.  **If a project runs Bandit scans:** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### FindSecBugs score
@@ -485,16 +485,16 @@ This sub-score is based on 2 features:
 
 
 1.  **Does it use FindSecBugs?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### How a project uses Pylint
 
-Score: **N/A**, confidence is 3.33 (low), weight is 0.35 (medium)
+Score: **0.0**, confidence is 3.33 (low), weight is 0.35 (medium)
 
 
 
-The score is N/A because the project uses languages that are not supported by Pylint.
+
 
 This sub-score is based on 3 features:
 
@@ -502,7 +502,7 @@ This sub-score is based on 3 features:
 
 1.  **Does it run Pylint scans on all commits?** unknown
 1.  **Does it run Pylint scans?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### GoSec score
@@ -520,16 +520,16 @@ This sub-score is based on 4 features:
 1.  **Does it run GoSec scans on all pull requests?** unknown
 1.  **Does it run GoSec scans with rules?** unknown
 1.  **Does it run GoSec scans?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ### How a project uses MyPy
 
-Score: **N/A**, confidence is 3.33 (low), weight is 0.2 (low)
+Score: **0.0**, confidence is 3.33 (low), weight is 0.2 (low)
 
 
 
-The score is N/A because the project uses languages that are not supported by MyPy.
+
 
 This sub-score is based on 3 features:
 
@@ -537,7 +537,7 @@ This sub-score is based on 3 features:
 
 1.  **Does it run MyPy scans on all commits?** unknown
 1.  **Does it run MyPy scans?** unknown
-1.  **Programming languages:** JAVA
+1.  **Programming languages:** JAVA, PYTHON, OTHER
 
 
 ## Known vulnerabilities
