@@ -121,19 +121,12 @@ jobs:
       - name: Publish Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
-      # cicirello/jacoco-badge-generator needs a list of jacoco csv files for multiple modules, we're using find to list them here
-      - name: Find JaCoCo reports of modules
-        run: |
-          find . -name jacoco.csv
-          echo "jacoco_csv_files=`find . -name jacoco.csv | tr '\n' ' '`" >> "$GITHUB_OUTPUT"
-        id: find_jacoco
       - name: Generate JaCoCo Badge
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
         with:
           generate-branches-badge: true
-          jacoco-csv-file: >
-            ${{ steps.find_jacoco.outputs.jacoco_csv_files }}
+          jacoco-csv-file: "**/jacoco.csv"
       - name: Test Coverage Percentage
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
