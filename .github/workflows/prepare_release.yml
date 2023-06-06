@@ -1,0 +1,78 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version, leave empty for default value'
+        required: false
+      snapshot_version:
+        description: 'Next Snapshot version'
+        required: true
+        default: "true"
+
+env:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+
+      - name: Quality Gate
+        run: echo todo quality gate
+
+      - name: Determine Release Version
+        run: |
+          python .pipeline/scripts/get-release-versions.py
+        id: get-release-versions
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.release_version }}
+
+      - run: 'echo Release Version: ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}'
+      - run: 'echo Current Snapshot: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}'
+      - run: 'echo New Snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}'
+
+      - run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: Prepare release
+        run: |
+          BRANCH_NAME=RELEASE-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          git switch --create $BRANCH_NAME
+
+          python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          git add .
+          git commit -m "Update to version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
+
+          mvn $MVN_CLI_ARGS package
+
+          ARTIFACTS=$(find . -name "*.jar" | grep --invert-match maven-wrapper | tr "\n" " ")
+
+          gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+            --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+            --draft --generate-notes $ARTIFACTS
+
+          python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
+          git add .
+          git commit -m "Update to version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
+
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+          echo gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+             --body "**Pull request for releasing version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.** It will be merged automatically once approved and ready."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
