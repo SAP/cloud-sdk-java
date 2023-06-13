@@ -59,13 +59,14 @@ jobs:
           git add .
           git commit -m "Update to version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
 
-          mvn $MVN_CLI_ARGS package
-
-          ARTIFACTS=$(find . -name "*.jar" | grep --invert-match maven-wrapper | tr "\n" " ")
+          mvn $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          zip -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
           gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
             --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --draft --generate-notes $ARTIFACTS
+            --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
+
+          rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
           python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
           git add .
