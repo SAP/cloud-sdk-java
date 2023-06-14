@@ -1,0 +1,85 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version, leave empty for default value based on current snapshot'
+        required: false
+
+env:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          fetch-depth: '0'
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+
+
+      - name: Determine Release Version
+        run: |
+          python .pipeline/scripts/get-release-versions.py
+        id: get-release-versions
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.release_version }}
+
+      - run: 'echo Release Version: ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}'
+      - run: 'echo Current Snapshot: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}'
+      - run: 'echo New Snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}'
+
+      - name: Quality Gate
+        run: echo todo quality gate here
+
+      - run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: Prepare release
+        run: |
+          BRANCH_NAME=RELEASE-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          git switch --create $BRANCH_NAME
+
+          python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          git add .
+          git commit -m "Update to version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
+
+          # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
+          RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
+
+          mvn $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          zip -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+
+          gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+            --target $RELEASE_COMMIT_ID \
+            --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+            --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
+
+          rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+
+          python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
+          git add .
+          git commit -m "Update to version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
+
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+          gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+             --body "**Pull request for releasing version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.** It will be merged automatically once approved and ready."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

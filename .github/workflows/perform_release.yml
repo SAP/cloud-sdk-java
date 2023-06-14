@@ -1,0 +1,49 @@
+name: Perform Release
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+env:
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved' && startsWith(github.event.pull_request.title, 'Release ')
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          fetch-depth: '0'
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+
+      - run: |
+          echo Release PR Branch name: "$RELEASE_PR_BRANCH_NAME"
+
+          # Extract version number from a string in the form of RELEASE-1.2.3
+          RELEASE_VERSION=$(echo "$RELEASE_PR_BRANCH_NAME" | cut -d "-" -f 2)
+          echo Release Version "$RELEASE_VERSION"
+          GIT_TAG="rel/$RELEASE_VERSION"
+          echo Git Tag "$GIT_TAG"
+
+          gh release edit "$GIT_TAG" --draft=false
+
+          gh release download "$GIT_TAG" --dir artifacts
+          tree artifacts
+          # todo deploy to maven central
+
+          gh pr merge --rebase "$RELEASE_PR_BRANCH_NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_PR_BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
