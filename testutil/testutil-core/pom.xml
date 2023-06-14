@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.testutil</groupId>
 		<artifactId>testutil-parent</artifactId>
-		<version>4.12.1-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>testutil-core</artifactId>
 	<name>Test Utilities - Core</name>
