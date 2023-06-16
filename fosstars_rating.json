@@ -246,7 +246,7 @@
     },
     "value" : 2.4296031746031743,
     "weight" : 1.0,
-    "confidence" : 4.147435897435897,
+    "confidence" : 4.778971845148315,
     "usedValues" : [ {
       "type" : "ScoreValue",
       "score" : {
@@ -591,7 +591,7 @@
       },
       "value" : 2.0,
       "weight" : 0.6,
-      "confidence" : 5.666666666666667,
+      "confidence" : 6.929738562091503,
       "usedValues" : [ {
         "type" : "VulnerabilitiesValue",
         "feature" : {
@@ -697,7 +697,7 @@
         },
         "value" : 0.0,
         "weight" : 1.0,
-        "confidence" : 1.3333333333333335,
+        "confidence" : 3.859477124183006,
         "usedValues" : [ {
           "type" : "ScoreValue",
           "score" : {
@@ -706,7 +706,7 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 1.6666666666666667,
+          "confidence" : 3.3333333333333335,
           "usedValues" : [ {
             "type" : "ScoreValue",
             "score" : {
@@ -715,7 +715,7 @@
             },
             "value" : 0.0,
             "weight" : 1.0,
-            "confidence" : 2.5,
+            "confidence" : 5.0,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -739,10 +739,13 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
+              },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
               },
               "explanation" : [ ]
             } ],
@@ -761,7 +764,7 @@
             },
             "value" : 0.0,
             "weight" : 1.0,
-            "confidence" : 2.5,
+            "confidence" : 5.0,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -785,10 +788,13 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
+              },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
               },
               "explanation" : [ ]
             } ],
@@ -900,7 +906,7 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 0.0,
+          "confidence" : 3.4640522875816986,
           "usedValues" : [ {
             "type" : "ScoreValue",
             "score" : {
@@ -909,7 +915,7 @@
             },
             "value" : 0.0,
             "weight" : 0.3,
-            "confidence" : 0.0,
+            "confidence" : 2.5,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -932,16 +938,19 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
               },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+              },
               "explanation" : [ ]
             } ],
-            "explanation" : [ "The score value is unknown because all required features are unknown." ],
-            "isUnknown" : true,
-            "isNotApplicable" : false,
+            "explanation" : [ "The score is N/A because the project uses languages that are not supported by GoSec." ],
+            "isUnknown" : false,
+            "isNotApplicable" : true,
             "feature" : {
               "type" : "GoSecScore",
               "name" : "How a project uses GoSec"
@@ -954,7 +963,7 @@
             },
             "value" : 0.0,
             "weight" : 0.35,
-            "confidence" : 0.0,
+            "confidence" : 3.3333333333333335,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -970,15 +979,18 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
               },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+              },
               "explanation" : [ ]
             } ],
-            "explanation" : [ "The score value is unknown because all required features are unknown." ],
-            "isUnknown" : true,
+            "explanation" : [ ],
+            "isUnknown" : false,
             "isNotApplicable" : false,
             "feature" : {
               "type" : "BanditScore",
@@ -992,12 +1004,15 @@
             },
             "value" : 0.0,
             "weight" : 0.35,
-            "confidence" : 0.0,
+            "confidence" : 5.0,
             "usedValues" : [ {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
+              },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
               },
               "explanation" : [ ]
             }, {
@@ -1009,7 +1024,7 @@
               "explanation" : [ ]
             } ],
             "explanation" : [ ],
-            "isUnknown" : true,
+            "isUnknown" : false,
             "isNotApplicable" : false,
             "feature" : {
               "type" : "FindSecBugsScore",
@@ -1023,7 +1038,7 @@
             },
             "value" : 0.0,
             "weight" : 1.0,
-            "confidence" : 0.0,
+            "confidence" : 3.3333333333333335,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -1039,15 +1054,18 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
               },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+              },
               "explanation" : [ ]
             } ],
-            "explanation" : [ "The score value is unknown because all required features are unknown." ],
-            "isUnknown" : true,
+            "explanation" : [ ],
+            "isUnknown" : false,
             "isNotApplicable" : false,
             "feature" : {
               "type" : "CodeqlScore",
@@ -1061,7 +1079,7 @@
             },
             "value" : 0.0,
             "weight" : 0.35,
-            "confidence" : 0.0,
+            "confidence" : 3.3333333333333335,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -1077,15 +1095,18 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
               },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+              },
               "explanation" : [ ]
             } ],
-            "explanation" : [ "The score value is unknown because all required features are unknown." ],
-            "isUnknown" : true,
+            "explanation" : [ ],
+            "isUnknown" : false,
             "isNotApplicable" : false,
             "feature" : {
               "type" : "PylintScore",
@@ -1099,7 +1120,7 @@
             },
             "value" : 0.0,
             "weight" : 0.2,
-            "confidence" : 0.0,
+            "confidence" : 3.3333333333333335,
             "usedValues" : [ {
               "type" : "UnknownValue",
               "feature" : {
@@ -1115,15 +1136,18 @@
               },
               "explanation" : [ ]
             }, {
-              "type" : "UnknownValue",
+              "type" : "LanguagesValue",
               "feature" : {
                 "type" : "LanguagesFeature",
                 "name" : "A set of programming languages"
               },
+              "languages" : {
+                "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+              },
               "explanation" : [ ]
             } ],
-            "explanation" : [ "The score value is unknown because all required features are unknown." ],
-            "isUnknown" : true,
+            "explanation" : [ ],
+            "isUnknown" : false,
             "isNotApplicable" : false,
             "feature" : {
               "type" : "MyPyScore",
@@ -1131,7 +1155,7 @@
             }
           } ],
           "explanation" : [ ],
-          "isUnknown" : true,
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "StaticAnalysisScore",
@@ -1223,12 +1247,15 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 5.0,
+          "confidence" : 10.0,
           "usedValues" : [ {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
+            },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
             },
             "explanation" : [ ]
           }, {
@@ -1242,7 +1269,7 @@
           } ],
           "explanation" : [ ],
           "isUnknown" : false,
-          "isNotApplicable" : false,
+          "isNotApplicable" : true,
           "feature" : {
             "type" : "FuzzingScore",
             "name" : "How a project uses fuzzing"
@@ -1255,12 +1282,15 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 0.0,
+          "confidence" : 2.5,
           "usedValues" : [ {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
+            },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
             },
             "explanation" : [ ]
           }, {
@@ -1286,8 +1316,8 @@
             "explanation" : [ ]
           } ],
           "explanation" : [ ],
-          "isUnknown" : true,
-          "isNotApplicable" : false,
+          "isUnknown" : false,
+          "isNotApplicable" : true,
           "feature" : {
             "type" : "MemorySafetyTestingScore",
             "name" : "How a project tests for memory-safety issues"
@@ -1606,7 +1636,7 @@
       },
       "value" : 0.0,
       "weight" : 1.0,
-      "confidence" : 1.3333333333333335,
+      "confidence" : 3.859477124183006,
       "usedValues" : [ {
         "type" : "ScoreValue",
         "score" : {
@@ -1615,7 +1645,7 @@
         },
         "value" : 0.0,
         "weight" : 1.0,
-        "confidence" : 1.6666666666666667,
+        "confidence" : 3.3333333333333335,
         "usedValues" : [ {
           "type" : "ScoreValue",
           "score" : {
@@ -1624,7 +1654,7 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 2.5,
+          "confidence" : 5.0,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1648,10 +1678,13 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
+            },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
             },
             "explanation" : [ ]
           } ],
@@ -1670,7 +1703,7 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 2.5,
+          "confidence" : 5.0,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1694,10 +1727,13 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
+            },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
             },
             "explanation" : [ ]
           } ],
@@ -1809,7 +1845,7 @@
         },
         "value" : 0.0,
         "weight" : 1.0,
-        "confidence" : 0.0,
+        "confidence" : 3.4640522875816986,
         "usedValues" : [ {
           "type" : "ScoreValue",
           "score" : {
@@ -1818,7 +1854,7 @@
           },
           "value" : 0.0,
           "weight" : 0.3,
-          "confidence" : 0.0,
+          "confidence" : 2.5,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1841,16 +1877,19 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
             },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+            },
             "explanation" : [ ]
           } ],
-          "explanation" : [ "The score value is unknown because all required features are unknown." ],
-          "isUnknown" : true,
-          "isNotApplicable" : false,
+          "explanation" : [ "The score is N/A because the project uses languages that are not supported by GoSec." ],
+          "isUnknown" : false,
+          "isNotApplicable" : true,
           "feature" : {
             "type" : "GoSecScore",
             "name" : "How a project uses GoSec"
@@ -1863,7 +1902,7 @@
           },
           "value" : 0.0,
           "weight" : 0.35,
-          "confidence" : 0.0,
+          "confidence" : 3.3333333333333335,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1879,15 +1918,18 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
             },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+            },
             "explanation" : [ ]
           } ],
-          "explanation" : [ "The score value is unknown because all required features are unknown." ],
-          "isUnknown" : true,
+          "explanation" : [ ],
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "BanditScore",
@@ -1901,12 +1943,15 @@
           },
           "value" : 0.0,
           "weight" : 0.35,
-          "confidence" : 0.0,
+          "confidence" : 5.0,
           "usedValues" : [ {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
+            },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
             },
             "explanation" : [ ]
           }, {
@@ -1918,7 +1963,7 @@
             "explanation" : [ ]
           } ],
           "explanation" : [ ],
-          "isUnknown" : true,
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "FindSecBugsScore",
@@ -1932,7 +1977,7 @@
           },
           "value" : 0.0,
           "weight" : 1.0,
-          "confidence" : 0.0,
+          "confidence" : 3.3333333333333335,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1948,15 +1993,18 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
             },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+            },
             "explanation" : [ ]
           } ],
-          "explanation" : [ "The score value is unknown because all required features are unknown." ],
-          "isUnknown" : true,
+          "explanation" : [ ],
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "CodeqlScore",
@@ -1970,7 +2018,7 @@
           },
           "value" : 0.0,
           "weight" : 0.35,
-          "confidence" : 0.0,
+          "confidence" : 3.3333333333333335,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -1986,15 +2034,18 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
             },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+            },
             "explanation" : [ ]
           } ],
-          "explanation" : [ "The score value is unknown because all required features are unknown." ],
-          "isUnknown" : true,
+          "explanation" : [ ],
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "PylintScore",
@@ -2008,7 +2059,7 @@
           },
           "value" : 0.0,
           "weight" : 0.2,
-          "confidence" : 0.0,
+          "confidence" : 3.3333333333333335,
           "usedValues" : [ {
             "type" : "UnknownValue",
             "feature" : {
@@ -2024,15 +2075,18 @@
             },
             "explanation" : [ ]
           }, {
-            "type" : "UnknownValue",
+            "type" : "LanguagesValue",
             "feature" : {
               "type" : "LanguagesFeature",
               "name" : "A set of programming languages"
             },
+            "languages" : {
+              "elements" : [ "JAVA", "PYTHON", "OTHER" ]
+            },
             "explanation" : [ ]
           } ],
-          "explanation" : [ "The score value is unknown because all required features are unknown." ],
-          "isUnknown" : true,
+          "explanation" : [ ],
+          "isUnknown" : false,
           "isNotApplicable" : false,
           "feature" : {
             "type" : "MyPyScore",
@@ -2040,7 +2094,7 @@
           }
         } ],
         "explanation" : [ ],
-        "isUnknown" : true,
+        "isUnknown" : false,
         "isNotApplicable" : false,
         "feature" : {
           "type" : "StaticAnalysisScore",
@@ -2132,12 +2186,15 @@
         },
         "value" : 0.0,
         "weight" : 1.0,
-        "confidence" : 5.0,
+        "confidence" : 10.0,
         "usedValues" : [ {
-          "type" : "UnknownValue",
+          "type" : "LanguagesValue",
           "feature" : {
             "type" : "LanguagesFeature",
             "name" : "A set of programming languages"
+          },
+          "languages" : {
+            "elements" : [ "JAVA", "PYTHON", "OTHER" ]
           },
           "explanation" : [ ]
         }, {
@@ -2151,7 +2208,7 @@
         } ],
         "explanation" : [ ],
         "isUnknown" : false,
-        "isNotApplicable" : false,
+        "isNotApplicable" : true,
         "feature" : {
           "type" : "FuzzingScore",
           "name" : "How a project uses fuzzing"
@@ -2164,12 +2221,15 @@
         },
         "value" : 0.0,
         "weight" : 1.0,
-        "confidence" : 0.0,
+        "confidence" : 2.5,
         "usedValues" : [ {
-          "type" : "UnknownValue",
+          "type" : "LanguagesValue",
           "feature" : {
             "type" : "LanguagesFeature",
             "name" : "A set of programming languages"
+          },
+          "languages" : {
+            "elements" : [ "JAVA", "PYTHON", "OTHER" ]
           },
           "explanation" : [ ]
         }, {
@@ -2195,8 +2255,8 @@
           "explanation" : [ ]
         } ],
         "explanation" : [ ],
-        "isUnknown" : true,
-        "isNotApplicable" : false,
+        "isUnknown" : false,
+        "isNotApplicable" : true,
         "feature" : {
           "type" : "MemorySafetyTestingScore",
           "name" : "How a project tests for memory-safety issues"
