@@ -141,7 +141,7 @@
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
 		<stax2-api.version>4.2.1</stax2-api.version>
 		<netty.version>4.1.91.Final</netty.version>
-		<bouncycastle.version>1.73</bouncycastle.version>
+		<bouncycastle.version>1.74</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.0</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
