@@ -164,6 +164,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud</groupId>
+			<artifactId>neo-java-web-api</artifactId>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -187,6 +191,16 @@
 						<!-- see here: https://github.com/rzwitserloot/lombok/issues/1363 -->
 						<arg>-Xlint:-cast</arg>
 					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredUnusedDeclaredDependencies>
+						<!-- required for JCo -->
+						<ignoredUnusedDeclaredDependency>com.sap.cloud:neo-java-web-api</ignoredUnusedDeclaredDependency>
+					</ignoredUnusedDeclaredDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

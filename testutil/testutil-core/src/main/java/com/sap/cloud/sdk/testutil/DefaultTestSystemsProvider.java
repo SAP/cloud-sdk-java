@@ -17,7 +17,6 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.google.json.JsonSanitizer;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
-import com.sap.cloud.sdk.s4hana.serialization.SapClient;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -186,6 +185,7 @@ class DefaultTestSystemsProvider implements TestSystemsProvider
         }
     }
 
+    @Deprecated
     private void parseTestSystems( @Nonnull final String str )
     {
         try {
@@ -224,7 +224,7 @@ class DefaultTestSystemsProvider implements TestSystemsProvider
                                 .alias(system.getAlias())
                                 .uri(system.getUri())
                                 .systemId(system.getSystemId())
-                                .sapClient(SapClient.of(system.getSapClient()))
+                                .sapClient(com.sap.cloud.sdk.s4hana.serialization.SapClient.of(system.getSapClient()))
                                 .proxyConfiguration(parseProxyConfiguration(system.getProxyUri()))
                                 .locale(parseLocale(system.getLocale()))
                                 .applicationServer(system.getApplicationServer())

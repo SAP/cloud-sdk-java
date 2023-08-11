@@ -43,12 +43,12 @@
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity</artifactId>
-			<version>5.0.0-alpha-SNAPSHOT</version>
+			<version>4.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.frameworks</groupId>
 			<artifactId>apache-httpclient5</artifactId>
-			<version>5.0.0-alpha-SNAPSHOT</version>
+			<version>4.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

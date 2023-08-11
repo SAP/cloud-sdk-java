@@ -11,7 +11,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 import com.sap.cloud.sdk.cloudplatform.security.NoCredentials;
-import com.sap.cloud.sdk.s4hana.serialization.SapClient;
 
 import io.vavr.Function2;
 import io.vavr.Function3;
@@ -64,9 +63,10 @@ class DefaultServerMocker implements ServerMocker
 
     @Nonnull
     @Override
+    @Deprecated
     public WireMockRule mockErpServer(
         @Nonnull final String destinationName,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final String relativePath,
         @Nullable final WireMockConfiguration configuration )
     {
@@ -88,9 +88,10 @@ class DefaultServerMocker implements ServerMocker
 
     @Nonnull
     @Override
+    @Deprecated
     public WireMockRule mockErpServer(
         @Nonnull final String destinationName,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final String relativePath )
     {
         return mockErpServer(destinationName, sapClient, relativePath, null);
@@ -98,7 +99,10 @@ class DefaultServerMocker implements ServerMocker
 
     @Nonnull
     @Override
-    public WireMockRule mockErpServer( @Nonnull final String destinationName, @Nullable final SapClient sapClient )
+    @Deprecated
+    public WireMockRule mockErpServer(
+        @Nonnull final String destinationName,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient )
     {
         return mockErpServer(destinationName, sapClient, null, null);
     }

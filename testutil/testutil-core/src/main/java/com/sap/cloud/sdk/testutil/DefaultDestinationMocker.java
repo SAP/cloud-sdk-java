@@ -19,6 +19,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationLoader;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationType;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Header;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
@@ -27,9 +28,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType;
 import com.sap.cloud.sdk.cloudplatform.connectivity.WrappedDestination;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
-import com.sap.cloud.sdk.s4hana.connectivity.DefaultErpHttpDestination;
-import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
-import com.sap.cloud.sdk.s4hana.serialization.SapClient;
 
 import io.vavr.control.Option;
 import lombok.AccessLevel;
@@ -175,6 +173,7 @@ class DefaultDestinationMocker implements DestinationMocker
 
     @Nonnull
     @Override
+    @Deprecated
     public Destination mockErpDestination(
         @Nonnull final String destinationName,
         @Nullable final ErpSystem erpSystem,
@@ -195,11 +194,11 @@ class DefaultDestinationMocker implements DestinationMocker
         final ErpSystem erpSystemOrDefault = erpSystem == null ? testSystemsProvider.getErpSystem() : erpSystem;
 
         final URI uri = erpSystemOrDefault.getUri();
-        final SapClient sapClient = erpSystemOrDefault.getSapClient();
+        final String sapClient = erpSystemOrDefault.getSapClient().toString();
         final Locale locale = erpSystemOrDefault.getLocale();
 
-        final DefaultErpHttpDestination.Builder destinationBuilder =
-            DefaultErpHttpDestination.builder(uri).name(destinationName);
+        final DefaultHttpDestination.Builder destinationBuilder =
+            DefaultHttpDestination.builder(uri).name(destinationName);
 
         // handle headers
         final List<Header> headerList = new ArrayList<>();
@@ -210,8 +209,8 @@ class DefaultDestinationMocker implements DestinationMocker
 
         // handle properties
         final Map<String, String> properties = new HashMap<>();
-        properties.put(ErpHttpDestination.SAP_CLIENT_KEY, sapClient.getValue());
-        properties.put(ErpHttpDestination.LOCALE_KEY, locale.getLanguage());
+        properties.put(DestinationProperty.SAP_CLIENT.getKeyName(), sapClient);
+        properties.put(DestinationProperty.SAP_LANGUAGE.getKeyName(), locale.getLanguage());
 
         if( propertiesByName != null ) {
             properties.putAll(propertiesByName);
@@ -254,16 +253,9 @@ class DefaultDestinationMocker implements DestinationMocker
             destinationBuilder.password(basicCredentials.getPassword());
         }
 
-        final ErpHttpDestination httpDestination =
-            TestErpHttpDestination
-                .builder()
-                .baseProperties(destinationBuilder.build())
-                .keyStore(keyStore)
-                .keyStorePassword(keyStorePassword)
-                .trustStore(trustStore)
-                .build();
+        destinationBuilder.keyStore(keyStore).keyStorePassword(keyStorePassword).trustStore(trustStore);
 
-        final Destination destination = WrappedDestination.of(httpDestination);
+        final Destination destination = WrappedDestination.of(destinationBuilder.build());
         erpHttpDestinations.put(destinationName, destination);
         return destination;
     }

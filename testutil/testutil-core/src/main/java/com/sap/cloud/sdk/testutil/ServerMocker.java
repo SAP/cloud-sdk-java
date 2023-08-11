@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.sap.cloud.sdk.s4hana.serialization.SapClient;
 
 interface ServerMocker
 {
@@ -61,8 +60,9 @@ interface ServerMocker
      * @param destinationName
      *            The name of the destination to be mocked.
      * @param sapClient
-     *            The {@link SapClient} to be set as a destination property of the mocked destination. If {@code null},
-     *            {@link SapClient#DEFAULT} is used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be set as a destination property of
+     *            the mocked destination. If {@code null},
+     *            {@link com.sap.cloud.sdk.s4hana.serialization.SapClient#DEFAULT} is used.
      * @param relativePath
      *            An optional relative path to be appended to the ERP URI.
      * @param configuration
@@ -71,9 +71,10 @@ interface ServerMocker
      * @return The started mock server. <strong>Make sure to stop the server after your test.</strong>
      */
     @Nonnull
+    @Deprecated
     WireMockRule mockErpServer(
         @Nonnull final String destinationName,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final String relativePath,
         @Nullable final WireMockConfiguration configuration );
 
@@ -84,17 +85,19 @@ interface ServerMocker
      * @param destinationName
      *            The name of the destination to be mocked.
      * @param sapClient
-     *            The {@link SapClient} to be set as a destination property of the mocked destination. If {@code null},
-     *            {@link SapClient#DEFAULT} is used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be set as a destination property of
+     *            the mocked destination. If {@code null},
+     *            {@link com.sap.cloud.sdk.s4hana.serialization.SapClient#DEFAULT} is used.
      * @param relativePath
      *            An optional relative path to be appended to the ERP URI.
      *
      * @return The started mock server. <strong>Make sure to stop the server after your test.</strong>
      */
     @Nonnull
+    @Deprecated
     WireMockRule mockErpServer(
         @Nonnull final String destinationName,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final String relativePath );
 
     /**
@@ -104,13 +107,17 @@ interface ServerMocker
      * @param destinationName
      *            The name of the destination to be mocked.
      * @param sapClient
-     *            The {@link SapClient} to be set as a destination property of the mocked destination. If {@code null},
-     *            {@link SapClient#DEFAULT} is used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be set as a destination property of
+     *            the mocked destination. If {@code null},
+     *            {@link com.sap.cloud.sdk.s4hana.serialization.SapClient#DEFAULT} is used.
      *
      * @return The started mock server. <strong>Make sure to stop the server after your test.</strong>
      */
     @Nonnull
-    WireMockRule mockErpServer( @Nonnull final String destinationName, @Nullable final SapClient sapClient );
+    @Deprecated
+    WireMockRule mockErpServer(
+        @Nonnull final String destinationName,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient );
 
     /**
      * Mocks an ERP destination and starts a mock server pointing all calls against the ERP destination towards the mock

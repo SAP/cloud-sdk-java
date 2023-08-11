@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
-import com.sap.cloud.sdk.s4hana.serialization.SapClient;
 
 import io.vavr.control.Option;
 import lombok.Data;
@@ -30,7 +29,8 @@ public class ErpSystem implements TestSystem<ErpSystem>
     private final String systemId;
 
     @Nonnull
-    private final SapClient sapClient;
+    @Deprecated
+    private final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient;
 
     @Nonnull
     private final Locale locale;
@@ -53,16 +53,22 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * <li>and instance number {@code "00"}.</li>
      * </ul>
      *
-     * Delegates to {@link #ErpSystem(String, URI, String, SapClient)}.
+     * Delegates to {@link #ErpSystem(String, URI, String, com.sap.cloud.sdk.s4hana.serialization.SapClient)}.
      *
      * @param uri
      *            The URI of the ERP.
      * @param systemId
      *            The system identifier of the ERP.
      * @param sapClient
-     *            The {@link SapClient} to be used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be used.
+     *
+     * @deprecated This module will be discontinued, along with its classes and method.
      */
-    public ErpSystem( @Nonnull final URI uri, @Nullable final String systemId, @Nullable final SapClient sapClient )
+    @Deprecated
+    public ErpSystem(
+        @Nonnull final URI uri,
+        @Nullable final String systemId,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient )
     {
         this(systemId + "_" + sapClient, uri, systemId, sapClient);
     }
@@ -75,7 +81,8 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * <li>and instance number {@code "00"}.</li>
      * </ul>
      *
-     * Delegates to {@link #ErpSystem(String, URI, String, SapClient, Locale, ProxyConfiguration, String, String)}.
+     * Delegates to
+     * {@link #ErpSystem(String, URI, String, com.sap.cloud.sdk.s4hana.serialization.SapClient, Locale, ProxyConfiguration, String, String)}.
      *
      * @param alias
      *            The alias of the ERP.
@@ -84,13 +91,16 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * @param systemId
      *            The system identifier of the ERP.
      * @param sapClient
-     *            The {@link SapClient} to be used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be used.
+     *
+     * @deprecated This module will be discontinued, along with its classes and method.
      */
+    @Deprecated
     public ErpSystem(
         @Nonnull final String alias,
         @Nonnull final URI uri,
         @Nullable final String systemId,
-        @Nullable final SapClient sapClient )
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient )
     {
         this(alias, uri, systemId, sapClient, null, null, null, null);
     }
@@ -103,7 +113,8 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * <li>and instance number {@code "00"}.</li>
      * </ul>
      *
-     * Delegates to {@link #ErpSystem(String, URI, String, SapClient, Locale, ProxyConfiguration, String, String)}.
+     * Delegates to
+     * {@link #ErpSystem(String, URI, String, com.sap.cloud.sdk.s4hana.serialization.SapClient, Locale, ProxyConfiguration, String, String)}.
      *
      * @param alias
      *            The alias of the ERP.
@@ -112,16 +123,19 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * @param systemId
      *            The system identifier of the ERP.
      * @param sapClient
-     *            The {@link SapClient} to be used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be used.
      * @param proxyConfiguration
      *            The {@link ProxyConfiguration} to be used as proxy for connecting to the ERP. If {@code null}, no
      *            proxy is required.
+     *
+     * @deprecated This module will be discontinued, along with its classes and method.
      */
+    @Deprecated
     public ErpSystem(
         @Nonnull final String alias,
         @Nonnull final URI uri,
         @Nullable final String systemId,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final ProxyConfiguration proxyConfiguration )
     {
         this(alias, uri, systemId, sapClient, null, proxyConfiguration, null, null);
@@ -137,7 +151,8 @@ public class ErpSystem implements TestSystem<ErpSystem>
      * @param systemId
      *            The system identifier of the ERP. If {@code null}, an empty String is used.
      * @param sapClient
-     *            The {@link SapClient} to be used. If {@code null}, {@link SapClient#DEFAULT} is used.
+     *            The {@link com.sap.cloud.sdk.s4hana.serialization.SapClient} to be used. If {@code null},
+     *            {@link com.sap.cloud.sdk.s4hana.serialization.SapClient#DEFAULT} is used.
      * @param locale
      *            The {@link Locale} to be used. If {@code null}, {@link Locale#US} is used.
      * @param proxyConfiguration
@@ -148,12 +163,15 @@ public class ErpSystem implements TestSystem<ErpSystem>
      *            used.
      * @param instanceNumber
      *            The instance number of the ERP. If {@code null}, {@code "00"} is used.
+     *
+     * @deprecated This module will be discontinued, along with its classes and method.
      */
+    @Deprecated
     public ErpSystem(
         @Nonnull final String alias,
         @Nonnull final URI uri,
         @Nullable final String systemId,
-        @Nullable final SapClient sapClient,
+        @Nullable final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient,
         @Nullable final Locale locale,
         @Nullable final ProxyConfiguration proxyConfiguration,
         @Nullable final String applicationServer,
@@ -163,7 +181,7 @@ public class ErpSystem implements TestSystem<ErpSystem>
         this.uri = uri;
 
         this.systemId = systemId != null ? systemId : "";
-        this.sapClient = sapClient != null ? sapClient : SapClient.DEFAULT;
+        this.sapClient = sapClient != null ? sapClient : com.sap.cloud.sdk.s4hana.serialization.SapClient.DEFAULT;
 
         this.locale = locale != null ? locale : Locale.US;
         this.proxyConfiguration = proxyConfiguration;
@@ -187,7 +205,10 @@ public class ErpSystem implements TestSystem<ErpSystem>
 
     /**
      * The ERP system builder.
+     *
+     * @deprecated This module will be discontinued, along with its classes and method.
      */
+    @Deprecated
     @Accessors( fluent = true )
     @Setter
     public static class ErpSystemBuilder
@@ -195,7 +216,7 @@ public class ErpSystem implements TestSystem<ErpSystem>
         private String alias;
         private URI uri;
         private String systemId;
-        private SapClient sapClient;
+        private com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient;
         private Locale locale;
         private ProxyConfiguration proxyConfiguration;
         private String applicationServer;
