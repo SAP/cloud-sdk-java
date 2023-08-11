@@ -1,0 +1,13 @@
+openapi: 3.0.0
+info:
+  title: Soda Store API
+  version: 1.0.0
+  description: API for managing sodas in a soda store
+
+paths:
+  /sodas:
+    get:
+      summary: Get a list of all sodas
+      operationId: getSodas
+      x-sap-cloud-sdk-api-name: awesomeListSodas
+      ---- broken here ----- snip snap ----

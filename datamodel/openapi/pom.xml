@@ -2,15 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.sap.cloud.sdk</groupId>
-		<artifactId>sdk-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<groupId>com.sap.cloud.sdk.datamodel</groupId>
+		<artifactId>datamodel-parent</artifactId>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
-	<groupId>com.sap.cloud.sdk.datamodel</groupId>
-	<artifactId>datamodel-parent</artifactId>
+	<artifactId>openapi-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>Data Model - Parent POM</name>
-	<description>Parent POM for API generator and core modules for Virtual Data Model (VDM).</description>
+	<name>Data Model - OpenAPI Services - Parent POM</name>
+	<description>OpenAPI Services Data Model (VDM) - API generator and core classes.</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
 	<organization>
 		<name>SAP SE</name>
@@ -31,9 +30,10 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>fluent-result</module>
-		<module>odata</module>
-		<module>openapi</module>
+		<module>openapi-core</module>
+		<module>openapi-generator</module>
+		<module>openapi-generator-maven-plugin</module>
+		<module>openapi-generator-cli</module>
 	</modules>
 	<scm>
 		<connection />
@@ -42,6 +42,24 @@
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
-		<project.rootdir>${project.basedir}/../../</project.rootdir>
+		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- resolve convergence between jackson and swagger -->
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.12.5</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<profiles>
+		<profile>
+			<id>test-modules</id>
+			<modules>
+				<module>openapi-api-sample</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>

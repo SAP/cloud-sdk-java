@@ -1666,7 +1666,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>build-test-modules</id>
+			<id>test-modules</id>
 			<activation>
 				<property>
 					<name>!audience</name>

@@ -1,0 +1,13 @@
+{
+  "java8" : true,
+  "dateLibrary" : "java8",
+
+  "serializableModel" : true,
+  "booleanGetterPrefix" : "is",
+  "hideGenerationTimestamp" : true,
+
+  "library" : "resttemplate",
+  "sourceFolder" : "/src/main/java",
+
+  "isReleased" : false
+}

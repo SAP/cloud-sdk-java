@@ -1,0 +1,68 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sample Cloud SDK Test API",
+    "description": "This is a sample API to test the Cloud SDK's OpenAPI generator.",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/some/endpoint": {
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Object1"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Object2"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Object1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Object2"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "destination"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Object1": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Age": {
+            "type": "integer"
+          }
+        }
+      },
+      "Object2": {
+        "type": "string"
+      }
+    }
+  },
+  "x-sap-shortText": "Read and manage destination configurations (including related certificates) on account and service instance levels with auto-retrieving and caching of auth tokens"
+}
