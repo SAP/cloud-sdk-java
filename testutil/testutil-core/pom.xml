@@ -103,10 +103,6 @@
 			<artifactId>s4hana-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.s4hana</groupId>
-			<artifactId>s4hana-connectivity</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>

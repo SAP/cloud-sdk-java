@@ -151,6 +151,7 @@
 		<byte-buddy.version>1.14.4</byte-buddy.version>
 		<hamcrest-core.version>2.2</hamcrest-core.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
+		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -158,7 +159,7 @@
 			<dependency>
 				<groupId>com.sap.cloud.sdk</groupId>
 				<artifactId>sdk-bom</artifactId>
-				<version>4.12.0</version>
+				<version>5.0.0-alpha-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -831,6 +832,11 @@
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<optional>${jsr305.optional}</optional>
 		</dependency>
 	</dependencies>
 	<build>
