@@ -87,7 +87,7 @@
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
 		<japicmp.skip>false</japicmp.skip>
 		<scp-neo.auditlog.version>0.6.60</scp-neo.auditlog.version>
-		<scp-neo-tomcat8.sdk.version>4.50.8</scp-neo-tomcat8.sdk.version>
+		<scp-neo-tomcat8.sdk.version>4.57.7.1</scp-neo-tomcat8.sdk.version>
 		<scp-cf.auditlog.version>2.0.16</scp-cf.auditlog.version>
 		<fabric-sdk-java.version>2.2.21</fabric-sdk-java.version>
 		<fabric-gateway-java.version>2.2.7</fabric-gateway-java.version>
