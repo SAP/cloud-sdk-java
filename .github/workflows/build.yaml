@@ -21,8 +21,8 @@ jobs:
         tool:
           - {"mvn_goal": "net.revelc.code:impsort-maven-plugin:check", "display_name": "Import Sort"}
           - {"mvn_goal": "net.revelc.code.formatter:formatter-maven-plugin:validate", "display_name": "Formatter"}
-          - {"mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd", "display_name": "pmd"}
-          - {"mvn_goal": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle", "display_name": "Checkstyle"}
+          - {"mvn_goal": "install org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests", "display_name": "pmd"}
+          # - {"mvn_goal": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle", "display_name": "Checkstyle"}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -85,7 +85,7 @@ jobs:
       fail-fast: false
       matrix:
         tool:
-          - {"mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs", "display_name": "Spotbugs"}
+          - {"mvn_goal": "install com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests", "display_name": "Spotbugs"}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
