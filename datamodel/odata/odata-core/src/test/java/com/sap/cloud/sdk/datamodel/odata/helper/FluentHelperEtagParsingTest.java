@@ -1,8 +1,3 @@
-/*
- * SPDX-FileCopyrightText: 2023 SAP SE or an SAP affiliate company and cloud-sdk-java
- *
- * SPDX-License-Identifier: Apache-2.0
- */
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;

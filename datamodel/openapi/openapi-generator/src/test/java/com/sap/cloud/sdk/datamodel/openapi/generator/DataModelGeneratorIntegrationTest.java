@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,7 +76,7 @@ public class DataModelGeneratorIntegrationTest
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(tempOutputDirectory.toAbsolutePath().toString())
-                .withSapCopyrightHeader(true)
+                .withSapCopyrightHeader(false)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 
@@ -113,7 +109,7 @@ public class DataModelGeneratorIntegrationTest
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(outputDirectory.toAbsolutePath().toString())
                 .deleteOutputDirectory(true)
-                .withSapCopyrightHeader(true)
+                .withSapCopyrightHeader(false)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 

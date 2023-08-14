@@ -1555,10 +1555,10 @@
 			</build>
 		</profile>
 		<profile>
-			<id>test-modules</id>
+			<id>testutil-modules</id>
 			<activation>
 				<property>
-					<name>!sdk.code.scanning</name>
+					<name>!code-scanning</name>
 				</property>
 			</activation>
 			<modules>
