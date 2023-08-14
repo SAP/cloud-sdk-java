@@ -28,7 +28,6 @@
 	</developers>
 	<modules>
 		<module>datamodel</module>
-		<module>testutil</module>
 	</modules>
 	<scm>
 		<connection />
@@ -1675,7 +1674,7 @@
 			<id>test-modules</id>
 			<activation>
 				<property>
-					<name>!audience</name>
+					<name>!skipTests</name>
 				</property>
 			</activation>
 			<modules>
