@@ -53,21 +53,20 @@ jobs:
           distribution: "temurin"
           java-version: 17
           cache: maven
-      - name: Build with Maven
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
+      - name: Install
         run: "mvn $MVN_CLI_ARGS install -DskipTests"
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
       - name: Archive compiled classes
         uses: actions/upload-artifact@v3
         with:
           name: compiled-classes
           path: |
             **/target/**/*.class
-          retention-days: 1
-      - name: Archive target directories
-        uses: actions/upload-artifact@v3
-        with:
-          name: target-directories
-          path: |
-            **/target/
           retention-days: 1
 
   test:
@@ -88,8 +87,21 @@ jobs:
           distribution: "temurin"
           java-version: 17
           cache: maven
-      - name: Build with Maven
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
+      - name: Test
         run: "mvn $MVN_CLI_ARGS test jacoco:report"
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
+      - name: Archive target directories
+        uses: actions/upload-artifact@v3
+        with:
+          name: target-directories
+          path: |
+            **/target/
+          retention-days: 1
 
   quality-checks-compiled:
     needs: build
@@ -109,6 +121,9 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: maven
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
       - uses: actions/download-artifact@v3
         with:
           name: compiled-classes
