@@ -1466,17 +1466,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>skip-formatting</id>
-			<activation>
-				<property>
-					<name>skipFormatting</name>
-				</property>
-			</activation>
-			<properties>
-					<skipFormatting>true</skipFormatting>
-			</properties>
-		</profile>
-		<profile>
 			<id>test-modules</id>
 			<activation>
 				<property>
