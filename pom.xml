@@ -49,15 +49,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
-		<project.build.javaCodeFormatter>${project.rootdir}/codestyle/java_formatter.xml</project.build.javaCodeFormatter>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
 		<enforcer.skipEnforceScopeJavaEE>false</enforcer.skipEnforceScopeJavaEE>
 		<enforcer.skipEnforceScopeLombok>false</enforcer.skipEnforceScopeLombok>
-		<enforcer.skipBanHighLicenseRisk>false</enforcer.skipBanHighLicenseRisk>
 		<enforcer.skipBanGeneratedModulesReference>false</enforcer.skipBanGeneratedModulesReference>
-		<enforcer.skipBanWiremockCompileScope>false</enforcer.skipBanWiremockCompileScope>
 		<surefire.forkCount>4</surefire.forkCount>
 		<surefire.include>*</surefire.include>
 		<surefire.exclude />
@@ -77,11 +74,6 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<jacoco.includes>*</jacoco.includes>
 		<jacoco.excludes>org.apache.*</jacoco.excludes>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.jacoco.reportPath>${jacoco.executionDataFile}</sonar.jacoco.reportPath>
-		<sonar.language>java</sonar.language>
-		<sonar.javascript.jslint.reportPath>${project.build.directory}/jslint.xml</sonar.javascript.jslint.reportPath>
-		<codeAnalysisExclusions />
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
 		<scp-neo.auditlog.version>0.6.60</scp-neo.auditlog.version>
@@ -1002,21 +994,6 @@
 							</configuration>
 						</execution>
 						<execution>
-							<id>ban-high-license-risk-dependencies</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipBanHighLicenseRisk}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Do not include any high license risk dependencies without team
-											coordination.</message>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
 							<id>ban-api-dependencies</id>
 							<goals>
 								<goal>enforce</goal>
@@ -1033,42 +1010,10 @@
                                                                                         An issue can be fixed by either removing the dependency (preferred solution, if possible), or adding the reported module here and excluding it via the mentioned profile.
                                                                                         In general this list should be in sync with the list of modules excluded by the sdk.code.scanning profile.
                                                                                          -->
-											<exclude>com.sap.cloud.sdk.s4hana:s4hana-api-odata</exclude>
-											<exclude>com.sap.cloud.sdk.s4hana:s4hana-api-odata-v4</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
-											<exclude>com.sap.cloud.sdk.s4hana:s4hana-all</exclude>
-											<exclude>com.sap.cloud.sdk.tests:integration-tests</exclude>
-											<exclude>com.sap.cloud.sdk.tests:performance-tests</exclude>
-											<exclude>com.sap.cloud.sdk.tests:end-to-end-tests</exclude>
 										</excludes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>enforce-scope-wiremock</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipBanWiremockCompileScope}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Do not use Wiremock with scope compile. Use scope test instead.</message>
-										<excludes>
-											<exclude>com.github.tomakehurst:wiremock-jre8-standalone:*:*:compile</exclude>
-											<exclude>com.github.tomakehurst:wiremock-standalone:*:*:compile</exclude>
-											<exclude>com.github.tomakehurst:wiremock:*:*:compile</exclude>
-											<exclude>com.github.tomakehurst:wiremock-jre8:*:*:compile</exclude>
-										</excludes>
-										<includes>
-											<exclude>com.github.tomakehurst:wiremock-jre8-standalone:*:*:test</exclude>
-											<exclude>com.github.tomakehurst:wiremock-standalone:*:*:test</exclude>
-											<exclude>com.github.tomakehurst:wiremock:*:*:test</exclude>
-											<exclude>com.github.tomakehurst:wiremock-jre8:*:*:test</exclude>
-										</includes>
 									</bannedDependencies>
 								</rules>
 							</configuration>
@@ -1082,16 +1027,8 @@
 					<groupId>net.revelc.code.formatter</groupId>
 					<artifactId>formatter-maven-plugin</artifactId>
 					<version>2.22.0</version>
-					<executions>
-						<execution>
-							<phase>process-sources</phase>
-							<goals>
-								<goal>format</goal>
-							</goals>
-						</execution>
-					</executions>
 					<configuration>
-						<configFile>${project.build.javaCodeFormatter}</configFile>
+						<configFile>${project.rootdir}/codestyle/java_formatter.xml</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
 							<directory>${project.basedir}/src/main/java</directory>
@@ -1103,14 +1040,6 @@
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
 					<version>1.8.0</version>
-					<executions>
-						<execution>
-							<id>sort-imports</id>
-							<goals>
-								<goal>sort</goal>
-							</goals>
-						</execution>
-					</executions>
 					<configuration>
 						<groups>java.,javax.,org.,com.</groups>
 						<staticGroups>java,*</staticGroups>
@@ -1279,7 +1208,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.2</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -1457,46 +1386,18 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>com.sap.research.security.vulas</groupId>
-					<artifactId>plugin-maven</artifactId>
-					<version>3.1.15</version>
-				</plugin>
-				<plugin>
 					<groupId>com.sap.cloud.sdk.datamodel</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${sdk.version}</version>
 					<configuration>
 						<apiMaturity>beta</apiMaturity>
-						<sapCopyrightHeader>true</sapCopyrightHeader>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.openapitools</groupId>
-					<artifactId>openapi-generator-maven-plugin</artifactId>
-					<version>${openapi-generator.version}</version>
-					<configuration>
-						<generatorName>java</generatorName>
-						<generateApiTests>false</generateApiTests>
-						<generateModelTests>false</generateModelTests>
-						<generateApiDocumentation>false</generateApiDocumentation>
-						<generateAliasAsModel>false</generateAliasAsModel>
-						<removeOperationIdPrefix>true</removeOperationIdPrefix>
-						<generateSupportingFiles>false</generateSupportingFiles>
+						<sapCopyrightHeader>false</sapCopyrightHeader>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>com.github.ekryd.sortpom</groupId>
 					<artifactId>sortpom-maven-plugin</artifactId>
 					<version>2.15.0</version>
-					<executions>
-						<execution>
-							<id>sort-all-poms</id>
-							<phase>process-sources</phase>
-							<goals>
-								<goal>sort</goal>
-							</goals>
-						</execution>
-					</executions>
 					<configuration>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<createBackupFile>false</createBackupFile>
@@ -1599,6 +1500,56 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>apply-formatting</id>
+			<activation>
+				<property>
+					<name>!skip-formatting</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.revelc.code.formatter</groupId>
+						<artifactId>formatter-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>format</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.revelc.code</groupId>
+						<artifactId>impsort-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sort-imports</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>sort</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.github.ekryd.sortpom</groupId>
+						<artifactId>sortpom-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sort-all-poms</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>sort</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

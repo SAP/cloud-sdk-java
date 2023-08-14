@@ -104,7 +104,6 @@
 					<apiMaturity>released</apiMaturity>
 					<deleteOutputDirectory>true</deleteOutputDirectory>
 					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-					<sapCopyrightHeader>true</sapCopyrightHeader>
 				</configuration>
 			</plugin>
 		</plugins>
