@@ -55,6 +55,20 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: "mvn $MVN_CLI_ARGS install -DskipTests"
+      - name: Archive compiled classes
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-classes
+          path: |
+            **/target/**/*.class
+          retention-days: 1
+      - name: Archive target directories
+        uses: actions/upload-artifact@v3
+        with:
+          name: target-directories
+          path: |
+            **/target/
+          retention-days: 1
 
   test:
     needs: build
@@ -97,7 +111,7 @@ jobs:
           cache: maven
       - uses: actions/download-artifact@v3
         with:
-          name: compiled-classes-jdk-17
+          name: compiled-classes
       - run: mvn $MVN_CLI_ARGS ${{ matrix.tool.mvn_goal }}
       - name: Show Spotbugs findings
         if: ${{ contains(matrix.tool.mvn_goal, 'spotbugs') }}
@@ -120,7 +134,7 @@ jobs:
           cache: maven
       - uses: actions/download-artifact@v3
         with:
-          name: target-jdk-17
+          name: target-directories
       - name: Publish Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
