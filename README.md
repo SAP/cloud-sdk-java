@@ -1,3 +1,6 @@
+# Disclaimer: We are working on the migration of this repository. The planned timeline for the OS migration and SDK version 5 is Q4 2023. Please stay tuned.
+
+
 <a href="https://sap.github.io/cloud-sdk/docs/java/overview-cloud-sdk-for-java"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-for-java.svg" alt="SAP Cloud SDK for Java Logo" height="122.92" width="226.773"/></a>
 
 ![build](https://github.com/SAP/cloud-sdk-java/workflows/build/badge.svg)
