@@ -50,6 +50,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
+		<apply-formatting>false</apply-formatting>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
@@ -988,6 +989,7 @@
 					<artifactId>formatter-maven-plugin</artifactId>
 					<version>2.22.0</version>
 					<configuration>
+						<skip>${apply-formatting}</skip>
 						<configFile>${project.rootdir}/codestyle/java_formatter.xml</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
@@ -1001,6 +1003,7 @@
 					<artifactId>impsort-maven-plugin</artifactId>
 					<version>1.8.0</version>
 					<configuration>
+						<skip>${apply-formatting}</skip>
 						<groups>java.,javax.,org.,com.</groups>
 						<staticGroups>java,*</staticGroups>
 						<staticAfter>false</staticAfter>
@@ -1008,6 +1011,23 @@
 						<excludes>
 							<exclude>**/test/resources/**</exclude>
 						</excludes>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.ekryd.sortpom</groupId>
+					<artifactId>sortpom-maven-plugin</artifactId>
+					<version>2.15.0</version>
+					<configuration>
+						<skip>${apply-formatting}</skip>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<createBackupFile>false</createBackupFile>
+						<expandEmptyElements>false</expandEmptyElements>
+						<!--  -1 stands for tab  -->
+						<nrOfIndentSpace>-1</nrOfIndentSpace>
+						<sortDependencies>none</sortDependencies>
+						<sortPlugins>none</sortPlugins>
+						<sortProperties>false</sortProperties>
+						<sortModules>false</sortModules>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1203,7 +1223,6 @@
 						<linkXRef>false</linkXRef>
 						<includeResources>false</includeResources>
 						<includeTestResources>false</includeTestResources>
-						<excludes>${codeAnalysisExclusions}</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1323,6 +1342,7 @@
 								<packages>com.sap.cloud.sdk.s4hana*</packages>
 							</group>
 						</groups>
+						<!--suppress UnresolvedMavenProperty -->
 						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
 						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
 					</configuration>
@@ -1349,22 +1369,6 @@
 					<configuration>
 						<apiMaturity>beta</apiMaturity>
 						<sapCopyrightHeader>false</sapCopyrightHeader>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.ekryd.sortpom</groupId>
-					<artifactId>sortpom-maven-plugin</artifactId>
-					<version>2.15.0</version>
-					<configuration>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<createBackupFile>false</createBackupFile>
-						<expandEmptyElements>false</expandEmptyElements>
-						<!--  -1 stands for tab  -->
-						<nrOfIndentSpace>-1</nrOfIndentSpace>
-						<sortDependencies>none</sortDependencies>
-						<sortPlugins>none</sortPlugins>
-						<sortProperties>false</sortProperties>
-						<sortModules>false</sortModules>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1465,51 +1469,12 @@
 			<id>apply-formatting</id>
 			<activation>
 				<property>
-					<name>!skip-formatting</name>
+					<name>!skipFormatting</name>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>format</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sort-imports</id>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>sort</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.github.ekryd.sortpom</groupId>
-						<artifactId>sortpom-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sort-all-poms</id>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>sort</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
+			<properties>
+					<apply-formatting>true</apply-formatting>
+			</properties>
 		</profile>
 		<profile>
 			<id>test-modules</id>
