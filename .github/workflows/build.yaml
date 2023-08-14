@@ -36,7 +36,7 @@ jobs:
         run: "mvn $MVN_CLI_ARGS net.revelc.code:impsort-maven-plugin:check"
       # - name: Check Code Style
       #   run: |
-      #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle || (python .pipeline/scripts/print-checkstyle.py && exit 1)
+      #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
       #     python .pipeline/scripts/print-checkstyle.py
       - name: Compile
         run: |
@@ -44,11 +44,11 @@ jobs:
           mvn $MVN_CLI_ARGS install -DskipTests
       - name: Spotbugs
         run: |
-          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning || (python .pipeline/scripts/print-spotbugs.py && exit 1)
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning
           python .pipeline/scripts/print-spotbugs.py
       - name: PMD
         run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning || (python .pipeline/scripts/print-pmd.py && exit 1)
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning
           python .pipeline/scripts/print-pmd.py
       - name: Test
         run: "mvn $MVN_CLI_ARGS test jacoco:report"

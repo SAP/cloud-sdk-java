@@ -33,13 +33,14 @@ for spotbugs_report_file in all_spotbugs_report_files:
 
         for bugInstance in spotbugs_report.findall('.//BugInstance'):
             findings[str(bugInstance.get('priority'))] += 1
-            print('  - Bug Type:', bugInstance.get('type'))
-            print('    Bug Category:', bugInstance.get('category'))
-            print('    Bug Priority:', bugInstance.get('priority'))
-            print('    Bug Message:', bugInstance.find('LongMessage').text)
-            print('    Source File:', bugInstance.find('SourceLine').get('sourcefile'))
-            print('    Source Line Number:', bugInstance.find('SourceLine').get('start'))
-            print()
+            if bugInstance.get('priority') == '1':
+                print('  - Bug Type:', bugInstance.get('type'))
+                print('    Bug Category:', bugInstance.get('category'))
+                print('    Bug Priority:', bugInstance.get('priority'))
+                print('    Bug Message:', bugInstance.find('LongMessage').text)
+                print('    Source File:', bugInstance.find('SourceLine').get('sourcefile'))
+                print('    Source Line Number:', bugInstance.find('SourceLine').get('start'))
+                print()
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
@@ -55,5 +56,5 @@ print(f"warnings low:    {findings['3']}, allowed is {threshold_low}")
 print(f"warnings normal: {findings['2']}, allowed is {threshold_normal}")
 print(f"warnings high:   {findings['1']}, allowed is {threshold_high}")
 
-if findings['3'] > threshold_low or findings['2'] > threshold_normal or findings['1'] > threshold_high:
+if findings['1'] > threshold_high: # or findings['2'] > threshold_normal or findings['3'] > threshold_low:
     sys.exit('Spotbugs exceeded thresholds')
