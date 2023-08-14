@@ -69,14 +69,22 @@
     </dependencyManagement>
     <build>
         <plugins>
+            <!-- needed here because the bom can not have the root pom as parent-->
             <plugin>
-                <!-- needed here because the bom can not have the root pom as parent-->
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
                 <version>2.22.0</version>
                 <configuration>
                     <skip>true</skip>
                     <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.9</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
