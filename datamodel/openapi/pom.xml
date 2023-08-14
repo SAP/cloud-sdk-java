@@ -57,6 +57,11 @@
 	<profiles>
 		<profile>
 			<id>test-modules</id>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
 			<modules>
 				<module>openapi-api-sample</module>
 			</modules>

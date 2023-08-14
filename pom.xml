@@ -50,7 +50,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
-		<apply-formatting>false</apply-formatting>
+		<skipFormatting>false</skipFormatting>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
@@ -989,7 +989,7 @@
 					<artifactId>formatter-maven-plugin</artifactId>
 					<version>2.22.0</version>
 					<configuration>
-						<skip>${apply-formatting}</skip>
+						<skip>${skipFormatting}</skip>
 						<configFile>${project.rootdir}/codestyle/java_formatter.xml</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
@@ -1003,7 +1003,7 @@
 					<artifactId>impsort-maven-plugin</artifactId>
 					<version>1.8.0</version>
 					<configuration>
-						<skip>${apply-formatting}</skip>
+						<skip>${skipFormatting}</skip>
 						<groups>java.,javax.,org.,com.</groups>
 						<staticGroups>java,*</staticGroups>
 						<staticAfter>false</staticAfter>
@@ -1018,7 +1018,7 @@
 					<artifactId>sortpom-maven-plugin</artifactId>
 					<version>2.15.0</version>
 					<configuration>
-						<skip>${apply-formatting}</skip>
+						<skip>${skipFormatting}</skip>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<createBackupFile>false</createBackupFile>
 						<expandEmptyElements>false</expandEmptyElements>
@@ -1466,14 +1466,14 @@
 			</build>
 		</profile>
 		<profile>
-			<id>apply-formatting</id>
+			<id>skip-formatting</id>
 			<activation>
 				<property>
-					<name>!skipFormatting</name>
+					<name>skipFormatting</name>
 				</property>
 			</activation>
 			<properties>
-					<apply-formatting>true</apply-formatting>
+					<skipFormatting>true</skipFormatting>
 			</properties>
 		</profile>
 		<profile>
