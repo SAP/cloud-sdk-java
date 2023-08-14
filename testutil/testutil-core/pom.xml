@@ -36,7 +36,6 @@
 		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<x-sap-exclude-from-blackduck-scan>true</x-sap-exclude-from-blackduck-scan>
-		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
 	</properties>
 	<dependencyManagement>
 		<!-- test dependencies with scope "compile" -->
@@ -110,10 +109,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.vavr</groupId>

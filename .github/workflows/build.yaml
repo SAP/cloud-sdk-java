@@ -27,31 +27,38 @@ jobs:
           distribution: "temurin"
           java-version: 17
           cache: maven
+      # the cache doesn't seem to work really
+      # printing the repo contents here shows only the BOMs are cached (for some reason)
       - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk/testutil/testutil-core
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
         continue-on-error: true
+      ### Verify formatting ###
+      # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
       - name: Check Formatting
         run: "mvn $MVN_CLI_ARGS net.revelc.code.formatter:formatter-maven-plugin:validate"
       - name: Check Import Sorting
         run: "mvn $MVN_CLI_ARGS net.revelc.code:impsort-maven-plugin:check"
       - name: Check POM File Sorting
         run: "mvn $MVN_CLI_ARGS com.github.ekryd.sortpom:sortpom-maven-plugin:verify"
+      # Check style is currently lacking the required file, so disable it for now
       # - name: Check Code Style
       #   run: |
       #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
       #     python .pipeline/scripts/print-checkstyle.py
       - name: Compile
-        # compile everything, including tests, but don't execute tests yet
-        # skip formatting stuff because we already verified it above
+        # we need to use install here because otherwise the code checks below don't work
+        # they seem to require "mvn dependency:resolve" to work, why is unclear honestly...
+        # Problem: With caching the maven repo this might? maybe? produce race conditions / side effects between different executions
         run: |
           mvn $MVN_CLI_ARGS install -DskipTests -Dskip-formatting
+      # run code checks that require the result of "install" above
       - name: Spotbugs
         run: |
-          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
           python .pipeline/scripts/print-spotbugs.py
       - name: PMD
         run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
           python .pipeline/scripts/print-pmd.py
       - name: Test
         run: "mvn $MVN_CLI_ARGS test jacoco:report"

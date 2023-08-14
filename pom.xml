@@ -28,6 +28,7 @@
 	</developers>
 	<modules>
 		<module>datamodel</module>
+		<module>modules-bom</module>
 	</modules>
 	<scm>
 		<connection />
@@ -145,7 +146,16 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<!--Dependencies with import scope-->
+			<!-- Set the version of the OSS modules first -->
+			<dependency>
+				<groupId>com.sap.cloud.sdk</groupId>
+				<artifactId>sdk-modules-bom</artifactId>
+				<version>${sdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- Use existing modules for the rest -->
+			<!-- Todo: Use V5 snapshots here -->
 			<dependency>
 				<groupId>com.sap.cloud.sdk</groupId>
 				<artifactId>sdk-bom</artifactId>
@@ -170,17 +180,6 @@
 				<scope>import</scope>
 			</dependency>
 			<!--Dependencies with runtime scope-->
-			<!-- Spring Security for Blockchain -->
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-oauth2-core</artifactId>
-				<version>${spring-security.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-oauth2-client</artifactId>
-				<version>${spring-security.version}</version>
-			</dependency>
 			<!--Used in Odata, openApi generators and in scp-neo-maven-plugin-->
 			<dependency>
 				<groupId>org.apache.maven</groupId>
@@ -200,20 +199,6 @@
 				<version>${maven-plugin.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!--Only used in scp-neo-maven-plugin-->
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-model</artifactId>
-				<version>${maven-plugin.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<!--Used only in concurrency-scp-neo with provided scope-->
-			<dependency>
-				<groupId>com.sap.core.jpaas.security</groupId>
-				<artifactId>com.sap.core.jpaas.security.utils</artifactId>
-				<version>${com-sap-core-jpaas-security.version}</version>
-				<scope>provided</scope>
-			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud</groupId>
 				<artifactId>neo-java-web-api</artifactId>
@@ -225,31 +210,6 @@
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-artifact</artifactId>
 				<version>${maven-plugin.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<!--Only used in auditlog-scp-neo-->
-			<dependency>
-				<groupId>com.sap.core.service.auditlog</groupId>
-				<artifactId>com.sap.core.service.auditlog.api</artifactId>
-				<version>${scp-neo.auditlog.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.core.service.auditlog</groupId>
-				<artifactId>com.sap.core.service.auditlog.impl</artifactId>
-				<version>${scp-neo.auditlog.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.core.service.auditlog</groupId>
-				<artifactId>com.sap.core.service.auditlog.extension.api</artifactId>
-				<version>${scp-neo.auditlog.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.core.service.auditlog</groupId>
-				<artifactId>com.sap.core.service.auditlog.extension.impl</artifactId>
-				<version>${scp-neo.auditlog.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!-- Only used in auditlog-scp-cf, with provided scope, both api and impl-->
@@ -494,7 +454,7 @@
 				<groupId>com.sap.cloud.sdk.testutil</groupId>
 				<artifactId>testutil-core</artifactId>
 				<version>${sdk.version}</version>
-				<scope>test</scope>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud.sdk.testutil</groupId>
@@ -1262,7 +1222,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.20.0</version>
+					<version>3.21.0</version>
 					<configuration>
 						<rulesets>
 							<!-- fixme: pipeline config-->
@@ -1275,9 +1235,6 @@
 						</rulesets>
 						<linkXRef>false</linkXRef>
 						<targetJdk>${java.version}</targetJdk>
-						<excludes>
-							<exclude>${codeAnalysisExclusions}</exclude>
-						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1555,10 +1512,10 @@
 			</build>
 		</profile>
 		<profile>
-			<id>testutil-modules</id>
+			<id>test-modules</id>
 			<activation>
 				<property>
-					<name>!code-scanning</name>
+					<name>!release</name>
 				</property>
 			</activation>
 			<modules>
