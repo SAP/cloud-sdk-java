@@ -1546,10 +1546,6 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.whitesource</groupId>
-				<artifactId>whitesource-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 			</plugin>

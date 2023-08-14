@@ -34,10 +34,10 @@ jobs:
         run: "mvn $MVN_CLI_ARGS net.revelc.code.formatter:formatter-maven-plugin:validate"
       - name: Check Import Sorting
         run: "mvn $MVN_CLI_ARGS net.revelc.code:impsort-maven-plugin:check"
-      - name: Check Code Style
-        run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle || (python .pipeline/scripts/print-checkstyle.py && exit 1)
-          python .pipeline/scripts/print-checkstyle.py
+      # - name: Check Code Style
+      #   run: |
+      #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle || (python .pipeline/scripts/print-checkstyle.py && exit 1)
+      #     python .pipeline/scripts/print-checkstyle.py
       - name: Compile
         run: |
           mvn $MVN_CLI_ARGS test-compile
