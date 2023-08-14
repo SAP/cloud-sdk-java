@@ -13,7 +13,7 @@ env:
 
 jobs:
 
-  quality-checks:
+  source-code-analysis:
     name: Check ${{ matrix.tool.display_name }}
     strategy:
       fail-fast: false
@@ -21,7 +21,6 @@ jobs:
         tool:
           - {"mvn_goal": "net.revelc.code:impsort-maven-plugin:check", "display_name": "Import Sort"}
           - {"mvn_goal": "net.revelc.code.formatter:formatter-maven-plugin:validate", "display_name": "Formatter"}
-          - {"mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests", "display_name": "pmd"}
           # - {"mvn_goal": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle", "display_name": "Checkstyle"}
     runs-on: ubuntu-latest
     steps:
@@ -33,9 +32,6 @@ jobs:
           java-version: "17"
           cache: maven
       - run: mvn $MVN_CLI_ARGS ${{ matrix.tool.mvn_goal }}
-      - name: Show pmd findings
-        if: ${{ contains(matrix.tool.mvn_goal, 'pmd') }}
-        run: python .pipeline/scripts/print-pmd.py
       - name: Show Checkstyle findings
         if: ${{ contains(matrix.tool.mvn_goal, 'checkstyle') }}
         run: python .pipeline/scripts/print-checkstyle.py
@@ -48,35 +44,38 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      matrix:
-        # jdk 20 currently does not work because of a warning:
-        # Warning:  source/target value 8 is obsolete and will be removed in a future release
-        java: [ '17', '19' ]
-    name: Build, Test and Verify JDK ${{ matrix.Java }}
+    name: Build
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: ${{ matrix.java }}
+          java-version: 17
           cache: maven
       - name: Build with Maven
-        run: mvn $MVN_CLI_ARGS verify jacoco:report
-      - name: Archive compiled classes
-        uses: actions/upload-artifact@v3
+        run: "mvn $MVN_CLI_ARGS install -DskipTests"
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    # Permissions block is optional, useful for dependabot checks
+    permissions:
+      checks: write
+      contents: read
+    strategy:
+      fail-fast: false
+    name: Test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
         with:
-          name: compiled-classes-jdk-${{ matrix.Java }}
-          path: |
-            **/target/**/*.class
-          retention-days: 1
-      - name: Archive target
-        uses: actions/upload-artifact@v3
-        with:
-          name: target-jdk-${{ matrix.Java }}
-          path: |
-            **/target/
-          retention-days: 1
+          distribution: "temurin"
+          java-version: 17
+          cache: maven
+      - name: Build with Maven
+        run: "mvn $MVN_CLI_ARGS test jacoco:report"
 
   quality-checks-compiled:
     needs: build
@@ -85,7 +84,8 @@ jobs:
       fail-fast: false
       matrix:
         tool:
-          - {"mvn_goal": "install com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests", "display_name": "Spotbugs"}
+          - {"mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning", "display_name": "Spotbugs"}
+          - {"mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning", "display_name": "pmd"}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -102,6 +102,9 @@ jobs:
       - name: Show Spotbugs findings
         if: ${{ contains(matrix.tool.mvn_goal, 'spotbugs') }}
         run: python .pipeline/scripts/print-spotbugs.py
+      - name: Show pmd findings
+        if: ${{ contains(matrix.tool.mvn_goal, 'pmd') }}
+        run: python .pipeline/scripts/print-pmd.py
 
   code-quality:
     needs: build

@@ -1674,7 +1674,7 @@
 			<id>test-modules</id>
 			<activation>
 				<property>
-					<name>!skipTests</name>
+					<name>!sdk.code.scanning</name>
 				</property>
 			</activation>
 			<modules>
