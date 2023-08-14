@@ -84,7 +84,6 @@
 		<codeAnalysisExclusions />
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
-		<japicmp.skip>false</japicmp.skip>
 		<scp-neo.auditlog.version>0.6.60</scp-neo.auditlog.version>
 		<scp-neo-tomcat8.sdk.version>4.57.7.1</scp-neo-tomcat8.sdk.version>
 		<scp-cf.auditlog.version>2.0.16</scp-cf.auditlog.version>
@@ -1353,37 +1352,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.whitesource</groupId>
-					<artifactId>whitesource-maven-plugin</artifactId>
-					<version>20.7.1</version>
-					<configuration>
-						<checkPolicies>true</checkPolicies>
-						<failOnError>true</failOnError>
-						<ignorePomModules>false</ignorePomModules>
-						<autoDetectProxySettings>false</autoDetectProxySettings>
-						<forceCheckAllDependencies>true</forceCheckAllDependencies>
-						<forceUpdate>true</forceUpdate>
-						<enableDebug>true</enableDebug>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.siom79.japicmp</groupId>
-					<artifactId>japicmp-maven-plugin</artifactId>
-					<version>0.17.2</version>
-					<configuration>
-						<skip>${japicmp.skip}</skip>
-						<parameter>
-							<ignoreMissingOldVersion>true</ignoreMissingOldVersion>
-							<ignoreMissingClasses>true</ignoreMissingClasses>
-							<skipHtmlReport>true</skipHtmlReport>
-							<skipDiffReport>true</skipDiffReport>
-							<skipXmlReport>true</skipXmlReport>
-							<breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
-							<breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
-						</parameter>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
 					<version>1.18.20.0</version>
@@ -1423,24 +1391,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>properties-maven-plugin</artifactId>
-					<version>1.1.0</version>
-					<executions>
-						<execution>
-							<phase>initialize</phase>
-							<goals>
-								<goal>read-project-properties</goal>
-							</goals>
-							<configuration>
-								<files>
-									<file>${project.rootdir}/scripts/javadoc.${audience}.properties</file>
-								</files>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.5.0</version>
@@ -1460,7 +1410,7 @@
 					</executions>
 					<configuration>
 						<quiet>true</quiet>
-						<additionalOptions>${javadoc.opts}</additionalOptions>
+						<doclint>syntax</doclint>
 						<show>protected</show>
 						<groups>
 							<group>
@@ -1600,10 +1550,6 @@
 				<artifactId>whitesource-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>com.github.siom79.japicmp</groupId>
-				<artifactId>japicmp-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 			</plugin>
@@ -1622,15 +1568,6 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>disable-doclint-java8</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
-			</properties>
-		</profile>
 		<profile>
 			<id>docs</id>
 			<activation>

@@ -12,39 +12,13 @@ env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
 jobs:
-
-  source-code-analysis:
-    name: Check ${{ matrix.tool.display_name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        tool:
-          - {"mvn_goal": "net.revelc.code:impsort-maven-plugin:check", "display_name": "Import Sort"}
-          - {"mvn_goal": "net.revelc.code.formatter:formatter-maven-plugin:validate", "display_name": "Formatter"}
-          # - {"mvn_goal": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle", "display_name": "Checkstyle"}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: maven
-      - run: mvn $MVN_CLI_ARGS ${{ matrix.tool.mvn_goal }}
-      - name: Show Checkstyle findings
-        if: ${{ contains(matrix.tool.mvn_goal, 'checkstyle') }}
-        run: python .pipeline/scripts/print-checkstyle.py
-
-  build:
+  everything:
     runs-on: ubuntu-latest
     # Permissions block is optional, useful for dependabot checks
     permissions:
       checks: write
       contents: read
-    strategy:
-      fail-fast: false
-    name: Build
+    name: Everything
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -56,102 +30,29 @@ jobs:
       - name: Show Maven repository contents
         run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
         continue-on-error: true
-      - name: Install
-        run: "mvn $MVN_CLI_ARGS install -DskipTests"
-      - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
-        continue-on-error: true
-      - name: Archive compiled classes
-        uses: actions/upload-artifact@v3
-        with:
-          name: compiled-classes
-          path: |
-            **/target/**/*.class
-          retention-days: 1
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    # Permissions block is optional, useful for dependabot checks
-    permissions:
-      checks: write
-      contents: read
-    strategy:
-      fail-fast: false
-    name: Test
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-          cache: maven
-      - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
-        continue-on-error: true
+      - name: Check Formatting
+        run: "mvn $MVN_CLI_ARGS net.revelc.code.formatter:formatter-maven-plugin:validate"
+      - name: Check Import Sorting
+        run: "mvn $MVN_CLI_ARGS net.revelc.code:impsort-maven-plugin:check"
+      - name: Check Code Style
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle || (python .pipeline/scripts/print-checkstyle.py && exit 1)
+          python .pipeline/scripts/print-checkstyle.py
+      - name: Compile
+        run: |
+          mvn $MVN_CLI_ARGS test-compile
+          mvn $MVN_CLI_ARGS install -DskipTests
+      - name: Spotbugs
+        run: |
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning || (python .pipeline/scripts/print-spotbugs.py && exit 1)
+          python .pipeline/scripts/print-spotbugs.py
+      - name: PMD
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning || (python .pipeline/scripts/print-pmd.py && exit 1)
+          python .pipeline/scripts/print-pmd.py
       - name: Test
         run: "mvn $MVN_CLI_ARGS test jacoco:report"
-      - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
-        continue-on-error: true
-      - name: Archive target directories
-        uses: actions/upload-artifact@v3
-        with:
-          name: target-directories
-          path: |
-            **/target/
-          retention-days: 1
-
-  quality-checks-compiled:
-    needs: build
-    name: Check ${{ matrix.tool.display_name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        tool:
-          - {"mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs -DskipTests -Dsdk.code.scanning", "display_name": "Spotbugs"}
-          - {"mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd -DskipTests -Dsdk.code.scanning", "display_name": "pmd"}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: maven
-      - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
-        continue-on-error: true
-      - uses: actions/download-artifact@v3
-        with:
-          name: compiled-classes
-      - run: mvn $MVN_CLI_ARGS ${{ matrix.tool.mvn_goal }}
-      - name: Show Spotbugs findings
-        if: ${{ contains(matrix.tool.mvn_goal, 'spotbugs') }}
-        run: python .pipeline/scripts/print-spotbugs.py
-      - name: Show pmd findings
-        if: ${{ contains(matrix.tool.mvn_goal, 'pmd') }}
-        run: python .pipeline/scripts/print-pmd.py
-
-  code-quality:
-    needs: build
-    name: Code Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: maven
-      - uses: actions/download-artifact@v3
-        with:
-          name: target-directories
       - name: Publish Test Report
-        if: success() || failure()
         uses: scacap/action-surefire-report@v1
       - name: Generate JaCoCo Badge
         id: jacoco
@@ -163,3 +64,7 @@ jobs:
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
           echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      - name: Show Maven repository contents
+        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        continue-on-error: true
+
