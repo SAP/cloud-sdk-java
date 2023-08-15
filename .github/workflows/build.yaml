@@ -124,6 +124,13 @@ jobs:
           path: |
             ./datamodel/fluent-result/target
           retention-days: 1
+      - name: Archive M2 SDK Directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: m2-sdk
+          path: |
+            ~/.m2/repository/com/sap/cloud/sdk
+          retention-days: 1
       # - name: Test
       #   run: "mvn $MVN_CLI_ARGS test jacoco:report"
       # - name: Publish Test Report
@@ -182,14 +189,18 @@ jobs:
           ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
           ls -R $HOME/.m2/repository/com/google/guava/guava
         continue-on-error: true
-      - uses: actions/download-artifact@v3
-        id: download
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
         with:
           name: compiled-classes
           path: |
               ./datamodel/fluent-result/target
-      - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: |
+            ~/.m2/repository/com/sap/cloud/sdk
       - name: Print File Timestamps
         run: |
           echo "-------------------"
@@ -200,4 +211,8 @@ jobs:
           echo "-------------------"
         continue-on-error: true
       - name: Test
-        run: "mvn test -pl :fluent-result -X"
+        run: "mvn test -pl :fluent-result"
+      - name: PMD
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+          python .pipeline/scripts/print-pmd.py
