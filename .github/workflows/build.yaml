@@ -183,8 +183,13 @@ jobs:
           ls -R $HOME/.m2/repository/com/google/guava/guava
         continue-on-error: true
       - uses: actions/download-artifact@v3
+        id: download
         with:
           name: compiled-classes
+          path: |
+              ./datamodel/fluent-result/target
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
       - name: Print File Timestamps
         run: |
           echo "-------------------"
