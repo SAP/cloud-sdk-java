@@ -111,9 +111,9 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
+          ls -lR --time-style=full-iso ./datamodel/fluent-result/src
           echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
+          ls -lR --time-style=full-iso ./datamodel/fluent-result/target
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
@@ -122,7 +122,7 @@ jobs:
         with:
           name: compiled-classes
           path: |
-            **/target/**/*.class
+            ./datamodel/fluent-result/target
           retention-days: 1
       # - name: Test
       #   run: "mvn $MVN_CLI_ARGS test jacoco:report"
@@ -188,9 +188,9 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
+          ls -lR --time-style=full-iso ./datamodel/fluent-result/src
           echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
+          ls -lR --time-style=full-iso ./datamodel/fluent-result/target
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
