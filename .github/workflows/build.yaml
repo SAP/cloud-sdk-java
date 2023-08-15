@@ -30,7 +30,9 @@ jobs:
       # the cache doesn't seem to work really
       # printing the repo contents here shows only the BOMs are cached (for some reason)
       - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        run: |
+          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
+          ls -R $HOME/.m2/repository/com/google/guava/guava
         continue-on-error: true
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
@@ -75,6 +77,8 @@ jobs:
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
           echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
       - name: Show Maven repository contents
-        run: ls -R $HOME/.m2/repository/com/sap/cloud/sdk
+        run: |
+          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
+          ls -R $HOME/.m2/repository/com/google/guava/guava
         continue-on-error: true
 
