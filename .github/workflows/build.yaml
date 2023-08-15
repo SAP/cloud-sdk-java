@@ -32,6 +32,14 @@ jobs:
         with:
           path: ${{vars.HOME}}/.m2/repository
           key: maven
+      - name: Print File Timestamps
+        run: |
+          echo "-------------------"
+          ls -l **/testutil/**/*.java
+          echo "-------------------"
+          echo "-------------------"
+          ls -l **/testutil/**/*.class  
+          echo "-------------------"
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
       - name: Check Formatting
@@ -102,10 +110,10 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l testutil/**/*.java
+          ls -l **/testutil/**/*.java
           echo "-------------------"
           echo "-------------------"
-          ls -l testutil/**/*.class  
+          ls -l **/testutil/**/*.class  
           echo "-------------------"
       - name: Archive compiled classes
         uses: actions/upload-artifact@v3
@@ -178,8 +186,8 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l testutil/**/*.java
+          ls -l **/testutil/**/*.java
           echo "-------------------"
           echo "-------------------"
-          ls -l testutil/**/*.class  
+          ls -l **/testutil/**/*.class  
           echo "-------------------"
