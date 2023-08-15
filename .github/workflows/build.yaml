@@ -68,9 +68,9 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          - path: |
-              $HOME/.m2/repository
-            key: maven
+          path: |
+            $HOME/.m2/repository
+          key: maven
       # print maven repo cache here for debugging
       - name: Show Maven Repository
         run: |
@@ -129,7 +129,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
-          - path: |
-              $HOME/.m2/repository
-            key: maven
+          path: |
+            $HOME/.m2/repository
+          key: maven
 
