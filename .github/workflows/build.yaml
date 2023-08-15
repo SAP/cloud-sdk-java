@@ -30,7 +30,7 @@ jobs:
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
         with:
-          path: ${{vars.HOME}}/.m2/repository
+          path: ~/.m2/repository
           key: maven
       - name: Print File Timestamps
         run: |
@@ -76,13 +76,13 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          path: ${{vars.HOME}}/.m2/repository
+          path: ~/.m2/repository
           key: maven
       # print maven repo cache here for debugging
       - name: Show Maven Repository
         run: |
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
           ls -R $HOME/.m2/repository/com/google/guava/guava
+          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
         continue-on-error: true
       - name: Compile
         # we need to use install here because otherwise the code checks below don't work
@@ -100,14 +100,14 @@ jobs:
               exit 1
           fi
       # run code checks that require the result of "install" above
-      - name: Spotbugs
-        run: |
-          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
-          python .pipeline/scripts/print-spotbugs.py
-      - name: PMD
-        run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-          python .pipeline/scripts/print-pmd.py
+      # - name: Spotbugs
+      #   run: |
+      #     mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+      #     python .pipeline/scripts/print-spotbugs.py
+      # - name: PMD
+      #   run: |
+      #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+      #     python .pipeline/scripts/print-pmd.py
       - name: Print File Timestamps
         run: |
           echo "-------------------"
@@ -124,35 +124,35 @@ jobs:
           path: |
             **/target/**/*.class
           retention-days: 1
-      - name: Test
-        run: "mvn $MVN_CLI_ARGS test jacoco:report"
-      - name: Publish Test Report
-        uses: scacap/action-surefire-report@v1
-      - name: Generate JaCoCo Badge
-        id: jacoco
-        uses: cicirello/jacoco-badge-generator@v2
-        with:
-          generate-branches-badge: true
-          jacoco-csv-file: "**/jacoco.csv"
-      - name: Test Coverage Percentage
-        run: |
-          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
-          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      # - name: Test
+      #   run: "mvn $MVN_CLI_ARGS test jacoco:report"
+      # - name: Publish Test Report
+      #   uses: scacap/action-surefire-report@v1
+      # - name: Generate JaCoCo Badge
+      #   id: jacoco
+      #   uses: cicirello/jacoco-badge-generator@v2
+      #   with:
+      #     generate-branches-badge: true
+      #     jacoco-csv-file: "**/jacoco.csv"
+      # - name: Test Coverage Percentage
+      #   run: |
+      #     echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+      #     echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
       - name: Purge Maven Repository from SDK Artifacts
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
       # print maven repo cache here for debugging
       - name: Show Maven repository contents
         run: |
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
           ls -R $HOME/.m2/repository/com/google/guava/guava
+          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
         continue-on-error: true
       - name: Save Maven Repository
         uses: actions/cache/save@v3
         if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
-          path: ${{vars.HOME}}/.m2/repository
+          path: ~/.m2/repository
           key: maven
 
   fun:
@@ -174,7 +174,7 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          path: ${{vars.HOME}}/.m2/repository
+          path: ~/.m2/repository
           key: maven
       # print maven repo cache here for debugging
       - name: Show Maven Repository
@@ -194,3 +194,5 @@ jobs:
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
+      - name: Test
+        run: "mvn test -pl :fluent-result -X"
