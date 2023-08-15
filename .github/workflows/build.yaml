@@ -31,8 +31,13 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          path: |
-            $HOME/.m2/repository
+          path: ${{vars.HOME}}/.m2/repository
+          key: maven
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ${{vars.HOME}}/.m2/repository
           key: maven
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
@@ -69,8 +74,7 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          path: |
-            $HOME/.m2/repository
+          path: ${{vars.HOME}}/.m2/repository
           key: maven
       # print maven repo cache here for debugging
       - name: Show Maven Repository
@@ -130,7 +134,6 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
-          path: |
-            $HOME/.m2/repository
+          path: ${{vars.HOME}}/.m2/repository
           key: maven
 
