@@ -118,6 +118,9 @@
 					<plugin>
 						<groupId>net.revelc.code.formatter</groupId>
 						<artifactId>formatter-maven-plugin</artifactId>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
 						<executions>
 							<execution>
 								<phase>process-sources</phase>
@@ -130,6 +133,9 @@
 					<plugin>
 						<groupId>net.revelc.code</groupId>
 						<artifactId>impsort-maven-plugin</artifactId>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
 						<executions>
 							<execution>
 								<id>sort-imports</id>

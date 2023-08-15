@@ -27,8 +27,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
           cache: maven
-      # the cache doesn't seem to work really
-      # printing the repo contents here shows only the BOMs are cached (for some reason)
+      # print maven repo cache here for debugging
       - name: Show Maven repository contents
         run: |
           ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
@@ -53,6 +52,14 @@ jobs:
         # Problem: With caching the maven repo this might? maybe? produce race conditions / side effects between different executions
         run: |
           mvn $MVN_CLI_ARGS install -DskipTests -Dskip-formatting
+      - name: Local Changes Check
+        run: |
+          git status --porcelain | rev | cut -f1 -d " " | rev > local_changes.txt
+          if [ -s local_changes.txt ]; then
+              echo "There are local changes in the following files:"
+              cat local_changes.txt
+              exit 1
+          fi
       # run code checks that require the result of "install" above
       - name: Spotbugs
         run: |
@@ -76,6 +83,7 @@ jobs:
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
           echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      # print maven repo cache here for debugging
       - name: Show Maven repository contents
         run: |
           ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
