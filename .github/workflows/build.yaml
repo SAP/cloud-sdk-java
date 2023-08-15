@@ -35,10 +35,12 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
+          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
           echo "-------------------"
-          ls -lR
+          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
           echo "-------------------"  
           echo "-------------------"
+        continue-on-error: true
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
       - name: Check Formatting
@@ -109,11 +111,12 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l **/testutil/**/*.java
+          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
           echo "-------------------"
+          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
+          echo "-------------------"  
           echo "-------------------"
-          ls -l **/testutil/**/*.class  
-          echo "-------------------"
+        continue-on-error: true
       - name: Archive compiled classes
         uses: actions/upload-artifact@v3
         with:
@@ -185,8 +188,9 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l **/testutil/**/*.java
+          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
           echo "-------------------"
+          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
+          echo "-------------------"  
           echo "-------------------"
-          ls -l **/testutil/**/*.class  
-          echo "-------------------"
+        continue-on-error: true
