@@ -31,8 +31,9 @@ jobs:
         uses: actions/cache/restore@v3
         id: restore-cache
         with:
-          - path: $HOME/.m2/repository
-            key: maven
+          path: |
+            $HOME/.m2/repository
+          key: maven
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
       - name: Check Formatting
