@@ -35,10 +35,9 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -l **/testutil/**/*.java
           echo "-------------------"
-          echo "-------------------"
-          ls -l **/testutil/**/*.class  
+          ls -lR
+          echo "-------------------"  
           echo "-------------------"
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
