@@ -158,7 +158,7 @@ jobs:
           - { "name": "Test", "command": "test jacoco:report" }
           - { "name": "PMD", "command": "torg.apache.maven.plugins:maven-pmd-plugin:pmd" }
           - { "name": "Spotbugs", "command": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs" }
-    name: {{ matrix.task.name }}
+    name: ${{ matrix.task.name }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -206,9 +206,8 @@ jobs:
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
-
-      - name: {{ matrix.task.name }}
+      - name: ${{ matrix.task.name }}
         run: |
-          mvn $MVN_CLI_ARGS {{ matrix.task.command }}
+          mvn $MVN_CLI_ARGS ${{ matrix.task.command }}
 
         # TODO: reports, e.g. python .pipeline/scripts/print-pmd.py
