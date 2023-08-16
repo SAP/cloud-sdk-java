@@ -32,15 +32,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven
-      - name: Print File Timestamps
-        run: |
-          echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/src/main/java/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.java
-          echo "-------------------"
-          ls -l --time-style=full-iso ./datamodel/fluent-result/target/classes/com/sap/cloud/sdk/result/AnnotatedFieldGsonExclusionStrategy.class
-          echo "-------------------"  
-          echo "-------------------"
-        continue-on-error: true
       ### Verify formatting ###
       # this is done here because it is fast and we don't want to waste time on the other, more expensive steps
       - name: Check Formatting
@@ -62,7 +53,7 @@ jobs:
     permissions:
       checks: write
       contents: read
-    name: Build, Test & Q/A
+    name: Build
     env:
       CHANGED_FILES: ""
     steps:
@@ -104,25 +95,13 @@ jobs:
       #   run: |
       #     mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
       #     python .pipeline/scripts/print-spotbugs.py
-      # - name: PMD
-      #   run: |
-      #     mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-      #     python .pipeline/scripts/print-pmd.py
-      - name: Print File Timestamps
-        run: |
-          echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel/fluent-result/src
-          echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel/fluent-result/target
-          echo "-------------------"  
-          echo "-------------------"
-        continue-on-error: true
-      - name: Archive compiled classes
+      - name: Archive Target Dirs
         uses: actions/upload-artifact@v3
         with:
-          name: compiled-classes
+          name: target-dirs
           path: |
-            ./datamodel/fluent-result/target
+            ./**/target/
+            ./target/
           retention-days: 1
       - name: Archive M2 SDK Directory
         uses: actions/upload-artifact@v3
@@ -148,11 +127,6 @@ jobs:
       - name: Purge Maven Repository from SDK Artifacts
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
-      # print maven repo cache here for debugging
-      - name: Show Maven repository contents
-        run: |
-          ls -R $HOME/.m2/repository/com/google/guava/guava
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
         continue-on-error: true
       - name: Save Maven Repository
         uses: actions/cache/save@v3
@@ -162,14 +136,14 @@ jobs:
           path: ~/.m2/repository
           key: maven
 
-  fun:
+  pmd:
     needs: build
     runs-on: ubuntu-latest
     # Permissions block is optional, useful for dependabot checks
     permissions:
       checks: write
       contents: read
-    name: Compare timestamps
+    name: PMD
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -192,9 +166,8 @@ jobs:
       - name: Download Target Dirs
         uses: actions/download-artifact@v3
         with:
-          name: compiled-classes
-          path: |
-              ./datamodel/fluent-result/target
+          name: target-dirs
+          path: .
       - name: Download M2 SDK Directory
         uses: actions/download-artifact@v3
         with:
@@ -204,14 +177,12 @@ jobs:
       - name: Print File Timestamps
         run: |
           echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel/fluent-result/src
+          ls -lR --time-style=full-iso ./datamodel
           echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel/fluent-result/target
+          ls -lR --time-style=full-iso ./datamodel
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
-      - name: Test
-        run: "mvn test -pl :fluent-result"
       - name: PMD
         run: |
           mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
