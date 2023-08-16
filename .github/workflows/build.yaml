@@ -95,23 +95,30 @@ jobs:
       #   run: |
       #     mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
       #     python .pipeline/scripts/print-spotbugs.py
-      - name: Archive Target Dirs
-        uses: actions/upload-artifact@v3
-        with:
-          name: target-dirs
-          path: |
-            ./**/target/
-            ./target/
-          retention-days: 1
+
+      # M2
       - name: ZIP M2 SDK Directory
         run: |
           zip -r m2-sdk.zip ~/.m2/repository/com/sap/cloud/sdk
-      - name: Archive M2 SDK Directory
+      - name: Upload M2 SDK Directory
         uses: actions/upload-artifact@v3
         with:
           name: m2-sdk
           path: m2-sdk.zip
           retention-days: 1
+
+      # Target
+      - name: ZIP Target Dirs
+        run: |
+          zip -r target.zip ./**/target/
+      - name: Upload Target Dirs
+        uses: actions/upload-artifact@v3
+        with:
+          name: target-dirs
+          path: target.zip
+          retention-days: 1
+
+
       # - name: Test
       #   run: "mvn $MVN_CLI_ARGS test jacoco:report"
       # - name: Publish Test Report
@@ -159,14 +166,27 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven
+
+      # M2
       - name: Download M2 SDK Directory
         uses: actions/download-artifact@v3
         with:
           name: m2-sdk
-          path: m2-sdk.zip
+          path: .
       - name: UNZIP M2 SDK Directory
         run: |
-          zip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      # Target
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
+        with:
+          name: target-dirs
+          path: .
+      - name: UNZIP Target Dirs
+        run: |
+          unzip target.zip
+
       # print maven repo cache here for debugging
       - name: Show Maven Repository
         run: |
