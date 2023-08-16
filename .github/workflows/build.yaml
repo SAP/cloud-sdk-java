@@ -110,7 +110,8 @@ jobs:
       # Target
       - name: ZIP Target Dirs
         run: |
-          zip -r target.zip -i ./**/target/
+          zip -r target.zip $(find . -path './**/target/**/*')
+          unzip -l target.zip
       - name: Upload Target Dirs
         uses: actions/upload-artifact@v3
         with:
@@ -156,7 +157,7 @@ jobs:
       matrix:
         task:
           - { "name": "Test", "command": "test jacoco:report" }
-          - { "name": "PMD", "command": "torg.apache.maven.plugins:maven-pmd-plugin:pmd" }
+          - { "name": "PMD", "command": "org.apache.maven.plugins:maven-pmd-plugin:pmd" }
           - { "name": "Spotbugs", "command": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs" }
     name: ${{ matrix.task.name }}
     steps:
