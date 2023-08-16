@@ -110,7 +110,7 @@ jobs:
       # Target
       - name: ZIP Target Dirs
         run: |
-          zip -r target.zip ./**/target/
+          zip -r target.zip -i ./**/target/
       - name: Upload Target Dirs
         uses: actions/upload-artifact@v3
         with:
@@ -145,14 +145,20 @@ jobs:
           path: ~/.m2/repository
           key: maven
 
-  pmd:
+  checks:
     needs: build
     runs-on: ubuntu-latest
     # Permissions block is optional, useful for dependabot checks
     permissions:
       checks: write
       contents: read
-    name: PMD
+    strategy:
+      matrix:
+        task:
+          - { "name": "Test", "command": "test jacoco:report" }
+          - { "name": "PMD", "command": "torg.apache.maven.plugins:maven-pmd-plugin:pmd" }
+          - { "name": "Spotbugs", "command": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs" }
+    name: {{ matrix.task.name }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -176,6 +182,11 @@ jobs:
       - name: UNZIP M2 SDK Directory
         run: |
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+      - name: Show Maven Repository
+        run: |
+          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
+          ls -R $HOME/.m2/repository/com/google/guava/guava
+        continue-on-error: true
 
       # Target
       - name: Download Target Dirs
@@ -186,18 +197,6 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
-
-      # print maven repo cache here for debugging
-      - name: Show Maven Repository
-        run: |
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
-          ls -R $HOME/.m2/repository/com/google/guava/guava
-        continue-on-error: true
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
       - name: Print File Timestamps
         run: |
           echo "-------------------"
@@ -207,7 +206,9 @@ jobs:
           echo "-------------------"  
           echo "-------------------"
         continue-on-error: true
-      - name: PMD
+
+      - name: {{ matrix.task.name }}
         run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-          python .pipeline/scripts/print-pmd.py
+          mvn $MVN_CLI_ARGS {{ matrix.task.command }}
+
+        # TODO: reports, e.g. python .pipeline/scripts/print-pmd.py
