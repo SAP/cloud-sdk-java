@@ -99,7 +99,8 @@ jobs:
       # M2
       - name: ZIP M2 SDK Directory
         run: |
-          zip -r m2-sdk.zip ~/.m2/repository/com/sap/cloud/sdk
+          zip -r m2-sdk.zip $HOME/.m2/repository/com/sap/cloud/sdk
+          unzip -l m2-sdk.zip
       - name: Upload M2 SDK Directory
         uses: actions/upload-artifact@v3
         with:
@@ -118,7 +119,6 @@ jobs:
           name: target-dirs
           path: target.zip
           retention-days: 1
-
 
       # - name: Test
       #   run: "mvn $MVN_CLI_ARGS test jacoco:report"
@@ -185,8 +185,8 @@ jobs:
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
       - name: Show Maven Repository
         run: |
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
-          ls -R $HOME/.m2/repository/com/google/guava/guava
+          ls -lsaR $HOME/.m2/repository/com/sap/cloud/sdk/
+          ls -lsaR $HOME/.m2/repository/com/google/guava/guava
         continue-on-error: true
 
       # Target
