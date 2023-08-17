@@ -830,6 +830,7 @@ public final class ApiClient
         return restTemplate;
     }
 
+    @SuppressWarnings( "PMD.EmptyCatchBlock")
     private static void setHttpClientDependingOnSpringVersion(
         @Nonnull final HttpComponentsClientHttpRequestFactory httpRequestFactory,
         @Nonnull final HttpDestinationProperties destination )

@@ -43,8 +43,6 @@ class DefaultDestinationMocker implements DestinationMocker
 
     private final Supplier<DestinationLoader> resetDestinationLoader;
 
-    private static final String JCO_VERSION = getJcoVersion();
-
     @Getter( AccessLevel.PACKAGE )
     private final Map<String, Destination> erpHttpDestinations = Maps.newHashMap();
 
@@ -269,19 +267,8 @@ class DefaultDestinationMocker implements DestinationMocker
         destinations.clear();
     }
 
-    private void resetDestinationLoader()
-    {
+    private void resetDestinationLoader() {
         resetDestinationLoader.get();
         CacheManager.invalidateAll();
-    }
-
-    private void resetJCoRuntime()
-    {
-
-    }
-
-    private static String getJcoVersion()
-    {
-        return "0.0.1";
     }
 }
