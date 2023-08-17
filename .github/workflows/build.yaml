@@ -164,7 +164,7 @@ jobs:
       # touch all files to increase their timestamp to be newer than the source files
       - name: UNZIP Target Dirs
         run: |
-          unzip target.zip -D
+          unzip -D target.zip
       - name: Test
         run: |
           mvn $MVN_CLI_ARGS surefire:test jacoco:report
