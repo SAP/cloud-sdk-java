@@ -160,14 +160,12 @@ jobs:
         with:
           name: target-dirs
           path: .
-      # Workaround to ensure compilation doesn't occur again:
-      # touch all files to increase their timestamp to be newer than the source files
       - name: UNZIP Target Dirs
         run: |
           unzip -D target.zip
       - name: Test
         run: |
-          mvn $MVN_CLI_ARGS surefire:test jacoco:report
+          mvn $MVN_CLI_ARGS jacoco:prepare-agent surefire:test jacoco:report
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
