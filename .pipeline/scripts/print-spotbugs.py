@@ -56,9 +56,9 @@ if 'GITHUB_STEP_SUMMARY' in os.environ:
         print(f"| Low    | {findings['3']} | {allowed_low} |", file=f)
 
 print('Spotbugs result:')
-print(f"warnings high:   {findings['1']}, allowed is {allowed_high}")
-print(f"warnings normal: {findings['2']}, allowed is {allowed_normal}")
-print(f"warnings low:    {findings['3']}, allowed is {allowed_low}")
+print(f"warnings high:   {findings['1']}, allowed are {allowed_high}")
+print(f"warnings normal: {findings['2']}, allowed are {allowed_normal}")
+print(f"warnings low:    {findings['3']}, allowed are {allowed_low}")
 
 if threshold_high >= 0 and findings['1'] > threshold_high:
     sys.exit('Spotbugs exceeded threshold for high findings')

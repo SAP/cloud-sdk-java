@@ -53,9 +53,9 @@ if 'GITHUB_STEP_SUMMARY' in os.environ:
         print(f"| Low    | {findings['info']} | {allowed_low} |", file=f)
 
 print('Checkstyle result:')
-print(f"warnings high:   {findings['error']}, allowed is {allowed_high}")
-print(f"warnings normal: {findings['warning']}, allowed is {allowed_normal}")
-print(f"warnings low:    {findings['info']}, allowed is {allowed_low}")
+print(f"warnings high:   {findings['error']}, allowed are {allowed_high}")
+print(f"warnings normal: {findings['warning']}, allowed are {allowed_normal}")
+print(f"warnings low:    {findings['info']}, allowed are {allowed_low}")
 
 if threshold_high >= 0 and findings['error'] > threshold_high:
     sys.exit('Checkstyle exceeded threshold for high findings')

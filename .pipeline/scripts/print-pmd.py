@@ -30,10 +30,11 @@ all_pmd_report_files = glob.glob('**/pmd.xml', recursive=True)
 for pmd_report_file in all_pmd_report_files:
     if os.path.isfile(pmd_report_file):
         parsed_pmd_report = ET.parse(pmd_report_file)
-        pmd_report = parsed_pmd_report.getroot()
+        pmd_report = parsed_pmd_report.getroot().findall('{http://pmd.sourceforge.net/report/2.0.0}file')
         for sdk_source_file in pmd_report:
             print(f"File: .{sdk_source_file.attrib['name'].removeprefix(os.getcwd())}")
-            for violation in sdk_source_file:
+            for violation in sdk_source_file.findall('{http://pmd.sourceforge.net/report/2.0.0}violation'):
+                ET.dump(violation)
                 findings[str(violation.attrib['priority'])] += 1
                 print(f"  - Rule: {violation.attrib['rule']}")
                 print(f"    Priority: {violation.attrib['priority']}")
@@ -59,9 +60,9 @@ if 'GITHUB_STEP_SUMMARY' in os.environ:
         print(f"| Low    | {low_findings} | {allowed_low} |", file=f)
 
 print('pmd result:')
-print(f"warnings high:   {high_findings}, allowed is {allowed_high}")
-print(f"warnings normal: {normal_findings}, allowed is {allowed_normal}")
-print(f"warnings low:    {low_findings}, allowed is {allowed_low}")
+print(f"warnings high:   {high_findings}, allowed are {allowed_high}")
+print(f"warnings normal: {normal_findings}, allowed are {allowed_normal}")
+print(f"warnings low:    {low_findings}, allowed are {allowed_low}")
 
 if threshold_high >= 0 and high_findings > threshold_high:
     sys.exit('PMD exceeded threshold for high findings')
