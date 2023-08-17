@@ -39,9 +39,9 @@ for checkstyle_report_file in all_checkstyle_report_files:
                     print(f"    Line: {error.attrib['line']}")
                 print()
 
-allowed_high = threshold_high if threshold_high > 0 else 'unlimited'
-allowed_normal = threshold_normal if threshold_normal > 0 else 'unlimited'
-allowed_low = threshold_low if threshold_low > 0 else 'unlimited'
+allowed_high = threshold_high if threshold_high >= 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal >= 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low >= 0 else 'unlimited'
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
@@ -57,9 +57,9 @@ print(f"warnings high:   {findings['error']}, allowed is {allowed_high}")
 print(f"warnings normal: {findings['warning']}, allowed is {allowed_normal}")
 print(f"warnings low:    {findings['info']}, allowed is {allowed_low}")
 
-if threshold_high > 0 and findings['error'] > threshold_high:
+if threshold_high >= 0 and findings['error'] > threshold_high:
     sys.exit('Checkstyle exceeded threshold for high findings')
-elif threshold_normal > 0 and findings['warning'] > threshold_normal:
+elif threshold_normal >= 0 and findings['warning'] > threshold_normal:
     sys.exit('Checkstyle exceeded threshold for normal findings')
-elif threshold_low > 0 and findings['info'] > threshold_low:
+elif threshold_low >= 0 and findings['info'] > threshold_low:
     sys.exit('Checkstyle exceeded threshold for low findings')

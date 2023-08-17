@@ -42,9 +42,9 @@ for spotbugs_report_file in all_spotbugs_report_files:
                 print('    Source Line Number:', bugInstance.find('SourceLine').get('start'))
                 print()
 
-allowed_high = threshold_high if threshold_high > 0 else 'unlimited'
-allowed_normal = threshold_normal if threshold_normal > 0 else 'unlimited'
-allowed_low = threshold_low if threshold_low > 0 else 'unlimited'
+allowed_high = threshold_high if threshold_high >= 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal >= 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low >= 0 else 'unlimited'
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
@@ -60,9 +60,9 @@ print(f"warnings high:   {findings['1']}, allowed is {allowed_high}")
 print(f"warnings normal: {findings['2']}, allowed is {allowed_normal}")
 print(f"warnings low:    {findings['3']}, allowed is {allowed_low}")
 
-if threshold_high > 0 and findings['1'] > threshold_high:
+if threshold_high >= 0 and findings['1'] > threshold_high:
     sys.exit('Spotbugs exceeded threshold for high findings')
-elif threshold_normal > 0 and findings['2'] > threshold_normal:
+elif threshold_normal >= 0 and findings['2'] > threshold_normal:
     sys.exit('Spotbugs exceeded threshold for normal findings')
-elif threshold_low > 0 and findings['3'] > threshold_low:
+elif threshold_low >= 0 and findings['3'] > threshold_low:
     sys.exit('Spotbugs exceeded threshold for low findings')

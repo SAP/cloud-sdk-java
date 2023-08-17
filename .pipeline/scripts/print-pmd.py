@@ -45,9 +45,9 @@ high_findings = findings['1'] + findings['2']
 normal_findings = findings['3']
 low_findings = findings['4'] + findings['5']
 
-allowed_high = threshold_high if threshold_high > 0 else 'unlimited'
-allowed_normal = threshold_normal if threshold_normal > 0 else 'unlimited'
-allowed_low = threshold_low if threshold_low > 0 else 'unlimited'
+allowed_high = threshold_high if threshold_high >= 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal >= 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low >= 0 else 'unlimited'
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
@@ -63,9 +63,9 @@ print(f"warnings high:   {high_findings}, allowed is {allowed_high}")
 print(f"warnings normal: {normal_findings}, allowed is {allowed_normal}")
 print(f"warnings low:    {low_findings}, allowed is {allowed_low}")
 
-if threshold_high > 0 and high_findings > threshold_high:
+if threshold_high >= 0 and high_findings > threshold_high:
     sys.exit('PMD exceeded threshold for high findings')
-elif threshold_normal > 0 and normal_findings > threshold_normal:
+elif threshold_normal >= 0 and normal_findings > threshold_normal:
     sys.exit('PMD exceeded threshold for normal findings')
-elif threshold_low > 0 and low_findings > threshold_low:
+elif threshold_low >= 0 and low_findings > threshold_low:
     sys.exit('PMD exceeded threshold for low findings')
