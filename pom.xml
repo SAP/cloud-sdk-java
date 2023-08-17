@@ -50,7 +50,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
-		<skipFormatting>false</skipFormatting>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
@@ -987,8 +986,16 @@
 					<groupId>net.revelc.code.formatter</groupId>
 					<artifactId>formatter-maven-plugin</artifactId>
 					<version>2.22.0</version>
+					<executions>
+						<execution>
+							<phase>process-sources</phase>
+							<goals>
+								<goal>format</goal>
+							</goals>
+						</execution>
+					</executions>
 					<configuration>
-						<skip>${skipFormatting}</skip>
+						<skipFormatting>${skipFormatting}</skipFormatting>
 						<configFile>${project.rootdir}/codestyle/java_formatter.xml</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
@@ -1001,6 +1008,14 @@
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
 					<version>1.8.0</version>
+					<executions>
+						<execution>
+							<phase>process-sources</phase>
+							<goals>
+								<goal>sort</goal>
+							</goals>
+						</execution>
+					</executions>
 					<configuration>
 						<skip>${skipFormatting}</skip>
 						<groups>java.,javax.,org.,com.</groups>
@@ -1016,6 +1031,15 @@
 					<groupId>com.github.ekryd.sortpom</groupId>
 					<artifactId>sortpom-maven-plugin</artifactId>
 					<version>2.15.0</version>
+					<executions>
+						<execution>
+							<id>sort-all-poms</id>
+							<phase>process-sources</phase>
+							<goals>
+								<goal>sort</goal>
+							</goals>
+						</execution>
+					</executions>
 					<configuration>
 						<skip>${skipFormatting}</skip>
 						<encoding>${project.build.sourceEncoding}</encoding>
@@ -1474,6 +1498,17 @@
 			<modules>
 				<module>testutil</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>formatting</id>
+			<activation>
+				<property>
+					<name>!skipFormatting</name>
+				</property>
+			</activation>
+			<properties>
+					<skipFormatting>false</skipFormatting>
+			</properties>
 		</profile>
 	</profiles>
 </project>

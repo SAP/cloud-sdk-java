@@ -267,7 +267,8 @@ class DefaultDestinationMocker implements DestinationMocker
         destinations.clear();
     }
 
-    private void resetDestinationLoader() {
+    private void resetDestinationLoader()
+    {
         resetDestinationLoader.get();
         CacheManager.invalidateAll();
     }
