@@ -51,6 +51,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
+		<project.build.javaCodeFormatter>${project.rootdir}/codestyle/java_formatter.xml</project.build.javaCodeFormatter>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
@@ -76,71 +77,60 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<jacoco.includes>*</jacoco.includes>
 		<jacoco.excludes>org.apache.*</jacoco.excludes>
+		<codeAnalysisExclusions />
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
-		<scp-neo.auditlog.version>0.6.60</scp-neo.auditlog.version>
 		<scp-neo-tomcat8.sdk.version>4.57.7.1</scp-neo-tomcat8.sdk.version>
 		<scp-cf.auditlog.version>2.0.16</scp-cf.auditlog.version>
-		<fabric-sdk-java.version>2.2.21</fabric-sdk-java.version>
-		<fabric-gateway-java.version>2.2.7</fabric-gateway-java.version>
 		<jsonschema2pojo.version>1.1.2</jsonschema2pojo.version>
-		<commons-codec.version>1.15</commons-codec.version>
-		<jackson.version>2.14.2</jackson.version>
+		<jackson.version>2.15.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20230227</json.version>
+		<json.version>20230618</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
 		<!-- Keep Spring version in sync with bom/pom.xml -->
-		<spring.version>5.3.27</spring.version>
-		<spring-security.version>5.8.3</spring-security.version>
-		<spring-boot.version>2.7.11</spring-boot.version>
+		<spring.version>5.3.29</spring.version>
+		<spring-security.version>5.8.5</spring-security.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<junit.version>4.13.2</junit.version>
 		<assertj-core.version>3.24.2</assertj-core.version>
-		<assertj-vavr.version>0.4.2</assertj-vavr.version>
-		<mockito.version>5.3.0</mockito.version>
+		<assertj-vavr.version>0.4.3</assertj-vavr.version>
+		<mockito.version>5.4.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<arquillian.version>1.5.0.Final</arquillian.version>
-		<junit.jupiter.version>5.9.2</junit.jupiter.version>
+		<junit.jupiter.version>5.10.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>4.9.0</olingo-v4.version>
 		<olingo-v2.version>2.0.12</olingo-v2.version>
 		<commons-cli.version>1.5.0</commons-cli.version>
-		<mojo-executor.version>2.4.0</mojo-executor.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
 		<caffeine.version>2.9.3</caffeine.version>
-		<cds.services.version>1.33.1</cds.services.version>
-		<cds4j-api.version>1.37.1</cds4j-api.version>
 		<javax-javaee.version>8.0.1</javax-javaee.version>
-		<reactor.version>3.5.5</reactor.version>
 		<!-- Keep TomEE version in sync with com.sap.cloud.sjb.cf:cf-tomee7-bom -->
 		<arquillian-tomee.version>7.0.7</arquillian-tomee.version>
-		<com-sap-core-jpaas-security.version>1.4.94</com-sap-core-jpaas-security.version>
-		<spotbugs-annotations.version>4.7.3</spotbugs-annotations.version>
 		<openapi-generator.version>6.1.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
-		<io-swagger-core.version>1.6.10</io-swagger-core.version>
+		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
 		<jetty.version>9.4.51.v20230217</jetty.version>
-		<protobuf-java.version>3.22.3</protobuf-java.version>
+		<protobuf-java.version>3.23.4</protobuf-java.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
-		<plexus-utils.version>3.5.1</plexus-utils.version>
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
 		<stax2-api.version>4.2.1</stax2-api.version>
-		<netty.version>4.1.91.Final</netty.version>
-		<bouncycastle.version>1.73</bouncycastle.version>
+		<netty.version>4.1.96.Final</netty.version>
+		<bouncycastle.version>1.76</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.0</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
 		<wiremock.version>2.35.0</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.8.20</kotlin.version>
-		<byte-buddy.version>1.14.4</byte-buddy.version>
+		<kotlin.version>1.9.0</kotlin.version>
+		<byte-buddy.version>1.14.5</byte-buddy.version>
 		<hamcrest-core.version>2.2</hamcrest-core.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
 		<jsr305.optional>true</jsr305.optional>
@@ -180,8 +170,14 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!--Dependencies with runtime scope-->
-			<!--Used in Odata, openApi generators and in scp-neo-maven-plugin-->
+			<dependency>
+				<groupId>com.sap.cloud</groupId>
+				<artifactId>neo-java-web-api</artifactId>
+				<version>${scp-neo-tomcat8.sdk.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!--Dependencies with provided scope-->
+			<!--Used in Odata and openApi generators-->
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-core</artifactId>
@@ -197,19 +193,6 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>${maven-plugin.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud</groupId>
-				<artifactId>neo-java-web-api</artifactId>
-				<version>${scp-neo-tomcat8.sdk.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<!--Only listed in parent-->
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-artifact</artifactId>
 				<version>${maven-plugin.version}</version>
 				<scope>provided</scope>
 			</dependency>
@@ -320,64 +303,11 @@
 				<version>${jackson.version}</version>
 			</dependency>
 			<!--Dependencies used in services-->
-			<!--  blockchain-client-fabric  -->
-			<dependency>
-				<groupId>org.hyperledger.fabric-sdk-java</groupId>
-				<artifactId>fabric-sdk-java</artifactId>
-				<version>${fabric-sdk-java.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hyperledger.fabric</groupId>
-				<artifactId>fabric-gateway-java</artifactId>
-				<version>${fabric-gateway-java.version}</version>
-			</dependency>
-			<!-- Added to avoid vulnerability CVE-2021-21295 that comes from fabric-sdk-java  -->
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-tcnative-boringssl-static</artifactId>
-				<version>2.0.59.Final</version>
-			</dependency>
-			<!-- Added to avoid vulnerability CVE-2022-41915 that comes in via spring-boot-starter-reactor-netty -->
-			<dependency>
-				<groupId>io.projectreactor.netty</groupId>
-				<artifactId>reactor-netty-core</artifactId>
-				<version>1.1.6</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>io.projectreactor.netty</groupId>
-				<artifactId>reactor-netty-http</artifactId>
-				<version>1.1.6</version>
-				<scope>runtime</scope>
-			</dependency>
 			<!-- Added to avoid vulnerability CVE-2022-42889 that comes from the openapi generator  -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-text</artifactId>
 				<version>1.10.0</version>
-			</dependency>
-			<!--Used in MDI-->
-			<dependency>
-				<groupId>org.jsonschema2pojo</groupId>
-				<artifactId>jsonschema2pojo-core</artifactId>
-				<version>${jsonschema2pojo.version}</version>
-			</dependency>
-			<!--Used in MDO distribution client-->
-			<dependency>
-				<groupId>org.apache.olingo</groupId>
-				<artifactId>odata-server-api</artifactId>
-				<version>${olingo-v4.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>${commons-codec.version}</version>
-			</dependency>
-			<!--Used only in btp-shared-ledger-client-->
-			<dependency>
-				<groupId>io.projectreactor</groupId>
-				<artifactId>reactor-core</artifactId>
-				<version>${reactor.version}</version>
 			</dependency>
 			<!--Rest of SDK Dependencies-->
 			<!--Used only in RFC module as a compile dependency, everywhere else in test scope -->
@@ -392,48 +322,19 @@
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
-			<!--Used in scp-neo-maven-plugin-->
-			<dependency>
-				<groupId>org.twdata.maven</groupId>
-				<artifactId>mojo-executor</artifactId>
-				<version>${mojo-executor.version}</version>
-			</dependency>
-			<!--Used in scp-neo-maven-plugin-->
-			<dependency>
-				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-utils</artifactId>
-				<version>${plexus-utils.version}</version>
-			</dependency>
-			<!--Used in blockchain-client-fabric and cloudplatform-core-dwc-cf-->
+			<!--Used in cloudplatform-core-dwc-cf-->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcpkix-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
 			</dependency>
-			<!--Used in btp-shared-ledger-client,intregation-tests and cloudplatform-core-dwc-cf-->
+			<!--Used in intregation-tests and cloudplatform-core-dwc-cf-->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
 			</dependency>
-			<!--Used in cloudplatform-core-dwc-cf-->
-			<dependency>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-annotations</artifactId>
-				<version>${spotbugs-annotations.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>${protobuf-java.version}</version>
-			</dependency>
 			<!--Used in end-to-end tests-->
-			<!--Used in end-to-end tests, not test scope-->
-			<dependency>
-				<groupId>com.sap.cds</groupId>
-				<artifactId>cds-services-api</artifactId>
-				<version>${cds.services.version}</version>
-			</dependency>
 			<!--Used only in unit-tests-->
 			<dependency>
 				<groupId>jakarta.activation</groupId>
@@ -455,6 +356,7 @@
 				<groupId>com.sap.cloud.sdk.testutil</groupId>
 				<artifactId>testutil-core</artifactId>
 				<version>${sdk.version}</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud.sdk.testutil</groupId>
@@ -466,12 +368,6 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter</artifactId>
-				<version>${junit.jupiter.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -489,12 +385,6 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>${mockito.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-junit-jupiter</artifactId>
 				<version>${mockito.version}</version>
 				<scope>test</scope>
 			</dependency>
@@ -528,81 +418,7 @@
 				<version>${junit.jupiter.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.sap.cds</groupId>
-				<artifactId>cds4j-api</artifactId>
-				<version>${cds4j-api.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!--Used in mdo modules but in test scope and in scp-cf-spring archetype-->
-			<!-- Spring Boot for MDO tests and E2E tests -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-autoconfigure</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-test-autoconfigure</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-test</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-config</artifactId>
-				<version>${spring-security.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-web</artifactId>
-				<version>${spring-security.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-oauth2-resource-server</artifactId>
-				<version>${spring-security.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-oauth2-jose</artifactId>
-				<version>${spring-security.version}</version>
-				<scope>test</scope>
-			</dependency>
 			<!--Only used in integration-tests-->
-			<dependency>
-				<groupId>javax</groupId>
-				<artifactId>javaee-api</artifactId>
-				<version>${javax-javaee.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.jaxrs</groupId>
-				<artifactId>jackson-jaxrs-json-provider</artifactId>
-				<version>${jackson.version}</version>
-				<scope>test</scope>
-			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
@@ -647,42 +463,6 @@
 				<artifactId>jcache</artifactId>
 				<version>${caffeine.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<!--Used in integration tests and archetypes-->
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>rest-assured</artifactId>
-				<version>${restassured.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!--Used in Integration-tests and archetype-->
-			<dependency>
-				<groupId>org.apache.tomee</groupId>
-				<artifactId>arquillian-tomee-embedded</artifactId>
-				<version>${arquillian-tomee.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!--Used in Integration-tests and archetype-->
-			<dependency>
-				<groupId>org.apache.tomee</groupId>
-				<artifactId>tomee-embedded</artifactId>
-				<version>${arquillian-tomee.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!--Dependencies with runtime scope-->
-			<!--Used only in btp-shared-ledger-client as runtime dependency -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-reactor-netty</artifactId>
-				<version>${spring-boot.version}</version>
-				<scope>runtime</scope>
-			</dependency>
-			<!--Used in MDO distribution client-->
-			<dependency>
-				<groupId>org.apache.olingo</groupId>
-				<artifactId>odata-server-core</artifactId>
-				<version>${olingo-v4.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 			<!--Dependencies managed for conflict resolution-->
 			<!--Used for dependency convergence in odata-generator-maven-plugin -->
@@ -761,6 +541,12 @@
 				<artifactId>asm</artifactId>
 				<version>9.5</version>
 				<scope>test</scope>
+			</dependency>
+			<!-- Added to resolve dependency convergence between httpclient5, httpclient, and olingo-odata2-core -->
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.16.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -986,10 +772,9 @@
 				<plugin>
 					<groupId>net.revelc.code.formatter</groupId>
 					<artifactId>formatter-maven-plugin</artifactId>
-					<version>2.22.0</version>
+					<version>2.23.0</version>
 					<executions>
 						<execution>
-							<phase>process-sources</phase>
 							<goals>
 								<goal>format</goal>
 							</goals>
@@ -997,7 +782,7 @@
 					</executions>
 					<configuration>
 						<skipFormatting>${skipFormatting}</skipFormatting>
-						<configFile>${project.rootdir}/codestyle/java_formatter.xml</configFile>
+						<configFile>${project.build.javaCodeFormatter}</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
 							<directory>${project.basedir}/src/main/java</directory>
@@ -1008,10 +793,9 @@
 				<plugin>
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
-					<version>1.8.0</version>
+					<version>1.9.0</version>
 					<executions>
 						<execution>
-							<phase>process-sources</phase>
 							<goals>
 								<goal>sort</goal>
 							</goals>
@@ -1034,8 +818,6 @@
 					<version>2.15.0</version>
 					<executions>
 						<execution>
-							<id>sort-all-poms</id>
-							<phase>process-sources</phase>
 							<goals>
 								<goal>sort</goal>
 							</goals>
@@ -1105,7 +887,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1159,12 +941,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.9.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.0</version>
 					<executions>
 						<execution>
 							<id>remove-old-artifacts</id>
@@ -1194,7 +976,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.9</version>
+					<version>0.8.10</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -1214,7 +996,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.1.0</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -1236,7 +1018,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.3.0</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
@@ -1245,16 +1027,17 @@
 						</dependency>
 					</dependencies>
 					<configuration>
-						<configLocation>${project.rootdir}/codestyle/checkstyle.xml</configLocation>
+						<configLocation>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-checkstyle.xml</configLocation>
 						<linkXRef>false</linkXRef>
 						<includeResources>false</includeResources>
 						<includeTestResources>false</includeTestResources>
+						<excludes>${codeAnalysisExclusions}</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.7.3.4</version>
+					<version>4.7.3.5</version>
 					<configuration>
 						<!-- fixme: pipeline config-->
 						<!-- <includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile> -->
@@ -1280,6 +1063,9 @@
 						</rulesets>
 						<linkXRef>false</linkXRef>
 						<targetJdk>${java.version}</targetJdk>
+						<excludes>
+							<exclude>${codeAnalysisExclusions}</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1314,12 +1100,30 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.26</version>
+							<version>1.18.28</version>
 						</dependency>
 					</dependencies>
 					<configuration>
 						<addOutputDirectory>false</addOutputDirectory>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>properties-maven-plugin</artifactId>
+					<version>1.2.0</version>
+					<executions>
+						<execution>
+							<phase>initialize</phase>
+							<goals>
+								<goal>read-project-properties</goal>
+							</goals>
+							<configuration>
+								<files>
+									<file>${project.rootdir}/scripts/javadoc.${audience}.properties</file>
+								</files>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1341,16 +1145,12 @@
 					</executions>
 					<configuration>
 						<quiet>true</quiet>
-						<doclint>syntax</doclint>
+						<additionalOptions>${javadoc.opts}</additionalOptions>
 						<show>protected</show>
 						<groups>
 							<group>
 								<title>Cloud Platform</title>
 								<packages>com.sap.cloud.sdk.cloudplatform*</packages>
-							</group>
-							<group>
-								<title>Business Logging</title>
-								<packages>com.sap.cloud.sdk.services.scp.businesslogging*</packages>
 							</group>
 							<group>
 								<title>Framework Adaptations</title>
@@ -1368,7 +1168,6 @@
 								<packages>com.sap.cloud.sdk.s4hana*</packages>
 							</group>
 						</groups>
-						<!--suppress UnresolvedMavenProperty -->
 						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
 						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
 					</configuration>
@@ -1376,7 +1175,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.3.0</version>
 					<executions>
 						<execution>
 							<goals>
@@ -1400,7 +1199,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1453,6 +1252,15 @@
 	</build>
 	<profiles>
 		<profile>
+			<id>disable-doclint-java8</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+		<profile>
 			<id>docs</id>
 			<activation>
 				<property>
@@ -1490,6 +1298,24 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>build-test-modules</id>
+			<activation>
+				<property>
+					<name>!audience</name>
+				</property>
+			</activation>
+			<modules>
+				<module>tests</module>
+				<module>testutil</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>skip-openapi-vdm-generation</id>
+			<properties>
+				<openapi.generate.skip>true</openapi.generate.skip>
+			</properties>
 		</profile>
 		<profile>
 			<id>formatting</id>
