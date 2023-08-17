@@ -1051,6 +1051,8 @@
 						<sortPlugins>none</sortPlugins>
 						<sortProperties>false</sortProperties>
 						<sortModules>false</sortModules>
+						<verifyFail>stop</verifyFail>
+						<verifyFailOn>strict</verifyFailOn>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1507,7 +1509,7 @@
 				</property>
 			</activation>
 			<properties>
-					<skipFormatting>false</skipFormatting>
+				<skipFormatting>false</skipFormatting>
 			</properties>
 		</profile>
 	</profiles>
