@@ -28,7 +28,7 @@ jobs:
           - { "name": "POM File Sorting", "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify" }
           # Checkstyle is currently lacking the required file, so disable it for now
           # - { "name": "Checkstyle", "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle" }
-    name: Formatting
+    name: "Formatting: " ${{ matrix.task.name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -105,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: m2-sdk
-          path: m2-sdk.zip
+          path: $HOME/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
           retention-days: 1
       - name: Purge Maven Repository from SDK Artifacts
         run: |
