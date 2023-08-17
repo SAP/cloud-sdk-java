@@ -28,7 +28,7 @@ jobs:
           - { "name": "POM File Sorting", "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify" }
           # Checkstyle is currently lacking the required file, so disable it for now
           # - { "name": "Checkstyle", "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle" }
-    name: "Formatting: " ${{ matrix.task.name }}
+    name: ${{ matrix.task.name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
