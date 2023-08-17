@@ -163,6 +163,7 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
+          ls -lsaR --time-style=full-iso
 
       - name: Test
         run: |
