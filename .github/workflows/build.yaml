@@ -73,12 +73,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven
-      # print maven repo cache here for debugging
-      - name: Show Maven Repository
-        run: |
-          ls -R $HOME/.m2/repository/com/google/guava/guava
-          ls -R $HOME/.m2/repository/com/sap/cloud/sdk/
-        continue-on-error: true
       - name: Compile
         # we need to use install here because otherwise the code checks below don't work
         # they require the JARs of all modules to work, so those need to be installed
@@ -100,7 +94,6 @@ jobs:
         run: |
           cd $HOME/.m2/repository/com/sap/cloud/sdk
           zip -r m2-sdk.zip .
-          unzip -l m2-sdk.zip
       - name: Upload M2 SDK Directory
         uses: actions/upload-artifact@v3
         with:
@@ -122,7 +115,6 @@ jobs:
       - name: ZIP Target Dirs
         run: |
           zip -r target.zip $(find . -path './**/target/**/*')
-          unzip -l target.zip
       - name: Upload Target Dirs
         uses: actions/upload-artifact@v3
         with:
@@ -162,11 +154,6 @@ jobs:
       - name: UNZIP M2 SDK Directory
         run: |
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-      - name: Show Maven Repository
-        run: |
-          ls -lsaR $HOME/.m2/repository/com/sap/cloud/sdk/
-          ls -lsaR $HOME/.m2/repository/com/google/guava/guava
-        continue-on-error: true
 
       # Target
       - name: Download Target Dirs
@@ -177,15 +164,6 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
-      - name: Print File Timestamps
-        run: |
-          echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel
-          echo "-------------------"
-          ls -lR --time-style=full-iso ./datamodel
-          echo "-------------------"  
-          echo "-------------------"
-        continue-on-error: true
 
       - name: Test
         run: |
