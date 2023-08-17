@@ -215,8 +215,7 @@ jobs:
           path: .
       - name: UNZIP Target Dirs
         run: |
-          unzip target.zip
-          touch $(find . -path './**/target/**/*')
+          unzip -D target.zip
       - name: PMD
         run: |
           mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
@@ -263,9 +262,7 @@ jobs:
           path: .
       - name: UNZIP Target Dirs
         run: |
-          unzip target.zip
-          touch $(find . -path './**/target/**/*')
-
+          unzip -D target.zip
       - name: Spotbugs
         run: |
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
