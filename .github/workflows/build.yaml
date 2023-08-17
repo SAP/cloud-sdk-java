@@ -105,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: m2-sdk
-          path: $HOME/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
+          path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
           retention-days: 1
       - name: Purge Maven Repository from SDK Artifacts
         run: |
