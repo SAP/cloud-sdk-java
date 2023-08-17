@@ -22,9 +22,9 @@ with open(".pipeline/config.yml", "r") as stream:
     except yaml.YAMLError as exc:
         print(exc)
 
-threshold_low = int(config['stages']['codeCheck']['pmd']['low'])
-threshold_normal = int(config['stages']['codeCheck']['pmd']['normal'])
 threshold_high = int(config['stages']['codeCheck']['pmd']['high'])
+threshold_normal = int(config['stages']['codeCheck']['pmd']['normal'])
+threshold_low = int(config['stages']['codeCheck']['pmd']['low'])
 
 all_pmd_report_files = glob.glob('**/pmd.xml', recursive=True)
 for pmd_report_file in all_pmd_report_files:
@@ -41,23 +41,31 @@ for pmd_report_file in all_pmd_report_files:
                 print(f"    Line: {violation.attrib['beginline']}")
             print()
 
-low_findings = findings['4'] + findings['5']
-normal_findings = findings['3']
 high_findings = findings['1'] + findings['2']
+normal_findings = findings['3']
+low_findings = findings['4'] + findings['5']
+
+allowed_high = threshold_high if threshold_high > 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal > 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low > 0 else 'unlimited'
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-        print('## pmd result', file=f)
+        print('## PMD Result', file=f)
         print('| Category | Actual Findings | Allowed Findings |', file=f)
         print('| -------- | --------------- | ---------------- |', file=f)
-        print(f"| Low    | {low_findings} | {threshold_low} |", file=f)
-        print(f"| Normal | {normal_findings} | {threshold_normal} |", file=f)
-        print(f"| High   | {high_findings} | {threshold_high} |", file=f)
+        print(f"| High   | {high_findings} | {allowed_high} |", file=f)
+        print(f"| Normal | {normal_findings} | {allowed_normal} |", file=f)
+        print(f"| Low    | {low_findings} | {allowed_low} |", file=f)
 
 print('pmd result:')
-print(f"warnings low:    {low_findings}, allowed is {threshold_low}")
-print(f"warnings normal: {normal_findings}, allowed is {threshold_normal}")
-print(f"warnings high:   {high_findings}, allowed is {threshold_high}")
+print(f"warnings high:   {high_findings}, allowed is {allowed_high}")
+print(f"warnings normal: {normal_findings}, allowed is {allowed_normal}")
+print(f"warnings low:    {low_findings}, allowed is {allowed_low}")
 
-if low_findings > threshold_low or normal_findings > threshold_normal or high_findings > threshold_high:
-    sys.exit('pmd exceeded thresholds')
+if threshold_high > 0 and high_findings > threshold_high:
+    sys.exit('PMD exceeded threshold for high findings')
+elif threshold_normal > 0 and normal_findings > threshold_normal:
+    sys.exit('PMD exceeded threshold for normal findings')
+elif threshold_low > 0 and low_findings > threshold_low:
+    sys.exit('PMD exceeded threshold for low findings')

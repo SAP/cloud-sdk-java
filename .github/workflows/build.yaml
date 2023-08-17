@@ -45,7 +45,7 @@ jobs:
         run: |
           mvn $MVN_CLI_ARGS ${{ matrix.task.command }}
       - name: Checkstyle Results
-        if: ${{ matrix.task.name }} == "Checkstyle"
+        if: ${{ matrix.task.name == "Checkstyle" }}
         run: |
           python .pipeline/scripts/print-checkstyle.py
 

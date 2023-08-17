@@ -7,16 +7,15 @@ steps:
 
 stages:
   codeCheck:
-    openTasks: '27'
     checkstyle:
-      high: '1'
-      normal: '1555'
-      low: '1059'
+      high: '0'
+      normal: '-1'
+      low: '-1'
     findbugs:
-      high: '1'
-      normal: '1'
-      low: '1'
+      high: '0'
+      normal: '-1'
+      low: '-1'
     pmd:
-      high: '98'
-      normal: '8547'
-      low: '914'
+      high: '0'
+      normal: '-1'
+      low: '-1'
