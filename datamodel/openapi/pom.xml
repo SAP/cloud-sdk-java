@@ -34,6 +34,7 @@
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
 		<module>openapi-generator-cli</module>
+		<module>openapi-api-sample</module>
 	</modules>
 	<scm>
 		<connection />
@@ -54,17 +55,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<profiles>
-		<profile>
-			<id>test-modules</id>
-			<activation>
-				<property>
-					<name>!skipTests</name>
-				</property>
-			</activation>
-			<modules>
-				<module>openapi-api-sample</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>
