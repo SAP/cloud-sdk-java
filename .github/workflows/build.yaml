@@ -168,7 +168,7 @@ jobs:
           touch $(find . -path './**/target/**/*')
       - name: Test
         run: |
-          mvn $MVN_CLI_ARGS test jacoco:report
+          mvn $MVN_CLI_ARGS surefire:test jacoco:report
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
