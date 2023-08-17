@@ -59,7 +59,7 @@
 			<id>test-modules</id>
 			<activation>
 				<property>
-					<name>!release</name>
+					<name>!skipTests</name>
 				</property>
 			</activation>
 			<modules>

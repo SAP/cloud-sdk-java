@@ -29,6 +29,7 @@
 	<modules>
 		<module>datamodel</module>
 		<module>modules-bom</module>
+		<module>testutil</module>
 	</modules>
 	<scm>
 		<connection />
@@ -1489,17 +1490,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<id>test-modules</id>
-			<activation>
-				<property>
-					<name>!release</name>
-				</property>
-			</activation>
-			<modules>
-				<module>testutil</module>
-			</modules>
 		</profile>
 		<profile>
 			<id>formatting</id>

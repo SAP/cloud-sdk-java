@@ -165,9 +165,7 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
-          ls -lsaR --time-style=full-iso
           touch $(find . -path './**/target/**/*')
-          ls -lsaR --time-style=full-iso
       - name: Test
         run: |
           mvn $MVN_CLI_ARGS test jacoco:report
@@ -221,9 +219,7 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
-          ls -lsaR --time-style=full-iso
           touch $(find . -path './**/target/**/*')
-          ls -lsaR --time-style=full-iso
       - name: PMD
         run: |
           mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
@@ -271,9 +267,7 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip target.zip
-          ls -lsaR --time-style=full-iso
           touch $(find . -path './**/target/**/*')
-          ls -lsaR --time-style=full-iso
 
       - name: Spotbugs
         run: |
