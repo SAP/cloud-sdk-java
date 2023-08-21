@@ -76,7 +76,7 @@ jobs:
         # we need to use install here because otherwise the code checks below don't work
         # they require the JARs of all modules to work, so those need to be installed
         run: |
-          mvn $MVN_CLI_ARGS install -DskipTests -Dskip-formatting
+          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"

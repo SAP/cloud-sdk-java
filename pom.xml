@@ -52,6 +52,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.build.generated-sources>${project.build.directory}/generated-sources/java</project.build.generated-sources>
 		<project.build.javaCodeFormatter>${project.rootdir}/codestyle/java_formatter.xml</project.build.javaCodeFormatter>
+		<skipFormatting>false</skipFormatting>
 		<!--  Quality assurance  -->
 		<enforcer.skipBanLoggingFrameworks>false</enforcer.skipBanLoggingFrameworks>
 		<enforcer.skipEnforceScopeLoggerBridges>false</enforcer.skipEnforceScopeLoggerBridges>
@@ -781,7 +782,7 @@
 						</execution>
 					</executions>
 					<configuration>
-						<skipFormatting>${skipFormatting}</skipFormatting>
+						<skip>${skipFormatting}</skip>
 						<configFile>${project.build.javaCodeFormatter}</configFile>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<directories>
@@ -1315,17 +1316,6 @@
 			<id>skip-openapi-vdm-generation</id>
 			<properties>
 				<openapi.generate.skip>true</openapi.generate.skip>
-			</properties>
-		</profile>
-		<profile>
-			<id>formatting</id>
-			<activation>
-				<property>
-					<name>!skipFormatting</name>
-				</property>
-			</activation>
-			<properties>
-				<skipFormatting>false</skipFormatting>
 			</properties>
 		</profile>
 	</profiles>
