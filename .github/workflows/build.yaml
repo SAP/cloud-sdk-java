@@ -78,7 +78,6 @@ jobs:
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
-          echo "Computing the changed files resulted in: $CHANGED_FILES"
           if [ ! -z "$CHANGED_FILES" ]; then
               echo "There are local changes in the following files:"
               echo "$CHANGED_FILES"
