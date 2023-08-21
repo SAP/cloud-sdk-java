@@ -57,8 +57,6 @@ jobs:
       checks: write
       contents: read
     name: Build
-    env:
-      CHANGED_FILES: ""
     steps:
       - uses: actions/checkout@v3
       - name: Setup java

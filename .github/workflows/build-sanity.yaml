@@ -25,11 +25,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        with:
-          path: ~/.m2/repository
-          key: maven
       - name: Install
         run: |
           mvn $MVN_CLI_ARGS install jacoco:report
