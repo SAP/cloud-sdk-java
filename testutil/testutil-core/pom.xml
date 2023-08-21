@@ -36,7 +36,6 @@
 		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<x-sap-exclude-from-blackduck-scan>true</x-sap-exclude-from-blackduck-scan>
-		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
 	</properties>
 	<dependencyManagement>
 		<!-- test dependencies with scope "compile" -->
@@ -103,10 +102,6 @@
 			<artifactId>s4hana-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.s4hana</groupId>
-			<artifactId>s4hana-connectivity</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -114,10 +109,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.vavr</groupId>
@@ -168,6 +159,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud</groupId>
+			<artifactId>neo-java-web-api</artifactId>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -191,6 +186,16 @@
 						<!-- see here: https://github.com/rzwitserloot/lombok/issues/1363 -->
 						<arg>-Xlint:-cast</arg>
 					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredUnusedDeclaredDependencies>
+						<!-- required for JCo -->
+						<ignoredUnusedDeclaredDependency>com.sap.cloud:neo-java-web-api</ignoredUnusedDeclaredDependency>
+					</ignoredUnusedDeclaredDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

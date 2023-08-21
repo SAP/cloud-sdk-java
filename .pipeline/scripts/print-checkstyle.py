@@ -39,19 +39,27 @@ for checkstyle_report_file in all_checkstyle_report_files:
                     print(f"    Line: {error.attrib['line']}")
                 print()
 
+allowed_high = threshold_high if threshold_high >= 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal >= 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low >= 0 else 'unlimited'
+
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-        print('## Checkstyle result', file=f)
+        print('## Checkstyle Result', file=f)
         print('| Category | Actual Findings | Allowed Findings |', file=f)
         print('| -------- | --------------- | ---------------- |', file=f)
-        print(f"| Low    | {findings['info']} | {threshold_low} |", file=f)
-        print(f"| Normal | {findings['warning']} | {threshold_normal} |", file=f)
-        print(f"| High   | {findings['error']} | {threshold_high} |", file=f)
+        print(f"| High   | {findings['error']} | {allowed_high} |", file=f)
+        print(f"| Normal | {findings['warning']} | {allowed_normal} |", file=f)
+        print(f"| Low    | {findings['info']} | {allowed_low} |", file=f)
 
 print('Checkstyle result:')
-print(f"warnings low:    {findings['info']}, allowed is {threshold_low}")
-print(f"warnings normal: {findings['warning']}, allowed is {threshold_normal}")
-print(f"warnings high:   {findings['error']}, allowed is {threshold_high}")
+print(f"warnings high:   {findings['error']}, allowed are {allowed_high}")
+print(f"warnings normal: {findings['warning']}, allowed are {allowed_normal}")
+print(f"warnings low:    {findings['info']}, allowed are {allowed_low}")
 
-if findings['info'] > threshold_low or findings['warning'] > threshold_normal or findings['error'] > threshold_high:
-    sys.exit('Checkstyle exceeded thresholds')
+if threshold_high >= 0 and findings['error'] > threshold_high:
+    sys.exit('Checkstyle exceeded threshold for high findings')
+elif threshold_normal >= 0 and findings['warning'] > threshold_normal:
+    sys.exit('Checkstyle exceeded threshold for normal findings')
+elif threshold_low >= 0 and findings['info'] > threshold_low:
+    sys.exit('Checkstyle exceeded threshold for low findings')

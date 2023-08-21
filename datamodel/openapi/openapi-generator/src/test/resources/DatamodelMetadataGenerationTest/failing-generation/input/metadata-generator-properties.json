@@ -1,0 +1,7 @@
+{
+  "mavenGroupId": "com.sap.cloud.sdk.services",
+  "mavenArtifactId": "some-artifact-id",
+  "featureDocumentationUri": "https://sap.github.io/cloud-sdk/docs/java/features/rest/clients/some-artifact-id-api",
+  "libraryVersion": "88.88.88",
+  "generatorVersion": "99.99.99"
+}

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 12 * * 1,2,3,4,5
+
+env:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Permissions block is optional, useful for dependabot checks
+    permissions:
+      checks: write
+      contents: read
+    name: Install
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: Install
+        run: |
+          mvn $MVN_CLI_ARGS install jacoco:report
+      - name: Local Changes Check
+        run: |
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [ ! -z $CHANGED_FILES ]; then
+              echo "There are local changes in the following files:"
+              echo $CHANGED_FILES
+              echo "Printing the git diff:"
+              git --no-pager diff
+              exit 1
+          fi
+      - name: Test Report
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
+      - name: Generate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: "**/jacoco.csv"
+      - name: Test Coverage
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      - name: PMD
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+          python .pipeline/scripts/print-pmd.py
+      - name: Spotbugs
+        run: |
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+          python .pipeline/scripts/print-spotbugs.py

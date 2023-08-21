@@ -33,27 +33,36 @@ for spotbugs_report_file in all_spotbugs_report_files:
 
         for bugInstance in spotbugs_report.findall('.//BugInstance'):
             findings[str(bugInstance.get('priority'))] += 1
-            print('  - Bug Type:', bugInstance.get('type'))
-            print('    Bug Category:', bugInstance.get('category'))
-            print('    Bug Priority:', bugInstance.get('priority'))
-            print('    Bug Message:', bugInstance.find('LongMessage').text)
-            print('    Source File:', bugInstance.find('SourceLine').get('sourcefile'))
-            print('    Source Line Number:', bugInstance.find('SourceLine').get('start'))
-            print()
+            if bugInstance.get('priority') == '1':
+                print('  - Bug Type:', bugInstance.get('type'))
+                print('    Bug Category:', bugInstance.get('category'))
+                print('    Bug Priority:', bugInstance.get('priority'))
+                print('    Bug Message:', bugInstance.find('LongMessage').text)
+                print('    Source File:', bugInstance.find('SourceLine').get('sourcefile'))
+                print('    Source Line Number:', bugInstance.find('SourceLine').get('start'))
+                print()
+
+allowed_high = threshold_high if threshold_high >= 0 else 'unlimited'
+allowed_normal = threshold_normal if threshold_normal >= 0 else 'unlimited'
+allowed_low = threshold_low if threshold_low >= 0 else 'unlimited'
 
 if 'GITHUB_STEP_SUMMARY' in os.environ:
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-        print('## Spotbugs result', file=f)
+        print('## Spotbugs Result', file=f)
         print('| Category | Actual Findings | Allowed Findings |', file=f)
         print('| -------- | --------------- | ---------------- |', file=f)
-        print(f"| Low    | {findings['3']} | {threshold_low} |", file=f)
-        print(f"| Normal | {findings['2']} | {threshold_normal} |", file=f)
-        print(f"| High   | {findings['1']} | {threshold_high} |", file=f)
+        print(f"| High   | {findings['1']} | {allowed_high} |", file=f)
+        print(f"| Normal | {findings['2']} | {allowed_normal} |", file=f)
+        print(f"| Low    | {findings['3']} | {allowed_low} |", file=f)
 
 print('Spotbugs result:')
-print(f"warnings low:    {findings['3']}, allowed is {threshold_low}")
-print(f"warnings normal: {findings['2']}, allowed is {threshold_normal}")
-print(f"warnings high:   {findings['1']}, allowed is {threshold_high}")
+print(f"warnings high:   {findings['1']}, allowed are {allowed_high}")
+print(f"warnings normal: {findings['2']}, allowed are {allowed_normal}")
+print(f"warnings low:    {findings['3']}, allowed are {allowed_low}")
 
-if findings['3'] > threshold_low or findings['2'] > threshold_normal or findings['1'] > threshold_high:
-    sys.exit('Spotbugs exceeded thresholds')
+if threshold_high >= 0 and findings['1'] > threshold_high:
+    sys.exit('Spotbugs exceeded threshold for high findings')
+elif threshold_normal >= 0 and findings['2'] > threshold_normal:
+    sys.exit('Spotbugs exceeded threshold for normal findings')
+elif threshold_low >= 0 and findings['3'] > threshold_low:
+    sys.exit('Spotbugs exceeded threshold for low findings')

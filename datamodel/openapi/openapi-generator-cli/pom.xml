@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.sap.cloud.sdk.datamodel</groupId>
+		<artifactId>openapi-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>openapi-generator-cli</artifactId>
+	<packaging>jar</packaging>
+	<name>Data Model - OpenAPI Services - Generator CLI</name>
+	<description>OpenAPI Services data model (VDM) - command line interface for generator.</description>
+	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+	<organization>
+		<name>SAP SE</name>
+		<url>https://www.sap.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+	<scm>
+		<connection />
+		<url />
+	</scm>
+	<properties>
+		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<!-- allow use of slf4j-simple with scope runtime -->
+		<enforcer.skipBanLoggingFrameworks>true</enforcer.skipBanLoggingFrameworks>
+		<!-- allow transitive use of javax.inject since this module is not included as dependency -->
+		<enforcer.skipEnforceScopeJavaEE>true</enforcer.skipEnforceScopeJavaEE>
+		<!-- allow scope compile for lombok since this module is not included as dependency -->
+		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.datamodel</groupId>
+			<artifactId>openapi-generator</artifactId>
+			<exclusions>
+				<!-- Remove bouncycastle dependencies, as they are not required for the CLI. -->
+				<exclusion>
+					<artifactId>bcprov-jdk18on</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcpkix-jdk18on</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spotbugs-annotations</artifactId>
+					<groupId>com.github.spotbugs</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+		</dependency>
+		<!-- scope "runtime" -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- scope "test" -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<!-- ban ECCN-relevant crypto dependencies since they would be packaged with the maven-shade-plugin -->
+					<execution>
+						<id>ban-crypto-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<message>This module must not use dependencies that implement cryptography.</message>
+									<excludes>
+										<exclude>org.bouncycastle</exclude>
+									</excludes>
+								</bannedDependencies>
+								<bannedDependencies>
+									<message>For licensing reasons we cannot package LGPL licensed dependencies.</message>
+									<excludes>
+										<exclude>com.github.spotbugs:spotbugs-annotations</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<minimizeJar>false</minimizeJar>
+					<createDependencyReducedPom>false</createDependencyReducedPom>
+					<transformers>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<mainClass>com.sap.cloud.sdk.datamodel.openapi.generator.DataModelGeneratorCli</mainClass>
+						</transformer>
+					</transformers>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<!-- as we repackaged all dependencies their signatures no longer are valid and have to be excluded -->
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

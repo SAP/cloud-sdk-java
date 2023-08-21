@@ -81,7 +81,22 @@ public class DestinationAccessorMocker implements TestRule
         return Option
             .of(destinations.get(destinationName))
             .toTry()
-            .onSuccess(d -> log.info("Successfully loaded provided destination for name '" + destinationName + "'."))
-            .onFailure(e -> log.warn("Could not find any provided destination for name '" + destinationName + "'."));
+            .onSuccess(
+                d -> log
+                    .info(
+                        "Successfully loaded provided destination for name '"
+                            + destinationName
+                            + "' with options "
+                            + options
+                            + "."))
+            .onFailure(
+                e -> log
+                    .info(
+                        "Could not find any provided destination for name '"
+                            + destinationName
+                            + "' with options "
+                            + options
+                            + ".",
+                        e));
     }
 }

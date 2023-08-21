@@ -75,19 +75,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>code.scans.excluded</id>
-			<activation>
-				<property>
-					<name>!sdk.code.scanning</name>
-				</property>
-			</activation>
-			<!-- <modules>
-				<module>integration-tests</module>
-				<module>performance-tests</module>
-				<module>end-to-end-tests</module>
-			</modules> -->
-		</profile>
-	</profiles>
 </project>

@@ -1,0 +1,69 @@
+  /**
+   * {{description}}{{^description}}Gets or Sets {{{name}}}{{/description}}
+   */
+{{#withXml}}
+  @XmlType(name="{{datatypeWithEnum}}")
+  @XmlEnum({{dataType}}.class)
+{{/withXml}}
+  {{>additionalEnumTypeAnnotations}}public enum {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{classname}}{{/datatypeWithEnum}} {
+    {{#allowableValues}}
+      {{#enumVars}}
+    {{#enumDescription}}
+    /**
+     * {{.}}
+     */
+    {{/enumDescription}}
+    {{#withXml}}
+    @XmlEnumValue({{#isInteger}}"{{/isInteger}}{{#isDouble}}"{{/isDouble}}{{#isLong}}"{{/isLong}}{{#isFloat}}"{{/isFloat}}{{{value}}}{{#isInteger}}"{{/isInteger}}{{#isDouble}}"{{/isDouble}}{{#isLong}}"{{/isLong}}{{#isFloat}}"{{/isFloat}})
+    {{/withXml}}
+    /**
+    * The {{name}} option of this {{classname}}
+    */
+    {{{name}}}({{{value}}}){{^-last}},
+    {{/-last}}{{#-last}};{{/-last}}
+      {{/enumVars}}
+    {{/allowableValues}}
+
+    private {{{dataType}}} value;
+
+    {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{classname}}{{/datatypeWithEnum}}({{{dataType}}} value) {
+      this.value = value;
+    }
+
+    /**
+    * Get the value of the enum
+    * @return The enum value
+    */
+{{#jackson}}
+    @JsonValue
+{{/jackson}}
+    @Nonnull public {{{dataType}}} getValue() {
+      return value;
+    }
+
+    /**
+    * Get the String value of the enum value.
+    * @return The enum value as String
+    */
+    @Override
+    @Nonnull public String toString() {
+      return String.valueOf(value);
+    }
+
+    /**
+    * Get the enum value from a String value
+    * @param value The String value
+    * @return The enum value of type {{classname}}
+    */
+{{#jackson}}
+    @JsonCreator
+{{/jackson}}
+    @Nonnull public static {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}} fromValue(@Nonnull final {{{dataType}}} value) {
+      for ({{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}} b : {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}}.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      {{#isNullable}}return null;{{/isNullable}}{{^isNullable}}throw new IllegalArgumentException("Unexpected value '" + value + "'");{{/isNullable}}
+    }
+  }

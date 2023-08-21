@@ -33,6 +33,7 @@
 	<modules>
 		<module>fluent-result</module>
 		<module>odata</module>
+		<module>openapi</module>
 	</modules>
 	<scm>
 		<connection />
