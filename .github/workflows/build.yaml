@@ -268,9 +268,8 @@ jobs:
         run: |
           python .pipeline/scripts/print-spotbugs.py
 
-  analyze:
+  codeql:
     name: Analyze with CodeQL
-    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 360
     permissions:
@@ -297,27 +296,9 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-      # Target
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -D target.zip
-
-#      - name: Autobuild
-#        uses: github/codeql-action/autobuild@v2
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
 
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
