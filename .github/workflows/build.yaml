@@ -267,3 +267,69 @@ jobs:
       - name: Spotbugs Report
         run: |
           python .pipeline/scripts/print-spotbugs.py
+
+  analyze:
+    name: Analyze with CodeQL
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'java'
+          # config-file: ./.github/codeql/codeql-config.yml
+
+
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      # Target
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
+        with:
+          name: target-dirs
+          path: .
+      - name: UNZIP Target Dirs
+        run: |
+          unzip -D target.zip
+
+#      - name: Autobuild
+#        uses: github/codeql-action/autobuild@v2
+
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+
+      #   If the Autobuild fails above, remove it and uncomment the following three lines.
+      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+
+      # - run: |
+      #     echo "Run, Build Application using script"
+      #     ./location_of_script_within_repo/buildscript.sh
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
