@@ -13,6 +13,13 @@ public class BigIntegerExtractor implements ObjectExtractor<BigInteger>
     @Override
     public BigInteger extract( @Nonnull final ResultElement resultElement )
     {
+        Integer[] a = new Integer[10];
+        int sum = 0;
+        for (int i = 0; i <= a.length; i++) { // BAD
+            sum += a[i];
+          }
+
+        System.out.println(sum);
         return resultElement.asBigInteger();
     }
 }
