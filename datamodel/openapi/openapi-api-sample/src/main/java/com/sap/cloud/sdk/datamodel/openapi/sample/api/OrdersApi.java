@@ -1,7 +1,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
-import java.util.Base64;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -51,12 +50,6 @@ public class OrdersApi extends AbstractOpenApiService
     public OrdersApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);
-        //Test finding security issue
-        String username = "user";
-        String password = "passwd";
-        //header as base64 encoded basic auth string
-        String authHeader = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
-        apiClient.addDefaultHeader("Authorization", authHeader);
     }
 
     /**
