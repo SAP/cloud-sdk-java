@@ -66,6 +66,13 @@ public abstract class AbstractOpenApiService implements OpenApiService
         String authHeader = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
         apiClient.addDefaultHeader("Authorization", authHeader);
 
+        Integer[] a = new Integer[10];
+        int sum = 0;
+        for (int i = 0; i <= a.length; i++) { // BAD
+            sum += a[i];
+          }
+
+        System.out.println(sum);
         return apiClient;
     }
 }
