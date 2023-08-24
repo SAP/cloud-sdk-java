@@ -286,6 +286,7 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: 'java'
+          queries: security-extended
 #          config-file: ./.github/codeql/codeql-config.yml
 
 
