@@ -286,10 +286,7 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: 'java'
-          # TODO: Decide on query set to use, available options are: default (lowest risk for false positives), security-extended and security-and-quality
-          # security-extended and security-and-quality contain experimental queries and may produce more false positives: https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/about-code-scanning-alerts#disabling-experimental-alerts
-          # https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/built-in-codeql-query-suites#built-in-codeql-query-suites
-          queries: security-and-quality
+          queries: security-extended
 
       # M2
       - name: Load Maven Repository
