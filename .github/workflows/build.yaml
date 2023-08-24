@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["code-ql", "main"]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
 
