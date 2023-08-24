@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["code-ql", "main"]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
 
@@ -286,9 +286,10 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: 'java'
+          # TODO: Decide on query set to use, available options are: default (lowest risk for false positives), security-extended and security-and-quality
+          # security-extended and security-and-quality contain experimental queries and may produce more false positives: https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/about-code-scanning-alerts#disabling-experimental-alerts
+          # https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/built-in-codeql-query-suites#built-in-codeql-query-suites
           queries: security-and-quality
-#          config-file: ./.github/codeql/codeql-config.yml
-
 
       # M2
       - name: Load Maven Repository
@@ -300,16 +301,6 @@ jobs:
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
-
-      # ℹ️ Command-line programs to run using the OS shell.
-      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-
-      #   If the Autobuild fails above, remove it and uncomment the following three lines.
-      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
-
-      # - run: |
-      #     echo "Run, Build Application using script"
-      #     ./location_of_script_within_repo/buildscript.sh
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

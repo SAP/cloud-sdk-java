@@ -2,7 +2,6 @@ package com.sap.cloud.sdk.services.openapi.core;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Base64;
 
 import javax.annotation.Nonnull;
 
@@ -59,20 +58,6 @@ public abstract class AbstractOpenApiService implements OpenApiService
 
         apiClient.setBasePath(path.toString());
 
-        //Test finding security issue
-        String username = "user";
-        String password = "passwd";
-        //header as base64 encoded basic auth string
-        String authHeader = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
-        apiClient.addDefaultHeader("Authorization", authHeader);
-
-        Integer[] a = new Integer[10];
-        int sum = 0;
-        for (int i = 0; i <= a.length; i++) { // BAD
-            sum += a[i];
-          }
-
-        System.out.println(sum);
         return apiClient;
     }
 }
