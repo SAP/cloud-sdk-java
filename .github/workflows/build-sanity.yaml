@@ -59,3 +59,38 @@ jobs:
         run: |
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
           python .pipeline/scripts/print-spotbugs.py
+  codeql:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'java'
+          queries: security-extended
+
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
