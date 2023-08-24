@@ -286,7 +286,8 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: 'java'
-          queries: security-extended
+          # queries: security-extended
+          queries: security-and-quality
 
       # M2
       - name: Load Maven Repository
