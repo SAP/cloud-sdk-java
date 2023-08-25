@@ -4,6 +4,12 @@ steps:
     groups:
       - 'CLOUD SDK 4.0'
     serverUrl: 'https://sap.blackducksoftware.com/'
+    mavenExcludedScopes: ["provided", "test"]
+    failOn: ['BLOCKER', 'CRITICAL', 'MAJOR']
+    scanProperties:
+      - --detect.maven.excluded.modules=tests-parent,testutil-core,testutil-parent
+      - --detect.maven.build.command="'-pl !:tests-parent,!:testutil-core,!:testutil-parent'"
+      - --detect.timeout=7200
 
 stages:
   codeCheck:
