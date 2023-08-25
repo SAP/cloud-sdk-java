@@ -60,7 +60,8 @@ jobs:
           DETECT_MAVEN_EXCLUDED_MODULES: "tests-parent,testutil-core,testutil-parent"
           # DETECT_MAVEN_BUILD_COMMAND: "-pl !:s4hana-all,!:s4hana-api-odata,!:s4hana-api-odata-onpremise,!:s4hana-api-odata-v4,!:s4hana-api-odata-v4-onpremise,!:s4hana-api-parent,!:end-to-end-tests,!:performance-tests,!:tests-parent,!:unit-tests,!:vdm-integration-tests,!:testutil-core,!:testutil-parent"
           DETECT_MAVEN_BUILD_COMMAND: "-pl !:tests-parent,!:testutil-core,!:testutil-parent"
-          DETECT_MAVEN_EXCLUDED_SCOPES: "test"
+          DETECT_MAVEN_EXCLUDED_SCOPES: "provided,test"
+          DETECT_LATEST_RELEASE_VERSION: 7.14.0
         with:
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
           blackduck_apiToken: ${{ secrets.BLACKDUCK_TOKEN }}
