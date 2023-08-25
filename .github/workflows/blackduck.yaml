@@ -57,9 +57,9 @@ jobs:
           DETECT_PROJECT_VERSION_NAME: "5"
           DETECT_TIMEOUT: 7200
           # DETECT_MAVEN_EXCLUDED_MODULES: "s4hana-all,s4hana-api-odata,s4hana-api-odata-onpremise,s4hana-api-odata-v4,s4hana-api-odata-v4-onpremise,s4hana-api-parent,end-to-end-tests,performance-tests,tests-parent,unit-tests,vdm-integration-tests,testutil-core,testutil-parent"
-          DETECT_MAVEN_EXCLUDED_MODULES: "tests-parent,unit-tests,vdm-integration-tests,testutil-core,testutil-parent"
+          DETECT_MAVEN_EXCLUDED_MODULES: "tests-parent,testutil-core,testutil-parent"
           # DETECT_MAVEN_BUILD_COMMAND: "-pl !:s4hana-all,!:s4hana-api-odata,!:s4hana-api-odata-onpremise,!:s4hana-api-odata-v4,!:s4hana-api-odata-v4-onpremise,!:s4hana-api-parent,!:end-to-end-tests,!:performance-tests,!:tests-parent,!:unit-tests,!:vdm-integration-tests,!:testutil-core,!:testutil-parent"
-          DETECT_MAVEN_BUILD_COMMAND: "-pl !:tests-parent,!:unit-tests,!:vdm-integration-tests,!:testutil-core,!:testutil-parent"
+          DETECT_MAVEN_BUILD_COMMAND: "-pl !:tests-parent,!:testutil-core,!:testutil-parent"
         with:
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
           blackduck_apiToken: ${{ secrets.BLACKDUCK_TOKEN }}
