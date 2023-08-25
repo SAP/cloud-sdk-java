@@ -32,7 +32,6 @@ jobs:
           command: detectExecuteScan
           flags: \
             --version=$PROJECT_VERSION \
-            --blackduck.trust.cert=true"
         env:
           PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
           PROJECT_VERSION: "5"
