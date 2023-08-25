@@ -10,6 +10,8 @@ steps:
       - --detect.maven.excluded.modules=tests-parent,testutil-core,testutil-parent
       - --detect.maven.build.command="'-pl !:tests-parent,!:testutil-core,!:testutil-parent'"
       - --detect.timeout=7200
+      - --blackduck.trust.cert=true
+      - --blackduck.signature.scanner.memory=4096
 
 stages:
   codeCheck:
