@@ -1,6 +1,8 @@
 name: 'Blackduck Scan'
 
 on:
+  push:
+    branches: ["update-blackduck-action"]
   workflow_dispatch:
   # schedule:
   #   - cron: 0 23 * * *
