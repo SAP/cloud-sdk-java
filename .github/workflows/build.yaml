@@ -314,8 +314,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    # needs: [codeql, test, pmd, spotbugs]
-    needs: build
+    needs: [codeql, test, pmd, spotbugs]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
