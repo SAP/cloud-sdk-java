@@ -348,19 +348,9 @@ jobs:
         with:
           command: mavenExecute
           flags: \
-            --goals="\
-            deploy"
+            --goals='["deploy"]' \
             --projectSettingsFile=".pipeline/snapshot-settings.xml" \
-            --defines="\
-            -Dmaven.test.skip \
-            -Daudience=sap \
-            -DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/ \
-            -Dhttp.keepAlive=false \
-            -Dformatter.skip \
-            -Denforcer.skip \
-            -Djacoco.skip \
-            -Dimpsort.skip \
-            -Dmdep.analyze.skip"
+            --defines='["-Dmaven.test.skip", "-Daudience=sap", "-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false", "-Dformatter.skip", "-Denforcer.skip", "-Djacoco.skip", "-Dimpsort.skip", "-Dmdep.analyze.skip"]'
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
