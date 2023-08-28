@@ -317,3 +317,13 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: maven
+      - name: Deploy Snapshot
+        uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
+        with:
+          command: mavenExecute
+          flags: \
+            --goals=["deploy"] \
+            --defines=["-Dmaven.test.skip", "-Daudience=sap", "-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false", "-Dformatter.skip", "-Denforcer.skip", "-Djacoco.skip", "-Dimpsort.skip", "-Dmdep.analyze.skip"]
+        env:
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
