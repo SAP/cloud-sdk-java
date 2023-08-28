@@ -22,9 +22,18 @@ jobs:
     strategy:
       matrix:
         task:
-          - { "name": "Code Formatting", "command": "net.revelc.code.formatter:formatter-maven-plugin:validate" }
-          - { "name": "Import Sorting", "command": "net.revelc.code:impsort-maven-plugin:check" }
-          - { "name": "POM File Sorting", "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify" }
+          - {
+              "name": "Code Formatting",
+              "command": "net.revelc.code.formatter:formatter-maven-plugin:validate",
+            }
+          - {
+              "name": "Import Sorting",
+              "command": "net.revelc.code:impsort-maven-plugin:check",
+            }
+          - {
+              "name": "POM File Sorting",
+              "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify",
+            }
           # Checkstyle is currently lacking the required file, so disable it for now
           # - { "name": "Checkstyle", "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle" }
     name: ${{ matrix.task.name }}
@@ -284,7 +293,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: 'java'
+          languages: "java"
           queries: security-extended
 
       # M2
@@ -318,9 +327,9 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: maven
-          # server-id: cloud-sdk-java-oss-snapshots
-          # server-username: MAVEN_USERNAME # env variable for username in deploy
-          # server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
+          server-id: artifactory-snapshots
+          server-username: ARTIFACTORY_USER # env variable for username in deploy
+          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
       # M2
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
@@ -347,18 +356,12 @@ jobs:
         run: |
           unzip -D target.zip
       - name: Publish Snapshot
-        run: mvn $MVN_CLI_ARGS -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges --settings ./.pipeline/snapshot-settings.xml deploy
+        run: >
+          mvn $MVN_CLI_ARGS
+          -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Daudience=sap -Dhttp.keepAlive=false-Dformatter.skip
+          -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
+          deploy
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-      # - name: Deploy Snapshot
-      #   uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
-      #   with:
-      #     command: mavenExecute
-      #     flags: \
-      #       --goals="deploy" \
-      #       --projectSettingsFile=".pipeline/snapshot-settings.xml" \
-      #       --defines="-Dmaven.test.skip","-Daudience=sap","-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false","-Dformatter.skip","-Denforcer.skip","-Djacoco.skip","-Dimpsort.skip","-Dmdep.analyze.skip"
-      #   env:
-      #     ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-      #     ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
