@@ -12,7 +12,7 @@
       <profile>
          <id>snapshot.build</id>
          <properties>
-            <altSnapshotDeploymentRepository>artifactory-snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</altSnapshotDeploymentRepository>
+            <altSnapshotDeploymentRepository>artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</altSnapshotDeploymentRepository>
           </properties>
          <pluginRepositories>
             <pluginRepository>
