@@ -39,7 +39,7 @@
 		<snapshotRepository>
 			<id>cloud-sdk-java-oss-snapshots</id>
 			<name>Cloud SDK Snapshots</name>
-			<url>https://common.repositories.cloud.sap/artifactory/sap-cloud-sdk-java/</url>
+			<url>https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
