@@ -318,6 +318,9 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: maven
+          server-id: cloud-sdk-java-oss-snapshots
+          server-username: MAVEN_USERNAME # env variable for username in deploy
+          server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
       # M2
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
@@ -343,14 +346,19 @@ jobs:
       - name: UNZIP Target Dirs
         run: |
           unzip -D target.zip
-      - name: Deploy Snapshot
-        uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
-        with:
-          command: mavenExecute
-          flags: \
-            --goals="deploy" \
-            --projectSettingsFile=".pipeline/snapshot-settings.xml" \
-            --defines="-Dmaven.test.skip","-Daudience=sap","-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false","-Dformatter.skip","-Denforcer.skip","-Djacoco.skip","-Dimpsort.skip","-Dmdep.analyze.skip"
+      - name: Publish Snapshot
+        run: mvn $MVN_CLI_ARGS -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges deploy
         env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+      # - name: Deploy Snapshot
+      #   uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
+      #   with:
+      #     command: mavenExecute
+      #     flags: \
+      #       --goals="deploy" \
+      #       --projectSettingsFile=".pipeline/snapshot-settings.xml" \
+      #       --defines="-Dmaven.test.skip","-Daudience=sap","-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false","-Dformatter.skip","-Denforcer.skip","-Djacoco.skip","-Dimpsort.skip","-Dmdep.analyze.skip"
+      #   env:
+      #     ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+      #     ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}

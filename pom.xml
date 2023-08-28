@@ -35,6 +35,13 @@
 		<connection />
 		<url />
 	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>cloud-sdk-java-oss-snapshots</id>
+			<name>Cloud SDK Snapshots</name>
+			<url>https://common.repositories.cloud.sap/artifactory/sap-cloud-sdk-java/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
