@@ -112,7 +112,7 @@ jobs:
         continue-on-error: true
       - name: Save Maven Repository
         uses: actions/cache/save@v3
-        # if: steps.restore-cache.outputs.cache-hit != 'true'
+        if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
           path: ~/.m2/repository
