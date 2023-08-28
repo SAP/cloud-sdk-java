@@ -8,9 +8,7 @@ steps:
     failOn: ['BLOCKER', 'CRITICAL', 'MAJOR']
     versioningModel: "major"
     scanProperties:
-      # --detect.maven.excluded.modules=s4hana-all,s4hana-api-odata,s4hana-api-odata-onpremise,s4hana-api-odata-v4,s4hana-api-odata-v4-onpremise,s4hana-api-parent,end-to-end-tests,performance-tests,tests-parent,unit-tests,vdm-integration-tests,testutil-core,testutil-parent
       - --detect.maven.excluded.modules=tests-parent,testutil-core,testutil-parent
-      # - --detect.maven.build.command="'-pl !:s4hana-all,!:s4hana-api-odata,!:s4hana-api-odata-onpremise,!:s4hana-api-odata-v4,!:s4hana-api-odata-v4-onpremise,!:s4hana-api-parent,!:end-to-end-tests,!:performance-tests,!:tests-parent,!:unit-tests,!:vdm-integration-tests,!:testutil-core,!:testutil-parent'"
       - --detect.maven.build.command="'-pl !:tests-parent,!:testutil-core,!:testutil-parent'"
       - --detect.timeout=7200
 
