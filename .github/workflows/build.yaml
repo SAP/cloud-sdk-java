@@ -317,12 +317,38 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: maven
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      # Target
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
+        with:
+          name: target-dirs
+          path: .
+      - name: UNZIP Target Dirs
+        run: |
+          unzip -D target.zip
       - name: Deploy Snapshot
         uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
         with:
           command: mavenExecute
           flags: \
             --goals=["deploy"] \
+            --projectSettingsFile=".pipeline/snapshot-settings.xml" \
             --defines=["-Dmaven.test.skip", "-Daudience=sap", "-DaltDeploymentRepository=deploy.snapshots::default::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk/","-Dhttp.keepAlive=false", "-Dformatter.skip", "-Denforcer.skip", "-Djacoco.skip", "-Dimpsort.skip", "-Dmdep.analyze.skip"]
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
