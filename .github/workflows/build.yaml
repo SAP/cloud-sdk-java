@@ -328,6 +328,12 @@ jobs:
           server-id: artifactory-snapshots
           server-username: ARTIFACTORY_USER # env variable for username in deploy
           server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+      - name: Determine Maven Excludes
+        run: |
+          python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
+        id: get-maven-excludes-for-deploy-snapshot
+      - run: 'echo Excludes: ${{ steps.get-release-versions.outputs.EXCLUDES }}'
+      - run: 'echo Prefixed Excludes: ${{ steps.get-release-versions.outputs.PREFIXED_EXCLUDES }}'
       # M2
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
