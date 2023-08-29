@@ -332,8 +332,8 @@ jobs:
         run: |
           python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
         id: get-maven-excludes-for-deploy-snapshot
-      - run: 'echo Excludes: ${{ steps.get-release-versions.outputs.EXCLUDES }}'
-      - run: 'echo Prefixed Excludes: ${{ steps.get-release-versions.outputs.PREFIXED_EXCLUDES }}'
+      - run: 'echo Excludes: ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.EXCLUDES }}'
+      - run: 'echo Prefixed Excludes: ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}'
       # M2
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
