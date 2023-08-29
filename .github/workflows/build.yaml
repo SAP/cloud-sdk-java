@@ -314,6 +314,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: [codeql, test, pmd, spotbugs]
     runs-on: ubuntu-latest
     timeout-minutes: 15
