@@ -37,8 +37,8 @@ jobs:
           flags: \
             --version=$PROJECT_VERSION \
             --scanProperties="\
-            --detect.maven.excluded.modules=${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }} \
-            --detect.maven.build.command='-pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }}' \
+            --detect.maven.excluded.modules="'"'"'${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }},openapi-generator-cli'"'"'" \
+            --detect.maven.build.command="'"'"'-pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }},!:openapi-generator-cli'"'"'" \
             --detect.timeout=7200"
         env:
           PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
