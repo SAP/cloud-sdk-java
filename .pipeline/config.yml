@@ -7,10 +7,6 @@ steps:
     mavenExcludedScopes: ["provided", "test"]
     failOn: ['BLOCKER', 'CRITICAL', 'MAJOR']
     versioningModel: "major"
-    scanProperties:
-      - --detect.maven.excluded.modules=tests-parent,testutil-core,testutil-parent,openapi-generator-cli
-      - --detect.maven.build.command="'-pl !:tests-parent,!:testutil-core,!:testutil-parent,!:openapi-generator-cli'"
-      - --detect.timeout=7200
 
 stages:
   codeCheck:

@@ -25,6 +25,11 @@ jobs:
         run: |
           echo "project_version_NOT_YET_IN_USE=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d '.' -f 1)" >> $GITHUB_ENV
 
+      - name: Determine Maven Excludes
+        run: |
+          python .pipeline/scripts/get-maven-excludes.py --filter-key excludeFromBlackDuckScan --filter-value True
+        id: get-maven-excludes-for-blackduck
+
       - name: Blackduck Scan
         uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
         with:
@@ -33,4 +38,7 @@ jobs:
             --version=$PROJECT_VERSION \
         env:
           PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
+          DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }},openapi-generator-cli
+          DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }},!:openapi-generator-cli
+          DETECT_TIMEOUT: 7200
           PROJECT_VERSION: "5"
