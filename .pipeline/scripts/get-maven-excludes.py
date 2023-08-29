@@ -6,12 +6,12 @@ def write_maven_excludes_github_output(filter_key, filter_value):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
-        filtered_inventory = filter(lambda x: x[filter_key] == filter_value, module_inventory)
+        filtered_inventory = filter(lambda x: str(x[filter_key]) == filter_value, module_inventory)
         artifact_ids = list(map(lambda x: x["artifactId"], filtered_inventory))
         artifact_ids_for_maven_excludes = list(map(lambda x: "!:" + x, artifact_ids))
 
         excludes = ','.join(artifact_ids)
-        print("Excludes: ",excludes)
+        print("Excludes: ", excludes)
         prefixed_excludes = ','.join(artifact_ids_for_maven_excludes)
         print("Prefixed excludes: ", prefixed_excludes)
 

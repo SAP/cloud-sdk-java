@@ -362,7 +362,7 @@ jobs:
         run: >
           mvn $MVN_CLI_ARGS
           -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false-Dformatter.skip
+          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false -Dformatter.skip
           -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
           -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
           deploy
