@@ -314,7 +314,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    if: ${{ github.ref == 'refs/heads/main' }}
+    # if: ${{ github.ref == 'refs/heads/main' }}
     needs: [codeql, test, pmd, spotbugs]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -357,7 +357,7 @@ jobs:
           path: .
       - name: UNZIP Target Dirs
         run: |
-          unzip -D target.zip
+          unzip -DD target.zip
       - name: Publish Snapshot
         run: >
           mvn $MVN_CLI_ARGS
