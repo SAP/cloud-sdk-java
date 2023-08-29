@@ -11,7 +11,9 @@ def write_maven_excludes_github_output(filter_key, filter_value):
         artifact_ids_for_maven_excludes = list(map(lambda x: "!:" + x, artifact_ids))
 
         excludes = ','.join(artifact_ids)
+        print("Excludes: ",excludes)
         prefixed_excludes = ','.join(artifact_ids_for_maven_excludes)
+        print("Prefixed excludes: ", prefixed_excludes)
 
         github_output = os.environ.get("GITHUB_OUTPUT")
         with open(github_output, "a") as f:

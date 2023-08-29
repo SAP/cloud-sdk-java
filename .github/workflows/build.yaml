@@ -332,8 +332,6 @@ jobs:
         run: |
           python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
         id: get-maven-excludes-for-deploy-snapshot
-      - run: 'echo Excludes: ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.EXCLUDES }}'
-      - run: 'echo Prefixed Excludes: ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}'
       # M2
       - name: Load Maven Repository
         uses: actions/cache/restore@v3
@@ -365,6 +363,7 @@ jobs:
           -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Daudience=sap -Dhttp.keepAlive=false-Dformatter.skip
           -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
+          -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
           deploy
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
