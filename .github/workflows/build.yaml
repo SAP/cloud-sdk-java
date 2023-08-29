@@ -22,9 +22,18 @@ jobs:
     strategy:
       matrix:
         task:
-          - { "name": "Code Formatting", "command": "net.revelc.code.formatter:formatter-maven-plugin:validate" }
-          - { "name": "Import Sorting", "command": "net.revelc.code:impsort-maven-plugin:check" }
-          - { "name": "POM File Sorting", "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify" }
+          - {
+              "name": "Code Formatting",
+              "command": "net.revelc.code.formatter:formatter-maven-plugin:validate",
+            }
+          - {
+              "name": "Import Sorting",
+              "command": "net.revelc.code:impsort-maven-plugin:check",
+            }
+          - {
+              "name": "POM File Sorting",
+              "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify",
+            }
           # Checkstyle is currently lacking the required file, so disable it for now
           # - { "name": "Checkstyle", "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle" }
     name: ${{ matrix.task.name }}
@@ -118,7 +127,6 @@ jobs:
           name: target-dirs
           path: target.zip
           retention-days: 1
-
 
   test:
     needs: build
@@ -285,7 +293,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: 'java'
+          languages: "java"
           queries: security-extended
 
       # M2
@@ -303,3 +311,61 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:java"
+
+  deploy-snapshot:
+    name: Deploy Snapshot
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [codeql, test, pmd, spotbugs]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          server-id: artifactory-snapshots
+          server-username: ARTIFACTORY_USER # env variable for username in deploy
+          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+      - name: Determine Maven Excludes
+        run: |
+          python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
+        id: get-maven-excludes-for-deploy-snapshot
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      # Target
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
+        with:
+          name: target-dirs
+          path: .
+      - name: UNZIP Target Dirs
+        run: |
+          unzip -DD target.zip
+      - name: Publish Snapshot
+        run: >
+          mvn $MVN_CLI_ARGS
+          -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false -Dformatter.skip
+          -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
+          -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
+          deploy
+        env:
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
