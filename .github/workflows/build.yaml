@@ -355,16 +355,16 @@ jobs:
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
       - name: Generate ${{ matrix.task.archetype }}
-        run: >
-          mvn archetype:generate -B
-            -DarchetypeCatalog=local
-            -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
-            -DarchetypeArtifactId=${{ matrix.task.archetype }}
-            -DarchetypeVersion=${{ needs.build.outputs.version }}
-            -DgroupId=com.sap.test
-            -DartifactId=example-${{ matrix.task.archetype }}
-            -Dversion=1.0-SNAPSHOT
-            -Dpackage=com.sap.test
+        run: \
+          mvn archetype:generate -B \
+            -DarchetypeCatalog=local \
+            -DarchetypeGroupId=com.sap.cloud.sdk.archetypes \
+            -DarchetypeArtifactId=${{ matrix.task.archetype }} \
+            -DarchetypeVersion=${{ needs.build.outputs.version }} \
+            -DgroupId=com.sap.test \
+            -DartifactId=example-${{ matrix.task.archetype }} \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.sap.test \
             -Dhttp.keepAlive=false
 
       - name: Verify ${{ matrix.task.archetype }}
