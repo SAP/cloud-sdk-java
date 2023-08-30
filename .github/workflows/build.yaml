@@ -385,7 +385,7 @@ jobs:
       - name: Spotbugs ${{ matrix.task.archetype }}
         working-directory: ./example-${{ matrix.task.archetype }}
         run: >
-          mvn com.github.spotbugs:spotbugs-maven-plugin:check
+          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
           -pl !integration-tests
           -Dhttp.keepAlive=false
           -Dmaven.wagon.http.pool=false
@@ -397,7 +397,14 @@ jobs:
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
-          curl --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello || cat log.txt && exit 1
+          
+          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
+          if [ $? -ne 0 ]; then
+            cat $logFilePath
+            exit 1
+          fi
+          
+
           
           grep -q \"I am running!\" $logFilePath"
           if grep -iq \"caused by\" $logFilePath; then
