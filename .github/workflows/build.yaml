@@ -345,6 +345,7 @@ jobs:
           path: .
       - name: UNZIP M2 SDK Directory
         run: |
+          mkdir -p ~/.m2/repository/com/sap/cloud/sdk
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
       - name: Determine Version
