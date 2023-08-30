@@ -67,7 +67,7 @@ jobs:
       contents: read
     name: Build
     outputs:
-      version: ${{ steps.get-version.outputs.CURRENT_SNAPSHOT }}
+      version: ${{ steps.get-version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
       - name: Determine Version

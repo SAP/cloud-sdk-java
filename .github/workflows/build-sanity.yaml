@@ -18,13 +18,12 @@ jobs:
       contents: read
     name: Install
     outputs:
-      version: ${{ steps.get-version.outputs.CURRENT_SNAPSHOT }}
+      version: ${{ steps.get-version.outputs.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Version
-        run: |
-          python .pipeline/scripts/get-release-versions.py
+        run: VERSION=$(cat latest.json | jq .version) >> $GITHUB_OUTPUT
         id: get-version
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -44,6 +43,18 @@ jobs:
               git --no-pager diff
               exit 1
           fi
+
+      - name: ZIP M2 SDK Directory
+        run: |
+          cd $HOME/.m2/repository/com/sap/cloud/sdk
+          zip -r m2-sdk.zip .
+      - name: Upload M2 SDK Directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: m2-sdk
+          path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
+          retention-days: 1
+
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
