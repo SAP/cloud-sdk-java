@@ -391,12 +391,12 @@ jobs:
           -Dmaven.wagon.http.pool=false
 
       - name: Start ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}/application
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          if ! curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
+          if ! curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello2 ; then
             echo "Project generated from archetype ${archetype} failed to start locally."
             cat $logFilePath
             exit 1
