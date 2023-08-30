@@ -403,7 +403,7 @@ jobs:
             exit 1
           fi
           
-          grep -q "I am running!" $logFilePath"
+          grep -q "I am running!" $logFilePath
           if [ $? -ne 0 ]; then
             echo "Project generated from archetype ${archetype} started locally, but did not contain the expected log output."
             cat $logFilePath
