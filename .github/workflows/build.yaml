@@ -385,7 +385,9 @@ jobs:
           -Dmaven.wagon.http.pool=false
       - name: Start ${{ matrix.task.archetype }}
         working-directory: ./example-${{ matrix.task.archetype }}
-        run: ${{ matrix.task.startCommand }} > log.txt 2>&1 &
+        run: |
+          ${{ matrix.task.startCommand }} > log.txt 2>&1 &
+          python .pipeline/scripts/validate-running-archetype.py
 
   deploy-snapshot:
     name: Deploy Snapshot
