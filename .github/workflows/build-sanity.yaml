@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Determine Version
-        run: echo "VERSION=$(cat latest.json | jq .version)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
         id: get-version
       - name: Setup Java
         uses: actions/setup-java@v3
