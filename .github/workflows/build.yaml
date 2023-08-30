@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "test-archetypes"]
   pull_request:
     branches: ["main"]
 
@@ -312,10 +312,79 @@ jobs:
         with:
           category: "/language:java"
 
+  archetypes:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      checks: write
+      contents: read
+    strategy:
+      matrix:
+        task:
+          - {
+            "archetype": "scp-cf-spring",
+            "javaVersion": 8,
+            "startCommand": "mvn spring-boot:run -B"
+          }
+          - {
+            "archetype": "scp-cf-spring-jakarta",
+            "javaVersion": 17,
+            "startCommand": "mvn spring-boot:run -B"
+          }
+    name: ${{ matrix.task.archetype }}
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      - name: Determine Version
+        run: |
+          python .pipeline/scripts/get-release-versions.py
+        id: get-release-versions
+
+      - name: Generate ${{ matrix.task.archetype }}
+        run: >
+          mvn archetype:generate -B
+            -DarchetypeCatalog=local
+            -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
+            -DarchetypeArtifactId=${{ matrix.task.archetype }}
+            -DarchetypeVersion=${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}
+            -DgroupId=com.sap.test
+            -DartifactId=example-${{ matrix.task.archetype }}
+            -Dversion=1.0-SNAPSHOT
+            -Dpackage=com.sap.test
+            -Dhttp.keepAlive=false
+
+      - name: Verify ${{ matrix.task.archetype }}
+        run: >
+          mvn clean verify -B
+            -Dhttp.keepAlive=false
+            -Dmaven.test.skip=true
+      - name: Test ${{ matrix.task.name }}
+        run: mvn test -Dsurefire.logLevel='error'
+      - name: Spotbugs ${{ matrix.task.archetype }}
+        run: >
+          mvn com.github.spotbugs:spotbugs-maven-plugin:check
+            -pl !integration-tests
+            -Dhttp.keepAlive=false
+            -Dmaven.wagon.http.pool=false
+      - name: Start ${{ matrix.task.archetype }}
+        run: ${{ matrix.task.startCommand }} > log.txt 2>&1 &
+
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [codeql, test, pmd, spotbugs]
+    needs: [codeql, test, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

@@ -27,6 +27,7 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>archetypes</module>
 		<module>datamodel</module>
 		<module>modules-bom</module>
 		<module>testutil</module>
