@@ -398,7 +398,7 @@ jobs:
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
           if [ ! curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ]; then
-            echo "echo "Project generated from archetype ${archetype} failed to start locally."
+            echo "Project generated from archetype ${archetype} failed to start locally."
             cat $logFilePath
             exit 1
           fi
