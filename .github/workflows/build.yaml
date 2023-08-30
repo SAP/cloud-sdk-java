@@ -394,17 +394,17 @@ jobs:
         working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           logFilePath=log.txt
+          exitCode=0
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
-          if [ $? -ne 0 ]; then
+          curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello || exitCode=$?
+          if [ $exitCode -ne 0 ]; then
             echo "echo "Project generated from archetype ${archetype} failed to start locally."
             cat $logFilePath
             exit 1
           fi
           
-          grep -q "I am running!" $logFilePath
-          if [ $? -ne 0 ]; then
+          if ! grep -q "I am running!" $logFilePath; then
             echo "Project generated from archetype ${archetype} started locally, but did not contain the expected log output."
             cat $logFilePath
             exit 1
