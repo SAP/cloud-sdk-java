@@ -16,7 +16,7 @@
 
         <java.version>17</java.version>
         <security-lib.version>3.0.1</security-lib.version>
-        <cloud-sdk.version>5.0.0-alpha-SNAPSHOT</cloud-sdk.version>
+        <cloud-sdk.version>0.0.1-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
