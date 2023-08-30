@@ -397,8 +397,7 @@ jobs:
           exitCode=0
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello || exitCode=$?
-          if [ $exitCode -ne 0 ]; then
+          if [ ! curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ]; then
             echo "echo "Project generated from archetype ${archetype} failed to start locally."
             cat $logFilePath
             exit 1
