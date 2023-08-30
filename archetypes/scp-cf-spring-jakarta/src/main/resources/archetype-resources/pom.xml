@@ -16,7 +16,7 @@
 
         <java.version>17</java.version>
         <security-lib.version>3.0.1</security-lib.version>
-        <cloud-sdk.version>0.0.1-SNAPSHOT</cloud-sdk.version>
+        <cloud-sdk.version>4.20.0</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -46,7 +46,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sap.cloud.sdk</groupId>
-                <artifactId>sdk-modules-bom</artifactId>
+                <artifactId>sdk-bom</artifactId>
                 <version>${cloud-sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

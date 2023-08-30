@@ -15,7 +15,7 @@
         <spring-boot.version>2.7.15</spring-boot.version>
 
         <java.version>1.8</java.version>
-        <cloud-sdk.version>0.0.1-SNAPSHOT</cloud-sdk.version>
+        <cloud-sdk.version>4.20.0</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -31,7 +31,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.sap.cloud.sdk</groupId>
-                <artifactId>sdk-modules-bom</artifactId>
+                <artifactId>sdk-bom</artifactId>
                 <version>${cloud-sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
