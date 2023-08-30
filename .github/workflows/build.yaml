@@ -368,19 +368,23 @@ jobs:
           -Dhttp.keepAlive=false
 
       - name: Verify ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: >
           mvn clean verify -B
-            -Dhttp.keepAlive=false
-            -Dmaven.test.skip=true
+          -Dhttp.keepAlive=false
+          -Dmaven.test.skip=true
       - name: Test ${{ matrix.task.name }}
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: mvn test -Dsurefire.logLevel='error'
       - name: Spotbugs ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: >
           mvn com.github.spotbugs:spotbugs-maven-plugin:check
-            -pl !integration-tests
-            -Dhttp.keepAlive=false
-            -Dmaven.wagon.http.pool=false
+          -pl !integration-tests
+          -Dhttp.keepAlive=false
+          -Dmaven.wagon.http.pool=false
       - name: Start ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: ${{ matrix.task.startCommand }} > log.txt 2>&1 &
 
   deploy-snapshot:
