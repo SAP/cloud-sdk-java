@@ -387,7 +387,8 @@ jobs:
         working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           ${{ matrix.task.startCommand }} > log.txt 2>&1 &
-          python .pipeline/scripts/validate-running-archetype.py
+          curl --retry 60 --retry-delay 3 http://127.0.0.1:8080/hello
+          
 
   deploy-snapshot:
     name: Deploy Snapshot
