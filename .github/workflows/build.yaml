@@ -391,12 +391,13 @@ jobs:
           -Dmaven.wagon.http.pool=false
 
       - name: Start ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}/application
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          if [ $(curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello2) -ne 0 ]; then
+          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
+          if [ $? -ne 0 ]; then
             cat $logFilePath
             exit 1
           fi
