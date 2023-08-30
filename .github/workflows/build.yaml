@@ -387,7 +387,17 @@ jobs:
         working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           ${{ matrix.task.startCommand }} > log.txt 2>&1 &
-          curl --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
+          curl --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello || cat log.txt && exit 1
+          
+          logFilePath=application/log.txt
+          grep -q \"I am running!\" $logFilePath"
+          if grep -iq \"caused by\" $logFilePath; then
+            echo \"Error in log file:\"
+            cat $logFilePath
+            exit 1
+          fi
+          
+      
           
 
   deploy-snapshot:
