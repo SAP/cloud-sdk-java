@@ -387,7 +387,7 @@ jobs:
         working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           ${{ matrix.task.startCommand }} > log.txt 2>&1 &
-          curl --retry 60 --retry-delay 3 http://127.0.0.1:8080/hello
+          curl --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
           
 
   deploy-snapshot:
