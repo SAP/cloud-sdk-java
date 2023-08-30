@@ -66,8 +66,14 @@ jobs:
       checks: write
       contents: read
     name: Build
+    outputs:
+      version: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}
     steps:
       - uses: actions/checkout@v3
+      - name: Determine Version
+        run: |
+          python .pipeline/scripts/get-release-versions.py
+        id: get-release-versions
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -348,18 +354,13 @@ jobs:
           mkdir -p ~/.m2/repository/com/sap/cloud/sdk
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-      - name: Determine Version
-        run: |
-          python .pipeline/scripts/get-release-versions.py
-        id: get-release-versions
-
       - name: Generate ${{ matrix.task.archetype }}
         run: >
           mvn archetype:generate -B
             -DarchetypeCatalog=local
             -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
             -DarchetypeArtifactId=${{ matrix.task.archetype }}
-            -DarchetypeVersion=${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}
+            -DarchetypeVersion=${{ needs.build.outputs.version }}
             -DgroupId=com.sap.test
             -DartifactId=example-${{ matrix.task.archetype }}
             -Dversion=1.0-SNAPSHOT
