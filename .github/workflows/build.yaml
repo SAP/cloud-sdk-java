@@ -396,7 +396,7 @@ jobs:
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
+          curl -s --retry 2 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
           if [ $? -ne 0 ]; then
             echo "echo "Project generated from archetype ${archetype} failed to start locally."
             cat $logFilePath
@@ -426,9 +426,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven-central
-          
-      
-          
 
   deploy-snapshot:
     name: Deploy Snapshot
