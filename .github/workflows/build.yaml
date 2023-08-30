@@ -389,29 +389,28 @@ jobs:
           -pl !integration-tests
           -Dhttp.keepAlive=false
           -Dmaven.wagon.http.pool=false
-      - name: Purge SDK Artifacts from Maven Repository
-        run: |
-          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+
       - name: Start ${{ matrix.task.archetype }}
         working-directory: ./example-${{ matrix.task.archetype }}/application
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello2
-          if [ $? -ne 0 ]; then
+          if [ $(curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello2) -ne 0 ]; then
             cat $logFilePath
             exit 1
           fi
           
+          grep -q "I am running!" $logFilePath"
+          if grep -iq "caused by" $logFilePath; then
+            echo "Error in log file:"
+            cat $logFilePath
+            exit 1
+          fi
 
-          
-          grep -q \"I am running!\" $logFilePath"
-          if grep -iq \"caused by\" $logFilePath; then
-            echo \"Error in log file:\"
-            cat $logFilePath
-            exit 1
-          fi
+      - name: Purge SDK Artifacts from Maven Repository
+        run: |
+          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
       - name: Save Maven Repository
         uses: actions/cache/save@v3
         if: steps.restore-cache.outputs.cache-hit != 'true'
