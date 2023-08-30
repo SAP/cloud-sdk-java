@@ -413,6 +413,16 @@ jobs:
             cat $logFilePath
             exit 1
           fi
+          
+
+      - name: Verify .gitignore ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: |
+          if [ ! -f .gitignore ]; then
+              ls -lah
+              echo "Project generated from archetype does not contain a .gitignore file."
+              exit 1
+          fi
 
       - name: Purge SDK Artifacts from Maven Repository
         run: |
