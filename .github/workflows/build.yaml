@@ -398,7 +398,7 @@ jobs:
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
           
-          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello
+          curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello2
           if [ $? -ne 0 ]; then
             cat $logFilePath
             exit 1
