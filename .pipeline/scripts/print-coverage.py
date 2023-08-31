@@ -102,8 +102,8 @@ def compute_coverage(file_list) :
             calculate_percentage(classes_covered, classes_missed))
 
 def calculate_percentage(covered, missed) :
-    if missed == 0 :
-        return 1
+    if covered == 0 & missed == 0 :
+        sys.exit('No coverage data found')
     return int((covered / (covered + missed)) * 100)
 
 def main():
