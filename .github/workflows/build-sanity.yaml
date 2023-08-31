@@ -87,15 +87,15 @@ jobs:
       matrix:
         task:
           - {
-            "archetype": "scp-cf-spring",
-            "javaVersion": 8,
-            "startCommand": "mvn spring-boot:run -B"
-          }
+              "archetype": "scp-cf-spring",
+              "javaVersion": 8,
+              "startCommand": "mvn spring-boot:run -B",
+            }
           - {
-            "archetype": "scp-cf-spring-jakarta",
-            "javaVersion": 17,
-            "startCommand": "mvn spring-boot:run -B"
-          }
+              "archetype": "scp-cf-spring-jakarta",
+              "javaVersion": 17,
+              "startCommand": "mvn spring-boot:run -B",
+            }
     name: ${{ matrix.task.archetype }}
     steps:
       - name: Setup Java
@@ -173,7 +173,6 @@ jobs:
             exit 1
           fi
 
-
       - name: Verify .gitignore ${{ matrix.task.archetype }}
         working-directory: ./example-${{ matrix.task.archetype }}
         run: |
@@ -211,7 +210,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: 'java'
+          languages: "java"
           queries: security-extended
 
       # M2
