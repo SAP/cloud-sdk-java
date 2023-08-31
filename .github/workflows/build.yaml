@@ -115,7 +115,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: archetype-catalog
-          path: ~/.m2/archetype-catalog.xml
+          path: ~/.m2/repository/archetype-catalog.xml
           retention-days: 1
       - name: Purge SDK Artifacts from Maven Repository
         run: |
@@ -369,7 +369,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: archetype-catalog
-          path: ~/.m2/archetype-catalog.xml
+          path: ~/.m2/repository/archetype-catalog.xml
 
       - name: Generate ${{ matrix.task.archetype }}
         run: >
