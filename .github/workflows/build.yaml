@@ -36,7 +36,7 @@ jobs:
           }
           - {
             "name": "Checkstyle",
-            "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle -Dcheckstyle.config.location=codestyle/checkstyle.xml"
+            "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle"
           }
     name: ${{ matrix.task.name }}
     steps:
