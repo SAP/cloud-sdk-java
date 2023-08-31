@@ -25,9 +25,8 @@ def get_jacoco_thresholds():
 
 def write_jacoco_github_output(jacoco_report_pattern):
     jacoco_report_files = glob(jacoco_report_pattern, recursive=True)
-    # coverage, branch_coverage = compute_coverage(jacoco_report_files)
-    instruction_coverage, branch_coverage, line_coverage, complexity_coverage, method_coverage, class_coverage = compute_coverage(jacoco_report_files)
 
+    instruction_coverage, branch_coverage, line_coverage, complexity_coverage, method_coverage, class_coverage = compute_coverage(jacoco_report_files)
     instruction_threshold, branch_threshold, line_threshold, complexity_threshold, method_threshold, class_threshold = get_jacoco_thresholds()
 
     if 'GITHUB_STEP_SUMMARY' in os.environ:
@@ -80,7 +79,6 @@ def compute_coverage(file_list) :
             jacoco_reader = csv.reader(csv_file)
             for i, row in enumerate(jacoco_reader) :
                 if i > 0 :
-
                     missed_instructions += int(row[3])
                     covered_instructions += int(row[4])
                     missed_branches += int(row[5])
@@ -114,7 +112,6 @@ def main():
     parser.add_argument("--jacoco-report-pattern",
                         help="Glob pattern for JaCoCo reports in CSV format.",
                         required=True)
-
     args = parser.parse_args()
 
     write_jacoco_github_output(args.jacoco_report_pattern)
