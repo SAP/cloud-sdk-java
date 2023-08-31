@@ -987,12 +987,12 @@
 						</execution>
 					</executions>
 					<!-- fixme: pipeline config-->
-					<configuration>
+					<!-- <configuration>
 						<destFile>${jacoco.executionDataFile}</destFile>
 						<dataFile>${jacoco.executionDataFile}</dataFile>
 						<includes>${jacoco.includes}</includes>
 						<excludes>${jacoco.excludes}</excludes>
-					</configuration>
+					</configuration> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
