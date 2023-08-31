@@ -989,13 +989,13 @@
 						</execution>
 						<execution>
 							<id>report</id>
+							<goals>
+								<goal>report</goal>
+							</goals>
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<outputDirectory>${jacoco.reportsDirectory}</outputDirectory>
 							</configuration>
-							<goals>
-								<goal>report</goal>
-							</goals>
 						</execution>
 					</executions>
 					<!-- fixme: pipeline config-->
