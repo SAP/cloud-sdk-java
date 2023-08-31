@@ -190,7 +190,7 @@ jobs:
         uses: scacap/action-surefire-report@v1
       - name: Coverage Report
         run: |
-          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/coverage-reports/jacoco/**/jacoco.csv'
+          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
 
   pmd:
     needs: build
