@@ -32,6 +32,7 @@
 	</developers>
 	<modules>
 		<module>scp-cf-spring</module>
+		<module>scp-cf-spring-jakarta</module>
 	</modules>
 	<scm>
 		<connection />
