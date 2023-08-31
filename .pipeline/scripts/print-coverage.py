@@ -106,7 +106,7 @@ def compute_coverage(file_list) :
 def calculate_percentage(covered, missed) :
     if missed == 0 :
         return 1
-    return (covered / (covered + missed)) * 100
+    return int((covered / (covered + missed)) * 100)
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
