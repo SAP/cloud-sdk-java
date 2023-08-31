@@ -77,6 +77,7 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
+		<jacoco.reportsDirectory>${project.build.directory}/coverage-reports/jacoco</jacoco.reportsDirectory>
 		<jacoco.includes>*</jacoco.includes>
 		<jacoco.excludes>org.apache.*</jacoco.excludes>
 		<codeAnalysisExclusions />
@@ -984,6 +985,16 @@
 							<id>prepare-agent</id>
 							<goals>
 								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>report</id>
+							<configuration>
+								<dataFile>${jacoco.executionDataFile}</dataFile>
+								<outputDirectory>${jacoco.reportsDirectory}</outputDirectory>
+							</configuration>
+							<goals>
+								<goal>report</goal>
 							</goals>
 						</execution>
 					</executions>
