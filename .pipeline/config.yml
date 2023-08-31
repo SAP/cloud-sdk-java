@@ -12,18 +12,18 @@ stages:
   test:
     coverageThresholds:
       # TODO: Switch to actual thresholds from previous pipeline once all modules are moved over
-      # instruction: 75
-      # branch: 68
-      # complexity: 66
-      # line: 76
-      # method: 73
-      # class: 82
-      instruction: 40
-      branch: 40
-      complexity: 40
-      line: 40
-      method: 40
-      class: 40
+      instruction: 75
+      branch: 68
+      complexity: 66
+      line: 76
+      method: 73
+      class: 82
+      # instruction: 40
+      # branch: 40
+      # complexity: 40
+      # line: 40
+      # method: 40
+      # class: 40
   codeCheck:
     checkstyle:
       high: '0'
