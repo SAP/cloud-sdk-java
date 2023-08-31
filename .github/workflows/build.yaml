@@ -68,8 +68,13 @@ jobs:
       checks: write
       contents: read
     name: Build
+    outputs:
+      version: ${{ steps.get-version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
+      - name: Determine Version
+        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
+        id: get-version
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -107,6 +112,12 @@ jobs:
         with:
           name: m2-sdk
           path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
+          retention-days: 1
+      - name: Upload Archetype Catalog
+        uses: actions/upload-artifact@v3
+        with:
+          name: archetype-catalog
+          path: ~/.m2/repository/archetype-catalog.xml
           retention-days: 1
       - name: Purge SDK Artifacts from Maven Repository
         run: |
@@ -307,10 +318,131 @@ jobs:
         with:
           category: "/language:java"
 
+  archetypes:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      checks: write
+      contents: read
+    strategy:
+      matrix:
+        task:
+          - {
+              "archetype": "scp-cf-spring",
+              "javaVersion": 8,
+              "startCommand": "mvn spring-boot:run -B",
+            }
+          - {
+              "archetype": "scp-cf-spring-jakarta",
+              "javaVersion": 17,
+              "startCommand": "mvn spring-boot:run -B",
+            }
+    name: Test Archetype ${{ matrix.task.archetype }}
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven-central
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          mkdir -p ~/.m2/repository/com/sap/cloud/sdk
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      - name: Download Archetype Catalog
+        uses: actions/download-artifact@v3
+        with:
+          name: archetype-catalog
+          path: ~/.m2/repository/archetype-catalog.xml
+      - name: Generate ${{ matrix.task.archetype }}
+        run: >
+          mvn archetype:generate -B
+          -DarchetypeCatalog=local
+          -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
+          -DarchetypeArtifactId=${{ matrix.task.archetype }}
+          -DarchetypeVersion=${{ needs.build.outputs.version }}
+          -DgroupId=com.sap.test
+          -DartifactId=example-${{ matrix.task.archetype }}
+          -Dversion=1.0-SNAPSHOT
+          -Dpackage=com.sap.test
+          -Dhttp.keepAlive=false
+
+      - name: Verify ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: >
+          mvn clean verify -B
+          -Dhttp.keepAlive=false
+          -Dmaven.test.skip=true
+      - name: Test ${{ matrix.task.name }}
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: mvn test -B -Dsurefire.logLevel='error'
+      - name: Spotbugs ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: >
+          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
+          -pl !integration-tests
+          -Dhttp.keepAlive=false
+          -Dmaven.wagon.http.pool=false
+
+      - name: Start ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}/application
+        run: |
+          logFilePath=log.txt
+          ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
+
+          if ! curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
+            echo "Project generated from archetype ${{ matrix.task.archetype }} failed to start locally."
+            cat $logFilePath
+            exit 1
+          fi
+
+          if ! grep -q "I am running!" $logFilePath; then
+            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but did not contain the expected log output."
+            cat $logFilePath
+            exit 1
+          fi
+
+          if grep -iq "caused by" $logFilePath; then
+            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but an unexpected error occurred."
+            cat $logFilePath
+            exit 1
+          fi
+
+      - name: Verify .gitignore ${{ matrix.task.archetype }}
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: |
+          if [ ! -f .gitignore ]; then
+              ls -lah
+              echo "Project generated from archetype does not contain a .gitignore file."
+              exit 1
+          fi
+
+      - name: Purge SDK Artifacts from Maven Repository
+        run: |
+          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+      - name: Save Maven Repository
+        uses: actions/cache/save@v3
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        id: save-cache
+        with:
+          path: ~/.m2/repository
+          key: maven-central
+
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [codeql, test, pmd, spotbugs]
+    needs: [codeql, test, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
