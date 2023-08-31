@@ -370,8 +370,6 @@ jobs:
         with:
           name: archetype-catalog
           path: ~/.m2/repository/archetype-catalog.xml
-      - name: List Files
-        run: ls -lah
       - name: Generate ${{ matrix.task.archetype }}
         run: >
           mvn archetype:generate -B
