@@ -394,25 +394,25 @@ jobs:
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
-          
+
           if ! curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
-            echo "Project generated from archetype ${archetype} failed to start locally."
+            echo "Project generated from archetype ${{ matrix.task.archetype }} failed to start locally."
             cat $logFilePath
             exit 1
           fi
-          
+
           if ! grep -q "I am running!" $logFilePath; then
-            echo "Project generated from archetype ${archetype} started locally, but did not contain the expected log output."
+            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but did not contain the expected log output."
             cat $logFilePath
             exit 1
           fi
-          
+
           if grep -iq "caused by" $logFilePath; then
-            echo "Error in log file:"
+            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but an unexpected error occurred."
             cat $logFilePath
             exit 1
           fi
-          
+
 
       - name: Verify .gitignore ${{ matrix.task.archetype }}
         working-directory: ./example-${{ matrix.task.archetype }}
