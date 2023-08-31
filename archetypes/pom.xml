@@ -81,21 +81,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!--
-    !!! Add all modules that should never be released here. If left empty this can be removed. !!!
-    -->
-	<profiles>
-		<profile>
-			<id>build-sap-internal-modules</id>
-			<activation>
-				<property>
-					<name>audience</name>
-					<value>!everyone</value>
-				</property>
-			</activation>
-			<modules>
-				<module>scp-cf-spring-jakarta</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>
