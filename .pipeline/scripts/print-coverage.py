@@ -9,19 +9,15 @@ import yaml
 from glob import glob
 
 def get_jacoco_thresholds():
-    config = None
     with open(".pipeline/config.yml", "r") as stream:
-        try:
-            config = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+        config = yaml.safe_load(stream)
 
-    return (config['stages']['test']['coverageThresholds']['instruction'],
-            config['stages']['test']['coverageThresholds']['branch'],
-            config['stages']['test']['coverageThresholds']['line'],
-            config['stages']['test']['coverageThresholds']['complexity'],
-            config['stages']['test']['coverageThresholds']['method'],
-            config['stages']['test']['coverageThresholds']['class'])
+        return (config['stages']['test']['coverageThresholds']['instruction'],
+                config['stages']['test']['coverageThresholds']['branch'],
+                config['stages']['test']['coverageThresholds']['line'],
+                config['stages']['test']['coverageThresholds']['complexity'],
+                config['stages']['test']['coverageThresholds']['method'],
+                config['stages']['test']['coverageThresholds']['class'])
 
 def write_jacoco_github_output(jacoco_report_pattern):
     jacoco_report_files = glob(jacoco_report_pattern, recursive=True)
