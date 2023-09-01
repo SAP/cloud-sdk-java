@@ -1001,6 +1001,9 @@
 									<exclude>"**/testclasses/**"</exclude>
 									<exclude>"**/cds/gen/**"</exclude>
 									<exclude>"**/servletjakarta/**"</exclude>
+									<exclude>**/odata/sample/**</exclude>
+									<exclude>**/odatav4/sample/**</exclude>
+									<exclude>**/openapi/sample/**</exclude>
 								</excludes>
 							</configuration>
 						</execution>
