@@ -20,7 +20,7 @@ def get_jacoco_thresholds():
                 config['stages']['test']['coverageThresholds']['class'])
 
 def get_threshold_for_summary(threshold):
-    return threshold if threshold >= 0 else 'unlimited'
+    return str(threshold) + "%" if threshold >= 0 else 'unlimited'
 
 def write_jacoco_github_output(jacoco_report_pattern):
     jacoco_report_files = glob(jacoco_report_pattern, recursive=True)
@@ -40,12 +40,12 @@ def write_jacoco_github_output(jacoco_report_pattern):
             print('## JaCoCo Result', file=f)
             print('| Category | Actual Coverage | Coverage Threshold |', file=f)
             print('| --------------- | --------------- | ------------------ |', file=f)
-            print(f"| Class Coverage | {class_coverage}% ({classes_covered}/{number_of_classes} covered) | {summary_class_threshold}% |", file=f)
-            print(f"| Method Coverage | {method_coverage}% | {summary_method_threshold}% |", file=f)
-            print(f"| Line Coverage | {line_coverage}% | {summary_line_threshold}% |", file=f)
-            print(f"| Complexity Coverage | {complexity_coverage}% | {summary_complexity_threshold}% |", file=f)
-            print(f"| Branch Coverage | {branch_coverage}% | {summary_branch_threshold}% |", file=f)
-            print(f"| Instruction Coverage | {instruction_coverage}% | {summary_instruction_threshold}% |", file=f)
+            print(f"| Class Coverage | {class_coverage}% ({classes_covered}/{number_of_classes} covered) | {summary_class_threshold} |", file=f)
+            print(f"| Method Coverage | {method_coverage}% | {summary_method_threshold} |", file=f)
+            print(f"| Line Coverage | {line_coverage}% | {summary_line_threshold} |", file=f)
+            print(f"| Complexity Coverage | {complexity_coverage}% | {summary_complexity_threshold} |", file=f)
+            print(f"| Branch Coverage | {branch_coverage}% | {summary_branch_threshold} |", file=f)
+            print(f"| Instruction Coverage | {instruction_coverage}% | {summary_instruction_threshold} |", file=f)
 
     print(f"Class Coverage: {class_coverage}% ({classes_covered}/{number_of_classes}), Class Threshold: {summary_class_threshold}%")
     print(f"Method Coverage: {method_coverage}%, Method Threshold: {summary_method_threshold}%")
