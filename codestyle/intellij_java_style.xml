@@ -1,0 +1,46 @@
+<code_scheme name="intellij_java_style">
+  <option name="LINE_SEPARATOR" value="&#xA;" />
+  <option name="GENERATE_FINAL_LOCALS" value="true" />
+  <option name="GENERATE_FINAL_PARAMETERS" value="true" />
+  <option name="VISIBILITY" value="private" />
+  <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="20" />
+  <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="20" />
+  <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+    <value>
+      <package name="org.junit.Assert" withSubpackages="true" static="true" />
+    </value>
+  </option>
+  <option name="IMPORT_LAYOUT_TABLE">
+    <value>
+      <package name="" withSubpackages="true" static="false" />
+      <emptyLine />
+      <package name="javax" withSubpackages="true" static="false" />
+      <package name="java" withSubpackages="true" static="false" />
+      <emptyLine />
+      <package name="com.sap" withSubpackages="true" static="false" />
+      <emptyLine />
+      <package name="" withSubpackages="true" static="true" />
+    </value>
+  </option>
+  <XML>
+    <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+  </XML>
+  <codeStyleSettings language="JAVA">
+    <arrangement>
+      <groups>
+        <group>
+          <type>GETTERS_AND_SETTERS</type>
+          <order>KEEP</order>
+        </group>
+        <group>
+          <type>OVERRIDDEN_METHODS</type>
+          <order>KEEP</order>
+        </group>
+        <group>
+          <type>DEPENDENT_METHODS</type>
+          <order>BREADTH_FIRST</order>
+        </group>
+      </groups>
+    </arrangement>
+  </codeStyleSettings>
+</code_scheme>
