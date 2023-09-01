@@ -9,6 +9,7 @@ on:
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+  MVN_SKIP_ARGS: "-Dformatter.skip -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip"
 
 jobs:
   ### Verify formatting ###
@@ -226,7 +227,7 @@ jobs:
           unzip -D target.zip
       - name: Checkstyle
         run: |
-          mvn $MVN_CLI_ARGS -Dformatter.skip -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
       - name: Checkstyle Results
         run: |
           python .pipeline/scripts/print-checkstyle.py
@@ -526,10 +527,9 @@ jobs:
           unzip -DD target.zip
       - name: Publish Snapshot
         run: >
-          mvn $MVN_CLI_ARGS
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS
           -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false -Dformatter.skip
-          -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
+          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false
           -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
           deploy
         env:
