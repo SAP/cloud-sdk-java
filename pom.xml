@@ -998,7 +998,6 @@
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>
 									<exclude>"**/soap/client/**"</exclude>
-									<exclude>"**/testclasses/**"</exclude>
 									<exclude>"**/cds/gen/**"</exclude>
 									<exclude>"**/servletjakarta/**"</exclude>
 									<exclude>**/odata/sample/**</exclude>
