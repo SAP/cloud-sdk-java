@@ -104,7 +104,7 @@ def calculate_percentage(covered, missed) :
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Filters the module inventory and returns Maven excludes.")
+        description="Parses code coverage reports and generates a Github Actions step summary.")
     parser.add_argument("--jacoco-report-pattern",
                         help="Glob pattern for JaCoCo reports in CSV format.",
                         required=True)
