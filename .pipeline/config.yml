@@ -9,6 +9,21 @@ steps:
     versioningModel: "major"
 
 stages:
+  test:
+    coverageThresholds:
+      # TODO: Switch to actual thresholds from previous pipeline once all modules are moved over
+      # instruction: 75
+      # branch: 68
+      # complexity: 66
+      # line: 76
+      # method: 73
+      # class: 82
+      instruction: -1
+      branch: -1
+      complexity: -1
+      line: -1
+      method: -1
+      class: -1
   codeCheck:
     checkstyle:
       high: '0'
