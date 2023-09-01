@@ -8,6 +8,7 @@ on:
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+  MVN_SKIP_ARGS: "-Dformatter.skip -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip"
 
 jobs:
   build:
@@ -75,6 +76,10 @@ jobs:
         run: |
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
           python .pipeline/scripts/print-spotbugs.py
+      - name: Checkstyle
+        run: |
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
+          python .pipeline/scripts/print-checkstyle.py
 
   archetypes:
     runs-on: ubuntu-latest
