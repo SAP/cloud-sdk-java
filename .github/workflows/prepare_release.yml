@@ -62,15 +62,15 @@ jobs:
           # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
           RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
 
-          mvn -q $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
-          zip -q -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          # mvn -q $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          # zip -q -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
-          gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --target $RELEASE_COMMIT_ID \
-            --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
+          # gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+          #   --target $RELEASE_COMMIT_ID \
+          #   --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+          #   --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
 
           rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
@@ -82,8 +82,6 @@ jobs:
 
           RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
           gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-             --body "# Todos \\n" \
-             "- [ ] Check diff of [version commit](https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID) \\n" \
-             "- [ ] Check [release notes]($RELEASE_URL)\n It will be merged automatically once approved and ready."
+             --body "# Todos \\n- [ ] Check diff of [version commit](https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID) \\n- [ ] Check [release notes]($RELEASE_URL)\n It will be merged automatically once approved and ready."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
