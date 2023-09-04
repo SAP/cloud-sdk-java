@@ -67,10 +67,10 @@ jobs:
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
-          gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --target $RELEASE_COMMIT_ID \
-            --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
+          # gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+          #   --target $RELEASE_COMMIT_ID \
+          #   --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+          #   --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
 
           # rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
@@ -80,8 +80,8 @@ jobs:
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
-          RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
-          PR_BODY=$(python .pipeline/scripts/print-release-summary.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID --release-url $RELEASE_URL)
+          # RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
+          PR_BODY=$(python .pipeline/scripts/print-release-summary.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID --release-url https://sap.com)
           gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
              --body $PR_BODY
         env:
