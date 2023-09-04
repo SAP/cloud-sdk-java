@@ -79,7 +79,7 @@ jobs:
           git commit -m "Update to version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
-          gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-             --body "**Pull request for releasing version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.** It will be merged automatically once approved and ready."
+
+          python .pipeline/scripts/print-release-summary.py --commit-url "https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID" --release-url "https://github.com/SAP/cloud-sdk-java/releases/tag/rel%2F${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
