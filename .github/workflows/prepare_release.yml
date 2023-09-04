@@ -82,7 +82,8 @@ jobs:
 
           # RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
           PR_BODY=$(python .pipeline/scripts/print-release-summary.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID --release-url https://sap.com)
+          echo $PR_BODY
           gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-             --body $PR_BODY
+             --body "$PR_BODY"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
