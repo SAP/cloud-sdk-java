@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 
 def write_release_summary(commit_url, release_url):
-    if "GITHUB_STEP_SUMMARY" in os.environ:
-        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-            print("## Release Summary", file=f)
-            print("### ToDos", file=f)
-            print(f"- Check diff of [version commit]({commit_url}).", file=f)
-            print(f"- Check [release notes]({release_url}).", file=f)
-
-
-    print(f"Commit URL: {commit_url}")
-    print(f"Release URL: {release_url}")
+    print(f"# ToDos \n- [ ] Check diff of [version commit]({commit_url}). \n- [ ] Check [release notes]({release_url}).")
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
