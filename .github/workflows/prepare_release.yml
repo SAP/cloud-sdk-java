@@ -80,6 +80,8 @@ jobs:
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
-          python .pipeline/scripts/print-release-summary.py --commit-url "https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID" --release-url "https://github.com/SAP/cloud-sdk-java/releases/tag/rel%2F${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
+          RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
+
+          python .pipeline/scripts/print-release-summary.py --commit-url "https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID" --release-url "$RELEASE_URL"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
