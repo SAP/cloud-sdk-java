@@ -25,6 +25,7 @@ def _update_version_tags(sdk_version):
         for file in files:
             if file == "pom.xml":
                 _update_file(os.path.join(root, file), r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
+                _update_file(os.path.join(root, file), r'(<cloud-sdk\.version>)(.*?)(</cloud-sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
                 if not "archetype-resources" in root:
                     _update_version_tag(os.path.join(root, file), sdk_version)
 
