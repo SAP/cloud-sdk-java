@@ -1,8 +1,8 @@
 name: Perform Release
 
 on:
-  pull_request_review:
-    types: [submitted]
+  release:
+    types: [published]
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -10,7 +10,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved' && startsWith(github.event.pull_request.title, 'Release ')
     permissions:
       contents: write
       pull-requests: write
@@ -18,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: 'main'
+          ref: '${{ github.event.release.tag_name }}'
           fetch-depth: '0'
 
       - name: Setup java
@@ -29,15 +28,8 @@ jobs:
           cache: maven
 
       - run: |
-          echo Release PR Branch name: "$RELEASE_PR_BRANCH_NAME"
-
-          # Extract version number from a string in the form of RELEASE-1.2.3
-          RELEASE_VERSION=$(echo "$RELEASE_PR_BRANCH_NAME" | cut -d "-" -f 2)
-          echo Release Version "$RELEASE_VERSION"
-          GIT_TAG="rel/$RELEASE_VERSION"
+          GIT_TAG=${{ github.event.release.tag_name }}
           echo Git Tag "$GIT_TAG"
-
-          gh release edit "$GIT_TAG" --draft=false
 
           gh release download "$GIT_TAG" --dir artifacts
           tree artifacts
