@@ -72,7 +72,7 @@ jobs:
           #   --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
           #   --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
 
-          rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          # rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
           python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
           git add .
@@ -82,6 +82,6 @@ jobs:
 
           RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
           gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-             --body "# Todos \\n- [ ] Check diff of [version commit](https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID) \\n- [ ] Check [release notes]($RELEASE_URL)\n It will be merged automatically once approved and ready."
+             --body `python .pipeline/scripts/print-release-summary.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID --release-url $RELEASE_URL`
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
