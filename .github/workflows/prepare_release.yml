@@ -81,7 +81,7 @@ jobs:
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
           RELEASE_URL=$(gh release view rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }} --json url | jq -r .url)
-
-          python .pipeline/scripts/print-release-summary.py --commit-url "https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID" --release-url "$RELEASE_URL"
+          gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
+             --body "# Todos \n - Check diff of [version commit](https://github.com/SAP/cloud-sdk-java/commit/$RELEASE_COMMIT_ID)\n - Check [release notes]($RELEASE_URL)\n It will be merged automatically once approved and ready."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
