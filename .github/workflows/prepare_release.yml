@@ -126,7 +126,6 @@ jobs:
           name: archetype-catalog
           path: ~/.m2/repository/archetype-catalog.xml
           retention-days: 1
-
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
@@ -141,6 +140,16 @@ jobs:
         run: |
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
           python .pipeline/scripts/print-spotbugs.py
+      - name: Create release package
+        run: |
+          mvn -q $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ needs.prepare-release.outputs.release_version }}
+          zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip rel-${{ needs.prepare-release.outputs.release_version }}
+      - name: Upload release package
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
+          retention-days: 1
 
   archetypes:
     runs-on: ubuntu-latest
@@ -304,8 +313,6 @@ jobs:
           category: "/language:java"
 
 
-
-
   create-release:
     runs-on: ubuntu-latest
     needs: [archetype, codeql, prepare-release]
@@ -313,15 +320,16 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      #      - name: Create release assets
-      #        id: prepare-release
-      #        run: |
-      #          mvn -q $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
-      #          zip -q -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.prepare-release.outputs.release_commit_id }}
+
+      - name: Download release package
+        uses: actions/download-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: .
 
       - name: Create release
         run: |
@@ -330,9 +338,10 @@ jobs:
             --title "Release ${{ needs.prepare-release.outputs.release_version }}" \
             --draft --generate-notes sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
 
-          rm -rf sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip rel-${{ needs.prepare-release.outputs.release_version }}
+          rm -rf sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set new snapshot version
         run: |
           python .pipeline/scripts/set-release-versions.py --version ${{ needs.prepare-release.outputs.new_snapshot }}
