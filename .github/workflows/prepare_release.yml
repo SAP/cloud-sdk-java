@@ -62,8 +62,8 @@ jobs:
           # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
           RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
 
-          mvn $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
-          zip -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          mvn -q $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          zip -q -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
