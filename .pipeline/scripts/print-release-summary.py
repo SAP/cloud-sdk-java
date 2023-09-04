@@ -8,8 +8,8 @@ def write_release_summary(commit_url, release_url):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
             print("## Release Summary", file=f)
             print("### ToDos", file=f)
-            print(f"- [ ] Check diff of [version commit]({commit_url}).", file=f)
-            print(f"- [ ] Check [release notes]({release_url}).", file=f)
+            print(f"- Check diff of [version commit]({commit_url}).", file=f)
+            print(f"- Check [release notes]({release_url}).", file=f)
 
 
     print(f"Commit URL: {commit_url}")
