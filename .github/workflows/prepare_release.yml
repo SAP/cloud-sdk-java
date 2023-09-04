@@ -54,6 +54,7 @@ jobs:
         id: prepare-release
         run: |
           BRANCH_NAME=RELEASE-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
           git switch --create $BRANCH_NAME
 
           python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
@@ -83,6 +84,8 @@ jobs:
           git add .
           git commit -m "Update to version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
           git push origin $BRANCH_NAME:$BRANCH_NAME
+        env:
+          BRANCH_NAME: ${{ steps.prepare-release.outputs.BRANCH_NAME }}
 
       - name: Create PR
         run: |
