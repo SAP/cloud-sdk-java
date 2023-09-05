@@ -35,4 +35,3 @@ jobs:
           #gh pr merge --rebase "$BRANCH_NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_PR_BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
