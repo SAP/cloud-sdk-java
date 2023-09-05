@@ -24,7 +24,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-          cache: maven
 
       - run: |
           #GIT_TAG=${{ github.event.release.tag_name }}
