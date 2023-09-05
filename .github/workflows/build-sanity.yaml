@@ -238,9 +238,20 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:java"
+
+  create_fosstars_report:
+    runs-on: ubuntu-latest
+    name: "Security rating"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: SAP/fosstars-rating-core-action@v1.14.0
+        with:
+          report-branch: fosstars-report
+          token: "${{ secrets.GH_CLOUD_SDK_JAVA_ADMIN_WRITE_TOKEN }}"
+
   notify-job:
     runs-on: ubuntu-latest
-    needs: [ build, archetypes, codeql ]
+    needs: [build, archetypes, codeql]
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
