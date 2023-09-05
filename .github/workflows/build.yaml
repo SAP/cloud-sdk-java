@@ -9,6 +9,7 @@ on:
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+  MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
 jobs:
   ### Verify formatting ###
@@ -34,10 +35,6 @@ jobs:
               "name": "POM File Sorting",
               "command": "com.github.ekryd.sortpom:sortpom-maven-plugin:verify",
             }
-          # - {
-          #     "name": "Checkstyle",
-          #     "command": "org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle",
-          #   }
     name: ${{ matrix.task.name }}
     steps:
       - name: Checkout
@@ -55,10 +52,6 @@ jobs:
       - name: ${{ matrix.task.name }}
         run: |
           mvn $MVN_CLI_ARGS ${{ matrix.task.command }}
-      - name: Checkstyle Results
-        if: ${{ contains(matrix.tool.name, 'Checkstyle') }}
-        run: |
-          python .pipeline/scripts/print-checkstyle.py
 
   build:
     runs-on: ubuntu-latest
@@ -191,6 +184,49 @@ jobs:
       - name: Coverage Report
         run: |
           python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
+
+  checkstyle:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Checkstyle
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+
+      # Target
+      - name: Download Target Dirs
+        uses: actions/download-artifact@v3
+        with:
+          name: target-dirs
+          path: .
+      - name: UNZIP Target Dirs
+        run: |
+          unzip -D target.zip
+      - name: Checkstyle
+        run: |
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
+      - name: Checkstyle Results
+        run: |
+          python .pipeline/scripts/print-checkstyle.py
 
   pmd:
     needs: build
@@ -443,7 +479,7 @@ jobs:
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [codeql, test, pmd, spotbugs, archetypes]
+    needs: [codeql, test, checkstyle, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -488,10 +524,9 @@ jobs:
           unzip -DD target.zip
       - name: Publish Snapshot
         run: >
-          mvn $MVN_CLI_ARGS
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS
           -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false -Dformatter.skip
-          -Denforcer.skip -Djacoco.skip -Dimpsort.skip -Dmdep.analyze.skip
+          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false
           -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
           deploy
         env:
