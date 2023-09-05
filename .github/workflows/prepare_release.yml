@@ -48,9 +48,6 @@ jobs:
       - run: 'echo Current Snapshot: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}'
       - run: 'echo New Snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}'
 
-      - name: Quality Gate
-        run: echo todo quality gate here
-
       - name: Prepare git
         run: |
           git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
@@ -333,6 +330,11 @@ jobs:
         with:
           name: cloud-sdk-package
           path: .
+
+      - name: Prepare git
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
 
       - name: Create release
         run: |
