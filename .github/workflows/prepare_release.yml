@@ -357,7 +357,7 @@ jobs:
       - name: Create PR
         run: |
           RELEASE_URL=$(gh release view rel/${{ needs.prepare-release.outputs.release_version }} --json url | jq -r .url)
-          PR_BODY=$(python .pipeline/scripts/print-release-summary.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/${{ needs.prepare-release.outputs.release_commit_id }} --release-url $RELEASE_URL)
+          PR_BODY=$(python .pipeline/scripts/print_pr_body.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/${{ needs.prepare-release.outputs.release_commit_id }} --release-url $RELEASE_URL)
 
           gh pr create --title "Release ${{ needs.prepare-release.outputs.release_version }}" \
              --body "$PR_BODY"

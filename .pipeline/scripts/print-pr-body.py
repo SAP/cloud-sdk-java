@@ -2,8 +2,14 @@
 
 import argparse
 
-def write_release_summary(commit_url, release_url):
-    print(f"# ToDos \n- [ ] Check diff of [version commit]({commit_url}). \n- [ ] Check [release notes]({release_url}).")
+def print_pr_body(commit_url, release_url):
+    print(f"# ToDos\n\n"
+          f"Perform these steps in order:\n\n"
+          f"- [ ] Check diff of [version update commit]({commit_url})\n"
+          f"- [ ] Approve this PR if appropriate\n"
+          f"- [ ] Check release notes, **edit** the [release]({release_url}) and **Publish** it (triggers workflow)\n\n"
+          f"The `perform_release` workflow will automatically merge this PR once the release is published."
+          )
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
@@ -16,7 +22,7 @@ def main():
                         required=True)
     args = parser.parse_args()
 
-    write_release_summary(args.commit_url, args.release_url)
+    print_pr_body(args.commit_url, args.release_url)
 
 if __name__ == '__main__':
     main()
