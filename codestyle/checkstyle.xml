@@ -88,7 +88,7 @@
 			<property name="severity" value="warning"/>
 		</module>
 		<module name="TodoComment">
-      <property name="format" value="(TODO)|(FIXME)"/>
-    </module>
+			<property name="format" value="(TODO)|(FIXME)"/>
+		</module>
 	</module>
 </module>
