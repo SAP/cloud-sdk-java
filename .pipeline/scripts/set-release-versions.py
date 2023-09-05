@@ -17,7 +17,8 @@ class _CommentedTreeBuilder(ElementTree.TreeBuilder):
 def _update_pom_files(sdk_version):
     _update_version_tags(sdk_version)
 
-    _update_file("latest.json", r'^.*?$', r'{"version": "%s"}' % sdk_version)
+    with open("latest.json", "w") as f:
+        f.write('{\n    "version": "%s"\n}\n' % sdk_version)
 
 
 def _update_version_tags(sdk_version):
