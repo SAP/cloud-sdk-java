@@ -3,6 +3,11 @@ name: Perform Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Name of the tag to release'
+        required: true
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -22,7 +27,8 @@ jobs:
           cache: maven
 
       - run: |
-          GIT_TAG=${{ github.event.release.tag_name }}
+          #GIT_TAG=${{ github.event.release.tag_name }}
+          GIT_TAG=${{ github.event.inputs.release_tag }}
           echo Git Tag "$GIT_TAG"
 
           gh release download "$GIT_TAG" --dir artifacts
