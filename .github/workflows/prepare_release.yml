@@ -323,7 +323,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.prepare-release.outputs.release_commit_id }}
+          ref: ${{ needs.prepare-release.outputs.branch_name }}
 
       - name: Download release package
         uses: actions/download-artifact@v3
@@ -352,9 +352,7 @@ jobs:
           python .pipeline/scripts/set-release-versions.py --version ${{ needs.prepare-release.outputs.new_snapshot }}
           git add .
           git commit -m "Update to version ${{ needs.prepare-release.outputs.new_snapshot }}"
-          git push origin $BRANCH_NAME:$BRANCH_NAME
-        env:
-          BRANCH_NAME: ${{ needs.prepare-release.outputs.branch_name }}
+          git push
 
       - name: Create PR
         run: |
