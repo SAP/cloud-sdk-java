@@ -21,6 +21,7 @@ Prerequisites:
 - [Git](https://git-scm.com/downloads)
 - [Any OpenJDK variant, for example SapMachine](https://sap.github.io/SapMachine/)
 - [Maven](https://maven.apache.org/)
+- (Optional) [Intellij](./docs/how-to/setup-intellij.md)
 
 We provide maven archetypes which are the recommended way to start new projects based on SAP Cloud SDK for Java.
 
