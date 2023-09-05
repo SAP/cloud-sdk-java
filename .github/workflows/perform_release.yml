@@ -30,7 +30,7 @@ jobs:
           GIT_TAG=${{ github.event.inputs.release_tag }}
           echo Git Tag "$GIT_TAG"
 
-          gh release download "$GIT_TAG" --dir artifacts
+          gh release download "$GIT_TAG" --dir artifacts --repo "SAP/cloud-sdk-java"
           tree artifacts
           # todo deploy to maven central
 
