@@ -14,12 +14,6 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: '${{ github.event.release.tag_name }}'
-          fetch-depth: '0'
-
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -35,7 +29,10 @@ jobs:
           tree artifacts
           # todo deploy to maven central
 
-          gh pr merge --rebase "$RELEASE_PR_BRANCH_NAME"
+          BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
+          echo Branch Name "$BRANCH_NAME"
+
+          #gh pr merge --rebase "$BRANCH_NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_PR_BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
