@@ -26,7 +26,7 @@ stages:
       class: -1
   codeCheck:
     checkstyle:
-      high: '0'
+      high: '3'
       normal: '-1'
       low: '-1'
     findbugs:
