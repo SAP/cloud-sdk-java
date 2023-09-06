@@ -350,6 +350,10 @@ jobs:
           DETECT_TIMEOUT: 7200
           # Fixme: Use real project version
           PROJECT_VERSION: "5"
+      - name: Fill summary with TODO
+        run: |
+          echo "# TODO" >> $GITHUB_STEP_SUMMARY
+          echo "Fix the project version of the Blackduck scan once it is version 5.x in the pom!" >> $GITHUB_STEP_SUMMARY
 
   create_fosstars_report:
     name: "Security rating"
