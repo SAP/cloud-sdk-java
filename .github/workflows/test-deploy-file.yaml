@@ -34,7 +34,12 @@ jobs:
 
           echo mvn -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk -Dfile=$JAR_PATH -Dfiles=./v0.0.1/cloud-sdk-core-0.0.1.jar deploy:deploy-file
 
-          mvn -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk -Dfile=$JAR_PATH -Dfiles=./v0.0.1/cloud-sdk-core-0.0.1.jar deploy:deploy-file
+          mvn
+          -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -Dfile=$JAR_PATH
+          -Dfiles=./v0.0.1/cloud-sdk-core-0.0.1.jar
+          -Dtypes=jar
+          deploy:deploy-file
 
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
