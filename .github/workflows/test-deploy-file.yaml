@@ -39,6 +39,7 @@ jobs:
           -Dfile=$JAR_PATH
           -Dfiles=./v0.0.1/cloud-sdk-core-0.0.1.jar
           -Dtypes=jar
+          -Dclassifiers=bin
           deploy:deploy-file
 
         env:
