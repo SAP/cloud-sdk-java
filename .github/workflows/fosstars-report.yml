@@ -1,8 +1,6 @@
 name: "Fosstars (Security)"
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
   schedule:
     - cron: "0 0 * * *"
 
