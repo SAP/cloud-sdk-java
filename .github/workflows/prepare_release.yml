@@ -366,7 +366,7 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
-    needs: [archetypes, codeql, prepare-release]
+    needs: [archetypes, codeql, prepare-release, scan, create_fosstars_report]
     name: Create Draft Release
     permissions:
       contents: write
@@ -417,7 +417,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   notify-job:
     runs-on: ubuntu-latest
-    needs: [prepare-release, build, archetypes, codeql, create-release]
+    needs: [prepare-release, build, archetypes, codeql, create-release, scan, create_fosstars_report]
     if: ${{ failure() }}
     steps:
       - name: Checkout
