@@ -30,11 +30,11 @@ jobs:
         run: >
           mvn $MVN_CLI_ARGS
           -Dmaven.test.skip=true
+          -DaltDeploymentRepository=local::file:./v0.0.1
           package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy
-          -DaltReleaseDeploymentRepository=local::file:./v0.0.1
 
           mvn
-          -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -DaltDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -Dfile=./v0.0.1/com/sap/cloud/sdk/datamodel/fluent-result/0.0.1-SNAPSHOT/fluent-result-0.0.1-SNAPSHOT.jar
           -Dfiles=./v0.0.1/cloud-sdk-core-0.0.1.jar
           deploy:deploy-file
