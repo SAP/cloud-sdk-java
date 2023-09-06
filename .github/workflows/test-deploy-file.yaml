@@ -11,89 +11,8 @@ env:
   MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    # Permissions block is optional, useful for dependabot checks
-    permissions:
-      checks: write
-      contents: read
-    name: Build
-    outputs:
-      version: ${{ steps.get-version.outputs.VERSION }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Determine Version
-        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
-        id: get-version
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Compile
-        # we need to use install here because otherwise the code checks below don't work
-        # they require the JARs of all modules to work, so those need to be installed
-        run: |
-          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
-      - name: Local Changes Check
-        run: |
-          CHANGED_FILES="$(git --no-pager diff --name-only)"
-          if [ ! -z "$CHANGED_FILES" ]; then
-              echo "There are local changes in the following files:"
-              echo "$CHANGED_FILES"
-              echo "Printing the git diff:"
-              git --no-pager diff
-              exit 1
-          fi
-
-      # M2
-      - name: ZIP M2 SDK Directory
-        run: |
-          cd $HOME/.m2/repository/com/sap/cloud/sdk
-          zip -r m2-sdk.zip .
-      - name: Upload M2 SDK Directory
-        uses: actions/upload-artifact@v3
-        with:
-          name: m2-sdk
-          path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
-          retention-days: 1
-      - name: Upload Archetype Catalog
-        uses: actions/upload-artifact@v3
-        with:
-          name: archetype-catalog
-          path: ~/.m2/repository/archetype-catalog.xml
-          retention-days: 1
-      - name: Purge SDK Artifacts from Maven Repository
-        run: |
-          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
-        continue-on-error: true
-      - name: Save Maven Repository
-        uses: actions/cache/save@v3
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        id: save-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      # Target
-      - name: ZIP Target Dirs
-        run: |
-          zip -r target.zip $(find . -path './**/target/**/*')
-      - name: Upload Target Dirs
-        uses: actions/upload-artifact@v3
-        with:
-          name: target-dirs
-          path: target.zip
-          retention-days: 1
-
   deploy-file:
     name: Test Deploy File
-    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
