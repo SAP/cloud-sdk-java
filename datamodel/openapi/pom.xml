@@ -33,7 +33,6 @@
 		<module>openapi-core</module>
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
-		<module>openapi-generator-cli</module>
 		<module>openapi-api-sample</module>
 	</modules>
 	<scm>
