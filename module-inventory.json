@@ -101,16 +101,6 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
-    "artifactId": "openapi-generator-cli",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "datamodel/openapi/openapi-generator-cli/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.datamodel",
-    "parentArtifactId": "openapi-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-generator-maven-plugin",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
