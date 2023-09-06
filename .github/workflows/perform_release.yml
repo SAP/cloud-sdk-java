@@ -3,11 +3,6 @@ name: Perform Release
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'Name of the tag to release'
-        required: true
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -18,26 +13,44 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      branch_name: ${{ steps.perform-release.outputs.BRANCH_NAME }}
     steps:
       - name: Setup java
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
           java-version: "17"
-          cache: maven
 
-      - run: |
-          #GIT_TAG=${{ github.event.release.tag_name }}
-          GIT_TAG=${{ github.event.inputs.release_tag }}
+      - name: Perform Release
+        id: perform-release
+        run: |
+          BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
+          echo Branch Name "$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          GIT_TAG=${{ github.event.release.tag_name }}
           echo Git Tag "$GIT_TAG"
 
-          gh release download "$GIT_TAG" --dir artifacts
+          gh release download "$GIT_TAG" --dir artifacts --repo "SAP/cloud-sdk-java"
           tree artifacts
           # todo deploy to maven central
 
-          BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
-          echo Branch Name "$BRANCH_NAME"
-
-          #gh pr merge --rebase "$BRANCH_NAME"
+          gh pr merge --rebase "$BRANCH_NAME" --repo "SAP/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-job:
+    runs-on: ubuntu-latest
+    needs: [ release ]
+    if: ${{ failure() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Notify
+        run: python .pipeline/scripts/notify.py
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          WORKFLOW: ${{ github.workflow }}
+          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+          BRANCH_NAME: ${{ needs.release.outputs.branch_name }}

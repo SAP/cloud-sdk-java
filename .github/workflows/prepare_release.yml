@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version, leave empty for default value based on current snapshot'
+        description: "Release version, leave empty for default value based on current snapshot"
         required: false
 
 env:
@@ -14,15 +14,20 @@ env:
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
+    name: Prepare
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      branch_name: ${{ steps.prepare-release.outputs.BRANCH_NAME }}
+      release_commit_id: ${{ steps.prepare-release.outputs.RELEASE_COMMIT_ID }}
+      release_version: ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+      new_snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           ref: 'main'
-          fetch-depth: '0'
 
       - name: Setup java
         uses: actions/setup-java@v3
@@ -31,7 +36,6 @@ jobs:
           java-version: "17"
           cache: maven
 
-
       - name: Determine Release Version
         run: |
           python .pipeline/scripts/get-release-versions.py
@@ -39,20 +43,21 @@ jobs:
         env:
           INPUT_VERSION: ${{ github.event.inputs.release_version }}
 
-      - run: 'echo Release Version: ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}'
-      - run: 'echo Current Snapshot: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}'
-      - run: 'echo New Snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}'
+      - run: "echo Release Version: ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}"
+      - run: "echo Current Snapshot: ${{ steps.get-release-versions.outputs.CURRENT_SNAPSHOT }}"
+      - run: "echo New Snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
 
-      - name: Quality Gate
-        run: echo todo quality gate here
-
-      - run: |
+      - name: Prepare git
+        run: |
           git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
           git config --global user.name "Maven Central Release Script"
 
-      - name: Prepare release
+      - name: Set release version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+        id: prepare-release
         run: |
+          # NOTE: If you change this pattern here, also adjust perform_release.yml:
           BRANCH_NAME=RELEASE-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
           git switch --create $BRANCH_NAME
 
           python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
@@ -61,25 +66,370 @@ jobs:
 
           # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
           RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
-
-          mvn $MVN_CLI_ARGS package org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
-          zip -r sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+          echo "RELEASE_COMMIT_ID=$RELEASE_COMMIT_ID" >> $GITHUB_OUTPUT
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
 
-          gh release create "rel/${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --target $RELEASE_COMMIT_ID \
-            --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-            --draft --generate-notes sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip
+  build:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    # Permissions block is optional, useful for dependabot checks
+    permissions:
+      checks: write
+      contents: read
+    name: Test/Install/Package
+    outputs:
+      version: ${{ steps.get-version.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_commit_id }}
+      - name: Determine Version
+        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
+        id: get-version
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: Test/Install/Package
+        run: |
+          mvn $MVN_CLI_ARGS install jacoco:report org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ needs.prepare-release.outputs.release_version }}
+          zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip rel-${{ needs.prepare-release.outputs.release_version }}
+      - name: Local Changes Check
+        run: |
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [ ! -z "$CHANGED_FILES" ]; then
+              echo "There are local changes in the following files:"
+              echo "$CHANGED_FILES"
+              echo "Printing the git diff:"
+              git --no-pager diff
+              exit 1
+          fi
 
-          rm -rf sap-cloud-sdk-java-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.zip rel-${{ steps.get-release-versions.outputs.RELEASE_VERSION }}
+      - name: ZIP M2 SDK Directory
+        run: |
+          cd $HOME/.m2/repository/com/sap/cloud/sdk
+          zip -r m2-sdk.zip .
+      - name: Upload M2 SDK Directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: m2-sdk
+          path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
+          retention-days: 1
+      - name: Upload Archetype Catalog
+        uses: actions/upload-artifact@v3
+        with:
+          name: archetype-catalog
+          path: ~/.m2/repository/archetype-catalog.xml
+          retention-days: 1
+      - name: Test Report
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
+      - name: Coverage Report
+        run: |
+          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
+      - name: PMD
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+          python .pipeline/scripts/print-pmd.py
+      - name: Spotbugs
+        run: |
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+          python .pipeline/scripts/print-spotbugs.py
+      - name: Upload release package
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
+          retention-days: 1
 
-          python .pipeline/scripts/set-release-versions.py --version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
-          git add .
-          git commit -m "Update to version ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}"
+  archetypes:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      checks: write
+      contents: read
+    strategy:
+      matrix:
+        task:
+          - {
+              "archetype": "scp-cf-spring",
+              "javaVersion": 8,
+              "startCommand": "mvn spring-boot:run -B",
+            }
+          - {
+              "archetype": "scp-cf-spring-jakarta",
+              "javaVersion": 17,
+              "startCommand": "mvn spring-boot:run -B",
+            }
+    name: ${{ matrix.task.archetype }}
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven-central
+      - name: Download M2 SDK Directory
+        uses: actions/download-artifact@v3
+        with:
+          name: m2-sdk
+          path: .
+      - name: UNZIP M2 SDK Directory
+        run: |
+          mkdir -p ~/.m2/repository/com/sap/cloud/sdk
+          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-          git push origin $BRANCH_NAME:$BRANCH_NAME
-          gh pr create --title "Release ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}" \
-             --body "**Pull request for releasing version ${{ steps.get-release-versions.outputs.RELEASE_VERSION }}.** It will be merged automatically once approved and ready."
+      - name: Download Archetype Catalog
+        uses: actions/download-artifact@v3
+        with:
+          name: archetype-catalog
+          path: ~/.m2/repository/archetype-catalog.xml
+
+      - name: Generate ${{ matrix.task.archetype }}
+        run: >
+          mvn archetype:generate -B
+          -DarchetypeCatalog=local
+          -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
+          -DarchetypeArtifactId=${{ matrix.task.archetype }}
+          -DarchetypeVersion=${{ needs.build.outputs.version }}
+          -DgroupId=com.sap.test
+          -DartifactId=example-${{ matrix.task.archetype }}
+          -Dversion=1.0-SNAPSHOT
+          -Dpackage=com.sap.test
+          -Dhttp.keepAlive=false
+
+      #      - name: Verify ${{ matrix.task.archetype }}
+      #        working-directory: ./example-${{ matrix.task.archetype }}
+      #        run: >
+      #          mvn clean verify -B
+      #          -Dhttp.keepAlive=false
+      #          -Dmaven.test.skip=true
+      #      - name: Test ${{ matrix.task.name }}
+      #        working-directory: ./example-${{ matrix.task.archetype }}
+      #        run: mvn test -B -Dsurefire.logLevel='error'
+      #      - name: Spotbugs ${{ matrix.task.archetype }}
+      #        working-directory: ./example-${{ matrix.task.archetype }}
+      #        run: >
+      #          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
+      #          -pl !integration-tests
+      #          -Dhttp.keepAlive=false
+      #          -Dmaven.wagon.http.pool=false
+      #
+      #      - name: Start ${{ matrix.task.archetype }}
+      #        working-directory: ./example-${{ matrix.task.archetype }}/application
+      #        run: |
+      #          logFilePath=log.txt
+      #          ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
+      #
+      #          if ! curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
+      #            echo "Project generated from archetype ${{ matrix.task.archetype }} failed to start locally."
+      #            cat $logFilePath
+      #            exit 1
+      #          fi
+      #
+      #          if ! grep -q "I am running!" $logFilePath; then
+      #            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but did not contain the expected log output."
+      #            cat $logFilePath
+      #            exit 1
+      #          fi
+      #
+      #          if grep -iq "caused by" $logFilePath; then
+      #            echo "Project generated from archetype ${{ matrix.task.archetype }} started locally, but an unexpected error occurred."
+      #            cat $logFilePath
+      #            exit 1
+      #          fi
+      #
+      #      - name: Verify .gitignore ${{ matrix.task.archetype }}
+      #        working-directory: ./example-${{ matrix.task.archetype }}
+      #        run: |
+      #          if [ ! -f .gitignore ]; then
+      #              ls -lah
+      #              echo "Project generated from archetype does not contain a .gitignore file."
+      #              exit 1
+      #          fi
+      #
+      #      - name: Purge SDK Artifacts from Maven Repository
+      #        run: |
+      #          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+      #      - name: Save Maven Repository
+      #        uses: actions/cache/save@v3
+      #        if: steps.restore-cache.outputs.cache-hit != 'true'
+      #        id: save-cache
+      #        with:
+      #          path: ~/.m2/repository
+      #          key: maven-central
+      - name: Fill summary with TODO
+        run: |
+          echo "# TODO" >> $GITHUB_STEP_SUMMARY
+          echo "Enable archetypes tests once all modules are migrated to github.com!" >> $GITHUB_STEP_SUMMARY
+
+  codeql:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_commit_id }}
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "java"
+          queries: security-extended
+
+      # M2
+      - name: Load Maven Repository
+        uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          path: ~/.m2/repository
+          key: maven
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
+
+  scan:
+    name: "Blackduck Scan"
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: ${{ needs.prepare-release.outputs.branch_name }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: maven
+
+      # Fixme: Use major version from pom once it is 5.x
+      - name: Get SDK Version
+        run: |
+          echo "project_version_NOT_YET_IN_USE=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d '.' -f 1)" >> $GITHUB_ENV
+
+      - name: Determine Maven Excludes
+        run: |
+          python .pipeline/scripts/get-maven-excludes.py --filter-key excludeFromBlackDuckScan --filter-value True
+        id: get-maven-excludes-for-blackduck
+
+      - name: Blackduck Scan
+        uses: SAP/project-piper-action@27cadf261545552a68660531476c0915a97ee3d8
+        with:
+          command: detectExecuteScan
+          flags: \
+            --version=$PROJECT_VERSION \
+        env:
+          PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
+          DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }},openapi-generator-cli
+          DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }},!:openapi-generator-cli
+          DETECT_TIMEOUT: 7200
+          # Fixme: Use real project version
+          PROJECT_VERSION: "5"
+      - name: Fill summary with TODO
+        run: |
+          echo "# TODO" >> $GITHUB_STEP_SUMMARY
+          echo "Fix the project version of the Blackduck scan once it is version 5.x in the pom!" >> $GITHUB_STEP_SUMMARY
+
+  create_fosstars_report:
+    name: "Security rating"
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prepare-release.outputs.branch_name }}
+      - uses: SAP/fosstars-rating-core-action@v1.14.0
+        with:
+          report-branch: fosstars-report
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [archetypes, codeql, prepare-release, scan, create_fosstars_report]
+    name: Create Draft Release
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prepare-release.outputs.branch_name }}
+
+      - name: Download release package
+        uses: actions/download-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: .
+
+      - name: Prepare git
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: Create release
+        run: |
+          gh release create "rel/${{ needs.prepare-release.outputs.release_version }}" \
+            --target ${{ needs.prepare-release.outputs.release_commit_id }} \
+            --title "Release ${{ needs.prepare-release.outputs.release_version }}" \
+            --draft --generate-notes sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
+
+          rm -rf sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set new snapshot version
+        run: |
+          python .pipeline/scripts/set-release-versions.py --version ${{ needs.prepare-release.outputs.new_snapshot }}
+          git add .
+          git commit -m "Update to version ${{ needs.prepare-release.outputs.new_snapshot }}"
+          git push
+
+      - name: Create PR
+        run: |
+          RELEASE_URL=$(gh release view rel/${{ needs.prepare-release.outputs.release_version }} --json url | jq -r .url)
+          PR_BODY=$(python .pipeline/scripts/print-pr-body.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/${{ needs.prepare-release.outputs.release_commit_id }} --release-url $RELEASE_URL)
+
+          gh pr create --title "Release ${{ needs.prepare-release.outputs.release_version }}" \
+             --body "$PR_BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  notify-job:
+    runs-on: ubuntu-latest
+    needs: [prepare-release, build, archetypes, codeql, create-release, scan, create_fosstars_report]
+    if: ${{ failure() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Notify
+        run: python .pipeline/scripts/notify.py
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          WORKFLOW: ${{ github.workflow }}
+          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+          BRANCH_NAME: ${{ needs.prepare-release.outputs.branch_name }}

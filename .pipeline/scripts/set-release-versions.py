@@ -17,21 +17,18 @@ class _CommentedTreeBuilder(ElementTree.TreeBuilder):
 def _update_pom_files(sdk_version):
     _update_version_tags(sdk_version)
 
-    _update_file("latest.json", r'^.*?$', r'{"version": "%s"}' % sdk_version)
-    _update_file("pom.xml", r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
-    _update_file("bom/pom.xml", r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
-    _update_file("modules-bom/pom.xml", r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
-    _update_file("bom-buildpack/pom.xml", r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
-    _update_file("tests/pom.xml", r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
+    with open("latest.json", "w") as f:
+        f.write('{\n    "version": "%s"\n}\n' % sdk_version)
 
 
 def _update_version_tags(sdk_version):
     for root, dirs, files in os.walk(os.getcwd()):
-        if "archetype-resources" in root:
-            continue
         for file in files:
             if file == "pom.xml":
-                _update_version_tag(os.path.join(root, file), sdk_version)
+                _update_file(os.path.join(root, file), r'(<sdk\.version>)(.*?)(</sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
+                _update_file(os.path.join(root, file), r'(<cloud-sdk\.version>)(.*?)(</cloud-sdk\.version>)', r'\g<1>%s\g<3>' % sdk_version)
+                if not "archetype-resources" in root:
+                    _update_version_tag(os.path.join(root, file), sdk_version)
 
 
 def _update_version_tag(pom_file, sdk_version):
