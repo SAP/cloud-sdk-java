@@ -30,7 +30,7 @@ jobs:
         run: >
           mvn $MVN_CLI_ARGS -DskipTests install org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltDeploymentRepository=local::file:./v0.0.1
 
-          ls -la ./v0.0.1/com/sap/cloud/sdk/datamodel/fluent-result/0.0.1-SNAPSHOT/**
+          python .pipeline/scripts/get-deploy-filenames.py --path "./v0.0.1"
 
           mvn
           -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
