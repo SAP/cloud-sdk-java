@@ -6,7 +6,7 @@ import os
 
 def write_file_paths_to_output(path):
     all_jar_files = glob.glob(path + "/**/*.jar", recursive=True)
-    print("All jar files: ", all_jar_files)
+    print(all_jar_files[0])
 
     # github_output = os.environ.get("GITHUB_OUTPUT")
     # with open(github_output, "a") as f:
