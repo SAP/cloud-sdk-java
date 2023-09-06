@@ -39,12 +39,13 @@ pom_end = """
 </project>
 """
 
-def generate_pom():
+
+def generate_pom(sdk_version, target_pom_path):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
-        with open("pom.xml", "w") as f:
-            f.write(pom_beginning)
+        with open(target_pom_path, "w") as f:
+            f.write(pom_beginning.replace("${sdkVersion}", sdk_version))
             f.write(pom_begin_install_plugin)
 
             for module in module_inventory:
@@ -56,10 +57,10 @@ def generate_pom():
                           <goal>install-file</goal>
                       </goals>
                       <configuration>
-                          <file>${{project.basedir}}/dist/{module["artifactId"]}-{module["version"]}.jar</file>
+                          <file>${{project.basedir}}/dist/{module["artifactId"]}-{sdk_version}.jar</file>
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
-                          <version>{module["version"]}</version>
+                          <version>{sdk_version}</version>
                           <packaging>{module["packagingType"]}</packaging>
                       </configuration>
                   </execution>
@@ -67,7 +68,8 @@ def generate_pom():
             f.write(pom_end_plugin)
             f.write(pom_begin_deploy_plugin)
             for module in module_inventory:
-                artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + module["version"] + "/" + module["artifactId"] + "-" + module["version"]
+                artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
+                                + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packagingType"]
                 pom_path = artifact_path + ".pom"
                 f.write(f"""
@@ -82,7 +84,7 @@ def generate_pom():
                           <pomFile>${pom_path}</pomFile>
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
-                          <version>{module["version"]}</version>
+                          <version>{sdk_version}</version>
                           <packaging>{module["packagingType"]}</packaging>
                       </configuration>
                   </execution>
@@ -92,14 +94,19 @@ def generate_pom():
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Filters the module inventory and returns Maven excludes.")
+        description="Iterates the module inventory and generates a pom.xml file for installing or deploying all "
+                    "module artifacts.")
     parser.add_argument("--version",
                         help="Version of the artifacts.",
                         required=True)
+    parser.add_argument("--pomFile",
+                        help="Path to the pom.xml file that is to be generated.",
+                        required=True)
 
-    args = parser.parse_args(args.version)
+    args = parser.parse_args()
 
-    generate_pom()
+    generate_pom(args.version, args.pomFile)
+
 
 if __name__ == '__main__':
     main()
