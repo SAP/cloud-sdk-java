@@ -49,6 +49,9 @@ def generate_pom(sdk_version, target_pom_path):
             f.write(pom_begin_install_plugin)
 
             for module in module_inventory:
+                artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
+                                + "/" + module["artifactId"] + "-" + sdk_version
+                file = artifact_path + "." + module["packagingType"]
                 f.write(f"""
                   <execution>
                       <id>install-{module["artifactId"]}</id>
@@ -57,7 +60,8 @@ def generate_pom(sdk_version, target_pom_path):
                           <goal>install-file</goal>
                       </goals>
                       <configuration>
-                          <file>${{project.basedir}}/dist/{module["artifactId"]}-{sdk_version}.jar</file>
+                          <file>${file}</file>
+                          <pomFile>${pom_path}</pomFile>
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
                           <version>{sdk_version}</version>
