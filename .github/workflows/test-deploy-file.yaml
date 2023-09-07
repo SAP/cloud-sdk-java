@@ -32,6 +32,8 @@ jobs:
           
           python .pipeline/scripts/generate-pom.py --version 0.0.1-SNAPSHOT --pomFile ./v0.0.1/pom.xml
 
+          zip -q -r sap-cloud-sdk-java-v0.0.1.zip ./v0.0.1
+
           mvn
           -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           deploy:deploy-file
@@ -43,6 +45,13 @@ jobs:
           # -Dtypes=jar
           # -Dclassifiers=bin
           # deploy:deploy-file
+
+      - name: Upload Test Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-zip
+          path: sap-cloud-sdk-java-v0.0.1.zip
+          retention-days: 1
 
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
