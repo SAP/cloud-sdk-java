@@ -61,7 +61,7 @@ def generate_pom(sdk_version, target_pom_path):
                 pom_path = "artifacts/" + module["pomFile"]
                 if module["packaging"] == "pom":
                     file = pom_path
-                elif module["packaging"] == "maven-archetype":
+                elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
                     file = artifact_path + ".jar"
                 f.write(f"""
                   <execution>
@@ -92,7 +92,7 @@ def generate_pom(sdk_version, target_pom_path):
                 pom_path = "artifacts/" + module["pomFile"]
                 if module["packaging"] == "pom":
                     file = pom_path
-                elif module["packaging"] == "maven-archetype":
+                elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
                     file = artifact_path + ".jar"
                 f.write(f"""
                   <execution>
