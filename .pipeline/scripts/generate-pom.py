@@ -43,7 +43,7 @@ pom_end = """
 def get_module_target_path(module, sdk_version):
     # return module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version \
     #    + "/" + module["artifactId"] + "-" + sdk_version
-    return module["pomFile"].replace("/pom.xml", "/artifacts/target")
+    return "artifacts/" + module["pomFile"].replace("/pom.xml", "/target")
 
 
 def generate_pom(sdk_version, target_pom_path):
