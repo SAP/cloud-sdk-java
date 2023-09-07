@@ -52,7 +52,7 @@ jobs:
         run: >
           mvn
           $MVN_CLI_ARGS
-          -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -DaltDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           deploy
 
           # mvn
