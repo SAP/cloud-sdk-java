@@ -80,6 +80,9 @@ def generate_pom(path_prefix, sdk_version):
             f.write(pom_begin_install_plugin)
 
             for module in module_inventory:
+                if module["releaseAudience"] != "Public":
+                    continue
+
                 artifact_path = get_module_dest_path(module) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
