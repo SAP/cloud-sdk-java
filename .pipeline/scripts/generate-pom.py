@@ -59,6 +59,8 @@ def generate_pom(sdk_version, target_pom_path):
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
+                if module["packaging"] == "pom":
+                    file = pom_path
                 f.write(f"""
                   <execution>
                       <id>install-{module["artifactId"]}</id>
@@ -86,6 +88,8 @@ def generate_pom(sdk_version, target_pom_path):
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
+                if module["packaging"] == "pom":
+                    file = pom_path
                 f.write(f"""
                   <execution>
                       <id>deploy-{module["artifactId"]}</id>

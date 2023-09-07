@@ -51,6 +51,7 @@ jobs:
         working-directory: ./release
         run: >
           mvn
+          $MVN_CLI_ARGS
           -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           deploy
 
