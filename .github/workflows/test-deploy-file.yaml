@@ -32,7 +32,7 @@ jobs:
           
           mkdir -p release/artifacts
           
-          find . -path './**/target/**/*' -exec cp --parents {} ./release/artifacts \;
+          find . -path './**/target/*' -exec cp --parents {} ./release/artifacts \;
           
           find . -path './**/pom.xml' -exec cp --parents {} ./release/artifacts \;
           
