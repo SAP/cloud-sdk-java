@@ -23,6 +23,7 @@ pom_begin_deploy_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
 """
 
