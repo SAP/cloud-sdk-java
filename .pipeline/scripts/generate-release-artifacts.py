@@ -11,6 +11,7 @@ pom_beginning = """
     <version>${sdkVersion}</version>
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
     </properties>
     <build>
         <plugins>
