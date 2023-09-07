@@ -1,6 +1,7 @@
 import os
 import json
 import argparse
+import shutil
 
 pom_beginning = """
 <project>
@@ -41,22 +42,45 @@ pom_end = """
 """
 
 
-def get_module_target_path(module, sdk_version):
-    # return module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version \
-    #    + "/" + module["artifactId"] + "-" + sdk_version
-    return "artifacts/" + module["pomFile"].replace("pom.xml", "target")
+def get_module_source_path(module):
+    return module["pomFile"].replace("pom.xml", "target")
 
 
-def generate_pom(sdk_version, target_pom_path):
+def get_module_dest_path(module):
+    return os.path.join("artifacts", module["pomFile"].replace("pom.xml", ""))
+
+
+def copy_artifacts(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
-        with open(target_pom_path, "w") as f:
+        for module in module_inventory:
+            if module["releaseAudience"] != "Public":
+                continue
+
+            dst_path = os.path.join(path_prefix, get_module_dest_path(module))
+            os.makedirs(dst_path, exist_ok=True)
+
+            shutil.copyfile(module["pomFile"], os.path.join(dst_path, "pom.xml"))
+
+            if module["packaging"] != "pom":
+                src_path = get_module_source_path(module)
+
+                src_artifact = os.path.join(src_path, module["artifactId"] + "-" + sdk_version + ".jar")
+                dst_artifact = os.path.join(dst_path, module["artifactId"] + "-" + sdk_version + ".jar")
+                shutil.copyfile(src_artifact, dst_artifact)
+
+
+def generate_pom(path_prefix, sdk_version):
+    with open("module-inventory.json", "r") as file:
+        module_inventory = json.load(file)
+
+        with open(os.path.join(path_prefix, "pom.xml"), "w") as f:
             f.write(pom_beginning.replace("${sdkVersion}", sdk_version))
             f.write(pom_begin_install_plugin)
 
             for module in module_inventory:
-                artifact_path = get_module_target_path(module, sdk_version) \
+                artifact_path = get_module_dest_path(module) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
@@ -87,7 +111,7 @@ def generate_pom(sdk_version, target_pom_path):
                 if module["releaseAudience"] != "Public":
                     continue
 
-                artifact_path = get_module_target_path(module, sdk_version) \
+                artifact_path = get_module_dest_path(module) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
@@ -122,13 +146,18 @@ def main():
     parser.add_argument("--version",
                         help="Version of the artifacts.",
                         required=True)
-    parser.add_argument("--pomFile",
-                        help="Path to the pom.xml file that is to be generated.",
+    parser.add_argument("--path-prefix",
+                        help="Path in which to generate the release folder structure.",
                         required=True)
 
     args = parser.parse_args()
 
-    generate_pom(args.version, args.pomFile)
+    if os.path.exists(args.path_prefix):
+        shutil.rmtree(args.path_prefix)
+
+    copy_artifacts(args.path_prefix, args.version)
+
+    generate_pom(args.path_prefix, args.version)
 
 
 if __name__ == '__main__':

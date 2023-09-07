@@ -30,13 +30,7 @@ jobs:
         run: >
           mvn $MVN_CLI_ARGS -DskipTests package
           
-          mkdir -p release/artifacts
-          
-          find . -not -path "./release/*" -path '**/target/*.jar' -exec cp --parents {} ./release/artifacts \;
-          
-          find . -not -path "./release/*" -path '**/pom.xml' -exec cp --parents {} ./release/artifacts \;
-          
-          python .pipeline/scripts/generate-pom.py --version 0.0.1-SNAPSHOT --pomFile ./release/pom.xml
+          python .pipeline/scripts/generate-release-artifacts.py --version 0.0.1-SNAPSHOT --path-prefix release
 
           zip -q -r sap-cloud-sdk-java-v0.0.1.zip ./release
 
