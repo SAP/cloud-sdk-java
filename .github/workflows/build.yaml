@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "improve-perform-release"]
   pull_request:
     branches: ["main"]
 
@@ -84,6 +84,8 @@ jobs:
         # they require the JARs of all modules to work, so those need to be installed
         run: |
           mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
+          python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
+          zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
@@ -94,7 +96,12 @@ jobs:
               git --no-pager diff
               exit 1
           fi
-
+      - name: Upload release package
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
+          retention-days: 1
       # M2
       - name: ZIP M2 SDK Directory
         run: |
@@ -478,7 +485,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/improve-perform-release' }}
     needs: [codeql, test, checkstyle, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -493,66 +500,48 @@ jobs:
           server-id: artifactory-snapshots
           server-username: ARTIFACTORY_USER # env variable for username in deploy
           server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
-      - name: Determine Maven Excludes
-        run: |
-          python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
-        id: get-maven-excludes-for-deploy-snapshot
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-      # Target
-      - name: Download Target Dirs
+      - name: Download Release ZIP
         uses: actions/download-artifact@v3
         with:
-          name: target-dirs
+          name: cloud-sdk-package
           path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -DD target.zip
       - name: Publish Snapshot
         run: >
-          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS
-          -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false
-          -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
+          unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
+          
+          cd release
+          
+          mvn
+          $MVN_CLI_ARGS
+          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -DrepositoryId=artifactory-snapshots
+          -Dmaven.install.skip=true
           deploy
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-  notify-job:
-    runs-on: ubuntu-latest
-    needs:
-      [
-        formatting,
-        build,
-        test,
-        pmd,
-        spotbugs,
-        codeql,
-        archetypes,
-        deploy-snapshot,
-      ]
-    if: ${{ failure() && github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Notify
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.ref_name }}
+#  notify-job:
+#    runs-on: ubuntu-latest
+#    needs:
+#      [
+#        formatting,
+#        build,
+#        test,
+#        pmd,
+#        spotbugs,
+#        codeql,
+#        archetypes,
+#        deploy-snapshot,
+#      ]
+#    if: ${{ failure() && github.ref == 'refs/heads/main' }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Notify
+#        run: python .pipeline/scripts/notify.py
+#        env:
+#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+#          WORKFLOW: ${{ github.workflow }}
+#          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+#          BRANCH_NAME: ${{ github.ref_name }}
