@@ -34,6 +34,8 @@ jobs:
 
           zip -q -r sap-cloud-sdk-java-v0.0.1.zip ./v0.0.1
 
+          cd ./v0.0.1
+
           mvn
           -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           deploy:deploy-file
