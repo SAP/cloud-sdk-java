@@ -96,6 +96,7 @@ jobs:
       - name: Test/Install/Package
         run: |
           mvn $MVN_CLI_ARGS install jacoco:report org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltReleaseDeploymentRepository=local::file:./rel-${{ needs.prepare-release.outputs.release_version }}
+          python .pipeline/scripts/generate-pom.py --version ${{ needs.prepare-release.outputs.release_version }} --pomFile ./rel-${{ needs.prepare-release.outputs.release_version }}/pom.xml
           zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip rel-${{ needs.prepare-release.outputs.release_version }}
       - name: Local Changes Check
         run: |
