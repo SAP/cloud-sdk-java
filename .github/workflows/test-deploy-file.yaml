@@ -50,6 +50,7 @@ jobs:
           -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -DrepositoryId=artifactory-snapshots
           -Dmaven.install.skip=true
+          -Dmaven.deploy.skip=true
           deploy
 
           # mvn
