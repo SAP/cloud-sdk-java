@@ -94,7 +94,7 @@ jobs:
           java-version: 17
       - name: Test and Package
         run: |
-          mvn $MVN_CLI_ARGS package jacoco:report
+          mvn $MVN_CLI_ARGS verify jacoco:report
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ needs.prepare-release.outputs.release_version }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip release
       - name: Local Changes Check
