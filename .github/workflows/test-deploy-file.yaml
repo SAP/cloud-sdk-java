@@ -34,7 +34,7 @@ jobs:
           
           find . -path './**/target/**/*' -exec cp --parents {} ./release/artifacts \;
           
-          find . -name './**/pom.xml' -exec cp --parents {} ./release/artifacts \;
+          find . -path './**/pom.xml' -exec cp --parents {} ./release/artifacts \;
           
           python .pipeline/scripts/generate-pom.py --version 0.0.1-SNAPSHOT --pomFile ./release/pom.xml
 
