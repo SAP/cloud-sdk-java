@@ -72,6 +72,9 @@ def generate_pom(sdk_version, target_pom_path):
             f.write(pom_end_plugin)
             f.write(pom_begin_deploy_plugin)
             for module in module_inventory:
+                if module["releaseAudience"] != "Public":
+                    continue
+
                 artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packagingType"]
