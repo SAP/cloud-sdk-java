@@ -9,6 +9,9 @@ pom_beginning = """
     <groupId>com.sap.cloud.sdk</groupId>
     <artifactId>sdkdist</artifactId>
     <version>${sdkVersion}</version>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
     <build>
         <plugins>
 """
