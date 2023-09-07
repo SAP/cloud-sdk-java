@@ -28,11 +28,14 @@ jobs:
           server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
       - name: Deploy to local repo
         run: >
-          mvn $MVN_CLI_ARGS -DskipTests install org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy -DaltDeploymentRepository=local::file:./v0.0.1
+          mvn $MVN_CLI_ARGS -DskipTests package
           
-          python .pipeline/scripts/generate-pom.py --version 0.0.1-SNAPSHOT --pomFile ./v0.0.1/pom.xml
+          mkdir release-artifacts
+          find . -path './**/target/**/*' -exec cp --parents {} ./release-artifacts \;
+          
+          python .pipeline/scripts/generate-pom.py --version 0.0.1-SNAPSHOT --pomFile ./release-artifacts/pom.xml
 
-          zip -q -r sap-cloud-sdk-java-v0.0.1.zip ./v0.0.1
+          zip -q -r sap-cloud-sdk-java-v0.0.1.zip ./release-artifacts
 
       - name: Upload Test Release
         uses: actions/upload-artifact@v3
@@ -42,7 +45,7 @@ jobs:
           retention-days: 1
 
       - name: Deploy to artifactory
-        working-directory: ./v0.0.1
+        working-directory: ./release-artifacts
         run: >
           mvn
           -Durl=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk

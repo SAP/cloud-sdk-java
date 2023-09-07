@@ -40,6 +40,12 @@ pom_end = """
 """
 
 
+def get_module_target_path(module, sdk_version):
+    # return module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version \
+    #    + "/" + module["artifactId"] + "-" + sdk_version
+    return module["pomFile"].replace("/pom.xml", "/target")
+
+
 def generate_pom(sdk_version, target_pom_path):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
@@ -49,10 +55,10 @@ def generate_pom(sdk_version, target_pom_path):
             f.write(pom_begin_install_plugin)
 
             for module in module_inventory:
-                artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
+                artifact_path = get_module_target_path(module, sdk_version) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
-                pom_path = artifact_path + ".pom"
+                pom_path = module["pomFile"]
                 f.write(f"""
                   <execution>
                       <id>install-{module["artifactId"]}</id>
@@ -76,10 +82,10 @@ def generate_pom(sdk_version, target_pom_path):
                 if module["releaseAudience"] != "Public":
                     continue
 
-                artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
+                artifact_path = get_module_target_path(module, sdk_version) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
-                pom_path = artifact_path + ".pom"
+                pom_path = module["pomFile"]
                 f.write(f"""
                   <execution>
                       <id>deploy-{module["artifactId"]}</id>
