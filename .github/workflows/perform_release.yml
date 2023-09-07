@@ -42,7 +42,6 @@ jobs:
         run: >
           mvn
           $MVN_CLI_ARGS
-          -DaltDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -DrepositoryId=artifactory-snapshots
           -Dmaven.install.skip=true
