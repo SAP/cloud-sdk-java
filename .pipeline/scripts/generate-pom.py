@@ -61,7 +61,7 @@ def generate_pom(sdk_version, target_pom_path):
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
                           <version>{sdk_version}</version>
-                          <packaging>{module["packagingType"]}</packaging>
+                          <packaging>{module["packaging"]}</packaging>
                       </configuration>
                   </execution>
                 """)
@@ -70,7 +70,7 @@ def generate_pom(sdk_version, target_pom_path):
             for module in module_inventory:
                 artifact_path = module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version\
                                 + "/" + module["artifactId"] + "-" + sdk_version
-                file = artifact_path + "." + module["packagingType"]
+                file = artifact_path + "." + module["packaging"]
                 pom_path = artifact_path + ".pom"
                 f.write(f"""
                   <execution>
@@ -85,7 +85,7 @@ def generate_pom(sdk_version, target_pom_path):
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
                           <version>{sdk_version}</version>
-                          <packaging>{module["packagingType"]}</packaging>
+                          <packaging>{module["packaging"]}</packaging>
                       </configuration>
                   </execution>
                 """)
