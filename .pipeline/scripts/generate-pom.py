@@ -43,7 +43,7 @@ pom_end = """
 def get_module_target_path(module, sdk_version):
     # return module["groupId"].replace(".", "/") + "/" + module["artifactId"] + "/" + sdk_version \
     #    + "/" + module["artifactId"] + "-" + sdk_version
-    return module["pomFile"].replace("/pom.xml", "/target")
+    return module["pomFile"].replace("/pom.xml", "/artifacts/target")
 
 
 def generate_pom(sdk_version, target_pom_path):
@@ -58,7 +58,7 @@ def generate_pom(sdk_version, target_pom_path):
                 artifact_path = get_module_target_path(module, sdk_version) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
-                pom_path = module["pomFile"]
+                pom_path = "artifacts/" + module["pomFile"]
                 f.write(f"""
                   <execution>
                       <id>install-{module["artifactId"]}</id>
@@ -85,7 +85,7 @@ def generate_pom(sdk_version, target_pom_path):
                 artifact_path = get_module_target_path(module, sdk_version) \
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
-                pom_path = module["pomFile"]
+                pom_path = "artifacts/" + module["pomFile"]
                 f.write(f"""
                   <execution>
                       <id>deploy-{module["artifactId"]}</id>
