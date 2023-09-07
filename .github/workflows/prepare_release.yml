@@ -352,7 +352,8 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
-    needs: [archetypes, codeql, prepare-release, scan, create_fosstars_report]
+    #needs: [archetypes, codeql, prepare-release, scan, create_fosstars_report]
+    needs: [archetypes, codeql, prepare-release, create_fosstars_report]
     name: Create Draft Release
     permissions:
       contents: write
