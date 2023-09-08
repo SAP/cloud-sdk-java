@@ -173,6 +173,7 @@ jobs:
           cd release
           mvn $MVN_CLI_ARGS install
           cat /home/runner/.m2/repository/archetype-catalog.xml
+          cat ~/.m2/repository/archetype-catalog.xml
           mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
           cat /home/runner/.m2/repository/archetype-catalog.xml
           cd ..
@@ -183,6 +184,13 @@ jobs:
         with:
           name: archetype-catalog
           path: /home/runner/.m2/repository/archetype-catalog.xml
+          retention-days: 1
+
+      - name: Upload archetype catalog 2
+        uses: actions/upload-artifact@v3
+        with:
+          name: archetype-catalog-2
+          path: ~/.m2/repository/archetype-catalog.xml
           retention-days: 1
 
       - name: Generate ${{ matrix.task.archetype }}
