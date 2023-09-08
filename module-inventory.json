@@ -22,7 +22,7 @@
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "scp-cf-spring-jakarta",
-    "releaseAudience": "None",
+    "releaseAudience": "Public",
     "releaseMaturity": "Beta",
     "pomFile": "archetypes/scp-cf-spring-jakarta/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.archetypes",
