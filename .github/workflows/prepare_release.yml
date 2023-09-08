@@ -172,8 +172,9 @@ jobs:
           unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
           cd release
           mvn $MVN_CLI_ARGS install
+          cat /home/runner/.m2/repository/archetype-catalog.xml
           mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
-
+          cat /home/runner/.m2/repository/archetype-catalog.xml
           cd ..
           rm -rf release
 
@@ -189,10 +190,10 @@ jobs:
           mvn archetype:generate -B
           -DarchetypeCatalog=local
           -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
-          -DarchetypeArtifactId=${{ matrix.task.archetype }}
-          -DarchetypeVersion=${{ needs.build.outputs.version }}
+          -DarchetypeArtifactId=scp-cf-spring
+          -DarchetypeVersion=0.0.2
           -DgroupId=com.sap.test
-          -DartifactId=example-${{ matrix.task.archetype }}
+          -DartifactId=example-scp-cf-spring
           -Dversion=1.0-SNAPSHOT
           -Dpackage=com.sap.test
           -Dhttp.keepAlive=false
