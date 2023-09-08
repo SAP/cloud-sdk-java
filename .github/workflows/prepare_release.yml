@@ -142,6 +142,7 @@ jobs:
               "archetype": "scp-cf-spring",
               "javaVersion": 8,
               "startCommand": "mvn spring-boot:run -B",
+              "pomPath": "artifacts/archetypes/scp-cf-spring/pom.xml"
             }
 #          - {
 #              "archetype": "scp-cf-spring-jakarta",
@@ -170,7 +171,8 @@ jobs:
         run: |
           unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
           cd release
-          mvn $MVN_CLI_ARGS install archetype:update-local-catalog
+          mvn $MVN_CLI_ARGS install
+          mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
           mvn $MVN_CLI_ARGS archetype:crawl
           cd ..
           rm -rf release
