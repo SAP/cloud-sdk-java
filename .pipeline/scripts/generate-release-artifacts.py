@@ -91,10 +91,12 @@ def generate_pom(path_prefix, sdk_version):
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
+                packaging = module["packaging"]
                 if module["packaging"] == "pom":
                     file = pom_path
                 elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
                     file = artifact_path + ".jar"
+                    packaging = "jar"
                 f.write(f"""
                   <execution>
                       <id>install-{module["artifactId"]}</id>
@@ -108,7 +110,7 @@ def generate_pom(path_prefix, sdk_version):
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
                           <version>{sdk_version}</version>
-                          <packaging>{module["packaging"]}</packaging>
+                          <packaging>{packaging}</packaging>
                       </configuration>
                   </execution>
                 """)
@@ -122,10 +124,12 @@ def generate_pom(path_prefix, sdk_version):
                                 + "/" + module["artifactId"] + "-" + sdk_version
                 file = artifact_path + "." + module["packaging"]
                 pom_path = "artifacts/" + module["pomFile"]
+                packaging = module["packaging"]
                 if module["packaging"] == "pom":
                     file = pom_path
                 elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
                     file = artifact_path + ".jar"
+                    packaging = "jar"
                 f.write(f"""
                   <execution>
                       <id>deploy-{module["artifactId"]}</id>
@@ -139,7 +143,7 @@ def generate_pom(path_prefix, sdk_version):
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
                           <version>{sdk_version}</version>
-                          <packaging>{module["packaging"]}</packaging>
+                          <packaging>{packaging}</packaging>
                       </configuration>
                   </execution>
                 """)
