@@ -190,10 +190,10 @@ jobs:
           mvn archetype:generate -B
           -DarchetypeCatalog=local
           -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
-          -DarchetypeArtifactId=scp-cf-spring
-          -DarchetypeVersion=0.0.2
+          -DarchetypeArtifactId=${{ matrix.task.archetype }}
+          -DarchetypeVersion=${{ needs.build.outputs.version }}
           -DgroupId=com.sap.test
-          -DartifactId=example-scp-cf-spring
+          -DartifactId=example-${{ matrix.task.archetype }}
           -Dversion=1.0-SNAPSHOT
           -Dpackage=com.sap.test
           -Dhttp.keepAlive=false
