@@ -509,8 +509,8 @@ jobs:
           path: .
       - name: Publish Snapshot
         run: >
-          unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
-
+          unzip sap-cloud-sdk-java-${{ needs.build.outputs.version }}.zip -d .
+          
           cd release
 
           mvn
