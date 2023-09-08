@@ -1,4 +1,4 @@
-name: Perform Release
+name: Perform Release 2
 
 on:
   release:
@@ -28,7 +28,7 @@ jobs:
           BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
           echo Branch Name "$BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          
+
           GIT_TAG=${{ github.event.release.tag_name }}
           echo Git Tag "$GIT_TAG"
 
