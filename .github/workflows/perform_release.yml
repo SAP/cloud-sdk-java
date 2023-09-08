@@ -14,7 +14,7 @@ jobs:
       contents: write
       pull-requests: write
     outputs:
-      branch_name: ${{ steps.perform-release.outputs.BRANCH_NAME }}
+      branch_name: ${{ steps.download-asset.outputs.BRANCH_NAME }}
     steps:
       - name: Setup java
         uses: actions/setup-java@v3
@@ -22,23 +22,38 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Perform Release
-        id: perform-release
+      - name: Download Release Asset
+        id: download-asset
         run: |
           BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
           echo Branch Name "$BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          
+
           GIT_TAG=${{ github.event.release.tag_name }}
           echo Git Tag "$GIT_TAG"
 
           gh release download "$GIT_TAG" --dir artifacts --repo "SAP/cloud-sdk-java"
-          tree artifacts
-          # todo deploy to maven central
-
-          gh pr merge --rebase "$BRANCH_NAME" --repo "SAP/cloud-sdk-java"
+          unzip sap-cloud-sdk-java-*.zip -d .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Perform Release
+        working-directory: ./release
+        run: >
+          mvn
+          $MVN_CLI_ARGS
+          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -DrepositoryId=artifactory-snapshots
+          -Dmaven.install.skip=true
+          deploy
+
+        env:
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+
+      - name: Merge Release Branch
+        run: gh pr merge --rebase "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
+
 
   notify-job:
     runs-on: ubuntu-latest
