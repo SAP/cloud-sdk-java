@@ -174,8 +174,6 @@ jobs:
           mvn $MVN_CLI_ARGS install
           mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
 
-          mvn $MVN_CLI_ARGS archetype:crawl
-
           cd ..
           rm -rf release
 
