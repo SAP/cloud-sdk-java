@@ -173,7 +173,7 @@ jobs:
           cd release
           rm -rf /home/runner/.m2/repository/archetype-catalog.xml
           mvn $MVN_CLI_ARGS install
-          mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
+          mvn $MVN_CLI_ARGS archetype:crawl
 
           cd ..
           rm -rf release
@@ -258,6 +258,7 @@ jobs:
       #      - name: Purge SDK Artifacts from Maven Repository
       #        run: |
       #          rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+      #          rm -rf $HOME/.m2/repository/archetype-catalog.xml
       #      - name: Save Maven Repository
       #        uses: actions/cache/save@v3
       #        if: steps.restore-cache.outputs.cache-hit != 'true'

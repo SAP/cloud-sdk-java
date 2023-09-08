@@ -475,6 +475,7 @@ jobs:
       - name: Purge SDK Artifacts from Maven Repository
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+          rm -rf $HOME/.m2/repository/archetype-catalog.xml
       - name: Save Maven Repository
         uses: actions/cache/save@v3
         if: steps.restore-cache.outputs.cache-hit != 'true'
@@ -509,9 +510,9 @@ jobs:
       - name: Publish Snapshot
         run: >
           unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
-          
+
           cd release
-          
+
           mvn
           $MVN_CLI_ARGS
           -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
