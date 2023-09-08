@@ -172,8 +172,14 @@ jobs:
           unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
           cd release
           mvn $MVN_CLI_ARGS install
+          echo "local catalog after install: "
+          cat /home/runner/.m2/repository/archetype-catalog.xml
           mvn -f ${{ matrix.task.pomPath }} archetype:update-local-catalog
+          echo "local catalog after update-local-catalog: "
+          cat /home/runner/.m2/repository/archetype-catalog.xml
           mvn $MVN_CLI_ARGS archetype:crawl
+          echo "local catalog after crawl: "
+          cat /home/runner/.m2/repository/archetype-catalog.xml
           cd ..
           rm -rf release
 
