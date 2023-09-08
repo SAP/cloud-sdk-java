@@ -1,4 +1,4 @@
-name: Perform Release 2
+name: Perform Release
 
 on:
   release:
