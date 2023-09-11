@@ -538,6 +538,7 @@ jobs:
         test,
         pmd,
         spotbugs,
+        checkstyle,
         codeql,
         archetypes,
         deploy-snapshot,
