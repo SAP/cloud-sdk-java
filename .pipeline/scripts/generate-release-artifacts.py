@@ -45,14 +45,18 @@ pom_end = """
 </project>
 """
 
+def sanitize_path(*args):
+    return os.path.normpath(os.path.join(*args))
+
+def to_maven_path(*args):
+    return sanitize_path(*args).replace("\\", "/")
 
 def get_module_source_path(module):
     return module["pomFile"].replace("pom.xml", "target")
 
 
 def get_module_dest_path(module):
-    return os.path.join("artifacts", module["pomFile"].replace("pom.xml", ""))
-
+    return sanitize_path("artifacts", module["pomFile"].replace("pom.xml", ""))
 
 def copy_artifacts(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
@@ -62,23 +66,22 @@ def copy_artifacts(path_prefix, sdk_version):
             if module["releaseAudience"] != "Public":
                 continue
 
-            dst_path = os.path.join(path_prefix, get_module_dest_path(module))
+            dst_path = sanitize_path(path_prefix, get_module_dest_path(module))
             os.makedirs(dst_path, exist_ok=True)
 
-            shutil.copyfile(module["pomFile"], os.path.join(dst_path, "pom.xml"))
+            shutil.copyfile(module["pomFile"], sanitize_path(dst_path, "pom.xml"))
 
             if module["packaging"] != "pom":
                 src_path = get_module_source_path(module)
 
-                src_artifact = os.path.join(src_path, module["artifactId"] + "-" + sdk_version + ".jar")
-                dst_artifact = os.path.join(dst_path, module["artifactId"] + "-" + sdk_version + ".jar")
+                src_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + ".jar")
+                dst_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + ".jar")
                 shutil.copyfile(src_artifact, dst_artifact)
 
 def generate_execution(phase, module, sdk_version):
-    artifact_path = get_module_dest_path(module) \
-                                + "/" + module["artifactId"] + "-" + sdk_version
+    artifact_path = to_maven_path(get_module_dest_path(module), module["artifactId"] + "-" + sdk_version)
     file = artifact_path + "." + module["packaging"]
-    pom_path = "artifacts/" + module["pomFile"]
+    pom_path = to_maven_path("artifacts", module["pomFile"])
     packaging = module["packaging"]
     if module["packaging"] == "pom":
         file = pom_path
@@ -108,7 +111,7 @@ def generate_pom(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
-        with open(os.path.join(path_prefix, "pom.xml"), "w") as f:
+        with open(sanitize_path(path_prefix, "pom.xml"), "w") as f:
             f.write(pom_beginning.replace("${sdkVersion}", sdk_version))
             f.write(pom_begin_install_plugin)
 
