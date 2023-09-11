@@ -144,11 +144,11 @@ jobs:
               "startCommand": "mvn spring-boot:run -B",
               "pomPath": "artifacts/archetypes/scp-cf-spring/pom.xml"
             }
-#          - {
-#              "archetype": "scp-cf-spring-jakarta",
-#              "javaVersion": 17,
-#              "startCommand": "mvn spring-boot:run -B",
-#            }
+          - {
+              "archetype": "scp-cf-spring-jakarta",
+              "javaVersion": 17,
+              "startCommand": "mvn spring-boot:run -B",
+            }
     name: ${{ matrix.task.archetype }}
     steps:
       - name: Setup Java
@@ -177,20 +177,6 @@ jobs:
 
           cd ..
           rm -rf release
-
-      - name: Upload archetype catalog
-        uses: actions/upload-artifact@v3
-        with:
-          name: archetype-catalog
-          path: /home/runner/.m2/repository/archetype-catalog.xml
-          retention-days: 1
-
-      - name: Upload archetype catalog 2
-        uses: actions/upload-artifact@v3
-        with:
-          name: archetype-catalog-2
-          path: ~/.m2/repository/archetype-catalog.xml
-          retention-days: 1
 
       - name: Generate ${{ matrix.task.archetype }}
         run: >
