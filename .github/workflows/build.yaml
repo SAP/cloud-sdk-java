@@ -89,7 +89,7 @@ jobs:
           python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
       - name: Local Changes Check
         run: |
-          CHANGED_FILES="$(git --no-pager diff --name-only --ignore-space-at-eol)"
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
           if [ ! -z "$CHANGED_FILES" ]; then
               echo "There are local changes in the following files:"
               echo "$CHANGED_FILES"
