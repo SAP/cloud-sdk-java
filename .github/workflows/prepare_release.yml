@@ -77,16 +77,11 @@ jobs:
       checks: write
       contents: read
     name: Test and Package
-    outputs:
-      version: ${{ steps.get-version.outputs.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.prepare-release.outputs.release_commit_id }}
-      - name: Determine Version
-        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
-        id: get-version
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -183,7 +178,7 @@ jobs:
           -DarchetypeCatalog=local
           -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
           -DarchetypeArtifactId=${{ matrix.task.archetype }}
-          -DarchetypeVersion=${{ needs.build.outputs.version }}
+          -DarchetypeVersion=${{ needs.prepare-release.outputs.release_version }}
           -DgroupId=com.sap.test
           -DartifactId=example-${{ matrix.task.archetype }}
           -Dversion=1.0-SNAPSHOT
