@@ -141,8 +141,7 @@ jobs:
           - {
               "archetype": "scp-cf-spring",
               "javaVersion": 8,
-              "startCommand": "mvn spring-boot:run -B",
-              "pomPath": "artifacts/archetypes/scp-cf-spring/pom.xml"
+              "startCommand": "mvn spring-boot:run -B"
             }
           - {
               "archetype": "scp-cf-spring-jakarta",
