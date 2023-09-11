@@ -36,7 +36,6 @@ jobs:
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           gh release download "$GIT_TAG" --dir ./ --repo "SAP/cloud-sdk-java"
-          ls -la
           unzip sap-cloud-sdk-java-*.zip -d .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
