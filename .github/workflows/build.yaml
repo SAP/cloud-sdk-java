@@ -137,7 +137,7 @@ jobs:
       # Target
       - name: ZIP Target Dirs
         run: |
-          zip -r target.zip $(find . -path './**/target/**/*')
+          zip -r target.zip $(find . -path '**/target/*')
       - name: Upload Target Dirs
         uses: actions/upload-artifact@v3
         with:
