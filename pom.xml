@@ -1176,7 +1176,7 @@
 								<packages>com.sap.cloud.sdk.s4hana*</packages>
 							</group>
 						</groups>
-						<!-- <sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath> -->
+						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
 						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
 					</configuration>
 				</plugin>
