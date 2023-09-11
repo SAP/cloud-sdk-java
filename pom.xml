@@ -1177,7 +1177,7 @@
 							</group>
 						</groups>
 						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
-						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
+						<!-- <overview>${project.rootdir}/javadoc.everyone.overview.html</overview> -->
 					</configuration>
 				</plugin>
 				<plugin>
