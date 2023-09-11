@@ -27,6 +27,10 @@ Also points that you should be aware of are:
 1. Add the new artifact to the _pom.xml_ of the _modules-bom_ module. There you have to add an entry under `dependencyManagement` > `dependencies`. This is only required if the module is meant to be consumed as a `dependency`
    for e.g. this is not required to be done for the `maven-plugin`.
 1. Follow one of the step groups described below, depending on your release target.
+1. Update the `module-inventory.json` by running the `create_module_inventory_file.py` script:
+    ```sh
+    python scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
+    ```
 
 ## Steps for a publicly released module
 
