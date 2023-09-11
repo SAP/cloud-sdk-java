@@ -1,0 +1,29 @@
+{
+  "ignoredModules": [
+    {
+      "groupId": "^\\$\\{groupId\\}.*",
+      "artifactId": ".*",
+      "useRegexValidation": true,
+      "reason": "Archetype template."
+    },
+    {
+      "groupId": ".*",
+      "artifactId": "^\\$\\{artifactId\\}.*",
+      "useRegexValidation": true,
+      "reason": "Archetype template."
+    },
+    {
+      "groupId": "com.company",
+      "artifactId": "application",
+      "useRegexValidation": false,
+      "reason": "Used for test purposes."
+    }
+  ],
+  "ignoredPoms": [
+    {
+      "path": ".+[\\/\\\\]target[\\/\\\\]test-classes[\\/\\\\].+",
+      "useRegexValidation": true,
+      "reason": "Compiled module."
+    }
+  ]
+}
