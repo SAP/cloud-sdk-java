@@ -86,6 +86,9 @@ jobs:
           mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
+      - name: Create module-inventory
+        run: |
+          python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
