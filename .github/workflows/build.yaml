@@ -83,7 +83,7 @@ jobs:
         # we need to use install here because otherwise the code checks below don't work
         # they require the JARs of all modules to work, so those need to be installed
         run: |
-          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
+          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting -Pdocs
       - name: Create module-inventory
         run: |
           python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
