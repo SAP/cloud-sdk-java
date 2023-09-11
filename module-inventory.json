@@ -2,6 +2,7 @@
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "archetypes-parent",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "archetypes/pom.xml",
@@ -12,6 +13,7 @@
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "scp-cf-spring",
+    "packaging": "maven-archetype",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "archetypes/scp-cf-spring/pom.xml",
@@ -22,6 +24,7 @@
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "scp-cf-spring-jakarta",
+    "packaging": "maven-archetype",
     "releaseAudience": "Public",
     "releaseMaturity": "Beta",
     "pomFile": "archetypes/scp-cf-spring-jakarta/pom.xml",
@@ -32,6 +35,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "datamodel-parent",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/pom.xml",
@@ -42,6 +46,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "fluent-result",
+    "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/fluent-result/pom.xml",
@@ -52,6 +57,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "odata-core",
+    "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/odata/odata-core/pom.xml",
@@ -62,6 +68,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "odata-parent",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/odata/pom.xml",
@@ -72,6 +79,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-api-sample",
+    "packaging": "jar",
     "releaseAudience": "None",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/openapi/openapi-api-sample/pom.xml",
@@ -82,6 +90,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-core",
+    "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/openapi/openapi-core/pom.xml",
@@ -92,6 +101,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-generator",
+    "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/openapi/openapi-generator/pom.xml",
@@ -102,6 +112,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-generator-maven-plugin",
+    "packaging": "maven-plugin",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/openapi/openapi-generator-maven-plugin/pom.xml",
@@ -112,6 +123,7 @@
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-parent",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "datamodel/openapi/pom.xml",
@@ -122,6 +134,7 @@
   {
     "groupId": "com.sap.cloud.sdk.tests",
     "artifactId": "tests-parent",
+    "packaging": "pom",
     "releaseAudience": "None",
     "releaseMaturity": "Stable",
     "pomFile": "tests/pom.xml",
@@ -132,6 +145,7 @@
   {
     "groupId": "com.sap.cloud.sdk.testutil",
     "artifactId": "testutil-core",
+    "packaging": "jar",
     "releaseAudience": "None",
     "releaseMaturity": "Stable",
     "pomFile": "testutil/testutil-core/pom.xml",
@@ -142,6 +156,7 @@
   {
     "groupId": "com.sap.cloud.sdk.testutil",
     "artifactId": "testutil-parent",
+    "packaging": "pom",
     "releaseAudience": "None",
     "releaseMaturity": "Stable",
     "pomFile": "testutil/pom.xml",
@@ -152,6 +167,7 @@
   {
     "groupId": "com.sap.cloud.sdk",
     "artifactId": "sdk-modules-bom",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "modules-bom/pom.xml",
@@ -162,6 +178,7 @@
   {
     "groupId": "com.sap.cloud.sdk",
     "artifactId": "sdk-parent",
+    "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "pom.xml",
