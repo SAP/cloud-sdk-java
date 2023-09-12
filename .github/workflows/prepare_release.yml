@@ -124,6 +124,11 @@ jobs:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
           retention-days: 1
+      - name: Upload release package
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-aggregated-javadoc
+          path: ./target/site/apidocs
 
   archetypes:
     runs-on: ubuntu-latest
