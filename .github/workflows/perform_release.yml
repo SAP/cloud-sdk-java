@@ -40,19 +40,56 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Perform Release
-        working-directory: ./release
-        run: >
-          mvn
-          $MVN_CLI_ARGS
-          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -DrepositoryId=artifactory-snapshots
-          -Dmaven.install.skip=true
-          deploy
+#      - name: Perform Release
+#        working-directory: ./release
+#        run: >
+#          mvn
+#          $MVN_CLI_ARGS
+#          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+#          -DrepositoryId=artifactory-snapshots
+#          -Dmaven.install.skip=true
+#          deploy
+#
+#        env:
+#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+#          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
 
+      - name: Get SDK Major Version
+        run: |
+          echo "MAJOR_VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}' | awk -F'.' '{print $1}')" >> $GITHUB_ENV
         env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+          GIT_TAG: ${{ github.event.release.tag_name }}
+
+      - name: Checkout SAP/cloud-sdk
+        uses: actions/checkout@v3
+        with:
+          repository: SAP/cloud-sdk
+          path: cloud-sdk
+
+      - name: Prepare git
+        working-directory: ./cloud-sdk
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: Extract JavaDoc
+        working-directory: ./cloud-sdk
+        env:
+          MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
+        run: |
+          TARGET_DIR=static/java-api/v$MAJOR_VERSION
+          rm -rf $TARGET_DIR
+          unzip ../sap-cloud-sdk-java-*.zip -d $TARGET_DIR
+          tree static/java-api
+          
+          git add -A $TARGET_DIR
+          git commit -m "Update Cloud SDK for JavaDoc v$MAJOR_VERSION"
+
+      - name: Create JavaDoc PR
+        working-directory: ./cloud-sdk
+        run: |
+          
+          
 
       - name: Merge Release Branch
         run: gh pr merge --rebase "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
