@@ -124,7 +124,7 @@ jobs:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
           retention-days: 1
-      - name: Upload release package
+      - name: Upload JavaDocs
         uses: actions/upload-artifact@v3
         with:
           name: cloud-sdk-aggregated-javadoc
@@ -374,6 +374,16 @@ jobs:
           name: cloud-sdk-package
           path: .
 
+      - name: Download JavaDocs
+        uses: actions/download-artifact@v3
+        with:
+          name: cloud-sdk-aggregated-javadoc
+
+      - name: Zip JavaDocs for Release
+        run: |
+          zip -q -r sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip cloud-sdk-aggregated-javadoc
+          rm -rf cloud-sdk-aggregated-javadoc
+
       - name: Prepare git
         run: |
           git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
@@ -384,9 +394,12 @@ jobs:
           gh release create "rel/${{ needs.prepare-release.outputs.release_version }}" \
             --target ${{ needs.prepare-release.outputs.release_commit_id }} \
             --title "Release ${{ needs.prepare-release.outputs.release_version }}" \
-            --draft --generate-notes sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
+            --draft --generate-notes \
+            sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip \
+            sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip
 
           rm -rf sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
+          rm -rf sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
