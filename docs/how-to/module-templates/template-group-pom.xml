@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Short name of your module</name>
+    <description>Short description of the module.</description>
+
+    <groupId>New group id in case you want to override the parent group id, otherwise delete this line</groupId>
+    <artifactId>Your module name, ending with -all</artifactId>
+
+    <!--
+    !!! Don't forget to add this module also to the list of modules in the parent pom.xml !!!
+    -->
+    <parent>
+        <groupId>Group id of the parent pom.xml</groupId>
+        <artifactId>Artifact if of the parent pom.xml</artifactId>
+        <version>Add the currently used version here. Be aware of any release that might happen in parallel!</version>
+    </parent>
+
+    <url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+
+    <organization>
+        <name>SAP SE</name>
+        <url>https://www.sap.com</url>
+    </organization>
+
+    <licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+
+    <scm>
+        <connection/>
+        <url/>
+    </scm>
+
+    <properties>
+        <!--
+        !!! Select the release audience and maturity of your new module !!!
+        -->
+        <x-sap-release-audience>Choose one of: None, Public</x-sap-release-audience>
+        <x-sap-release-maturity>Choose one of: Beta, Stable, Deprecated</x-sap-release-maturity>
+        <!--
+        !!! Adjust this path to point to the actual root directory of the SDK !!!
+        -->
+        <project.rootdir>${project.basedir}/../../</project.rootdir>
+    </properties>
+
+    <!--
+    !!! List all modules that should be combined via this pom.xml into the the dependency block !!!
+    -->
+
+    <!--
+    <dependencies>
+    </dependencies>
+    -->
+
+    <!--
+     !!! Add all modules listed under dependencies also in the dependency-plugin configuration below, to prevent the plugin from reporting unused dependencies !!!
+    -->
+    <!--<build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>groupId1:artifactId1</usedDependency>
+                        <usedDependency>groupId2:artifactId2</usedDependency>
+                    </usedDependencies>
+                </configuration>
+            </plugin>
+
+            &lt;!&ndash; create an empty javadoc jar for Maven Central &ndash;&gt;
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>empty-javadoc-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>javadoc</classifier>
+                            <classesDirectory>${basedir}/javadoc</classesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>-->
+</project>
