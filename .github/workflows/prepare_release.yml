@@ -26,8 +26,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: 'main'
+#        with:
+#          ref: 'main'
 
       - name: Setup java
         uses: actions/setup-java@v3
@@ -89,7 +89,8 @@ jobs:
           java-version: 17
       - name: Test and Package
         run: |
-          mvn $MVN_CLI_ARGS install jacoco:report
+          python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
+          mvn $MVN_CLI_ARGS install jacoco:report -Pdocs
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ needs.prepare-release.outputs.release_version }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip release
       - name: Local Changes Check

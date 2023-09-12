@@ -78,11 +78,28 @@ def copy_artifacts(path_prefix, sdk_version):
                 dst_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + ".jar")
                 shutil.copyfile(src_artifact, dst_artifact)
 
-def generate_execution(phase, module, sdk_version):
+                src_docs_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + "-javadoc.jar")
+                if os.path.exists(src_docs_artifact):
+                    dst_docs_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + "-javadoc.jar")
+                    shutil.copyfile(src_docs_artifact, dst_docs_artifact)
+
+                src_sources_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + "-sources.jar")
+                if os.path.exists(src_sources_artifact):
+                    dst_sources_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + "-sources.jar")
+                    shutil.copyfile(src_sources_artifact, dst_sources_artifact)
+
+
+def generate_execution(path_prefix, phase, module, sdk_version):
     artifact_path = to_maven_path(get_module_dest_path(module), module["artifactId"] + "-" + sdk_version)
     file = artifact_path + "." + module["packaging"]
     pom_path = to_maven_path("artifacts", module["pomFile"])
     packaging = module["packaging"]
+    sources = artifact_path + "-sources.jar"
+    if not os.path.exists(sanitize_path(path_prefix, sources)):
+        sources = ""
+    javadoc = artifact_path + "-javadoc.jar"
+    if not os.path.exists(sanitize_path(path_prefix, javadoc)):
+        javadoc = ""
     if module["packaging"] == "pom":
         file = pom_path
     elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
@@ -98,6 +115,8 @@ def generate_execution(phase, module, sdk_version):
                       </goals>
                       <configuration>
                           <file>{file}</file>
+                          <sources>{sources}</sources>
+                          <javadoc>{javadoc}</javadoc>
                           <pomFile>{pom_path}</pomFile>
                           <groupId>{module["groupId"]}</groupId>
                           <artifactId>{module["artifactId"]}</artifactId>
@@ -118,14 +137,14 @@ def generate_pom(path_prefix, sdk_version):
             for module in module_inventory:
                 if module["releaseAudience"] != "Public":
                     continue
-                f.write(generate_execution("install", module, sdk_version))
+                f.write(generate_execution(path_prefix, "install", module, sdk_version))
             f.write(pom_end_plugin)
 
             f.write(pom_begin_deploy_plugin)
             for module in module_inventory:
                 if module["releaseAudience"] != "Public":
                     continue
-                f.write(generate_execution("deploy", module, sdk_version))
+                f.write(generate_execution(path_prefix, "deploy", module, sdk_version))
             f.write(pom_end)
 
 def main():

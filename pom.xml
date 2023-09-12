@@ -1127,7 +1127,7 @@
 							</goals>
 							<configuration>
 								<files>
-									<file>${project.rootdir}/scripts/javadoc.properties</file>
+									<file>${project.rootdir}/javadoc.properties</file>
 								</files>
 							</configuration>
 						</execution>
