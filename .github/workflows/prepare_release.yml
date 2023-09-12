@@ -378,12 +378,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cloud-sdk-aggregated-javadoc
-          path: ./cloud-sdk-aggregated-javadoc
+          path: ./sap-cloud-sdk-aggregated-javadoc
 
       - name: Zip JavaDocs for Release
         run: |
           tree
-          zip -q -r sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip cloud-sdk-aggregated-javadoc
+          zip -q -r sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip sap-cloud-sdk-aggregated-javadoc
           rm -rf cloud-sdk-aggregated-javadoc
 
       - name: Prepare git
