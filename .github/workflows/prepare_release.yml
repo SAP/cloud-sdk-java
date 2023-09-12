@@ -378,6 +378,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: cloud-sdk-aggregated-javadoc
+          path: ./cloud-sdk-aggregated-javadoc
 
       - name: Zip JavaDocs for Release
         run: |
