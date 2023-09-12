@@ -491,7 +491,7 @@ jobs:
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [codeql, test, checkstyle, pmd, spotbugs, archetypes]
+    needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
