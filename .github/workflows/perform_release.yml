@@ -83,7 +83,7 @@ jobs:
           tree static/java-api
           
           git add -A $TARGET_DIR
-          git commit -m "Update Cloud SDK for JavaDoc v$MAJOR_VERSION"
+          git commit -m "Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
 
       - name: Create JavaDoc PR
         working-directory: ./cloud-sdk
