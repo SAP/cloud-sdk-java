@@ -38,18 +38,19 @@ pom_end_plugin = """
 """
 
 pom_end = """
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>
 """
 
+
 def sanitize_path(*args):
     return os.path.normpath(os.path.join(*args))
 
+
 def to_maven_path(*args):
     return sanitize_path(*args).replace("\\", "/")
+
 
 def get_module_source_path(module):
     return module["pomFile"].replace("pom.xml", "target")
@@ -57,6 +58,7 @@ def get_module_source_path(module):
 
 def get_module_dest_path(module):
     return sanitize_path("artifacts", module["pomFile"].replace("pom.xml", ""))
+
 
 def copy_artifacts(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
@@ -126,26 +128,28 @@ def generate_execution(path_prefix, phase, module, sdk_version):
                   </execution>
                 """
 
+
 def generate_pom(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
         with open(sanitize_path(path_prefix, "pom.xml"), "w") as f:
             f.write(pom_beginning.replace("${sdkVersion}", sdk_version))
-            f.write(pom_begin_install_plugin)
 
+            f.write(pom_begin_install_plugin)
             for module in module_inventory:
-                if module["releaseAudience"] != "Public":
-                    continue
-                f.write(generate_execution(path_prefix, "install", module, sdk_version))
+                if module["releaseAudience"] == "Public":
+                    f.write(generate_execution(path_prefix, "install", module, sdk_version))
             f.write(pom_end_plugin)
 
             f.write(pom_begin_deploy_plugin)
             for module in module_inventory:
-                if module["releaseAudience"] != "Public":
-                    continue
-                f.write(generate_execution(path_prefix, "deploy", module, sdk_version))
+                if module["releaseAudience"] == "Public":
+                    f.write(generate_execution(path_prefix, "deploy", module, sdk_version))
+            f.write(pom_end_plugin)
+
             f.write(pom_end)
+
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(
