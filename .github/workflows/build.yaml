@@ -84,6 +84,9 @@ jobs:
         # they require the JARs of all modules to work, so those need to be installed
         run: |
           mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
+          python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
+          zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
+          rm -rf release
       - name: Create module-inventory
         run: |
           python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
@@ -97,7 +100,12 @@ jobs:
               git --no-pager diff
               exit 1
           fi
-
+      - name: Upload release package
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-package
+          path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
+          retention-days: 1
       # M2
       - name: ZIP M2 SDK Directory
         run: |
@@ -129,7 +137,7 @@ jobs:
       # Target
       - name: ZIP Target Dirs
         run: |
-          zip -r target.zip $(find . -path './**/target/**/*')
+          zip -r target.zip $(find . -path '**/target/*')
       - name: Upload Target Dirs
         uses: actions/upload-artifact@v3
         with:
@@ -471,6 +479,7 @@ jobs:
       - name: Purge SDK Artifacts from Maven Repository
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+          rm -rf $HOME/.m2/repository/archetype-catalog.xml
       - name: Save Maven Repository
         uses: actions/cache/save@v3
         if: steps.restore-cache.outputs.cache-hit != 'true'
@@ -496,41 +505,26 @@ jobs:
           server-id: artifactory-snapshots
           server-username: ARTIFACTORY_USER # env variable for username in deploy
           server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
-      - name: Determine Maven Excludes
-        run: |
-          python .pipeline/scripts/get-maven-excludes.py --filter-key releaseAudience --filter-value None
-        id: get-maven-excludes-for-deploy-snapshot
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-      # Target
-      - name: Download Target Dirs
+      - name: Download Release ZIP
         uses: actions/download-artifact@v3
         with:
-          name: target-dirs
+          name: cloud-sdk-package
           path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -DD target.zip
       - name: Publish Snapshot
         run: >
-          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS
-          -DaltSnapshotDeploymentRepository=artifactory-snapshots::https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -Dmaven.test.skip -Dmaven.compiler.showCompilationChanges -Dhttp.keepAlive=false
-          -pl ${{ steps.get-maven-excludes-for-deploy-snapshot.outputs.PREFIXED_EXCLUDES }}
+          unzip sap-cloud-sdk-java-${{ needs.build.outputs.version }}.zip -d .
+
+          cd release
+
+          mvn
+          $MVN_CLI_ARGS
+          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+          -DrepositoryId=artifactory-snapshots
+          -Dmaven.install.skip=true
+          -Dmaven.test.skip
+          -Dmaven.compiler.showCompilationChanges
+          -Dhttp.keepAlive=false
           deploy
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
@@ -544,6 +538,7 @@ jobs:
         test,
         pmd,
         spotbugs,
+        checkstyle,
         codeql,
         archetypes,
         deploy-snapshot,

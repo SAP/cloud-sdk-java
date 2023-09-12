@@ -31,9 +31,11 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
-      - name: Install
+      - name: Install and package
         run: |
           mvn $MVN_CLI_ARGS install jacoco:report
+          python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
+          zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
@@ -44,22 +46,11 @@ jobs:
               git --no-pager diff
               exit 1
           fi
-
-      - name: ZIP M2 SDK Directory
-        run: |
-          cd $HOME/.m2/repository/com/sap/cloud/sdk
-          zip -r m2-sdk.zip .
-      - name: Upload M2 SDK Directory
+      - name: Upload release package
         uses: actions/upload-artifact@v3
         with:
-          name: m2-sdk
-          path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
-          retention-days: 1
-      - name: Upload Archetype Catalog
-        uses: actions/upload-artifact@v3
-        with:
-          name: archetype-catalog
-          path: ~/.m2/repository/archetype-catalog.xml
+          name: cloud-sdk-package
+          path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
           retention-days: 1
 
       - name: Test Report
@@ -113,21 +104,20 @@ jobs:
         with:
           path: ~/.m2/repository
           key: maven-central
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          mkdir -p ~/.m2/repository/com/sap/cloud/sdk
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
-      - name: Download Archetype Catalog
+      - name: Download Release ZIP
         uses: actions/download-artifact@v3
         with:
-          name: archetype-catalog
-          path: ~/.m2/repository/archetype-catalog.xml
+          name: cloud-sdk-package
+          path: .
+      - name: Install Release Artifacts
+        run: |
+          unzip sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip -d .
+          cd release
+          mvn $MVN_CLI_ARGS install
+          mvn $MVN_CLI_ARGS archetype:crawl
+          cd ..
+          rm -rf release
 
       - name: Generate ${{ matrix.task.archetype }}
         run: >
@@ -195,6 +185,7 @@ jobs:
       - name: Purge SDK Artifacts from Maven Repository
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
+          rm -rf $HOME/.m2/repository/archetype-catalog.xml
       - name: Save Maven Repository
         uses: actions/cache/save@v3
         if: steps.restore-cache.outputs.cache-hit != 'true'
