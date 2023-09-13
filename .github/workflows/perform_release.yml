@@ -84,8 +84,8 @@ jobs:
       - name: Prepare git
         working-directory: ./cloud-sdk
         run: |
-          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
-          git config --global user.name "Maven Central Release Script"
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: Replace JavaDoc in new Branch
         working-directory: ./cloud-sdk
