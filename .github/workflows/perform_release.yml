@@ -89,9 +89,9 @@ jobs:
           VERSION: ${{ env.VERSION }}
         run: |
           TARGET_DIR=static/java-api/v$MAJOR_VERSION
-          #rm -rf $TARGET_DIR
-          #mkdir -p $TARGET_DIR
-          #mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
+          rm -rf $TARGET_DIR
+          mkdir -p $TARGET_DIR
+          mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
           
           CHANGED_FILES="$(git --no-pager diff --name-only)"
           if [ -z "$CHANGED_FILES" ]; then
