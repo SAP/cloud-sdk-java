@@ -384,7 +384,7 @@ jobs:
         run: |
           tree
           zip -q -r sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip sap-cloud-sdk-aggregated-javadoc
-          rm -rf cloud-sdk-aggregated-javadoc
+          rm -rf sap-cloud-sdk-aggregated-javadoc
 
       - name: Prepare git
         run: |
