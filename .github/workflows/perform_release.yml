@@ -76,9 +76,6 @@ jobs:
           path: cloud-sdk
           token: ${{ secrets.GH_CROSS_REPO_TOKEN_STIPPI2 }}
 
-      - name: Tree
-        run: tree
-
       - name: Prepare git
         working-directory: ./cloud-sdk
         run: |
@@ -92,10 +89,18 @@ jobs:
           VERSION: ${{ env.VERSION }}
         run: |
           TARGET_DIR=static/java-api/v$MAJOR_VERSION
-          rm -rf $TARGET_DIR
-          mkdir -p $TARGET_DIR
-          mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
-          tree static/java-api
+          #rm -rf $TARGET_DIR
+          #mkdir -p $TARGET_DIR
+          #mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
+          
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [ -z "$CHANGED_FILES" ]; then
+              echo "No changes to API docs detected, skipping Pull Request creation."
+              echo "CREATE_PR=false" >> $GITHUB_ENV
+              exit 0
+          fi
+
+          echo "CREATE_PR=true" >> $GITHUB_ENV
           
           CLOUD_SDK_BRANCH_NAME=update-java-api-docs-v$VERSION
           echo "CLOUD_SDK_BRANCH_NAME=$CLOUD_SDK_BRANCH_NAME" >> $GITHUB_ENV
@@ -108,6 +113,7 @@ jobs:
           git push origin $CLOUD_SDK_BRANCH_NAME:$CLOUD_SDK_BRANCH_NAME
 
       - name: Create JavaDoc PR
+        if: env.CREATE_PR == 'true'
         working-directory: ./cloud-sdk
         run: |
           PR_TITLE="Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
