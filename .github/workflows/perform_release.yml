@@ -74,6 +74,7 @@ jobs:
         with:
           repository: SAP/cloud-sdk
           path: cloud-sdk
+          token: ${{ secrets.GH_CROSS_REPO_TOKEN_STIPPI2 }}
 
       - name: Tree
         run: tree
@@ -116,6 +117,7 @@ jobs:
         env:
           MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
           VERSION: ${{ env.VERSION }}
+          GH_TOKEN: ${{ secrets.GH_CROSS_REPO_TOKEN_STIPPI2 }}
 
       - name: Merge Release Branch
         run: gh pr merge --rebase "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
