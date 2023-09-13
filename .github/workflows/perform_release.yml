@@ -95,7 +95,7 @@ jobs:
 
           git add -A $TARGET_DIR
           
-          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          CHANGED_FILES="$(git status -s)"
           if [ -z "$CHANGED_FILES" ]; then
               echo "No changes to API docs detected, skipping Pull Request creation."
               echo "CREATE_PR=false" >> $GITHUB_ENV
