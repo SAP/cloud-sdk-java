@@ -56,6 +56,7 @@ jobs:
 
       - name: Get SDK Major Version
         run: |
+          echo "VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')" >> $GITHUB_ENV
           echo "MAJOR_VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}' | awk -F'.' '{print $1}')" >> $GITHUB_ENV
         env:
           GIT_TAG: ${{ github.event.release.tag_name }}
@@ -72,24 +73,37 @@ jobs:
           git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
           git config --global user.name "Maven Central Release Script"
 
-      - name: Extract JavaDoc
+      - name: Replace JavaDoc in new Branch
         working-directory: ./cloud-sdk
         env:
           MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
+          VERSION: ${{ env.VERSION }}
         run: |
           TARGET_DIR=static/java-api/v$MAJOR_VERSION
           rm -rf $TARGET_DIR
           unzip ../sap-cloud-sdk-java-*.zip -d $TARGET_DIR
           tree static/java-api
           
+          CLOUD_SDK_BRANCH_NAME=update-java-api-docs-v$VERSION
+          echo "CLOUD_SDK_BRANCH_NAME=$CLOUD_SDK_BRANCH_NAME" >> $GITHUB_ENV
+
+          git switch --create $CLOUD_SDK_BRANCH_NAME
+          
           git add -A $TARGET_DIR
           git commit -m "Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
+
+          git push origin $CLOUD_SDK_BRANCH_NAME:$CLOUD_SDK_BRANCH_NAME
 
       - name: Create JavaDoc PR
         working-directory: ./cloud-sdk
         run: |
-          
-          
+          PR_TITLE="Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
+          PR_BODY="Replace the contents of v$MAJOR_VERSION API docs with the latest release of the SDK.
+
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+        env:
+          MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
+          VERSION: ${{ env.VERSION }}
 
       - name: Merge Release Branch
         run: gh pr merge --rebase "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
