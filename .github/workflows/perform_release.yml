@@ -92,6 +92,8 @@ jobs:
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
           mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
+
+          git add -A $TARGET_DIR
           
           CHANGED_FILES="$(git --no-pager diff --name-only)"
           if [ -z "$CHANGED_FILES" ]; then
@@ -107,7 +109,6 @@ jobs:
 
           git switch --create $CLOUD_SDK_BRANCH_NAME
           
-          git add -A $TARGET_DIR
           git commit -m "Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
 
           git push origin $CLOUD_SDK_BRANCH_NAME:$CLOUD_SDK_BRANCH_NAME
