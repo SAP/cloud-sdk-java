@@ -124,6 +124,11 @@ jobs:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
           retention-days: 1
+      - name: Upload JavaDocs
+        uses: actions/upload-artifact@v3
+        with:
+          name: cloud-sdk-aggregated-javadoc
+          path: ./target/site/apidocs
 
   archetypes:
     runs-on: ubuntu-latest
@@ -376,7 +381,6 @@ jobs:
 
       - name: Zip JavaDocs for Release
         run: |
-          tree
           zip -q -r sap-cloud-sdk-aggregated-javadoc-${{ needs.prepare-release.outputs.release_version }}.zip sap-cloud-sdk-aggregated-javadoc
           rm -rf sap-cloud-sdk-aggregated-javadoc
 
