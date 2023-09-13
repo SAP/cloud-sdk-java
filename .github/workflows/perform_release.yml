@@ -3,11 +3,14 @@ name: Perform Release
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Release version, leave empty for default value based on current snapshot"
-        required: false
+
+#  # Uncomment the following lines to enable manual workflow trigger
+#  # Make sure to swap out the two places referencing GIT_TAG in the steps below
+#  workflow_dispatch:
+#    inputs:
+#      release_version:
+#        description: "Release version, leave empty for default value based on current snapshot"
+#        required: false
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -33,8 +36,9 @@ jobs:
       - name: Download Release Asset
         id: download-asset
         run: |
-          GIT_TAG=rel/${{ github.event.inputs.release_version }}
-          #GIT_TAG=${{ github.event.release.tag_name }}
+          GIT_TAG=${{ github.event.release.tag_name }}
+          # When enabling the manual workflow trigger, use the next line instead of the previous one
+          # GIT_TAG=rel/${{ github.event.inputs.release_version }}
           echo Git Tag "$GIT_TAG"
 
           BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
@@ -66,8 +70,9 @@ jobs:
           echo "VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')" >> $GITHUB_ENV
           echo "MAJOR_VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}' | awk -F'.' '{print $1}')" >> $GITHUB_ENV
         env:
-          #GIT_TAG: ${{ github.event.release.tag_name }}
-          GIT_TAG: rel/${{ github.event.inputs.release_version }}
+          GIT_TAG: ${{ github.event.release.tag_name }}
+          # When enabling the manual workflow trigger, use the next line instead of the previous one
+          # GIT_TAG: rel/${{ github.event.inputs.release_version }}
 
       - name: Checkout SAP/cloud-sdk
         uses: actions/checkout@v3
