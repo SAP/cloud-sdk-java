@@ -244,9 +244,9 @@
         }
       }
     },
-    "value" : 4.745297905404289,
+    "value" : 4.995925292201888,
     "weight" : 1.0,
-    "confidence" : 10.0,
+    "confidence" : 9.645390070921987,
     "usedValues" : [ {
       "type" : "ScoreValue",
       "score" : {
@@ -1330,7 +1330,7 @@
         "type" : "ProjectActivityScore",
         "name" : "Open-source project activity score"
       },
-      "value" : 7.446153846153847,
+      "value" : 9.815384615384616,
       "weight" : 0.5,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -1339,7 +1339,7 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of commits in the last three months"
         },
-        "number" : 44,
+        "number" : 58,
         "explanation" : [ ]
       }, {
         "type" : "IntegerValue",
@@ -1350,7 +1350,7 @@
         "number" : 4,
         "explanation" : [ ]
       } ],
-      "explanation" : [ "44 commits in the last 3 months results to 6.77 points", "4 contributors increase the score value from 6.77 to 7.45" ],
+      "explanation" : [ "58 commits in the last 3 months results to 8.92 points", "4 contributors increase the score value from 8.92 to 9.82" ],
       "isUnknown" : false,
       "isNotApplicable" : false,
       "feature" : {
@@ -1388,9 +1388,9 @@
         "type" : "ProjectPopularityScore",
         "name" : "Open-source project popularity score"
       },
-      "value" : 0.028333333333333335,
+      "value" : 0.015,
       "weight" : 0.5,
-      "confidence" : 10.0,
+      "confidence" : 6.666666666666667,
       "usedValues" : [ {
         "type" : "IntegerValue",
         "feature" : {
@@ -1408,12 +1408,11 @@
         "number" : 3,
         "explanation" : [ ]
       }, {
-        "type" : "IntegerValue",
+        "type" : "UnknownValue",
         "feature" : {
           "type" : "PositiveIntegerFeature",
           "name" : "Number of projects on GitHub that use an open source project"
         },
-        "number" : 20,
         "explanation" : [ ]
       } ],
       "explanation" : [ ],
