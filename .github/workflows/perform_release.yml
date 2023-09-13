@@ -79,7 +79,7 @@ jobs:
         with:
           repository: SAP/cloud-sdk
           path: cloud-sdk
-          token: ${{ secrets.GH_CROSS_REPO_TOKEN_STIPPI2 }}
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: Prepare git
         working-directory: ./cloud-sdk
