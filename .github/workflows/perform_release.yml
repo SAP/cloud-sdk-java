@@ -43,6 +43,7 @@ jobs:
 
           gh release download "$GIT_TAG" --dir ./ --repo "SAP/cloud-sdk-java"
           unzip sap-cloud-sdk-java-*.zip -d .
+          unzip sap-cloud-sdk-aggregated-javadoc-*.zip -d .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,7 +93,7 @@ jobs:
           TARGET_DIR=static/java-api/v$MAJOR_VERSION
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          unzip ../sap-cloud-sdk-aggregated-javadoc-*.zip -d $TARGET_DIR
+          mv ../sap-cloud-sdk-aggregated-javadoc/* $TARGET_DIR
           tree static/java-api
           
           CLOUD_SDK_BRANCH_NAME=update-java-api-docs-v$VERSION
