@@ -1,6 +1,4 @@
-import os
 import json
-import argparse
 
 
 def write_javadoc_sourcepath_properties():
