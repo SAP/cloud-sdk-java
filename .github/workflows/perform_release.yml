@@ -126,7 +126,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_CROSS_REPO_TOKEN_STIPPI2 }}
 
       - name: Merge Release Branch
-        run: gh pr merge --rebase "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
+        run: gh pr merge --squash "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ github.token }}
 
