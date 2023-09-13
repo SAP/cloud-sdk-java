@@ -124,11 +124,6 @@ jobs:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
           retention-days: 1
-      - name: Upload JavaDocs
-        uses: actions/upload-artifact@v3
-        with:
-          name: cloud-sdk-aggregated-javadoc
-          path: ./target/site/apidocs
 
   archetypes:
     runs-on: ubuntu-latest
@@ -142,7 +137,7 @@ jobs:
           - {
               "archetype": "scp-cf-spring",
               "javaVersion": 8,
-              "startCommand": "mvn spring-boot:run -B"
+              "startCommand": "mvn spring-boot:run -B",
             }
           - {
               "archetype": "scp-cf-spring-jakarta",
@@ -426,7 +421,16 @@ jobs:
 
   notify-job:
     runs-on: ubuntu-latest
-    needs: [prepare-release, build, archetypes, codeql, create-release, scan, create_fosstars_report]
+    needs:
+      [
+        prepare-release,
+        build,
+        archetypes,
+        codeql,
+        create-release,
+        scan,
+        create_fosstars_report,
+      ]
     if: ${{ failure() }}
     steps:
       - name: Checkout
