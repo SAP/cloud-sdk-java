@@ -111,7 +111,7 @@ jobs:
         working-directory: ./cloud-sdk
         run: |
           PR_TITLE="Update Cloud SDK for Java API docs for v$MAJOR_VERSION"
-          PR_BODY="Replace the contents of v$MAJOR_VERSION API docs with the latest release of the SDK.
+          PR_BODY="Replace the contents of v$MAJOR_VERSION API docs with the latest release of the SDK."
 
           gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
         env:
