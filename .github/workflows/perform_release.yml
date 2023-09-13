@@ -67,6 +67,9 @@ jobs:
           repository: SAP/cloud-sdk
           path: cloud-sdk
 
+      - name: Tree
+        run: tree
+
       - name: Prepare git
         working-directory: ./cloud-sdk
         run: |
