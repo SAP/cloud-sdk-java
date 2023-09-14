@@ -89,6 +89,7 @@ jobs:
           java-version: 17
       - name: Import PGP Key
         run: |
+          export GPG_TTY=$(tty)
           echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --import
       - name: Test and Package
         run: |
