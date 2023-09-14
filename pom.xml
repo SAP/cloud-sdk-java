@@ -1326,10 +1326,10 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>release</id>
+			<id>signing</id>
 			<activation>
 				<property>
-					<name>release</name>
+					<name>signing</name>
 				</property>
 			</activation>
 			<build>
