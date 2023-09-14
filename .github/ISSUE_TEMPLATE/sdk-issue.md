@@ -84,6 +84,7 @@ If you cannot share your project for confidentiality reasons, please consider pr
 
 - [ ] Checked out the [documentation](https://sap.github.io/cloud-sdk/docs/java/sdk-java-troubleshooting-frequent-problems) and [Stack Overflow](https://stackoverflow.com/questions/tagged/sap-cloud-sdk)
 - [ ] Description provided with all relevant information
+- [ ] Exception and stack trace provided
 - [ ] Attached debug logs
 - [ ] Attached dependency tree
 - [ ] Provided Cloud SDK version & link to relevant source code
