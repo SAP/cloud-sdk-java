@@ -44,6 +44,7 @@ scripts/usageanalytics/figures/*.pdf
 .mvn
 **/.factorypath
 mvnvm.properties
+javadoc.properties
 
 **/.openapi-generator/**
 

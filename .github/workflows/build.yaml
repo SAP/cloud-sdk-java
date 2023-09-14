@@ -83,7 +83,8 @@ jobs:
         # we need to use install here because otherwise the code checks below don't work
         # they require the JARs of all modules to work, so those need to be installed
         run: |
-          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting
+          python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
+          mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting -Pdocs
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
           rm -rf release
