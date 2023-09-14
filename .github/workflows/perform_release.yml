@@ -64,6 +64,18 @@ jobs:
           -Dmaven.install.skip=true
           deploy
 
+          mvn
+          $MVN_CLI_ARGS
+          nexus-staging:rc-list
+          -DserverId=ossrh
+          -DnexusUrl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+          
+          mvn
+          $MVN_CLI_ARGS
+          nexus-staging:rc-close
+          -DserverId=ossrh
+          -DnexusUrl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+
         env:
           MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
