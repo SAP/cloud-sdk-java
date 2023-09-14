@@ -95,9 +95,11 @@ jobs:
       - name: Test and Package
         run: |
           python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
-          mvn $MVN_CLI_ARGS install jacoco:report javadoc:aggregate -Pdocs,signing -Dgpg.passphrase="${{ secrets.PGP_PASSPHRASE }}" -Dgpg.keyname="${{ secrets.MAVEN_CENTRAL_USER }}"
+          mvn $MVN_CLI_ARGS install jacoco:report javadoc:aggregate -Pdocs,signing -Dgpg.passphrase="$PASSPHRASE" -Dgpg.keyname="${{ secrets.MAVEN_CENTRAL_USER }}"
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ needs.prepare-release.outputs.release_version }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip release
+        env:
+          PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
       - name: Local Changes Check
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
