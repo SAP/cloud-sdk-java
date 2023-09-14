@@ -89,7 +89,7 @@ jobs:
           java-version: 17
       - name: Import PGP Key
         run: |
-          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase "${{ secrets.PGP_PASSPHRASE }}" --import
+          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase '${{ secrets.PGP_PASSPHRASE }}' --import
       - name: Test and Package
         run: |
           python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
