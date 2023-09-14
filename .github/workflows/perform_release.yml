@@ -1,16 +1,16 @@
 name: Perform Release
 
 on:
-  release:
-    types: [published]
+  # release:
+  #   types: [published]
 
-#  # Uncomment the following lines to enable manual workflow trigger
-#  # Make sure to swap out the two places referencing GIT_TAG in the steps below
-#  workflow_dispatch:
-#    inputs:
-#      release_version:
-#        description: "Release version, leave empty for default value based on current snapshot"
-#        required: false
+ # Uncomment the following lines to enable manual workflow trigger
+ # Make sure to swap out the two places referencing GIT_TAG in the steps below
+ workflow_dispatch:
+   inputs:
+     release_version:
+       description: "Release version, leave empty for default value based on current snapshot"
+       required: false
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -29,16 +29,19 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-          server-id: artifactory-snapshots
-          server-username: ARTIFACTORY_USER # env variable for username in deploy
-          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+          # server-id: artifactory-snapshots
+          # server-username: ARTIFACTORY_USER # env variable for username in deploy
+          # server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+          server-id: ossrh
+          server-username: MAVEN_CENTRAL_USER # env variable for username in deploy
+          server-password: MAVEN_CENTRAL_PASSWORD # env variable for token in deploy
 
       - name: Download Release Asset
         id: download-asset
         run: |
-          GIT_TAG=${{ github.event.release.tag_name }}
+          # GIT_TAG=${{ github.event.release.tag_name }}
           # When enabling the manual workflow trigger, use the next line instead of the previous one
-          # GIT_TAG=rel/${{ github.event.inputs.release_version }}
+          GIT_TAG=rel/${{ github.event.inputs.release_version }}
           echo Git Tag "$GIT_TAG"
 
           BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
@@ -56,23 +59,21 @@ jobs:
         run: >
           mvn
           $MVN_CLI_ARGS
-          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -DrepositoryId=artifactory-snapshots
           -Dmaven.install.skip=true
           deploy
 
         env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
       - name: Get SDK Major Version
         run: |
           echo "VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')" >> $GITHUB_ENV
           echo "MAJOR_VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}' | awk -F'.' '{print $1}')" >> $GITHUB_ENV
         env:
-          GIT_TAG: ${{ github.event.release.tag_name }}
+          # GIT_TAG: ${{ github.event.release.tag_name }}
           # When enabling the manual workflow trigger, use the next line instead of the previous one
-          # GIT_TAG: rel/${{ github.event.inputs.release_version }}
+          GIT_TAG: rel/${{ github.event.inputs.release_version }}
 
       - name: Checkout SAP/cloud-sdk
         uses: actions/checkout@v3
@@ -131,22 +132,22 @@ jobs:
           VERSION: ${{ env.VERSION }}
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
-      - name: Merge Release Branch
-        run: gh pr merge --squash "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # - name: Merge Release Branch
+      #   run: gh pr merge --squash "${{ steps.download-asset.outputs.BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
 
-  notify-job:
-    runs-on: ubuntu-latest
-    needs: [release]
-    if: ${{ failure() }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Notify
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ needs.release.outputs.branch_name }}
+  # notify-job:
+  #   runs-on: ubuntu-latest
+  #   needs: [release]
+  #   if: ${{ failure() }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Notify
+  #       run: python .pipeline/scripts/notify.py
+  #       env:
+  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  #         WORKFLOW: ${{ github.workflow }}
+  #         WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+  #         BRANCH_NAME: ${{ needs.release.outputs.branch_name }}
