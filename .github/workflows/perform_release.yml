@@ -66,13 +66,13 @@ jobs:
 
           mvn
           $MVN_CLI_ARGS
-          nexus-staging:rc-list
+          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-list
           -DserverId=ossrh
           -DnexusUrl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
           
           mvn
           $MVN_CLI_ARGS
-          nexus-staging:rc-close
+          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-close
           -DserverId=ossrh
           -DnexusUrl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
 
