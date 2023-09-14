@@ -244,16 +244,16 @@
         }
       }
     },
-    "value" : 4.329804179272265,
+    "value" : 4.480977119806908,
     "weight" : 1.0,
-    "confidence" : 9.645390070921987,
+    "confidence" : 10.0,
     "usedValues" : [ {
       "type" : "ScoreValue",
       "score" : {
         "type" : "ProjectSecurityAwarenessScore",
         "name" : "How well open-source community is aware about security"
       },
-      "value" : 2.0,
+      "value" : 2.5,
       "weight" : 0.9,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -294,7 +294,7 @@
           "type" : "BooleanFeature",
           "name" : "If a project signs artifacts"
         },
-        "flag" : false,
+        "flag" : true,
         "explanation" : [ ]
       }, {
         "type" : "BooleanValue",
@@ -1330,7 +1330,7 @@
         "type" : "ProjectActivityScore",
         "name" : "Open-source project activity score"
       },
-      "value" : 3.553846153846154,
+      "value" : 4.061538461538461,
       "weight" : 0.5,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -1339,7 +1339,7 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of commits in the last three months"
         },
-        "number" : 22,
+        "number" : 24,
         "explanation" : [ ]
       }, {
         "type" : "IntegerValue",
@@ -1347,10 +1347,10 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of contributors in the last three months"
         },
-        "number" : 2,
+        "number" : 3,
         "explanation" : [ ]
       } ],
-      "explanation" : [ "22 commits in the last 3 months results to 3.38 points", "2 contributors increase the score value from 3.38 to 3.55" ],
+      "explanation" : [ "24 commits in the last 3 months results to 3.69 points", "3 contributors increase the score value from 3.69 to 4.06" ],
       "isUnknown" : false,
       "isNotApplicable" : false,
       "feature" : {
@@ -1388,9 +1388,9 @@
         "type" : "ProjectPopularityScore",
         "name" : "Open-source project popularity score"
       },
-      "value" : 0.015,
+      "value" : 0.028333333333333335,
       "weight" : 0.5,
-      "confidence" : 6.666666666666667,
+      "confidence" : 10.0,
       "usedValues" : [ {
         "type" : "IntegerValue",
         "feature" : {
@@ -1408,11 +1408,12 @@
         "number" : 3,
         "explanation" : [ ]
       }, {
-        "type" : "UnknownValue",
+        "type" : "IntegerValue",
         "feature" : {
           "type" : "PositiveIntegerFeature",
           "name" : "Number of projects on GitHub that use an open source project"
         },
+        "number" : 20,
         "explanation" : [ ]
       } ],
       "explanation" : [ ],
@@ -2727,5 +2728,5 @@
       }
     }
   },
-  "label" : [ "OssSecurityRating$SecurityLabel", "BAD" ]
+  "label" : [ "OssSecurityRating$SecurityLabel", "MODERATE" ]
 }
