@@ -244,7 +244,7 @@
         }
       }
     },
-    "value" : 4.995925292201888,
+    "value" : 4.329804179272265,
     "weight" : 1.0,
     "confidence" : 9.645390070921987,
     "usedValues" : [ {
@@ -1330,7 +1330,7 @@
         "type" : "ProjectActivityScore",
         "name" : "Open-source project activity score"
       },
-      "value" : 9.815384615384616,
+      "value" : 3.553846153846154,
       "weight" : 0.5,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -1339,7 +1339,7 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of commits in the last three months"
         },
-        "number" : 58,
+        "number" : 22,
         "explanation" : [ ]
       }, {
         "type" : "IntegerValue",
@@ -1347,10 +1347,10 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of contributors in the last three months"
         },
-        "number" : 4,
+        "number" : 2,
         "explanation" : [ ]
       } ],
-      "explanation" : [ "58 commits in the last 3 months results to 8.92 points", "4 contributors increase the score value from 8.92 to 9.82" ],
+      "explanation" : [ "22 commits in the last 3 months results to 3.38 points", "2 contributors increase the score value from 3.38 to 3.55" ],
       "isUnknown" : false,
       "isNotApplicable" : false,
       "feature" : {
@@ -2727,5 +2727,5 @@
       }
     }
   },
-  "label" : [ "OssSecurityRating$SecurityLabel", "MODERATE" ]
+  "label" : [ "OssSecurityRating$SecurityLabel", "BAD" ]
 }
