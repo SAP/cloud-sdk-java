@@ -59,6 +59,8 @@ jobs:
         run: >
           mvn
           $MVN_CLI_ARGS
+          -DrepositoryId=ossrh
+          -Durl=https://oss.sonatype.org/
           -Dmaven.install.skip=true
           deploy
 
