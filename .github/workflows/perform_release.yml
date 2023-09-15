@@ -58,7 +58,6 @@ jobs:
         working-directory: ./release
         run: >
           mvn
-          $MVN_CLI_ARGS
           -DrepositoryId=ossrh
           -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
           -Dmaven.install.skip=true
@@ -69,7 +68,7 @@ jobs:
           org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-list
           -DserverId=ossrh
           -DnexusUrl=https://oss.sonatype.org
-          
+
           mvn
           $MVN_CLI_ARGS
           org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-close
