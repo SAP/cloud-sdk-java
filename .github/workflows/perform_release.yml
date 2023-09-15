@@ -58,12 +58,14 @@ jobs:
         working-directory: ./release
         run: >
           mvn
-          # -DrepositoryId=ossrh
-          # -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+          $MVN_CLI_ARGS
           -DrepositoryId=local
           -Durl=file:./custom_repo
           -Dmaven.install.skip=true
           deploy
+
+          # -DrepositoryId=ossrh
+          # -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
 
           mvn
           $MVN_CLI_ARGS
