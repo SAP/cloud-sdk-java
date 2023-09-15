@@ -60,9 +60,20 @@ jobs:
           mvn
           $MVN_CLI_ARGS
           -DrepositoryId=local
-          -Durl=file:./custom_repo
+          -Durl=file:./temp_local_repo
           -Dmaven.install.skip=true
           deploy
+
+          # TODO: FIX Version handling
+
+          mvn
+          $MVN_CLI_ARGS
+          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
+          -DserverId=ossrh
+          -DnexusUrl=https://oss.sonatype.org
+          -DrepositoryDirectory=./temp_local_repo
+          -DstagingProfileId=com.sap.cloud
+          -DstagingRepositoryId=comsapcloudsdk-${{ github.event.inputs.release_version }}
 
           # -DrepositoryId=ossrh
           # -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
