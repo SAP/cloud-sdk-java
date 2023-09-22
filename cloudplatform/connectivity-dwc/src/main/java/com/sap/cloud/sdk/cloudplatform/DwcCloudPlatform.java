@@ -4,12 +4,9 @@
 
 package com.sap.cloud.sdk.cloudplatform;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor;
 
 import io.vavr.control.Option;
 
@@ -62,14 +59,4 @@ public interface DwcCloudPlatform extends CloudPlatform
      */
     @Nonnull
     DwcOutboundProxyBinding getOutboundProxyBindingOrThrow( @Nonnull final String bindingName );
-
-    /**
-     * Returns the mapping of outbound-service-bindings.
-     *
-     * @return A mapping of outbound-service-bindings and service-meta information.
-     * @deprecated Deprecated in favor of the {@link MegacliteServiceBindingAccessor#getServiceBindings()} API.
-     */
-    @Deprecated
-    @Nonnull
-    Map<DwcOutboundServiceBinding, DwcOutboundServiceMeta> getOutboundServices();
 }

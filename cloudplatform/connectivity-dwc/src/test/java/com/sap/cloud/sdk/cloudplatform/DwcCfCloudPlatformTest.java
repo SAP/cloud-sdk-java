@@ -8,13 +8,11 @@ import static com.sap.cloud.sdk.cloudplatform.MegacliteConfigurationLoader.DWC_A
 import static com.sap.cloud.sdk.cloudplatform.MegacliteConfigurationLoader.DWC_MEGACLITE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 
-import org.assertj.core.api.Condition;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -164,34 +162,6 @@ public class DwcCfCloudPlatformTest
         assertThat(platform1).isEqualTo(platform2);
         assertThat(platform1 == platform2).isTrue();
         assertThat(platform2.getEnvironmentVariable("foo")).isEqualTo(Option.of("bar"));
-    }
-
-    @Test
-    @SuppressWarnings( "deprecation" )
-    public void testRegisterReuseServiceBinding()
-    {
-        final DwcOutboundServiceBinding bindingSubscriber = mock(DwcOutboundServiceBinding.class);
-        final DwcOutboundServiceBinding bindingProvider = mock(DwcOutboundServiceBinding.class);
-
-        platform.registerSubscriberReuseDestinationService(bindingSubscriber);
-        platform.registerProviderReuseDestinationService(bindingProvider);
-
-        assertThat(platform.getOutboundServices())
-            .hasSize(2)
-            .hasEntrySatisfying(
-                bindingSubscriber,
-                new Condition<>(
-                    meta -> meta.isReuseService()
-                        && meta.getTargetService() == DwcOutboundServiceMeta.TargetService.DESTINATION
-                        && meta.getTargetMandate() == DwcOutboundServiceMeta.TargetMandate.SUBSCRIBER,
-                    "Reuse destination service binding on behalf of subscriber account."))
-            .hasEntrySatisfying(
-                bindingProvider,
-                new Condition<>(
-                    meta -> meta.isReuseService()
-                        && meta.getTargetService() == DwcOutboundServiceMeta.TargetService.DESTINATION
-                        && meta.getTargetMandate() == DwcOutboundServiceMeta.TargetMandate.PROVIDER,
-                    "Reuse destination service binding on behalf of provider account."));
     }
 
     @Test

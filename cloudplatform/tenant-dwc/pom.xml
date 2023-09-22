@@ -40,7 +40,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc</artifactId>
+			<artifactId>connectivity-dwc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>

@@ -83,6 +83,10 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.mikesamuel</groupId>
+			<artifactId>json-sanitizer</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
 			<artifactId>java-access-api</artifactId>
 		</dependency>

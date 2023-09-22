@@ -3,7 +3,6 @@
  */
 package com.sap.cloud.sdk.cloudplatform;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -20,12 +19,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.json.JsonSanitizer;
-import com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,10 +51,6 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     @Setter
     @Nonnull
     private Function<String, String> environmentVariableReader = System::getenv;
-
-    @Getter( onMethod = @__( @Deprecated ) )
-    @SuppressWarnings( "deprecation" )
-    private final Map<DwcOutboundServiceBinding, DwcOutboundServiceMeta> outboundServices = new HashMap<>();
 
     /**
      * Invalidates all internal caches holding the parsed VCAP_APPLICATION and VCAP_SERVICES environment variables.
@@ -258,7 +251,6 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     }
 
     @Override
-    @SuppressWarnings( "deprecation" )
     @Nonnull
     public Option<DwcOutboundProxyBinding> getOutboundProxyBinding()
     {
@@ -266,7 +258,6 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     }
 
     @Override
-    @SuppressWarnings( "deprecation" )
     @Nonnull
     public DwcOutboundProxyBinding getOutboundProxyBindingOrThrow()
     {
@@ -318,53 +309,5 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
                         "Failed to load URL of outbound proxy (megaclite). Proceeding without outbound proxy.",
                         cause))
             .getOrNull();
-    }
-
-    /**
-     * Register an initial outbound-service-binding for the reuse-destination-service adapter. The binding will be used
-     * on behalf of the subscriber account. <br>
-     * <b>Note:</b> This method is intended for bootstrapping the application. Invoking the method later at application
-     * runtime may not take effect.
-     *
-     * @param binding
-     *            The service binding.
-     * @deprecated Deprecated in favor of the
-     *             {@link com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor#registerServiceBinding(MegacliteServiceBinding)}
-     *             API.
-     */
-    @Deprecated
-    public void registerSubscriberReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
-    {
-        outboundServices
-            .put(
-                binding,
-                new DefaultDwcOutboundServiceMeta(
-                    true,
-                    DwcOutboundServiceMeta.TargetService.DESTINATION,
-                    DwcOutboundServiceMeta.TargetMandate.SUBSCRIBER));
-    }
-
-    /**
-     * Register an initial outbound-service-binding for the reuse-destination-service adapter. The binding will be used
-     * on behalf of the provider account. <br>
-     * <b>Note:</b> This method is intended for bootstrapping the application. Invoking the method later at application
-     * runtime may not take effect.
-     *
-     * @param binding
-     *            The service binding.
-     * @deprecated Deprecated in favor of the
-     *             {@link com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor#registerServiceBinding(MegacliteServiceBinding)}
-     *             API.
-     */
-    @Deprecated
-    public void registerProviderReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
-    {
-        outboundServices
-            .put(
-                binding,
-                new DefaultDwcOutboundServiceMeta(
-                    true,
-                    DwcOutboundServiceMeta.TargetService.DESTINATION,
-                    DwcOutboundServiceMeta.TargetMandate.PROVIDER));
     }
 }

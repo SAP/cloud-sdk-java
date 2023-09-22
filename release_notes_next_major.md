@@ -48,6 +48,10 @@ blog: https://blogs.sap.com/?p=xxx
     - Cloud Platform - Auditlog - SCP CF: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-cf`
     - Cloud Platform - Auditlog - SCP Neo: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-neo`
     - As part of removing these modules, we also removed the integration of the Auditlog service with the S/4HANA connectivity features. Consumers who relied on this out-of-the-box integration are asked to approach the development team by [creating a GitHub support issue](https://github.com/SAP/cloud-sdk-java/issues/new) for migration guidance.
+  - Related to DwC:
+    - Cloud Platform - Core SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc`
+    - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
+    - The replacement is Deploy with Confidence Connectivity: `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
 - Following public classes have been removed:
   - Related to the `Destination` API:
     - Within the [Business Technology Platform - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity) Module:

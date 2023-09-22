@@ -50,8 +50,6 @@
 		<module>tenant</module>
 		<module>tenant-scp-cf</module>
 		<module>dwc-cf</module>
-		<module>cloudplatform-core-dwc-cf</module>
-		<module>cloudplatform-core-dwc</module>
 		<module>security-dwc</module>
 		<module>tenant-dwc</module>
 	</modules>
@@ -64,4 +62,20 @@
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<project.rootdir>${project.basedir}/../../</project.rootdir>
 	</properties>
+	<profiles>
+		<profile>
+			<id>build-sap-internal-modules</id>
+			<activation>
+				<property>
+					<name>audience</name>
+					<value>!everyone</value>
+				</property>
+			</activation>
+			<modules>
+				<module>dwc-cf</module>
+				<module>security-dwc</module>
+				<module>tenant-dwc</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
