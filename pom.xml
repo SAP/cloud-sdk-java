@@ -104,7 +104,7 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>4.9.0</olingo-v4.version>
 		<olingo-v2.version>2.0.12</olingo-v2.version>
-		<maven-plugin.version>3.6.0</maven-plugin.version>
+		<maven-plugin.version>3.8.1</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
 		<caffeine.version>2.9.3</caffeine.version>
