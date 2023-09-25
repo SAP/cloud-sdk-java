@@ -4,8 +4,8 @@ on:
   release:
     types: [published]
 
-# # Uncomment the following lines to enable manual workflow trigger
-# # Make sure to swap out the two places referencing GIT_TAG in the steps below
+#  # Uncomment the following lines to enable manual workflow trigger
+#  # Make sure to swap out the two places referencing GIT_TAG in the steps below
 #  workflow_dispatch:
 #    inputs:
 #      release_version:
