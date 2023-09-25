@@ -31,6 +31,7 @@ pom_begin_install_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
 """
 
