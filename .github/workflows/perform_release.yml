@@ -77,7 +77,6 @@ jobs:
           -DrepositoryDirectory=./temp_local_repo
           -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
           -DautoReleaseAfterClose=false
-          -DstagingRepositoryId=comsapcloudsdk-${{ github.event.inputs.release_version }}
 
           exit 1
 
