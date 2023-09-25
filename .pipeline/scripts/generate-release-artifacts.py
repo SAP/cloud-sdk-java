@@ -71,10 +71,6 @@ def get_module_dest_path(module):
     return sanitize_path("artifacts", module["pomFile"].replace("pom.xml", ""))
 
 
-def get_module_repo_path(module, sdk_version):
-    return sanitize_path(module["groupId"].replace(".", "/"), module["artifactId"], sdk_version)
-
-
 def copy_artifact_and_signature(source_path, target_path):
     shutil.copyfile(source_path, target_path)
     if os.path.exists(source_path + ".asc"):
@@ -115,38 +111,6 @@ def copy_artifacts(path_prefix, sdk_version):
                 if os.path.exists(src_sources_artifact):
                     dst_sources_artifact = sanitize_path(dst_path, artifact_base_name + "-sources.jar")
                     copy_artifact_and_signature(src_sources_artifact, dst_sources_artifact)
-
-
-def copy_signatures(path_prefix, sdk_version, local_repo):
-    with open("module-inventory.json", "r") as file:
-        module_inventory = json.load(file)
-
-        for module in module_inventory:
-            if module["releaseAudience"] != "Public":
-                continue
-
-            src_path = sanitize_path(path_prefix, get_module_dest_path(module))
-            dst_path = sanitize_path(local_repo, get_module_repo_path(module, sdk_version))
-            artifact_base_name = module["artifactId"] + "-" + sdk_version
-
-            shutil.copyfile(
-                sanitize_path(src_path, artifact_base_name + ".pom.asc"),
-                sanitize_path(dst_path, artifact_base_name + ".pom.asc"))
-
-            if module["packaging"] != "pom":
-                src_artifact = sanitize_path(src_path, artifact_base_name + ".jar")
-                dst_artifact = sanitize_path(dst_path, artifact_base_name + ".jar")
-                shutil.copyfile(src_artifact + ".asc", dst_artifact + ".asc")
-
-                src_docs_artifact = sanitize_path(src_path, artifact_base_name + "-javadoc.jar")
-                if os.path.exists(src_docs_artifact):
-                    dst_docs_artifact = sanitize_path(dst_path, artifact_base_name + "-javadoc.jar")
-                    shutil.copyfile(src_docs_artifact + ".asc", dst_docs_artifact + ".asc")
-
-                src_sources_artifact = sanitize_path(src_path, artifact_base_name + "-sources.jar")
-                if os.path.exists(src_sources_artifact):
-                    dst_sources_artifact = sanitize_path(dst_path, artifact_base_name + "-sources.jar")
-                    shutil.copyfile(src_sources_artifact + ".asc", dst_sources_artifact + ".asc")
 
 
 def generate_execution(path_prefix, phase, module, sdk_version):
@@ -219,24 +183,15 @@ def main():
     parser.add_argument("--path-prefix",
                         help="Path in which to generate the release folder structure.",
                         required=True)
-    parser.add_argument("--copy-signatures",
-                        help="Copy the signature files (.asc) for all artifacts.",
-                        required=False)
-    parser.add_argument("--local-repository",
-                        help="Copy the signature files (.asc) for all artifacts.",
-                        required=False)
 
     args = parser.parse_args()
 
-    if args.copy_signatures:
-        copy_signatures(args.path_prefix, args.version, args.local_repository)
-    else:
-        if os.path.exists(args.path_prefix):
-            shutil.rmtree(args.path_prefix)
+    if os.path.exists(args.path_prefix):
+        shutil.rmtree(args.path_prefix)
 
-        copy_artifacts(args.path_prefix, args.version)
+    copy_artifacts(args.path_prefix, args.version)
 
-        generate_pom(args.path_prefix, args.version)
+    generate_pom(args.path_prefix, args.version)
 
 
 if __name__ == '__main__':
