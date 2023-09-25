@@ -13,16 +13,6 @@ pom_beginning = """
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
     </properties>
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <build>
         <plugins>
 """
@@ -71,10 +61,8 @@ def get_module_dest_path(module):
     return sanitize_path("artifacts", module["pomFile"].replace("pom.xml", ""))
 
 
-def copy_artifact_and_signature(source_path, target_path):
+def copy_artifact(source_path, target_path):
     shutil.copyfile(source_path, target_path)
-    if os.path.exists(source_path + ".asc"):
-        shutil.copyfile(source_path + ".asc", target_path + ".asc")
 
 
 def copy_artifacts(path_prefix, sdk_version):
@@ -85,32 +73,28 @@ def copy_artifacts(path_prefix, sdk_version):
             if module["releaseAudience"] != "Public":
                 continue
 
-            src_path = get_module_source_path(module)
             dst_path = sanitize_path(path_prefix, get_module_dest_path(module))
             artifact_base_name = module["artifactId"] + "-" + sdk_version
             os.makedirs(dst_path, exist_ok=True)
 
             shutil.copyfile(module["pomFile"], sanitize_path(dst_path, "pom.xml"))
 
-            src_pom_signature = sanitize_path(src_path, artifact_base_name + ".pom.asc")
-            if os.path.exists(src_pom_signature):
-                dst_pom_signature = sanitize_path(dst_path, artifact_base_name + ".pom.asc")
-                shutil.copyfile(src_pom_signature, dst_pom_signature)
-
             if module["packaging"] != "pom":
+                src_path = get_module_source_path(module)
+
                 src_artifact = sanitize_path(src_path, artifact_base_name + ".jar")
                 dst_artifact = sanitize_path(dst_path, artifact_base_name + ".jar")
-                copy_artifact_and_signature(src_artifact, dst_artifact)
+                copy_artifact(src_artifact, dst_artifact)
 
                 src_docs_artifact = sanitize_path(src_path, artifact_base_name + "-javadoc.jar")
                 if os.path.exists(src_docs_artifact):
                     dst_docs_artifact = sanitize_path(dst_path, artifact_base_name + "-javadoc.jar")
-                    copy_artifact_and_signature(src_docs_artifact, dst_docs_artifact)
+                    copy_artifact(src_docs_artifact, dst_docs_artifact)
 
                 src_sources_artifact = sanitize_path(src_path, artifact_base_name + "-sources.jar")
                 if os.path.exists(src_sources_artifact):
                     dst_sources_artifact = sanitize_path(dst_path, artifact_base_name + "-sources.jar")
-                    copy_artifact_and_signature(src_sources_artifact, dst_sources_artifact)
+                    copy_artifact(src_sources_artifact, dst_sources_artifact)
 
 
 def generate_execution(path_prefix, phase, goal, module, sdk_version):

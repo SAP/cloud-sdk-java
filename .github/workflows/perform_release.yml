@@ -1,16 +1,16 @@
 name: Perform Release
 
 on:
-   release:
-     types: [published]
+  release:
+    types: [published]
 
- # Uncomment the following lines to enable manual workflow trigger
- # Make sure to swap out the two places referencing GIT_TAG in the steps below
-# workflow_dispatch:
-#   inputs:
-#     release_version:
-#       description: "Release version, leave empty for default value based on current snapshot"
-#       required: false
+# # Uncomment the following lines to enable manual workflow trigger
+# # Make sure to swap out the two places referencing GIT_TAG in the steps below
+#  workflow_dispatch:
+#    inputs:
+#      release_version:
+#        description: "Release version, leave empty for default value based on current snapshot"
+#        required: false
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -38,7 +38,7 @@ jobs:
         run: |
           GIT_TAG=${{ github.event.release.tag_name }}
           # When enabling the manual workflow trigger, use the next line instead of the previous one
-          #GIT_TAG=rel/${{ github.event.inputs.release_version }}
+          # GIT_TAG=rel/${{ github.event.inputs.release_version }}
           echo Git Tag "$GIT_TAG"
 
           BRANCH_NAME=`python -c "print('RELEASE-' + '$GIT_TAG'.replace('rel/', ''))"`
