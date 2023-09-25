@@ -1,6 +1,6 @@
 **Rating**: **MODERATE**
 
-**Score**: **5.0**, max score value is 10.0
+**Score**: **4.92**, max score value is 10.0
 
 **Confidence**: High (9.65, max confidence value is 10.0)
 
@@ -41,7 +41,7 @@ It used the following sub-scores:
         
     1.  **[nohttp tool](#nohttp-tool)**: **0.0** (weight is 0.2)
         
-1.  **[Security awareness](#security-awareness)**: **2.5** (weight is 0.9)
+1.  **[Security awareness](#security-awareness)**: **2.0** (weight is 0.9)
     
 1.  **[Vulnerability discovery and security testing](#vulnerability-discovery-and-security-testing)**: **2.0** (weight is 0.6)
     1.  **[Security testing](#security-testing)**: **6.57** (weight is 1.0)
@@ -75,7 +75,7 @@ It used the following sub-scores:
     
 1.  **[Community commitment](#community-commitment)**: **8.0** (weight is 0.5)
     
-1.  **[Project activity](#project-activity)**: **8.97** (weight is 0.5)
+1.  **[Project activity](#project-activity)**: **9.14** (weight is 0.5)
     
 1.  **[Project popularity](#project-popularity)**: **0.01** (weight is 0.5)
     
@@ -106,6 +106,11 @@ You can set a CVSS threshold for vulnerabilities reported by OWASP Dependency Ch
 More info:
 1.  [OWASP Dependnecy Check](https://jeremylong.github.io/DependencyCheck/)
 1.  [Configuring OWASP Dependency Check](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/configuration.html)
+
+
+You can enable artifact signing in the project's build pipeline.
+More info:
+1.  [Apache Maven Jarsigner Plugin](https://maven.apache.org/plugins/maven-jarsigner-plugin/)
 
 
 You can enable NoHttp tool in the project's build pipeline.
@@ -182,7 +187,7 @@ This sub-score is based on the following sub-scores:
 
 ### Security awareness
 
-Score: **2.5**, confidence is 10.0 (max), weight is 0.9 (high)
+Score: **2.0**, confidence is 10.0 (max), weight is 0.9 (high)
 
 The score shows how a project is aware of security. If the project has a security policy, then the score adds 2.00. If the project has a security team, then the score adds 3.00. If the project uses verified signed commits, then the score adds 0.50. If the project has a bug bounty program, then the score adds 4.00. If the project signs its artifacts, then the score adds 0.50. If the project uses a security tool or library, then the score adds 1.00. If the project has executable binaries, then the score subtracts 2.00.
 
@@ -196,7 +201,7 @@ This sub-score is based on 18 features:
 1.  **Does it have a security policy?** Yes
 1.  **Does it have a security team?** No
 1.  **Does it have executable binaries?** No
-1.  **Does it sign artifacts?** Yes
+1.  **Does it sign artifacts?** No
 1.  **Does it use AddressSanitizer?** No
 1.  **Does it use Dependabot?** No
 1.  **Does it use FindSecBugs?** No
@@ -294,18 +299,18 @@ This sub-score is based on 3 features:
 
 ### Project activity
 
-Score: **8.97**, confidence is 10.0 (max), weight is 0.5 (medium)
+Score: **9.14**, confidence is 10.0 (max), weight is 0.5 (medium)
 
 The score evaluates how active a project is. It's based on number of commits and contributors in the last 3 months.
 
-53 commits in the last 3 months results to 8.15 points
-4 contributors increase the score value from 8.15 to 8.97
+54 commits in the last 3 months results to 8.31 points
+4 contributors increase the score value from 8.31 to 9.14
 
 This sub-score is based on 2 features:
 
 
 
-1.  **Number of commits in the last three months:** 53
+1.  **Number of commits in the last three months:** 54
 1.  **Number of contributors in the last three months:** 4
 
 
