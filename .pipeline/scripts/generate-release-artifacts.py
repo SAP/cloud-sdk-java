@@ -43,6 +43,14 @@ pom_begin_deploy_plugin = """
                 <executions>
 """
 
+pom_begin_gpg_plugin = """
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+"""
+
 pom_end_plugin = """
                 </executions>
             </plugin>
@@ -113,7 +121,7 @@ def copy_artifacts(path_prefix, sdk_version):
                     copy_artifact_and_signature(src_sources_artifact, dst_sources_artifact)
 
 
-def generate_execution(path_prefix, phase, module, sdk_version):
+def generate_execution(path_prefix, phase, goal, module, sdk_version):
     artifact_path = to_maven_path(get_module_dest_path(module), module["artifactId"] + "-" + sdk_version)
     file = artifact_path + "." + module["packaging"]
     pom_path = to_maven_path("artifacts", module["pomFile"])
@@ -135,7 +143,7 @@ def generate_execution(path_prefix, phase, module, sdk_version):
                       <id>{phase}-{module["artifactId"]}</id>
                       <phase>{phase}</phase>
                       <goals>
-                          <goal>{phase}-file</goal>
+                          <goal>{goal}</goal>
                       </goals>
                       <configuration>
                           <file>{file}</file>
@@ -161,13 +169,19 @@ def generate_pom(path_prefix, sdk_version):
             f.write(pom_begin_install_plugin)
             for module in module_inventory:
                 if module["releaseAudience"] == "Public":
-                    f.write(generate_execution(path_prefix, "install", module, sdk_version))
+                    f.write(generate_execution(path_prefix, "install", "install-file", module, sdk_version))
             f.write(pom_end_plugin)
 
-            f.write(pom_begin_deploy_plugin)
+            # f.write(pom_begin_deploy_plugin)
+            # for module in module_inventory:
+            #     if module["releaseAudience"] == "Public":
+            #         f.write(generate_execution(path_prefix, "deploy", "deploy-file", module, sdk_version))
+            # f.write(pom_end_plugin)
+
+            f.write(pom_begin_gpg_plugin)
             for module in module_inventory:
                 if module["releaseAudience"] == "Public":
-                    f.write(generate_execution(path_prefix, "deploy", module, sdk_version))
+                    f.write(generate_execution(path_prefix, "deploy", "sign-and-deploy-file", module, sdk_version))
             f.write(pom_end_plugin)
 
             f.write(pom_end)
