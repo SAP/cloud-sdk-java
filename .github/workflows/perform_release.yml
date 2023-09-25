@@ -54,6 +54,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Import PGP Key
+        run: |
+          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase "$PASSPHRASE" --import
+        env:
+          PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+
       - name: Perform Release
         working-directory: ./release
         run: >
