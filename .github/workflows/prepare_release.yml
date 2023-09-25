@@ -87,16 +87,10 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
-      - name: Import PGP Key
-        run: |
-          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase "$PASSPHRASE" --import
-        env:
-          PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
       - name: Test and Package
         run: |
           python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
-          mvn $MVN_CLI_ARGS install jacoco:report javadoc:aggregate -Pdocs,signing -Dgpg.passphrase="$PASSPHRASE" -Dgpg.keyname="${{ secrets.MAVEN_CENTRAL_USER }}"
-          #mvn $MVN_CLI_ARGS install jacoco:report javadoc:aggregate -Pdocs
+          mvn $MVN_CLI_ARGS install jacoco:report javadoc:aggregate -Pdocs
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ needs.prepare-release.outputs.release_version }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip release
         env:

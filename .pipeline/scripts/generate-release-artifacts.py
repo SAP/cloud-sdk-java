@@ -35,14 +35,6 @@ pom_begin_install_plugin = """
                 <executions>
 """
 
-pom_begin_deploy_plugin = """
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-"""
-
 pom_begin_gpg_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -171,12 +163,6 @@ def generate_pom(path_prefix, sdk_version):
                 if module["releaseAudience"] == "Public":
                     f.write(generate_execution(path_prefix, "install", "install-file", module, sdk_version))
             f.write(pom_end_plugin)
-
-            # f.write(pom_begin_deploy_plugin)
-            # for module in module_inventory:
-            #     if module["releaseAudience"] == "Public":
-            #         f.write(generate_execution(path_prefix, "deploy", "deploy-file", module, sdk_version))
-            # f.write(pom_end_plugin)
 
             f.write(pom_begin_gpg_plugin)
             for module in module_inventory:
