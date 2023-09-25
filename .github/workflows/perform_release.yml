@@ -29,9 +29,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-          # server-id: artifactory-snapshots
-          # server-username: ARTIFACTORY_USER # env variable for username in deploy
-          # server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
           server-id: ossrh
           server-username: MAVEN_CENTRAL_USER # env variable for username in deploy
           server-password: MAVEN_CENTRAL_PASSWORD # env variable for token in deploy
@@ -72,8 +69,6 @@ jobs:
           -Dgpg.keyname="$MAVEN_CENTRAL_USER"
           deploy
 
-          # TODO: FIX Version handling
-
           mvn
           $MVN_CLI_ARGS
           org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
@@ -82,25 +77,9 @@ jobs:
           -DrepositoryDirectory=./temp_local_repo
           -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
           -DautoReleaseAfterClose=false
-
-          #-DstagingRepositoryId=comsapcloudsdk-${{ github.event.inputs.release_version }}
-
-          # -DrepositoryId=ossrh
-          # -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+          -DstagingRepositoryId=comsapcloudsdk-${{ github.event.inputs.release_version }}
 
           exit 1
-
-#          mvn
-#          $MVN_CLI_ARGS
-#          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-list
-#          -DserverId=ossrh
-#          -DnexusUrl=https://oss.sonatype.org
-#
-#          mvn
-#          $MVN_CLI_ARGS
-#          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-close
-#          -DserverId=ossrh
-#          -DnexusUrl=https://oss.sonatype.org
 
         env:
           MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
