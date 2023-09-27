@@ -21,14 +21,15 @@ pom_begin_install_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
 """
 
-pom_begin_deploy_plugin = """
+pom_begin_gpg_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
 """
 
@@ -60,6 +61,10 @@ def get_module_dest_path(module):
     return sanitize_path("artifacts", module["pomFile"].replace("pom.xml", ""))
 
 
+def copy_artifact(source_path, target_path):
+    shutil.copyfile(source_path, target_path)
+
+
 def copy_artifacts(path_prefix, sdk_version):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
@@ -69,6 +74,7 @@ def copy_artifacts(path_prefix, sdk_version):
                 continue
 
             dst_path = sanitize_path(path_prefix, get_module_dest_path(module))
+            artifact_base_name = module["artifactId"] + "-" + sdk_version
             os.makedirs(dst_path, exist_ok=True)
 
             shutil.copyfile(module["pomFile"], sanitize_path(dst_path, "pom.xml"))
@@ -76,22 +82,22 @@ def copy_artifacts(path_prefix, sdk_version):
             if module["packaging"] != "pom":
                 src_path = get_module_source_path(module)
 
-                src_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + ".jar")
-                dst_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + ".jar")
-                shutil.copyfile(src_artifact, dst_artifact)
+                src_artifact = sanitize_path(src_path, artifact_base_name + ".jar")
+                dst_artifact = sanitize_path(dst_path, artifact_base_name + ".jar")
+                copy_artifact(src_artifact, dst_artifact)
 
-                src_docs_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + "-javadoc.jar")
+                src_docs_artifact = sanitize_path(src_path, artifact_base_name + "-javadoc.jar")
                 if os.path.exists(src_docs_artifact):
-                    dst_docs_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + "-javadoc.jar")
-                    shutil.copyfile(src_docs_artifact, dst_docs_artifact)
+                    dst_docs_artifact = sanitize_path(dst_path, artifact_base_name + "-javadoc.jar")
+                    copy_artifact(src_docs_artifact, dst_docs_artifact)
 
-                src_sources_artifact = sanitize_path(src_path, module["artifactId"] + "-" + sdk_version + "-sources.jar")
+                src_sources_artifact = sanitize_path(src_path, artifact_base_name + "-sources.jar")
                 if os.path.exists(src_sources_artifact):
-                    dst_sources_artifact = sanitize_path(dst_path, module["artifactId"] + "-" + sdk_version + "-sources.jar")
-                    shutil.copyfile(src_sources_artifact, dst_sources_artifact)
+                    dst_sources_artifact = sanitize_path(dst_path, artifact_base_name + "-sources.jar")
+                    copy_artifact(src_sources_artifact, dst_sources_artifact)
 
 
-def generate_execution(path_prefix, phase, module, sdk_version):
+def generate_execution(path_prefix, phase, goal, module, sdk_version):
     artifact_path = to_maven_path(get_module_dest_path(module), module["artifactId"] + "-" + sdk_version)
     file = artifact_path + "." + module["packaging"]
     pom_path = to_maven_path("artifacts", module["pomFile"])
@@ -113,7 +119,7 @@ def generate_execution(path_prefix, phase, module, sdk_version):
                       <id>{phase}-{module["artifactId"]}</id>
                       <phase>{phase}</phase>
                       <goals>
-                          <goal>{phase}-file</goal>
+                          <goal>{goal}</goal>
                       </goals>
                       <configuration>
                           <file>{file}</file>
@@ -139,13 +145,13 @@ def generate_pom(path_prefix, sdk_version):
             f.write(pom_begin_install_plugin)
             for module in module_inventory:
                 if module["releaseAudience"] == "Public":
-                    f.write(generate_execution(path_prefix, "install", module, sdk_version))
+                    f.write(generate_execution(path_prefix, "install", "install-file", module, sdk_version))
             f.write(pom_end_plugin)
 
-            f.write(pom_begin_deploy_plugin)
+            f.write(pom_begin_gpg_plugin)
             for module in module_inventory:
                 if module["releaseAudience"] == "Public":
-                    f.write(generate_execution(path_prefix, "deploy", module, sdk_version))
+                    f.write(generate_execution(path_prefix, "deploy", "sign-and-deploy-file", module, sdk_version))
             f.write(pom_end_plugin)
 
             f.write(pom_end)
