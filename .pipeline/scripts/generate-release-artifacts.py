@@ -188,8 +188,6 @@ def main():
 
     args = parser.parse_args()
 
-    print(args)
-
     if os.path.exists(args.path_prefix):
         shutil.rmtree(args.path_prefix)
 
