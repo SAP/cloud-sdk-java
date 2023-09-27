@@ -33,7 +33,6 @@ pom_begin_deploy_plugin = """
                 <executions>
 """
 
-
 pom_begin_gpg_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
