@@ -157,7 +157,7 @@ def generate_pom(path_prefix, sdk_version, with_signing):
                     f.write(generate_execution(path_prefix, "install", "install-file", module, sdk_version))
             f.write(pom_end_plugin)
 
-            if with_signing == "true":
+            if with_signing is True:
                 f.write(pom_begin_gpg_plugin)
                 for module in module_inventory:
                     if module["releaseAudience"] == "Public":
@@ -187,6 +187,8 @@ def main():
                         help="Specify whether to sign all artifacts during deployment.")
 
     args = parser.parse_args()
+
+    print(args)
 
     if os.path.exists(args.path_prefix):
         shutil.rmtree(args.path_prefix)
