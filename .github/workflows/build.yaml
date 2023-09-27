@@ -85,7 +85,7 @@ jobs:
         run: |
           python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
           mvn $MVN_CLI_ARGS install -DskipTests -DskipFormatting -Pdocs
-          python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release --with-signing
+          python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
           rm -rf release
       - name: Create module-inventory
