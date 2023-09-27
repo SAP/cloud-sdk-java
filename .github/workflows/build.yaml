@@ -533,14 +533,10 @@ jobs:
           -Dmaven.test.skip
           -Dmaven.compiler.showCompilationChanges
           -Dhttp.keepAlive=false
-          -Dgpg.passphrase="$PASSPHRASE"
-          -Dgpg.keyname="$MAVEN_CENTRAL_USER"
           deploy
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
-          PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
   notify-job:
     runs-on: ubuntu-latest
     needs:

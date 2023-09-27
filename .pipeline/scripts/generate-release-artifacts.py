@@ -25,6 +25,15 @@ pom_begin_install_plugin = """
                 <executions>
 """
 
+pom_begin_deploy_plugin = """
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+"""
+
+
 pom_begin_gpg_plugin = """
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -135,7 +144,7 @@ def generate_execution(path_prefix, phase, goal, module, sdk_version):
                 """
 
 
-def generate_pom(path_prefix, sdk_version):
+def generate_pom(path_prefix, sdk_version, with_signing):
     with open("module-inventory.json", "r") as file:
         module_inventory = json.load(file)
 
@@ -148,10 +157,16 @@ def generate_pom(path_prefix, sdk_version):
                     f.write(generate_execution(path_prefix, "install", "install-file", module, sdk_version))
             f.write(pom_end_plugin)
 
-            f.write(pom_begin_gpg_plugin)
-            for module in module_inventory:
-                if module["releaseAudience"] == "Public":
-                    f.write(generate_execution(path_prefix, "deploy", "sign-and-deploy-file", module, sdk_version))
+            if with_signing == "true":
+                f.write(pom_begin_gpg_plugin)
+                for module in module_inventory:
+                    if module["releaseAudience"] == "Public":
+                        f.write(generate_execution(path_prefix, "deploy", "sign-and-deploy-file", module, sdk_version))
+            else:
+                f.write(pom_begin_deploy_plugin)
+                for module in module_inventory:
+                    if module["releaseAudience"] == "Public":
+                        f.write(generate_execution(path_prefix, "deploy", "deploy-file", module, sdk_version))
             f.write(pom_end_plugin)
 
             f.write(pom_end)
@@ -167,6 +182,9 @@ def main():
     parser.add_argument("--path-prefix",
                         help="Path in which to generate the release folder structure.",
                         required=True)
+    parser.add_argument("--with-signing",
+                        action="store_true",
+                        help="Specify whether to sign all artifacts during deployment.")
 
     args = parser.parse_args()
 
@@ -175,7 +193,7 @@ def main():
 
     copy_artifacts(args.path_prefix, args.version)
 
-    generate_pom(args.path_prefix, args.version)
+    generate_pom(args.path_prefix, args.version, args.with_signing)
 
 
 if __name__ == '__main__':
