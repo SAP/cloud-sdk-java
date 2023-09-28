@@ -1011,8 +1011,9 @@
 					<artifactId>spotbugs-maven-plugin</artifactId>
 					<version>4.7.3.6</version>
 					<configuration>
-						<includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile>
-						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
+						<!-- fixme: pipeline config-->
+						<!-- <includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile> -->
+						<!-- <excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile> -->
 						<effort>Max</effort>
 						<threshold>Low</threshold>
 						<maxHeap>2048</maxHeap>
@@ -1024,8 +1025,9 @@
 					<version>3.21.0</version>
 					<configuration>
 						<rulesets>
-							<ruleset>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-pmd.xml</ruleset>
-							<ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset>
+							<!-- fixme: pipeline config-->
+							<!-- <ruleset>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-pmd.xml</ruleset> -->
+							<!-- <ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset> -->
 							<!-- content of the PMD default rule set for Java can be found here:
                                                         https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD
                                                          -->
@@ -1089,7 +1091,7 @@
 							</goals>
 							<configuration>
 								<files>
-									<file>${project.rootdir}/scripts/javadoc.${audience}.properties</file>
+									<file>${project.rootdir}/javadoc.properties</file>
 								</files>
 							</configuration>
 						</execution>
@@ -1139,7 +1141,7 @@
 							</group>
 						</groups>
 						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
-						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
+						<overview>${project.rootdir}/javadoc.overview.html</overview>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1163,7 +1165,7 @@
 					<version>${sdk.version}</version>
 					<configuration>
 						<apiMaturity>beta</apiMaturity>
-						<sapCopyrightHeader>true</sapCopyrightHeader>
+						<sapCopyrightHeader>false</sapCopyrightHeader>
 					</configuration>
 				</plugin>
 				<plugin>
