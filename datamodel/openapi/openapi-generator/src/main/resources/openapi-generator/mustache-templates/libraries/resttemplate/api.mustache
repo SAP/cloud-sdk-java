@@ -1,0 +1,228 @@
+{{#copyrightHeader}}/*
+ * {{copyrightHeader}}
+ */{{/copyrightHeader}}
+
+package {{package}};
+
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
+import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
+import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
+
+{{#imports}}import {{import}} ; //NOPMD
+{{/imports}}
+
+{{^fullJavaUtil}}
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;{{/fullJavaUtil}}
+
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import com.google.common.annotations.Beta;
+
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+
+/**
+* {{appName}} in version {{version}}.
+*
+* {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+*/
+{{>generatedAnnotation}}
+{{^isReleased}}@Beta{{/isReleased}}
+{{#operations}}
+public class {{classname}} extends AbstractOpenApiService {
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}}.
+    *
+    * @param httpDestination The destination that API should be used with
+    */
+    public {{classname}}( @Nonnull final Destination httpDestination )
+    {
+        super(httpDestination);
+    }
+
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+    *
+    * @param apiClient
+    *            ApiClient to invoke the API on
+    */
+    @Beta
+    public {{classname}}( @Nonnull final ApiClient apiClient )
+    {
+         super(apiClient);
+    }
+
+    {{#operation}}{{#hasOptionalParams}}
+    /**
+     * <p>{{summary}}</p>
+     *<p>{{notes}}</p>
+    {{#responses}}
+     * <p><b>{{code}}</b>{{#message}} - {{.}}{{/message}}
+     {{/responses}}
+     {{#allParams}}
+     * @param {{paramName}} {{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}){{/isContainer}}{{/required}}
+     {{#description}}
+        {{description}}
+     {{/description}}
+     {{^description}}
+        The value for the parameter {{paramName}}
+     {{/description}}
+     {{/allParams}}
+     {{#returnType}}
+     * @return {{.}}
+     {{/returnType}}
+     {{^returnType}}
+     * @return An OpenApiResponse containing the status code of the HttpResponse.
+     {{/returnType}}
+     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+     {{#externalDocs}}
+     * {{description}}
+     * @see <a href="{{url}}">{{summary}} Documentation</a>
+     {{/externalDocs}}
+     {{#isDeprecated}}
+     * @deprecated
+     {{/isDeprecated}}
+     */
+    {{#isDeprecated}}
+    @Deprecated
+    {{/isDeprecated}}
+    {{#returnType}}@Nullable {{/returnType}} {{^returnType}}@Nonnull {{/returnType}}public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}} {{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}} final {{#isFile}}{{#useAbstractionForFiles}}{{#collectionFormat}}java.util.Collection<org.springframework.core.io.Resource>{{/collectionFormat}}{{^collectionFormat}}org.springframework.core.io.Resource{{/collectionFormat}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}{{{dataType}}}{{/useAbstractionForFiles}}{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
+        final Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
+        {{#allParams}}{{#required}}
+        // verify the required parameter '{{paramName}}' is set
+        if ({{paramName}} == null) {
+            throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}");
+        }
+        {{/required}}{{/allParams}}{{#hasPathParams}}
+        // create path and map variables
+        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();{{#pathParams}}
+        localVarPathParams.put("{{baseName}}", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
+        final String localVarPath = UriComponentsBuilder.fromPath("{{{path}}}"){{#hasPathParams}}.buildAndExpand(localVarPathParams){{/hasPathParams}}{{^hasPathParams}}.build(){{/hasPathParams}}.toUriString();
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();{{#hasQueryParams}}
+
+        {{#queryParams}}localVarQueryParams.putAll(apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase(Locale.ROOT)){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}));{{^-last}}
+        {{/-last}}{{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
+
+        {{#headerParams}}if ({{paramName}} != null)
+            localVarHeaderParams.add("{{baseName}}", apiClient.parameterToString({{paramName}}));{{^-last}}
+        {{/-last}}{{/headerParams}}{{/hasHeaderParams}}{{#hasFormParams}}
+
+        {{#formParams}}if ({{paramName}} != null)
+            localVarFormParams.add("{{baseName}}", {{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
+        {{/-last}}{{/formParams}}{{/hasFormParams}}
+
+        final String[] localVarAccepts = { {{#hasProduces}}
+            {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
+        {{/hasProduces}}};
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { {{#hasConsumes}}
+            {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
+        {{/hasConsumes}}};
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        final String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
+
+        final {{#returnType}}ParameterizedTypeReference<{{{returnType}}}> localVarReturnType = new ParameterizedTypeReference<{{{returnType}}}>() {};{{/returnType}}{{^returnType}}ParameterizedTypeReference<Void> localVarReturnType = new ParameterizedTypeReference<Void>() {};{{/returnType}}
+        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, HttpMethod.{{httpMethod}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
+        return new OpenApiResponse(apiClient);{{/returnType}}
+    }
+
+    {{/hasOptionalParams}}
+    /**
+    * <p>{{summary}}</p>
+     *<p>{{notes}}</p>
+{{#responses}}     * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
+{{/responses}}
+{{#requiredParams}}
+* @param {{paramName}}
+    {{#description}}
+        {{description}}
+    {{/description}}
+    {{^description}}
+            The value for the parameter {{paramName}}
+    {{/description}}
+{{/requiredParams}}
+{{#returnType}}
+* @return {{returnType}}
+{{/returnType}}
+{{^returnType}}
+* @return An OpenApiResponse containing the status code of the HttpResponse.
+{{/returnType}}
+* @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+{{#externalDocs}}
+    * {{description}}
+    * @see <a href="{{url}}">{{summary}} Documentation</a>
+{{/externalDocs}}
+     {{#isDeprecated}}
+     * @deprecated
+     {{/isDeprecated}}
+     */
+    {{#isDeprecated}}
+    @Deprecated
+    {{/isDeprecated}}
+    {{#returnType}}@Nullable {{/returnType}} {{^returnType}}@Nonnull {{/returnType}} public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#requiredParams}} @Nonnull final {{#isFile}}{{#useAbstractionForFiles}}{{#collectionFormat}}java.util.Collection<org.springframework.core.io.Resource>{{/collectionFormat}}{{^collectionFormat}}org.springframework.core.io.Resource{{/collectionFormat}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}{{{dataType}}}{{/useAbstractionForFiles}}{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}) throws OpenApiRequestException {
+        {{#hasOptionalParams}}
+        return {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#hasRequiredParams}}{{#requiredParams}}{{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}, {{/hasRequiredParams}}{{#optionalParams}}null{{^-last}}, {{/-last}}{{/optionalParams}});
+        {{/hasOptionalParams}}
+        {{^hasOptionalParams}}
+        final Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
+        {{#allParams}}{{#required}}
+        // verify the required parameter '{{paramName}}' is set
+        if ({{paramName}} == null) {
+            throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}");
+        }
+        {{/required}}{{/allParams}}{{#hasPathParams}}
+        // create path and map variables
+        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();{{#pathParams}}
+        localVarPathParams.put("{{baseName}}", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
+        final String localVarPath = UriComponentsBuilder.fromPath("{{{path}}}"){{#hasPathParams}}.buildAndExpand(localVarPathParams){{/hasPathParams}}{{^hasPathParams}}.build(){{/hasPathParams}}.toUriString();
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();{{#hasQueryParams}}
+
+        {{#queryParams}}localVarQueryParams.putAll(apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{.}}}".toUpperCase(Locale.ROOT)){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}));{{^-last}}
+        {{/-last}}{{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
+
+        {{#headerParams}}if ({{paramName}} != null)
+        localVarHeaderParams.add("{{baseName}}", apiClient.parameterToString({{paramName}}));{{^-last}}
+        {{/-last}}{{/headerParams}}{{/hasHeaderParams}}{{#hasFormParams}}
+
+        {{#formParams}}if ({{paramName}} != null)
+            localVarFormParams.add("{{baseName}}", {{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
+        {{/-last}}{{/formParams}}{{/hasFormParams}}
+
+        final String[] localVarAccepts = { {{#hasProduces}}
+            {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
+        {{/hasProduces}}};
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { {{#hasConsumes}}
+            {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
+        {{/hasConsumes}}};
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        final String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
+
+        final {{#returnType}}ParameterizedTypeReference<{{{returnType}}}> localVarReturnType = new ParameterizedTypeReference<{{{returnType}}}>() {};{{/returnType}}{{^returnType}}ParameterizedTypeReference<Void> localVarReturnType = new ParameterizedTypeReference<Void>() {};{{/returnType}}
+        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, HttpMethod.{{httpMethod}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
+        return new OpenApiResponse(apiClient);{{/returnType}}
+        {{/hasOptionalParams}}
+    }
+    {{/operation}}
+}
+{{/operations}}

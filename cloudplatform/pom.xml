@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.sap.cloud.sdk</groupId>
+		<artifactId>sdk-parent</artifactId>
+		<version>5.0.0-alpha-SNAPSHOT</version>
+	</parent>
+	<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+	<artifactId>cloudplatform-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Cloud Platform - Parent POM</name>
+	<description>Parent POM for Cloud platform modules.</description>
+	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+	<organization>
+		<name>SAP SE</name>
+		<url>https://www.sap.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+	<modules>
+		<module>scp-cf</module>
+		<module>cloudplatform-core</module>
+		<module>cloudplatform-core-scp-cf</module>
+		<module>caching</module>
+		<module>cloudplatform-connectivity</module>
+		<module>cloudplatform-connectivity-scp-cf</module>
+		<module>connectivity-dwc</module>
+		<module>connectivity-oauth</module>
+		<module>connectivity-apache-httpclient4</module>
+		<module>resilience</module>
+		<module>security</module>
+		<module>security-scp-cf</module>
+		<module>servlet</module>
+		<module>servlet-jakarta</module>
+		<module>tenant</module>
+		<module>tenant-scp-cf</module>
+	</modules>
+	<scm>
+		<connection />
+		<url />
+	</scm>
+	<properties>
+		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<project.rootdir>${project.basedir}/../../</project.rootdir>
+	</properties>
+</project>

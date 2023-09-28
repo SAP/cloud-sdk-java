@@ -1,0 +1,449 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "minimal metadata",
+    "version": "1 ",
+    "description": "You can use this inbound synchronous service to create, read and update."
+  },
+  "externalDocs": {
+    "description": "Business Documentation",
+    "url": "https://sap.com"
+  },
+  "x-sap-api-type": "ODATA",
+  "x-sap-shortText": "You can use this inbound synchronous service to create, read and update.",
+  "x-sap-api-deprecated": "No",
+  "x-sap-ext-overview": [
+    {
+      "name": "Communication Scenario",
+      "values": [
+        {
+          "text": "minimal metadata",
+          "format": "plain"
+        }
+      ]
+    },
+    {
+      "name": "Scope Items",
+      "values": [
+        {
+          "text": "[API_BUSINESS_PARTNER_Entities](https://sap.com)",
+          "format": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "Authentication Methods",
+      "values": [
+        {
+          "text": "Basic, x509",
+          "format": "plain"
+        }
+      ]
+    },
+    {
+      "name": "Service Group Name",
+      "values": [
+        {
+          "text": "API_BUSINESS_PARTNER",
+          "format": "plain"
+        }
+      ]
+    },
+    {
+      "name": "Business Object",
+      "values": [
+        {
+          "text": "SimplePerson",
+          "format": "plain"
+        }
+      ]
+    }
+  ],
+  "security": [
+    {
+      "basicAuthentication": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://sap.com"
+    },
+    {
+      "url": "https://{host}:{port}/sap/opu/random/path",
+      "variables": {
+        "host": {
+          "default": ""
+        },
+        "port": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Simple Person Master Details"
+    }
+  ],
+  "paths": {
+    "/A_SimplePersons": {
+      "foo": "bar",
+      "summary": "A simple endpoint",
+      "description": "A simple endpoint",
+      "parameters": {
+        "$ref": "#/components/parameters/top"
+      },
+      "servers": [
+        {
+          "url": "https://sap.com"
+        }
+      ],
+      "get": {
+        "summary": "Get entities from Bank",
+        "tags": [
+          "Bank Master Details"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/top"
+          },
+          {
+            "$ref": "#/components/parameters/skip"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "Filter items by property values, see [Filtering](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionfilter)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/count"
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "Order items by property values, see [Sorting](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionorderby)",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Person",
+                  "EmailAddress",
+                  "Amount",
+                  "Cost",
+                  "SSomeday"
+                ]
+              }
+            }
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Select properties to be returned, see [Select](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionselect)",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Person",
+                  "EmailAddress",
+                  "Amount",
+                  "Cost",
+                  "SSomeday"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved entities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Collection of SimplePerson",
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/A_SimplePersonType"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new entity to SimplePersons",
+        "tags": [
+          "Simple Person Details"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "New entity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/A_SimplePersonType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/A_SimplePersonType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "summary": "Some unsupported HEAD operation",
+        "requestBody": {
+          "required": false,
+          "description": "New entity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/A_SimplePersonType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Headed entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/A_SimplePersonType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/A_SimplePersons(Person='{Person}')": {
+      "parameters": [
+        {
+          "name": "Person",
+          "in": "path",
+          "required": true,
+          "description": "Person Key",
+          "schema": {
+            "type": "string",
+            "maxLength": 30
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get entity from Person by key",
+        "tags": [
+          "Bank Master Details"
+        ],
+        "parameters": [
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "Select properties to be returned, see [Select](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionselect)",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Person",
+                  "BankInternalID",
+                  "BankName",
+                  "Region",
+                  "StreetName",
+                  "CityName",
+                  "SWIFTCode",
+                  "IsMarkedForDeletion",
+                  "Bank",
+                  "Branch",
+                  "SAP__Messages"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/A_SimplePersonType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update entity in Person",
+        "tags": [
+          "A_SimplePersonType Details"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "New property values",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/A_SimplePersonType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/$batch": {
+      "post": {
+        "summary": "Send a group of Simple Persons",
+        "description": "Group multiple requests into a single request payload, see [Batch Requests](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_BatchRequests).\n\n*Please note that \"Try it out\" is not supported for this request.*",
+        "tags": [
+          "Batch Requests"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Batch request",
+          "content": {
+            "multipart/mixed;boundary=request-separator": {
+              "schema": {
+                "type": "string"
+              },
+              "example": "--request-separator\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nGET Bank HTTP/1.1\nAccept: application/json\n\n\n--request-separator--"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch response",
+            "content": {
+              "multipart/mixed": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "--response-separator\nContent-Type: application/http\n\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{...}\n--response-separator--"
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuthentication": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "A_SimplePersonType": {
+        "type": "object",
+        "properties": {
+          "Person": {
+            "type": "string",
+            "maxLength": 3,
+            "title": "Person",
+            "description": "Person Key"
+          },
+          "EmailAddress": {
+            "type": "string",
+            "maxLength": 15,
+            "title": "EmailAddress",
+            "description": "EmailAddress"
+          },
+          "Amount": {
+            "type": "decimal",
+            "maxLength": 60,
+            "title": "Amount",
+            "description": "Amount"
+          },
+          "Cost": {
+            "type": "decimal",
+            "maxLength": 11,
+            "title": "Cost",
+            "description": "Cost"
+          },
+          "SSomeday": {
+            "type": "timeofday",
+            "maxLength": 15,
+            "title": "Some some day"
+          }
+        },
+        "title": "Bank Master Details"
+      }
+    },
+    "parameters": {
+      "top": {
+        "name": "$top",
+        "in": "query",
+        "description": "Show only the first n items, see [Paging - Top](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptiontop)",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "example": 50
+      },
+      "skip": {
+        "name": "$skip",
+        "in": "query",
+        "description": "Skip the first n items, see [Paging - Skip](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionskip)",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "count": {
+        "name": "$count",
+        "in": "query",
+        "description": "Include count of items, see [Count](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptioncount)",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    },
+    "responses": {
+      "error": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

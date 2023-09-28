@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ShellService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Config" EntityType="ShellService.Config"/>
+                <EntitySet Name="PageConfig" EntityType="ShellService.PageConfig"/>
+                <EntitySet Name="SchemaSizes" EntityType="ShellService.SchemaSizes"/>
+                <EntitySet Name="TableSizes" EntityType="ShellService.TableSizes"/>
+                <EntitySet Name="UserConfig" EntityType="ShellService.UserConfig"/>
+            </EntityContainer>
+            <EntityType Name="Config">
+                <Key>
+                    <PropertyRef Name="usecase"/>
+                    <PropertyRef Name="owner"/>
+                    <PropertyRef Name="configkey"/>
+                </Key>
+                <Property Name="usecase" Type="Edm.String" MaxLength="40" Nullable="false"/>
+                <Property Name="owner" Type="Edm.String" MaxLength="80" Nullable="false"/>
+                <Property Name="configkey" Type="Edm.String" MaxLength="12" Nullable="false"/>
+                <Property Name="content" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="PageConfig">
+                <Key>
+                    <PropertyRef Name="usecase"/>
+                    <PropertyRef Name="owner"/>
+                    <PropertyRef Name="configkey"/>
+                </Key>
+                <Property Name="usecase" Type="Edm.String" MaxLength="40" Nullable="false"/>
+                <Property Name="owner" Type="Edm.String" MaxLength="80" Nullable="false"/>
+                <Property Name="configkey" Type="Edm.String" MaxLength="12" Nullable="false"/>
+                <Property Name="content" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="SchemaSizes">
+                <Key>
+                    <PropertyRef Name="schema_name"/>
+                </Key>
+                <Property Name="schema_name" Type="Edm.String" MaxLength="256" Nullable="false"/>
+                <Property Name="KiB" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="TableSizes">
+                <Key>
+                    <PropertyRef Name="schema_name"/>
+                    <PropertyRef Name="table_name"/>
+                </Key>
+                <Property Name="schema_name" Type="Edm.String" MaxLength="256" Nullable="false"/>
+                <Property Name="table_name" Type="Edm.String" MaxLength="256" Nullable="false"/>
+                <Property Name="record_count" Type="Edm.Int64"/>
+                <Property Name="estimated_max_memory_size_in_total" Type="Edm.Int64"/>
+            </EntityType>
+            <EntityType Name="UserConfig">
+                <Key>
+                    <PropertyRef Name="usecase"/>
+                    <PropertyRef Name="owner"/>
+                    <PropertyRef Name="configkey"/>
+                </Key>
+                <Property Name="usecase" Type="Edm.String" MaxLength="40" Nullable="false"/>
+                <Property Name="owner" Type="Edm.String" MaxLength="80" Nullable="false"/>
+                <Property Name="configkey" Type="Edm.String" MaxLength="12" Nullable="false"/>
+                <Property Name="content" Type="Edm.String"/>
+            </EntityType>
+            <Annotations Target="ShellService.EntityContainer/Config" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ShellService.EntityContainer/SchemaSizes" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <!-- empty record -->
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ShellService.SchemaSizes/KiB" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ShellService.EntityContainer/TableSizes" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

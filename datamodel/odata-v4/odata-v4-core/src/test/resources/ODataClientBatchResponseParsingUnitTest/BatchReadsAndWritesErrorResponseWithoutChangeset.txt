@@ -1,0 +1,18 @@
+--batchresponse_2e5e59e3-ef58-493c-b947-638f445896aa
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+
+[{"Id":"System.ComponentModel.DataAnnotations.RequiredAttribute","Message":"The FirstName field is required.","PropertyName":"FirstName","Severity":"Error"}]
+--batchresponse_2e5e59e3-ef58-493c-b947-638f445896aa
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+Content-Type: application/json; odata.metadata=minimal; odata.streaming=true
+OData-Version: 4.0
+
+{"@odata.context":"https://services.odata.org/TripPinRESTierService/(S(w3zgpoiit3rigb4hkixmletd))/$metadata#People/$entity","UserName":"klauskinski","FirstName":"Klaus","LastName":"Kinski","MiddleName":null,"Gender":"Male","Age":null,"Emails":[],"FavoriteFeature":null,"Features":[],"AddressInfo":[],"HomeAddress":null}
+--batchresponse_2e5e59e3-ef58-493c-b947-638f445896aa--

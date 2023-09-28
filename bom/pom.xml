@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sap.cloud.sdk</groupId>
+  <artifactId>sdk-bom</artifactId>
+  <version>5.0.0-alpha-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>SAP Cloud SDK - Modules and Dependencies BOM</name>
+  <description>Bill of Materials (BOM) of the SAP Cloud SDK modules and dependencies.</description>
+  <url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+  <organization>
+    <name>SAP SE</name>
+    <url>https://www.sap.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>SAP</name>
+      <email>cloudsdk@sap.com</email>
+      <organization>SAP SE</organization>
+      <organizationUrl>https://www.sap.com</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection />
+    <url />
+  </scm>
+  <properties>
+    <x-sap-release-audience>Public</x-sap-release-audience>
+    <x-sap-release-maturity>Stable</x-sap-release-maturity>
+    <!-- do not modify the following line, it is updated by the versioning script -->
+    <sdk.version>5.0.0-alpha-SNAPSHOT</sdk.version>
+    <service-binding.version>0.10.0</service-binding.version>
+    <!-- HTTP stuff -->
+    <httpcore.version>4.4.16</httpcore.version>
+    <httpcore5.version>5.2.3</httpcore5.version>
+    <httpclient5.version>5.2.1</httpclient5.version>
+    <httpcomponents-client.version>4.5.14</httpcomponents-client.version>
+    <javax-servlet.version>4.0.1</javax-servlet.version>
+    <jakarta-servlet.version>6.0.0</jakarta-servlet.version>
+    <!-- XSUAA & Spring Security -->
+    <!-- keep this version consistent with the one used from current SAP buildpack -->
+    <!-- see https://central.sonatype.com/artifact/com.sap.cloud.sjb.cf/sap-java-buildpack-bom/ -->
+    <!-- Keep these two versions consistent with the one from: com.sap.cloud.security.xsuaa:parent -->
+    <!-- see https://github.com/SAP/cloud-security-xsuaa-integration/blob/master/pom.xml -->
+    <scp-cf.xsuaa-client.version>2.13.9</scp-cf.xsuaa-client.version>
+    <spring.version>5.3.29</spring.version>
+    <java-jwt.version>4.4.0</java-jwt.version>
+    <!-- Utility stuff -->
+    <slf4j.version>1.7.36</slf4j.version>
+    <lombok.version>1.18.30</lombok.version>
+    <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
+    <!-- @Nonnull/@Nullable annotations -->
+    <vavr.version>0.10.4</vavr.version>
+    <guava.version>32.1.2-jre</guava.version>
+    <!-- collection utilities, @Beta annotation -->
+    <commons-io.version>2.13.0</commons-io.version>
+    <!-- Apache file utils -->
+    <axis2.version>1.7.9</axis2.version>
+    <!--Used in essential modules: cloudplatform-connectivity, cloudplatform-connectivity-scp-cf, odata-client, odata-core, securitys-->
+    <commons-lang3.version>3.13.0</commons-lang3.version>
+    <!-- Soap requests -->
+    <!-- Resilience & Caching -->
+    <caffeine.version>2.9.3</caffeine.version>
+    <jcache.version>1.1.1</jcache.version>
+    <resilience4j.version>1.7.1</resilience4j.version>
+    <!-- JSON & XML stuff -->
+    <gson.version>2.10.1</gson.version>
+    <jackson.version>2.15.2</jackson.version>
+    <owasp-json-sanitizer.version>1.2.3</owasp-json-sanitizer.version>
+    <!-- Unused runtime dependencies, unclear for what purpose they are in the BOM -->
+    <javax-inject.version>1</javax-inject.version>
+    <!-- Customers are forced to add this if they use OData generators, sorf of runtime dependency -->
+    <!-- end of essential versions -->
+    <scp-cf.logging-support.version>3.6.2</scp-cf.logging-support.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.sap.cloud.sdk</groupId>
+        <artifactId>sdk-modules-bom</artifactId>
+        <version>${sdk.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- SAP Business Technology Platform - Cloud Foundry XSUAA Client -->
+      <dependency>
+        <groupId>com.sap.cloud.security</groupId>
+        <artifactId>java-bom</artifactId>
+        <version>${scp-cf.xsuaa-client.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <!-- Service Binding Library -->
+      <dependency>
+        <groupId>com.sap.cloud.environment.servicebinding</groupId>
+        <artifactId>java-modules-bom</artifactId>
+        <version>${service-binding.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Third-party -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <!-- TODO -->
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${findbugs-jsr305.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.vavr</groupId>
+        <artifactId>vavr</artifactId>
+        <version>${vavr.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.cache</groupId>
+        <artifactId>cache-api</artifactId>
+        <version>${jcache.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+      <!-- TODO -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mikesamuel</groupId>
+        <artifactId>json-sanitizer</artifactId>
+        <version>${owasp-json-sanitizer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${java-jwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcore.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcomponents-client</artifactId>
+        <version>${httpcomponents-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpcomponents-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents.client5</groupId>
+        <artifactId>httpclient5</artifactId>
+        <version>${httpclient5.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents.core5</groupId>
+        <artifactId>httpcore5</artifactId>
+        <version>${httpcore5.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-adb</artifactId>
+        <version>${axis2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-transport-http</artifactId>
+        <version>${axis2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-transport-local</artifactId>
+        <version>${axis2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-kernel</artifactId>
+        <version>${axis2.version}</version>
+      </dependency>
+      <!--Used in essential modules: cloudplatform-connectivity, cloudplatform-connectivity-scp-cf, odata-client, odata-core, security-->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-circuitbreaker</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-bulkhead</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-timelimiter</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-cache</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-retry</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-ratelimiter</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax-inject.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax-servlet.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta-servlet.version}</version>
+      </dependency>
+      <!-- Conflict Resolutions -->
+      <!-- 3.19 by Caffeine and 3.12 by Guava  -->
+      <dependency>
+        <groupId>org.checkerframework</groupId>
+        <artifactId>checker-qual</artifactId>
+        <version>3.38.0</version>
+      </dependency>
+      <!--  2.10 by Caffeine and 2.11 by Guava  -->
+      <dependency>
+        <groupId>com.google.errorprone</groupId>
+        <artifactId>error_prone_annotations</artifactId>
+        <version>2.22.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

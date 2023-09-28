@@ -1,0 +1,29 @@
+package {{invokerPackage}}.auth;
+
+import com.google.common.annotations.Beta;
+
+/**
+* Supported OAuth flows to authenticate at the REST API
+*/
+@Beta
+public enum OAuthFlow {
+    /**
+    * Authenticate with an access code
+    */
+    accessCode,
+
+    /**
+    * Authenticate implicitly
+    */
+    implicit,
+
+    /**
+    * Authenticate with password
+    */
+    password,
+
+    /**
+    * Authenticate as application
+    */
+    application
+}

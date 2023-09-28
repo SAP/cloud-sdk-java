@@ -1,0 +1,27 @@
+{
+    "xsuaa": [
+        {
+            "name": "vcap-xsuaa",
+            "plan": "lite",
+            "credentials": {
+                "source": "vcap"
+            }
+        },
+        {
+            "name": "overloaded-xsuaa",
+            "plan": "lite",
+            "credentials": {
+                "source": "vcap"
+            }
+        }
+    ],
+    "vcap-specific": [
+        {
+            "name": "binding",
+            "plan": "lite",
+            "credentials": {
+                "source": "vcap"
+            }
+        }
+    ]
+}

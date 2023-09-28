@@ -1,0 +1,100 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Test Service",
+    "version": "1 ",
+    "description": "This service enables you to test OData specifications.\n"
+  },
+  "externalDocs": {
+    "description": "Demo service",
+    "url": "https://foo.bar/help.html"
+  },
+  "x-sap-api-type": "ODATA",
+  "x-sap-shortText": "This service enables you to test OData specifications",
+  "x-sap-api-deprecated": "Yes",
+  "x-sap-ext-overview": [
+    {
+      "name": "Foo",
+      "values": [{ "text": "Fizz" }, { "text": "Buzz" }]
+    },
+    {
+      "name": "Bar",
+      "values": [{ "text": "Bazz" }]
+    }
+  ],
+  "x-sap-stateInfo": {
+    "state": "Deprecated",
+    "deprecationrelease": "9000",
+    "successorApi": "https://foo.bar/test/service_reloaded",
+    "deprecationdate": "AUG-1999"
+  },
+  "security": [
+    {
+      "basicAuthentication": []
+    }
+  ],
+  "securityDefinitions": {
+    "basicAuthentication": {
+      "type": "basic"
+    }
+  },
+  "x-sap-software-min-version": "1805",
+  "x-servers": [
+    {
+      "url": "https://{host}:{port}/test/service",
+      "description": "Demo system endpoint"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "host": "foo.bar",
+  "basePath": "/test/service",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/A_TestEntity": {
+      "servers": [{"url": "https://sap.com"}],
+      "get": {},
+      "post": {}
+    },
+    "/A_OtherTestEntity": {
+      "get": {},
+      "post": {},
+      "delete": {}
+    },
+    "/A_TestEntityMultiLink": {
+      "get": {},
+      "post": {}
+    },
+    "/A_TestEntityOtherMultiLink": {
+      "get": {},
+      "post": {}
+    },
+    "/A_TestEntityLvl2MultiLink": {
+      "get": {},
+      "post": {},
+      "patch": {}
+    },
+    "/A_TestEntitySingleLink": {
+      "get": {},
+      "post": {}
+    },
+    "/A_TestEntityLvl2SingleLink": {
+      "get": {}
+    },
+    "/A_MediaEntity": {
+      "get": {}
+    },
+    "/A_TestEntityEndsWithCollection": {
+      "get": {}
+    },
+    "/A_TestEntityEndsWithSomethingElse": {
+      "get": {}
+    }
+  }
+}

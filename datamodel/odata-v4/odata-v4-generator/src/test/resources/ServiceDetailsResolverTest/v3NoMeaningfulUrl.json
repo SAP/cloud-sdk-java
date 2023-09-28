@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Service Java Class and Package Name",
+    "description": "Some description text for service class javadocs.",
+    "version": "1"
+  },
+  "externalDocs": {
+    "description": "link text for URL",
+    "url": "http://any.url"
+  },
+  "x-sap-api-type": "ODATA",
+  "x-sap-shortText": "Some short Text",
+  "x-sap-api-deprecated": "No",
+  "x-sap-ext-overview": [
+    {
+      "name": "table entry",
+      "values": [
+        "some text",
+        {
+          "text": "some text",
+          "format": "plain"
+        },
+        {
+          "text": "[link text for URL](http://any.url \"double quotes for pattern matcher\")",
+          "format": "markdown"
+        }
+      ]
+    }
+  ],
+  "security": [
+    {
+      "basicAuthentication": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "no.sandbox.url/othercloud/sap/opu/odata/my/custom/path/CompleteBusinessObject"
+    },
+    {
+      "url": "{host}:1234/this/is/unexpected/and/not/parsed",
+      "variables": {
+        "host": {
+          "default": ""
+        },
+        "port": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Some Tags"
+    }
+  ],
+  "paths": {
+    "/A_PATH": {
+      "get": {},
+      "post": {}
+    },
+    "/A_PATH()": {
+      "get": {},
+      "patch": {},
+      "delete": {}
+    },
+    "/ANOTHER_PATH": {
+      "patch": {},
+      "delete": {},
+      "malformed": {}
+    }
+  }
+}

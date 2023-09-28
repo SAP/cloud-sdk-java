@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="API_MINIMAL_TEST_CASE" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="A_SimplePerson" sap:label="Simple Person Test Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="LastName"/>
+                    <PropertyRef Name="FirstName"/>
+                </Key>
+                <Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Person FirstName" />
+                <Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Person LastName" />
+            </EntityType>
+            <EntityContainer Name="API_BUSINESS_PARTNER_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="A_SimplePerson" EntityType="API_MINIMAL_TEST_CASE.A_SimplePerson" sap:content-version="1"/>
+                <FunctionImport Name="Greet" ReturnType="Edm.String" m:HttpMethod="POST">
+                    <Parameter Name="LastName" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="FirstName" Type="Edm.String" Mode="In"/>
+                </FunctionImport>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

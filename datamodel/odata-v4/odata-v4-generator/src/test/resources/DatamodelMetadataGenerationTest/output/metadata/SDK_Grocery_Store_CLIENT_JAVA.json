@@ -1,0 +1,13 @@
+{
+  "serviceStatus": "certified",
+  "language": "Java",
+  "apiType": "OData",
+  "pregeneratedLibrary": {
+    "groupId": "nice-group-id",
+    "artifactId": "nice-artifact-id",
+    "version": "99.99.99",
+    "compatibilityNotes": "",
+    "description": "The Virtual Data Model for OData V4 Services"
+  },
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport testcomparison.services.SdkGroceryStoreService;\nimport testcomparison.services.DefaultSdkGroceryStoreService;\nimport java.util.List;\nimport testcomparison.namespaces.sdkgrocerystore.Shelf;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal SdkGroceryStoreService service = new DefaultSdkGroceryStoreService();\nfinal List<Shelf> result = service.getAllShelves().top(5).execute(destination);"
+}

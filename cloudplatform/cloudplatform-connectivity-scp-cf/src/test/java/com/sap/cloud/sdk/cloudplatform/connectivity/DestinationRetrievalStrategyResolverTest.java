@@ -1,0 +1,277 @@
+package com.sap.cloud.sdk.cloudplatform.connectivity;
+
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
+import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
+import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+
+import io.vavr.Tuple;
+import io.vavr.Tuple3;
+import io.vavr.control.Try;
+
+@SuppressWarnings( "deprecation" )
+class DestinationRetrievalStrategyResolverTest
+{
+    private static final Tenant providerT = new DefaultTenant("provider");
+    private static final Tenant subscriberT = new DefaultTenant("subscriber");
+    private DestinationRetrievalStrategyResolver sut;
+
+    private Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever;
+    private Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
+
+    @RegisterExtension
+    public TokenRule token = TokenRule.createXsuaa();
+
+    @SuppressWarnings( "unchecked" )
+    @BeforeEach
+    void prepareResolver()
+    {
+        destinationRetriever = (Function<Strategy, ScpCfDestinationServiceV1Response>) mock(Function.class);
+        allDestinationRetriever = (Function<OnBehalfOf, List<Destination>>) mock(Function.class);
+        sut =
+            spy(
+                new DestinationRetrievalStrategyResolver(
+                    providerT::getTenantId,
+                    destinationRetriever,
+                    allDestinationRetriever));
+    }
+
+    @Test
+    void testSimpleBehalfResolutions()
+    {
+        final SoftAssertions softly = new SoftAssertions();
+
+        final List<Tuple3<ScpCfDestinationRetrievalStrategy, ScpCfDestinationTokenExchangeStrategy, Strategy>> testCases =
+            new ArrayList<>();
+
+        testCases.add(Tuple.of(CURRENT_TENANT, LOOKUP_ONLY, new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, LOOKUP_ONLY, new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
+        testCases.add(Tuple.of(ALWAYS_PROVIDER, LOOKUP_ONLY, new Strategy(TECHNICAL_USER_PROVIDER, false)));
+
+        testCases.add(Tuple.of(CURRENT_TENANT, EXCHANGE_ONLY, new Strategy(NAMED_USER_CURRENT_TENANT, false)));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, EXCHANGE_ONLY, new Strategy(NAMED_USER_CURRENT_TENANT, false)));
+        testCases.add(Tuple.of(ALWAYS_PROVIDER, EXCHANGE_ONLY, new Strategy(NAMED_USER_CURRENT_TENANT, false)));
+
+        testCases.add(Tuple.of(CURRENT_TENANT, FORWARD_USER_TOKEN, new Strategy(TECHNICAL_USER_CURRENT_TENANT, true)));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, FORWARD_USER_TOKEN, new Strategy(TECHNICAL_USER_CURRENT_TENANT, true)));
+        testCases.add(Tuple.of(ALWAYS_PROVIDER, FORWARD_USER_TOKEN, new Strategy(TECHNICAL_USER_PROVIDER, true)));
+
+        testCases
+            .forEach(
+                c -> softly
+                    .assertThat(sut.resolveSingleRequestStrategy(c._1(), c._2()))
+                    .as("Expecting '%s' with '%s' to resolve to '%s'", c._1(), c._2(), c._3())
+                    .isEqualTo(c._3()));
+        softly.assertAll();
+    }
+
+    @Test
+    void testExceptionsAreThrownOnIllegalCombinations()
+    {
+        final List<Tuple3<ScpCfDestinationRetrievalStrategy, ScpCfDestinationTokenExchangeStrategy, Tenant>> testCases =
+            new ArrayList<>();
+
+        final SoftAssertions softly = new SoftAssertions();
+
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, LOOKUP_ONLY, providerT));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, LOOKUP_THEN_EXCHANGE, providerT));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, EXCHANGE_ONLY, providerT));
+        testCases.add(Tuple.of(ONLY_SUBSCRIBER, FORWARD_USER_TOKEN, providerT));
+
+        testCases.add(Tuple.of(ALWAYS_PROVIDER, EXCHANGE_ONLY, subscriberT));
+
+        testCases
+            .forEach(
+                c -> TenantAccessor
+                    .executeWithTenant(
+                        c._3(),
+                        () -> softly
+                            .assertThatThrownBy(() -> sut.prepareSupplier(c._1(), c._2()))
+                            .as("Expecting '%s' with '%s' and '%s' to throw.", c._1(), c._2(), c._3())
+                            .isInstanceOf(DestinationAccessException.class)));
+
+        TenantAccessor
+            .executeWithTenant(
+                providerT,
+                () -> softly
+                    .assertThatThrownBy(() -> sut.prepareSupplierAllDestinations(ONLY_SUBSCRIBER))
+                    .as("Expecting '%s' with '%s' to throw.", ONLY_SUBSCRIBER, providerT)
+                    .isInstanceOf(DestinationAccessException.class));
+
+        softly.assertAll();
+    }
+
+    @Test
+    @DisplayName( "Test exceptions are thrown for cases where a token exchange can't be performed" )
+    void testExceptionsAreThrownForImpossibleTokenExchanges()
+    {
+        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
+        final Supplier<ScpCfDestinationServiceV1Response> supplier =
+            sut.prepareSupplier(ALWAYS_PROVIDER, LOOKUP_THEN_EXCHANGE);
+
+        TenantAccessor
+            .executeWithTenant(
+                subscriberT,
+                () -> assertThatThrownBy(
+                    supplier::get,
+                    "Expecting %s with %s and %s to fail when attempting the exchange",
+                    ALWAYS_PROVIDER,
+                    LOOKUP_THEN_EXCHANGE,
+                    subscriberT).isInstanceOf(DestinationAccessException.class));
+
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
+        verifyNoMoreInteractions(destinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "When current tenant == provider then CURRENT_TENANT_THEN_PROVIDER should be equal to CURRENT_TENANT" )
+    void testCurrentThenProviderSimpleCase()
+    {
+        TenantAccessor
+            .executeWithTenant(
+                providerT,
+                () -> sut.prepareSupplier(CURRENT_TENANT_THEN_PROVIDER, LOOKUP_THEN_EXCHANGE));
+
+        verify(sut, times(1)).resolveSingleRequestStrategy(CURRENT_TENANT, LOOKUP_ONLY);
+
+        TenantAccessor
+            .executeWithTenant(
+                providerT,
+                () -> assertThatThrownBy(() -> sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY))
+                    .isInstanceOf(IllegalStateException.class));
+    }
+
+    @Test
+    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_ONLY" )
+    void testSubThenProvLookupOnly()
+    {
+        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
+
+        // subscriber tenant is implied
+        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY)::get)
+            .isInstanceOf(DestinationNotFoundException.class);
+
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
+        verifyNoMoreInteractions(destinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with FORWARD_USER_TOKEN" )
+    void testSubThenProvFwdUserToken()
+    {
+        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
+
+        // subscriber tenant is implied
+        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(FORWARD_USER_TOKEN)::get)
+            .isInstanceOf(DestinationNotFoundException.class);
+
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, true)));
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
+        verifyNoMoreInteractions(destinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with EXCHANGE_ONLY" )
+    void testSubThenProvExchangeOnly()
+    {
+        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
+
+        // subscriber tenant is implied
+        sut.prepareSupplierForSubscriberThenProviderCase(EXCHANGE_ONLY).get();
+
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
+        verifyNoMoreInteractions(destinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_THEN_EXCHANGE" )
+    void testLookupThenExchangeWithCurrentTenantThenProvider()
+    {
+        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
+
+        // subscriber tenant is implied
+        sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_THEN_EXCHANGE).get();
+
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
+        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
+        verifyNoMoreInteractions(destinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "Test getting all destinations with CURRENT_TENANT_THEN_PROVIDER" )
+    void testAllDestinationsCurrTenThenProv()
+    {
+        doThrow(DestinationAccessException.class).when(allDestinationRetriever).apply(TECHNICAL_USER_CURRENT_TENANT);
+
+        // subscriber tenant is implied
+        sut.prepareSupplierAllDestinations(CURRENT_TENANT_THEN_PROVIDER).get();
+
+        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_CURRENT_TENANT);
+        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_PROVIDER);
+
+        verifyNoMoreInteractions(allDestinationRetriever);
+    }
+
+    @Test
+    @DisplayName( "Test default strategies are set correctly" )
+    void testDefaultStrategies()
+    {
+        // subscriber tenant is implied
+        sut.prepareSupplier(DestinationOptions.builder().build());
+        sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
+
+        verify(sut).prepareSupplier(CURRENT_TENANT, FORWARD_USER_TOKEN);
+        verify(sut).prepareSupplierAllDestinations(CURRENT_TENANT);
+    }
+
+    @Test
+    @DisplayName( "Test default strategy for non-XSUAA tokens is set correctly" )
+    void testDefaultNonXsuaaTokenStrategy()
+    {
+        final AuthToken nonXsuaaToken = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
+        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(nonXsuaaToken));
+
+        sut.prepareSupplier(DestinationOptions.builder().build());
+        verify(sut).prepareSupplier(CURRENT_TENANT, LOOKUP_THEN_EXCHANGE);
+    }
+}

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="API_MINIMAL_TEST_CASE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="A_SimplePerson">
+                <Key>
+                    <PropertyRef Name="Person"/>
+                </Key>
+                <Property Name="Person" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="241"/>
+                <Property Name="Amount" Type="Edm.Decimal" Precision="3" Scale="2"/>
+                <!-- HEREAFTER FOLLOWS THE INTENTIONALLY UNKNOWN PROPERTY TYPE TO PROVOKE A GENERATION ERROR -->
+                <Property Name="Cost" Type="Edm.NotExistingType" Precision="3" Scale="variable"/>
+                <Property Name="SSomeday" Type="Edm.TimeOfDay"/>
+        </EntityType>
+            <EntityContainer Name="API_BUSINESS_PARTNER_Entities" IsDefaultEntityContainer="true">
+                <EntitySet Name="A_SimplePersons" EntityType="API_MINIMAL_TEST_CASE.A_SimplePerson"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

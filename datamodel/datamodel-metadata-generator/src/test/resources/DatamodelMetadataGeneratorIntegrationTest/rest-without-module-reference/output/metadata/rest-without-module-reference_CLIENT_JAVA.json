@@ -1,0 +1,7 @@
+{
+  "serviceStatus": "verified",
+  "language": "Java",
+  "apiType": "OpenAPI",
+  "pregeneratedLibrary": null,
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport com.sap.foo.api.FooApi;\nimport com.sap.foo.model.BarModel;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal FooApi service = new FooApi(destination);\nfinal BarModel result = service.invokeFoo();"
+}

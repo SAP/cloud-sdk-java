@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="API_MINIMAL_TEST_CASE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="A_SimplePerson">
+                <Key>
+                    <PropertyRef Name="FirstName"/>
+                    <PropertyRef Name="LastName"/>
+                </Key>
+                <Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="10"/>
+            </EntityType>
+            <Function Name="Greet">
+                <Parameter Name="FirstName" Type="Edm.String" Nullable="false"/>
+                <Parameter Name="LastName" Type="Edm.String" Nullable="false"/>
+                <ReturnType Type="Edm.String" Nullable="false"/>
+            </Function>
+            <Function Name="Greet" IsBound="true">
+                <Parameter Name="Entity" Type="API_MINIMAL_TEST_CASE.A_SimplePerson" Nullable="false"/>
+                <Parameter Name="FirstName" Type="Edm.String" Nullable="false"/>
+                <Parameter Name="LastName" Type="Edm.String" Nullable="false"/>
+                <ReturnType Type="Edm.String" Nullable="false"/>
+            </Function>
+            <Action Name="BookTicket">
+                <Parameter Name="FirstName" Type="Edm.String" Nullable="false"/>
+                <Parameter Name="LastName" Type="Edm.String" Nullable="false"/>
+                <Parameter Name="From" Type="Edm.String" Nullable="false"/>
+                <Parameter Name="To" Type="Edm.String" Nullable="false"/>
+                <ReturnType Type="Edm.String" Nullable="false"/>
+            </Action>
+            <EntityContainer Name="API_BUSINESS_PARTNER_Entities" IsDefaultEntityContainer="true">
+                <EntitySet Name="A_SimplePersons" EntityType="API_MINIMAL_TEST_CASE.A_SimplePerson"/>
+                <FunctionImport Name="Greet" Function="API_MINIMAL_TEST_CASE.Greet"/>
+                <ActionImport Name="BookTicket" Action="API_MINIMAL_TEST_CASE.BookTicket"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

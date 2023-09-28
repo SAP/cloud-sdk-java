@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>${artifactId} - Application</name>
+    <description>${artifactId} - Application</description>
+
+    <artifactId>${artifactId}-application</artifactId>
+    <version>${version}</version>
+
+    <parent>
+        <groupId>${groupId}</groupId>
+        <artifactId>${artifactId}</artifactId>
+        <version>${version}</version>
+    </parent>
+
+    <properties>
+        <surefire.skipTests>false</surefire.skipTests>
+        <surefire.forkCount>1</surefire.forkCount>
+        <surefire.include>*</surefire.include>
+        <surefire.exclude />
+        <surefire.groups />
+        <surefire.excludedGroups />
+        <surefire.maxMemorySize>1024m</surefire.maxMemorySize>
+        <surefire.logLevel>info</surefire.logLevel>
+
+        <!--
+        Use the argLine property to define the arguments for the JVMs that are forked by the surefire plugin.
+        This avoids the need to use late property evaluation for configuring the jacoco plugin.
+        Relying on late evaluation of properties such as @{argLine} can result in issues with certain IDEs.
+
+        For more details, visit:
+        https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
+        -->
+        <argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
+
+        <jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
+        <jacoco.includes>*</jacoco.includes>
+        <jacoco.excludes>org.apache.*</jacoco.excludes>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+            <artifactId>scp-cf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+            <artifactId>servlet-jakarta</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sap.hcp.cf.logging</groupId>
+            <artifactId>cf-java-logging-support-logback</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Dependencies for generated OData V4 VDM -->
+        <!--
+        <dependency>
+            <groupId>com.sap.cloud.sdk.datamodel</groupId>
+            <artifactId>odata-v4-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <!-- Dependencies for security setup -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sap.cloud.security</groupId>
+            <artifactId>resourceserver-security-spring-boot-starter</artifactId>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <attach>false</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
+                <configuration>
+                    <destFile>${jacoco.executionDataFile}</destFile>
+                    <dataFile>${jacoco.executionDataFile}</dataFile>
+                    <includes>${jacoco.includes}</includes>
+                    <excludes>${jacoco.excludes}</excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <skipTests>${surefire.skipTests}</skipTests>
+                    <includes>
+                        <include>${surefire.include}</include>
+                    </includes>
+                    <excludes>
+                        <exclude>${surefire.exclude}</exclude>
+                    </excludes>
+                    <forkCount>${surefire.forkCount}</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <groups>${surefire.groups}</groups>
+                    <excludedGroups>${surefire.excludedGroups}</excludedGroups>
+                    <systemPropertyVariables>
+                        <surefire.forkDir>${project.build.directory}/surefire-fork/${surefire.forkNumber}/
+                        </surefire.forkDir>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin for generating Java classes from OData V4 metadata -->
+            <!-- Have a look into our documentation for more details as well as the OData V2 generator: -->
+            <!-- https://sap.github.io/cloud-sdk/docs/java/features/odata/vdm-generator -->
+            <!--
+            <plugin>
+                <groupId>com.sap.cloud.sdk.datamodel</groupId>
+                <artifactId>odata-v4-generator-maven-plugin</artifactId>
+                <version>${cloud-sdk.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-consumption</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>${project.basedir}/src/main/resources/edmx</inputDirectory>
+                            <outputDirectory>${project.build.directory}/vdm</outputDirectory>
+                            <deleteOutputDirectory>true</deleteOutputDirectory>
+                            <packageName>${package}</packageName>
+                            <defaultBasePath>odata/v4/</defaultBasePath>
+                            <compileScope>COMPILE</compileScope>
+                            <serviceMethodsPerEntitySet>true</serviceMethodsPerEntitySet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+        </plugins>
+    </build>
+</project>
