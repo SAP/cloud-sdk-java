@@ -84,14 +84,14 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<profiles>
+	<!-- <profiles>
 		<profile>
 			<id>generate-sample-modules</id>
 			<activation>
 				<property>
 					<name>!skip-generate-samples</name>
 				</property>
-			</activation>
+			</activation> -->
 			<build>
 				<plugins>
 					<plugin>
@@ -145,6 +145,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-	</profiles>
+		<!-- </profile>
+	</profiles> -->
 </project>
