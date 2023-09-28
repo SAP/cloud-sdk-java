@@ -71,13 +71,5 @@
                 <include>**</include>
             </includes>
         </fileSet>
-
-        <!-- cx-server folder -->
-        <fileSet filtered="false">
-            <directory>cx-server</directory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
     </fileSets>
 </archetype-descriptor>
