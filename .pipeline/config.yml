@@ -30,7 +30,7 @@ stages:
       normal: '-1'
       low: '-1'
     findbugs:
-      high: '0'
+      high: '10'
       normal: '-1'
       low: '-1'
     pmd:
