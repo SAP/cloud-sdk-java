@@ -19,6 +19,8 @@
       <emptyLine />
       <package name="com.sap" withSubpackages="true" static="false" />
       <emptyLine />
+      <package name="com.sap.cloud.sdk.s4hana" withSubpackages="true" static="false" />
+      <emptyLine />
       <package name="" withSubpackages="true" static="true" />
     </value>
   </option>
