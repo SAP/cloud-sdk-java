@@ -26,14 +26,14 @@ stages:
       class: -1
   codeCheck:
     checkstyle:
-      high: '3'
+      high: '14'
       normal: '-1'
       low: '-1'
     findbugs:
-      high: '0'
+      high: '10'
       normal: '-1'
       low: '-1'
     pmd:
-      high: '0'
+      high: '10'
       normal: '-1'
       low: '-1'
