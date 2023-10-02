@@ -37,7 +37,9 @@ def create_module_inventory_file(sdk_root: Path,
 
     sorted_modules: List[MavenModule] = sorted(modules, key=lambda m: m.identifier)
     serializable_modules: List[Dict[str, str]] = [module.to_dictionary() for module in sorted_modules]
-    json.dump(serializable_modules, output_file.open("w+"), indent=2)
+    with open(output_file, "w+") as f:
+        json.dump(serializable_modules, f, indent=2)
+        f.write("\n")
 
     return sorted_modules
 
