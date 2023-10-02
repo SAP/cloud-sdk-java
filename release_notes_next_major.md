@@ -10,7 +10,7 @@ blog: https://blogs.sap.com/?p=xxx
 
 ## compatibilityNotes
 
-- The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) 
+- The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) 
 - Following modules have been removed:
   - SAP Java Buildpack BOM: `com.sap.cloud.sdk:sdk-sjb-bom`
   - (Parent Module) `com.sap.cloud.sdk.plugins:plugins-parent`
