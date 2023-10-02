@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<!-- <jacoco.includes>*</jacoco.includes> -->
 		<!-- <jacoco.excludes>org.apache.*</jacoco.excludes> -->
-		<codeAnalysisExclusions />
+		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/com/sap/xi/**,**/testclasses/**,**/cds/gen/**,**/scp/businesslogging/odata/**,**/scp/businesslogging/rest/**,**/scp/workflow/**,**/services/btp/businessrules/**</codeAnalysisExclusions>
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
 		<!--  Non-essential dependencies  -->
