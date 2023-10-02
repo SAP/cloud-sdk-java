@@ -242,15 +242,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <!-- needed here because the bom can not have the root pom as parent-->
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>2.22.0</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
+            <!-- needed here because the modules-bom can not have the root pom as parent-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
