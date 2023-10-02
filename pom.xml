@@ -958,7 +958,6 @@
 							</goals>
 							<configuration>
 								<destFile>${jacoco.executionDataFile}</destFile>
-								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>org.apache.*</excludes>
 							</configuration>
 						</execution>
