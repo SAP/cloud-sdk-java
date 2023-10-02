@@ -1091,7 +1091,7 @@
 							</goals>
 							<configuration>
 								<files>
-									<file>${project.rootdir}/scripts/javadoc.${audience}.properties</file>
+									<file>${project.rootdir}/javadoc.properties</file>
 								</files>
 							</configuration>
 						</execution>
@@ -1141,7 +1141,7 @@
 							</group>
 						</groups>
 						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
-						<overview>${project.rootdir}/javadoc.everyone.overview.html</overview>
+						<overview>${project.rootdir}/javadoc.overview.html</overview>
 					</configuration>
 				</plugin>
 				<plugin>
