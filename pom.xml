@@ -956,11 +956,11 @@
 							<goals>
 								<goal>prepare-agent</goal>
 							</goals>
-						<configuration>
-							<destFile>${jacoco.executionDataFile}</destFile>
-							<dataFile>${jacoco.executionDataFile}</dataFile>
-							<excludes>org.apache.*</excludes>
-						</configuration>
+							<configuration>
+								<destFile>${jacoco.executionDataFile}</destFile>
+								<dataFile>${jacoco.executionDataFile}</dataFile>
+								<excludes>org.apache.*</excludes>
+							</configuration>
 						</execution>
 						<execution>
 							<id>report</id>
