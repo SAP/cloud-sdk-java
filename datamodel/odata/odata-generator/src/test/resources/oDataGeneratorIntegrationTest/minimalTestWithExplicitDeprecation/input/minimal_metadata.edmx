@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="API_MINIMAL_TEST_CASE" xml:lang="en" sap:schema-version="1"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="A_SimplePerson" sap:label="Simple Person Test Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Person"/>
+                </Key>
+                <Property Name="Person" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+                          sap:label="Person number">
+                    <Documentation>
+                        <Summary>Person Summary.</Summary>
+                        <LongDescription>Some long description for the Person property.</LongDescription>
+                    </Documentation>
+                </Property>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="241" sap:label="Email Address">
+                    <Documentation>
+                        <Summary>Email Address Summary.</Summary>
+                        <LongDescription>Some long description for the EmailAddress property.
+                        </LongDescription>
+                    </Documentation>
+                </Property>
+            </EntityType>
+            <EntityContainer Name="API_BUSINESS_PARTNER_Entities" m:IsDefaultEntityContainer="true"
+                             sap:supported-formats="atom json xlsx">
+                <EntitySet Name="A_SimplePerson" EntityType="API_MINIMAL_TEST_CASE.A_SimplePerson"
+                           sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

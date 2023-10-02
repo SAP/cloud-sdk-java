@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.company</groupId>
+	<artifactId>application</artifactId>
+	<version>5.0.0-alpha-SNAPSHOT</version>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.sap.cloud.sdk.datamodel</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<configuration>
+					<inputSpec />
+					<apiPackage>com.sap.cloud.sdk.datamodel.rest.test.api</apiPackage>
+                    <modelPackage>com.sap.cloud.sdk.datamodel.rest.test.model</modelPackage>
+                    <apiMaturity>released</apiMaturity>
+					<outputDirectory>output-directory</outputDirectory>
+					<verbose>false</verbose>
+					<additionalProperties>
+						<param1>val1</param1>
+						<param2>val2</param2>
+						<useAbstractionForFiles>true</useAbstractionForFiles>
+					</additionalProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

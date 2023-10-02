@@ -1,0 +1,13 @@
+{
+  "serviceStatus": "certified",
+  "language": "Java",
+  "apiType": "OpenAPI",
+  "pregeneratedLibrary": {
+    "groupId": "com.sap.cloud.sdk.services",
+    "artifactId": "scp-workflow-cf",
+    "version": "1.1.1",
+    "compatibilityNotes": "",
+    "description": "rest-library"
+  },
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport com.sap.foo.api.FooApi;\nimport java.util.List;\nimport com.sap.foo.model.BarModel;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal FooApi service = new FooApi(destination);\nfinal List<BarModel> result = service.invokeFoo();"
+}

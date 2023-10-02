@@ -1,0 +1,205 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0">
+    <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+                       xmlns:sap="http://www.sap.com/Protocols/SAPData" m:DataServiceVersion="1.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="com.sap.cloud.sdk.store.grocery">
+
+            <!-- Complex Types -->
+            <ComplexType Name="ProductCount">
+                <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Quantity" Type="Edm.Int32" Nullable="false"/>
+            </ComplexType>
+            <Association Name="ProductCountToProduct">
+                <End Type="com.sap.cloud.sdk.store.grocery.ProductCount" Multiplicity="*" Role="ProductCountToProduct_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Product" Multiplicity="1" Role="ProductCountToProduct_To"/>
+            </Association>
+
+            <!-- Entities -->
+            <EntityType Name="Vendor">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Name" MaxLength="100" Type="Edm.String"/>
+                <Property Name="AddressId" Type="Edm.Int32" Nullable="true"/>
+                <NavigationProperty Name="Address" Relationship="com.sap.cloud.sdk.store.grocery.VendorToAddress"
+                                    FromRole="VendorToAddress_From" ToRole="VendorToAddress_To"/>
+            </EntityType>
+            <Association Name="VendorToAddress">
+                <End Type="com.sap.cloud.sdk.store.grocery.Vendor" Multiplicity="*" Role="VendorToAddress_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Address" Multiplicity="0..1" Role="VendorToAddress_To"/>
+            </Association>
+            <EntityType Name="Customer" sap:label="OData entity representation of Customer">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false">
+                    <Documentation>
+                        <Summary>Customer identifier used as entity key value.</Summary>
+                        <LongDescription>With this numeric identifier it's possible to resolve and manipulate customer information</LongDescription>
+                    </Documentation>
+                </Property>
+                <Property Name="Name" Type="Edm.String" MaxLength="100" Nullable="false">
+                    <Documentation>
+                        <Summary>Customer name.</Summary>
+                        <LongDescription>The mandatory field may contain different combinations of first- and last-name.</LongDescription>
+                    </Documentation>
+                </Property>
+                <Property Name="Email" Type="Edm.String">
+                    <Documentation>
+                        <Summary>Customer email address.</Summary>
+                        <LongDescription>The optional field for customer email address is checked server-side for validity.</LongDescription>
+                    </Documentation>
+                </Property>
+                <Property Name="AddressId" Type="Edm.Int32" Nullable="true">
+                    <Documentation>
+                        <Summary>Customer address identifier.</Summary>
+                        <LongDescription>The optional field can be used to resolve the current customer address id.</LongDescription>
+                    </Documentation>
+                </Property>
+                <NavigationProperty Name="Address" Relationship="com.sap.cloud.sdk.store.grocery.CustomerToAddress"
+                                    FromRole="CustomerToAddress_From" ToRole="CustomerToAddress_To">
+                    <Documentation>
+                        <Summary>Navigation property to customer address entity.</Summary>
+                        <LongDescription>The navigation property can be used to access and manipulate current customer address.</LongDescription>
+                    </Documentation>
+                </NavigationProperty>
+            </EntityType>
+            <Association Name="CustomerToAddress">
+                <End Type="com.sap.cloud.sdk.store.grocery.Customer" Multiplicity="*" Role="CustomerToAddress_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Address" Multiplicity="0..1" Role="CustomerToAddress_To"/>
+            </Association>
+            <EntityType Name="Product" m:HasStream="true">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String"/>
+                <Property Name="ShelfId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="VendorId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Price" Type="Edm.Decimal" Nullable="false"/>
+                <Property Name="Image" Type="Edm.Binary" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Vendor" Relationship="com.sap.cloud.sdk.store.grocery.ProductToVendor"
+                                    FromRole="ProductToVendor_From" ToRole="ProductToVendor_To"/>
+                <NavigationProperty Name="Shelf" Relationship="com.sap.cloud.sdk.store.grocery.ProductToShelf"
+                                    FromRole="ProductToShelf_From" ToRole="ProductToShelf_To"/>
+            </EntityType>
+            <Association Name="ProductToVendor">
+                <End Type="com.sap.cloud.sdk.store.grocery.Product" Multiplicity="*" Role="ProductToVendor_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Vendor" Multiplicity="1" Role="ProductToVendor_To"/>
+            </Association>
+            <Association Name="ProductToShelf">
+                <End Type="com.sap.cloud.sdk.store.grocery.Product" Multiplicity="*" Role="ProductToShelf_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Shelf" Multiplicity="*" Role="ProductToShelf_To"/>
+            </Association>
+
+            <EntityType Name="Receipt">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="CustomerId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="TotalAmount" Type="Edm.Decimal" Nullable="false"/>
+                <Property Name="ProductCount1" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="false"/>
+                <Property Name="ProductCount2" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount3" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount4" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount5" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount6" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount7" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount8" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount9" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <Property Name="ProductCount10" Type="com.sap.cloud.sdk.store.grocery.ProductCount" Nullable="true"/>
+                <NavigationProperty Name="Customer" Relationship="com.sap.cloud.sdk.store.grocery.ReceiptToCustomer"
+                                    FromRole="ReceiptToCustomer_From" ToRole="ReceiptToCustomer_To"/>
+            </EntityType>
+            <Association Name="ReceiptToCustomer">
+                <End Type="com.sap.cloud.sdk.store.grocery.Receipt" Multiplicity="*" Role="ReceiptToCustomer_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Customer" Multiplicity="1" Role="ReceiptToCustomer_To"/>
+            </Association>
+
+            <EntityType Name="Address">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Street" Type="Edm.String"/>
+                <Property Name="City" Type="Edm.String"/>
+                <Property Name="State" Type="Edm.String"/>
+                <Property Name="Country" Type="Edm.String"/>
+                <Property Name="PostalCode" Type="Edm.String"/>
+                <Property Name="Latitude" Type="Edm.Double" Nullable="false"/>
+                <Property Name="Longitude" Type="Edm.Double" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="OpeningHours">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="DayOfWeek" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="OpenTime" Type="Edm.Time" Nullable="false"/>
+                <Property Name="CloseTime" Type="Edm.Time" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="FloorPlan">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="ImageUri" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="Shelf">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="FloorPlanId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="FloorPlan" Relationship="com.sap.cloud.sdk.store.grocery.ShelfToFloorPlan"
+                                    FromRole="ShelfToFloorPlan_From" ToRole="ShelfToFloorPlan_To"/>
+                <NavigationProperty Name="Products" Relationship="com.sap.cloud.sdk.store.grocery.ShelfToProducts"
+                                    FromRole="ShelfToProducts_From" ToRole="ShelfToProducts_To"/>
+            </EntityType>
+            <Association Name="ShelfToFloorPlan">
+                <End Type="com.sap.cloud.sdk.store.grocery.Shelf" Multiplicity="*" Role="ShelfToFloorPlan_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.FloorPlan" Multiplicity="1" Role="ShelfToFloorPlan_To"/>
+            </Association>
+            <Association Name="ShelfToProducts">
+                <End Type="com.sap.cloud.sdk.store.grocery.Shelf" Multiplicity="*" Role="ShelfToProducts_From"/>
+                <End Type="com.sap.cloud.sdk.store.grocery.Product" Multiplicity="*" Role="ShelfToProducts_To"/>
+            </Association>
+
+            <EntityContainer Name="GroceryStoreService" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Customers" EntityType="com.sap.cloud.sdk.store.grocery.Customer" sap:creatable="true" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Products" EntityType="com.sap.cloud.sdk.store.grocery.Product" sap:creatable="true" sap:updatable="true" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Receipts" EntityType="com.sap.cloud.sdk.store.grocery.Receipt" sap:creatable="true" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Addresses" EntityType="com.sap.cloud.sdk.store.grocery.Address" sap:creatable="true" sap:updatable="true" sap:deletable="true" sap:content-version="1"/>
+                <EntitySet Name="Shelves" EntityType="com.sap.cloud.sdk.store.grocery.Shelf" sap:creatable="true" sap:updatable="true" sap:deletable="true" sap:content-version="1"/>
+                <EntitySet Name="OpeningHours" EntityType="com.sap.cloud.sdk.store.grocery.OpeningHours" sap:creatable="false" sap:updatable="true" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Vendors" EntityType="com.sap.cloud.sdk.store.grocery.Vendor" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Floors" EntityType="com.sap.cloud.sdk.store.grocery.FloorPlan" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+
+                <!-- Function Imports -->
+                <FunctionImport Name="PrintReceipt" ReturnType="Edm.String" m:HttpMethod="POST" sap:label="Returns the Count of Attachments">
+                    <Parameter Name="ReceiptId" Type="Edm.Int32" Mode="In" Nullable="false" />
+                </FunctionImport>
+                <FunctionImport Name="RevokeReceipt" ReturnType="Edm.String" m:HttpMethod="POST" sap:label="Returns the Count of Attachments">
+                    <Parameter Name="ReceiptId" Type="Edm.Int32" Mode="In" Nullable="false" />
+                </FunctionImport>
+                <FunctionImport Name="IsStoreOpen" ReturnType="Edm.Boolean" EntitySet="OpeningHours" m:HttpMethod="GET" sap:label="Check whether the store is open." sap:action-for="com.sap.cloud.sdk.store.grocery.OpeningHours">
+                    <Parameter Name="DateTime" Type="Edm.DateTime" Mode="In" Nullable="false" />
+                </FunctionImport>
+                <FunctionImport Name="OrderProduct" ReturnType="com.sap.cloud.sdk.store.grocery.Receipt" EntitySet="Customers" m:HttpMethod="Post" sap:label="Create an order for a given customer." sap:action-for="com.sap.cloud.sdk.store.grocery.Customer">
+                    <Parameter Name="CustomerId" Type="Edm.Int32" Mode="In" Nullable="false"/>
+                    <Parameter Name="ProductId" Type="Edm.Int32" Mode="In" Nullable="false"/>
+                    <Parameter Name="Quantity" Type="Edm.Int32" Mode="In" Nullable="false"/>
+                </FunctionImport>
+                <FunctionImport Name="GetProductQuantities" ReturnType="Collection(com.sap.cloud.sdk.store.grocery.ProductCount)" EntitySet="Shelves" m:HttpMethod="Get" sap:label="Get inventory of a given shelf." sap:action-for="com.sap.cloud.sdk.store.grocery.Shelf">
+                    <Parameter Name="ShelfId" Type="Edm.Int32" Mode="In" Nullable="false"/>
+                    <Parameter Name="ProductId" Type="Edm.Int32" Mode="In" Nullable="false"/>
+                </FunctionImport>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/SDK/Grocery_Store/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/SDK/Grocery_Store/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

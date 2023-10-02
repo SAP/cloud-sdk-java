@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.company</groupId>
+    <artifactId>application</artifactId>
+    <version>5.0.0-alpha-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.sap.cloud.sdk.datamodel</groupId>
+                <artifactId>odata-generator-maven-plugin</artifactId>
+                <configuration>
+                    <nameSource>NAME</nameSource>
+                    <inputDirectory>myInputDir</inputDirectory>
+                    <outputDirectory>myOutputDir</outputDirectory>
+                    <deleteOutputDirectory>true</deleteOutputDirectory>
+                    <overwriteFiles>true</overwriteFiles>
+                    <packageName>my.package</packageName>
+                    <defaultBasePath>my/base/path/</defaultBasePath>
+                    <serviceNameMappingFile>myServiceNameMappings.properties</serviceNameMappingFile>
+                    <pojosOnly>true</pojosOnly>
+                    <excludes>**/myExclusions/**</excludes>
+                    <linkToApiBusinessHub>true</linkToApiBusinessHub>
+                    <versionReference>true</versionReference>
+                    <includeEntitySets>
+                        <param>entitySet1</param>
+                        <param>entitySet2</param>
+                    </includeEntitySets>
+                    <includeFunctionImports>
+                        <param>fnImport1</param>
+                        <param>fnImport2</param>
+                        <param>fnImport3</param>
+                    </includeFunctionImports>
+                    <failOnWarning>true</failOnWarning>
+                    <serviceMethodsPerEntitySet>true</serviceMethodsPerEntitySet>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

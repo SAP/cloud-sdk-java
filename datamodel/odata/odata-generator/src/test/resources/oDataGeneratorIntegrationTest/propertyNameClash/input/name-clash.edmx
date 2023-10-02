@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="API_TEST_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="A_TestEntityV2" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KeyPropertyGuid"/>
+				</Key>
+				<Property Name="KeyPropertyGuid" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="MultiLink" Type="Edm.String" MaxLength="80"/>
+				<Property Name="toMultiLink" Type="Edm.String" MaxLength="100" sap:display-format="UpperCase"/>
+				<NavigationProperty Name="to_MultiLink" Relationship="API_TEST_SRV.assoc_TestEntityToMultiLink" FromRole="FromRole_assoc_TestEntityToMultiLink" ToRole="ToRole_assoc_TestEntityToMultiLink"/>
+			</EntityType>
+
+			<EntityType Name="A_TestEntityMultiLinkType" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KeyProperty"/>
+				</Key>
+				<Property Name="KeyProperty" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			</EntityType>
+
+			<Association Name="assoc_TestEntityToMultiLink" sap:content-version="1">
+				<End Type="API_TEST_SRV.A_TestEntityV2" Multiplicity="1" Role="FromRole_assoc_TestEntityToMultiLink"/>
+				<End Type="API_TEST_SRV.A_TestEntityMultiLinkType" Multiplicity="*" Role="ToRole_assoc_TestEntityToMultiLink"/>
+			</Association>
+
+			<EntityContainer Name="API_TEST_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="A_TestEntity" EntityType="API_TEST_SRV.A_TestEntityV2" sap:content-version="1"/>
+				<EntitySet Name="A_TestEntityMultiLink" EntityType="API_TEST_SRV.A_TestEntityMultiLinkType" sap:content-version="1"/>
+				<AssociationSet Name="assoc_TestEntityToMultiLink" Association="API_TEST_SRV.assoc_TestEntityToMultiLink" sap:content-version="1">
+					<End EntitySet="A_TestEntity" Role="FromRole_assoc_TestEntityToMultiLink"/>
+					<End EntitySet="A_TestEntityMultiLink" Role="ToRole_assoc_TestEntityToMultiLink"/>
+				</AssociationSet>
+			</EntityContainer>
+			<Annotations Target="API_TEST_SRV.API_TEST_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="None"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<atom:link rel="self" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

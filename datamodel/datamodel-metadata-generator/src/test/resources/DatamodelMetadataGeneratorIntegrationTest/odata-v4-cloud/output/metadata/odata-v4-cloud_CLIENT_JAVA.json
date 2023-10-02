@@ -1,0 +1,13 @@
+{
+  "serviceStatus": "certified",
+  "language": "Java",
+  "apiType": "OData",
+  "pregeneratedLibrary": {
+    "groupId": "com.sap.cloud.sdk.s4hana",
+    "artifactId": "s4hana-api-odata-v4",
+    "version": "1.1.1",
+    "compatibilityNotes": "",
+    "description": "thirdDescription"
+  },
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.services.AwesomeService;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.services.DefaultAwesomeService;\nimport com.sap.cloud.sdk.datamodel.odatav4.core.ModificationResponse;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.namespaces.entity.AwesomeEntity;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal String foobar;\nfinal AwesomeService service = new DefaultAwesomeService();\nfinal ModificationResponse<AwesomeEntity> result = service.customMethod(foobar).execute(destination);"
+}

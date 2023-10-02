@@ -1,0 +1,22 @@
+# OpenAPI Generator Ignore
+# Lines beginning with a # are comments
+
+# This should match build.sh located anywhere.
+build.sh
+
+settings.gradle
+README.md
+gradlew.bat
+gradlew
+gradle.properties
+git_push.sh
+build.sbt
+build.gradle
+.travis.yml
+gradle/**
+/gradle/wrapper
+/gradle/
+gradle
+gradle/
+src/main/AndroidManifest.xml
+pom.xml

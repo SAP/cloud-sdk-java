@@ -1,0 +1,53 @@
+{
+  "swagger": "2.0",
+  "basePath": "/othercloud/sap/opu/odata/my/custom/path/CompleteBusinessObject",
+  "paths": {
+    "/A_PATH": {
+      "get": {},
+      "post": {}
+    },
+    "/A_PATH()": {
+      "get": {},
+      "patch": {},
+      "delete": {}
+    },
+    "/ANOTHER_PATH": {
+      "patch": {},
+      "delete": {},
+      "malformed": {}
+    }
+  },
+  "info": {
+    "title": "Service Java Class and Package Name",
+    "description": "Some description text for service class javadocs.",
+    "version": "1"
+  },
+  "externalDocs": {
+    "description": "link text for URL",
+    "url": "http://any.url"
+  },
+  "x-sap-software-min-version": "Some Version",
+  "x-sap-api-deprecated": "Yes",
+  "x-sap-ext-overview": [
+    {
+      "name": "table entry",
+      "values": [
+        "some text",
+        {
+          "text": "some text",
+          "format": "plain"
+        },
+        {
+          "text": "[link text for URL](http://any.url \"double quotes for pattern matcher\")",
+          "format": "markdown"
+        }
+      ]
+    }
+  ],
+  "x-sap-stateInfo": {
+    "state": "Deprecated",
+    "deprecationrelease": "1908",
+    "successorApi": "https://api.sap.com/api/SOME_OTHER_API",
+    "deprecationdate": "AUG-2019"
+  }
+}

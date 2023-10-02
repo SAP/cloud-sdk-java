@@ -1,0 +1,50 @@
+{
+  "d": {
+    "results": [
+      {
+        "__metadata": {
+          "id": "https://127.0.0.1/endpoint/url/Ticket('1')",
+          "uri": "https://127.0.0.1/endpoint/url/Ticket('1')",
+          "type": "API_TICKET.TicketType"
+        },
+        "Ticket": "1",
+        "TicketCategory": "1",
+        "TicketName": "UpdatedFirstA UpdatedLastA",
+        "TicketGrouping": "BP01",
+        "TicketUUID": "34c6020a-aaaa-1111-2222-af75a376b0f9",
+        "CorrespondenceLanguage": "",
+        "CreatedByUser": "ABC001553",
+        "CreationDate": "/Date(1507075200000)/",
+        "CreationTime": "PT14H06M40S",
+        "LastChangeDate": "/Date(1524009600000)/",
+        "LastChangeTime": "ABC",
+        "LastChangedByUser": "ABC",
+        "TicketIsBlocked": false,
+        "TicketType": "",
+        "ETag": "ABC20190624171745"
+      },
+      {
+        "__metadata": {
+          "id": "https://127.0.0.1/endpoint/url/Ticket('1000000')",
+          "uri": "https://127.0.0.1/endpoint/url/Ticket('1000000')",
+          "type": "API_TICKET.TicketType"
+        },
+        "Ticket": "1000000",
+        "TicketCategory": "1",
+        "TicketName": "test test",
+        "TicketGrouping": "BP02",
+        "TicketUUID": "34c6020a-aaaa-1111-2222-af75a376b0f9",
+        "CorrespondenceLanguage": "EN",
+        "CreatedByUser": "ABC001553",
+        "CreationDate": "/Date(1430697600000)/",
+        "CreationTime": "PT08H08M26S",
+        "LastChangeDate": "/Date(1561334400000)/",
+        "LastChangeTime": "PT17H17M45S",
+        "LastChangedByUser": "ABC",
+        "TicketIsBlocked": false,
+        "TicketType": "",
+        "ETag": "ABC20190624171745"
+      }
+    ]
+  }
+}

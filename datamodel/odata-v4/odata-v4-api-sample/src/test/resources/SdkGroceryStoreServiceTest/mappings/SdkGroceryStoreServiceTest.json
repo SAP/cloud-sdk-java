@@ -1,0 +1,381 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/com.sap.cloud.sdk.store.grocery/Customers",
+        "headers": {
+          "Accept": {
+            "equalTo": "application/json"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.context": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/$metadata#Customer",
+          "value": [
+            {
+              "Id": "9001",
+              "Name": "Customer Name 1",
+              "Email": "customer1@mail.sap"
+            },
+            {
+              "Id": "9002",
+              "Name": "Customer Name 2",
+              "Email": "customer2@mail.sap"
+            },
+            {
+              "Id": "9003",
+              "Name": "Customer Name 3",
+              "Email": "customer3@mail.sap"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/com.sap.cloud.sdk.store.grocery/Customers(9001)",
+        "headers": {
+          "Accept": {
+            "equalTo": "application/json"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.type": "#SdkGroceryStore.Customer",
+          "Id": "9001",
+          "Name": "Customer Name 1",
+          "Email": "customer1@mail.sap",
+          "AddressId": "100"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts?$top=10",
+        "headers": {
+          "Accept": {
+            "equalTo": "application/json"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.context": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/$metadata#Receipt",
+          "value": [
+            {
+              "Id": 123453,
+              "CustomerId": 9001,
+              "TotalAmount": 20,
+              "ProductCounts": [
+                {
+                  "ProductId": 1001,
+                  "Quantity": 2
+                },
+                {
+                  "ProductId": 1002,
+                  "Quantity": 4
+                }
+              ]
+            },
+            {
+              "Id": 123454,
+              "CustomerId": 9001,
+              "TotalAmount": 28,
+              "ProductCounts": [
+                {
+                  "ProductId": 1001,
+                  "Quantity": 4
+                },
+                {
+                  "ProductId": 1002,
+                  "Quantity": 4
+                }
+              ]
+            },
+            {
+              "Id": 123455,
+              "CustomerId": 9001,
+              "TotalAmount": 34,
+              "ProductCounts": [
+                {
+                  "ProductId": 1001,
+                  "Quantity": 4
+                },
+                {
+                  "ProductId": 1002,
+                  "Quantity": 6
+                }
+              ]
+            },
+            {
+              "Id": 123456,
+              "CustomerId": 9001,
+              "TotalAmount": 100,
+              "ProductCounts": [
+                {
+                  "ProductId": 1001,
+                  "Quantity": 10
+                },
+                {
+                  "ProductId": 1002,
+                  "Quantity": 20
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts(123456)",
+        "headers": {
+          "Accept": {
+            "equalTo": "application/json"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.type": "#SdkGroceryStore.Receipt",
+          "Id": 123456,
+          "CustomerId": 9001,
+          "TotalAmount": 100,
+          "ProductCounts": [
+            {
+              "ProductId": 1001,
+              "Quantity": 10
+            },
+            {
+              "ProductId": 1002,
+              "Quantity": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts?$select=Id,ProductCounts&$expand=Customer($select=Name,Id)&$filter=(TotalAmount%20ge%20400)&$top=1",
+        "headers": {
+          "Accept": {
+            "equalTo": "application/json"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.context": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/$metadata#Receipt",
+          "value": [
+            {
+              "Id": 123456,
+              "Customer": {
+                "Id": 9001,
+                "Name": "Customer Name 1"
+              },
+              "ProductCounts": [
+                {
+                  "ProductId": 1001,
+                  "Quantity": 10
+                },
+                {
+                  "ProductId": 1002,
+                  "Quantity": 20
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/com.sap.cloud.sdk.store.grocery/Customers(1337)/com.sap.cloud.sdk.store.grocery.FilterPurchaseHistory",
+        "headers": {
+          "Content-Type": {
+            "equalTo": "application/json"
+          },
+          "Accept": {
+            "equalTo": "application/json"
+          },
+          "x-csrf-token": {
+            "equalTo": "MY-CSRF-TOKEN"
+          }
+        },
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": {
+              "expression": "$.Receipts",
+              "equalToJson": "[{ \"@odata.type\": \"#com.sap.cloud.sdk.store.grocery.Receipt\", \"Id\": 4242, \"CustomerId\": 1337 }]"
+            }
+          },
+          {
+            "matchesJsonPath": {
+              "expression": "$.ProductNames",
+              "equalToJson": "[ \"milk\", \"eggs\" ]"
+            }
+          },
+          {
+            "matchesJsonPath": {
+              "expression": "$.ProductCategories",
+              "equalToJson": "[ \"Dairy\", \"Meat\" ]"
+            }
+          },
+          {
+            "matchesJsonPath": {
+              "expression": "$.DateRange",
+              "equalToJson": "{ \"@odata.type\": \"#com.sap.cloud.sdk.store.grocery.DateRange\", \"Start\": \"2023-01-01T00:00:00Z\", \"End\": \"2023-12-31T23:59:59Z\" }"
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "@odata.context": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/$metadata#PurchaseHistoryItem",
+          "value": [
+            {
+              "ReceiptId": 123456,
+              "ProductCount": {
+                "ProductId": 1001,
+                "Quantity": 10
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "HEAD",
+        "url": "/com.sap.cloud.sdk.store.grocery",
+        "headers": {
+          "x-csrf-token": {
+            "equalTo": "fetch"
+          }
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": {
+          "x-csrf-token": "MY-CSRF-TOKEN"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts",
+        "headers": {
+          "Content-Type": {
+            "equalTo": "application/json"
+          },
+          "x-csrf-token": {
+            "equalTo": "MY-CSRF-TOKEN"
+          }
+        },
+        "bodyPatterns": [
+          {
+            "matchesJsonPath": "$.CustomerId"
+          },
+          {
+            "matchesJsonPath": "$.ProductCounts[*].ProductId"
+          },
+          {
+            "matchesJsonPath": "$.ProductCounts[*].Quantity"
+          }
+        ]
+      },
+      "response": {
+        "status": 201,
+        "jsonBody": {
+          "@odata.type": "#SdkGroceryStore.Receipt",
+          "Id": 123999,
+          "TotalAmount": 100,
+          "CustomerId": 9001
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "PATCH",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts(123999)",
+        "headers": {
+          "Content-Type": {
+            "equalTo": "application/json"
+          },
+          "x-csrf-token": {
+            "equalTo": "MY-CSRF-TOKEN"
+          }
+        },
+        "bodyPatterns": [
+          {
+            "equalToJson": {
+              "@odata.type": "#com.sap.cloud.sdk.store.grocery.Receipt",
+              "TotalAmount": 90.00
+            },
+            "ignoreExtraElements": false
+          }
+        ]
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts(123999)",
+        "headers": {
+          "Content-Type": {
+            "equalTo": "application/json"
+          },
+          "x-csrf-token": {
+            "equalTo": "MY-CSRF-TOKEN"
+          }
+        },
+        "bodyPatterns": [
+          {
+            "equalToJson": {
+              "@odata.type": "#com.sap.cloud.sdk.store.grocery.Receipt",
+              "Id": 123999,
+              "TotalAmount": 100.00,
+              "CustomerId": 9001
+            },
+            "ignoreExtraElements": false
+          }
+        ]
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "request": {
+        "method": "DELETE",
+        "url": "/com.sap.cloud.sdk.store.grocery/Receipts(123999)",
+        "headers": {
+          "x-csrf-token": {
+            "equalTo": "MY-CSRF-TOKEN"
+          }
+        }
+      },
+      "response": {
+        "status": 204
+      }
+    }
+  ]
+}

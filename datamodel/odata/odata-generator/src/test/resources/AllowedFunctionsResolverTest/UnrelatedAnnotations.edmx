@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="vdmerror">
+            <EntityType Name="TestEntity">
+                <Key>
+                    <PropertyRef Name="TestEntityID"/>
+                </Key>
+                <Property Name="TestEntityID" Nullable="false" Type="Edm.String"/>
+                <Property Name="SomeField" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="FieldValues">
+                <Key>
+                    <PropertyRef Name="FieldValuesID"/>
+                </Key>
+                <Property Name="FieldValuesID" Nullable="false" Type="Edm.String"/>
+                <Property Name="SomeAdditionalProperty" Type="Edm.String"/>
+            </EntityType>
+            <EntityContainer Name="default" m:IsDefaultEntityContainer="true">
+                <EntitySet EntityType="vdmerror.TestEntity" Name="TestEntity" sap:searchable="true" sap:deletable="false" sap:updatable="false" sap:addressable="false" />
+                <EntitySet EntityType="vdmerror.FieldValues" Name="FieldValues" sap:searchable="true" sap:deletable="false" sap:updatable="false" sap:addressable="false" />
+            </EntityContainer>
+            <Annotations Target="vdmerror.TestEntity/SomeField" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Value Help for Field"/>
+                        <PropertyValue Property="CollectionPath" String="FieldValues"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="FieldValuesID"/>
+                                    <PropertyValue Property="ValueListProperty" String="FieldValuesID"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Search help for Product Type in SSP PR"/>
+                        <PropertyValue Property="CollectionPath" String="ProductTypeSet"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductType"/>
+                                    <PropertyValue Property="ValueListProperty" String="PRODUCT_TYPE"/>
+                                </Record>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductType"/>
+                                    <PropertyValue Property="ValueListProperty" String="PRODUCT_TYPE"/>
+                                </Record>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="PTEXT"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link rel="self" href="/api/odata/v2/vdmerror/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
+            <atom:link rel="latest-version" href="/api/odata/v2/vdmerror/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

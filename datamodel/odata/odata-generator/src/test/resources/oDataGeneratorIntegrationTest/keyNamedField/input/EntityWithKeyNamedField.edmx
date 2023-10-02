@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="SOME_SMALL_SRV" xml:lang="en" sap:schema-version="1"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="SomeType" sap:label="Some Type Label" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="KeyFieldWithKeyLabel"/>
+                </Key>
+                <Property Name="KeyFieldWithKeyLabel" Type="Edm.Guid" Nullable="false" sap:label="Key" sap:sortable="false"
+                          sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="WithoutKeyType" sap:label="Entity without keyLabel" sap:content-version="1">
+                <Property Name="SomeField" Type="Edm.String" Nullable="false" sap:label="Some Field"/>
+            </EntityType>
+            <EntityContainer Name="Container" m:IsDefaultEntityContainer="true"
+                             sap:supported-formats="atom json xlsx">
+                <EntitySet Name="SomeConreteType" EntityType="SOME_SMALL_SRV.SomeType"
+                           sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="WithoutKeyType" EntityType="SOME_SMALL_SRV.WithoutKeyType"
+                           sap:searchable="true" sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

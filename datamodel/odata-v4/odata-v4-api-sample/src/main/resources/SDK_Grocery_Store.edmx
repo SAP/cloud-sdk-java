@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:DataServices>
+        <Schema Namespace="com.sap.cloud.sdk.store.grocery" Alias="GroceryStore">
+
+            <!-- Complex Types -->
+            <ComplexType Name="ProductCount">
+                <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Quantity" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="Product" Type="GroceryStore.Product" Nullable="false"
+                                    Partner="ProductCounts"/>
+            </ComplexType>
+            <ComplexType Name="DateRange">
+                <Property Name="Start" Type="Edm.DateTimeOffset" Nullable="false"/>
+                <Property Name="End" Type="Edm.DateTimeOffset" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="PurchaseHistoryItem">
+                <Property Name="ReceiptId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="ProductCount" Type="GroceryStore.ProductCount" Nullable="false"/>
+            </ComplexType>
+
+            <!-- Entities -->
+            <EntityType Name="Vendor">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Name" MaxLength="100" Type="Edm.String"/>
+                <Property Name="AddressId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="Address" Type="GroceryStore.Address" Partner="Customers"/>
+            </EntityType>
+            <EntityType Name="Customer">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String" MaxLength="100" Nullable="false" />
+                <Property Name="Email" Type="Edm.String"/>
+                <Property Name="AddressId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="Address" Type="GroceryStore.Address" Partner="Customers"/>
+            </EntityType>
+            <EntityType Name="Product">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Name" Type="Edm.String"/>
+                <Property Name="ShelfId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="VendorId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Price" Type="Edm.Decimal" Nullable="false"/>
+                <Property Name="Categories" Type="Collection(GroceryStore.ProductCategory)" Nullable="false"/>
+                <NavigationProperty Name="Vendor" Type="GroceryStore.Vendor" Partner="Products"/>
+                <NavigationProperty Name="Shelf" Type="GroceryStore.Shelf" Partner="Shelves"/>
+            </EntityType>
+            <EntityType Name="Receipt">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="CustomerId" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="TotalAmount" Type="Edm.Decimal" Nullable="false"/>
+                <Property Name="ProductCounts" Type="Collection(GroceryStore.ProductCount)" Nullable="false"/>
+                <NavigationProperty Name="Customer" Type="GroceryStore.Customer" Partner="Receipts"/>
+            </EntityType>
+            <EntityType Name="Address">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="Street" Type="Edm.String"/>
+                <Property Name="City" Type="Edm.String"/>
+                <Property Name="State" Type="Edm.String"/>
+                <Property Name="Country" Type="Edm.String"/>
+                <Property Name="PostalCode" Type="Edm.String"/>
+                <Property Name="Latitude" Type="Edm.Double" Nullable="false"/>
+                <Property Name="Longitude" Type="Edm.Double" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="OpeningHours">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="DayOfWeek" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="OpenTime" Type="Edm.TimeOfDay" Nullable="false"/>
+                <Property Name="CloseTime" Type="Edm.TimeOfDay" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="FloorPlan">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="ImageUri" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="Shelf">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="FloorPlanId" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="FloorPlan" Type="GroceryStore.FloorPlan" Partner="Floorplans"/>
+                <NavigationProperty Name="Products" Type="Collection(GroceryStore.Product)" Partner="Shelves"/>
+            </EntityType>
+
+            <!-- Enums -->
+            <EnumType Name="ProductCategory">
+                <Member Name="Vegetables" Value="1"/>
+                <Member Name="Fruits" Value="2"/>
+                <Member Name="Meat" Value="3"/>
+                <Member Name="Fish" Value="4"/>
+                <Member Name="Dairy" Value="5"/>
+                <Member Name="Beverages" Value="6"/>
+            </EnumType>
+
+            <!-- Actions -->
+            <Action Name="OrderProduct" IsBound="true">
+                <Parameter Name="bindingParameter" Type="GroceryStore.Customer"/>
+                <Parameter Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+                <Parameter Name="Quantity" Type="Edm.Int32" Nullable="false"/>
+            </Action>
+            <Action Name="PrintReceipt">
+                <Parameter Name="ReceiptId" Type="Edm.Int32" Nullable="false"/>
+            </Action>
+            <Action Name="RevokeReceipt">
+                <Parameter Name="ReceiptId" Type="Edm.Int32" Nullable="false"/>
+            </Action>
+            <Action Name="FilterPurchaseHistory" IsBound="true">
+                <Parameter Name="bindingParameter" Type="GroceryStore.Customer"/>
+                <Parameter Name="Receipts" Type="Collection(GroceryStore.Receipt)" Nullable="true"/>
+                <Parameter Name="ProductNames" Type="Collection(Edm.String)" Nullable="true"/>
+                <Parameter Name="ProductCategories" Type="Collection(GroceryStore.ProductCategory)" Nullable="true"/>
+                <Parameter Name="DateRange" Type="GroceryStore.DateRange" Nullable="true"/>
+                <ReturnType Type="Collection(GroceryStore.PurchaseHistoryItem)" Nullable="false"/>
+            </Action>
+
+            <!-- Functions -->
+            <Function Name="IsStoreOpen" IsBound="true">
+                <Parameter Name="bindingParameter" Type="GroceryStore.OpeningHours"/>
+                <Parameter Name="DateTime" Type="Edm.DateTimeOffset" Nullable="false"/>
+                <ReturnType Type="Edm.Boolean" Nullable="false"/>
+            </Function>
+            <Function Name="GetProductQuantities" IsBound="true">
+                <Parameter Name="bindingParameter" Type="GroceryStore.Shelf"/>
+                <ReturnType Type="Collection(GroceryStore.ProductCount)" Nullable="false"/>
+            </Function>
+
+            <!-- Entity Sets -->
+            <EntityContainer Name="GroceryStoreService" IsDefaultEntityContainer="true">
+                <EntitySet Name="Customers" EntityType="GroceryStore.Customer"/>
+                <EntitySet Name="Products" EntityType="GroceryStore.Product"/>
+                <EntitySet Name="Receipts" EntityType="GroceryStore.Receipt"/>
+                <EntitySet Name="Addresses" EntityType="GroceryStore.Address"/>
+                <EntitySet Name="Shelves" EntityType="GroceryStore.Shelf"/>
+                <EntitySet Name="ShopFloorShelves" EntityType="GroceryStore.Shelf" />
+                <EntitySet Name="StorageShelves" EntityType="GroceryStore.Shelf" />
+                <EntitySet Name="OpeningHours" EntityType="GroceryStore.OpeningHours"/>
+            </EntityContainer>
+
+            <!-- Annotations -->
+            <Annotations Target="GroceryStore.Customer/Id">
+                <Annotation Term="SAP__common.Label" String="Customer ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the customer."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Customer/Name">
+                <Annotation Term="SAP__common.Label" String="Customer Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Name of the customer."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Customer/Email">
+                <Annotation Term="SAP__common.Label" String="Email Address"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Email address of the customer."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Customer/AddressId">
+                <Annotation Term="SAP__common.Label" String="Address ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the customer's address."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Customer/Address">
+                <Annotation Term="SAP__common.Label" String="Address"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Associated address of the customer."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Product/Id">
+                <Annotation Term="SAP__common.Label" String="Product ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the product."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Product/Name">
+                <Annotation Term="SAP__common.Label" String="Product Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Name of the product."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Product/Price">
+                <Annotation Term="SAP__common.Label" String="Price"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Price of the product."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Product/VendorId">
+                <Annotation Term="SAP__common.Label" String="Vendor ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the vendor."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Product/Vendor">
+                <Annotation Term="SAP__common.Label" String="Vendor"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Associated vendor of the product."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Receipt/Id">
+                <Annotation Term="SAP__common.Label" String="Receipt ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the receipt."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Receipt/TotalAmount">
+                <Annotation Term="SAP__common.Label" String="Total Amount"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Total amount of the receipt."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Receipt/CustomerId">
+                <Annotation Term="SAP__common.Label" String="Customer ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the customer."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Receipt/ProductCounts">
+                <Annotation Term="SAP__common.Label" String="Product Counts"/>
+                <Annotation Term="SAP__common.QuickInfo"
+                            String="List of products and quantities associated with the receipt."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Receipt/Customer">
+                <Annotation Term="SAP__common.Label" String="Customer"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Associated customer of the receipt."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Address/Id">
+                <Annotation Term="SAP__common.Label" String="Address ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="ID of the address."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Address/Street">
+                <Annotation Term="SAP__common.Label" String="Street"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Street of the address."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Address/City">
+                <Annotation Term="SAP__common.Label" String="City"/>
+                <Annotation Term="SAP__common.QuickInfo" String="City of the address."/>
+            </Annotations>
+            <Annotations Target="GroceryStore.Address/State">
+                <Annotation Term="SAP__common.Label" String="State"/>
+                <Annotation Term="SAP__common.QuickInfo" String="State of the address."/>
+            </Annotations>
+
+            <Annotations Target="GroceryStore.GroceryStoreService/Customer">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+
+            <Annotations Target="GroceryStore.GroceryStoreService/Address">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="true"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+
+            <Annotations Target="GroceryStore.GroceryStoreService/Receipt">
+                <Annotation Term="SAP__capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty"
+                                                   NavigationPropertyPath="ProductsCount"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Bool="true"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

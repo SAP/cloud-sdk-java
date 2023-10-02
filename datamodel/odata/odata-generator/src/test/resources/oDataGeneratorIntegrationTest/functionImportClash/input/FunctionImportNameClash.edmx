@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="namespace" xml:lang="en" sap:schema-version="1"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="BPType">
+                <Key>
+                    <PropertyRef Name="Code"/>
+                </Key>
+                <Property Name="Code" Type="Edm.String"/>
+            </EntityType>
+            <EntityContainer Name="SomeContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="BP" EntityType="namespace.BPType" sap:creatable="true" sap:updatable="true"
+                           sap:deletable="true" sap:searchable="true"/>
+                <FunctionImport Name="BPByKey" ReturnType="Edm.String" m:HttpMethod="POST"/>
+                <FunctionImport Name="BPCreate" ReturnType="Edm.String" m:HttpMethod="POST"/>
+                <FunctionImport Name="BPDelete" ReturnType="Edm.String" m:HttpMethod="POST"/>
+                <FunctionImport Name="BPUpdate" ReturnType="Edm.String" m:HttpMethod="POST"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/sap/opu/odata/sap/API_TEST_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

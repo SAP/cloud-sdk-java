@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
+package {{invokerPackage}}.auth;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.MultiValueMap;
+import javax.annotation.Nonnull;
+import com.google.common.annotations.Beta;
+
+/**
+* Authentication at the REST API by providing username and password
+*/
+{{>generatedAnnotation}}
+@Beta
+public class HttpBasicAuth implements Authentication {
+    private String username;
+    private String password;
+
+    /**
+    * Get the username
+    * @return The username
+    */
+    @Nonnull public String getUsername() {
+        return username;
+    }
+
+    /**
+    * Set the username
+    * @param username The username
+    */
+    public void setUsername( @Nonnull String username) {
+        this.username = username;
+    }
+
+    /**
+    * Get the password
+    * @return The password
+    */
+    @Nonnull public String getPassword() {
+        return password;
+    }
+
+    /**
+    * Set the password
+    * @param password The password
+    */
+    public void setPassword( @Nonnull String password) {
+        this.password = password;
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public void applyToParams( @Nonnull MultiValueMap<String, String> queryParams, @Nonnull HttpHeaders headerParams) {
+        if (username == null && password == null) {
+            return;
+        }
+        final String str = (username == null ? "" : username) + ":" + (password == null ? "" : password);
+        headerParams.add(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString(str.getBytes(StandardCharsets.UTF_8)));
+    }
+}
