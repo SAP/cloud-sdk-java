@@ -512,6 +512,7 @@ jobs:
         with:
           name: cloud-sdk-package
           path: .
+
       - name: Publish Snapshot
         run: >
           unzip sap-cloud-sdk-java-${{ needs.build.outputs.version }}.zip -d .
