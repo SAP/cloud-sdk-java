@@ -228,28 +228,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.1</version>
-                    <configuration>
-                        <retryFailedDeploymentCount>3</retryFailedDeploymentCount>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <!-- needed here because the modules-bom can not have the root pom as parent-->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.9</version>
-                <configuration>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
