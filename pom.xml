@@ -81,8 +81,8 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<jacoco.includes>*</jacoco.includes>
-		<jacoco.excludes>org.apache.*</jacoco.excludes>
+		<!-- <jacoco.includes>*</jacoco.includes> -->
+		<!-- <jacoco.excludes>org.apache.*</jacoco.excludes> -->
 		<codeAnalysisExclusions />
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
@@ -955,15 +955,36 @@
 							<id>prepare-agent</id>
 							<goals>
 								<goal>prepare-agent</goal>
+							</goals><configuration>
+							<destFile>${jacoco.executionDataFile}</destFile>
+							<dataFile>${jacoco.executionDataFile}</dataFile>
+							<excludes>org.apache.*</excludes>
+						</configuration>
+						</execution>
+						<execution>
+							<id>report</id>
+							<goals>
+								<goal>report</goal>
 							</goals>
+							<configuration>
+								<dataFile>${jacoco.executionDataFile}</dataFile>
+								<excludes>
+									<exclude>"**/soap/client/**"</exclude>
+									<exclude>"**/cds/gen/**"</exclude>
+									<exclude>"**/servletjakarta/**"</exclude>
+									<exclude>**/odata/sample/**</exclude>
+									<exclude>**/odatav4/sample/**</exclude>
+									<exclude>**/openapi/sample/**</exclude>
+								</excludes>
+							</configuration>
 						</execution>
 					</executions>
-					<configuration>
+					<!-- <configuration>
 						<destFile>${jacoco.executionDataFile}</destFile>
 						<dataFile>${jacoco.executionDataFile}</dataFile>
 						<includes>${jacoco.includes}</includes>
 						<excludes>${jacoco.excludes}</excludes>
-					</configuration>
+					</configuration> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
