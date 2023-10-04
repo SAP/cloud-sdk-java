@@ -19,13 +19,13 @@ stages:
       class: 80
   codeCheck:
     checkstyle:
-      high: '14'
-      normal: '-1'
-      low: '-1'
-    findbugs:
-      high: '10'
-      normal: '-1'
-      low: '-1'
+      high: '14'# Open tasks (to do or fix me)
+      normal: '0'
+      low: '216'
+    findbugs: #SpotBugs
+      high: '0'
+      normal: '0'
+      low: '0'
     pmd:
       high: '0'
       normal: '19'
