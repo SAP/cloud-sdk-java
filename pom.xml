@@ -81,9 +81,7 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<!-- <jacoco.includes>*</jacoco.includes> -->
-		<!-- <jacoco.excludes>org.apache.*</jacoco.excludes> -->
-		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/com/sap/xi/**,**/testclasses/**,**/cds/gen/**,**/scp/businesslogging/odata/**,**/scp/businesslogging/rest/**,**/scp/workflow/**,**/services/btp/businessrules/**</codeAnalysisExclusions>
+		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/com/sap/xi/**,**/testclasses/**,**/cds/gen/**</codeAnalysisExclusions>
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
 		<!--  Non-essential dependencies  -->
@@ -975,12 +973,6 @@
 									<exclude>"**/odatav4/services/**"</exclude>
 									<exclude>"**/soap/client/**"</exclude>
 									<exclude>"**/com/sap/xi/**"</exclude>
-									<exclude>"**/services/btp/businessrules/**"</exclude>
-									<exclude>"**/services/mdi/model/**"</exclude>
-									<exclude>"**/scp/kernel/services/**"</exclude>
-									<exclude>"**/scp/businesslogging/odata/**"</exclude>
-									<exclude>"**/scp/businesslogging/rest/**"</exclude>
-									<exclude>"**/scp/workflow/**"</exclude>
 									<exclude>"**/testclasses/**"</exclude>
 									<exclude>"**/cds/gen/**"</exclude>
 									<!-- namespaces compiled to Java17 -->
