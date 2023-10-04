@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +66,10 @@ public class ODataSerializationTest
             + "        \"etag\": \"W/\\\"some-version-id\\\"\","
             + "        \"type\": \"DataServiceProviderDemo.Category\" "
             + "      }, "
+            + "      \"SByteValue\": -127, "
+            + "      \"Int16Value\": 1337, "
             + "      \"IntegerValue\": 42, "
+            + "      \"Int64Value\": 123456789000, "
             + "      \"DecimalValue\": \"123456.789\", "
             + "      \"DoubleValue\": 42.1, "
             + "      \"BooleanValue\": true, "
@@ -164,7 +171,10 @@ public class ODataSerializationTest
 
         assertThat(entity).isNotNull();
         assertThat(entity.getVersionIdentifier()).containsExactly("W/\"some-version-id\"");
+        assertThat(entity.getSByteValue()).isEqualTo((byte) -127);
+        assertThat(entity.getInt16Value()).isEqualTo((short) 1337);
         assertThat(entity.getIntegerValue()).isEqualTo(42);
+        assertThat(entity.getInt64Value()).isEqualTo(123456789000L);
         assertThat(entity.getDecimalValue()).isEqualTo("123456.789");
         assertThat(entity.getDoubleValue()).isEqualTo(42.1);
         assertThat(entity.getBooleanValue()).isTrue();
@@ -318,5 +328,23 @@ public class ODataSerializationTest
         @JsonAdapter( com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ODataBooleanAdapter.class )
         @ODataField( odataName = "BooleanValue" )
         private Boolean booleanValue;
+
+        @SerializedName( "SByteValue" )
+        @JsonProperty( "SByteValue" )
+        @Nullable
+        @ODataField( odataName = "SByteValue" )
+        private Byte sByteValue;
+
+        @SerializedName( "Int16Value" )
+        @JsonProperty( "Int16Value" )
+        @Nullable
+        @ODataField( odataName = "Int16Value" )
+        private Short int16Value;
+
+        @SerializedName( "Int64Value" )
+        @JsonProperty( "Int64Value" )
+        @Nullable
+        @ODataField( odataName = "Int64Value" )
+        private Long int64Value;
     }
 }

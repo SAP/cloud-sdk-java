@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk</groupId>
 		<artifactId>sdk-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<groupId>com.sap.cloud.sdk.datamodel</groupId>
 	<artifactId>datamodel-parent</artifactId>
@@ -19,7 +19,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -32,8 +32,14 @@
 	</developers>
 	<modules>
 		<module>fluent-result</module>
+		<module>odata-client</module>
 		<module>odata</module>
+		<module>odata-v4</module>
+		<!-- To be removed -->
+		<module>soap</module>
 		<module>openapi</module>
+		<module>datamodel-metadata-generator</module>
+		<module>odata-generator-utility</module>
 	</modules>
 	<scm>
 		<connection />

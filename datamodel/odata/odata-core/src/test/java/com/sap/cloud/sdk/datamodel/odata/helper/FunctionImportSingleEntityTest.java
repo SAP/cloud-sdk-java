@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.okForJson;
@@ -35,6 +39,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ODataField;
@@ -123,7 +128,7 @@ public class FunctionImportSingleEntityTest
 
         @Nullable
         @Override
-        public TestingEntity executeRequest( @Nonnull final HttpDestinationProperties destination )
+        public TestingEntity executeRequest( @Nonnull final Destination destination )
         {
             return super.executeSingle(destination);
         }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
@@ -5,11 +9,10 @@ import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 
 /**
  * Representation of an OData modification request (Create, Update, Delete) as a fluent interface for further
- * configuring the request and {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * configuring the request and {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.

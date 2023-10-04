@@ -1,6 +1,9 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.testutil.ThrowableAssertionUtil.assertHasSuppressedExceptionTypes;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -102,13 +105,13 @@ public class DataModelGeneratorMojoUnitTest
 
         assertThat(mojoExecutionTry.isFailure()).isTrue();
 
-        assertThat(mojoExecutionTry.getCause()).isInstanceOf(MojoExecutionException.class);
-        assertThat(mojoExecutionTry.getCause()).hasCauseInstanceOf(OpenApiGeneratorException.class);
-
-        assertHasSuppressedExceptionTypes(
-            mojoExecutionTry.getCause().getCause(),
-            IllegalArgumentException.class,
-            IllegalArgumentException.class);
+        assertThat(mojoExecutionTry.getCause())
+            .isInstanceOf(MojoExecutionException.class)
+            .hasCauseInstanceOf(OpenApiGeneratorException.class);
+        assertThat(mojoExecutionTry.getCause().getCause().getSuppressed())
+            .satisfiesExactly(
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class),
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
     }
 
     @Test

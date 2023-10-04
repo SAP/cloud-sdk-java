@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.net.URI;
@@ -14,8 +18,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import com.google.gson.JsonElement;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -30,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of any OData function import as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -147,7 +151,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     /**
      * Default implementation for the case that this function returns a single type.
      * <p>
-     * This method can be used in subclasses to implement the {@link #executeRequest(HttpDestinationProperties)} method.
+     * This method can be used in subclasses to implement the {@link #executeRequest(Destination)} method.
      *
      * @param destination
      *            The destination to run the function against.
@@ -160,7 +164,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
      */
     @SuppressWarnings( "checkstyle:IllegalCatch" )
     @Nullable
-    protected ObjectT executeSingle( @Nonnull final HttpDestinationProperties destination )
+    protected ObjectT executeSingle( @Nonnull final Destination destination )
         throws ODataException
     {
         final ODataRequestResultGeneric result = executeInternal(destination);
@@ -186,7 +190,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     /**
      * Default implementation for the case that this function returns a collection of entries.
      * <p>
-     * This method can be used in subclasses to implement the {@link #executeRequest(HttpDestinationProperties)} method.
+     * This method can be used in subclasses to implement the {@link #executeRequest(Destination)} method.
      *
      * @param destination
      *            The destination to run the function against.
@@ -199,7 +203,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
      */
     @Nonnull
     @SuppressWarnings( "unchecked" )
-    protected List<ObjectT> executeMultiple( @Nonnull final HttpDestinationProperties destination )
+    protected List<ObjectT> executeMultiple( @Nonnull final Destination destination )
         throws ODataException
     {
         final ODataRequestResultGeneric result = executeInternal(destination);
@@ -213,7 +217,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     }
 
     @Nonnull
-    private ODataRequestResultGeneric executeInternal( final HttpDestinationProperties destination )
+    private ODataRequestResultGeneric executeInternal( final Destination destination )
         throws ODataException
     {
         final ODataRequestGeneric functionImportRequest = toRequest();

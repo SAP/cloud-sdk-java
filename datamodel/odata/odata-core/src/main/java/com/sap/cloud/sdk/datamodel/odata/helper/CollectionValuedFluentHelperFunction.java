@@ -1,13 +1,15 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
-
 /**
  * Representation of any OData function import as a fluent class for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.This is specifically for functions that return either
- * a collection of primitive values or entities
+ * {@link #executeRequest(Destination) executing} it.This is specifically for functions that return either a collection
+ * of primitive values or entities
  *
  * @param <FluentHelperT>
  *            The fluent helper type.

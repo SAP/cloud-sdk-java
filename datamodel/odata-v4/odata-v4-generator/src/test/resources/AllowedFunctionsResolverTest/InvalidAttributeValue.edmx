@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:DataServices>
+        <Schema Namespace="SomeService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="SomeEntityType">
+                <Key>
+                    <PropertyRef Name="SomeKeyProperty"/>
+                </Key>
+                <Property Name="SomeKeyProperty" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="SomeOtherProperty" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityContainer Name="SomeEntityContainer" IsDefaultEntityContainer="true">
+                <EntitySet Name="SomeEntitySet" EntityType="SomeService.SomeEntityType"/>
+            </EntityContainer>
+            <Annotations Target="SomeService.SomeEntityContainer/SomeEntitySet" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="invalid"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self"
+                       href="https://example.com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
+                       href="https://example.com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

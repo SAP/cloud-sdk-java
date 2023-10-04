@@ -1,0 +1,15 @@
+{
+  "d": {
+    "results": [
+      {
+        "__metadata": {
+          "id": "https://sap.com/sap/opu/odata/sap/API_ENTITIES/MyEntityCollection('10100001')",
+          "uri": "https://sap.com/sap/opu/odata/sap/API_ENTITIES/MyEntityCollection('10100001')",
+          "type": "API_ENTITIES.MyEntityType"
+        },
+        "EntityId": "10100001",
+        "EntityValue": "Foobar"
+      }
+    ]
+  }
+}

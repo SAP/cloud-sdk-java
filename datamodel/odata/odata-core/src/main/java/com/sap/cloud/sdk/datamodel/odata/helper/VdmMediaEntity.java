@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.io.IOException;
@@ -8,8 +12,8 @@ import javax.annotation.Nonnull;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -35,10 +39,10 @@ public abstract class VdmMediaEntity<EntityT> extends VdmEntity<EntityT>
      * entity object from the OData service.
      * <p>
      * <i>Alternatively</i>, you can use this method to only retrieve the media resource without requesting the entity
-     * data. Build this entity via its {@code .builder()} and use
-     * {@link #attachToService(String, HttpDestinationProperties)} to declare a service path and destination to request
-     * the media resource from. You can obtain the service path from the {@code <ServiceClass>#DEFAULT_SERVICE_PATH},
-     * e.g. {@code BusinessPartnerServiceBusinessPartnerService.DEFAULT_SERVICE_PATH}
+     * data. Build this entity via its {@code .builder()} and use {@link #attachToService(String, Destination)} to
+     * declare a service path and destination to request the media resource from. You can obtain the service path from
+     * the {@code <ServiceClass>#DEFAULT_SERVICE_PATH}, e.g.
+     * {@code BusinessPartnerServiceBusinessPartnerService.DEFAULT_SERVICE_PATH}
      * <p>
      * <strong>Please ensure this stream is closed after usage.</strong> The below example achieves this using
      * try-with-resources:
@@ -65,7 +69,7 @@ public abstract class VdmMediaEntity<EntityT> extends VdmEntity<EntityT>
         final ODataRequestReadByKey request =
             new ODataRequestReadByKey(getServicePathForFetch(), resource, null, ODataProtocol.V2);
 
-        final HttpDestinationProperties destination = getDestinationForFetch();
+        final Destination destination = getDestinationForFetch();
         if( destination == null ) {
             throw new ODataRequestException(
                 request,

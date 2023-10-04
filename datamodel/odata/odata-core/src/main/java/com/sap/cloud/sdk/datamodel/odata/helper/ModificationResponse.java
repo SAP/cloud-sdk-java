@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.Map;
@@ -7,7 +11,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
 
 import io.vavr.control.Option;
@@ -45,7 +49,7 @@ public final class ModificationResponse<EntityT extends VdmEntity<?>>
     private final EntityT originalRequestEntity;
 
     @Nonnull
-    private final HttpDestinationProperties destination;
+    private final Destination destination;
 
     /**
      * Get an updated version of the entity. If the service responded with an entity it is returned here. If the service

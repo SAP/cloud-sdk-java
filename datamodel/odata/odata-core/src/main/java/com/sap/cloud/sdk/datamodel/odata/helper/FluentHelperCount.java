@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
@@ -5,8 +9,8 @@ import javax.annotation.Nonnull;
 import org.apache.http.client.HttpClient;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
@@ -18,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Representation of an OData query for count, as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 public class FluentHelperCount
@@ -42,7 +46,7 @@ public class FluentHelperCount
      *             If the OData request execution failed. Please find the documentation for {@link ODataException}
      *             possible sub-types and error scenarios they can occur in.
      */
-    public long executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public long executeRequest( @Nonnull final Destination destination )
     {
         final ODataRequestCount requestCount = toRequest();
 

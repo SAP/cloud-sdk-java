@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
@@ -5,7 +9,7 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException;
@@ -34,5 +38,5 @@ public interface FluentHelperExecutable<ResultT>
      *             If the OData request execution failed.
      */
     @Nullable
-    ResultT executeRequest( @Nonnull final HttpDestinationProperties destination );
+    ResultT executeRequest( @Nonnull final Destination destination );
 }

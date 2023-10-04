@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.LinkedHashMap;
@@ -9,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
@@ -21,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of any OData request as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -90,7 +94,7 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     }
 
     @Nullable
-    public abstract ResultT executeRequest( @Nonnull final HttpDestinationProperties destination );
+    public abstract ResultT executeRequest( @Nonnull final Destination destination );
 
     /**
      * Get all headers for explicit and implicit requests.

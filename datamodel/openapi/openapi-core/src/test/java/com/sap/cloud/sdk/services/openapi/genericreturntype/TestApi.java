@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.services.openapi.genericreturntype;
 
 import java.util.HashMap;
@@ -14,13 +18,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 public class TestApi extends AbstractOpenApiService
 {
-    public TestApi( @Nonnull final HttpDestinationProperties httpDestination )
+    public TestApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }

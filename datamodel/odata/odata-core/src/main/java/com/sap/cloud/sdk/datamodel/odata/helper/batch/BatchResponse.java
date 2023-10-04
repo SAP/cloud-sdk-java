@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.helper.CollectionValuedFluentHelperFunction;
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperByKey;
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperRead;
@@ -15,7 +20,7 @@ import io.vavr.control.Try;
 /**
  * Interface to access the OData batch response.
  */
-public interface BatchResponse
+public interface BatchResponse extends AutoCloseable
 {
     /**
      * Get the result for a single changeset.
@@ -91,4 +96,11 @@ public interface BatchResponse
     {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * @since 4.15.0
+     */
+    @Beta
+    @Override
+    void close();
 }

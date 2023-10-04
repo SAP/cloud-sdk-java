@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.archetypes</groupId>
 		<artifactId>archetypes-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>scp-cf-spring</artifactId>
 	<packaging>maven-archetype</packaging>
@@ -18,7 +18,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>

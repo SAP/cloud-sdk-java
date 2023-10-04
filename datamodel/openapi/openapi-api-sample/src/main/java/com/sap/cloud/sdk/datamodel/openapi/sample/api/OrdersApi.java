@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
@@ -15,7 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Order; //NOPMD
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
@@ -35,7 +38,7 @@ public class OrdersApi extends AbstractOpenApiService
      * @param httpDestination
      *            The destination that API should be used with
      */
-    public OrdersApi( @Nonnull final HttpDestinationProperties httpDestination )
+    public OrdersApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }

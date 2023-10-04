@@ -1,12 +1,14 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.testutil;
 
 import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,16 +17,8 @@ import com.google.common.collect.ImmutableList;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
-import com.sap.cloud.sdk.cloudplatform.auditlog.AuditLogFacade;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationLoader;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
-import com.sap.cloud.sdk.cloudplatform.naming.JndiLookupAccessor;
-import com.sap.cloud.sdk.cloudplatform.naming.JndiLookupFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
@@ -50,59 +44,15 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Utility class for mocking Cloud platform services, as well as for accessing test systems and credentials.
+ * Utility class for mocking the cloud platform and tenant/user contexts.
  * <p>
  * <strong>Caution:</strong> This class is not thread-safe.
  * <p>
- * Upon construction, this class automatically loads test systems and credentials from resource files
- * {@link #TEST_SYSTEMS_RESOURCE_FILE} and {@link #CREDENTIALS_RESOURCE_FILE} (appending the file extensions defined by
- * {@link #CONFIG_FILE_EXTENSIONS}). For examples of such files, refer to {@code loadTestSystems(File)} and
- * {@code loadCredentials(File)}.
- * <p>
- * In addition, test systems and credentials are read from Java system properties {@link #PROPERTY_TEST_SYSTEMS} and
- * {@link #PROPERTY_CREDENTIALS}. Both properties can be used to specify either the path to or the direct content of a
- * configuration file. For example, these can be specified via
- * <code>mvn clean install -Dtest.systems="..." -Dtest.credentials="..."</code> where <code>"..."</code> corresponds to
- * either the path to a configuration file or the content of such a file.
- * <p>
- * When specifying paths to test systems and credentials files, the file extension can be omitted (e.g.,
- * <code>test/resources/systems</code>). In this case, this class will scan for the existence of the following files:
- * <ul>
- * <li><code>test/resources/systems.json</code></li>
- * <li><code>test/resources/systems.yaml</code></li>
- * <li><code>test/resources/systems.yml</code></li>
- * </ul>
- * <p>
- * Note that the order is arbitrary here since, if more than one matching file is found, an exception is thrown
- * demanding to specify exactly one file. If test systems or credentials are specified as Java system properties while
- * configuration files exist simultaneously within the the test resources folder, only Java system properties are
- * loaded, thereby overriding configuration from files in the test resources folder.
  */
 @Slf4j
-public class MockUtil
-    implements
-    TestSystemsProvider,
-    CredentialsProvider,
-    JndiLookupMocker,
-    LocaleMocker,
-    CloudPlatformMocker,
-    TenantMocker,
-    PrincipalMocker,
-    SecretStoreMocker,
-    DestinationMocker,
-    ServerMocker
+public class MockUtil implements LocaleMocker, CloudPlatformMocker, TenantMocker, PrincipalMocker, SecretStoreMocker
 {
-    static final String TEST_SYSTEMS_RESOURCE_FILE = "systems";
-    static final String CREDENTIALS_RESOURCE_FILE = "credentials";
-
-    static final String PROPERTY_TEST_SYSTEMS = "test.systems";
-    static final String PROPERTY_CREDENTIALS = "test.credentials";
-
     static final List<String> CONFIG_FILE_EXTENSIONS = ImmutableList.of(".yml", ".yaml", ".json");
-
-    static final String PROPERTY_ERP_ALIAS = "erp";
-    static final String PROPERTY_ERP_USERNAME = "erp.username";
-    static final String PROPERTY_ERP_PASSWORD = "erp.password";
 
     static final String MOCKED_CLOUD_APP_NAME = "testapp";
     static final String MOCKED_TENANT = "00000000-0000-0000-0000-000000000000";
@@ -113,13 +63,7 @@ public class MockUtil
     private ProxyConfiguration proxyConfiguration;
 
     @Getter( AccessLevel.PACKAGE )
-    private JndiLookupFacade jndiLookupFacade;
-
-    @Getter( AccessLevel.PACKAGE )
     private LocaleFacade localeFacade;
-
-    @Getter( AccessLevel.PACKAGE )
-    private AuditLogFacade auditLogFacade;
 
     @Getter( AccessLevel.PACKAGE )
     private CloudPlatformFacade cloudPlatformFacade;
@@ -133,23 +77,12 @@ public class MockUtil
     @Getter( AccessLevel.PACKAGE )
     private SecretStoreFacade secretStoreFacade;
 
-    private DestinationLoader destinationFacade;
-
-    @Delegate
-    private final DefaultJndiLookupMocker jndiLookupMocker = new DefaultJndiLookupMocker(this::resetJndiLookupFacade);
-
     @Delegate
     private final DefaultLocaleMocker localeMocker = new DefaultLocaleMocker(this::resetLocaleFacade);
 
     @Delegate
     private final DefaultCloudPlatformMocker cloudPlatformMocker =
         new DefaultCloudPlatformMocker(this::resetCloudPlatformFacade);
-
-    @Delegate
-    private final DefaultTestSystemsProvider testSystemsProvider = new DefaultTestSystemsProvider();
-
-    @Delegate
-    private final DefaultCredentialsProvider credentialsProvider = new DefaultCredentialsProvider();
 
     @Delegate
     private final DefaultTenantMocker tenantMocker = new DefaultTenantMocker(this::resetTenantFacade);
@@ -160,18 +93,6 @@ public class MockUtil
     @Delegate
     private final DefaultSecretStoreMocker secretStoreMocker =
         new DefaultSecretStoreMocker(this::resetSecretStoreFacade);
-
-    @Getter( AccessLevel.PACKAGE )
-    @Delegate
-    private final DefaultDestinationMocker destinationMocker =
-        new DefaultDestinationMocker(
-            testSystemsProvider,
-            credentialsProvider,
-            proxyConfiguration,
-            this::resetDestinationFacade);
-
-    @Delegate
-    private final ServerMocker serverMocker = new DefaultServerMocker(this::mockDestination, this::mockErpDestination);
 
     /**
      * Instantiates a new instance of {@link MockUtil}, invalidates caches.
@@ -192,13 +113,6 @@ public class MockUtil
      */
     public MockUtil()
     {
-        testSystemsProvider.loadTestSystems();
-        credentialsProvider.loadCredentials();
-
-        // Java system properties must be read after files to enable overriding of configuration
-        testSystemsProvider.readErpAliasProperty();
-        credentialsProvider.readErpCredentialsProperties();
-
         CacheManager.invalidateAll();
     }
 
@@ -230,7 +144,6 @@ public class MockUtil
      */
     public void mockDefaults()
     {
-        resetJndiLookupFacade();
         resetLocaleFacade();
         resetCloudPlatformFacade();
         resetTenantFacade();
@@ -241,21 +154,6 @@ public class MockUtil
         mockCurrentLocales();
         mockCurrentTenant();
         mockCurrentPrincipal();
-    }
-
-    JndiLookupFacade resetJndiLookupFacade()
-    {
-        if( jndiLookupFacade == null ) {
-            jndiLookupFacade =
-                ( name ) -> Option
-                    .of(jndiLookupMocker.getObjectsByName().get(name))
-                    .toTry(
-                        () -> new ObjectLookupFailedException(
-                            "No JNDI lookup mocked for object with name '" + name + "'."));
-        }
-
-        JndiLookupAccessor.setJndiLookupFacade(jndiLookupFacade);
-        return jndiLookupFacade;
     }
 
     private LocaleFacade resetLocaleFacade()
@@ -345,35 +243,5 @@ public class MockUtil
 
         SecretStoreAccessor.setSecretStoreFacade(secretStoreFacade);
         return secretStoreFacade;
-    }
-
-    private DestinationLoader resetDestinationFacade()
-    {
-        if( destinationFacade == null ) {
-            destinationFacade = ( destinationName, options ) -> getDestination(destinationName);
-        }
-
-        DestinationAccessor.setLoader(destinationFacade);
-        return destinationFacade;
-    }
-
-    @Nonnull
-    private Try<Destination> getDestination( @Nonnull final String destinationName )
-    {
-        final List<Function<String, Option<Destination>>> destinationLookup =
-            Arrays
-                .asList(
-                    n -> Option.of(destinationMocker.getErpHttpDestinations().get(n)),
-                    n -> Option.of(destinationMocker.getHttpDestinations().get(n)),
-                    n -> Option.of(destinationMocker.getRfcDestinations().get(n)),
-                    n -> Option.of(destinationMocker.getDestinations().get(n)));
-
-        return destinationLookup
-            .stream()
-            .map(f -> f.apply(destinationName))
-            .filter(Option::isDefined)
-            .map(Option::toTry)
-            .findFirst()
-            .orElseGet(() -> Try.failure(new DestinationNotFoundException(destinationName)));
     }
 }

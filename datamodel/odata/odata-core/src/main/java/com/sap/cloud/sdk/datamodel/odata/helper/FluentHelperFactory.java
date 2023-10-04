@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.net.URI;
@@ -15,7 +19,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -101,6 +105,14 @@ class FluentHelperFactory
     }
 
     <
+        FluentHelperT extends FluentHelperCreate<FluentHelperT, EntityT>, EntityT extends VdmEntity<?>>
+        FluentHelperCreate<FluentHelperT, EntityT>
+        create( @Nonnull final EntityT entity )
+    {
+        return create(entity.getEntityCollection(), entity);
+    }
+
+    <
         FluentHelperT extends FluentHelperDelete<FluentHelperT, EntityT>, EntityT extends VdmEntity<?>>
         FluentHelperDelete<FluentHelperT, EntityT>
         delete( @Nonnull final String entityCollection, @Nonnull final EntityT entity )
@@ -122,6 +134,14 @@ class FluentHelperFactory
                 return (Class<EntityT>) entity.getClass();
             }
         };
+    }
+
+    <
+        FluentHelperT extends FluentHelperDelete<FluentHelperT, EntityT>, EntityT extends VdmEntity<?>>
+        FluentHelperDelete<FluentHelperT, EntityT>
+        delete( @Nonnull final EntityT entity )
+    {
+        return delete(entity.getEntityCollection(), entity);
     }
 
     <
@@ -149,6 +169,14 @@ class FluentHelperFactory
     }
 
     <
+        FluentHelperT extends FluentHelperUpdate<FluentHelperT, EntityT>, EntityT extends VdmEntity<?>>
+        FluentHelperUpdate<FluentHelperT, EntityT>
+        update( @Nonnull final EntityT entity )
+    {
+        return update(entity.getEntityCollection(), entity);
+    }
+
+    <
         FluentHelperT extends FluentHelperFunction<FluentHelperT, ObjectT, ResultT>, ObjectT, ResultT>
         FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
         function(
@@ -156,7 +184,7 @@ class FluentHelperFactory
             @Nonnull final String functionName,
             @Nonnull final Class<ObjectT> objectClass,
             @Nonnull final Function<URI, HttpUriRequest> requestHandler,
-            @Nonnull final BiFunction<FluentHelperFunction<FluentHelperT, ObjectT, ResultT>, HttpDestinationProperties, ResultT> executeHandler )
+            @Nonnull final BiFunction<FluentHelperFunction<FluentHelperT, ObjectT, ResultT>, Destination, ResultT> executeHandler )
     {
         return new FluentHelperFunction<FluentHelperT, ObjectT, ResultT>(servicePath)
         {
@@ -190,7 +218,7 @@ class FluentHelperFactory
 
             @Nullable
             @Override
-            public ResultT executeRequest( @Nonnull final HttpDestinationProperties destination )
+            public ResultT executeRequest( @Nonnull final Destination destination )
             {
                 return executeHandler.apply(this, destination);
             }

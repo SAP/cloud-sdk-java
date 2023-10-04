@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="Schema" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="A_SimplePerson">
+				<Key>
+					<PropertyRef Name="Person"/>
+				</Key>
+				<Property Name="Person" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="EmailAddress" Type="Edm.String" MaxLength="241"/>
+			</EntityType>
+			<EntityType Name="A_FooTypeType">
+				<Key>
+					<PropertyRef Name="Foo"/>
+				</Key>
+				<Property Name="Foo" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			</EntityType>
+		</Schema>
+		<Schema Namespace="SchemaTwo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityContainer Name="EntityContainer">
+				<EntitySet Name="A_FirstSimplePersons" EntityType="Schema.A_SimplePerson"/>
+				<EntitySet Name="A_SecondSimplePersons" EntityType="Schema.A_SimplePerson"/>
+				<EntitySet Name="A_FooType" EntityType="Schema.A_FooTypeType"/>
+				<EntitySet Name="A_SecondFooType" EntityType="Schema.A_FooTypeType"/>
+				<EntitySet Name="A_ThirdFooType" EntityType="Schema.A_FooTypeType"/>
+			</EntityContainer>
+			<Annotations Target="SchemaTwo.EntityContainer/A_SecondFooType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SchemaTwo.EntityContainer/A_ThirdFooType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

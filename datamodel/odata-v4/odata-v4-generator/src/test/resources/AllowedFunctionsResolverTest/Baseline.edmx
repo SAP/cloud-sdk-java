@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="CustomBusinessObjectNamespace" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="SomeEntityType">
+                <Key>
+                    <PropertyRef Name="SomeKeyProperty"/>
+                </Key>
+                <Property Name="SomeKeyProperty" Type="Edm.String" Nullable="false" MaxLength="8"/>
+                <Property Name="SomeOtherProperty" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityContainer Name="SomeEntityContainer" IsDefaultEntityContainer="true">
+                <EntitySet Name="SomeEntitySet" EntityType="CustomBusinessObjectNamespace.SomeEntityType"/>
+                <EntitySet Name="FullEntitySet" EntityType="CustomBusinessObjectNamespace.SomeEntityType"/>
+            </EntityContainer>
+            <Annotations Target="CustomBusinessObjectNamespace.SomeEntityContainer/SomeEntitySet" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self"
+                       href="https://example.com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
+                       href="https://example.com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

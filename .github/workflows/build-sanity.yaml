@@ -33,7 +33,7 @@ jobs:
           java-version: 17
       - name: Install and package
         run: |
-          mvn $MVN_CLI_ARGS install jacoco:report
+          mvn $MVN_CLI_ARGS install org.jacoco:jacoco-maven-plugin:report
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
       - name: Local Changes Check

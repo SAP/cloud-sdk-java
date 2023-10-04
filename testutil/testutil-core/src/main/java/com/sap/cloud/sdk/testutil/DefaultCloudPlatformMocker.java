@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.testutil;
 
 import java.util.function.Supplier;
@@ -38,7 +42,6 @@ class DefaultCloudPlatformMocker implements CloudPlatformMocker
 
         currentCloudPlatform = Mockito.mock(CloudPlatform.class);
         Mockito.when(currentCloudPlatform.getApplicationName()).thenReturn(applicationName);
-        Mockito.when(currentCloudPlatform.getSslContext()).thenCallRealMethod();
 
         return currentCloudPlatform;
     }

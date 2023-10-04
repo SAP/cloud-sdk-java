@@ -6,7 +6,6 @@
 **/*.pyc
 **/*.pmd
 **/*.fpr
-**/sdkdist.zip
 **/*.ipr
 **/*.iws
 **/*.iml
@@ -19,10 +18,6 @@ META-INF/application.xml
 **/*.sublime-project
 **/*.sublime-workspace
 pom.xml.versionsBackup
-**/sdkdist*
-**/example*
-**/tmprepo
-**/credentials.*
 /mvnrepo
 /temp
 **/*.log
@@ -30,17 +25,10 @@ pom.xml.versionsBackup
 **/metadata/*.edmx
 **/swagger/*.json
 local_m2/*
-scripts/releasing/releaseSettings.yml
-scripts/releasing/preparationSettings.yml
 # ignore junit temporary directories
 **/junit[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/
-jenkins-jobs/end-to-end-tests/approuter-login-curl/node_modules/
-jenkins-jobs/end-to-end-tests/approuter-login-curl/package-lock.json
 **/vdm-integration-tests/serviceNameMappings.properties
-scripts/usageanalytics/figures/*.pdf
 .venv
-/scripts/releasing/repositories
-/scripts/usageanalytics/data.json
 .mvn
 **/.factorypath
 mvnvm.properties

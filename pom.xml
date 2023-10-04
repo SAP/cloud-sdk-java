@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>5.0.0-alpha-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -28,8 +28,12 @@
 	</developers>
 	<modules>
 		<module>archetypes</module>
+		<module>bom</module>
+		<module>cloudplatform</module>
 		<module>datamodel</module>
+		<module>frameworks</module>
 		<module>modules-bom</module>
+		<module>s4hana</module>
 		<module>testutil</module>
 	</modules>
 	<scm>
@@ -40,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>0.0.1-SNAPSHOT</sdk.version>
+		<sdk.version>5.0.0-alpha-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>8</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -77,11 +81,11 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<codeAnalysisExclusions />
+		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/com/sap/xi/**,**/testclasses/**,**/cds/gen/**</codeAnalysisExclusions>
 		<test.systems>${project.rootdir}/systems</test.systems>
 		<test.credentials>${project.rootdir}/credentials</test.credentials>
-		<scp-neo-tomcat8.sdk.version>4.57.7.1</scp-neo-tomcat8.sdk.version>
-		<scp-cf.auditlog.version>2.0.16</scp-cf.auditlog.version>
+		<!--  Non-essential dependencies  -->
+		<neo-api.version>4.57.7.1</neo-api.version>
 		<jsonschema2pojo.version>1.1.2</jsonschema2pojo.version>
 		<jackson.version>2.15.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
@@ -97,14 +101,14 @@
 		<junit.version>4.13.2</junit.version>
 		<assertj-core.version>3.24.2</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.4.0</mockito.version>
+		<mockito.version>5.5.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<arquillian.version>1.5.0.Final</arquillian.version>
 		<junit.jupiter.version>5.10.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>4.9.0</olingo-v4.version>
 		<olingo-v2.version>2.0.12</olingo-v2.version>
-		<maven-plugin.version>3.6.0</maven-plugin.version>
+		<maven-plugin.version>3.8.1</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
 		<caffeine.version>2.9.3</caffeine.version>
@@ -116,40 +120,31 @@
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
-		<jetty.version>9.4.51.v20230217</jetty.version>
-		<protobuf-java.version>3.23.4</protobuf-java.version>
+		<jetty.version>9.4.52.v20230823</jetty.version>
+		<protobuf-java.version>3.24.3</protobuf-java.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
 		<stax2-api.version>4.2.1</stax2-api.version>
-		<netty.version>4.1.96.Final</netty.version>
+		<netty.version>4.1.98.Final</netty.version>
 		<bouncycastle.version>1.76</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
-		<jakarta-xml-bind.version>4.0.0</jakarta-xml-bind.version>
+		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
-		<wiremock.version>2.35.0</wiremock.version>
+		<wiremock.version>2.35.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.0</kotlin.version>
-		<byte-buddy.version>1.14.5</byte-buddy.version>
+		<kotlin.version>1.9.10</kotlin.version>
+		<byte-buddy.version>1.14.8</byte-buddy.version>
 		<hamcrest-core.version>2.2</hamcrest-core.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<!-- Set the version of the OSS modules first -->
-			<dependency>
-				<groupId>com.sap.cloud.sdk</groupId>
-				<artifactId>sdk-modules-bom</artifactId>
-				<version>${sdk.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- Use existing modules for the rest -->
-			<!-- Todo: Use V5 snapshots here -->
+			<!--Dependencies with import scope-->
 			<dependency>
 				<groupId>com.sap.cloud.sdk</groupId>
 				<artifactId>sdk-bom</artifactId>
-				<version>4.20.0</version>
+				<version>${sdk.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -169,11 +164,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!--Dependencies with runtime scope-->
+			<!-- replaces the excluded commons-logging with slf4j -->
 			<dependency>
-				<groupId>com.sap.cloud</groupId>
-				<artifactId>neo-java-web-api</artifactId>
-				<version>${scp-neo-tomcat8.sdk.version}</version>
-				<scope>provided</scope>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<!--Dependencies with provided scope-->
 			<!--Used in Odata and openApi generators-->
@@ -195,28 +192,6 @@
 				<version>${maven-plugin.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!-- Only used in auditlog-scp-cf, with provided scope, both api and impl-->
-			<dependency>
-				<groupId>com.sap.xs.auditlog</groupId>
-				<artifactId>audit-java-client-api</artifactId>
-				<version>${scp-cf.auditlog.version}</version>
-				<!-- USE SCOPE=compile IF COMMUNITY JAVA BUILDBACK (java-buildpack) -->
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.xs.auditlog</groupId>
-				<artifactId>audit-java-client-impl</artifactId>
-				<version>${scp-cf.auditlog.version}</version>
-				<!-- USE SCOPE=compile IF COMMUNITY JAVA BUILDBACK (java-buildpack) -->
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.xs.java</groupId>
-				<artifactId>xs-env</artifactId>
-				<version>${scp-cf.xs-env.version}</version>
-				<!-- USE SCOPE=compile IF COMMUNITY JAVA BUILDBACK (java-buildpack) -->
-				<scope>provided</scope>
-			</dependency>
 			<!--Dependencies used in generators-->
 			<!--Used in Odata generator and test modules-->
 			<dependency>
@@ -226,6 +201,15 @@
 				<scope>runtime</scope>
 			</dependency>
 			<!--Dependencies with compile scope-->
+			<!-- Contains JCo -->
+			<dependency>
+				<groupId>com.sap.cloud</groupId>
+				<artifactId>neo-java-web-api</artifactId>
+				<version>${neo-api.version}</version>
+				<!-- we need it at compile time, but NOT at runtime.
+				At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>
@@ -352,12 +336,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.sap.cloud.sdk.testutil</groupId>
-				<artifactId>testutil-resources</artifactId>
-				<version>${sdk.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
@@ -411,7 +389,7 @@
 				<version>${junit.jupiter.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<!--Only used in integration-tests-->
+			<!--Only used in odata-core-->
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
@@ -588,7 +566,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.1</version>
 					<executions>
 						<execution>
 							<id>enforce-project-rules</id>
@@ -978,7 +956,6 @@
 							</goals>
 							<configuration>
 								<destFile>${jacoco.executionDataFile}</destFile>
-								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>org.apache.*</excludes>
 							</configuration>
 						</execution>
@@ -990,12 +967,19 @@
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>
-									<exclude>"**/soap/client/**"</exclude>
-									<exclude>"**/cds/gen/**"</exclude>
-									<exclude>"**/servletjakarta/**"</exclude>
 									<exclude>**/odata/sample/**</exclude>
 									<exclude>**/odatav4/sample/**</exclude>
 									<exclude>**/openapi/sample/**</exclude>
+									<exclude>**/odata/namespaces/**</exclude>
+									<exclude>**/odata/services/**</exclude>
+									<exclude>**/odatav4/namespaces/**</exclude>
+									<exclude>**/odatav4/services/**</exclude>
+									<exclude>**/soap/client/**</exclude>
+									<exclude>**/com/sap/xi/**</exclude>
+									<exclude>**/testclasses/**</exclude>
+									<exclude>**/cds/gen/**</exclude>
+									<!-- namespaces compiled to Java17 -->
+									<exclude>**/servletjakarta/**</exclude>
 								</excludes>
 							</configuration>
 						</execution>
@@ -1045,11 +1029,10 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.7.3.5</version>
+					<version>4.7.3.6</version>
 					<configuration>
-						<!-- fixme: pipeline config-->
-						<!-- <includeFilterFile>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-findbugs.xml</includeFilterFile> -->
-						<!-- <excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile> -->
+						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
+						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
 						<effort>Max</effort>
 						<threshold>Low</threshold>
 						<maxHeap>2048</maxHeap>
@@ -1061,9 +1044,8 @@
 					<version>3.21.0</version>
 					<configuration>
 						<rulesets>
-							<!-- fixme: pipeline config-->
-							<!-- <ruleset>${project.rootdir}/codestyle/SAPDefaultProfile-1.4.6-pmd.xml</ruleset> -->
-							<!-- <ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset> -->
+							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
+							<ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset>
 							<!-- content of the PMD default rule set for Java can be found here:
                                                         https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD
                                                          -->
@@ -1108,7 +1090,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.28</version>
+							<version>1.18.30</version>
 						</dependency>
 					</dependencies>
 					<configuration>
@@ -1136,7 +1118,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.6.0</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>
@@ -1201,13 +1183,13 @@
 					<version>${sdk.version}</version>
 					<configuration>
 						<apiMaturity>beta</apiMaturity>
-						<sapCopyrightHeader>false</sapCopyrightHeader>
+						<sapCopyrightHeader>true</sapCopyrightHeader>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.5.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1315,7 +1297,6 @@
 				</property>
 			</activation>
 			<modules>
-				<module>tests</module>
 				<module>testutil</module>
 			</modules>
 		</profile>

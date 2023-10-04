@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import java.util.List;
@@ -6,6 +10,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
+
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 import com.sap.cloud.sdk.datamodel.odata.helper.CollectionValuedFluentHelperFunction;
@@ -19,11 +27,13 @@ import com.sap.cloud.sdk.datamodel.odata.helper.VdmEntityUtil;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic OData service response wrapper for Batch response.
  *
  */
+@Slf4j
 @RequiredArgsConstructor( staticName = "of", access = AccessLevel.PACKAGE )
 public class DefaultBatchResponseResult implements BatchResponse
 {
@@ -117,5 +127,18 @@ public class DefaultBatchResponseResult implements BatchResponse
     private <T extends BatchRequestOperation> T getRequestPartByTypeAndIndex( final Class<T> type, final int index )
     {
         return requestParts.stream().filter(type::isInstance).map(type::cast).skip(index).findFirst().orElse(null);
+    }
+
+    /**
+     * @since 4.15.0
+     */
+    @Beta
+    @Override
+    public void close()
+    {
+        final HttpEntity ent = result.getHttpResponse().getEntity();
+        if( ent != null ) {
+            Try.run(() -> EntityUtils.consume(ent)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
+        }
     }
 }

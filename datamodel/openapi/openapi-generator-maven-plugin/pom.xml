@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-generator-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -18,7 +18,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -67,17 +67,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- scope "test" -->
-		<dependency>
-			<groupId>com.sap.cloud.sdk.testutil</groupId>
-			<artifactId>testutil-core</artifactId>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>handlebars</artifactId>
-					<groupId>com.github.jknack</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -136,6 +125,9 @@
 						<!-- Runtime dependency testing the plugin -->
 						<ignoredUnusedDeclaredDependency>org.apache.maven:maven-compat</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
+					<ignoredNonTestScopedDependencies>
+						<ignoredNonTestScopedDependency>com.google.code.findbugs:jsr305</ignoredNonTestScopedDependency>
+					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

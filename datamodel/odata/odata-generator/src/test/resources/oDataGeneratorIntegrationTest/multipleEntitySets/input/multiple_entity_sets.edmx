@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+
+    <edmx:DataServices m:DataServiceVersion="2.0">
+       <Schema Namespace="Schema" xml:lang="en" sap:schema-version="1"
+                                                 xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+       			<EntityType Name="A_SimplePerson">
+       				<Key>
+       					<PropertyRef Name="Person"/>
+       				</Key>
+       				<Property Name="Person" Type="Edm.String" Nullable="false" MaxLength="10"/>
+       				<Property Name="EmailAddress" Type="Edm.String" MaxLength="241"/>
+       			</EntityType>
+       			<EntityType Name="A_FooTypeType">
+       				<Key>
+       					<PropertyRef Name="Foo"/>
+       				</Key>
+       				<Property Name="Foo" Type="Edm.String" Nullable="false" MaxLength="10"/>
+       				<Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="10"/>
+       			</EntityType>
+       			<EntityType Name="A_TypeWithoutKey">
+       				<Property Name="Fizz" Type="Edm.String" Nullable="false" MaxLength="10"/>
+       				<Property Name="Buzz" Type="Edm.String" Nullable="false" MaxLength="10"/>
+       			</EntityType>
+       			<EntityContainer Name="EntityContainer" IsDefaultEntityContainer="true">
+					<EntitySet Name="A_FirstSimplePersons" EntityType="Schema.A_SimplePerson"/>
+					<EntitySet Name="A_SecondSimplePersons" EntityType="Schema.A_SimplePerson"/>
+					<EntitySet Name="A_FooType" EntityType="Schema.A_FooTypeType"/>
+					<EntitySet Name="A_TypeWithoutKey" EntityType="Schema.A_FooTypeType"/>
+					<EntitySet Name="A_SecondFooType" EntityType="Schema.A_FooTypeType"/>
+					<EntitySet Name="A_ThirdFooType" EntityType="Schema.A_FooTypeType"/>
+       			</EntityContainer>
+       			<Annotations Target="Schema.EntityContainer/A_SecondFooType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+       				<Annotation Term="Capabilities.InsertRestrictions">
+       					<Record Type="Capabilities.InsertRestrictionsType">
+       						<PropertyValue Property="Insertable" Bool="false"/>
+       					</Record>
+       				</Annotation>
+       			</Annotations>
+       			<Annotations Target="Schema.EntityContainer/A_ThirdFooType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+
+       				<Annotation Term="Capabilities.UpdateRestrictions">
+       					<Record Type="Capabilities.UpdateRestrictionsType">
+       						<PropertyValue Property="Updatable" Bool="false"/>
+       					</Record>
+       				</Annotation>
+
+       			</Annotations>
+       			<atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata"
+                              xmlns:atom="http://www.w3.org/2005/Atom"/>
+       			<atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata"
+                              xmlns:atom="http://www.w3.org/2005/Atom"/>
+       		</Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

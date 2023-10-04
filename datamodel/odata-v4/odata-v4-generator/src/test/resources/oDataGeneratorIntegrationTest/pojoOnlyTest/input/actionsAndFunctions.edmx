@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="API_ACTIONS_FUNCTIONS_TEST_CASE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="SimplePerson">
+                <Key>
+                    <PropertyRef Name="Person"/>
+                </Key>
+                <Property Name="Person" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="241"/>
+            </EntityType>
+            <EntityType Name="FunctionResult">
+                <Key>
+                    <PropertyRef Name="RequestId"/>
+                </Key>
+                <Property Name="RequestId" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="Message" Type="Edm.String" MaxLength="4096"/>
+            </EntityType>
+            <EntityType Name="Parameter">
+                <Key>
+                    <PropertyRef Name="RequestId"/>
+                </Key>
+                <Property Name="RequestId" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="Message" Type="Edm.String" MaxLength="100"/>
+            </EntityType>
+            <EntityType Name="FlightInfo">
+                <Key>
+                    <PropertyRef Name="FlightId"/>
+                </Key>
+                <Property Name="FlightId" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="Source" Type="Edm.String" MaxLength="40"/>
+                <Property Name="Destination" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <ComplexType Name="Address">
+                <Property Name="Street" Type="Edm.String" Nullable="false" MaxLength="40" />
+                <Property Name="City" Type="Edm.String" Nullable="false" MaxLength="30" />
+            </ComplexType>
+            <Action Name="NoArgAction"/>
+            <Function Name="GetPersonWithMostFriends">
+                <ReturnType Type="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionResult"/>
+            </Function>
+            <Action Name="InsertAddresses" IsBound="true">
+                <Parameter Name="_it" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.SimplePerson" Nullable="false" />
+                <Parameter Name="Addresses" Type="Collection(API_ACTIONS_FUNCTIONS_TEST_CASE.Address)" Nullable="false" />
+            </Action>
+            <Action Name="BookFlight" IsBound="true">
+                <Parameter Name="_it" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.SimplePerson" Nullable="false" />
+                <Parameter Name="FlightDetails" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.FlightInfo" Nullable="false" />
+            </Action>
+            <Action Name="UnboundAction">
+                <Parameter Name="ActionParameter" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.Parameter"/>
+            </Action>
+            <Function Name="FunctionWithUnassociatedEntityParameter">
+                <Parameter Name="FunctionParameter" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.Parameter"/>
+                <ReturnType Type="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionResult"/>
+            </Function>
+            <EntityContainer Name="API_ACTIONS_FUNCTIONS_TEST_CASE_Entities" IsDefaultEntityContainer="true">
+                <EntitySet Name="SimplePersons" EntityType="API_ACTIONS_FUNCTIONS_TEST_CASE.SimplePerson"/>
+                <FunctionImport Name="GetPersonWithMostFriends"
+                                Function="API_ACTIONS_FUNCTIONS_TEST_CASE.GetPersonWithMostFriends"/>
+                <FunctionImport Name="FunctionWithUnassociatedEntityParameter"
+                                Function="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionWithUnassociatedEntityParameter"/>
+                <ActionImport Name="UnboundAction"
+                              Action="API_ACTIONS_FUNCTIONS_TEST_CASE.UnboundAction"/>
+                <ActionImport Name="NoArgAction"
+                              Action="API_ACTIONS_FUNCTIONS_TEST_CASE.NoArgAction"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://host:port/some/path/SOME_API/$metadata"
+                       xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

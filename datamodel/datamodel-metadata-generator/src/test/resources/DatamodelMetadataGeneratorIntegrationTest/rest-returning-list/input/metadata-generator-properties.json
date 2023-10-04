@@ -1,0 +1,5 @@
+{
+  "mavenGroupId": "com.sap.cloud.sdk.services",
+  "mavenArtifactId": "scp-workflow-cf",
+  "featureDocumentationUri": "https://sap.github.io/cloud-sdk/docs/java/features/rest/clients/scp-workflow-rest-api"
+}

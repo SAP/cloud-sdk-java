@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,16 +65,16 @@ public class UncheckedFilterExpressionTest
         FluentHelperRead<T, MyEntity, MySelectable>
         newFluentHelperRead()
     {
-        return FluentHelperFactory.withServicePath("some/path").read(MyEntity.class, "BusinessPartners");
+        return FluentHelperFactory.withServicePath("some/path").read(MyEntity.class, "MyEntityCollection");
     }
 
     static class MyEntity extends VdmEntity<MyEntity>
     {
         @Getter
-        private final String entityCollection = "BusinessPartners";
+        private final String entityCollection = "MyEntityCollection";
 
         @Getter
-        private final String defaultServicePath = "API_BUSINESS_PARTNER";
+        private final String defaultServicePath = "API_MY_ENTITY";
 
         @Nonnull
         @Override

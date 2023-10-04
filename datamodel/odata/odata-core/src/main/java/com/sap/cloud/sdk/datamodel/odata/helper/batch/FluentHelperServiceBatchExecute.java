@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * Interface to provide execute methods.
@@ -19,5 +23,5 @@ public interface FluentHelperServiceBatchExecute
      * @return A single result element, holding each changeset response.
      */
     @Nonnull
-    BatchResponse executeRequest( @Nonnull final HttpDestinationProperties destination );
+    BatchResponse executeRequest( @Nonnull final Destination destination );
 }

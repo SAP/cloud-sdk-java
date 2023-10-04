@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
 * {{appName}} in version {{version}}.
@@ -47,7 +47,7 @@ public class {{classname}} extends AbstractOpenApiService {
     *
     * @param httpDestination The destination that API should be used with
     */
-    public {{classname}}( @Nonnull final HttpDestinationProperties httpDestination )
+    public {{classname}}( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }

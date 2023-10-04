@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.sap.cloud.sdk</groupId>
+		<artifactId>sdk-parent</artifactId>
+		<version>5.0.0-alpha-SNAPSHOT</version>
+	</parent>
+	<groupId>com.sap.cloud.sdk.s4hana</groupId>
+	<artifactId>s4hana-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>SAP S/4HANA - Parent POM</name>
+	<description>Parent POM for SAP S/4HANA modules.</description>
+	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+	<organization>
+		<name>SAP SE</name>
+		<url>https://www.sap.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+	<modules>
+		<!-- To be removed -->
+		<module>rfc</module>
+		<!-- To be removed -->
+		<module>s4hana-core</module>
+		<!-- To be removed -->
+		<module>s4hana-connectivity</module>
+	</modules>
+	<scm>
+		<connection />
+		<url />
+	</scm>
+	<properties>
+		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<project.rootdir>${project.basedir}/../../</project.rootdir>
+	</properties>
+</project>

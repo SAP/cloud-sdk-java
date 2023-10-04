@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -5,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Predicate;
 
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,10 +18,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
-import com.sap.cloud.sdk.testutil.DirectoryContentAssertionUtil;
 
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 public class DataModelGeneratorIntegrationTest
 {
@@ -76,7 +81,7 @@ public class DataModelGeneratorIntegrationTest
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(tempOutputDirectory.toAbsolutePath().toString())
-                .withSapCopyrightHeader(false)
+                .withSapCopyrightHeader(true)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 
@@ -85,7 +90,7 @@ public class DataModelGeneratorIntegrationTest
 
         assertThat(maybeGenerationResult.get().getGeneratedFiles()).hasSize(testCase.expectedNumberOfGeneratedFiles);
 
-        DirectoryContentAssertionUtil.assertThatDirectoriesHaveSameContent(tempOutputDirectory, comparisonDirectory);
+        assertThatDirectoriesHaveSameContent(tempOutputDirectory, comparisonDirectory);
     }
 
     // Add these annotations to regenerate all sources
@@ -109,7 +114,7 @@ public class DataModelGeneratorIntegrationTest
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(outputDirectory.toAbsolutePath().toString())
                 .deleteOutputDirectory(true)
-                .withSapCopyrightHeader(false)
+                .withSapCopyrightHeader(true)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 
@@ -147,5 +152,14 @@ public class DataModelGeneratorIntegrationTest
         assertThat(comparisonDirectory).exists().isDirectory().isReadable();
 
         return comparisonDirectory;
+    }
+
+    @SuppressWarnings( "resource" )
+    @SneakyThrows
+    private static void assertThatDirectoriesHaveSameContent( final Path a, final Path b )
+    {
+        final Predicate<Path> isFile = p -> p.toFile().isFile();
+        Files.walk(a).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(b.resolve(a.relativize(p))));
+        Files.walk(b).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(a.resolve(b.relativize(p))));
     }
 }

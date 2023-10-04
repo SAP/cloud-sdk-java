@@ -1,8 +1,11 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
@@ -13,24 +16,41 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpClientFactory;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
@@ -50,6 +70,7 @@ public class ODataV2BatchRequestUnitTest
     private static final String REQUEST_BODY_WITH_CUSTOM_HEADERS =
         readResourceFileCrlf("BatchRequestWithCustomHeaders.txt");
     private static final String RESPONSE_BODY = readResourceFileCrlf("BatchResponse.txt");
+    private static final int MAX_PARALLEL_CONNECTIONS = 10;
 
     private final WireMockServer server = new WireMockServer(WIREMOCK_CONFIGURATION);
     private DefaultHttpDestination destination;
@@ -104,12 +125,21 @@ public class ODataV2BatchRequestUnitTest
         // Mock OData Batch response
         final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
         server.stubFor(post(urlEqualTo(REQUEST_URL_BATCH)).willReturn(okForContentType(contentType, RESPONSE_BODY)));
+
+        HttpClientAccessor
+            .setHttpClientFactory(
+                DefaultHttpClientFactory
+                    .builder()
+                    .maxConnectionsTotal(MAX_PARALLEL_CONNECTIONS)
+                    .maxConnectionsPerRoute(MAX_PARALLEL_CONNECTIONS)
+                    .build());
     }
 
     @AfterEach
     public void shutdown()
     {
         server.shutdown();
+        HttpClientAccessor.setHttpClientFactory(null);
     }
 
     @SneakyThrows
@@ -155,13 +185,15 @@ public class ODataV2BatchRequestUnitTest
                 .delete(entity16)
                 .endChangeSet();
 
-        // execute batch request
-        final BatchResponse response = parameter.getExecutor().execute(request, destination);
-
-        verifyBatchChangeSets(response);
-        verifyBatchReadAll(response, readAll);
-        verifyBatchReadByKey(response, readByKey);
-        verifyBatchRequestBody(parameter);
+        // execute batch request with try-with-resources to ensure no connection leaks
+        for( int i = 0; i <= MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
+            try( final BatchResponse response = request.executeRequest(destination) ) {
+                verifyBatchChangeSets(response);
+                verifyBatchReadAll(response, readAll);
+                verifyBatchReadByKey(response, readByKey);
+                verifyBatchRequestBody(parameter);
+            }
+        }
     }
 
     @SneakyThrows
@@ -213,13 +245,15 @@ public class ODataV2BatchRequestUnitTest
                 // changeset:2
                 .addChangeSet(deleteEntity15, deleteEntity16);
 
-        // execute batch request
-        final BatchResponse response = parameter.getExecutor().execute(request, destination);
+        for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
+            // execute batch request
+            final BatchResponse response = parameter.getExecutor().execute(request, destination);
 
-        verifyBatchChangeSets(response);
-        verifyBatchReadAll(response, readAll);
-        verifyBatchReadByKey(response, readByKey);
-        verifyBatchRequestBody(parameter);
+            verifyBatchChangeSets(response);
+            verifyBatchReadAll(response, readAll);
+            verifyBatchReadByKey(response, readByKey);
+            verifyBatchRequestBody(parameter);
+        }
     }
 
     private void verifyBatchChangeSets( @Nonnull final BatchResponse response )
@@ -285,5 +319,50 @@ public class ODataV2BatchRequestUnitTest
                 .getResource(ODataV2BatchRequestUnitTest.class.getSimpleName() + "/" + resourceFileName);
         final String result = Resources.toString(resourceUrl, StandardCharsets.UTF_8);
         return result.replaceAll("(?<!\\r)\\n", "" + ((char) 13) + (char) 10);
+    }
+
+    @Test
+    @SneakyThrows
+    public void testBatchOpenConnection()
+    {
+        final int N = MAX_PARALLEL_CONNECTIONS * 2;
+        final List<InputStream> inputStreams = new ArrayList<>();
+
+        final HttpDestination dest = DefaultHttpDestination.builder("").build();
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.execute(argThat(req -> req instanceof HttpPost))).thenAnswer(args -> {
+            final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "ok");
+            final InputStream inStream = mock(InputStream.class);
+            inputStreams.add(inStream);
+            response.setEntity(new InputStreamEntity(inStream));
+            return response;
+        });
+
+        // configure test setup
+        HttpClientAccessor.setHttpClientFactory(( anyDestination ) -> httpClient);
+
+        // TEST: invoke many batch request each spawning an InputStream
+        for( int i = 0; i < N; i++ ) {
+            new TestVdmEntityBatch("").addReadOperations(new TestVdmEntityBatch.TestEntityRead()).executeRequest(dest);
+        }
+
+        // ASSERTION: input streams are loaded but never fully consumed
+        assertThat(inputStreams).hasSize(N);
+        for( final InputStream inStream : inputStreams ) {
+            Mockito.verify(inStream, never()).close();
+        }
+
+        // TEST: invoke one batch request using try-with-resource
+        try(
+            BatchResponse result =
+                new TestVdmEntityBatch("")
+                    .addReadOperations(new TestVdmEntityBatch.TestEntityRead())
+                    .executeRequest(dest) ) {
+
+            assertThat(result).isNotNull();
+        }
+
+        // ASSERTION: input stream is fully consumed
+        Mockito.verify(inputStreams.get(N), times(1)).close();
     }
 }

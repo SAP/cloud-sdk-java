@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import java.net.URI;
@@ -15,7 +19,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.helper.CollectionValuedFluentHelperFunction;
 import com.sap.cloud.sdk.datamodel.odata.helper.EntitySelectable;
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperByKey;
@@ -186,7 +190,7 @@ class TestVdmEntityBatch extends BatchFluentHelperBasic<TestVdmEntityBatch, Test
 
         @Nullable
         @Override
-        public String executeRequest( @Nonnull final HttpDestinationProperties destination )
+        public String executeRequest( @Nonnull final Destination destination )
         {
             return "awesomeStuff";
         }
@@ -233,7 +237,7 @@ class TestVdmEntityBatch extends BatchFluentHelperBasic<TestVdmEntityBatch, Test
 
         @Nullable
         @Override
-        public List<String> executeRequest( @Nonnull final HttpDestinationProperties destination )
+        public List<String> executeRequest( @Nonnull final Destination destination )
         {
             return Arrays.asList("foo", "bar");
         }
@@ -284,7 +288,7 @@ class TestVdmEntityBatch extends BatchFluentHelperBasic<TestVdmEntityBatch, Test
 
         @Nullable
         @Override
-        public TestVdmEntity executeRequest( @Nonnull final HttpDestinationProperties destination )
+        public TestVdmEntity executeRequest( @Nonnull final Destination destination )
         {
             return TestVdmEntity
                 .builder()
@@ -337,7 +341,7 @@ class TestVdmEntityBatch extends BatchFluentHelperBasic<TestVdmEntityBatch, Test
 
         @Nullable
         @Override
-        public String executeRequest( @Nonnull final HttpDestinationProperties destination )
+        public String executeRequest( @Nonnull final Destination destination )
         {
             return "awesomeStuff";
         }

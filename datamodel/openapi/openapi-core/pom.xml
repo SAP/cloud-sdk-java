@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-core</artifactId>
 	<name>Data Model - OpenAPI Services - Core</name>
@@ -17,7 +17,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -43,12 +43,14 @@
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity</artifactId>
-			<version>4.20.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.frameworks</groupId>
 			<artifactId>apache-httpclient5</artifactId>
-			<version>4.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

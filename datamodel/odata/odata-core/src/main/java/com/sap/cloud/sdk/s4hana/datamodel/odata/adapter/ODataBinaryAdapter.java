@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.s4hana.datamodel.odata.adapter;
 
 import java.io.IOException;
@@ -21,9 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ODataBinaryAdapter extends TypeAdapter<byte[]>
 {
     @Override
-    public void write( @Nonnull final JsonWriter jsonWriter, @Nonnull final byte[] bytes )
+    public void write( @Nonnull final JsonWriter jsonWriter, @Nullable final byte[] bytes )
         throws IOException
     {
+        if( bytes == null ) {
+            jsonWriter.nullValue();
+            return;
+        }
         final String result = new String(Base64.getEncoder().encode(bytes), StandardCharsets.UTF_8);
         jsonWriter.value(result);
     }

@@ -1,9 +1,11 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.testutil;
 
 import static org.mockito.Mockito.lenient;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -11,19 +13,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.assertj.core.util.Sets;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import com.sap.cloud.sdk.cloudplatform.security.Authorization;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAttribute;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
-import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAttributeException;
 
-import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,59 +34,15 @@ class DefaultPrincipalMocker implements PrincipalMocker
     @Nullable
     private Principal currentPrincipal;
 
-    @RequiredArgsConstructor
-    private static class GetAttributeMockitoAnswer implements Answer<Try<PrincipalAttribute>>
-    {
-        private final Map<String, PrincipalAttribute> attributes;
-
-        @Override
-        public Try<PrincipalAttribute> answer( final InvocationOnMock invocation )
-        {
-            final String attributeName = invocation.getArgument(0);
-            return attributes.containsKey(attributeName)
-                ? Try.of(() -> attributes.get(attributeName))
-                : Try
-                    .failure(
-                        new PrincipalAttributeException(
-                            "No principal attribute mocked with name '" + attributeName + "'."));
-        }
-    }
-
     @Nonnull
     @Override
     public Principal mockPrincipal( @Nonnull final String principalId )
-    {
-        return mockPrincipal(principalId, null, null);
-    }
-
-    @Nonnull
-    @Override
-    public Principal mockPrincipal(
-        @Nonnull final String principalId,
-        @Nullable final Collection<Authorization> authorizations,
-        @Nullable final Map<String, PrincipalAttribute> attributes )
     {
         resetPrincipalFacade.get();
 
         final Principal principal = Mockito.mock(Principal.class);
 
         lenient().when(principal.getPrincipalId()).thenReturn(principalId);
-
-        if( authorizations != null ) {
-            lenient().when(principal.getAuthorizations()).thenReturn(Sets.newHashSet(authorizations));
-        } else {
-            lenient().when(principal.getAuthorizations()).thenReturn(Collections.emptySet());
-        }
-
-        if( attributes != null ) {
-            lenient()
-                .when(principal.getAttribute(ArgumentMatchers.anyString()))
-                .thenAnswer(new GetAttributeMockitoAnswer(attributes));
-        } else {
-            lenient()
-                .when(principal.getAttribute(ArgumentMatchers.anyString()))
-                .thenReturn(Try.failure(new PrincipalAttributeException("No principal attributes mocked.")));
-        }
 
         principals.put(principalId, principal);
         return principal;
@@ -109,17 +59,7 @@ class DefaultPrincipalMocker implements PrincipalMocker
     @Override
     public Principal mockCurrentPrincipal( @Nonnull final String principalId )
     {
-        return mockCurrentPrincipal(principalId, null, null);
-    }
-
-    @Nonnull
-    @Override
-    public Principal mockCurrentPrincipal(
-        @Nonnull final String principalId,
-        @Nullable final Collection<Authorization> authorizations,
-        @Nullable final Map<String, PrincipalAttribute> attributes )
-    {
-        final Principal principal = mockPrincipal(principalId, authorizations, attributes);
+        final Principal principal = mockPrincipal(principalId);
         currentPrincipal = principal;
         return principal;
     }

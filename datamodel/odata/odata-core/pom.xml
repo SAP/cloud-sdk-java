@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>odata-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-core</artifactId>
 	<packaging>jar</packaging>
@@ -18,7 +18,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -36,6 +36,7 @@
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<jsr305.optional>false</jsr305.optional>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,6 +50,10 @@
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.datamodel</groupId>
@@ -66,10 +71,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -150,6 +151,26 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-io</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>caching</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

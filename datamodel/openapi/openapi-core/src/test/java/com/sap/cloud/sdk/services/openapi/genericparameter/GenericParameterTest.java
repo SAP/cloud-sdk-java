@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
@@ -99,7 +99,7 @@ public class GenericParameterTest
 
     private static class TestApi extends AbstractOpenApiService
     {
-        public TestApi( @Nonnull final HttpDestinationProperties httpDestination )
+        public TestApi( @Nonnull final Destination httpDestination )
         {
             super(httpDestination);
         }

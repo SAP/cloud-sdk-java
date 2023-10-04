@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
@@ -5,8 +9,8 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataSerializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -20,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of an OData create request as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -52,8 +56,7 @@ public abstract class FluentHelperCreate<FluentHelperT, EntityT extends VdmEntit
     /**
      * Getter for the VDM representation of the entity to be created.
      *
-     * @return The entity that should be created by calling the {@link #executeRequest(HttpDestinationProperties)}
-     *         method.
+     * @return The entity that should be created by calling the {@link #executeRequest(Destination)} method.
      */
     @Nonnull
     protected abstract EntityT getEntity();
@@ -68,7 +71,7 @@ public abstract class FluentHelperCreate<FluentHelperT, EntityT extends VdmEntit
 
     @Override
     @Nonnull
-    public ModificationResponse<EntityT> executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public ModificationResponse<EntityT> executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
         final ODataRequestResultGeneric result = toRequest().execute(httpClient);

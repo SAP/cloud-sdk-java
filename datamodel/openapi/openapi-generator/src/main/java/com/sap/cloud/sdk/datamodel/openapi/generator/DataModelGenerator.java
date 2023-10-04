@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import java.io.BufferedReader;
@@ -161,10 +165,9 @@ public class DataModelGenerator
     // of the Swagger annotations (io.swagger.annotations.ApiModel and io.swagger.annotations.ApiModelProperty).
     // These imports force customers to include Swagger as a dependency in their projects and have caused lots of
     // confusion in the past already.
-    // We do not expect the mentioned bug to be fixed any time soon and, thus, decided [2] to slightly widen the scope of
+    // We do not expect the mentioned bug to be fixed any time soon and, thus, decided to slightly widen the scope of
     // this class, because the workaround greatly benefits customers while the implementation effort is rather low.
     // [1]: https://github.com/OpenAPITools/openapi-generator/issues/1085
-    // [2]: https://github.wdf.sap.corp/MA/sdk/pull/4783
     private void removeSwaggerImports( final Iterable<File> generatedFiles )
         throws IOException
     {

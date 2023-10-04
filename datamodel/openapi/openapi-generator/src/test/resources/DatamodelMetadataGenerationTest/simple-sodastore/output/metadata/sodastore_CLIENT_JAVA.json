@@ -9,5 +9,5 @@
     "compatibilityNotes": "",
     "description": "OpenAPI client for the service Soda Store API"
   },
-  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;\nimport openapi.test.api.DefaultApi;\nimport java.util.List;\nimport openapi.test.model.Soda;\n\nfinal HttpDestination destination = DestinationAccessor.getDestination(\"MyDestination\").asHttp();\nfinal DefaultApi service = new DefaultApi(destination);\nfinal List<Soda> result = service.getSodas();"
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport openapi.test.api.DefaultApi;\nimport java.util.List;\nimport openapi.test.model.Soda;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal DefaultApi service = new DefaultApi(destination);\nfinal List<Soda> result = service.getSodas();"
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +25,7 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 import com.google.gson.annotations.JsonAdapter;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
@@ -38,6 +42,8 @@ import lombok.ToString;
 public class ModificationResponseTest
 {
     private static final String SERVICE_PATH = "/service-path";
+
+    private static final Destination destination = mock(Destination.class);
 
     @Data
     @NoArgsConstructor
@@ -82,8 +88,6 @@ public class ModificationResponseTest
         doReturn(new StringEntity("{\"foo\":\"bar\"}", Charsets.UTF_8)).when(response).getEntity();
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
 
-        final HttpDestinationProperties destination = mock(HttpDestinationProperties.class);
-
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
         final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject, destination);
 
@@ -120,8 +124,6 @@ public class ModificationResponseTest
             .when(response)
             .getStatusLine();
 
-        final HttpDestinationProperties destination = mock(HttpDestinationProperties.class);
-
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
         final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject, destination);
 
@@ -150,8 +152,6 @@ public class ModificationResponseTest
         doReturn(responseHeaders).when(response).getHeaders("ETag");
         doReturn(new StringEntity("{\"foo\":\"bar\"}", Charsets.UTF_8)).when(response).getEntity();
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
-
-        final HttpDestinationProperties destination = mock(HttpDestinationProperties.class);
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
         final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject, destination);

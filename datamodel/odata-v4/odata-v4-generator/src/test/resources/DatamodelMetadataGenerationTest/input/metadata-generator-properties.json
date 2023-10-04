@@ -1,0 +1,6 @@
+{
+  "mavenArtifactId": "nice-artifact-id",
+  "mavenGroupId": "nice-group-id",
+  "generatorVersion": "88.88.88",
+  "libraryVersion": "99.99.99"
+}

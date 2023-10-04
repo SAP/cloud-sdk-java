@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.services.openapi.core;
 
 import java.net.URI;
@@ -5,7 +9,7 @@ import java.net.URISyntaxException;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
 /**
@@ -19,12 +23,12 @@ public abstract class AbstractOpenApiService implements OpenApiService
     protected ApiClient apiClient;
 
     /**
-     * Expects the {@link HttpDestinationProperties} instance to create the {@link ApiClient} from it.
+     * Expects the {@link Destination} instance to create the {@link ApiClient} from it.
      *
      * @param destination
      *            The destination which is used to derive the connection details of the target system from.
      */
-    protected AbstractOpenApiService( @Nonnull final HttpDestinationProperties destination )
+    protected AbstractOpenApiService( @Nonnull final Destination destination )
     {
         apiClient = createApiClientFromDestination(destination);
     }
@@ -35,19 +39,19 @@ public abstract class AbstractOpenApiService implements OpenApiService
     }
 
     /**
-     * Derives the connection details of the target system from the provided {@link HttpDestinationProperties} and
-     * supplies them to the created instance of {@link ApiClient}.
+     * Derives the connection details of the target system from the provided {@link Destination} and supplies them to
+     * the created instance of {@link ApiClient}.
      *
      * @param destination
      *            The destination to derive the connection details from
      * @return The API client that is supplied with the connection details derived from the provided destination.
      */
-    private ApiClient createApiClientFromDestination( final HttpDestinationProperties destination )
+    private ApiClient createApiClientFromDestination( final Destination destination )
     {
         final ApiClient apiClient = new ApiClient(destination);
 
         // set root of API Client base path
-        final URI uri = destination.getUri();
+        final URI uri = destination.asHttp().getUri();
         final URI path;
         try {
             path = new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), uri.getPath(), null, null);

@@ -1,0 +1,13 @@
+{
+  "serviceStatus": "certified",
+  "language": "Java",
+  "apiType": "OData",
+  "pregeneratedLibrary": {
+    "groupId": "com.sap.cloud.sdk.s4hana",
+    "artifactId": "s4hana-api-odata-v4-onpremise",
+    "version": "1.1.1",
+    "compatibilityNotes": "",
+    "description": "secondDescription"
+  },
+  "apiSpecificUsage": "import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;\nimport com.sap.cloud.sdk.cloudplatform.connectivity.Destination;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.services.AwesomeService;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.services.DefaultAwesomeService;\nimport java.util.List;\nimport com.sap.cloud.sdk.s4hana.datamodel.odata.namespaces.entity.AwesomeEntity;\n\nfinal Destination destination = DestinationAccessor.getDestination(\"MyDestination\");\nfinal AwesomeService service = new DefaultAwesomeService();\nfinal List<AwesomeEntity> result = service.getAllAwesomeEntity().top(5).execute(destination);"
+}

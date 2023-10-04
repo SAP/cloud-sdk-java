@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 
 public class VdmEntityTest
@@ -67,7 +72,7 @@ public class VdmEntityTest
         assertThat(sut.getServicePathForFetch()).isEqualTo(TEST_DEFAULT_SERVICE_PATH);
 
         assertThat(sut.getDestinationForFetch()).isNotNull();
-        assertThat(sut.getDestinationForFetch().get("Name").get()).isEqualTo(TEST_DESTINATION_NAME);
+        assertThat(sut.getDestinationForFetch().get(DestinationProperty.NAME)).contains(TEST_DESTINATION_NAME);
     }
 
     @Test
@@ -92,7 +97,7 @@ public class VdmEntityTest
         assertThat(sut.getServicePathForFetch()).isEqualTo("/sap/opu/odata");
 
         assertThat(sut.getDestinationForFetch()).isNotNull();
-        assertThat(sut.getDestinationForFetch().get("Name").get()).isEqualTo(TEST_DESTINATION_NAME);
+        assertThat(sut.getDestinationForFetch().get(DestinationProperty.NAME)).contains(TEST_DESTINATION_NAME);
     }
 
     @Test
@@ -125,5 +130,37 @@ public class VdmEntityTest
 
         foo2.setVersionIdentifier("2");
         assertThat(foo1).withFailMessage("Equal entities with different ETags should not be equal.").isNotEqualTo(foo2);
+    }
+
+    @Test
+    public void testChangedNonCustomFields()
+    {
+        final TestVdmEntity entity = TestVdmEntity.builder().stringValue("old").build();
+
+        assertThat(entity.getChangedFields()).isEmpty();
+
+        entity.setStringValue("old");
+        assertThat(entity.getChangedFields()).isEmpty();
+
+        entity.setStringValue("new");
+        assertThat(entity.getChangedFields()).containsOnlyKeys("StringValue");
+    }
+
+    @Test
+    public void testChangedCustomFields()
+    {
+        final TestVdmEntity entity = TestVdmEntity.builder().build();
+
+        assertThat(entity.getChangedFields()).isEmpty();
+
+        entity.setCustomField("foo", "bar");
+        assertThat(entity.getChangedFields()).containsOnlyKeys("foo");
+
+        entity.resetChangedFields();
+        entity.setCustomField("foo", "bar");
+        assertThat(entity.getChangedFields()).isEmpty();
+
+        entity.setCustomField("foo", "baz");
+        assertThat(entity.getChangedFields()).containsOnlyKeys("foo");
     }
 }

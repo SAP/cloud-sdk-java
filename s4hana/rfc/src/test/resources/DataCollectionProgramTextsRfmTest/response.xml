@@ -1,0 +1,3950 @@
+<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap-env:Header/>
+    <soap-env:Body>
+        <n0:FcxlGetProgramTextsResponse xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+            <EProgramTexts>
+                <item>
+                    <TextId>900</TextId>
+                    <Descr>Confirm selection and continue</Descr>
+                </item>
+                <item>
+                    <TextId>901</TextId>
+                    <Descr>Cancel operation</Descr>
+                </item>
+                <item>
+                    <TextId>902</TextId>
+                    <Descr>Allocate selected value to characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>903</TextId>
+                    <Descr>Set this indicator if you want to use single values</Descr>
+                </item>
+                <item>
+                    <TextId>904</TextId>
+                    <Descr>Set this indicator if you want to use set aggregations</Descr>
+                </item>
+                <item>
+                    <TextId>905</TextId>
+                    <Descr>Specify whether the value is displayed with unit ($1, 1g)</Descr>
+                </item>
+                <item>
+                    <TextId>906</TextId>
+                    <Descr>Matrix name</Descr>
+                </item>
+                <item>
+                    <TextId>907</TextId>
+                    <Descr>Scaling: 1 = no scaling, 1000 = thousands etc.</Descr>
+                </item>
+                <item>
+                    <TextId>908</TextId>
+                    <Descr>This dialog box is used for creating a new matrix</Descr>
+                </item>
+                <item>
+                    <TextId>909</TextId>
+                    <Descr>Select a debit/credit sign logic</Descr>
+                </item>
+                <item>
+                    <TextId>910</TextId>
+                    <Descr>Select a new background color for the hierarchy level</Descr>
+                </item>
+                <item>
+                    <TextId>911</TextId>
+                    <Descr>The hierarchy level whose color you want to change</Descr>
+                </item>
+                <item>
+                    <TextId>912</TextId>
+                    <Descr>The background color of the hierarchy level</Descr>
+                </item>
+                <item>
+                    <TextId>913</TextId>
+                    <Descr>Continue to use these settings</Descr>
+                </item>
+                <item>
+                    <TextId>914</TextId>
+                    <Descr>Select the value allocations you want to copy</Descr>
+                </item>
+                <item>
+                    <TextId>915</TextId>
+                    <Descr>Select one or more values from the list</Descr>
+                </item>
+                <item>
+                    <TextId>916</TextId>
+                    <Descr>Multiple values will be inserted into a single row</Descr>
+                </item>
+                <item>
+                    <TextId>917</TextId>
+                    <Descr>Multiple values will be inserted into a single column</Descr>
+                </item>
+                <item>
+                    <TextId>918</TextId>
+                    <Descr>Select this indicator to insert a technical name</Descr>
+                </item>
+                <item>
+                    <TextId>919</TextId>
+                    <Descr>Select this indicator to apply colors to the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>920</TextId>
+                    <Descr>Choose whether to show a text, and which one</Descr>
+                </item>
+                <item>
+                    <TextId>921</TextId>
+                    <Descr>The level to which the hierarchy will be expanded</Descr>
+                </item>
+                <item>
+                    <TextId>922</TextId>
+                    <Descr>Select this indicator to indent text according to its level</Descr>
+                </item>
+                <item>
+                    <TextId>923</TextId>
+                    <Descr>Choose a value for the independent characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>924</TextId>
+                    <Descr>Enter your password</Descr>
+                </item>
+                <item>
+                    <TextId>925</TextId>
+                    <Descr>Enter your password again to ensure security</Descr>
+                </item>
+                <item>
+                    <TextId>926</TextId>
+                    <Descr>Restore SAP standard settings</Descr>
+                </item>
+                <item>
+                    <TextId>927</TextId>
+                    <Descr>Parameter that describes the origin of the value</Descr>
+                </item>
+                <item>
+                    <TextId>928</TextId>
+                    <Descr>End dialog</Descr>
+                </item>
+                <item>
+                    <TextId>929</TextId>
+                    <Descr>The key combination for calling up possible entries</Descr>
+                </item>
+                <item>
+                    <TextId>930</TextId>
+                    <Descr>Here you optimize the temporary storage of long texts</Descr>
+                </item>
+                <item>
+                    <TextId>931</TextId>
+                    <Descr>Select this indicator to use sets</Descr>
+                </item>
+                <item>
+                    <TextId>932</TextId>
+                    <Descr>Select this indicator to use hierarchy end nodes</Descr>
+                </item>
+                <item>
+                    <TextId>933</TextId>
+                    <Descr>Select this indicator to align values vertically</Descr>
+                </item>
+                <item>
+                    <TextId>934</TextId>
+                    <Descr>Select this indicator to assign values to the header area</Descr>
+                </item>
+                <item>
+                    <TextId>935</TextId>
+                    <Descr>Select this indicator to align value horizontally</Descr>
+                </item>
+                <item>
+                    <TextId>936</TextId>
+                    <Descr>Select the pivot table you want to refresh</Descr>
+                </item>
+                <item>
+                    <TextId>937</TextId>
+                    <Descr>Print list</Descr>
+                </item>
+                <item>
+                    <TextId>938</TextId>
+                    <Descr>Explanation of symbols</Descr>
+                </item>
+                <item>
+                    <TextId>939</TextId>
+                    <Descr>Select an existing job or define a new one</Descr>
+                </item>
+                <item>
+                    <TextId>940</TextId>
+                    <Descr>Execute the selected job</Descr>
+                </item>
+                <item>
+                    <TextId>941</TextId>
+                    <Descr>Delete the selected job</Descr>
+                </item>
+                <item>
+                    <TextId>942</TextId>
+                    <Descr>Create a new job</Descr>
+                </item>
+                <item>
+                    <TextId>943</TextId>
+                    <Descr>Select the characteristic to be changed by the job</Descr>
+                </item>
+                <item>
+                    <TextId>944</TextId>
+                    <Descr>Go back one dialog step</Descr>
+                </item>
+                <item>
+                    <TextId>945</TextId>
+                    <Descr>Select the list of values to be processed by the job</Descr>
+                </item>
+                <item>
+                    <TextId>946</TextId>
+                    <Descr>Select the operation to be executed by the job</Descr>
+                </item>
+                <item>
+                    <TextId>947</TextId>
+                    <Descr>Check the settings and the job name</Descr>
+                </item>
+                <item>
+                    <TextId>948</TextId>
+                    <Descr>The name of the macros you want to execute</Descr>
+                </item>
+                <item>
+                    <TextId>949</TextId>
+                    <Descr>Enter a name for the job</Descr>
+                </item>
+                <item>
+                    <TextId>950</TextId>
+                    <Descr>The table cell in which the value is written</Descr>
+                </item>
+                <item>
+                    <TextId>951</TextId>
+                    <Descr>Set this indicator to display empty rows</Descr>
+                </item>
+                <item>
+                    <TextId>952</TextId>
+                    <Descr>In this field, you can change the window size</Descr>
+                </item>
+                <item>
+                    <TextId>953</TextId>
+                    <Descr>Choose the characteristic for multiple-value processing</Descr>
+                </item>
+                <item>
+                    <TextId>954</TextId>
+                    <Descr>Set this indicator if you want to use attributes</Descr>
+                </item>
+                <item>
+                    <TextId>955</TextId>
+                    <Descr>Specify the pages you want to print</Descr>
+                </item>
+                <item>
+                    <TextId>956</TextId>
+                    <Descr>Select the worksheet you want to print</Descr>
+                </item>
+                <item>
+                    <TextId>957</TextId>
+                    <Descr>Change the job definition</Descr>
+                </item>
+                <item>
+                    <TextId>958</TextId>
+                    <Descr>Check internal data structures</Descr>
+                </item>
+                <item>
+                    <TextId>959</TextId>
+                    <Descr>Preview of fonts</Descr>
+                </item>
+                <item>
+                    <TextId>960</TextId>
+                    <Descr>The type of text to be displayed</Descr>
+                </item>
+                <item>
+                    <TextId>961</TextId>
+                    <Descr>Determines whether columns without values are displayed</Descr>
+                </item>
+                <item>
+                    <TextId>962</TextId>
+                    <Descr>The list of selected characteristic values</Descr>
+                </item>
+                <item>
+                    <TextId>963</TextId>
+                    <Descr>This dialog is used for selecting characteristic values</Descr>
+                </item>
+                <item>
+                    <TextId>964</TextId>
+                    <Descr>Specify a text for searching the IDs</Descr>
+                </item>
+                <item>
+                    <TextId>965</TextId>
+                    <Descr>Specify a text for searching the texts</Descr>
+                </item>
+                <item>
+                    <TextId>966</TextId>
+                    <Descr>Choose an attribute you want to search</Descr>
+                </item>
+                <item>
+                    <TextId>967</TextId>
+                    <Descr>Specify a value for the searched attribute</Descr>
+                </item>
+                <item>
+                    <TextId>968</TextId>
+                    <Descr>Starts the search</Descr>
+                </item>
+                <item>
+                    <TextId>969</TextId>
+                    <Descr>Here you find details about the structure</Descr>
+                </item>
+                <item>
+                    <TextId>970</TextId>
+                    <Descr>Select the structure(s) to be processed</Descr>
+                </item>
+                <item>
+                    <TextId>971</TextId>
+                    <Descr>Here you can select the cells belonging to the structure</Descr>
+                </item>
+                <item>
+                    <TextId>972</TextId>
+                    <Descr>Enter the values for the independent characteristics here</Descr>
+                </item>
+                <item>
+                    <TextId>973</TextId>
+                    <Descr>Here you limit the size of the list with a search term</Descr>
+                </item>
+                <item>
+                    <TextId>974</TextId>
+                    <Descr>Select this option to not have the data read automatically</Descr>
+                </item>
+                <item>
+                    <TextId>975</TextId>
+                    <Descr>Update the structures used for the matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>976</TextId>
+                    <Descr>Repair all errors that can be automatically repaired</Descr>
+                </item>
+                <item>
+                    <TextId>977</TextId>
+                    <Descr>Choose this option to post with cells w/o value 0</Descr>
+                </item>
+                <item>
+                    <TextId>978</TextId>
+                    <Descr>Choose one or more cells</Descr>
+                </item>
+                <item>
+                    <TextId>979</TextId>
+                    <Descr>Choose this option to run in test mode</Descr>
+                </item>
+                <item>
+                    <TextId>980</TextId>
+                    <Descr>Choose this option to validate the data</Descr>
+                </item>
+                <item>
+                    <TextId>981</TextId>
+                    <Descr>Directory, in which will be saved after the upgrade</Descr>
+                </item>
+                <item>
+                    <TextId>982</TextId>
+                    <Descr>Text that precedes the file name</Descr>
+                </item>
+                <item>
+                    <TextId>983</TextId>
+                    <Descr>Text that follows the file name</Descr>
+                </item>
+                <item>
+                    <TextId>984</TextId>
+                    <Descr>Choose this option, to create a pivot chart</Descr>
+                </item>
+                <item>
+                    <TextId>985</TextId>
+                    <Descr>Choose the type of pivot chart</Descr>
+                </item>
+                <item>
+                    <TextId>986</TextId>
+                    <Descr>Choose this option for a 3-D chart</Descr>
+                </item>
+                <item>
+                    <TextId>987</TextId>
+                    <Descr>Please choose how to save the messages</Descr>
+                </item>
+                <item>
+                    <TextId>988</TextId>
+                    <Descr>Click here to select parts of the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>989</TextId>
+                    <Descr>You can insert the complete subtree with this</Descr>
+                </item>
+                <item>
+                    <TextId>990</TextId>
+                    <Descr>Select desired parts of the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>991</TextId>
+                    <Descr>Do you want system messages to be displayed when logging on?</Descr>
+                </item>
+                <item>
+                    <TextId>992</TextId>
+                    <Descr>Insert the hierarchy node in reversed order?</Descr>
+                </item>
+                <item>
+                    <TextId>993</TextId>
+                    <Descr>Enter a short comment (up to 255 characters)</Descr>
+                </item>
+                <item>
+                    <TextId>994</TextId>
+                    <Descr>Should data entry preparation take place while reading?</Descr>
+                </item>
+                <item>
+                    <TextId>995</TextId>
+                    <Descr>Automatically delete the copy of the Add-In in the workbook</Descr>
+                </item>
+                <item>
+                    <TextId>996</TextId>
+                    <Descr>Delete the copy of the Add-In in the workbook</Descr>
+                </item>
+                <item>
+                    <TextId>997</TextId>
+                    <Descr>Auto-load the Interactive Excel Add-In when starting Excel</Descr>
+                </item>
+                <item>
+                    <TextId>998</TextId>
+                    <Descr>Select message type for the upload log</Descr>
+                </item>
+                <item>
+                    <TextId>999</TextId>
+                    <Descr>Message Type</Descr>
+                </item>
+                <item>
+                    <TextId>9A0</TextId>
+                    <Descr>Select the aspect you want to work with</Descr>
+                </item>
+                <item>
+                    <TextId>9B0</TextId>
+                    <Descr>Message triggered when writing to database.</Descr>
+                </item>
+                <item>
+                    <TextId>9B1</TextId>
+                    <Descr>If you specified a validation of data, you will</Descr>
+                </item>
+                <item>
+                    <TextId>9B2</TextId>
+                    <Descr>find the resulting messages here.</Descr>
+                </item>
+                <item>
+                    <TextId>9C0</TextId>
+                    <Descr>Select this indicator to hide characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>9C1</TextId>
+                    <Descr>during further work. You can also select this indicator</Descr>
+                </item>
+                <item>
+                    <TextId>9C2</TextId>
+                    <Descr>under "Consolidation -&gt; Data matrix -&gt; Change".</Descr>
+                </item>
+                <item>
+                    <TextId>9D0</TextId>
+                    <Descr>Select this indicator if the matrix is used for data entry.</Descr>
+                </item>
+                <item>
+                    <TextId>9D1</TextId>
+                    <Descr>Otherwise, the indicator must be deleted.</Descr>
+                </item>
+                <item>
+                    <TextId>9D2</TextId>
+                    <Descr>For more information, see SAP help.</Descr>
+                </item>
+                <item>
+                    <TextId>9E0</TextId>
+                    <Descr>Prints the entire log on the</Descr>
+                </item>
+                <item>
+                    <TextId>9E1</TextId>
+                    <Descr>Windows default printer.</Descr>
+                </item>
+                <item>
+                    <TextId>9F0</TextId>
+                    <Descr>Select a value to be allocated to the characteristic.</Descr>
+                </item>
+                <item>
+                    <TextId>9F1</TextId>
+                    <Descr>Choose 'confirm' to confirm your selection.</Descr>
+                </item>
+                <item>
+                    <TextId>9G0</TextId>
+                    <Descr>Select this option to use the set for aggregation.</Descr>
+                </item>
+                <item>
+                    <TextId>9G1</TextId>
+                    <Descr>Otherwise the set will be used as a list of values.</Descr>
+                </item>
+                <item>
+                    <TextId>9H0</TextId>
+                    <Descr>Specify the format applied to fields</Descr>
+                </item>
+                <item>
+                    <TextId>9H1</TextId>
+                    <Descr>in which data cannot be entered</Descr>
+                </item>
+                <item>
+                    <TextId>9H5</TextId>
+                    <Descr>Specify the format to be used for the cells of an</Descr>
+                </item>
+                <item>
+                    <TextId>9H6</TextId>
+                    <Descr>cell definition in dynamically built matrices.</Descr>
+                </item>
+                <item>
+                    <TextId>9H7</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>9HA</TextId>
+                    <Descr>Specify the format to be used for the cells of an</Descr>
+                </item>
+                <item>
+                    <TextId>9HB</TextId>
+                    <Descr>cell definition in dynamically built matrices.</Descr>
+                </item>
+                <item>
+                    <TextId>9HC</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>9HH</TextId>
+                    <Descr>Specify the format to be used for the cells of an</Descr>
+                </item>
+                <item>
+                    <TextId>9HI</TextId>
+                    <Descr>additional text column in dynamically built matrices.</Descr>
+                </item>
+                <item>
+                    <TextId>9HJ</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>9I0</TextId>
+                    <Descr>Specify the format applied to fields</Descr>
+                </item>
+                <item>
+                    <TextId>9I1</TextId>
+                    <Descr>in which data can be entered</Descr>
+                </item>
+                <item>
+                    <TextId>9J0</TextId>
+                    <Descr>You can change the formatting of matrix cells here.</Descr>
+                </item>
+                <item>
+                    <TextId>9J1</TextId>
+                    <Descr>Always define the same elements</Descr>
+                </item>
+                <item>
+                    <TextId>9J2</TextId>
+                    <Descr>(border, font, etc.)</Descr>
+                </item>
+                <item>
+                    <TextId>9K0</TextId>
+                    <Descr>Specify the format of data output fields in reports</Descr>
+                </item>
+                <item>
+                    <TextId>9K1</TextId>
+                    <Descr>(matrices that are not used for data entry)</Descr>
+                </item>
+                <item>
+                    <TextId>9L0</TextId>
+                    <Descr>Specify the number of spaces to be inserted</Descr>
+                </item>
+                <item>
+                    <TextId>9L1</TextId>
+                    <Descr>in front of the text on each hierarchy level</Descr>
+                </item>
+                <item>
+                    <TextId>9M0</TextId>
+                    <Descr>The exception &amp;2 was triggered when SAP function module &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>9M1</TextId>
+                    <Descr>was called. The function was cancelled and</Descr>
+                </item>
+                <item>
+                    <TextId>9M2</TextId>
+                    <Descr>you will be reconnected to the</Descr>
+                </item>
+                <item>
+                    <TextId>9M3</TextId>
+                    <Descr>R/3 System</Descr>
+                </item>
+                <item>
+                    <TextId>9M4</TextId>
+                    <Descr>If the error still exists, log off from the</Descr>
+                </item>
+                <item>
+                    <TextId>9M5</TextId>
+                    <Descr>R/3 System and log on again.</Descr>
+                </item>
+                <item>
+                    <TextId>9N0</TextId>
+                    <Descr>Select the characteristics whose long texts</Descr>
+                </item>
+                <item>
+                    <TextId>9N1</TextId>
+                    <Descr>you only want to store temporarily if they</Descr>
+                </item>
+                <item>
+                    <TextId>9N2</TextId>
+                    <Descr>have already been used</Descr>
+                </item>
+                <item>
+                    <TextId>9O0</TextId>
+                    <Descr>Double-click on a message with a cell reference to go</Descr>
+                </item>
+                <item>
+                    <TextId>9O1</TextId>
+                    <Descr>to the cell concerned</Descr>
+                </item>
+                <item>
+                    <TextId>9P0</TextId>
+                    <Descr>The matrix definition will not be changed, however it</Descr>
+                </item>
+                <item>
+                    <TextId>9P1</TextId>
+                    <Descr>cannot be used during this work session</Descr>
+                </item>
+                <item>
+                    <TextId>9P2</TextId>
+                    <Descr>Press this button to delete the characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>9P3</TextId>
+                    <Descr>permanently from the matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>9P4</TextId>
+                    <Descr>Do not log on the the database</Descr>
+                </item>
+                <item>
+                    <TextId>9P5</TextId>
+                    <Descr>All matrix definitions remain the same, but the</Descr>
+                </item>
+                <item>
+                    <TextId>9P6</TextId>
+                    <Descr>matrices concerned cannot be used.</Descr>
+                </item>
+                <item>
+                    <TextId>9P7</TextId>
+                    <Descr>Choose this option to permanently delete all unknown</Descr>
+                </item>
+                <item>
+                    <TextId>9P8</TextId>
+                    <Descr>characteristics from the matrices.</Descr>
+                </item>
+                <item>
+                    <TextId>9Q0</TextId>
+                    <Descr>Set this indicator to display a total</Descr>
+                </item>
+                <item>
+                    <TextId>9Q1</TextId>
+                    <Descr>for all characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>9Q2</TextId>
+                    <Descr>values in any empty cells</Descr>
+                </item>
+                <item>
+                    <TextId>9Q5</TextId>
+                    <Descr>Set this indicator to display a total</Descr>
+                </item>
+                <item>
+                    <TextId>9Q6</TextId>
+                    <Descr>characteristic has no specified value when the</Descr>
+                </item>
+                <item>
+                    <TextId>9Q7</TextId>
+                    <Descr>matrix definition contains empty cells.</Descr>
+                </item>
+                <item>
+                    <TextId>9QA</TextId>
+                    <Descr>Enter a text that you want to display as the value</Descr>
+                </item>
+                <item>
+                    <TextId>9QB</TextId>
+                    <Descr>ID for characteristics with no specified value</Descr>
+                </item>
+                <item>
+                    <TextId>9R0</TextId>
+                    <Descr>Select whether you want to print or save the results of each</Descr>
+                </item>
+                <item>
+                    <TextId>9R1</TextId>
+                    <Descr>job step, or further process them using your own macro</Descr>
+                </item>
+                <item>
+                    <TextId>9S0</TextId>
+                    <Descr>The workbook can be processed for multiple</Descr>
+                </item>
+                <item>
+                    <TextId>9S1</TextId>
+                    <Descr>characteristic values. Specify the characteristic and</Descr>
+                </item>
+                <item>
+                    <TextId>9S2</TextId>
+                    <Descr>the characteristic type for</Descr>
+                </item>
+                <item>
+                    <TextId>9S3</TextId>
+                    <Descr>which you want to select a value.</Descr>
+                </item>
+                <item>
+                    <TextId>9T0</TextId>
+                    <Descr>Font used for fields</Descr>
+                </item>
+                <item>
+                    <TextId>9T1</TextId>
+                    <Descr>and lists</Descr>
+                </item>
+                <item>
+                    <TextId>9T2</TextId>
+                    <Descr>Font used for buttons, headers,</Descr>
+                </item>
+                <item>
+                    <TextId>9T3</TextId>
+                    <Descr>and so on</Descr>
+                </item>
+                <item>
+                    <TextId>9T5</TextId>
+                    <Descr>Font size used for fields</Descr>
+                </item>
+                <item>
+                    <TextId>9T6</TextId>
+                    <Descr>and lists</Descr>
+                </item>
+                <item>
+                    <TextId>9T8</TextId>
+                    <Descr>Font size used for buttons, headers,</Descr>
+                </item>
+                <item>
+                    <TextId>9T9</TextId>
+                    <Descr>and so on</Descr>
+                </item>
+                <item>
+                    <TextId>9TA</TextId>
+                    <Descr>Press this button to change the font settings for</Descr>
+                </item>
+                <item>
+                    <TextId>9TB</TextId>
+                    <Descr>fields and lists</Descr>
+                </item>
+                <item>
+                    <TextId>9TD</TextId>
+                    <Descr>Press this button to change the font settings for</Descr>
+                </item>
+                <item>
+                    <TextId>9TE</TextId>
+                    <Descr>buttons, heading, and so on.</Descr>
+                </item>
+                <item>
+                    <TextId>9TG</TextId>
+                    <Descr>Press this button to use</Descr>
+                </item>
+                <item>
+                    <TextId>9TH</TextId>
+                    <Descr>the preset fonts</Descr>
+                </item>
+                <item>
+                    <TextId>9TI</TextId>
+                    <Descr>The font used for entry fields</Descr>
+                </item>
+                <item>
+                    <TextId>9TJ</TextId>
+                    <Descr>and lists</Descr>
+                </item>
+                <item>
+                    <TextId>9TK</TextId>
+                    <Descr>The font used for buttons, headings,</Descr>
+                </item>
+                <item>
+                    <TextId>9TL</TextId>
+                    <Descr>and so on</Descr>
+                </item>
+                <item>
+                    <TextId>9U0</TextId>
+                    <Descr>Select this option to also display rows without values.</Descr>
+                </item>
+                <item>
+                    <TextId>9U1</TextId>
+                    <Descr>Otherwise the rows without values will be hidden</Descr>
+                </item>
+                <item>
+                    <TextId>9U2</TextId>
+                    <Descr>(but not deleted).</Descr>
+                </item>
+                <item>
+                    <TextId>9U5</TextId>
+                    <Descr>Select this option to also display columns without values.</Descr>
+                </item>
+                <item>
+                    <TextId>9U6</TextId>
+                    <Descr>Otherwise, the columns without values will be hidden</Descr>
+                </item>
+                <item>
+                    <TextId>9U7</TextId>
+                    <Descr>(but not deleted).</Descr>
+                </item>
+                <item>
+                    <TextId>9V0</TextId>
+                    <Descr>Choose this option to also automatically determine the</Descr>
+                </item>
+                <item>
+                    <TextId>9V1</TextId>
+                    <Descr>independent characteristic using the dependent char.</Descr>
+                </item>
+                <item>
+                    <TextId>9W0</TextId>
+                    <Descr>Select this option to enable automatic updates of</Descr>
+                </item>
+                <item>
+                    <TextId>9W1</TextId>
+                    <Descr>the structure.</Descr>
+                </item>
+                <item>
+                    <TextId>9W2</TextId>
+                    <Descr>You can then update all of them at once.</Descr>
+                </item>
+                <item>
+                    <TextId>9W3</TextId>
+                    <Descr>Otherwise, you can only update the structure</Descr>
+                </item>
+                <item>
+                    <TextId>9W4</TextId>
+                    <Descr>once at a time.</Descr>
+                </item>
+                <item>
+                    <TextId>9WA</TextId>
+                    <Descr>Select this option to only delete/insert the cells</Descr>
+                </item>
+                <item>
+                    <TextId>9WB</TextId>
+                    <Descr>that belong to the matrix definition.</Descr>
+                </item>
+                <item>
+                    <TextId>9WD</TextId>
+                    <Descr>Select this option to delete/insert the cells</Descr>
+                </item>
+                <item>
+                    <TextId>9WE</TextId>
+                    <Descr>that belong to the matrix definition or to the output area</Descr>
+                </item>
+                <item>
+                    <TextId>9WF</TextId>
+                    <Descr>of the matrix.</Descr>
+                </item>
+                <item>
+                    <TextId>9WH</TextId>
+                    <Descr>Select this option to always delete/insert entire lines</Descr>
+                </item>
+                <item>
+                    <TextId>9WI</TextId>
+                    <Descr>and/or entire columns.</Descr>
+                </item>
+                <item>
+                    <TextId>9X0</TextId>
+                    <Descr>Choose this option to disclose values, which have been</Descr>
+                </item>
+                <item>
+                    <TextId>9X1</TextId>
+                    <Descr>posted directly to the hierarchy node, in a separate line.</Descr>
+                </item>
+                <item>
+                    <TextId>9X2</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>9X5</TextId>
+                    <Descr>Choose this option if the hierarchy node should only show</Descr>
+                </item>
+                <item>
+                    <TextId>9X6</TextId>
+                    <Descr>the values that were directly posted to it, without</Descr>
+                </item>
+                <item>
+                    <TextId>9X7</TextId>
+                    <Descr>adding up the lower-level values.</Descr>
+                </item>
+                <item>
+                    <TextId>9XA</TextId>
+                    <Descr>Choose this option if only want to see the grand total</Descr>
+                </item>
+                <item>
+                    <TextId>9XB</TextId>
+                    <Descr>for the values posted to the lower-level hierarchy levels</Descr>
+                </item>
+                <item>
+                    <TextId>9XC</TextId>
+                    <Descr>and those posted directly to the node.</Descr>
+                </item>
+                <item>
+                    <TextId>9XG</TextId>
+                    <Descr>Choose this option to create default lines based on the</Descr>
+                </item>
+                <item>
+                    <TextId>9XH</TextId>
+                    <Descr>default sets in the breakdown category.</Descr>
+                </item>
+                <item>
+                    <TextId>9Y0</TextId>
+                    <Descr>Choose update mode. For details see the</Descr>
+                </item>
+                <item>
+                    <TextId>9Y1</TextId>
+                    <Descr>SAP documentation for the flexible upload.</Descr>
+                </item>
+                <item>
+                    <TextId>9Z0</TextId>
+                    <Descr>If you select this option, the hierarchy will not be</Descr>
+                </item>
+                <item>
+                    <TextId>9Z1</TextId>
+                    <Descr>evaluated when reading the data. The hierarchy is only used</Descr>
+                </item>
+                <item>
+                    <TextId>9Z2</TextId>
+                    <Descr>for structuring the display.</Descr>
+                </item>
+                <item>
+                    <TextId>AAI</TextId>
+                    <Descr>Automatically load the Add-In when starting Excel</Descr>
+                </item>
+                <item>
+                    <TextId>ACA</TextId>
+                    <Descr>Confirm all</Descr>
+                </item>
+                <item>
+                    <TextId>ACK</TextId>
+                    <Descr>Confirm</Descr>
+                </item>
+                <item>
+                    <TextId>AIN</TextId>
+                    <Descr>Add-In</Descr>
+                </item>
+                <item>
+                    <TextId>ALL</TextId>
+                    <Descr>Optional characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>ALO</TextId>
+                    <Descr>You will be logged off from the database for this procedure</Descr>
+                </item>
+                <item>
+                    <TextId>APC</TextId>
+                    <Descr>Do you want to apply the changes?</Descr>
+                </item>
+                <item>
+                    <TextId>APL</TextId>
+                    <Descr>Apply</Descr>
+                </item>
+                <item>
+                    <TextId>ASC</TextId>
+                    <Descr>You cannot change the aspect</Descr>
+                </item>
+                <item>
+                    <TextId>ASG</TextId>
+                    <Descr>Allocate globally</Descr>
+                </item>
+                <item>
+                    <TextId>ASL</TextId>
+                    <Descr>Allocate</Descr>
+                </item>
+                <item>
+                    <TextId>ASP</TextId>
+                    <Descr>Aspect</Descr>
+                </item>
+                <item>
+                    <TextId>AST</TextId>
+                    <Descr>Aspects</Descr>
+                </item>
+                <item>
+                    <TextId>ATM</TextId>
+                    <Descr>Active matrix</Descr>
+                </item>
+                <item>
+                    <TextId>ATT</TextId>
+                    <Descr>Attributes</Descr>
+                </item>
+                <item>
+                    <TextId>AXL</TextId>
+                    <Descr>About SAP Interactive Excel...</Descr>
+                </item>
+                <item>
+                    <TextId>BCK</TextId>
+                    <Descr>Back</Descr>
+                </item>
+                <item>
+                    <TextId>BLD</TextId>
+                    <Descr>Build Up</Descr>
+                </item>
+                <item>
+                    <TextId>BRW</TextId>
+                    <Descr>Search</Descr>
+                </item>
+                <item>
+                    <TextId>C00</TextId>
+                    <Descr>0001 Standard</Descr>
+                </item>
+                <item>
+                    <TextId>C01</TextId>
+                    <Descr>0002 Symbol</Descr>
+                </item>
+                <item>
+                    <TextId>C02</TextId>
+                    <Descr>0255 OEM / DOS</Descr>
+                </item>
+                <item>
+                    <TextId>C03</TextId>
+                    <Descr>0000 Western</Descr>
+                </item>
+                <item>
+                    <TextId>C04</TextId>
+                    <Descr>0204 Cyrillic</Descr>
+                </item>
+                <item>
+                    <TextId>C05</TextId>
+                    <Descr>0238 Central European</Descr>
+                </item>
+                <item>
+                    <TextId>C06</TextId>
+                    <Descr>0161 Greek</Descr>
+                </item>
+                <item>
+                    <TextId>C07</TextId>
+                    <Descr>0162 Turkish</Descr>
+                </item>
+                <item>
+                    <TextId>C08</TextId>
+                    <Descr>0186 Baltic</Descr>
+                </item>
+                <item>
+                    <TextId>C09</TextId>
+                    <Descr>0177 Hebrew</Descr>
+                </item>
+                <item>
+                    <TextId>C10</TextId>
+                    <Descr>0178 Arabic</Descr>
+                </item>
+                <item>
+                    <TextId>C11</TextId>
+                    <Descr>0077 Mac</Descr>
+                </item>
+                <item>
+                    <TextId>C12</TextId>
+                    <Descr>0128 Japanese</Descr>
+                </item>
+                <item>
+                    <TextId>C3D</TextId>
+                    <Descr>3-dimensional</Descr>
+                </item>
+                <item>
+                    <TextId>CAC</TextId>
+                    <Descr>Optimize text buffer</Descr>
+                </item>
+                <item>
+                    <TextId>CAW</TextId>
+                    <Descr>Select the top cell of the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>CCR</TextId>
+                    <Descr>Confirm changes in released workbook</Descr>
+                </item>
+                <item>
+                    <TextId>CEL</TextId>
+                    <Descr>Cell</Descr>
+                </item>
+                <item>
+                    <TextId>CHR</TextId>
+                    <Descr>Characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>CHS</TextId>
+                    <Descr>Save Check Result in File</Descr>
+                </item>
+                <item>
+                    <TextId>CLM</TextId>
+                    <Descr>Column</Descr>
+                </item>
+                <item>
+                    <TextId>CLP</TextId>
+                    <Descr>Collapse</Descr>
+                </item>
+                <item>
+                    <TextId>CLS</TextId>
+                    <Descr>Close</Descr>
+                </item>
+                <item>
+                    <TextId>CLW</TextId>
+                    <Descr>Close window</Descr>
+                </item>
+                <item>
+                    <TextId>CM0</TextId>
+                    <Descr>The characteristic &amp;1 does not exist in the database.</Descr>
+                </item>
+                <item>
+                    <TextId>CM1</TextId>
+                    <Descr>However, it is used in matrix &amp;2.</Descr>
+                </item>
+                <item>
+                    <TextId>CM2</TextId>
+                    <Descr>Deactivate matrix</Descr>
+                </item>
+                <item>
+                    <TextId>CM3</TextId>
+                    <Descr>Delete characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>CM4</TextId>
+                    <Descr>Stop logon</Descr>
+                </item>
+                <item>
+                    <TextId>CM5</TextId>
+                    <Descr>Always deactivate</Descr>
+                </item>
+                <item>
+                    <TextId>CM6</TextId>
+                    <Descr>Always delete</Descr>
+                </item>
+                <item>
+                    <TextId>CMT</TextId>
+                    <Descr>Comment</Descr>
+                </item>
+                <item>
+                    <TextId>CN?</TextId>
+                    <Descr>Do you want to continue?</Descr>
+                </item>
+                <item>
+                    <TextId>CNL</TextId>
+                    <Descr>Cancel</Descr>
+                </item>
+                <item>
+                    <TextId>CNP</TextId>
+                    <Descr>Value cannot be saved to DB</Descr>
+                </item>
+                <item>
+                    <TextId>CNT</TextId>
+                    <Descr>Continue</Descr>
+                </item>
+                <item>
+                    <TextId>CNU</TextId>
+                    <Descr>This cell cannot be written to the database.</Descr>
+                </item>
+                <item>
+                    <TextId>CNV</TextId>
+                    <Descr>So you still want to change it?</Descr>
+                </item>
+                <item>
+                    <TextId>COI</TextId>
+                    <Descr>Ignore values</Descr>
+                </item>
+                <item>
+                    <TextId>COL</TextId>
+                    <Descr>Color</Descr>
+                </item>
+                <item>
+                    <TextId>COM</TextId>
+                    <Descr>Independent characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>CON</TextId>
+                    <Descr>Consolidation</Descr>
+                </item>
+                <item>
+                    <TextId>COS</TextId>
+                    <Descr>Save value of independent characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>COU</TextId>
+                    <Descr>Use values</Descr>
+                </item>
+                <item>
+                    <TextId>CRB</TextId>
+                    <Descr>To confirm, click on the icon</Descr>
+                </item>
+                <item>
+                    <TextId>CRE</TextId>
+                    <Descr>Define</Descr>
+                </item>
+                <item>
+                    <TextId>CS0</TextId>
+                    <Descr>MS Excel formula '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CS1</TextId>
+                    <Descr>MS Excel constant '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CS2</TextId>
+                    <Descr>Set aggregation über '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CS3</TextId>
+                    <Descr>Hierarchy '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CS4</TextId>
+                    <Descr>Entry '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CS5</TextId>
+                    <Descr>Non-postable node: &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>CS6</TextId>
+                    <Descr>Node of characteristic &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>CS7</TextId>
+                    <Descr>Higher-level value in hierarchy: &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>CS8</TextId>
+                    <Descr>Value of independent characteristic in the compound:</Descr>
+                </item>
+                <item>
+                    <TextId>CS9</TextId>
+                    <Descr>Hierarchy level &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>CSA</TextId>
+                    <Descr>This is a hierarchy node</Descr>
+                </item>
+                <item>
+                    <TextId>CSB</TextId>
+                    <Descr>This is a leaf in the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>CSC</TextId>
+                    <Descr>Origin of data</Descr>
+                </item>
+                <item>
+                    <TextId>CSD</TextId>
+                    <Descr>SAP characteristic value (formula: &amp;)</Descr>
+                </item>
+                <item>
+                    <TextId>CSE</TextId>
+                    <Descr>Value: '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CSF</TextId>
+                    <Descr>Reference to cell '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CSG</TextId>
+                    <Descr>The value of the independent characteristic is ignored</Descr>
+                </item>
+                <item>
+                    <TextId>CSH</TextId>
+                    <Descr>The value belongs to Interactive Excel object &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>CSI</TextId>
+                    <Descr>The row definiton of matrix is dynamically determined.</Descr>
+                </item>
+                <item>
+                    <TextId>CSJ</TextId>
+                    <Descr>The values for the characteristic are generated dynamically.</Descr>
+                </item>
+                <item>
+                    <TextId>CSK</TextId>
+                    <Descr>This is a rollup leaf in the hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>CSL</TextId>
+                    <Descr>Rollup-Entry '&amp;'</Descr>
+                </item>
+                <item>
+                    <TextId>CSM</TextId>
+                    <Descr>Hierarchy is not evaluated when reading the data</Descr>
+                </item>
+                <item>
+                    <TextId>CST</TextId>
+                    <Descr>Complete subtrees</Descr>
+                </item>
+                <item>
+                    <TextId>CT0</TextId>
+                    <Descr>Column</Descr>
+                </item>
+                <item>
+                    <TextId>CT1</TextId>
+                    <Descr>Bar</Descr>
+                </item>
+                <item>
+                    <TextId>CT2</TextId>
+                    <Descr>Line</Descr>
+                </item>
+                <item>
+                    <TextId>CT3</TextId>
+                    <Descr>Pie</Descr>
+                </item>
+                <item>
+                    <TextId>CT4</TextId>
+                    <Descr>XY (Scatter)</Descr>
+                </item>
+                <item>
+                    <TextId>CT5</TextId>
+                    <Descr>Area</Descr>
+                </item>
+                <item>
+                    <TextId>CT6</TextId>
+                    <Descr>Doughnut</Descr>
+                </item>
+                <item>
+                    <TextId>CT7</TextId>
+                    <Descr>Radar</Descr>
+                </item>
+                <item>
+                    <TextId>CT8</TextId>
+                    <Descr>Surface</Descr>
+                </item>
+                <item>
+                    <TextId>CT9</TextId>
+                    <Descr>Bubble</Descr>
+                </item>
+                <item>
+                    <TextId>CTR</TextId>
+                    <Descr>CTRL +</Descr>
+                </item>
+                <item>
+                    <TextId>CTY</TextId>
+                    <Descr>Type of chart</Descr>
+                </item>
+                <item>
+                    <TextId>DAR</TextId>
+                    <Descr>Selected data area is already assigned to a vector of matrix definition; select</Descr>
+                </item>
+                <item>
+                    <TextId>DAT</TextId>
+                    <Descr>Date</Descr>
+                </item>
+                <item>
+                    <TextId>DBL</TextId>
+                    <Descr>Database listing</Descr>
+                </item>
+                <item>
+                    <TextId>DBN</TextId>
+                    <Descr>System / Database</Descr>
+                </item>
+                <item>
+                    <TextId>DCH</TextId>
+                    <Descr>Dynamic</Descr>
+                </item>
+                <item>
+                    <TextId>DCS</TextId>
+                    <Descr>Dr/Cr sign logic</Descr>
+                </item>
+                <item>
+                    <TextId>DDM</TextId>
+                    <Descr>Delete data matrix</Descr>
+                </item>
+                <item>
+                    <TextId>DE1</TextId>
+                    <Descr>You have turned off the automatic reading of data.</Descr>
+                </item>
+                <item>
+                    <TextId>DE2</TextId>
+                    <Descr>As a result of this, the displayed data will no longer be</Descr>
+                </item>
+                <item>
+                    <TextId>DE3</TextId>
+                    <Descr>adjusted automatically with report parameter</Descr>
+                </item>
+                <item>
+                    <TextId>DE4</TextId>
+                    <Descr>changes.</Descr>
+                </item>
+                <item>
+                    <TextId>DE5</TextId>
+                    <Descr>Do you really want to retain these settings?</Descr>
+                </item>
+                <item>
+                    <TextId>DEA</TextId>
+                    <Descr>Refresh values automatically</Descr>
+                </item>
+                <item>
+                    <TextId>DEB</TextId>
+                    <Descr>Only read the values manually</Descr>
+                </item>
+                <item>
+                    <TextId>DEF</TextId>
+                    <Descr>SAP defaults</Descr>
+                </item>
+                <item>
+                    <TextId>DEL</TextId>
+                    <Descr>Delete</Descr>
+                </item>
+                <item>
+                    <TextId>DEP</TextId>
+                    <Descr>Characteristic compound</Descr>
+                </item>
+                <item>
+                    <TextId>DES</TextId>
+                    <Descr>Long Text</Descr>
+                </item>
+                <item>
+                    <TextId>DHH</TextId>
+                    <Descr>Delete hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>DLC</TextId>
+                    <Descr>Do you really want to cancel the reading of the data?</Descr>
+                </item>
+                <item>
+                    <TextId>DLD</TextId>
+                    <Descr>Deleted</Descr>
+                </item>
+                <item>
+                    <TextId>DLT</TextId>
+                    <Descr>Delete matrix</Descr>
+                </item>
+                <item>
+                    <TextId>DMN</TextId>
+                    <Descr>Matrix name</Descr>
+                </item>
+                <item>
+                    <TextId>DNL</TextId>
+                    <Descr>Import data</Descr>
+                </item>
+                <item>
+                    <TextId>DNP</TextId>
+                    <Descr>Do not write</Descr>
+                </item>
+                <item>
+                    <TextId>DOB</TextId>
+                    <Descr>Delete structure</Descr>
+                </item>
+                <item>
+                    <TextId>DOM</TextId>
+                    <Descr>Change data matrix</Descr>
+                </item>
+                <item>
+                    <TextId>DOP</TextId>
+                    <Descr>Write</Descr>
+                </item>
+                <item>
+                    <TextId>DSC</TextId>
+                    <Descr>Description</Descr>
+                </item>
+                <item>
+                    <TextId>DSO</TextId>
+                    <Descr>Value/Value reference</Descr>
+                </item>
+                <item>
+                    <TextId>DTL</TextId>
+                    <Descr>Your changes will be lost</Descr>
+                </item>
+                <item>
+                    <TextId>DVC</TextId>
+                    <Descr>Matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>DWM</TextId>
+                    <Descr>Automatically updating the data</Descr>
+                </item>
+                <item>
+                    <TextId>DWW</TextId>
+                    <Descr>Reading data of the entire workbook</Descr>
+                </item>
+                <item>
+                    <TextId>DYA</TextId>
+                    <Descr>Create entire row / column</Descr>
+                </item>
+                <item>
+                    <TextId>DYC</TextId>
+                    <Descr>Update set / hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>DYH</TextId>
+                    <Descr>Only create definition area</Descr>
+                </item>
+                <item>
+                    <TextId>DYM</TextId>
+                    <Descr>Create matrix area</Descr>
+                </item>
+                <item>
+                    <TextId>DYN</TextId>
+                    <Descr>Update automatically</Descr>
+                </item>
+                <item>
+                    <TextId>DYU</TextId>
+                    <Descr>Update matrix defintion</Descr>
+                </item>
+                <item>
+                    <TextId>DZP</TextId>
+                    <Descr>Delete copy of the Add-In</Descr>
+                </item>
+                <item>
+                    <TextId>ECV</TextId>
+                    <Descr>Error while processing the matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>EC_</TextId>
+                    <Descr>Cons/EIS</Descr>
+                </item>
+                <item>
+                    <TextId>EDT</TextId>
+                    <Descr>Change</Descr>
+                </item>
+                <item>
+                    <TextId>EIS</TextId>
+                    <Descr>EC-EIS</Descr>
+                </item>
+                <item>
+                    <TextId>EMP</TextId>
+                    <Descr>The selected cells are not in the matrix output area</Descr>
+                </item>
+                <item>
+                    <TextId>EPW</TextId>
+                    <Descr>Enter password</Descr>
+                </item>
+                <item>
+                    <TextId>ER0</TextId>
+                    <Descr>The standard object &amp;1 is missing and was created</Descr>
+                </item>
+                <item>
+                    <TextId>ER1</TextId>
+                    <Descr>Standard object &amp;1 contained an invalid value.</Descr>
+                </item>
+                <item>
+                    <TextId>ER2</TextId>
+                    <Descr>This value has been corrected.</Descr>
+                </item>
+                <item>
+                    <TextId>ER3</TextId>
+                    <Descr>The cell range that was assigned to the characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>ER4</TextId>
+                    <Descr>does not exist. The characteristic has been</Descr>
+                </item>
+                <item>
+                    <TextId>ER5</TextId>
+                    <Descr>deleted from the matrix definition.</Descr>
+                </item>
+                <item>
+                    <TextId>ER6</TextId>
+                    <Descr>The cell range that was assigned to the characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>ER7</TextId>
+                    <Descr>contains errors and cannot be evaluated.</Descr>
+                </item>
+                <item>
+                    <TextId>ER8</TextId>
+                    <Descr>The characteristic was deleted from the matrix definition.</Descr>
+                </item>
+                <item>
+                    <TextId>ER9</TextId>
+                    <Descr>A cell range of another workbook was assigned to the</Descr>
+                </item>
+                <item>
+                    <TextId>ERA</TextId>
+                    <Descr>characteristic. Check whether the matrix</Descr>
+                </item>
+                <item>
+                    <TextId>ERB</TextId>
+                    <Descr>definition is correct.</Descr>
+                </item>
+                <item>
+                    <TextId>ERC</TextId>
+                    <Descr>The object &amp;1 was created by Interactive Excel, but is</Descr>
+                </item>
+                <item>
+                    <TextId>ERD</TextId>
+                    <Descr>no longer used. Please delete the object</Descr>
+                </item>
+                <item>
+                    <TextId>ERE</TextId>
+                    <Descr>if applicable.</Descr>
+                </item>
+                <item>
+                    <TextId>ERF</TextId>
+                    <Descr>A value was assigned directly to the characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>ERG</TextId>
+                    <Descr>instead of a cell reference. However, this value appears to</Descr>
+                </item>
+                <item>
+                    <TextId>ERH</TextId>
+                    <Descr>consist of cell reference fragments. Check whether this</Descr>
+                </item>
+                <item>
+                    <TextId>ERI</TextId>
+                    <Descr>definition is correct</Descr>
+                </item>
+                <item>
+                    <TextId>ERJ</TextId>
+                    <Descr>The data area of the matrix overlaps</Descr>
+                </item>
+                <item>
+                    <TextId>ERK</TextId>
+                    <Descr>the data area of matarix &amp;1.</Descr>
+                </item>
+                <item>
+                    <TextId>ERL</TextId>
+                    <Descr>An error occurred during the last data import.</Descr>
+                </item>
+                <item>
+                    <TextId>ERM</TextId>
+                    <Descr>A value must be entered for the characteristic.</Descr>
+                </item>
+                <item>
+                    <TextId>ERN</TextId>
+                    <Descr>The value in cell &amp;1 is used as the value for characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>ERO</TextId>
+                    <Descr>&amp;1 as well as the value for characteristic &amp;2.</Descr>
+                </item>
+                <item>
+                    <TextId>ERQ</TextId>
+                    <Descr>A blank cell was assigned to the characteristic.</Descr>
+                </item>
+                <item>
+                    <TextId>ERS</TextId>
+                    <Descr>The characteristic is specified both directly and indirectly</Descr>
+                </item>
+                <item>
+                    <TextId>ERT</TextId>
+                    <Descr>via hierarchy elements in a hierarchy spanning</Descr>
+                </item>
+                <item>
+                    <TextId>ERU</TextId>
+                    <Descr>characteristic &amp;2.</Descr>
+                </item>
+                <item>
+                    <TextId>ERV</TextId>
+                    <Descr>The following errors were found in</Descr>
+                </item>
+                <item>
+                    <TextId>ERW</TextId>
+                    <Descr>the data structure:</Descr>
+                </item>
+                <item>
+                    <TextId>ERX</TextId>
+                    <Descr>The following errors were found during the automatic</Descr>
+                </item>
+                <item>
+                    <TextId>ERY</TextId>
+                    <Descr>data structure check:</Descr>
+                </item>
+                <item>
+                    <TextId>ERZ</TextId>
+                    <Descr>Check data structures</Descr>
+                </item>
+                <item>
+                    <TextId>ES0</TextId>
+                    <Descr>The characteristics in the row definitions must all span</Descr>
+                </item>
+                <item>
+                    <TextId>ES1</TextId>
+                    <Descr>the same rows.</Descr>
+                </item>
+                <item>
+                    <TextId>ES2</TextId>
+                    <Descr>The characteristics in the column definitions must all span</Descr>
+                </item>
+                <item>
+                    <TextId>ES3</TextId>
+                    <Descr>the same columns.</Descr>
+                </item>
+                <item>
+                    <TextId>ES4</TextId>
+                    <Descr>The values are compounded with a different value for</Descr>
+                </item>
+                <item>
+                    <TextId>ES5</TextId>
+                    <Descr>independent characteristic &amp;1 than the value that is</Descr>
+                </item>
+                <item>
+                    <TextId>ES6</TextId>
+                    <Descr>located in the matrix definition for &amp;1.</Descr>
+                </item>
+                <item>
+                    <TextId>ES7</TextId>
+                    <Descr>Constants in the output area of the matrix are deleted</Descr>
+                </item>
+                <item>
+                    <TextId>ES8</TextId>
+                    <Descr>during data import. Please use Excel formulas of the</Descr>
+                </item>
+                <item>
+                    <TextId>ES9</TextId>
+                    <Descr>type ="ABC", instead.</Descr>
+                </item>
+                <item>
+                    <TextId>ESA</TextId>
+                    <Descr>The automatic calculation of Excel formulas is</Descr>
+                </item>
+                <item>
+                    <TextId>ESB</TextId>
+                    <Descr>deactivated.</Descr>
+                </item>
+                <item>
+                    <TextId>ESC</TextId>
+                    <Descr>Cells of characteristic &amp;1 are assigned to the structure</Descr>
+                </item>
+                <item>
+                    <TextId>ESD</TextId>
+                    <Descr>,although no structure info. exists for this characteristic.</Descr>
+                </item>
+                <item>
+                    <TextId>ESE</TextId>
+                    <Descr>Eventhough the structure does not exist, there are cells</Descr>
+                </item>
+                <item>
+                    <TextId>ESF</TextId>
+                    <Descr>assigned to it.</Descr>
+                </item>
+                <item>
+                    <TextId>ESG</TextId>
+                    <Descr>The structure contains a substructure for characteristic &amp;1.</Descr>
+                </item>
+                <item>
+                    <TextId>ESH</TextId>
+                    <Descr>However, no cells belonging to this substructure</Descr>
+                </item>
+                <item>
+                    <TextId>ESI</TextId>
+                    <Descr>can be found</Descr>
+                </item>
+                <item>
+                    <TextId>ESJ</TextId>
+                    <Descr>Assigned cells were found for this structure, however</Descr>
+                </item>
+                <item>
+                    <TextId>ESK</TextId>
+                    <Descr>the structure belongs to table &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>ESL</TextId>
+                    <Descr>The structure contains horizontally as well as vertically</Descr>
+                </item>
+                <item>
+                    <TextId>ESM</TextId>
+                    <Descr>arranged substructures.</Descr>
+                </item>
+                <item>
+                    <TextId>ESN</TextId>
+                    <Descr>No cells are allocated to structure &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>ESO</TextId>
+                    <Descr>The locally named area &amp;1 was created by Interactive</Descr>
+                </item>
+                <item>
+                    <TextId>ESP</TextId>
+                    <Descr>Excel. But the named area must be defined globally.</Descr>
+                </item>
+                <item>
+                    <TextId>ESQ</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>ESR</TextId>
+                    <Descr>The named area &amp;1 was created by Interactive Excel</Descr>
+                </item>
+                <item>
+                    <TextId>ESS</TextId>
+                    <Descr>and no longer used, but contains errors.</Descr>
+                </item>
+                <item>
+                    <TextId>EST</TextId>
+                    <Descr>Pivot table &amp;1 no longer exists in the workbook but its obsolete definition stil</Descr>
+                </item>
+                <item>
+                    <TextId>ESX</TextId>
+                    <Descr>See SAPNet note no.149447 for more</Descr>
+                </item>
+                <item>
+                    <TextId>ESY</TextId>
+                    <Descr>information about these messages.</Descr>
+                </item>
+                <item>
+                    <TextId>ESZ</TextId>
+                    <Descr>No errors or warnings were found.</Descr>
+                </item>
+                <item>
+                    <TextId>EXC</TextId>
+                    <Descr>Exceptions</Descr>
+                </item>
+                <item>
+                    <TextId>EXP</TextId>
+                    <Descr>Expand all</Descr>
+                </item>
+                <item>
+                    <TextId>F41</TextId>
+                    <Descr>Possible entries are only available for cells</Descr>
+                </item>
+                <item>
+                    <TextId>F42</TextId>
+                    <Descr>used in the matrix definition.</Descr>
+                </item>
+                <item>
+                    <TextId>F43</TextId>
+                    <Descr>Possible entries are only available for</Descr>
+                </item>
+                <item>
+                    <TextId>F44</TextId>
+                    <Descr>single values and set aggregations.</Descr>
+                </item>
+                <item>
+                    <TextId>FCL</TextId>
+                    <Descr>Cells with formulas</Descr>
+                </item>
+                <item>
+                    <TextId>FCU</TextId>
+                    <Descr>Columns for free use</Descr>
+                </item>
+                <item>
+                    <TextId>FFH</TextId>
+                    <Descr>Possible entries</Descr>
+                </item>
+                <item>
+                    <TextId>FFT</TextId>
+                    <Descr>Monospaced font</Descr>
+                </item>
+                <item>
+                    <TextId>FIX</TextId>
+                    <Descr>Constant</Descr>
+                </item>
+                <item>
+                    <TextId>FLA</TextId>
+                    <Descr>Set Filter</Descr>
+                </item>
+                <item>
+                    <TextId>FLT</TextId>
+                    <Descr>Filter</Descr>
+                </item>
+                <item>
+                    <TextId>FMT</TextId>
+                    <Descr>Format</Descr>
+                </item>
+                <item>
+                    <TextId>FNT</TextId>
+                    <Descr>Font</Descr>
+                </item>
+                <item>
+                    <TextId>FRU</TextId>
+                    <Descr>Empty rows for user entries</Descr>
+                </item>
+                <item>
+                    <TextId>FST</TextId>
+                    <Descr>Sample text</Descr>
+                </item>
+                <item>
+                    <TextId>FTC</TextId>
+                    <Descr>Formats for matrix cells</Descr>
+                </item>
+                <item>
+                    <TextId>FTH</TextId>
+                    <Descr>Formats for hiearchies</Descr>
+                </item>
+                <item>
+                    <TextId>FUP</TextId>
+                    <Descr>Data entry matrix</Descr>
+                </item>
+                <item>
+                    <TextId>FZO</TextId>
+                    <Descr>Window size</Descr>
+                </item>
+                <item>
+                    <TextId>GDF</TextId>
+                    <Descr>Generate default line</Descr>
+                </item>
+                <item>
+                    <TextId>GDS</TextId>
+                    <Descr>Generate Description</Descr>
+                </item>
+                <item>
+                    <TextId>GLB</TextId>
+                    <Descr>Global parameters</Descr>
+                </item>
+                <item>
+                    <TextId>GO_</TextId>
+                    <Descr>Execute</Descr>
+                </item>
+                <item>
+                    <TextId>GPS</TextId>
+                    <Descr>Chars without references</Descr>
+                </item>
+                <item>
+                    <TextId>GRN</TextId>
+                    <Descr>Do not group</Descr>
+                </item>
+                <item>
+                    <TextId>GRY</TextId>
+                    <Descr>Group</Descr>
+                </item>
+                <item>
+                    <TextId>GUC</TextId>
+                    <Descr>Carry out data entry preparation</Descr>
+                </item>
+                <item>
+                    <TextId>HDC</TextId>
+                    <Descr>Characteristics set as constants</Descr>
+                </item>
+                <item>
+                    <TextId>HDN</TextId>
+                    <Descr>Fixed</Descr>
+                </item>
+                <item>
+                    <TextId>HDR</TextId>
+                    <Descr>Header</Descr>
+                </item>
+                <item>
+                    <TextId>HFF</TextId>
+                    <Descr>A hierarchy cannot be set as a constant</Descr>
+                </item>
+                <item>
+                    <TextId>HID</TextId>
+                    <Descr>Constant</Descr>
+                </item>
+                <item>
+                    <TextId>HIE</TextId>
+                    <Descr>Hierarchies</Descr>
+                </item>
+                <item>
+                    <TextId>HIP</TextId>
+                    <Descr>Subhierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>HNL</TextId>
+                    <Descr>Hierarchy level</Descr>
+                </item>
+                <item>
+                    <TextId>HOR</TextId>
+                    <Descr>Horizontal</Descr>
+                </item>
+                <item>
+                    <TextId>HRS</TextId>
+                    <Descr>Create totals formulas for hierarchy node(s)</Descr>
+                </item>
+                <item>
+                    <TextId>HST</TextId>
+                    <Descr>Hierarchy ignored when data is read</Descr>
+                </item>
+                <item>
+                    <TextId>HSU</TextId>
+                    <Descr>Hierarchy not ignored when data is read</Descr>
+                </item>
+                <item>
+                    <TextId>IC1</TextId>
+                    <Descr>Aggregation of the elements of a set</Descr>
+                </item>
+                <item>
+                    <TextId>IC2</TextId>
+                    <Descr>Values are located in a column</Descr>
+                </item>
+                <item>
+                    <TextId>IC3</TextId>
+                    <Descr>A cell is being shared by several matrices</Descr>
+                </item>
+                <item>
+                    <TextId>IC4</TextId>
+                    <Descr>Fixed value</Descr>
+                </item>
+                <item>
+                    <TextId>IC5</TextId>
+                    <Descr>Value is in the matrix definition, not on the sheet</Descr>
+                </item>
+                <item>
+                    <TextId>IC6</TextId>
+                    <Descr>Values are located in a row</Descr>
+                </item>
+                <item>
+                    <TextId>IC7</TextId>
+                    <Descr>Value is part of the header</Descr>
+                </item>
+                <item>
+                    <TextId>IC8</TextId>
+                    <Descr>The value is taken from the global parameters</Descr>
+                </item>
+                <item>
+                    <TextId>ID_</TextId>
+                    <Descr>ID</Descr>
+                </item>
+                <item>
+                    <TextId>IGA</TextId>
+                    <Descr>Ignore all</Descr>
+                </item>
+                <item>
+                    <TextId>IGN</TextId>
+                    <Descr>Ignore</Descr>
+                </item>
+                <item>
+                    <TextId>INC</TextId>
+                    <Descr>Inconsistent program status</Descr>
+                </item>
+                <item>
+                    <TextId>IND</TextId>
+                    <Descr>Indent level</Descr>
+                </item>
+                <item>
+                    <TextId>INN</TextId>
+                    <Descr>Do not indent</Descr>
+                </item>
+                <item>
+                    <TextId>INT</TextId>
+                    <Descr>Unknown error</Descr>
+                </item>
+                <item>
+                    <TextId>INY</TextId>
+                    <Descr>Indent</Descr>
+                </item>
+                <item>
+                    <TextId>ISS</TextId>
+                    <Descr>Set</Descr>
+                </item>
+                <item>
+                    <TextId>IVO</TextId>
+                    <Descr>reversed order</Descr>
+                </item>
+                <item>
+                    <TextId>IVS</TextId>
+                    <Descr>Invalid selection</Descr>
+                </item>
+                <item>
+                    <TextId>JEX</TextId>
+                    <Descr>Execute Excel macro</Descr>
+                </item>
+                <item>
+                    <TextId>JFR</TextId>
+                    <Descr>From</Descr>
+                </item>
+                <item>
+                    <TextId>JOB</TextId>
+                    <Descr>Job Manager</Descr>
+                </item>
+                <item>
+                    <TextId>JOI</TextId>
+                    <Descr>Connect</Descr>
+                </item>
+                <item>
+                    <TextId>JOW</TextId>
+                    <Descr>Do you want to overwrite the existing entry?</Descr>
+                </item>
+                <item>
+                    <TextId>JPA</TextId>
+                    <Descr>Pages:</Descr>
+                </item>
+                <item>
+                    <TextId>JPD</TextId>
+                    <Descr>For correct node insertion, trust access to VB project; see SAP Note 169479</Descr>
+                </item>
+                <item>
+                    <TextId>JPP</TextId>
+                    <Descr>Print pages</Descr>
+                </item>
+                <item>
+                    <TextId>JPS</TextId>
+                    <Descr>Print sheet</Descr>
+                </item>
+                <item>
+                    <TextId>JPW</TextId>
+                    <Descr>Print workbook</Descr>
+                </item>
+                <item>
+                    <TextId>JR0</TextId>
+                    <Descr>Interactive Excel will process a list of values for the</Descr>
+                </item>
+                <item>
+                    <TextId>JR1</TextId>
+                    <Descr>characteristic &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>JR2</TextId>
+                    <Descr>At each step, the value will be written in the cell &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>JR3</TextId>
+                    <Descr>and values for all data matrices will be refreshed</Descr>
+                </item>
+                <item>
+                    <TextId>JR4</TextId>
+                    <Descr>The workbook will be printed after each data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JR5</TextId>
+                    <Descr>The workbook will be saved after each data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JR6</TextId>
+                    <Descr>The Excel macro &amp; will be run after each data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JR7</TextId>
+                    <Descr>The Excel macro &amp; will be executed for each value.</Descr>
+                </item>
+                <item>
+                    <TextId>JR8</TextId>
+                    <Descr>The current value for the characteristic &amp; will be used</Descr>
+                </item>
+                <item>
+                    <TextId>JR9</TextId>
+                    <Descr>as a macro parameter. The macro will only receive this</Descr>
+                </item>
+                <item>
+                    <TextId>JRA</TextId>
+                    <Descr>parameter when it is called.</Descr>
+                </item>
+                <item>
+                    <TextId>JRB</TextId>
+                    <Descr>The worksheet &amp; will be printed after each</Descr>
+                </item>
+                <item>
+                    <TextId>JRC</TextId>
+                    <Descr>data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JRD</TextId>
+                    <Descr>Pages &amp;1 to &amp;2 of the workbook will be printed after each</Descr>
+                </item>
+                <item>
+                    <TextId>JRE</TextId>
+                    <Descr>data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JRF</TextId>
+                    <Descr>All pages of the workbook from page &amp;1 onward will be</Descr>
+                </item>
+                <item>
+                    <TextId>JRG</TextId>
+                    <Descr>printed after each data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JRH</TextId>
+                    <Descr>All pages up to page &amp;1 will be printed after each</Descr>
+                </item>
+                <item>
+                    <TextId>JRI</TextId>
+                    <Descr>data refresh</Descr>
+                </item>
+                <item>
+                    <TextId>JSH</TextId>
+                    <Descr>Sheets:</Descr>
+                </item>
+                <item>
+                    <TextId>JTO</TextId>
+                    <Descr>to</Descr>
+                </item>
+                <item>
+                    <TextId>JWR</TextId>
+                    <Descr>Save value in:</Descr>
+                </item>
+                <item>
+                    <TextId>KEY</TextId>
+                    <Descr>Shortcut key</Descr>
+                </item>
+                <item>
+                    <TextId>KMB</TextId>
+                    <Descr>Build combinations</Descr>
+                </item>
+                <item>
+                    <TextId>LEG</TextId>
+                    <Descr>Legend</Descr>
+                </item>
+                <item>
+                    <TextId>LG0</TextId>
+                    <Descr>If you save the password, other people will be able to</Descr>
+                </item>
+                <item>
+                    <TextId>LG1</TextId>
+                    <Descr>use Interactive Excel without any authorization.</Descr>
+                </item>
+                <item>
+                    <TextId>LG2</TextId>
+                    <Descr>There is also the possibility that someone might decode</Descr>
+                </item>
+                <item>
+                    <TextId>LG3</TextId>
+                    <Descr>the password saved on your computer and, in this way,</Descr>
+                </item>
+                <item>
+                    <TextId>LG4</TextId>
+                    <Descr>gain unauthorized access to the SAP System.</Descr>
+                </item>
+                <item>
+                    <TextId>LG5</TextId>
+                    <Descr/>
+                </item>
+                <item>
+                    <TextId>LGA</TextId>
+                    <Descr>Other Access database...</Descr>
+                </item>
+                <item>
+                    <TextId>LGC</TextId>
+                    <Descr>Log onto database</Descr>
+                </item>
+                <item>
+                    <TextId>LGD</TextId>
+                    <Descr>Details...</Descr>
+                </item>
+                <item>
+                    <TextId>LGF</TextId>
+                    <Descr>Logged off</Descr>
+                </item>
+                <item>
+                    <TextId>LGO</TextId>
+                    <Descr>Logged on</Descr>
+                </item>
+                <item>
+                    <TextId>LGP</TextId>
+                    <Descr>Please wait, logon in process...</Descr>
+                </item>
+                <item>
+                    <TextId>LGR</TextId>
+                    <Descr>Other SAP system...</Descr>
+                </item>
+                <item>
+                    <TextId>LGS</TextId>
+                    <Descr>Permanent</Descr>
+                </item>
+                <item>
+                    <TextId>LO0</TextId>
+                    <Descr>Log on to a database...</Descr>
+                </item>
+                <item>
+                    <TextId>LO1</TextId>
+                    <Descr>Other SAP System...</Descr>
+                </item>
+                <item>
+                    <TextId>LO2</TextId>
+                    <Descr>Other MS-Access database</Descr>
+                </item>
+                <item>
+                    <TextId>LO3</TextId>
+                    <Descr>Application Server</Descr>
+                </item>
+                <item>
+                    <TextId>LO4</TextId>
+                    <Descr>Client</Descr>
+                </item>
+                <item>
+                    <TextId>LO5</TextId>
+                    <Descr>Database</Descr>
+                </item>
+                <item>
+                    <TextId>LO6</TextId>
+                    <Descr>Group</Descr>
+                </item>
+                <item>
+                    <TextId>LO7</TextId>
+                    <Descr>Language</Descr>
+                </item>
+                <item>
+                    <TextId>LO8</TextId>
+                    <Descr>Message server</Descr>
+                </item>
+                <item>
+                    <TextId>LO9</TextId>
+                    <Descr>System number</Descr>
+                </item>
+                <item>
+                    <TextId>LOA</TextId>
+                    <Descr>Set logon parameters</Descr>
+                </item>
+                <item>
+                    <TextId>LOB</TextId>
+                    <Descr>Custom Application Server</Descr>
+                </item>
+                <item>
+                    <TextId>LOC</TextId>
+                    <Descr>Value/Value reference</Descr>
+                </item>
+                <item>
+                    <TextId>LOD</TextId>
+                    <Descr>Default Logon</Descr>
+                </item>
+                <item>
+                    <TextId>LOE</TextId>
+                    <Descr>Group/Server Selection</Descr>
+                </item>
+                <item>
+                    <TextId>LOF</TextId>
+                    <Descr>Log off</Descr>
+                </item>
+                <item>
+                    <TextId>LOG</TextId>
+                    <Descr>Enter the client number</Descr>
+                </item>
+                <item>
+                    <TextId>LOH</TextId>
+                    <Descr>Enter the system ID</Descr>
+                </item>
+                <item>
+                    <TextId>LOJ</TextId>
+                    <Descr>Enter a description of the connection</Descr>
+                </item>
+                <item>
+                    <TextId>LOK</TextId>
+                    <Descr>Lock</Descr>
+                </item>
+                <item>
+                    <TextId>LON</TextId>
+                    <Descr>Log on</Descr>
+                </item>
+                <item>
+                    <TextId>LOP</TextId>
+                    <Descr>Code Page</Descr>
+                </item>
+                <item>
+                    <TextId>LOR</TextId>
+                    <Descr>SAP Logon</Descr>
+                </item>
+                <item>
+                    <TextId>LOS</TextId>
+                    <Descr>MS Access Logon</Descr>
+                </item>
+                <item>
+                    <TextId>LOT</TextId>
+                    <Descr>Connection Type</Descr>
+                </item>
+                <item>
+                    <TextId>LOU</TextId>
+                    <Descr>Enter the user name</Descr>
+                </item>
+                <item>
+                    <TextId>LOV</TextId>
+                    <Descr>Enter the name and path of the database</Descr>
+                </item>
+                <item>
+                    <TextId>LOX</TextId>
+                    <Descr>Enter the application server and instance number</Descr>
+                </item>
+                <item>
+                    <TextId>LOY</TextId>
+                    <Descr>Enter the message server and group</Descr>
+                </item>
+                <item>
+                    <TextId>LOZ</TextId>
+                    <Descr>Enter the user name and password or SNC identifier</Descr>
+                </item>
+                <item>
+                    <TextId>LRO</TextId>
+                    <Descr>Last refresh</Descr>
+                </item>
+                <item>
+                    <TextId>M11</TextId>
+                    <Descr>Errors:</Descr>
+                </item>
+                <item>
+                    <TextId>M12</TextId>
+                    <Descr>Warning:</Descr>
+                </item>
+                <item>
+                    <TextId>M13</TextId>
+                    <Descr>Information:</Descr>
+                </item>
+                <item>
+                    <TextId>M1C</TextId>
+                    <Descr>Select only one Excel cell</Descr>
+                </item>
+                <item>
+                    <TextId>M21</TextId>
+                    <Descr>Errors:</Descr>
+                </item>
+                <item>
+                    <TextId>M22</TextId>
+                    <Descr>Warning:</Descr>
+                </item>
+                <item>
+                    <TextId>M23</TextId>
+                    <Descr>Information:</Descr>
+                </item>
+                <item>
+                    <TextId>MAC</TextId>
+                    <Descr>Excel macro</Descr>
+                </item>
+                <item>
+                    <TextId>MCU</TextId>
+                    <Descr>This Excel cell is assigned to several characteristics.</Descr>
+                </item>
+                <item>
+                    <TextId>MCV</TextId>
+                    <Descr>This why no list of values is available.</Descr>
+                </item>
+                <item>
+                    <TextId>MIN</TextId>
+                    <Descr>Minimize</Descr>
+                </item>
+                <item>
+                    <TextId>MKA</TextId>
+                    <Descr>Select all</Descr>
+                </item>
+                <item>
+                    <TextId>MKN</TextId>
+                    <Descr>Deselect all</Descr>
+                </item>
+                <item>
+                    <TextId>MM0</TextId>
+                    <Descr>Input message</Descr>
+                </item>
+                <item>
+                    <TextId>MM1</TextId>
+                    <Descr>Excel comment</Descr>
+                </item>
+                <item>
+                    <TextId>MM2</TextId>
+                    <Descr>Do not save</Descr>
+                </item>
+                <item>
+                    <TextId>MM3</TextId>
+                    <Descr>Log sheet</Descr>
+                </item>
+                <item>
+                    <TextId>MNA</TextId>
+                    <Descr>A matrix with this name already exists</Descr>
+                </item>
+                <item>
+                    <TextId>MNC</TextId>
+                    <Descr>The matrix name cannot be changed</Descr>
+                </item>
+                <item>
+                    <TextId>MNP</TextId>
+                    <Descr>Enter a name for the matrix</Descr>
+                </item>
+                <item>
+                    <TextId>MOR</TextId>
+                    <Descr>More...</Descr>
+                </item>
+                <item>
+                    <TextId>MPR</TextId>
+                    <Descr>Data Matrix Properties</Descr>
+                </item>
+                <item>
+                    <TextId>MS0</TextId>
+                    <Descr>Display All Messages</Descr>
+                </item>
+                <item>
+                    <TextId>MS1</TextId>
+                    <Descr>Display Warnings and Errors</Descr>
+                </item>
+                <item>
+                    <TextId>MS2</TextId>
+                    <Descr>Display Errors Only</Descr>
+                </item>
+                <item>
+                    <TextId>MUC</TextId>
+                    <Descr>Excel cell &amp;1 is assigned to several characteristics.</Descr>
+                </item>
+                <item>
+                    <TextId>NAS</TextId>
+                    <Descr>First select an aspect</Descr>
+                </item>
+                <item>
+                    <TextId>NCH</TextId>
+                    <Descr>The backup copy is identical to the current version</Descr>
+                </item>
+                <item>
+                    <TextId>NCS</TextId>
+                    <Descr>Mark a column for entry/display</Descr>
+                </item>
+                <item>
+                    <TextId>NDC</TextId>
+                    <Descr>The values for char. '&amp;1' are determined dynamically</Descr>
+                </item>
+                <item>
+                    <TextId>NDD</TextId>
+                    <Descr>This is only possible for characteristics in line definition</Descr>
+                </item>
+                <item>
+                    <TextId>NDE</TextId>
+                    <Descr>The indicator 'Dynamic' is reset.</Descr>
+                </item>
+                <item>
+                    <TextId>NDM</TextId>
+                    <Descr>Data matrix</Descr>
+                </item>
+                <item>
+                    <TextId>NEW</TextId>
+                    <Descr>New</Descr>
+                </item>
+                <item>
+                    <TextId>NFT</TextId>
+                    <Descr>Undo filter</Descr>
+                </item>
+                <item>
+                    <TextId>NOB</TextId>
+                    <Descr>No structures belong to matrix &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>NOC</TextId>
+                    <Descr>Excell cell &amp;1 is not assigned to any characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>NOD</TextId>
+                    <Descr>Hierarchy nodes</Descr>
+                </item>
+                <item>
+                    <TextId>NOE</TextId>
+                    <Descr>No entry available</Descr>
+                </item>
+                <item>
+                    <TextId>NOP</TextId>
+                    <Descr>All data was not written</Descr>
+                </item>
+                <item>
+                    <TextId>NOQ</TextId>
+                    <Descr>Start the update again</Descr>
+                </item>
+                <item>
+                    <TextId>NPD</TextId>
+                    <Descr>Workbook is not locked against changes</Descr>
+                </item>
+                <item>
+                    <TextId>NRS</TextId>
+                    <Descr>Mark a row for entry/display</Descr>
+                </item>
+                <item>
+                    <TextId>NTV</TextId>
+                    <Descr>Save messages as...</Descr>
+                </item>
+                <item>
+                    <TextId>NUL</TextId>
+                    <Descr>Display empty rows</Descr>
+                </item>
+                <item>
+                    <TextId>NUS</TextId>
+                    <Descr>Display empty columns</Descr>
+                </item>
+                <item>
+                    <TextId>NWV</TextId>
+                    <Descr>Current value: &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>NXT</TextId>
+                    <Descr>Continue</Descr>
+                </item>
+                <item>
+                    <TextId>OB0</TextId>
+                    <Descr>The structure contains &amp;1 columns, however Excel supports</Descr>
+                </item>
+                <item>
+                    <TextId>OB1</TextId>
+                    <Descr>a maximum of 256 columns.</Descr>
+                </item>
+                <item>
+                    <TextId>OB2</TextId>
+                    <Descr>The structure contains &amp;1 rows, however Excel supports</Descr>
+                </item>
+                <item>
+                    <TextId>OB3</TextId>
+                    <Descr>a maximum of 65536 rows</Descr>
+                </item>
+                <item>
+                    <TextId>OB4</TextId>
+                    <Descr>Make the structure smaller.</Descr>
+                </item>
+                <item>
+                    <TextId>OB5</TextId>
+                    <Descr>The structure is, with &amp;1 columns, very large.</Descr>
+                </item>
+                <item>
+                    <TextId>OB6</TextId>
+                    <Descr>The structure is, with &amp;1 rows, very large.</Descr>
+                </item>
+                <item>
+                    <TextId>OB7</TextId>
+                    <Descr>Do you really want to insert the structure?</Descr>
+                </item>
+                <item>
+                    <TextId>OB8</TextId>
+                    <Descr>Parts of the structure do not start in the same</Descr>
+                </item>
+                <item>
+                    <TextId>OB9</TextId>
+                    <Descr>row or column.</Descr>
+                </item>
+                <item>
+                    <TextId>OBA</TextId>
+                    <Descr>Do you want to insert the changed structure now?</Descr>
+                </item>
+                <item>
+                    <TextId>OBE</TextId>
+                    <Descr>Hierarchy &amp;2 of characteristic &amp;1 does not exist</Descr>
+                </item>
+                <item>
+                    <TextId>OBH</TextId>
+                    <Descr>The structure contains characteristic &amp;1, however no</Descr>
+                </item>
+                <item>
+                    <TextId>OBI</TextId>
+                    <Descr>cells could be found for it.</Descr>
+                </item>
+                <item>
+                    <TextId>OBJ</TextId>
+                    <Descr>Structure</Descr>
+                </item>
+                <item>
+                    <TextId>OBM</TextId>
+                    <Descr>The structure contains horizontally as well as vertically</Descr>
+                </item>
+                <item>
+                    <TextId>OBN</TextId>
+                    <Descr>arranged elements</Descr>
+                </item>
+                <item>
+                    <TextId>OBR</TextId>
+                    <Descr>Reading structure &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>OBS</TextId>
+                    <Descr>Set &amp;2 for characteristic &amp;1 contains no values</Descr>
+                </item>
+                <item>
+                    <TextId>OCT</TextId>
+                    <Descr>Output format</Descr>
+                </item>
+                <item>
+                    <TextId>OKY</TextId>
+                    <Descr>OK</Descr>
+                </item>
+                <item>
+                    <TextId>OLD</TextId>
+                    <Descr>Value in backup copy: &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>OPL</TextId>
+                    <Descr>Optional</Descr>
+                </item>
+                <item>
+                    <TextId>OPT</TextId>
+                    <Descr>Options</Descr>
+                </item>
+                <item>
+                    <TextId>OR1</TextId>
+                    <Descr>An existing range definition already exists for characteristic &amp;1 that cannot be</Descr>
+                </item>
+                <item>
+                    <TextId>OR2</TextId>
+                    <Descr>to the new range created (due to different orientation / location). Creating a n</Descr>
+                </item>
+                <item>
+                    <TextId>OR3</TextId>
+                    <Descr>for this characteristic will remove the existing range including its data.</Descr>
+                </item>
+                <item>
+                    <TextId>ORI</TextId>
+                    <Descr>Cell reference</Descr>
+                </item>
+                <item>
+                    <TextId>OTH</TextId>
+                    <Descr>Others</Descr>
+                </item>
+                <item>
+                    <TextId>OU3</TextId>
+                    <Descr>Only update mode &amp;1 is supported.</Descr>
+                </item>
+                <item>
+                    <TextId>OVW</TextId>
+                    <Descr>Overwrite</Descr>
+                </item>
+                <item>
+                    <TextId>OW1</TextId>
+                    <Descr>You are about to change a matrix for which you have already</Descr>
+                </item>
+                <item>
+                    <TextId>OW2</TextId>
+                    <Descr>imported data. Data in the existing matrix</Descr>
+                </item>
+                <item>
+                    <TextId>OW3</TextId>
+                    <Descr>will be overwritten. Do you want to continue?</Descr>
+                </item>
+                <item>
+                    <TextId>OW5</TextId>
+                    <Descr>If you want to insert another matrix</Descr>
+                </item>
+                <item>
+                    <TextId>OW6</TextId>
+                    <Descr>in this worksheet, choose</Descr>
+                </item>
+                <item>
+                    <TextId>OW7</TextId>
+                    <Descr>"Consolidation -&gt; Data matrix -&gt; New".</Descr>
+                </item>
+                <item>
+                    <TextId>OW9</TextId>
+                    <Descr>Overwrite matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>OWD</TextId>
+                    <Descr>Do you want to overwrite existing data?</Descr>
+                </item>
+                <item>
+                    <TextId>OWU</TextId>
+                    <Descr>Data entered in the matrix will be overwritten. Continue?</Descr>
+                </item>
+                <item>
+                    <TextId>PCD</TextId>
+                    <Descr>Check your entry</Descr>
+                </item>
+                <item>
+                    <TextId>PDE</TextId>
+                    <Descr>Some matrices are deactivated</Descr>
+                </item>
+                <item>
+                    <TextId>PDL</TextId>
+                    <Descr>Importing values and structure into matrix:</Descr>
+                </item>
+                <item>
+                    <TextId>PDM</TextId>
+                    <Descr>Importing data into matrix:</Descr>
+                </item>
+                <item>
+                    <TextId>PDS</TextId>
+                    <Descr>Create matrix definition:</Descr>
+                </item>
+                <item>
+                    <TextId>PEM</TextId>
+                    <Descr>Post 0 for empty cells</Descr>
+                </item>
+                <item>
+                    <TextId>PER</TextId>
+                    <Descr>Error occurred during the import of data for some matrices</Descr>
+                </item>
+                <item>
+                    <TextId>PFX</TextId>
+                    <Descr>Prefix</Descr>
+                </item>
+                <item>
+                    <TextId>PG1</TextId>
+                    <Descr>The report definitions in this Interactive Excel</Descr>
+                </item>
+                <item>
+                    <TextId>PG2</TextId>
+                    <Descr>worksheet are locked against changes</Descr>
+                </item>
+                <item>
+                    <TextId>PGL</TextId>
+                    <Descr>Locked:</Descr>
+                </item>
+                <item>
+                    <TextId>PIV</TextId>
+                    <Descr>Invalid password</Descr>
+                </item>
+                <item>
+                    <TextId>PLM</TextId>
+                    <Descr>Position</Descr>
+                </item>
+                <item>
+                    <TextId>PLO</TextId>
+                    <Descr>All reports were refreshed within the following time period:</Descr>
+                </item>
+                <item>
+                    <TextId>PNE</TextId>
+                    <Descr>Enter the same password in both fields</Descr>
+                </item>
+                <item>
+                    <TextId>PNO</TextId>
+                    <Descr>No Interactive Excel reports found</Descr>
+                </item>
+                <item>
+                    <TextId>PNW</TextId>
+                    <Descr>Latest matrix:</Descr>
+                </item>
+                <item>
+                    <TextId>POI</TextId>
+                    <Descr>Value &amp;1 was not found</Descr>
+                </item>
+                <item>
+                    <TextId>POL</TextId>
+                    <Descr>Oldest matrix:</Descr>
+                </item>
+                <item>
+                    <TextId>POS</TextId>
+                    <Descr>Position</Descr>
+                </item>
+                <item>
+                    <TextId>POV</TextId>
+                    <Descr>Value to be found:</Descr>
+                </item>
+                <item>
+                    <TextId>PRE</TextId>
+                    <Descr>Selected charateristics</Descr>
+                </item>
+                <item>
+                    <TextId>PRF</TextId>
+                    <Descr>Check</Descr>
+                </item>
+                <item>
+                    <TextId>PRN</TextId>
+                    <Descr>Insert</Descr>
+                </item>
+                <item>
+                    <TextId>PRP</TextId>
+                    <Descr>Print</Descr>
+                </item>
+                <item>
+                    <TextId>PSD</TextId>
+                    <Descr>Select the values for the independent characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>PSV</TextId>
+                    <Descr>Select a value</Descr>
+                </item>
+                <item>
+                    <TextId>PTC</TextId>
+                    <Descr>Pivot chart</Descr>
+                </item>
+                <item>
+                    <TextId>PTD</TextId>
+                    <Descr>Object '&amp;' is already locked</Descr>
+                </item>
+                <item>
+                    <TextId>PUM</TextId>
+                    <Descr>Export data from matrix:</Descr>
+                </item>
+                <item>
+                    <TextId>PV0</TextId>
+                    <Descr>Read data from SAP database</Descr>
+                </item>
+                <item>
+                    <TextId>PV1</TextId>
+                    <Descr>Process key fields</Descr>
+                </item>
+                <item>
+                    <TextId>PV2</TextId>
+                    <Descr>Process value fields</Descr>
+                </item>
+                <item>
+                    <TextId>PV3</TextId>
+                    <Descr>Create ODBC data source</Descr>
+                </item>
+                <item>
+                    <TextId>PV4</TextId>
+                    <Descr>Save definition of pivot table</Descr>
+                </item>
+                <item>
+                    <TextId>PV5</TextId>
+                    <Descr>Write data to Excel</Descr>
+                </item>
+                <item>
+                    <TextId>PV9</TextId>
+                    <Descr>Create a pivot table</Descr>
+                </item>
+                <item>
+                    <TextId>PVL</TextId>
+                    <Descr>Pivot table layout</Descr>
+                </item>
+                <item>
+                    <TextId>PVT</TextId>
+                    <Descr>Pivot table</Descr>
+                </item>
+                <item>
+                    <TextId>PW1</TextId>
+                    <Descr>Password</Descr>
+                </item>
+                <item>
+                    <TextId>PW2</TextId>
+                    <Descr>Confirm</Descr>
+                </item>
+                <item>
+                    <TextId>PWA</TextId>
+                    <Descr>Access Password</Descr>
+                </item>
+                <item>
+                    <TextId>PWS</TextId>
+                    <Descr>Save Password</Descr>
+                </item>
+                <item>
+                    <TextId>QAC</TextId>
+                    <Descr>Fast Access</Descr>
+                </item>
+                <item>
+                    <TextId>QRY</TextId>
+                    <Descr>Function modules</Descr>
+                </item>
+                <item>
+                    <TextId>REF</TextId>
+                    <Descr>Refresh</Descr>
+                </item>
+                <item>
+                    <TextId>REL</TextId>
+                    <Descr>Do you want to refresh data in all reports?</Descr>
+                </item>
+                <item>
+                    <TextId>REM</TextId>
+                    <Descr>Remove</Descr>
+                </item>
+                <item>
+                    <TextId>REP</TextId>
+                    <Descr>Repair</Descr>
+                </item>
+                <item>
+                    <TextId>REQ</TextId>
+                    <Descr>Reqd char.</Descr>
+                </item>
+                <item>
+                    <TextId>RLW</TextId>
+                    <Descr>Release</Descr>
+                </item>
+                <item>
+                    <TextId>RMV</TextId>
+                    <Descr>Reset</Descr>
+                </item>
+                <item>
+                    <TextId>RNG</TextId>
+                    <Descr>Selected order</Descr>
+                </item>
+                <item>
+                    <TextId>ROW</TextId>
+                    <Descr>Row</Descr>
+                </item>
+                <item>
+                    <TextId>RQ0</TextId>
+                    <Descr>Data entry matrix: reading of data is mandatory</Descr>
+                </item>
+                <item>
+                    <TextId>RQ1</TextId>
+                    <Descr>Select the indicator so that the system ensures that, for the data entry matrix,</Descr>
+                </item>
+                <item>
+                    <TextId>RQ2</TextId>
+                    <Descr>you execute the "Read Data" function first before you can enter data.</Descr>
+                </item>
+                <item>
+                    <TextId>RQ3</TextId>
+                    <Descr>The system has not yet read any data for data entry matrix &amp;1.</Descr>
+                </item>
+                <item>
+                    <TextId>RQ4</TextId>
+                    <Descr>Data entry with matrix &amp;1 is currently not possible. First select the "Read Data</Descr>
+                </item>
+                <item>
+                    <TextId>RR0</TextId>
+                    <Descr>Consistency Check of Data Area</Descr>
+                </item>
+                <item>
+                    <TextId>RR1</TextId>
+                    <Descr>Select the indicator so that the system checks that the data area of the data en</Descr>
+                </item>
+                <item>
+                    <TextId>RR2</TextId>
+                    <Descr>is empty. Only relevant if the "Post 0 for Empty Cells" indicator is also select</Descr>
+                </item>
+                <item>
+                    <TextId>RR3</TextId>
+                    <Descr>The data area for data entry matrix &amp;1 is empty.</Descr>
+                </item>
+                <item>
+                    <TextId>RR4</TextId>
+                    <Descr>If you continue, the system deletes the data of the entire data area from the da</Descr>
+                </item>
+                <item>
+                    <TextId>RR5</TextId>
+                    <Descr>Data entry with matrix &amp;1 is currently not possible; first enter data in the are</Descr>
+                </item>
+                <item>
+                    <TextId>RS1</TextId>
+                    <Descr>Range &amp;1 is missing.</Descr>
+                </item>
+                <item>
+                    <TextId>RS2</TextId>
+                    <Descr>Please use the 'Check' button to fix the Structures.</Descr>
+                </item>
+                <item>
+                    <TextId>RT1</TextId>
+                    <Descr>Area &amp;1 comprises multiple rows and columns; area for text input cannot be ident</Descr>
+                </item>
+                <item>
+                    <TextId>RT2</TextId>
+                    <Descr>Area &amp;1 is not empty and therefore cannot be used for text input</Descr>
+                </item>
+                <item>
+                    <TextId>RTL</TextId>
+                    <Descr>The data cube being read is too large.</Descr>
+                </item>
+                <item>
+                    <TextId>RTM</TextId>
+                    <Descr>Therefore, reading data can take a very long time.</Descr>
+                </item>
+                <item>
+                    <TextId>RUN</TextId>
+                    <Descr>Return units</Descr>
+                </item>
+                <item>
+                    <TextId>RUO</TextId>
+                    <Descr>Only display rollup entry</Descr>
+                </item>
+                <item>
+                    <TextId>RUS</TextId>
+                    <Descr>Only display total of nodes</Descr>
+                </item>
+                <item>
+                    <TextId>RUY</TextId>
+                    <Descr>Generate rollup entry</Descr>
+                </item>
+                <item>
+                    <TextId>RVA</TextId>
+                    <Descr>Undo all</Descr>
+                </item>
+                <item>
+                    <TextId>RVT</TextId>
+                    <Descr>Undo</Descr>
+                </item>
+                <item>
+                    <TextId>S1A</TextId>
+                    <Descr>Select a rectangular cell area</Descr>
+                </item>
+                <item>
+                    <TextId>S44</TextId>
+                    <Descr>Select at least 2 output columns and rows</Descr>
+                </item>
+                <item>
+                    <TextId>SAA</TextId>
+                    <Descr>Saved under &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>SAC</TextId>
+                    <Descr>Aspect selection</Descr>
+                </item>
+                <item>
+                    <TextId>SAV</TextId>
+                    <Descr>Save</Descr>
+                </item>
+                <item>
+                    <TextId>SAX</TextId>
+                    <Descr>SAP Interactive Excel</Descr>
+                </item>
+                <item>
+                    <TextId>SC0</TextId>
+                    <Descr>Change the scaling under "Consolidation -&gt; Data matrix -&gt;</Descr>
+                </item>
+                <item>
+                    <TextId>SC1</TextId>
+                    <Descr>Change, tabstrip "Settings".</Descr>
+                </item>
+                <item>
+                    <TextId>SC2</TextId>
+                    <Descr>This field is for display only.</Descr>
+                </item>
+                <item>
+                    <TextId>SCL</TextId>
+                    <Descr>Scaling factor</Descr>
+                </item>
+                <item>
+                    <TextId>SCM</TextId>
+                    <Descr>Special characters cannot be used in a matrix name</Descr>
+                </item>
+                <item>
+                    <TextId>SDM</TextId>
+                    <Descr>Select the whole matrix</Descr>
+                </item>
+                <item>
+                    <TextId>SEA</TextId>
+                    <Descr>Find</Descr>
+                </item>
+                <item>
+                    <TextId>SEC</TextId>
+                    <Descr>Security</Descr>
+                </item>
+                <item>
+                    <TextId>SEL</TextId>
+                    <Descr>Select</Descr>
+                </item>
+                <item>
+                    <TextId>SEM</TextId>
+                    <Descr>SEM</Descr>
+                </item>
+                <item>
+                    <TextId>SEP</TextId>
+                    <Descr>Separate</Descr>
+                </item>
+                <item>
+                    <TextId>SET</TextId>
+                    <Descr>Sets</Descr>
+                </item>
+                <item>
+                    <TextId>SFX</TextId>
+                    <Descr>Suffix</Descr>
+                </item>
+                <item>
+                    <TextId>SHA</TextId>
+                    <Descr>Analyze matrix &amp;2 on table &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>SHI</TextId>
+                    <Descr>Select parts of hierarchy</Descr>
+                </item>
+                <item>
+                    <TextId>SIG</TextId>
+                    <Descr>Signature</Descr>
+                </item>
+                <item>
+                    <TextId>SIM</TextId>
+                    <Descr>Test run</Descr>
+                </item>
+                <item>
+                    <TextId>SLL</TextId>
+                    <Descr>Levels</Descr>
+                </item>
+                <item>
+                    <TextId>SMD</TextId>
+                    <Descr>Matrix to be deleted</Descr>
+                </item>
+                <item>
+                    <TextId>SN+</TextId>
+                    <Descr>Values as per item sign</Descr>
+                </item>
+                <item>
+                    <TextId>SN-</TextId>
+                    <Descr>Inverse database values</Descr>
+                </item>
+                <item>
+                    <TextId>SN0</TextId>
+                    <Descr>Database values</Descr>
+                </item>
+                <item>
+                    <TextId>SNC</TextId>
+                    <Descr>SNC Name</Descr>
+                </item>
+                <item>
+                    <TextId>SNE</TextId>
+                    <Descr>Activate Secure Network Communication</Descr>
+                </item>
+                <item>
+                    <TextId>SNL</TextId>
+                    <Descr>Single values</Descr>
+                </item>
+                <item>
+                    <TextId>SOC</TextId>
+                    <Descr>Select column for entry/display</Descr>
+                </item>
+                <item>
+                    <TextId>SOE</TextId>
+                    <Descr>&amp;3 does not exist in hierarchy &amp;2 of characteristic &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>SOR</TextId>
+                    <Descr>Select row for entry/display</Descr>
+                </item>
+                <item>
+                    <TextId>SP0</TextId>
+                    <Descr>Total all values</Descr>
+                </item>
+                <item>
+                    <TextId>SP1</TextId>
+                    <Descr>Select the value SPACE</Descr>
+                </item>
+                <item>
+                    <TextId>SPD</TextId>
+                    <Descr>Selection of indepedendent characteristics</Descr>
+                </item>
+                <item>
+                    <TextId>SPF</TextId>
+                    <Descr>Procedure for empty cells</Descr>
+                </item>
+                <item>
+                    <TextId>SPI</TextId>
+                    <Descr>If empty, display</Descr>
+                </item>
+                <item>
+                    <TextId>SPW</TextId>
+                    <Descr>Specify password</Descr>
+                </item>
+                <item>
+                    <TextId>SRC</TextId>
+                    <Descr>Select only one column/row</Descr>
+                </item>
+                <item>
+                    <TextId>SRT</TextId>
+                    <Descr>SAProuter</Descr>
+                </item>
+                <item>
+                    <TextId>SSP</TextId>
+                    <Descr>File name for snapshot</Descr>
+                </item>
+                <item>
+                    <TextId>SST</TextId>
+                    <Descr>Snapshot</Descr>
+                </item>
+                <item>
+                    <TextId>ST0</TextId>
+                    <Descr>The matrix is currently being defined</Descr>
+                </item>
+                <item>
+                    <TextId>ST1</TextId>
+                    <Descr>Active and error-free report matrix</Descr>
+                </item>
+                <item>
+                    <TextId>ST2</TextId>
+                    <Descr>Error-free data entry matrix</Descr>
+                </item>
+                <item>
+                    <TextId>ST3</TextId>
+                    <Descr>Matrix with errors</Descr>
+                </item>
+                <item>
+                    <TextId>ST4</TextId>
+                    <Descr>Matrix is incompatible with the DB and therefore deactivated</Descr>
+                </item>
+                <item>
+                    <TextId>ST5</TextId>
+                    <Descr>&amp;1: Missing characteristic '&amp;2' was added to the matrix definition</Descr>
+                </item>
+                <item>
+                    <TextId>STA</TextId>
+                    <Descr>Status</Descr>
+                </item>
+                <item>
+                    <TextId>STG</TextId>
+                    <Descr>Settings</Descr>
+                </item>
+                <item>
+                    <TextId>STK</TextId>
+                    <Descr>Filled key field</Descr>
+                </item>
+                <item>
+                    <TextId>STL</TextId>
+                    <Descr>Locked cells</Descr>
+                </item>
+                <item>
+                    <TextId>STN</TextId>
+                    <Descr>Settings</Descr>
+                </item>
+                <item>
+                    <TextId>STO</TextId>
+                    <Descr>Output cells in reports</Descr>
+                </item>
+                <item>
+                    <TextId>STS</TextId>
+                    <Descr>Blank key field</Descr>
+                </item>
+                <item>
+                    <TextId>STT</TextId>
+                    <Descr>Description of key</Descr>
+                </item>
+                <item>
+                    <TextId>STU</TextId>
+                    <Descr>Cells for data entry</Descr>
+                </item>
+                <item>
+                    <TextId>SUM</TextId>
+                    <Descr>Aggreg.</Descr>
+                </item>
+                <item>
+                    <TextId>SV0</TextId>
+                    <Descr>Save Interactive Excel data</Descr>
+                </item>
+                <item>
+                    <TextId>SV1</TextId>
+                    <Descr>Short texts for &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>SV2</TextId>
+                    <Descr>Long texts for &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>SV3</TextId>
+                    <Descr>Characteristics catalog</Descr>
+                </item>
+                <item>
+                    <TextId>SV4</TextId>
+                    <Descr>Matrix definitions</Descr>
+                </item>
+                <item>
+                    <TextId>SV5</TextId>
+                    <Descr>Backup copy of the matrix definitions</Descr>
+                </item>
+                <item>
+                    <TextId>SVC</TextId>
+                    <Descr>Characteristics for which you require attributes</Descr>
+                </item>
+                <item>
+                    <TextId>SVD</TextId>
+                    <Descr>Import data</Descr>
+                </item>
+                <item>
+                    <TextId>SVE</TextId>
+                    <Descr>Save changes?</Descr>
+                </item>
+                <item>
+                    <TextId>SVL</TextId>
+                    <Descr>Confirm</Descr>
+                </item>
+                <item>
+                    <TextId>SYM</TextId>
+                    <Descr>Display system messages</Descr>
+                </item>
+                <item>
+                    <TextId>SYS</TextId>
+                    <Descr>System ID</Descr>
+                </item>
+                <item>
+                    <TextId>TDC</TextId>
+                    <Descr>Origin of data</Descr>
+                </item>
+                <item>
+                    <TextId>TE1</TextId>
+                    <Descr>Characteristic: value</Descr>
+                </item>
+                <item>
+                    <TextId>TED</TextId>
+                    <Descr>Technical information</Descr>
+                </item>
+                <item>
+                    <TextId>TGT</TextId>
+                    <Descr>Target directory</Descr>
+                </item>
+                <item>
+                    <TextId>TIO</TextId>
+                    <Descr>Time out: operation terminated</Descr>
+                </item>
+                <item>
+                    <TextId>TV1</TextId>
+                    <Descr>Template version</Descr>
+                </item>
+                <item>
+                    <TextId>TV2</TextId>
+                    <Descr>Program version</Descr>
+                </item>
+                <item>
+                    <TextId>TV3</TextId>
+                    <Descr>DLL version</Descr>
+                </item>
+                <item>
+                    <TextId>TV4</TextId>
+                    <Descr>Database version</Descr>
+                </item>
+                <item>
+                    <TextId>TX0</TextId>
+                    <Descr>No text</Descr>
+                </item>
+                <item>
+                    <TextId>TX1</TextId>
+                    <Descr>Short Text</Descr>
+                </item>
+                <item>
+                    <TextId>TX2</TextId>
+                    <Descr>Medium Text</Descr>
+                </item>
+                <item>
+                    <TextId>TX3</TextId>
+                    <Descr>Long Text</Descr>
+                </item>
+                <item>
+                    <TextId>TYP</TextId>
+                    <Descr>Cat.</Descr>
+                </item>
+                <item>
+                    <TextId>UAL</TextId>
+                    <Descr>All files</Descr>
+                </item>
+                <item>
+                    <TextId>UDO</TextId>
+                    <Descr>Restore matrix</Descr>
+                </item>
+                <item>
+                    <TextId>UEF</TextId>
+                    <Descr>Unexpected error in compound characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>UGM</TextId>
+                    <Descr>You will be logged off from the database for the upgrade</Descr>
+                </item>
+                <item>
+                    <TextId>ULA</TextId>
+                    <Descr>Last refreshed by:</Descr>
+                </item>
+                <item>
+                    <TextId>ULD</TextId>
+                    <Descr>Write data</Descr>
+                </item>
+                <item>
+                    <TextId>ULK</TextId>
+                    <Descr>Unlock</Descr>
+                </item>
+                <item>
+                    <TextId>UM0</TextId>
+                    <Descr>No Modification</Descr>
+                </item>
+                <item>
+                    <TextId>UM1</TextId>
+                    <Descr>Delete - all FS items, all subassignments</Descr>
+                </item>
+                <item>
+                    <TextId>UM2</TextId>
+                    <Descr>Overwrite (entered items and subitems)</Descr>
+                </item>
+                <item>
+                    <TextId>UM3</TextId>
+                    <Descr>Delete (entered items, all subassignments)</Descr>
+                </item>
+                <item>
+                    <TextId>UM4</TextId>
+                    <Descr>Allocate (total per item does not change)</Descr>
+                </item>
+                <item>
+                    <TextId>UM9</TextId>
+                    <Descr>Delete (items in matrix, all subassignments)</Descr>
+                </item>
+                <item>
+                    <TextId>UMI</TextId>
+                    <Descr>The database only supports update mode '&amp;1'</Descr>
+                </item>
+                <item>
+                    <TextId>UMS</TextId>
+                    <Descr>Update mode</Descr>
+                </item>
+                <item>
+                    <TextId>UNA</TextId>
+                    <Descr>File is not an Interactive Excel workbook</Descr>
+                </item>
+                <item>
+                    <TextId>UOP</TextId>
+                    <Descr>Select one or more workbooks for upgrading</Descr>
+                </item>
+                <item>
+                    <TextId>UPC</TextId>
+                    <Descr>Complete upgrade</Descr>
+                </item>
+                <item>
+                    <TextId>UPE</TextId>
+                    <Descr>Update of data from matrix &amp;2 from page &amp;1</Descr>
+                </item>
+                <item>
+                    <TextId>UPF</TextId>
+                    <Descr>Derivation of file names</Descr>
+                </item>
+                <item>
+                    <TextId>UPG</TextId>
+                    <Descr>Upgrade</Descr>
+                </item>
+                <item>
+                    <TextId>UPL</TextId>
+                    <Descr>Data Entry</Descr>
+                </item>
+                <item>
+                    <TextId>UPS</TextId>
+                    <Descr>Secure upgrade</Descr>
+                </item>
+                <item>
+                    <TextId>USA</TextId>
+                    <Descr>Access User</Descr>
+                </item>
+                <item>
+                    <TextId>USB</TextId>
+                    <Descr>Upgrading workbooks</Descr>
+                </item>
+                <item>
+                    <TextId>USD</TextId>
+                    <Descr>Data exported successfully</Descr>
+                </item>
+                <item>
+                    <TextId>USE</TextId>
+                    <Descr>Data was written with messages.</Descr>
+                </item>
+                <item>
+                    <TextId>USF</TextId>
+                    <Descr>Test run completed with messages.</Descr>
+                </item>
+                <item>
+                    <TextId>USN</TextId>
+                    <Descr>User</Descr>
+                </item>
+                <item>
+                    <TextId>USP</TextId>
+                    <Descr>An audit trail of the messages is created.</Descr>
+                </item>
+                <item>
+                    <TextId>UST</TextId>
+                    <Descr>Test run completed without errors</Descr>
+                </item>
+                <item>
+                    <TextId>USY</TextId>
+                    <Descr>Error while exporting data</Descr>
+                </item>
+                <item>
+                    <TextId>UUC</TextId>
+                    <Descr>Locked cells</Descr>
+                </item>
+                <item>
+                    <TextId>UWB</TextId>
+                    <Descr>Excel workbook</Descr>
+                </item>
+                <item>
+                    <TextId>VAL</TextId>
+                    <Descr>Validation</Descr>
+                </item>
+                <item>
+                    <TextId>VDE</TextId>
+                    <Descr>Long Text</Descr>
+                </item>
+                <item>
+                    <TextId>VER</TextId>
+                    <Descr>Vertically</Descr>
+                </item>
+                <item>
+                    <TextId>VFT</TextId>
+                    <Descr>Proportional font</Descr>
+                </item>
+                <item>
+                    <TextId>VID</TextId>
+                    <Descr>Value ID</Descr>
+                </item>
+                <item>
+                    <TextId>VIT</TextId>
+                    <Descr>Interface</Descr>
+                </item>
+                <item>
+                    <TextId>VK0</TextId>
+                    <Descr>You can ignore this message and continue working</Descr>
+                </item>
+                <item>
+                    <TextId>VK1</TextId>
+                    <Descr>with this version. However, you will not be able to</Descr>
+                </item>
+                <item>
+                    <TextId>VK2</TextId>
+                    <Descr>use any adjustments and enhancements featured in the</Descr>
+                </item>
+                <item>
+                    <TextId>VK3</TextId>
+                    <Descr>new version.</Descr>
+                </item>
+                <item>
+                    <TextId>VK4</TextId>
+                    <Descr>Do you want to continue working with the existing</Descr>
+                </item>
+                <item>
+                    <TextId>VK5</TextId>
+                    <Descr>version without the upgrade?</Descr>
+                </item>
+                <item>
+                    <TextId>VLI</TextId>
+                    <Descr>Insert values</Descr>
+                </item>
+                <item>
+                    <TextId>VLL</TextId>
+                    <Descr>List of values</Descr>
+                </item>
+                <item>
+                    <TextId>VLR</TextId>
+                    <Descr>Reference values</Descr>
+                </item>
+                <item>
+                    <TextId>VMM</TextId>
+                    <Descr>Incompatible versions of program components</Descr>
+                </item>
+                <item>
+                    <TextId>VNS</TextId>
+                    <Descr>Not all required characteristics have been defined</Descr>
+                </item>
+                <item>
+                    <TextId>VRS</TextId>
+                    <Descr>Version</Descr>
+                </item>
+                <item>
+                    <TextId>VTA</TextId>
+                    <Descr>Attributes of &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>VTH</TextId>
+                    <Descr>Hierarchies for &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>VTN</TextId>
+                    <Descr>You need to upgrade Interactive Excel</Descr>
+                </item>
+                <item>
+                    <TextId>VTO</TextId>
+                    <Descr>You need to upgrade the workbook</Descr>
+                </item>
+                <item>
+                    <TextId>VTS</TextId>
+                    <Descr>Sets for &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>VTV</TextId>
+                    <Descr>Values of &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>WKB</TextId>
+                    <Descr>Workbook</Descr>
+                </item>
+                <item>
+                    <TextId>WKS</TextId>
+                    <Descr>Worksheet</Descr>
+                </item>
+                <item>
+                    <TextId>XPR</TextId>
+                    <Descr>Convert data structures for version:</Descr>
+                </item>
+                <item>
+                    <TextId>XSS</TextId>
+                    <Descr>Vectors have different lengths in the column definition</Descr>
+                </item>
+                <item>
+                    <TextId>YSS</TextId>
+                    <Descr>Vectors have different lengths in the column definition</Descr>
+                </item>
+                <item>
+                    <TextId>ZC0</TextId>
+                    <Descr>Data was not saved</Descr>
+                </item>
+                <item>
+                    <TextId>ZC1</TextId>
+                    <Descr>Internal error during value check</Descr>
+                </item>
+                <item>
+                    <TextId>ZC2</TextId>
+                    <Descr>&amp; is an aggregation</Descr>
+                </item>
+                <item>
+                    <TextId>ZC3</TextId>
+                    <Descr>No authorization for &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZC4</TextId>
+                    <Descr>You cannot use a wildcard</Descr>
+                </item>
+                <item>
+                    <TextId>ZCL</TextId>
+                    <Descr>Connection to SAP lost</Descr>
+                </item>
+                <item>
+                    <TextId>ZDB</TextId>
+                    <Descr>Error while accessing database in selection &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZDE</TextId>
+                    <Descr>Value with more than &amp; decimal places was rounded</Descr>
+                </item>
+                <item>
+                    <TextId>ZDI</TextId>
+                    <Descr>Different values for a characteristic in the matrix header</Descr>
+                </item>
+                <item>
+                    <TextId>ZDV</TextId>
+                    <Descr>More than one data record</Descr>
+                </item>
+                <item>
+                    <TextId>ZE0</TextId>
+                    <Descr>Can not be updated</Descr>
+                </item>
+                <item>
+                    <TextId>ZE1</TextId>
+                    <Descr>Entry not in data entry form</Descr>
+                </item>
+                <item>
+                    <TextId>ZE2</TextId>
+                    <Descr>Invalid or incomplete breakdown: Additional field 1</Descr>
+                </item>
+                <item>
+                    <TextId>ZE3</TextId>
+                    <Descr>Invalid or incomplete breakdown: Additional field 2</Descr>
+                </item>
+                <item>
+                    <TextId>ZE4</TextId>
+                    <Descr>Invalid or incomplete breakdown: Additional field 3</Descr>
+                </item>
+                <item>
+                    <TextId>ZE5</TextId>
+                    <Descr>Invalid or incomplete breakdown: Transaction type</Descr>
+                </item>
+                <item>
+                    <TextId>ZE6</TextId>
+                    <Descr>Invalid or incomplete breakdown: Trading partner</Descr>
+                </item>
+                <item>
+                    <TextId>ZE7</TextId>
+                    <Descr>Invalid or incomplete breakdown: transaction currency</Descr>
+                </item>
+                <item>
+                    <TextId>ZE8</TextId>
+                    <Descr>Invalid or incomplete breakdown: year of acquisition</Descr>
+                </item>
+                <item>
+                    <TextId>ZE9</TextId>
+                    <Descr>Invalid transaction type</Descr>
+                </item>
+                <item>
+                    <TextId>ZEA</TextId>
+                    <Descr>Invalid trading partner</Descr>
+                </item>
+                <item>
+                    <TextId>ZEB</TextId>
+                    <Descr>Invalid transaction currency</Descr>
+                </item>
+                <item>
+                    <TextId>ZEC</TextId>
+                    <Descr>Invalid combination of additional fields</Descr>
+                </item>
+                <item>
+                    <TextId>ZED</TextId>
+                    <Descr>Invalid unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZEE</TextId>
+                    <Descr>Invalid version</Descr>
+                </item>
+                <item>
+                    <TextId>ZEF</TextId>
+                    <Descr>Invalid company</Descr>
+                </item>
+                <item>
+                    <TextId>ZEG</TextId>
+                    <Descr>Invalid accounting period</Descr>
+                </item>
+                <item>
+                    <TextId>ZEH</TextId>
+                    <Descr>Invalid item</Descr>
+                </item>
+                <item>
+                    <TextId>ZEI</TextId>
+                    <Descr>This entry has more than one value</Descr>
+                </item>
+                <item>
+                    <TextId>ZF0</TextId>
+                    <Descr>Cannot be saved to the database</Descr>
+                </item>
+                <item>
+                    <TextId>ZF1</TextId>
+                    <Descr>Entry not found in data entry layouts</Descr>
+                </item>
+                <item>
+                    <TextId>ZF2</TextId>
+                    <Descr>Invalid or missing subassignment: subitem</Descr>
+                </item>
+                <item>
+                    <TextId>ZF3</TextId>
+                    <Descr>Invalid or missing subassignment: partner unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZF4</TextId>
+                    <Descr>Invalid or missing subassignment: transaction currency</Descr>
+                </item>
+                <item>
+                    <TextId>ZF5</TextId>
+                    <Descr>Invalid or missing subassignment: year of acquisition</Descr>
+                </item>
+                <item>
+                    <TextId>ZF6</TextId>
+                    <Descr>Invalid subitem</Descr>
+                </item>
+                <item>
+                    <TextId>ZF7</TextId>
+                    <Descr>Invalid partner unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZF8</TextId>
+                    <Descr>Invalid transaction currency</Descr>
+                </item>
+                <item>
+                    <TextId>ZF9</TextId>
+                    <Descr>Invalid base unit of measure</Descr>
+                </item>
+                <item>
+                    <TextId>ZFA</TextId>
+                    <Descr>Invalid cons chart of accounts</Descr>
+                </item>
+                <item>
+                    <TextId>ZFB</TextId>
+                    <Descr>Invalid dimension</Descr>
+                </item>
+                <item>
+                    <TextId>ZFC</TextId>
+                    <Descr>Invalid subitem catagory</Descr>
+                </item>
+                <item>
+                    <TextId>ZFD</TextId>
+                    <Descr>Invalid accounting period</Descr>
+                </item>
+                <item>
+                    <TextId>ZFE</TextId>
+                    <Descr>Invalid item</Descr>
+                </item>
+                <item>
+                    <TextId>ZFF</TextId>
+                    <Descr>Invalid version</Descr>
+                </item>
+                <item>
+                    <TextId>ZFG</TextId>
+                    <Descr>Invalid consolidation unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZFH</TextId>
+                    <Descr>Default value not allowed for partner</Descr>
+                </item>
+                <item>
+                    <TextId>ZFI</TextId>
+                    <Descr>No data can be entered for the consoldiation unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZFJ</TextId>
+                    <Descr>More than one value specified for the entry.</Descr>
+                </item>
+                <item>
+                    <TextId>ZFK</TextId>
+                    <Descr>Partner unit may not be the same as the consolidation unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZFL</TextId>
+                    <Descr>Subitem is blocked against data entry</Descr>
+                </item>
+                <item>
+                    <TextId>ZFM</TextId>
+                    <Descr>Item is blocked against data entry</Descr>
+                </item>
+                <item>
+                    <TextId>ZFN</TextId>
+                    <Descr>Values cannot be entered for text items</Descr>
+                </item>
+                <item>
+                    <TextId>ZFO</TextId>
+                    <Descr>Values cannot be entered for totals items</Descr>
+                </item>
+                <item>
+                    <TextId>ZFW</TextId>
+                    <Descr>Invalid or missing subassignment: &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZFX</TextId>
+                    <Descr>Invalid value for the characteristic &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZFY</TextId>
+                    <Descr>Default value not allowed here for characteristic &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZFZ</TextId>
+                    <Descr>A different value is set for &amp; in the breakdown category</Descr>
+                </item>
+                <item>
+                    <TextId>ZG0</TextId>
+                    <Descr>Base data generated for company &amp;2 in</Descr>
+                </item>
+                <item>
+                    <TextId>ZG1</TextId>
+                    <Descr>version &amp;1, dimension &amp;0, year, &amp;3, period &amp;4.</Descr>
+                </item>
+                <item>
+                    <TextId>ZG2</TextId>
+                    <Descr>Base data could not be generated for company &amp;2 in</Descr>
+                </item>
+                <item>
+                    <TextId>ZG3</TextId>
+                    <Descr>version &amp;1, dimension &amp;0, year, &amp;3, period &amp;4.</Descr>
+                </item>
+                <item>
+                    <TextId>ZGE</TextId>
+                    <Descr>Generation completed for version &amp;0, company &amp;1, in &amp;2/&amp;3</Descr>
+                </item>
+                <item>
+                    <TextId>ZIA</TextId>
+                    <Descr>Aspect &amp; invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIB</TextId>
+                    <Descr>Invalid or incomplete compound characteristic</Descr>
+                </item>
+                <item>
+                    <TextId>ZIC</TextId>
+                    <Descr>Characteristic &amp; invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIE</TextId>
+                    <Descr>Internal error</Descr>
+                </item>
+                <item>
+                    <TextId>ZIH</TextId>
+                    <Descr>Hierarchy &amp; invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIM</TextId>
+                    <Descr>Set &amp; invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIS</TextId>
+                    <Descr>Enter +, -, or 0</Descr>
+                </item>
+                <item>
+                    <TextId>ZIT</TextId>
+                    <Descr>Attribute &amp; invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIV</TextId>
+                    <Descr>Allocation '&amp;' invalid</Descr>
+                </item>
+                <item>
+                    <TextId>ZIX</TextId>
+                    <Descr>Column structure has error(s)</Descr>
+                </item>
+                <item>
+                    <TextId>ZIY</TextId>
+                    <Descr>Row structure has error(s)</Descr>
+                </item>
+                <item>
+                    <TextId>ZMA</TextId>
+                    <Descr>Invalid or missing key figure</Descr>
+                </item>
+                <item>
+                    <TextId>ZMT</TextId>
+                    <Descr>No text available</Descr>
+                </item>
+                <item>
+                    <TextId>ZMU</TextId>
+                    <Descr>Value required for &amp; in order to determine a currency/unit</Descr>
+                </item>
+                <item>
+                    <TextId>ZNG</TextId>
+                    <Descr>Generation failed for version &amp;0, company &amp;1, in &amp;2/&amp;3</Descr>
+                </item>
+                <item>
+                    <TextId>ZNK</TextId>
+                    <Descr>Specify a key figure</Descr>
+                </item>
+                <item>
+                    <TextId>ZNS</TextId>
+                    <Descr>&amp; cannot be used as an aggregation</Descr>
+                </item>
+                <item>
+                    <TextId>ZNU</TextId>
+                    <Descr>Data record could not be updated</Descr>
+                </item>
+                <item>
+                    <TextId>ZNW</TextId>
+                    <Descr>Data was not saved</Descr>
+                </item>
+                <item>
+                    <TextId>ZSA</TextId>
+                    <Descr>Total with ambiguous sign</Descr>
+                </item>
+                <item>
+                    <TextId>ZUE</TextId>
+                    <Descr>Unknown error</Descr>
+                </item>
+                <item>
+                    <TextId>ZUU</TextId>
+                    <Descr>Error in data record &amp;</Descr>
+                </item>
+                <item>
+                    <TextId>ZV0</TextId>
+                    <Descr>Validating local val. data for co. &amp;1, version &amp;0 in &amp;2/&amp;3</Descr>
+                </item>
+                <item>
+                    <TextId>ZV1</TextId>
+                    <Descr>Validating group val. data for co. &amp;1, version &amp;0 in &amp;2/&amp;3</Descr>
+                </item>
+                <item>
+                    <TextId>ZV2</TextId>
+                    <Descr>Validating local valuation data for company &amp;2,</Descr>
+                </item>
+                <item>
+                    <TextId>ZV3</TextId>
+                    <Descr>version &amp;1 and dimension &amp;0 in &amp;3/&amp;4</Descr>
+                </item>
+                <item>
+                    <TextId>ZV4</TextId>
+                    <Descr>Validating corporate valuation data for company &amp;2,</Descr>
+                </item>
+                <item>
+                    <TextId>ZV5</TextId>
+                    <Descr>version &amp;1 and dimension &amp;0 in &amp;3/&amp;4</Descr>
+                </item>
+                <item>
+                    <TextId>ZVA</TextId>
+                    <Descr>Error found for rule &amp;5: '&amp;8 (&amp;6)</Descr>
+                </item>
+            </EProgramTexts>
+            <Exception/>
+        </n0:FcxlGetProgramTextsResponse>
+    </soap-env:Body>
+</soap-env:Envelope>

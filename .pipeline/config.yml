@@ -11,29 +11,22 @@ steps:
 stages:
   test:
     coverageThresholds:
-      # TODO: Switch to actual thresholds from previous pipeline once all modules are moved over
-      # instruction: 75
-      # branch: 68
-      # complexity: 66
-      # line: 76
-      # method: 73
-      # class: 82
-      instruction: -1
-      branch: -1
-      complexity: -1
-      line: -1
-      method: -1
-      class: -1
+      instruction: 75
+      branch: 67
+      complexity: 65
+      line: 76
+      method: 71
+      class: 80
   codeCheck:
     checkstyle:
-      high: '3'
-      normal: '-1'
-      low: '-1'
-    findbugs:
+      high: '14'# Open tasks (to do or fix me)
+      normal: '0'
+      low: '216'
+    findbugs: #SpotBugs
       high: '0'
-      normal: '-1'
-      low: '-1'
+      normal: '0'
+      low: '0'
     pmd:
       high: '0'
-      normal: '-1'
-      low: '-1'
+      normal: '19'
+      low: '10'

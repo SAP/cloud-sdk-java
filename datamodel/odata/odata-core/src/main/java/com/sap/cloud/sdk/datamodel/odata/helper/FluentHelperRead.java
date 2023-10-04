@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.Arrays;
@@ -15,8 +19,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCount;
@@ -26,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of an OData query as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -150,7 +154,7 @@ public abstract class FluentHelperRead<FluentHelperT, EntityT extends VdmEntity<
 
     @Override
     @Nonnull
-    public List<EntityT> executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public List<EntityT> executeRequest( @Nonnull final Destination destination )
         throws com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException
     {
         final Iterable<List<EntityT>> iterablePages = iteratingPages().executeRequest(destination);
@@ -200,7 +204,7 @@ public abstract class FluentHelperRead<FluentHelperT, EntityT extends VdmEntity<
     }
 
     @Nonnull
-    private Iterable<List<EntityT>> executeInternal( @Nonnull final HttpDestinationProperties destination )
+    private Iterable<List<EntityT>> executeInternal( @Nonnull final Destination destination )
         throws com.sap.cloud.sdk.datamodel.odata.client.exception.ODataException
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);

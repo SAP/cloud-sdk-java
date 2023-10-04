@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import java.util.ArrayList;
@@ -12,8 +16,8 @@ import javax.annotation.Nonnull;
 import org.apache.http.client.HttpClient;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestAction;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
@@ -36,7 +40,7 @@ import lombok.Getter;
 
 /**
  * Representation of any OData batch request as a fluent interface for managing changesets and
- * {@link #executeRequest(HttpDestinationProperties) executing} them in a single query.
+ * {@link #executeRequest(Destination) executing} them in a single query.
  *
  * @param <FluentHelperBatchT>
  *            The fluent helper type.
@@ -76,7 +80,7 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
 
     @Nonnull
     @Override
-    public BatchResponse executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public BatchResponse executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
         // TODO Consider allowing custom Headers

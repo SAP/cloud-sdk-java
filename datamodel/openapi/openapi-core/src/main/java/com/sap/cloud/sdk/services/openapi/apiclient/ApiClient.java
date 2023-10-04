@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import java.io.UnsupportedEncodingException;
@@ -43,8 +47,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.frameworks.apachehttpclient5.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.ApiKeyAuth;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.Authentication;
@@ -138,13 +142,13 @@ public final class ApiClient
     }
 
     /**
-     * Creates an instance of this class given an instance of {@link HttpDestinationProperties}. The rest template will
-     * ignore getters and setters names for Jackson properties.
+     * Creates an instance of this class given an instance of {@link Destination}. The rest template will ignore getters
+     * and setters names for Jackson properties.
      *
      * @param destination
-     *            An instance of {@link HttpDestinationProperties}
+     *            An instance of {@link Destination}
      */
-    public ApiClient( @Nonnull final HttpDestinationProperties destination )
+    public ApiClient( @Nonnull final Destination destination )
     {
         this.restTemplate = setRequestFactory(newDefaultRestTemplate(), destination);
         init();
@@ -811,9 +815,9 @@ public final class ApiClient
     }
 
     @Nonnull
-    private static RestTemplate setRequestFactory(
-        @Nonnull final RestTemplate restTemplate,
-        @Nonnull final HttpDestinationProperties destination )
+    private static
+        RestTemplate
+        setRequestFactory( @Nonnull final RestTemplate restTemplate, @Nonnull final Destination destination )
     {
         // instantiate template with prepared HttpClient, featuring repeated response reading
         final HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -830,10 +834,9 @@ public final class ApiClient
         return restTemplate;
     }
 
-    @SuppressWarnings( "PMD.EmptyCatchBlock" )
     private static void setHttpClientDependingOnSpringVersion(
         @Nonnull final HttpComponentsClientHttpRequestFactory httpRequestFactory,
-        @Nonnull final HttpDestinationProperties destination )
+        @Nonnull final Destination destination )
         throws InvocationTargetException,
             IllegalAccessException
     {

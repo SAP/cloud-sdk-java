@@ -12,10 +12,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring-boot.version>2.7.15</spring-boot.version>
+        <spring-boot.version>2.7.16</spring-boot.version>
 
         <java.version>1.8</java.version>
-        <cloud-sdk.version>4.20.0</cloud-sdk.version>
+        <cloud-sdk.version>5.0.0-alpha-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -84,7 +84,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>SAP Cloud SDK Project Structure Checks</id>

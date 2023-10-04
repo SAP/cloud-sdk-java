@@ -5,7 +5,7 @@
 
 	<groupId>com.company</groupId>
 	<artifactId>application</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>5.0.0-alpha-SNAPSHOT</version>
 
 	<build>
 		<plugins>

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.Arrays;
@@ -9,8 +13,8 @@ import javax.annotation.Nullable;
 import org.apache.http.client.HttpClient;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
@@ -19,7 +23,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneri
 
 /**
  * Representation of an OData request to retrieve an entity by its key as a fluent interface for further configuring the
- * request and {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * request and {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -97,7 +101,7 @@ public abstract class FluentHelperByKey<FluentHelperT, EntityT extends VdmEntity
 
     @Override
     @Nonnull
-    public EntityT executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public EntityT executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);

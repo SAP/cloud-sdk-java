@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>datamodel-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-parent</artifactId>
 	<packaging>pom</packaging>
@@ -18,7 +18,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -31,6 +31,8 @@
 	</developers>
 	<modules>
 		<module>odata-core</module>
+		<module>odata-generator</module>
+		<module>odata-generator-maven-plugin</module>
 	</modules>
 	<scm>
 		<connection />
@@ -41,4 +43,18 @@
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 	</properties>
+	<profiles>
+		<profile>
+			<id>code.scans.included</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>sdk.code.scanning</name>
+				</property>
+			</activation>
+			<modules>
+				<module>odata-api-sample</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>

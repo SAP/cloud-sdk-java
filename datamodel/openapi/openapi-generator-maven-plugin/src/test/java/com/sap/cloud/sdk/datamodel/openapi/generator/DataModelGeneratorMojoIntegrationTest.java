@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Predicate;
 
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
@@ -13,7 +20,8 @@ import org.junit.rules.TemporaryFolder;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
-import com.sap.cloud.sdk.testutil.DirectoryContentAssertionUtil;
+
+import lombok.SneakyThrows;
 
 /**
  * This integration test might look redundant to {@code DataModelGeneratorIntegrationTest} from the openapi-generator
@@ -40,10 +48,9 @@ public class DataModelGeneratorMojoIntegrationTest
 
         generateSodastoreLibrary(outputFolderWithActualContent);
 
-        DirectoryContentAssertionUtil
-            .assertThatDirectoriesHaveSameContent(
-                Paths.get(outputFolderWithActualContent),
-                Paths.get(FOLDER_WITH_EXPECTED_CONTENT));
+        assertThatDirectoriesHaveSameContent(
+            Paths.get(FOLDER_WITH_EXPECTED_CONTENT),
+            Paths.get(outputFolderWithActualContent));
     }
 
     // Run this test method manually to overwrite the folder containing the expected content with the latest generator state
@@ -81,5 +88,14 @@ public class DataModelGeneratorMojoIntegrationTest
         mojo.setOutputDirectory(outputDirectory);
 
         mojo.execute();
+    }
+
+    @SuppressWarnings( "resource" )
+    @SneakyThrows
+    private static void assertThatDirectoriesHaveSameContent( final Path a, final Path b )
+    {
+        final Predicate<Path> isFile = p -> p.toFile().isFile();
+        Files.walk(a).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(b.resolve(a.relativize(p))));
+        Files.walk(b).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(a.resolve(b.relativize(p))));
     }
 }

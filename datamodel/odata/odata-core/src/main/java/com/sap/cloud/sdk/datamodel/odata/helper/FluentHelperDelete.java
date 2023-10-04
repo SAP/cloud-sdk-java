@@ -1,11 +1,15 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ETagSubmissionStrategy;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
@@ -16,7 +20,7 @@ import io.vavr.control.Option;
 
 /**
  * Representation of an OData delete request as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -43,7 +47,7 @@ public abstract class FluentHelperDelete<FluentHelperT, EntityT extends VdmEntit
     }
 
     /**
-     * The entity object to be deleted by calling the {@link #executeRequest(HttpDestinationProperties)} method.
+     * The entity object to be deleted by calling the {@link #executeRequest(Destination)} method.
      *
      * @return The entity to be deleted.
      */
@@ -92,7 +96,7 @@ public abstract class FluentHelperDelete<FluentHelperT, EntityT extends VdmEntit
 
     @Override
     @Nonnull
-    public ModificationResponse<EntityT> executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public ModificationResponse<EntityT> executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
         final ODataRequestResultGeneric result = toRequest().execute(httpClient);

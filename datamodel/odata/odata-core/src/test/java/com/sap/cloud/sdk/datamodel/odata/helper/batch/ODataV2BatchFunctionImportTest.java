@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper.batch;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -26,6 +30,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
@@ -155,7 +160,7 @@ public class ODataV2BatchFunctionImportTest
     @Test
     public void testLowLevelToHighLevel()
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final Destination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
 
         final TestVdmEntityBatch testVdmEntityBatch = new TestVdmEntityBatch("");
 

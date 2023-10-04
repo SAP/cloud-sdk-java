@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-api-sample</artifactId>
 	<name>Data Model - OpenAPI Services - Sample API</name>
@@ -17,7 +17,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>
@@ -84,70 +84,58 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>generate-sample-modules</id>
-			<activation>
-				<property>
-					<name>!skip-generate-samples</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.sap.cloud.sdk.datamodel</groupId>
-						<artifactId>openapi-generator-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/sodastore.json</inputSpec>
-							<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
-							<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
-							<apiMaturity>released</apiMaturity>
-							<deleteOutputDirectory>true</deleteOutputDirectory>
-							<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-						</configuration>
-					</plugin>
-					<!-- Enable formatter to always run on the generated code -->
-					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>format</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<skip>false</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sort-imports</id>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>sort</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<skip>false</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.sap.cloud.sdk.datamodel</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<inputSpec>${project.basedir}/src/main/resources/sodastore.json</inputSpec>
+					<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
+					<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
+					<apiMaturity>released</apiMaturity>
+					<deleteOutputDirectory>true</deleteOutputDirectory>
+					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+					<sapCopyrightHeader>true</sapCopyrightHeader>
+				</configuration>
+			</plugin>
+			<!-- Enable formatter to always run on the generated code -->
+			<plugin>
+				<groupId>net.revelc.code.formatter</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>net.revelc.code</groupId>
+				<artifactId>impsort-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sort</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

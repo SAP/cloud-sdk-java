@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
@@ -17,7 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Soda; //NOPMD
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId; //NOPMD
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
@@ -38,7 +41,7 @@ public class SodasApi extends AbstractOpenApiService
      * @param httpDestination
      *            The destination that API should be used with
      */
-    public SodasApi( @Nonnull final HttpDestinationProperties httpDestination )
+    public SodasApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }

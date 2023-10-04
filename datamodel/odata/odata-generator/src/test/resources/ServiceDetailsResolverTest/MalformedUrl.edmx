@@ -1,0 +1,28 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="SomeService" xml:lang="en"
+                sap:schema-version="1">
+            <EntityType Name="SomeEntityType" sap:label="Some Description"
+                        sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SomeKeyProperty"/>
+                </Key>
+                <Property Name="SomeKeyProperty" Type="Edm.String" Nullable="false" MaxLength="8" sap:display-format="NonNegative"
+                          sap:label="Key Property" sap:quickinfo="Some Quick description"/>
+                <Property Name="SomeOtherProperty" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase"
+                          sap:label="Other Property" sap:quickinfo="Some other Quick description"/>
+            </EntityType>
+            <EntityContainer Name="SomeEntityContainer" m:IsDefaultEntityContainer="true"
+                             sap:supported-formats="atom json xlsx">
+                <EntitySet Name="SomeEntitySet" EntityType="SomeEntityType"
+                           sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self"
+                       href="https://malformed   example   .com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
+                       href="https://malformed   example   .com:12345/sap/opu/odata/sap/SomeService/$metadata"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

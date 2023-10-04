@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -9,8 +13,8 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
 public class ApiClientFromDestinationTest
@@ -40,7 +44,7 @@ public class ApiClientFromDestinationTest
 
     private class MyTestAbstractOpenApiService extends AbstractOpenApiService
     {
-        public MyTestAbstractOpenApiService( final HttpDestinationProperties destination )
+        public MyTestAbstractOpenApiService( final Destination destination )
         {
             super(destination);
         }
@@ -53,7 +57,7 @@ public class ApiClientFromDestinationTest
 
     private static class MyExceptionThrowingServiceAbstract extends AbstractOpenApiService
     {
-        public MyExceptionThrowingServiceAbstract( final HttpDestinationProperties destination )
+        public MyExceptionThrowingServiceAbstract( final Destination destination )
         {
             super(destination);
         }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.List;
@@ -11,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.SerializedName;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -64,7 +68,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
     @Setter( AccessLevel.PROTECTED )
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    private transient HttpDestinationProperties destinationForFetch;
+    private transient Destination destinationForFetch;
 
     /**
      * Getter for the version identifier of this entity.
@@ -135,9 +139,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
      * @param destination
      *            New destination to apply to this entity and any associated entities that were previously fetched.
      */
-    protected
-        void
-        attachToService( @Nullable final String servicePath, @Nonnull final HttpDestinationProperties destination )
+    protected void attachToService( @Nullable final String servicePath, @Nonnull final Destination destination )
     {
         if( servicePath != null ) {
             servicePathForFetch = servicePath;
@@ -181,7 +183,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
         @Nonnull final String fieldName,
         @Nonnull final Class<T> fieldType )
     {
-        final HttpDestinationProperties destination = getDestinationForFetch();
+        final Destination destination = getDestinationForFetch();
         final ODataRequestResultGeneric response = fetchField(fieldName, destination);
         final List<T> entityList = response.asList(fieldType);
         for( final T entity : entityList ) {
@@ -206,7 +208,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
         @Nonnull final String fieldName,
         @Nonnull final Class<T> fieldType )
     {
-        final HttpDestinationProperties destination = getDestinationForFetch();
+        final Destination destination = getDestinationForFetch();
         final ODataRequestResultGeneric response = fetchField(fieldName, destination);
         final T entity = response.as(fieldType);
         entity.attachToService(getServicePathForFetch(), destination);
@@ -216,7 +218,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
     @Nonnull
     private <T extends VdmEntity<T>> ODataRequestResultGeneric fetchField(
         final String fieldName,
-        final HttpDestinationProperties destination )
+        final Destination destination )
     {
         final ODataEntityKey entityKey = ODataEntityKey.of(getKey(), ODataProtocol.V2);
         final ODataResourcePath path = ODataResourcePath.of(getEntityCollection(), entityKey).addSegment(fieldName);

@@ -1,6 +1,10 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.testutil.ThrowableAssertionUtil.assertHasSuppressedExceptionTypes;
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -9,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -108,11 +113,12 @@ public class DataModelGeneratorUnitTest
         Try<GenerationResult> result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(
-            result.getCause(),
-            IllegalArgumentException.class,
-            IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class),
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
 
         //assert on empty input file
         configuration =
@@ -128,11 +134,12 @@ public class DataModelGeneratorUnitTest
 
         result = new DataModelGenerator().generateDataModel(configuration);
 
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(
-            result.getCause(),
-            IllegalArgumentException.class,
-            IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class),
+                e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
     }
 
     @Test
@@ -152,8 +159,10 @@ public class DataModelGeneratorUnitTest
         Try<GenerationResult> result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
 
         //assert on provided but empty API package
         configuration =
@@ -170,8 +179,10 @@ public class DataModelGeneratorUnitTest
         result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
     }
 
     @Test
@@ -191,8 +202,10 @@ public class DataModelGeneratorUnitTest
         Try<GenerationResult> result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
 
         //assert on provided but empty model package
         configuration =
@@ -209,8 +222,10 @@ public class DataModelGeneratorUnitTest
         result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
     }
 
     @Test
@@ -230,8 +245,10 @@ public class DataModelGeneratorUnitTest
         Try<GenerationResult> result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
 
         //assert on provided but empty output directory value
         configuration =
@@ -248,8 +265,10 @@ public class DataModelGeneratorUnitTest
         result = new DataModelGenerator().generateDataModel(configuration);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(result.getCause(), IllegalArgumentException.class);
+        assertThat(result.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class));
     }
 
     @Test
@@ -277,8 +296,10 @@ public class DataModelGeneratorUnitTest
             new DataModelGenerator(noOpMock).generateDataModel(configuration);
 
         assertThat(generationResult.isFailure()).isTrue();
-        assertThat(generationResult.getCause()).isInstanceOf(OpenApiGeneratorException.class);
-        assertHasSuppressedExceptionTypes(generationResult.getCause(), IllegalStateException.class);
+        assertThat(generationResult.getCause())
+            .isInstanceOf(OpenApiGeneratorException.class)
+            .extracting(Throwable::getSuppressed, as(InstanceOfAssertFactories.array(Throwable[].class)))
+            .satisfiesExactly(e -> assertThat(e).isInstanceOf(IllegalStateException.class));
     }
 
     @Test

@@ -1,14 +1,13 @@
-package com.sap.cloud.sdk.testutil;
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 
-import java.util.Collection;
-import java.util.Map;
+package com.sap.cloud.sdk.testutil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.sap.cloud.sdk.cloudplatform.security.Authorization;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAttribute;
 
 interface PrincipalMocker
 {
@@ -17,22 +16,6 @@ interface PrincipalMocker
      */
     @Nonnull
     Principal mockPrincipal( @Nonnull final String principalId );
-
-    /**
-     * Mocks a {@link Principal}.
-     *
-     * @param principalId
-     *            Identifier of the principal.
-     * @param authorizations
-     *            Optional authorizations of the principal.
-     * @param attributes
-     *            Optional attributes of the principal.
-     */
-    @Nonnull
-    Principal mockPrincipal(
-        @Nonnull final String principalId,
-        @Nullable final Collection<Authorization> authorizations,
-        @Nullable final Map<String, PrincipalAttribute> attributes );
 
     /**
      * Mocks the current {@link Principal} with principal identifier {@link MockUtil#MOCKED_PRINCIPAL}.
@@ -45,22 +28,6 @@ interface PrincipalMocker
      */
     @Nonnull
     Principal mockCurrentPrincipal( @Nonnull final String principalId );
-
-    /**
-     * Mocks the current {@link Principal}.
-     *
-     * @param principalId
-     *            Identifier of the principal.
-     * @param authorizations
-     *            Optional authorizations of the principal.
-     * @param attributes
-     *            Optional attributes of the principal.
-     */
-    @Nonnull
-    Principal mockCurrentPrincipal(
-        @Nonnull final String principalId,
-        @Nullable final Collection<Authorization> authorizations,
-        @Nullable final Map<String, PrincipalAttribute> attributes );
 
     /**
      * Sets the current {@link Principal}. Clears the current {@link Principal} if given {@code null}.

@@ -83,6 +83,8 @@ def compute_coverage(file_list) :
     for filename in file_list :
         with open(filename, newline='') as csv_file :
             jacoco_reader = csv.reader(csv_file)
+            local_classes_missed = 0
+            local_classes_covered = 0
             for i, row in enumerate(jacoco_reader) :
                 if i > 0 :
                     missed_instructions += int(row[3])
@@ -96,9 +98,12 @@ def compute_coverage(file_list) :
                     method_missed += int(row[11])
                     method_covered += int(row[12])
                     if int(row[8]) == 0:
-                        classes_missed += 1
+                        local_classes_missed += 1
                     else:
-                        classes_covered += 1
+                        local_classes_covered += 1
+            classes_missed += local_classes_missed
+            classes_covered += local_classes_covered
+            print(f"{filename} {local_classes_missed + local_classes_covered} classes")
 
     return (calculate_percentage(covered_instructions, missed_instructions),
             calculate_percentage(covered_branches, missed_branches),
@@ -110,9 +115,9 @@ def compute_coverage(file_list) :
             classes_covered + classes_missed)
 
 def calculate_percentage(covered, missed) :
-    if covered == 0 & missed == 0 :
+    if covered == 0 and missed == 0:
         sys.exit('No coverage data found')
-    return int((covered / (covered + missed)) * 100)
+    return int(covered * 100 / (covered + missed))
 
 def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(

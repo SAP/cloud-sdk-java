@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import java.util.Collection;
@@ -9,8 +13,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataSerializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
@@ -25,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of an OData update request as a fluent interface for further configuring the request and
- * {@link #executeRequest(HttpDestinationProperties) executing} it.
+ * {@link #executeRequest(Destination) executing} it.
  *
  * @param <FluentHelperT>
  *            The fluent helper type.
@@ -56,7 +60,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     }
 
     /**
-     * The entity object to be updated by calling the {@link #executeRequest(HttpDestinationProperties)} method.
+     * The entity object to be updated by calling the {@link #executeRequest(Destination)} method.
      *
      * @return The entity to be updated.
      */
@@ -104,7 +108,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
 
     @Override
     @Nonnull
-    public ModificationResponse<EntityT> executeRequest( @Nonnull final HttpDestinationProperties destination )
+    public ModificationResponse<EntityT> executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 

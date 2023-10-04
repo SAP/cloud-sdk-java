@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
 * Soda Store API in version 1.0.0.
@@ -45,7 +45,7 @@ public class DefaultApi extends AbstractOpenApiService {
     *
     * @param httpDestination The destination that API should be used with
     */
-    public DefaultApi( @Nonnull final HttpDestinationProperties httpDestination )
+    public DefaultApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
