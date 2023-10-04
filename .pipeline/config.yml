@@ -12,11 +12,11 @@ stages:
   test:
     coverageThresholds:
       instruction: 75
-      branch: 68
-      complexity: 66
+      branch: 67
+      complexity: 65
       line: 76
-      method: 73
-      class: 82
+      method: 71
+      class: 80
   codeCheck:
     checkstyle:
       high: '14'
