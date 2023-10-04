@@ -970,22 +970,22 @@
 									<exclude>**/odata/sample/**</exclude>
 									<exclude>**/odatav4/sample/**</exclude>
 									<exclude>**/openapi/sample/**</exclude>
-									<exclude>"**/odata/namespaces/**"</exclude>
-									<exclude>"**/odata/services/**"</exclude>
-									<exclude>"**/odatav4/namespaces/**"</exclude>
-									<exclude>"**/odatav4/services/**"</exclude>
-									<exclude>"**/soap/client/**"</exclude>
-									<exclude>"**/com/sap/xi/**"</exclude>
-									<exclude>"**/services/btp/businessrules/**"</exclude>
-									<exclude>"**/services/mdi/model/**"</exclude>
-									<exclude>"**/scp/kernel/services/**"</exclude>
-									<exclude>"**/scp/businesslogging/odata/**"</exclude>
-									<exclude>"**/scp/businesslogging/rest/**"</exclude>
-									<exclude>"**/scp/workflow/**"</exclude>
-									<exclude>"**/testclasses/**"</exclude>
-									<exclude>"**/cds/gen/**"</exclude>
+									<exclude>**/odata/namespaces/**</exclude>
+									<exclude>**/odata/services/**</exclude>
+									<exclude>**/odatav4/namespaces/**</exclude>
+									<exclude>**/odatav4/services/**</exclude>
+									<exclude>**/soap/client/**</exclude>
+									<exclude>**/com/sap/xi/**</exclude>
+									<exclude>**/services/btp/businessrules/**</exclude>
+									<exclude>**/services/mdi/model/**</exclude>
+									<exclude>**/scp/kernel/services/**</exclude>
+									<exclude>**/scp/businesslogging/odata/**</exclude>
+									<exclude>**/scp/businesslogging/rest/**</exclude>
+									<exclude>**/scp/workflow/**</exclude>
+									<exclude>**/testclasses/**</exclude>
+									<exclude>**/cds/gen/**</exclude>
 									<!-- namespaces compiled to Java17 -->
-									<exclude>"**/servletjakarta/**"</exclude>
+									<exclude>**/servletjakarta/**</exclude>
 								</excludes>
 							</configuration>
 						</execution>
