@@ -976,12 +976,6 @@
 									<exclude>**/odatav4/services/**</exclude>
 									<exclude>**/soap/client/**</exclude>
 									<exclude>**/com/sap/xi/**</exclude>
-									<exclude>**/services/btp/businessrules/**</exclude>
-									<exclude>**/services/mdi/model/**</exclude>
-									<exclude>**/scp/kernel/services/**</exclude>
-									<exclude>**/scp/businesslogging/odata/**</exclude>
-									<exclude>**/scp/businesslogging/rest/**</exclude>
-									<exclude>**/scp/workflow/**</exclude>
 									<exclude>**/testclasses/**</exclude>
 									<exclude>**/cds/gen/**</exclude>
 									<!-- namespaces compiled to Java17 -->
