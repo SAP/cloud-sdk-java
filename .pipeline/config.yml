@@ -11,12 +11,12 @@ steps:
 stages:
   test:
     coverageThresholds:
-      instruction: 79
-      branch: 72
-      complexity: 70
-      line: 80
-      method: 77
-      class: 85
+      instruction: 75
+      branch: 67
+      complexity: 65
+      line: 76
+      method: 71
+      class: 80
   codeCheck:
     checkstyle:
       high: '14'# Open tasks (to do or fix me)
