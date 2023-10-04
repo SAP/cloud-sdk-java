@@ -967,6 +967,9 @@
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>
+									<exclude>**/odata/sample/**</exclude>
+									<exclude>**/odatav4/sample/**</exclude>
+									<exclude>**/openapi/sample/**</exclude>
 									<exclude>"**/odata/namespaces/**"</exclude>
 									<exclude>"**/odata/services/**"</exclude>
 									<exclude>"**/odatav4/namespaces/**"</exclude>
