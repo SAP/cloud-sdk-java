@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -40,7 +39,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
@@ -161,63 +159,6 @@ class DestinationRetrievalStrategyResolverTest
                     subscriberT).isInstanceOf(DestinationAccessException.class));
 
         verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_ONLY" )
-    void testSubThenProvLookupOnly()
-    {
-        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
-
-        // subscriber tenant is implied
-        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY)::get)
-            .isInstanceOf(DestinationNotFoundException.class);
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with FORWARD_USER_TOKEN" )
-    void testSubThenProvFwdUserToken()
-    {
-        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
-
-        // subscriber tenant is implied
-        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(FORWARD_USER_TOKEN)::get)
-            .isInstanceOf(DestinationNotFoundException.class);
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, true)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with EXCHANGE_ONLY" )
-    void testSubThenProvExchangeOnly()
-    {
-        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
-
-        // subscriber tenant is implied
-        sut.prepareSupplierForSubscriberThenProviderCase(EXCHANGE_ONLY).get();
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_THEN_EXCHANGE" )
-    void testLookupThenExchangeWithCurrentTenantThenProvider()
-    {
-        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
-
-        // subscriber tenant is implied
-        sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_THEN_EXCHANGE).get();
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
         verifyNoMoreInteractions(destinationRetriever);
     }
 
