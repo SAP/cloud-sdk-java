@@ -10,7 +10,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
@@ -52,7 +51,6 @@ import io.vavr.Tuple;
 import io.vavr.Tuple3;
 import io.vavr.control.Try;
 
-@SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
 {
     private static final Tenant providerT = new DefaultTenant("provider");
@@ -167,24 +165,6 @@ class DestinationRetrievalStrategyResolverTest
     }
 
     @Test
-    @DisplayName( "When current tenant == provider then CURRENT_TENANT_THEN_PROVIDER should be equal to CURRENT_TENANT" )
-    void testCurrentThenProviderSimpleCase()
-    {
-        TenantAccessor
-            .executeWithTenant(
-                providerT,
-                () -> sut.prepareSupplier(CURRENT_TENANT_THEN_PROVIDER, LOOKUP_THEN_EXCHANGE));
-
-        verify(sut, times(1)).resolveSingleRequestStrategy(CURRENT_TENANT, LOOKUP_ONLY);
-
-        TenantAccessor
-            .executeWithTenant(
-                providerT,
-                () -> assertThatThrownBy(() -> sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY))
-                    .isInstanceOf(IllegalStateException.class));
-    }
-
-    @Test
     @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_ONLY" )
     void testSubThenProvLookupOnly()
     {
@@ -239,21 +219,6 @@ class DestinationRetrievalStrategyResolverTest
         verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
         verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
         verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test getting all destinations with CURRENT_TENANT_THEN_PROVIDER" )
-    void testAllDestinationsCurrTenThenProv()
-    {
-        doThrow(DestinationAccessException.class).when(allDestinationRetriever).apply(TECHNICAL_USER_CURRENT_TENANT);
-
-        // subscriber tenant is implied
-        sut.prepareSupplierAllDestinations(CURRENT_TENANT_THEN_PROVIDER).get();
-
-        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_CURRENT_TENANT);
-        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_PROVIDER);
-
-        verifyNoMoreInteractions(allDestinationRetriever);
     }
 
     @Test
