@@ -254,7 +254,7 @@ class DestinationRetrievalStrategyResolver
             }
             default: {
                 throw new IllegalArgumentException(
-                    "The provided destination retrieval strategy " + strategy + "is not valid.");
+                    "The provided destination retrieval strategy " + strategy + " is not valid.");
             }
         }
     }
