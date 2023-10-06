@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -149,8 +148,7 @@ class DestinationRetrievalStrategyResolverTest
     void testExceptionsAreThrownForImpossibleTokenExchanges()
     {
         doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
-        final Supplier<ScpCfDestinationServiceV1Response> supplier =
-            sut.prepareSupplier(ALWAYS_PROVIDER, LOOKUP_THEN_EXCHANGE);
+        final DestinationRetrieval supplier = sut.prepareSupplier(ALWAYS_PROVIDER, LOOKUP_THEN_EXCHANGE);
 
         TenantAccessor
             .executeWithTenant(

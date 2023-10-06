@@ -515,6 +515,7 @@ public final class DefaultHttpDestination implements HttpDestination
     {
         final List<Header> headers = Lists.newArrayList();
         final DefaultDestination.Builder builder = DefaultDestination.builder();
+        final DefaultHttpDestinationBuilderProxyHandler proxyHandler = new DefaultHttpDestinationBuilderProxyHandler();
         KeyStore keyStore = null;
         KeyStore trustStore = null;
         final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
@@ -943,10 +944,22 @@ public final class DefaultHttpDestination implements HttpDestination
                 throw new IllegalArgumentException("Cannot build a HttpDestination without a URL.");
             }
 
-            // we are NOT using the typed property here since this would break change detection in our
-            // ScpCfDestinationLoader
+            // NOT using the typed property here since this would break change detection in our ScpCfDestinationLoader
             property(DestinationProperty.TYPE.getKeyName(), DestinationType.HTTP.toString());
 
+            // handle proxy type == OnPremise
+            if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
+                final DefaultHttpDestination proxyDestination = proxyHandler.handle(this);
+                if( proxyDestination != null ) {
+                    return proxyDestination;
+                }
+            }
+
+            return buildInternal();
+        }
+
+        DefaultHttpDestination buildInternal()
+        {
             return new DefaultHttpDestination(
                 builder.build(),
                 new ComplexDestinationPropertyFactory(),

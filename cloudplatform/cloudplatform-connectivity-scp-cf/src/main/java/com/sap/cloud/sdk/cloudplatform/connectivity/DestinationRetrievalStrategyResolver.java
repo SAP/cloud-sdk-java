@@ -118,7 +118,7 @@ class DestinationRetrievalStrategyResolver
         }
     }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplier( @Nonnull final DestinationOptions options )
+    DestinationRetrieval prepareSupplier( @Nonnull final DestinationOptions options )
     {
         final ScpCfDestinationRetrievalStrategy retrievalStrategy =
             ScpCfDestinationOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
@@ -163,7 +163,7 @@ class DestinationRetrievalStrategyResolver
         return FORWARD_USER_TOKEN;
     }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplier(
+    DestinationRetrieval prepareSupplier(
         @Nonnull final ScpCfDestinationRetrievalStrategy originalRetrievalStrategy,
         @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
         throws DestinationAccessException
@@ -187,13 +187,13 @@ class DestinationRetrievalStrategyResolver
         // handle the simple cases
         if( tokenExchangeStrategy != LOOKUP_THEN_EXCHANGE && retrievalStrategy != CURRENT_TENANT_THEN_PROVIDER ) {
             strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
-            return () -> destinationRetriever.apply(strategy);
+            return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
         }
 
         // deal with LOOKUP_THEN_EXCHANGE but exclude CURRENT_TENANT_THEN_PROVIDER for now
         if( retrievalStrategy != CURRENT_TENANT_THEN_PROVIDER ) {
             strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
-            return () -> {
+            return new DestinationRetrieval(() -> {
                 final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
                     return result;
@@ -203,14 +203,14 @@ class DestinationRetrievalStrategyResolver
                         "Can't perform token exchange, the current token is not issued for the provider tenant.");
                 }
                 return destinationRetriever.apply(tokenExchangeOnlyStrategy);
-            };
+            }, strategy.getBehalf());
         }
 
         // handle CURRENT_TENANT_THEN_PROVIDER where current tenant != provider
         return prepareSupplierForSubscriberThenProviderCase(tokenExchangeStrategy);
     }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplierForSubscriberThenProviderCase(
+    DestinationRetrieval prepareSupplierForSubscriberThenProviderCase(
         @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
         throws DestinationAccessException
     {
@@ -224,7 +224,7 @@ class DestinationRetrievalStrategyResolver
 
         if( tokenExchangeStrategy == LOOKUP_ONLY || tokenExchangeStrategy == FORWARD_USER_TOKEN ) {
             strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, tokenExchangeStrategy);
-            return () -> {
+            return new DestinationRetrieval(() -> {
                 try {
                     return destinationRetriever.apply(strategy);
                 }
@@ -235,18 +235,18 @@ class DestinationRetrievalStrategyResolver
                             e);
                     return destinationRetriever.apply(providerLookupOnlyStrategy);
                 }
-            };
+            }, strategy.getBehalf());
         }
 
         if( tokenExchangeStrategy == EXCHANGE_ONLY ) {
             strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, EXCHANGE_ONLY);
-            return () -> destinationRetriever.apply(strategy);
+            return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
         }
 
         // handle LOOKUP_THEN_EXCHANGE
         strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, LOOKUP_ONLY);
 
-        return () -> {
+        return new DestinationRetrieval(() -> {
             try {
                 final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
@@ -261,7 +261,7 @@ class DestinationRetrievalStrategyResolver
                         e);
                 return destinationRetriever.apply(providerLookupOnlyStrategy);
             }
-        };
+        }, strategy.getBehalf());
     }
 
     private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
@@ -313,10 +313,10 @@ class DestinationRetrievalStrategyResolver
         }
         log.warn("Option {} is not supported in conjunction with {}.", retrievalStrategy, tokenExchangeStrategy);
         switch( tokenExchangeStrategy ) {
-            case EXCHANGE_ONLY: //fallthrough
+            case EXCHANGE_ONLY:
                 log.warn("Falling back to {} with {}.", CURRENT_TENANT, EXCHANGE_ONLY);
                 break;
-            case FORWARD_USER_TOKEN:
+            case FORWARD_USER_TOKEN: //fallthrough
             case LOOKUP_THEN_EXCHANGE:
                 log
                     .warn(

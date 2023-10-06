@@ -137,6 +137,16 @@ public class DestinationProperty
         createProperty("isTrustingAllCertificates", Boolean.class, Boolean::valueOf);
 
     /**
+     * Principal Propagation Strategy of destination, in case of Proxy Type = On-Premise.
+     */
+    @Beta
+    public static final DestinationPropertyKey<PrincipalPropagationMode> PRINCIPAL_PROPAGATION_MODE =
+        createProperty(
+            "cloudsdk.principalPropagationMode",
+            PrincipalPropagationMode.class,
+            PrincipalPropagationMode::ofIdentifier);
+
+    /**
      * List of trusted certificates of destination used for authentication.
      */
     public static final DestinationPropertyKey<List<?>> CERTIFICATES = createListProperty("cloudsdk.certificates");
