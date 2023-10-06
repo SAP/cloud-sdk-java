@@ -20,19 +20,6 @@ import lombok.Getter;
  */
 public enum ScpCfDestinationRetrievalStrategy
 {
-    /**
-     * Try to retrieve the current tenant's destination first. If the current tenant is a subscriber and no destination
-     * was found, fallback to the provider's destination. When loading all destinations both subaccount and instance
-     * level will be considered individually: If the current tenant is a subscriber and there are no destinations on the
-     * subaccount level, the subaccount level of the provider will be considered. Independently of that, if the current
-     * tenant is a subscriber and there are no destinations on the instance level, the provider instance level will be
-     * queried.
-     *
-     * @deprecated Please query subscriber and provider tenants individually instead using {@link #ONLY_SUBSCRIBER} and
-     *             {@link #ALWAYS_PROVIDER}.
-     */
-    @Deprecated
-    CURRENT_TENANT_THEN_PROVIDER("CurrentTenantThenProvider"),
 
     /**
      * Only load destination from the provider's sub-account, regardless if subscribers have a destination of the same
