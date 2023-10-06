@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -176,12 +175,7 @@ class DestinationRetrievalStrategyResolver
 
         final Strategy strategy;
 
-        // handle the simple cases
-        if( tokenExchangeStrategy != LOOKUP_THEN_EXCHANGE ) {
-            strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
-            return () -> destinationRetriever.apply(strategy);
-        } else {
-            // LOOKUP_THEN_EXCHANGE
+        if( tokenExchangeStrategy == LOOKUP_THEN_EXCHANGE ) {
             strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
             return () -> {
                 final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
@@ -195,60 +189,9 @@ class DestinationRetrievalStrategyResolver
                 return destinationRetriever.apply(tokenExchangeOnlyStrategy);
             };
         }
-    }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplierForSubscriberThenProviderCase(
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
-        throws DestinationAccessException
-    {
-        // sanity check that this is never called with the provider tenant
-        if( currentTenantIsProvider() ) {
-            throw new IllegalStateException(
-                "Unexpected state: Preparing request to destination service for subscriber tenant, but current tenant is provider.");
-        }
-        final Strategy strategy;
-        final Strategy providerLookupOnlyStrategy = resolveSingleRequestStrategy(ALWAYS_PROVIDER, LOOKUP_ONLY);
-
-        if( tokenExchangeStrategy == LOOKUP_ONLY || tokenExchangeStrategy == FORWARD_USER_TOKEN ) {
-            strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, tokenExchangeStrategy);
-            return () -> {
-                try {
-                    return destinationRetriever.apply(strategy);
-                }
-                catch( final DestinationNotFoundException e ) {
-                    log
-                        .debug(
-                            "Did not find the destination in the subscriber account, falling back to the provider account.",
-                            e);
-                    return destinationRetriever.apply(providerLookupOnlyStrategy);
-                }
-            };
-        }
-
-        if( tokenExchangeStrategy == EXCHANGE_ONLY ) {
-            strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, EXCHANGE_ONLY);
-            return () -> destinationRetriever.apply(strategy);
-        }
-
-        // handle LOOKUP_THEN_EXCHANGE
-        strategy = resolveSingleRequestStrategy(ONLY_SUBSCRIBER, LOOKUP_ONLY);
-
-        return () -> {
-            try {
-                final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
-                if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
-                    return result;
-                }
-                return destinationRetriever.apply(tokenExchangeOnlyStrategy);
-            }
-            catch( final DestinationNotFoundException e ) {
-                log
-                    .debug(
-                        "Did not find the destination in the subscriber account, falling back to the provider account.",
-                        e);
-                return destinationRetriever.apply(providerLookupOnlyStrategy);
-            }
-        };
+        strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
+        return () -> destinationRetriever.apply(strategy);
     }
 
     private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
@@ -298,6 +241,7 @@ class DestinationRetrievalStrategyResolver
 
     Supplier<List<Destination>>
         prepareSupplierAllDestinations( @Nonnull final ScpCfDestinationRetrievalStrategy strategy )
+            throws IllegalArgumentException
     {
         warnOrThrowOnDeprecatedOrUnsupportedCombinations(strategy, null);
         switch( strategy ) {
@@ -305,9 +249,12 @@ class DestinationRetrievalStrategyResolver
                 return () -> allDestinationRetriever.apply(TECHNICAL_USER_PROVIDER);
             }
             case ONLY_SUBSCRIBER:
-            case CURRENT_TENANT:
-            default: {
+            case CURRENT_TENANT: {
                 return () -> allDestinationRetriever.apply(TECHNICAL_USER_CURRENT_TENANT);
+            }
+            default: {
+                throw new IllegalArgumentException(
+                    "The provided destination retrieval strategy " + strategy + "is not valid.");
             }
         }
     }
