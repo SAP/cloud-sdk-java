@@ -22,7 +22,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -565,82 +564,6 @@ public class ScpCfDestinationLoaderTest
             .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
     }
 
-    @SuppressWarnings( "deprecation" )
-    @Test
-    public void testLoadAllDestinationsWithProviderFallback()
-    {
-        // mock to return empty list as destinations for subscriber tenant.
-        doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        final DestinationOptionsAugmenter optionsStrategy =
-            augmenter().retrievalStrategy(ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations(options);
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
-
-        assertThat(destinationList.size()).isEqualTo(3);
-        assertThat(destinationList)
-            .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
-
-        // verify destinations for provider tenant are not called
-        verify(scpCfDestinationServiceAdapter, times(0))
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
-        verify(scpCfDestinationServiceAdapter, times(0))
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
-    }
-
-    @SuppressWarnings( "deprecation" )
-    @Test
-    public void testLoadAllDestinationsCurrentTenantThenProviderWithProviderAsCurrentTenant()
-    {
-        TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
-
-        // mock to return destinations for current == provider tenant
-        doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        final DestinationOptionsAugmenter optionsStrategy =
-            augmenter().retrievalStrategy(ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations(options);
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
-
-        assertThat(destinationList.size()).isEqualTo(3);
-        assertThat(destinationList)
-            .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
-
-        // assert one lookup happens
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        // assert no other lookup has been attempted
-        verify(scpCfDestinationServiceAdapter, never())
-            .getConfigurationAsJson(any(), eq(OnBehalfOf.TECHNICAL_USER_PROVIDER));
-        verify(scpCfDestinationServiceAdapter, never())
-            .getConfigurationAsJson(any(), eq(OnBehalfOf.NAMED_USER_CURRENT_TENANT));
-    }
-
     @Test
     public void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
@@ -747,67 +670,6 @@ public class ScpCfDestinationLoaderTest
         final HttpDestination loadedHttpDestination = loadedDestination.get().asHttp();
 
         assertThat(loadedHttpDestination.getUri()).isEqualTo(URI.create(subscriberUrl));
-    }
-
-    @SuppressWarnings( "deprecation" )
-    @Test
-    public void testDestinationRetrievalWithProviderFallback()
-    {
-        final ScpCfDestinationOptionsAugmenter optionsStrategy =
-            augmenter().retrievalStrategy(ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
-
-        final Try<Destination> loadedDestination = loader.tryGetDestination(destinationName, options);
-        final HttpDestination loadedHttpDestination = loadedDestination.get().asHttp();
-
-        assertThat(loadedHttpDestination.getUri()).isEqualTo(URI.create(subscriberUrl));
-    }
-
-    @SuppressWarnings( "deprecation" )
-    @Test
-    public void testDestinationRetrievalFallbackToSubscriber()
-    {
-        doReturn(createHttpDestinationServiceResponse(destinationName, providerUrl))
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/ProviderDestination", OnBehalfOf.TECHNICAL_USER_PROVIDER);
-        doThrow(DestinationNotFoundException.class)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/ProviderDestination",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        final ScpCfDestinationOptionsAugmenter optionsStrategy =
-            augmenter().retrievalStrategy(ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
-
-        final Try<Destination> loadedDestination = loader.tryGetDestination("ProviderDestination", options);
-        final HttpDestination loadedHttpDestination = loadedDestination.get().asHttp();
-
-        assertThat(loadedHttpDestination.getUri()).isEqualTo(URI.create(providerUrl));
-    }
-
-    @SuppressWarnings( "deprecation" )
-    @Test
-    // Seems to use the Strategy 'TECHNICAL_USER_CURRENT_TENANT/forwardToken=true' which is mocked to return subscriber information.
-    // Change in behavior?
-    public void testDestinationRetrievalCurrentTenantThenProviderWithProviderAsCurrentTenant()
-    {
-        TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
-
-        doReturn(createHttpDestinationServiceResponse(destinationName, providerUrl))
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        final ScpCfDestinationOptionsAugmenter optionsStrategy =
-            augmenter().retrievalStrategy(ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
-
-        final Try<Destination> loadedDestination = loader.tryGetDestination(destinationName, options);
-        final HttpDestination loadedHttpDestination = loadedDestination.get().asHttp();
-
-        assertThat(loadedHttpDestination.getUri()).isEqualTo(URI.create(providerUrl));
     }
 
     @Test

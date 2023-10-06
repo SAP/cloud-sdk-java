@@ -10,7 +10,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT_THEN_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
@@ -20,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -40,7 +38,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
@@ -51,7 +48,6 @@ import io.vavr.Tuple;
 import io.vavr.Tuple3;
 import io.vavr.control.Try;
 
-@SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
 {
     private static final Tenant providerT = new DefaultTenant("provider");
@@ -162,96 +158,6 @@ class DestinationRetrievalStrategyResolverTest
 
         verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
         verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "When current tenant == provider then CURRENT_TENANT_THEN_PROVIDER should be equal to CURRENT_TENANT" )
-    void testCurrentThenProviderSimpleCase()
-    {
-        TenantAccessor
-            .executeWithTenant(
-                providerT,
-                () -> sut.prepareSupplier(CURRENT_TENANT_THEN_PROVIDER, LOOKUP_THEN_EXCHANGE));
-
-        verify(sut, times(1)).resolveSingleRequestStrategy(CURRENT_TENANT, LOOKUP_ONLY);
-
-        TenantAccessor
-            .executeWithTenant(
-                providerT,
-                () -> assertThatThrownBy(() -> sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY))
-                    .isInstanceOf(IllegalStateException.class));
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_ONLY" )
-    void testSubThenProvLookupOnly()
-    {
-        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
-
-        // subscriber tenant is implied
-        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_ONLY)::get)
-            .isInstanceOf(DestinationNotFoundException.class);
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with FORWARD_USER_TOKEN" )
-    void testSubThenProvFwdUserToken()
-    {
-        doThrow(DestinationNotFoundException.class).when(destinationRetriever).apply(any());
-
-        // subscriber tenant is implied
-        assertThatThrownBy(sut.prepareSupplierForSubscriberThenProviderCase(FORWARD_USER_TOKEN)::get)
-            .isInstanceOf(DestinationNotFoundException.class);
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, true)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_PROVIDER, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with EXCHANGE_ONLY" )
-    void testSubThenProvExchangeOnly()
-    {
-        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
-
-        // subscriber tenant is implied
-        sut.prepareSupplierForSubscriberThenProviderCase(EXCHANGE_ONLY).get();
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test using CURRENT_TENANT_THEN_PROVIDER with LOOKUP_THEN_EXCHANGE" )
-    void testLookupThenExchangeWithCurrentTenantThenProvider()
-    {
-        doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
-
-        // subscriber tenant is implied
-        sut.prepareSupplierForSubscriberThenProviderCase(LOOKUP_THEN_EXCHANGE).get();
-
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
-        verify(destinationRetriever, times(1)).apply(eq(new Strategy(NAMED_USER_CURRENT_TENANT, false)));
-        verifyNoMoreInteractions(destinationRetriever);
-    }
-
-    @Test
-    @DisplayName( "Test getting all destinations with CURRENT_TENANT_THEN_PROVIDER" )
-    void testAllDestinationsCurrTenThenProv()
-    {
-        doThrow(DestinationAccessException.class).when(allDestinationRetriever).apply(TECHNICAL_USER_CURRENT_TENANT);
-
-        // subscriber tenant is implied
-        sut.prepareSupplierAllDestinations(CURRENT_TENANT_THEN_PROVIDER).get();
-
-        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_CURRENT_TENANT);
-        verify(allDestinationRetriever, times(1)).apply(TECHNICAL_USER_PROVIDER);
-
-        verifyNoMoreInteractions(allDestinationRetriever);
     }
 
     @Test
