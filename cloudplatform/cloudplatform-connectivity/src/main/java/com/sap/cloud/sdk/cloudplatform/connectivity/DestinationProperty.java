@@ -24,6 +24,7 @@ import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
  * @since 4.3.0
  */
 @Beta
+@SuppressWarnings( "PMD.TooManyStaticImports" )
 public class DestinationProperty
 {
     /**
@@ -135,6 +136,16 @@ public class DestinationProperty
      */
     public static final DestinationPropertyKey<Boolean> TRUST_ALL_FALLBACK =
         createProperty("isTrustingAllCertificates", Boolean.class, Boolean::valueOf);
+
+    /**
+     * Principal Propagation Strategy of destination, in case of Proxy Type = On-Premise.
+     */
+    @Beta
+    public static final DestinationPropertyKey<PrincipalPropagationMode> PRINCIPAL_PROPAGATION_MODE =
+        createProperty(
+            "cloudsdk.principalPropagationMode",
+            PrincipalPropagationMode.class,
+            PrincipalPropagationMode::ofIdentifier);
 
     /**
      * List of trusted certificates of destination used for authentication.

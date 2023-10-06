@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,56 +22,93 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Builds a {@link DefaultHttpDestination} from the JSON response of the SCP Cloud Foundry Destination Service.
  */
+@Slf4j
 class ScpCfDestinationFactory
 {
+    private static final String PROVIDER_TENANT_ID = ""; // as per contract in DestinationProperty.TENANT_ID
+
+    // for testing only
     @Nonnull
     static Destination fromDestinationServiceV1Response( @Nonnull final ScpCfDestinationServiceV1Response response )
         throws DestinationAccessException
     {
+        return fromDestinationServiceV1Response(response, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+    }
+
+    @Nonnull
+    static Destination fromDestinationServiceV1Response(
+        @Nonnull final ScpCfDestinationServiceV1Response response,
+        @Nonnull final OnBehalfOf onBehalfOf )
+        throws DestinationAccessException
+    {
         final Map<String, String> destConf = response.getDestinationConfiguration();
 
-        final DefaultDestination properties =
-            DefaultDestination
-                .fromMap(destConf)
-                .property(DestinationProperty.PROPERTIES_FOR_CHANGE_DETECTION, destConf.keySet())
-                .property(
-                    DestinationProperty.TENANT_ID,
-                    TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrElse(""))
-                .build();
+        final DefaultDestination.Builder baseBuilder = DefaultDestination.fromMap(destConf);
 
-        if( properties.get(DestinationProperty.TYPE).contains(DestinationType.RFC) ) {
-            return DefaultRfcDestination.fromProperties(properties);
+        // enable change detection
+        baseBuilder.property(DestinationProperty.PROPERTIES_FOR_CHANGE_DETECTION, destConf.keySet());
+
+        // enable tenant id
+        baseBuilder.property(DestinationProperty.TENANT_ID, getDestinationTenantId(onBehalfOf));
+
+        // finalize RFC destination
+        if( baseBuilder.get(DestinationProperty.TYPE).contains(DestinationType.RFC) ) {
+            return handleRfcDestination(baseBuilder.build());
         }
 
-        if( !properties.get(DestinationProperty.TYPE).contains(DestinationType.HTTP) ) {
-            return properties;
+        // finalize HTTP destination
+        if( baseBuilder.get(DestinationProperty.TYPE).contains(DestinationType.HTTP) ) {
+            return handleHttpDestination(baseBuilder.build(), response.getCertificates(), response.getAuthTokens());
         }
 
-        final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromProperties(properties);
+        return baseBuilder.build();
+    }
 
-        final List<ScpCfDestinationServiceV1Response.DestinationCertificate> certificates = response.getCertificates();
-        if( certificates != null ) {
+    private static String getDestinationTenantId( @Nonnull final OnBehalfOf onBehalfOf )
+    {
+        switch( onBehalfOf ) {
+            case TECHNICAL_USER_PROVIDER:
+                return PROVIDER_TENANT_ID; // TECHNICAL_USER_PROVIDER <- ALWAYS_PROVIDER
+            case NAMED_USER_CURRENT_TENANT:
+            case TECHNICAL_USER_CURRENT_TENANT:
+                final Try<String> tenantId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId);
+                return tenantId.getOrElse(PROVIDER_TENANT_ID);
+            default:
+                throw new IllegalStateException("Unknown OnBehalfOf: " + onBehalfOf);
+        }
+    }
+
+    private static Destination handleRfcDestination( final DestinationProperties baseProperties )
+    {
+        return DefaultRfcDestination.fromProperties(baseProperties);
+    }
+
+    private static Destination handleHttpDestination(
+        @Nonnull final DefaultDestination baseProperties,
+        @Nullable final List<ScpCfDestinationServiceV1Response.DestinationCertificate> certificates,
+        @Nullable final List<ScpCfDestinationServiceV1Response.DestinationAuthToken> authTokens )
+    {
+        final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromProperties(baseProperties);
+
+        // enable certificates and truststore/keystore
+        if( certificates != null && !certificates.isEmpty() ) {
             certificates.forEach(ScpCfDestinationFactory::determineAndSetCertificateExpirationTime);
             builder.property(DestinationProperty.CERTIFICATES, certificates);
 
-            // this is somewhat ugly
-            final DefaultDestination destination =
-                DefaultDestination.fromMap(destConf).property(DestinationProperty.CERTIFICATES, certificates).build();
-
-            final DestinationKeyStoreExtractor keyStoreExtractor = new DestinationKeyStoreExtractor(destination);
+            final DestinationKeyStoreExtractor keyStoreExtractor = new DestinationKeyStoreExtractor(builder::get);
             keyStoreExtractor.getKeyStore().peek(builder::keyStore);
             keyStoreExtractor.getTrustStore().peek(builder::trustStore);
         }
 
-        final List<ScpCfDestinationServiceV1Response.DestinationAuthToken> authTokens = response.getAuthTokens();
-        if( authTokens != null ) {
+        // enable auth tokens
+        if( authTokens != null && !authTokens.isEmpty() ) {
             final AuthenticationType authType =
-                AuthenticationType
-                    .ofIdentifierOrDefault(destConf.get("Authentication"), AuthenticationType.NO_AUTHENTICATION);
+                builder.get(DestinationProperty.AUTH_TYPE).getOrElse(AuthenticationType.NO_AUTHENTICATION);
             authTokens.forEach(t -> setExpirationTimestamp(t, authType));
 
             // Note: it is important that the auth tokens are added as property here
@@ -82,18 +120,7 @@ class ScpCfDestinationFactory
             builder.property(DestinationProperty.AUTH_TOKENS, authTokens);
             builder.headerProviders(new AuthTokenHeaderProvider());
         }
-        // to be changed by https://github.com/SAP/cloud-sdk-java-backlog/issues/275
-        if( properties.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
-            final ProxyConfiguration onPremiseProxyConfiguration =
-                Try
-                    .of(ConnectivityService::getOnPremiseProxyConfiguration)
-                    .getOrElseThrow(
-                        e -> new DestinationAccessException(
-                            "Failed to get retrieve on-premise proxy configuration for destination "
-                                + properties.get(DestinationProperty.NAME),
-                            e));
-            builder.proxyConfiguration(onPremiseProxyConfiguration);
-        }
+
         return builder.build();
     }
 

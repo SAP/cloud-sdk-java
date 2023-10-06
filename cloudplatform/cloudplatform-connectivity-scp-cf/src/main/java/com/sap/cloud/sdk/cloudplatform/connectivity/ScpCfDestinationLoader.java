@@ -155,13 +155,13 @@ public class ScpCfDestinationLoader implements DestinationLoader
         final Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever =
             strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
 
-        final ScpCfDestinationServiceV1Response response =
+        final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
             DestinationRetrievalStrategyResolver
-                .forSingleDestination(adapter::getProviderTenantId, destinationRetriever)
-                .prepareSupplier(options)
-                .get();
+                .forSingleDestination(adapter::getProviderTenantId, destinationRetriever);
 
-        return ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
+        final DestinationRetrieval retrieval = destinationRetrievalStrategyResolver.prepareSupplier(options);
+
+        return ScpCfDestinationFactory.fromDestinationServiceV1Response(retrieval.get(), retrieval.getOnBehalfOf());
     }
 
     @Nonnull

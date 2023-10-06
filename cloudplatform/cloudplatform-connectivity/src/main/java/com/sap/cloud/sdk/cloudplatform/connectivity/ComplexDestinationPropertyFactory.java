@@ -37,12 +37,6 @@ class ComplexDestinationPropertyFactory
     @Nonnull
     Option<ProxyConfiguration> getProxyConfiguration( @Nonnull final DestinationProperties baseProperties )
     {
-        /*
-        // to be changed by https://github.com/SAP/cloud-sdk-java-backlog/issues/275
-        if ( baseProperties.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
-
-        }
-        */
         final Option<URI> proxyUri = baseProperties.get(DestinationProperty.PROXY_URI);
         final Option<String> proxyHost = baseProperties.get(DestinationProperty.PROXY_HOST);
         final Option<Integer> proxyPort = baseProperties.get(DestinationProperty.PROXY_PORT);

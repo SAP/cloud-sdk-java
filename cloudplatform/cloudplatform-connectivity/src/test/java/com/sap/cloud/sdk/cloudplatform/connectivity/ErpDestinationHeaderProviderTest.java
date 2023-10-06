@@ -10,7 +10,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Locale;
 
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,8 +38,8 @@ class ErpDestinationHeaderProviderTest
         final DefaultHttpDestination destinationToTest = DefaultHttpDestination.builder(testUri).build();
 
         // sanity check
-        VavrAssertions.assertThat(destinationToTest.get(DestinationProperty.SAP_CLIENT)).isEmpty();
-        VavrAssertions.assertThat(destinationToTest.get(DestinationProperty.SAP_LANGUAGE)).isEmpty();
+        assertThat(destinationToTest.get(DestinationProperty.SAP_CLIENT)).isEmpty();
+        assertThat(destinationToTest.get(DestinationProperty.SAP_LANGUAGE)).isEmpty();
 
         assertThat(destinationToTest.getHeaders(testUri)).isEmpty();
     }
@@ -59,8 +58,8 @@ class ErpDestinationHeaderProviderTest
                 .build();
 
         // sanity check
-        VavrAssertions.assertThat(destinationToTest.get(DestinationProperty.SAP_CLIENT)).contains(testClient);
-        VavrAssertions.assertThat(destinationToTest.get(DestinationProperty.SAP_LANGUAGE)).contains(testLanguage);
+        assertThat(destinationToTest.get(DestinationProperty.SAP_CLIENT)).contains(testClient);
+        assertThat(destinationToTest.get(DestinationProperty.SAP_LANGUAGE)).contains(testLanguage);
 
         final Header expectedClientHeader = new Header("sap-client", testClient);
         final Header expectedLanguageHeader = new Header("sap-language", testLanguage);

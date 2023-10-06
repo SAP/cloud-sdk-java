@@ -58,7 +58,18 @@ class DestinationKeyStoreExtractor
     // @formatter:on
 
     @Nonnull
-    private final DestinationProperties destination;
+    private final PropertyKeyExtractor destination;
+
+    interface PropertyKeyExtractor
+    {
+        @Nonnull
+        <T> Option<T> get( @Nonnull final DestinationPropertyKey<T> key );
+    }
+
+    DestinationKeyStoreExtractor( @Nonnull final DestinationProperties destination )
+    {
+        this(destination::get);
+    }
 
     /*
      *  The destination configuration on Cloud Foundry allows to upload a trust store.

@@ -191,6 +191,7 @@
 		<dependency>
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-api</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.security</groupId>
@@ -242,9 +243,12 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.frameworks:resilience4j</ignoredUnusedDeclaredDependency>
-						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
+					<ignoredNonTestScopedDependencies>
+						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
+						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
+					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

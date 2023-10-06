@@ -16,7 +16,6 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 class ScpCfDestinationFactoryTest
 {
-
     private ScpCfDestinationServiceV1Response response;
 
     @BeforeEach
@@ -31,18 +30,26 @@ class ScpCfDestinationFactoryTest
     {
         final Tenant tenant = new DefaultTenant("tenant1");
 
+        response.getDestinationConfiguration().put("Type", "HTTP");
+        response.getDestinationConfiguration().put("URL", "http://foo/");
+
         final Destination result =
             TenantAccessor
                 .executeWithTenant(tenant, () -> ScpCfDestinationFactory.fromDestinationServiceV1Response(response));
 
+        assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThat(result.get(DestinationProperty.TENANT_ID)).contains(tenant.getTenantId());
     }
 
     @Test
     void testProviderTenantIsEmptyString()
     {
+        response.getDestinationConfiguration().put("Type", "HTTP");
+        response.getDestinationConfiguration().put("URL", "http://foo/");
+
         final Destination result = ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
 
+        assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThat(result.get(DestinationProperty.TENANT_ID)).contains("");
     }
 

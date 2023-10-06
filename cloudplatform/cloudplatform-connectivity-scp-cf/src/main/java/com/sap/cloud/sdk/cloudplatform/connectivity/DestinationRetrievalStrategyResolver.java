@@ -116,7 +116,7 @@ class DestinationRetrievalStrategyResolver
         }
     }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplier( @Nonnull final DestinationOptions options )
+    DestinationRetrieval prepareSupplier( @Nonnull final DestinationOptions options )
     {
         final ScpCfDestinationRetrievalStrategy retrievalStrategy =
             ScpCfDestinationOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
@@ -161,7 +161,7 @@ class DestinationRetrievalStrategyResolver
         return FORWARD_USER_TOKEN;
     }
 
-    Supplier<ScpCfDestinationServiceV1Response> prepareSupplier(
+    DestinationRetrieval prepareSupplier(
         @Nonnull final ScpCfDestinationRetrievalStrategy retrievalStrategy,
         @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
         throws DestinationAccessException
@@ -173,11 +173,9 @@ class DestinationRetrievalStrategyResolver
                 tokenExchangeStrategy);
         warnOrThrowOnDeprecatedOrUnsupportedCombinations(retrievalStrategy, tokenExchangeStrategy);
 
-        final Strategy strategy;
-
         if( tokenExchangeStrategy == LOOKUP_THEN_EXCHANGE ) {
-            strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
-            return () -> {
+            final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
+            return new DestinationRetrieval(() -> {
                 final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
                     return result;
@@ -187,11 +185,11 @@ class DestinationRetrievalStrategyResolver
                         "Can't perform token exchange, the current token is not issued for the provider tenant.");
                 }
                 return destinationRetriever.apply(tokenExchangeOnlyStrategy);
-            };
+            }, strategy.getBehalf());
         }
 
-        strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
-        return () -> destinationRetriever.apply(strategy);
+        final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
+        return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
     }
 
     private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
