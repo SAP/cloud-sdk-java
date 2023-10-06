@@ -186,7 +186,7 @@ class DefaultHttpDestinationBuilderProxyHandler
     {
         @Nonnull
         @Override
-        public List<Header> getHeaders( @Nonnull DestinationRequestContext requestContext )
+        public List<Header> getHeaders( @Nonnull final DestinationRequestContext requestContext )
         {
             return requestContext
                 .getDestination()

@@ -69,7 +69,7 @@ class ScpCfDestinationFactory
         return baseBuilder.build();
     }
 
-    private static String getDestinationTenantId( OnBehalfOf onBehalfOf )
+    private static String getDestinationTenantId( @Nonnull final OnBehalfOf onBehalfOf )
     {
         switch( onBehalfOf ) {
             case TECHNICAL_USER_PROVIDER:
