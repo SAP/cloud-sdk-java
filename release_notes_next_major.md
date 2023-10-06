@@ -103,6 +103,7 @@ blog: https://blogs.sap.com/?p=xxx
   - `APP_TO_APP_SSO` 
   - `INTERNAL_SYSTEM_AUTHENTICATION` 
 - Removed the deprecated enum element `CURRENT_TENANT_THEN_PROVIDER` from `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy`.
+  As alternative please run the destination lookup queries separately in your application for `ONLY_SUBSCRIBER` and `ALWAYS_PROVIDER` as fallback.
 - Removed the `javax.inject.Named` annotation from the OData Generator (v2, v4).
 - Other changes to the Destination API:
   - Retrieving a `Destination` from the Destination service (i.e. using the `ScpCfDestinationLoader`) will now throw an exception if any of the attached certificates isn't valid.
