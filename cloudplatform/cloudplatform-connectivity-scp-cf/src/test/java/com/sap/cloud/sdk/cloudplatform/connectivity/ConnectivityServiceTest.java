@@ -15,15 +15,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,16 +30,15 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonObject;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
+import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.testutil.MockUtil;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
@@ -53,8 +47,6 @@ import io.vavr.control.Try;
 
 public class ConnectivityServiceTest
 {
-    private static final MockUtil mockUtil = new MockUtil();
-
     private static final String XSUAA_SERVICE_ROOT = "/xsuaa";
     private static final String XSUAA_SERVICE_PATH = XSUAA_SERVICE_ROOT + "/oauth/token";
 
@@ -64,33 +56,28 @@ public class ConnectivityServiceTest
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
 
-    private ConnectivityService connectivityService;
-
     @Rule
     public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
     @Before
-    public void setupTenant()
-    {
-        mockUtil.mockCurrentTenant();
-        connectivityService =
-            new ConnectivityService(new XsuaaService(), ResilienceConfiguration.empty(ConnectivityServiceTest.class));
-    }
-
-    @Before
     public void setupCloudPlatform()
     {
-        final ScpCfCloudPlatform platform = (ScpCfCloudPlatform) spy(CloudPlatformAccessor.getCloudPlatform());
-        CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(platform));
+        final ServiceBinding connectivityService =
+            new DefaultServiceBindingBuilder()
+                .withServiceIdentifier(ServiceIdentifier.CONNECTIVITY)
+                .withCredentials(
+                    ImmutableMap
+                        .<String, Object> builder()
+                        .put("clientid", CLIENT_CREDENTIALS.getClientId())
+                        .put("clientsecret", CLIENT_CREDENTIALS.getClientSecret())
+                        .put("url", "http://localhost:" + wireMockServer.port() + XSUAA_SERVICE_ROOT)
+                        .put("uri", "http://foobar/")
+                        .put("onpremise_proxy_host", "localhost")
+                        .put("onpremise_proxy_port", "1234")
+                        .build())
+                .build();
 
-        final JsonObject credConnectivity = new JsonObject();
-        credConnectivity.addProperty("clientid", CLIENT_CREDENTIALS.getClientId());
-        credConnectivity.addProperty("clientsecret", CLIENT_CREDENTIALS.getClientSecret());
-        credConnectivity.addProperty("onpremise_proxy_host", "proxy.onpremise.com");
-        credConnectivity.addProperty("onpremise_proxy_port", 1234);
-        credConnectivity.addProperty("uri", "http://foobar/");
-        credConnectivity.addProperty("url", "http://localhost:" + wireMockServer.port() + XSUAA_SERVICE_ROOT);
-        doReturn(credConnectivity).when(platform).getServiceCredentials(eq(ConnectivityService.SERVICE_NAME));
+        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
     }
 
     @After
@@ -106,20 +93,10 @@ public class ConnectivityServiceTest
     }
 
     @Test
-    public void testGetOnPremiseProxyConfiguration()
-        throws URISyntaxException
-    {
-        final ProxyConfiguration expectedProxyConfig =
-            new ProxyConfiguration(new URI("http://proxy.onpremise.com:1234"));
-
-        assertThat(ConnectivityService.getOnPremiseProxyConfiguration()).isEqualTo(expectedProxyConfig);
-    }
-
-    @Test
     public void testConnectivityServiceWithStrategyCompatibility()
     {
         // test parameters
-        final boolean useProviderTenant = true;
+        final String providerTenantId = "";
         final String currentUserToken = "CURRENT USER TOKEN";
 
         // mock XSUAA service response
@@ -141,20 +118,23 @@ public class ConnectivityServiceTest
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
 
         // actual request
-        final List<Header> onPremiseProxyHeaders =
-            connectivityService
-                .getHeadersForOnPremiseSystem(useProviderTenant, PrincipalPropagationStrategy.COMPATIBILITY);
+        final DefaultHttpDestination.Builder builder =
+            DefaultHttpDestination
+                .builder("http://buzz/")
+                .proxyType(ProxyType.ON_PREMISE)
+                .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.COMPATIBILITY)
+                .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        assertThat(onPremiseProxyHeaders)
+        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+
+        assertThat(dest).isNotNull();
+        assertThat(dest.getHeaders())
             .containsOnly(
                 new Header("Proxy-Authorization", "Bearer " + proxyAccessToken),
                 new Header("SAP-Connectivity-Authentication", "Bearer " + currentUserToken));
 
         // verify the tokens are being cached
-        assertThat(
-            connectivityService
-                .getHeadersForOnPremiseSystem(useProviderTenant, PrincipalPropagationStrategy.COMPATIBILITY))
-            .isEqualTo(onPremiseProxyHeaders);
         verify(1, postRequestedFor(urlEqualTo(XSUAA_SERVICE_PATH)));
     }
 
@@ -162,7 +142,7 @@ public class ConnectivityServiceTest
     public void testConnectivityServiceWitStrategyDisabledPrincipalPropagation()
     {
         // test parameters
-        final boolean useProviderTenant = true;
+        final String providerTenantId = "";
 
         // mock XSUAA service response
         final String proxyAccessToken = "PROXY ACCESS TOKEN";
@@ -180,10 +160,16 @@ public class ConnectivityServiceTest
                             .build())));
 
         // actual request
-        final List<Header> onPremiseProxyHeaders =
-            connectivityService.getHeadersForOnPremiseSystem(useProviderTenant, PrincipalPropagationStrategy.DISABLED);
+        final DefaultHttpDestination.Builder builder =
+            DefaultHttpDestination
+                .builder("http://buzz/")
+                .proxyType(ProxyType.ON_PREMISE)
+                .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        assertThat(onPremiseProxyHeaders).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
+        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+
+        assertThat(dest).isNotNull();
+        assertThat(dest.getHeaders()).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
         verify(1, postRequestedFor(urlEqualTo(XSUAA_SERVICE_PATH)));
     }
 
@@ -191,7 +177,7 @@ public class ConnectivityServiceTest
     public void testConnectivityServiceWithStrategyRecommended()
     {
         // test parameters
-        final boolean useProviderTenant = true;
+        final String providerTenantId = "";
         final String currentUserToken =
             JwtGenerator.getInstance(Service.XSUAA, "client-id").createToken().getTokenValue();
 
@@ -215,11 +201,18 @@ public class ConnectivityServiceTest
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
 
         // actual request
-        final List<Header> onPremiseProxyHeaders =
-            connectivityService
-                .getHeadersForOnPremiseSystem(useProviderTenant, PrincipalPropagationStrategy.RECOMMENDATION);
+        final DefaultHttpDestination.Builder builder =
+            DefaultHttpDestination
+                .builder("http://buzz/")
+                .proxyType(ProxyType.ON_PREMISE)
+                .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.RECOMMENDED)
+                .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        assertThat(onPremiseProxyHeaders).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
+        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+
+        assertThat(dest).isNotNull();
+        assertThat(dest.getHeaders()).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
         verify(1, postRequestedFor(urlEqualTo(XSUAA_SERVICE_PATH)));
     }
 
@@ -227,7 +220,7 @@ public class ConnectivityServiceTest
     public void testConnectivityServiceWithInvalidXsuaaCredentials()
     {
         // test parameters
-        final boolean useProviderTenant = true;
+        final String providerTenantId = "";
 
         // mock XSUAA service response
         stubFor(
@@ -238,10 +231,18 @@ public class ConnectivityServiceTest
                 .willReturn(forbidden()));
 
         // actual request
-        assertThatCode(
-            () -> new ConnectivityService()
-                .getHeadersForOnPremiseSystem(useProviderTenant, PrincipalPropagationStrategy.DISABLED))
-            .isInstanceOf(DestinationAccessException.class)
+        final DefaultHttpDestination.Builder builder =
+            DefaultHttpDestination
+                .builder("http://buzz/")
+                .proxyType(ProxyType.ON_PREMISE)
+                .property(DestinationProperty.TENANT_ID, providerTenantId);
+
+        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        assertThat(dest).isNotNull();
+
+        assertThatCode(dest::getHeaders)
+            .hasMessageEndingWith("Failed to resolve access token.")
+            .isInstanceOf(ResilienceRuntimeException.class)
             .hasRootCauseInstanceOf(OAuth2ServiceException.class);
     }
 
