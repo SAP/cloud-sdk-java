@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,6 @@ import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 
 import com.sap.cloud.sdk.cloudplatform.PlatformSslContextProvider;
-import com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.vavr.control.Option;

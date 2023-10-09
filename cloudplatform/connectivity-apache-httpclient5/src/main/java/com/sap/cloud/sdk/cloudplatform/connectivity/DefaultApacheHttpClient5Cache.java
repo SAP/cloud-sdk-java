@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -18,8 +18,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationUtility;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 
 import io.vavr.control.Try;

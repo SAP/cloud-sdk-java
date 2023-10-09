@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,9 +32,6 @@ import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.Timeout;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 

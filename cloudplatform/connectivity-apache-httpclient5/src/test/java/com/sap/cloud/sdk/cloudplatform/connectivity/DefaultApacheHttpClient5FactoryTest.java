@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -50,8 +50,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
+
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
 import io.vavr.control.Option;

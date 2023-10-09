@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
 
@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
+
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 
 import io.vavr.control.Try;

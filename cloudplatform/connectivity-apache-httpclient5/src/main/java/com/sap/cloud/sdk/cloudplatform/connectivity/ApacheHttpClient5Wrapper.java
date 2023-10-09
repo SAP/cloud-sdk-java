@@ -2,7 +2,7 @@
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.frameworks.apachehttpclient5;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,9 +18,6 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 
 import com.google.common.base.Joiner;
-import com.sap.cloud.sdk.cloudplatform.connectivity.Header;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
-import com.sap.cloud.sdk.cloudplatform.connectivity.UriPathMerger;
 
 import lombok.extern.slf4j.Slf4j;
 

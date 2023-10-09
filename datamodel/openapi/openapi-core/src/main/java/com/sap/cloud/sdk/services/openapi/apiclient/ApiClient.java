@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.frameworks.apachehttpclient5.ApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.ApiKeyAuth;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.Authentication;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.HttpBasicAuth;
