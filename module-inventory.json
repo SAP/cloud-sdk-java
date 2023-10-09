@@ -138,7 +138,7 @@
     "releaseAudience": "Public",
     "releaseMaturity": "Beta",
     "pomFile": "cloudplatform/connectivity-apache-httpclient5/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.frameworks",
+    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
     "parentArtifactId": "cloudplatform-parent",
     "excludeFromBlackDuckScan": false
   },
