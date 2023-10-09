@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.common.annotations.Beta;
-
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 

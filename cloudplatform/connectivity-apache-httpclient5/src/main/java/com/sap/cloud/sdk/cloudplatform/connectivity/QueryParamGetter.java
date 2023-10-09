@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.escape.Escaper;
 import com.google.common.net.PercentEscaper;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;

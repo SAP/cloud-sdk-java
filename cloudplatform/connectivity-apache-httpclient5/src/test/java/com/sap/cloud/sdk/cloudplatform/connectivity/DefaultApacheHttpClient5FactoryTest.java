@@ -50,7 +50,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
 import io.vavr.control.Option;
