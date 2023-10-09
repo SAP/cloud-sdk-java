@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.sap.cloud.sdk.frameworks</groupId>
-		<artifactId>frameworks-parent</artifactId>
+		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+		<artifactId>cloudplatform-parent</artifactId>
 		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
-	<artifactId>apache-httpclient5</artifactId>
+	<artifactId>connectivity-apache-httpclient5</artifactId>
 	<name>Apache version 5 Http Client integration</name>
 	<description>Integrates the Apache version 5 Http Client with the destination abstraction.</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>

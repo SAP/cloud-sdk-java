@@ -49,8 +49,8 @@
 			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.frameworks</groupId>
-			<artifactId>apache-httpclient5</artifactId>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

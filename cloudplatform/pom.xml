@@ -40,6 +40,7 @@
 		<module>connectivity-dwc</module>
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
+		<module>connectivity-apache-httpclient5</module>
 		<module>resilience</module>
 		<module>security</module>
 		<module>security-scp-cf</module>
