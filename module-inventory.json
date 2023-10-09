@@ -133,6 +133,17 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
+    "artifactId": "connectivity-apache-httpclient5",
+    "packaging": "jar",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Beta",
+    "pomFile": "cloudplatform/connectivity-apache-httpclient5/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.frameworks",
+    "parentArtifactId": "cloudplatform-parent",
+    "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "connectivity-dwc",
     "packaging": "jar",
     "releaseAudience": "Public",
@@ -503,17 +514,6 @@
     "pomFile": "datamodel/soap/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.datamodel",
     "parentArtifactId": "datamodel-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.cloudplatform",
-    "artifactId": "connectivity-apache-httpclient5",
-    "packaging": "jar",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Beta",
-    "pomFile": "cloudplatform/connectivity-apache-httpclient5/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.frameworks",
-    "parentArtifactId": "frameworks-parent",
     "excludeFromBlackDuckScan": false
   },
   {
