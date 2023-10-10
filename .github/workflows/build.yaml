@@ -8,7 +8,7 @@ on:
 
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
-  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version -T 1C"
   MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
 jobs:
@@ -63,15 +63,11 @@ jobs:
     name: Build
     outputs:
       version: ${{ steps.get-version.outputs.VERSION }}
-      core_count: ${{ steps.get-core-count.outputs.CORE_COUNT }}
     steps:
       - uses: actions/checkout@v3
       - name: Determine Version
         run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
         id: get-version
-      - name: Get CPU Count
-        run: echo "CORE_COUNT=$(nproc)" >> $GITHUB_OUTPUT
-        id: get-core-count
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -92,8 +88,6 @@ jobs:
           python .pipeline/scripts/generate-release-artifacts.py --version ${{ steps.get-version.outputs.VERSION }} --path-prefix release
           zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
           rm -rf release
-        env:
-          MVN_CLI_ARGS: ${{ env.MVN_CLI_ARGS }} -T ${{ steps.get-core-count.outputs.CORE_COUNT }}
       - name: Create module-inventory
         run: |
           python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
@@ -196,8 +190,6 @@ jobs:
       - name: Test
         run: |
           mvn $MVN_CLI_ARGS org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
-        env:
-          MVN_CLI_ARGS: ${{ env.MVN_CLI_ARGS }} -T ${{ needs.build.outputs.core_count }}
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
@@ -244,8 +236,6 @@ jobs:
       - name: Checkstyle
         run: |
           mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
-        env:
-          MVN_CLI_ARGS: ${{ env.MVN_CLI_ARGS }} -T ${{ needs.build.outputs.core_count }}
       - name: Checkstyle Results
         run: |
           python .pipeline/scripts/print-checkstyle.py
@@ -289,8 +279,6 @@ jobs:
       - name: PMD
         run: |
           mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-        env:
-          MVN_CLI_ARGS: ${{ env.MVN_CLI_ARGS }} -T ${{ needs.build.outputs.core_count }}
       - name: PMD Report
         run: |
           python .pipeline/scripts/print-pmd.py
@@ -338,8 +326,6 @@ jobs:
       - name: Spotbugs
         run: |
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
-        env:
-          MVN_CLI_ARGS: ${{ env.MVN_CLI_ARGS }} -T ${{ needs.build.outputs.core_count }}
       - name: Spotbugs Report
         run: |
           python .pipeline/scripts/print-spotbugs.py
