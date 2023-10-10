@@ -32,7 +32,6 @@
 	</developers>
 	<modules>
 		<module>resilience4j</module>
-		<module>apache-httpclient5</module>
 	</modules>
 	<scm>
 		<connection />
