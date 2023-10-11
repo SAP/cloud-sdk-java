@@ -62,7 +62,7 @@
 			<artifactId>resilience</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.frameworks</groupId>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>resilience4j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
@@ -242,7 +242,7 @@
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.frameworks:resilience4j</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>

@@ -528,17 +528,6 @@
     "excludeFromBlackDuckScan": false
   },
   {
-    "groupId": "com.sap.cloud.sdk.frameworks",
-    "artifactId": "frameworks-parent",
-    "packaging": "pom",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "frameworks/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk",
-    "parentArtifactId": "sdk-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
     "groupId": "com.sap.cloud.sdk.s4hana",
     "artifactId": "rfc",
     "packaging": "jar",

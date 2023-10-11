@@ -136,7 +136,8 @@ public class Resilience4jDecorationStrategyTest
     {
         final String tenant_id_1 = "tenant_1";
         final String tenant_id_2 = "tenant_2";
-        final Resilience4jCachingDefaultProviderTest.TestCallable testCallable = new Resilience4jCachingDefaultProviderTest.TestCallable();
+        final Resilience4jCachingDefaultProviderTest.TestCallable testCallable =
+            new Resilience4jCachingDefaultProviderTest.TestCallable();
 
         final ResilienceConfiguration configuration =
             ResilienceConfiguration
