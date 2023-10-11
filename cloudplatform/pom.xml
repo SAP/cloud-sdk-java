@@ -42,6 +42,7 @@
 		<module>connectivity-apache-httpclient4</module>
 		<module>connectivity-apache-httpclient5</module>
 		<module>resilience</module>
+		<module>resilience4j</module>
 		<module>security</module>
 		<module>security-scp-cf</module>
 		<module>servlet</module>
