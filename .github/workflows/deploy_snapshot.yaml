@@ -2,6 +2,11 @@ name: Deploy Snapshot to Maven Central
 
 on:
   workflow_dispatch:
+    inputs:
+      skip_blackduck_scan:
+        description: "Skip Blackduck Scan (true or false), default is false."
+        default: "false"
+        required: false
 
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
@@ -374,6 +379,7 @@ jobs:
     name: "Blackduck Scan"
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    if: ${{ github.event.inputs.skip_blackduck_scan == 'false' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -538,7 +544,17 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
+    needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes, scan]
+    if: |
+      always() &&
+      (needs.build.result == 'success') &&
+      (needs.codeql.result == 'success') &&
+      (needs.test.result == 'success') &&
+      (needs.checkstyle.result == 'success') &&
+      (needs.pmd.result == 'success') &&
+      (needs.spotbugs.result == 'success') &&
+      (needs.archetypes.result == 'success') &&
+      (needs.scan.result == 'success' || needs.scan.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
