@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,19 +127,15 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     @Override
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
+        final ServiceIdentifier identifier = options.getServiceBinding().getServiceIdentifier().orElse(null);
+        log.debug("Creating an OAuth2 destination for service {}.", identifier);
+
         final OAuth2PropertySupplier propertySupplier = getOAuth2PropertySupplier(options);
-
         if( propertySupplier == null ) {
-            return Try
-                .failure(
-                    new DestinationNotFoundException(
-                        null,
-                        "No property mapping for the provided service "
-                            + options.getServiceBinding().getServiceIdentifier()
-                            + " found. You may provide your own mapping by using the static `registerPropertySupplier` method."));
+            final String msg =
+                "No property mapping for the provided service %s found. You may provide your own mapping by using the static `registerPropertySupplier` method.";
+            return Try.failure(new DestinationNotFoundException(null, String.format(msg, identifier)));
         }
-
-        log.debug("Creating an OAuth2 destination for service {}.", options.getServiceBinding().getServiceIdentifier());
 
         final URI serviceUri;
         final URI tokenUri;
@@ -156,38 +151,26 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
 
         final Option<HttpDestination> destinationToBeProxied = options.getOption(Options.ProxyOptions.class);
 
-        final Supplier<HttpDestination> destinationSupplier;
-        if( destinationToBeProxied.isDefined() ) {
-            log
-                .debug(
-                    "Using the given service {} as a proxy service to enhance destination {}.",
-                    options.getServiceBinding().getServiceIdentifier(),
-                    destinationToBeProxied.get());
-
-            destinationSupplier =
-                () -> toProxiedDestination(
-                    destinationToBeProxied.get(),
-                    serviceUri,
-                    tokenUri,
-                    clientIdentity,
-                    options.getOnBehalfOf());
-        } else {
-            final ServiceIdentifier identifier = options.getServiceBinding().getServiceIdentifier().orElse(null);
-            destinationSupplier =
-                () -> toDestination(serviceUri, tokenUri, clientIdentity, options.getOnBehalfOf(), identifier);
-        }
-
         try {
-            final HttpDestination result = destinationSupplier.get();
-            return Try.success(result);
+            final OnBehalfOf behalfOf = options.getOnBehalfOf();
+
+            // consider destination to be proxied
+            if( destinationToBeProxied.isDefined() ) {
+                final String msg = "Using the given service {} as a proxy service to enhance destination {}.";
+                log.debug(msg, identifier, destinationToBeProxied.get());
+
+                final HttpDestination dest =
+                    toProxiedDestination(destinationToBeProxied.get(), serviceUri, tokenUri, clientIdentity, behalfOf);
+                return Try.success(dest);
+            }
+
+            // continue without proxied destination
+            return Try.success(toDestination(serviceUri, tokenUri, clientIdentity, behalfOf, identifier));
         }
         catch( final Exception e ) {
             // might happen in case of invalid certificate
-            return Try
-                .failure(
-                    new DestinationAccessException(
-                        "Failed to instantiate OAuth destination based on given properties.",
-                        e));
+            final String msg = "Failed to instantiate OAuth destination based on given properties.";
+            return Try.failure(new DestinationAccessException(msg, e));
         }
     }
 
@@ -243,7 +226,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             .property(
                 OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                 createTokenRetrievalResilienceConfiguration(name))
-            .buildInternal();
+            .build();
     }
 
     @Nonnull
