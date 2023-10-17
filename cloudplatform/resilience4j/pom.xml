@@ -6,9 +6,9 @@
 		<artifactId>cloudplatform-parent</artifactId>
 		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
-	<artifactId>connectivity-dwc</artifactId>
-	<name>Deploy with Confidence Connectivity</name>
-	<description>Deploy with Confidence (DwC) connectivity capabilities</description>
+	<artifactId>resilience4j</artifactId>
+	<name>Cloud Platform - Resilience4j</name>
+	<description>Framework adaptation for Resilience4j.</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
 	<organization>
 		<name>SAP SE</name>
@@ -34,7 +34,7 @@
 	</scm>
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Beta</x-sap-release-maturity>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -43,11 +43,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-connectivity</artifactId>
+			<artifactId>resilience</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-apache-httpclient4</artifactId>
+			<artifactId>caching</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
@@ -55,11 +55,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>resilience</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
-			<artifactId>java-core-api</artifactId>
+			<artifactId>security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -71,40 +67,36 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.vavr</groupId>
 			<artifactId>vavr</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-circuitbreaker</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
-			<artifactId>java-access-api</artifactId>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-bulkhead</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-timelimiter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-retry</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-ratelimiter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
 		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
@@ -112,25 +104,24 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 		<!-- scope "test" -->
 		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>caching</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>resilience4j</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>jcache</artifactId>
+			<groupId>com.sap.cloud.sdk.testutil</groupId>
+			<artifactId>testutil-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -144,8 +135,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.datamodel</groupId>
-			<artifactId>odata-v4-core</artifactId>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>jcache</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -156,7 +147,8 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
+						<!-- Runtime dependency for resolving JCache implementation of Caffeine -->
+						<ignoredUnusedDeclaredDependency>com.github.ben-manes.caffeine:caffeine</ignoredUnusedDeclaredDependency>
 						<ignoredUnusedDeclaredDependency>com.github.ben-manes.caffeine:jcache</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 				</configuration>
