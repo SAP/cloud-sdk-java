@@ -67,7 +67,7 @@ public class AuthTokenDecoderIasTest
             + "  \"id_token_signing_alg_values_supported\" : [ \"RS256\" ],"
             + "  \"scopes_supported\" : [ \"openid\", \"email\", \"profile\", \"offline_access\" ],"
             + "  \"token_endpoint_auth_methods_supported\" : [ \"tls_client_auth_subject_dn\", \"client_secret_basic\", \"client_secret_post\" ],"
-            + "  \"claims_supported\" : [ \"sub\", \"iss\", \"exp\", \"iat\", \"nonce\", \"email\", \"email_verified\", \"given_name\", \"family_name\", \"zone_uuid\", \"user_uuid\", \"preferred_username\", \"name\" ],"
+            + "  \"claims_supported\" : [ \"sub\", \"iss\", \"exp\", \"iat\", \"nonce\", \"email\", \"email_verified\", \"given_name\", \"family_name\", \"zone_uuid\", \"app_tid\", \"user_uuid\", \"preferred_username\", \"name\" ],"
             + "  \"code_challenge_methods_supported\" : [ \"plain\", \"S256\" ],"
             + "  \"tls_client_certificate_bound_access_tokens\" : true"
             + "}";
@@ -90,6 +90,7 @@ public class AuthTokenDecoderIasTest
             + "          \"clientsecret\": \"xnDE_A.8@Bi-?ZP8W/jsW2::w:CmlbTjU\","
             + "          \"domain\": \"localhost\","
             + "          \"zone_uuid\": \"a89ea924-d9c2-4eab-84fb-3ffcaadf5d24\","
+            + "          \"app_tid\": \"a89ea924-d9c2-4eab-84fb-3ffcaadf5d24\","
             + "          \"domains\": ["
             + "            \"localhost\""
             + "          ],"
@@ -127,6 +128,7 @@ public class AuthTokenDecoderIasTest
                 .withClaimValue("user_uuid", "5a21dfa1-fd90-45ff-a5d3-d1cfa446d25a")
                 .withClaimValue("azp", "2aba8ab2-edc3-4666-b2ed-90b2b47e60e3")
                 .withClaimValue("zone_uuid", "a89ea924-d9c2-4eab-84fb-3ffcaadf5d24")
+                .withClaimValue("app_tid", "a89ea924-d9c2-4eab-84fb-3ffcaadf5d24")
                 .withClaimValue("given_name", "Foo")
                 .withClaimValue("family_name", "Bar")
                 .withClaimValue("email", "foo.bar@sap.com")
