@@ -127,11 +127,6 @@
 		</dependency>
 		<!-- scope "test" -->
 		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-apache-httpclient4</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -152,16 +147,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.security</groupId>
-			<artifactId>java-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
@@ -176,11 +161,10 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- required at runtime -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.security:java-security</ignoredUnusedDeclaredDependency>
-					</ignoredUnusedDeclaredDependencies>
-					<ignoredNonTestScopedDependencies>
-						<!-- httpcore and httpclient are necessary at runtime. -->
 						<ignoredNonTestScopedDependency>org.apache.httpcomponents:httpcore</ignoredNonTestScopedDependency>
 						<ignoredNonTestScopedDependency>org.apache.httpcomponents:httpclient</ignoredNonTestScopedDependency>
+					</ignoredUnusedDeclaredDependencies>
+					<ignoredNonTestScopedDependencies>
 						<!-- false positive by the maven plugins, this is actually used at compile time -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.environment.servicebinding.api:java-core-api</ignoredUnusedDeclaredDependency>
 					</ignoredNonTestScopedDependencies>
