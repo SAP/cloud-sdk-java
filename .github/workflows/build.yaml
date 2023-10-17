@@ -498,7 +498,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/maven-central-snapshots' }}
     needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
