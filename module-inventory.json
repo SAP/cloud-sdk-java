@@ -188,6 +188,17 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
+    "artifactId": "resilience4j",
+    "packaging": "jar",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Stable",
+    "pomFile": "cloudplatform/resilience4j/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
+    "parentArtifactId": "cloudplatform-parent",
+    "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "scp-cf",
     "packaging": "jar",
     "releaseAudience": "Public",
@@ -514,28 +525,6 @@
     "pomFile": "datamodel/soap/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.datamodel",
     "parentArtifactId": "datamodel-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.frameworks",
-    "artifactId": "frameworks-parent",
-    "packaging": "pom",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "frameworks/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk",
-    "parentArtifactId": "sdk-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.frameworks",
-    "artifactId": "resilience4j",
-    "packaging": "jar",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "frameworks/resilience4j/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.frameworks",
-    "parentArtifactId": "frameworks-parent",
     "excludeFromBlackDuckScan": false
   },
   {
