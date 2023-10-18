@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       skip_blackduck_scan:
-        description: "Skip Blackduck Scan (true or false), default is false."
+        description: "Skip Blackduck Scan"
         type: boolean
         default: false
         required: false
