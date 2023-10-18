@@ -606,6 +606,7 @@ jobs:
         spotbugs,
         checkstyle,
         codeql,
+        scan,
         archetypes,
         deploy-snapshot,
       ]
