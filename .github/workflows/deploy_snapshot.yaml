@@ -5,7 +5,8 @@ on:
     inputs:
       skip_blackduck_scan:
         description: "Skip Blackduck Scan (true or false), default is false."
-        default: "false"
+        type: boolean
+        default: false
         required: false
 
 env:
