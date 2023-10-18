@@ -119,7 +119,7 @@
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
-		<jetty.version>9.4.52.v20230823</jetty.version>
+		<jetty.version>9.4.53.v20231009</jetty.version>
 		<protobuf-java.version>3.24.3</protobuf-java.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
