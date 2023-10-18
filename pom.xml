@@ -134,7 +134,7 @@
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.8</byte-buddy.version>
 		<hamcrest-core.version>2.2</hamcrest-core.version>
-		<snakeyaml.version>1.33</snakeyaml.version>
+		<snakeyaml.version>2.0</snakeyaml.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
