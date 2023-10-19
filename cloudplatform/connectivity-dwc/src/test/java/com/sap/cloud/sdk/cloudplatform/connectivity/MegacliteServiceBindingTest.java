@@ -11,26 +11,22 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 public class MegacliteServiceBindingTest
 {
-    static {
-        MegacliteServiceBinding.dwcConfiguration =
-            new DwcConfiguration(URI.create("megaclite.com"), "provider-tenant-id");
-    }
-
     @Test
     public void testPropertiesOfTheOpenSourceServiceBinding()
     {
-        final ServiceBinding binding =
+        final MegacliteServiceBinding binding =
             MegacliteServiceBinding
                 .forService(ServiceIdentifier.DESTINATION)
                 .providerConfiguration()
                 .name("destination-paas")
                 .version("v1")
                 .build();
+        binding.setDwcConfiguration(new DwcConfiguration(URI.create("megaclite.com"), "provider-tenant-id"));
 
         assertThat(binding.getKeys()).isEmpty();
         assertThat(binding.getName()).isEmpty();
@@ -52,5 +48,22 @@ public class MegacliteServiceBindingTest
 
         assertThatThrownBy(() -> builder.and().providerConfiguration())
             .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testGetCredentialsThrowsExceptionWithoutProviderTenantId()
+    {
+        final MegacliteServiceBinding binding =
+            MegacliteServiceBinding
+                .forService(ServiceIdentifier.DESTINATION)
+                .providerConfiguration()
+                .name("destination-paas")
+                .version("v1")
+                .build();
+        binding.setDwcConfiguration(DwcConfiguration.getInstance());
+
+        assertThatThrownBy(binding::getCredentials)
+            .isExactlyInstanceOf(CloudPlatformException.class)
+            .hasMessage("No DWC_APPLICATION environment variable found. Cannot determine provider account id.");
     }
 }
