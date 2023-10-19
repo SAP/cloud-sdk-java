@@ -244,16 +244,16 @@
         }
       }
     },
-    "value" : 5.01556522673544,
+    "value" : 5.224146787019127,
     "weight" : 1.0,
-    "confidence" : 9.645390070921987,
+    "confidence" : 10.0,
     "usedValues" : [ {
       "type" : "ScoreValue",
       "score" : {
         "type" : "ProjectSecurityAwarenessScore",
         "name" : "How well open-source community is aware about security"
       },
-      "value" : 2.0,
+      "value" : 3.0,
       "weight" : 0.9,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -318,7 +318,7 @@
           "type" : "BooleanFeature",
           "name" : "If a project uses Dependabot"
         },
-        "flag" : false,
+        "flag" : true,
         "explanation" : [ ]
       }, {
         "type" : "BooleanValue",
@@ -519,7 +519,7 @@
             "type" : "DependabotScore",
             "name" : "How a project uses Dependabot"
           },
-          "value" : 5.0,
+          "value" : 10.0,
           "weight" : 1.0,
           "confidence" : 10.0,
           "usedValues" : [ {
@@ -528,7 +528,7 @@
               "type" : "BooleanFeature",
               "name" : "If a project uses Dependabot"
             },
-            "flag" : false,
+            "flag" : true,
             "explanation" : [ ]
           }, {
             "type" : "BooleanValue",
@@ -1339,7 +1339,7 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of commits in the last three months"
         },
-        "number" : 77,
+        "number" : 78,
         "explanation" : [ ]
       }, {
         "type" : "IntegerValue",
@@ -1350,7 +1350,7 @@
         "number" : 4,
         "explanation" : [ ]
       } ],
-      "explanation" : [ "77 commits in the last 3 months results to 10.00 points", "4 contributors increase the score value from 10.00 to 11.00" ],
+      "explanation" : [ "78 commits in the last 3 months results to 10.00 points", "4 contributors increase the score value from 10.00 to 11.00" ],
       "isUnknown" : false,
       "isNotApplicable" : false,
       "feature" : {
@@ -1388,9 +1388,9 @@
         "type" : "ProjectPopularityScore",
         "name" : "Open-source project popularity score"
       },
-      "value" : 0.015,
+      "value" : 0.1756666666666667,
       "weight" : 0.5,
-      "confidence" : 6.666666666666667,
+      "confidence" : 10.0,
       "usedValues" : [ {
         "type" : "IntegerValue",
         "feature" : {
@@ -1408,11 +1408,12 @@
         "number" : 3,
         "explanation" : [ ]
       }, {
-        "type" : "UnknownValue",
+        "type" : "IntegerValue",
         "feature" : {
           "type" : "PositiveIntegerFeature",
           "name" : "Number of projects on GitHub that use an open source project"
         },
+        "number" : 241,
         "explanation" : [ ]
       } ],
       "explanation" : [ ],
@@ -1643,7 +1644,7 @@
               "type" : "DependabotScore",
               "name" : "How a project uses Dependabot"
             },
-            "value" : 5.0,
+            "value" : 10.0,
             "weight" : 1.0,
             "confidence" : 10.0,
             "usedValues" : [ {
@@ -1652,7 +1653,7 @@
                 "type" : "BooleanFeature",
                 "name" : "If a project uses Dependabot"
               },
-              "flag" : false,
+              "flag" : true,
               "explanation" : [ ]
             }, {
               "type" : "BooleanValue",

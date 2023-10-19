@@ -1,8 +1,8 @@
 **Rating**: **MODERATE**
 
-**Score**: **5.02**, max score value is 10.0
+**Score**: **5.22**, max score value is 10.0
 
-**Confidence**: High (9.65, max confidence value is 10.0)
+**Confidence**: Max (10.0, max confidence value is 10.0)
 
 ## Details
 
@@ -16,7 +16,7 @@ It used the following sub-scores:
 
 1.  **[Security testing](#security-testing)**: **6.57** (weight is 1.0)
     1.  **[Dependency testing](#dependency-testing)**: **10.0** (weight is 1.0)
-        1.  **[Dependabot score](#dependabot-score)**: **5.0** (weight is 1.0)
+        1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
             
         1.  **[Snyk score](#snyk-score)**: **5.0** (weight is 1.0)
             
@@ -41,12 +41,12 @@ It used the following sub-scores:
         
     1.  **[nohttp tool](#nohttp-tool)**: **0.0** (weight is 0.2)
         
-1.  **[Security awareness](#security-awareness)**: **2.0** (weight is 0.9)
+1.  **[Security awareness](#security-awareness)**: **3.0** (weight is 0.9)
     
 1.  **[Vulnerability discovery and security testing](#vulnerability-discovery-and-security-testing)**: **2.0** (weight is 0.6)
     1.  **[Security testing](#security-testing)**: **6.57** (weight is 1.0)
         1.  **[Dependency testing](#dependency-testing)**: **10.0** (weight is 1.0)
-            1.  **[Dependabot score](#dependabot-score)**: **5.0** (weight is 1.0)
+            1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
                 
             1.  **[Snyk score](#snyk-score)**: **5.0** (weight is 1.0)
                 
@@ -77,7 +77,7 @@ It used the following sub-scores:
     
 1.  **[Project activity](#project-activity)**: **10.0** (weight is 0.5)
     
-1.  **[Project popularity](#project-popularity)**: **0.01** (weight is 0.5)
+1.  **[Project popularity](#project-popularity)**: **0.18** (weight is 0.5)
     
 1.  **[Security reviews](#security-reviews)**: **0.0** (weight is 0.2)
     
@@ -88,11 +88,6 @@ It used the following sub-scores:
 You can open a pull request to enable FindSecBugs for the project.
 More info:
 1.  [FindSecBugs home page](https://find-sec-bugs.github.io/)
-
-
-You can configure Dependabot by creating a configuration file.
-More info:
-1.  [Configuration options for dependency updates](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
 
 
 You can add OWASP Dependency Check to the project's build pipeline.
@@ -158,7 +153,7 @@ This sub-score is based on the following sub-scores:
 
 
 1.  **[Dependency testing](#dependency-testing)**: **10.0** (weight is 1.0)
-    1.  **[Dependabot score](#dependabot-score)**: **5.0** (weight is 1.0)
+    1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
         
     1.  **[Snyk score](#snyk-score)**: **5.0** (weight is 1.0)
         
@@ -187,7 +182,7 @@ This sub-score is based on the following sub-scores:
 
 ### Security awareness
 
-Score: **2.0**, confidence is 10.0 (max), weight is 0.9 (high)
+Score: **3.0**, confidence is 10.0 (max), weight is 0.9 (high)
 
 The score shows how a project is aware of security. If the project has a security policy, then the score adds 2.00. If the project has a security team, then the score adds 3.00. If the project uses verified signed commits, then the score adds 0.50. If the project has a bug bounty program, then the score adds 4.00. If the project signs its artifacts, then the score adds 0.50. If the project uses a security tool or library, then the score adds 1.00. If the project has executable binaries, then the score subtracts 2.00.
 
@@ -203,7 +198,7 @@ This sub-score is based on 18 features:
 1.  **Does it have executable binaries?** No
 1.  **Does it sign artifacts?** No
 1.  **Does it use AddressSanitizer?** No
-1.  **Does it use Dependabot?** No
+1.  **Does it use Dependabot?** Yes
 1.  **Does it use FindSecBugs?** No
 1.  **Does it use MemorySanitizer?** No
 1.  **Does it use OWASP ESAPI?** No
@@ -231,7 +226,7 @@ This sub-score is based on the following sub-score:
 
 1.  **[Security testing](#security-testing)**: **6.57** (weight is 1.0)
     1.  **[Dependency testing](#dependency-testing)**: **10.0** (weight is 1.0)
-        1.  **[Dependabot score](#dependabot-score)**: **5.0** (weight is 1.0)
+        1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
             
         1.  **[Snyk score](#snyk-score)**: **5.0** (weight is 1.0)
             
@@ -303,20 +298,20 @@ Score: **10.0**, confidence is 10.0 (max), weight is 0.5 (medium)
 
 The score evaluates how active a project is. It's based on number of commits and contributors in the last 3 months.
 
-77 commits in the last 3 months results to 10.00 points
+78 commits in the last 3 months results to 10.00 points
 4 contributors increase the score value from 10.00 to 11.00
 
 This sub-score is based on 2 features:
 
 
 
-1.  **Number of commits in the last three months:** 77
+1.  **Number of commits in the last three months:** 78
 1.  **Number of contributors in the last three months:** 4
 
 
 ### Project popularity
 
-Score: **0.01**, confidence is 6.67 (low), weight is 0.5 (medium)
+Score: **0.18**, confidence is 10.0 (max), weight is 0.5 (medium)
 
 This scoring function is based on number of stars, watchers and dependent projects.
 
@@ -326,7 +321,7 @@ This sub-score is based on 3 features:
 
 
 
-1.  **Number of projects on GitHub that use an open source project:** unknown
+1.  **Number of projects on GitHub that use an open source project:** 241
 1.  **Number of stars for a GitHub repository:** 5
 1.  **Number of watchers for a GitHub repository:** 3
 
@@ -358,7 +353,7 @@ This sub-score is based on the following sub-scores:
 
 
 
-1.  **[Dependabot score](#dependabot-score)**: **5.0** (weight is 1.0)
+1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
     
 1.  **[Snyk score](#snyk-score)**: **5.0** (weight is 1.0)
     
@@ -444,7 +439,7 @@ This sub-score is based on 2 features:
 
 ### Dependabot score
 
-Score: **5.0**, confidence is 10.0 (max), weight is 1.0 (high)
+Score: **10.0**, confidence is 10.0 (max), weight is 1.0 (high)
 
 
 
@@ -454,7 +449,7 @@ This sub-score is based on 4 features:
 
 
 
-1.  **Does it use Dependabot?** No
+1.  **Does it use Dependabot?** Yes
 1.  **Does it use GitHub as the main development platform?** Yes
 1.  **Package managers:** MAVEN
 1.  **Programming languages:** JAVA, PYTHON, OTHER
