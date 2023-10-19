@@ -61,13 +61,13 @@ public final class MegacliteServiceBinding implements ServiceBinding
     @Nonnull
     private final ServiceIdentifier service;
 
-    @Nonnull
-    private final String providerTenantId;
-
     @Nullable
     private final MandateConfiguration providerConfiguration;
     @Nullable
     private final MandateConfiguration subscriberConfiguration;
+
+    @Nullable
+    static DwcConfiguration dwcConfiguration;
 
     @Nonnull
     @Override
@@ -121,7 +121,12 @@ public final class MegacliteServiceBinding implements ServiceBinding
     @Override
     public Map<String, Object> getCredentials()
     {
-        return Collections.singletonMap("tenantid", providerTenantId);
+        return Collections
+            .singletonMap(
+                "tenantid",
+                dwcConfiguration == null
+                    ? DwcConfiguration.getInstance().providerTenant()
+                    : dwcConfiguration.providerTenant());
     }
 
     /**
@@ -371,12 +376,7 @@ public final class MegacliteServiceBinding implements ServiceBinding
             } else {
                 subscriberConfiguration = currentConfiguration;
             }
-            final String providerTenantId = DwcConfiguration.getInstance().providerTenant();
-            return new MegacliteServiceBinding(
-                service,
-                providerTenantId,
-                providerConfiguration,
-                subscriberConfiguration);
+            return new MegacliteServiceBinding(service, providerConfiguration, subscriberConfiguration);
         }
 
         @Nonnull
