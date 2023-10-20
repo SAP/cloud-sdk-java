@@ -15,12 +15,14 @@ import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -65,6 +67,10 @@ public final class MegacliteServiceBinding implements ServiceBinding
     private final MandateConfiguration providerConfiguration;
     @Nullable
     private final MandateConfiguration subscriberConfiguration;
+
+    @Nonnull
+    @Setter( AccessLevel.PACKAGE )
+    private DwcConfiguration dwcConfiguration = DwcConfiguration.getInstance();
 
     @Nonnull
     @Override
@@ -117,8 +123,10 @@ public final class MegacliteServiceBinding implements ServiceBinding
     @Nonnull
     @Override
     public Map<String, Object> getCredentials()
+        throws CloudPlatformException,
+            IllegalArgumentException
     {
-        return Collections.emptyMap();
+        return Collections.singletonMap("tenantid", dwcConfiguration.providerTenant());
     }
 
     /**
