@@ -4,11 +4,16 @@
 
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
+import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_SUBDOMAIN_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_TENANT_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.Map;
 
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.After;
@@ -17,11 +22,13 @@ import org.junit.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
+import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
+import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ScpCfAuthTokenFacade;
+import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
@@ -50,12 +57,12 @@ public class ScpCfTenantFacadeTest
     }
 
     @Test
-    public void testWithoutTenantFallsBackToXsuaaTokenAndFailsDueToMissingVcapServices()
+    public void testWithoutTenantFallsBackToXsuaaTokenAndFailsDueToMissingVcapServicesAndDwcHeaders()
     {
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
             final Try<Tenant> tenantTry = new ScpCfTenantFacade().tryGetCurrentTenant();
             assertThat(tenantTry).isEmpty();
-            assertThat(tenantTry.getCause()).isInstanceOf(CloudPlatformException.class);
+            assertThat(tenantTry.getCause()).isInstanceOf(TenantAccessException.class);
         });
     }
 
@@ -101,5 +108,41 @@ public class ScpCfTenantFacadeTest
         assertThat(actualResult.getCause()).isEqualTo(storedResult.getCause());
 
         verifyNoInteractions(AuthTokenAccessor.getAuthTokenFacade());
+    }
+
+    @Test
+    public void testDwcSuccessfulTenantRetrieval()
+    {
+        final Map<String, String> headers =
+            ImmutableMap.of(DWC_TENANT_HEADER, "tenant-value", DWC_SUBDOMAIN_HEADER, "subdomain-value");
+
+        final ScpCfTenant expectedTenant = new ScpCfTenant("tenant-value", "subdomain-value");
+
+        RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> {
+            final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
+            final ScpCfTenant currentTenant = (ScpCfTenant) TenantAccessor.getCurrentTenant();
+            final Try<Tenant> shouldBeSuccess =
+                currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
+
+            assertThat(currentTenant).isEqualTo(expectedTenant);
+            assertThat(shouldBeSuccess.isSuccess()).isTrue();
+            assertThat(shouldBeSuccess.get()).isEqualTo(expectedTenant);
+        });
+    }
+
+    @Test
+    public void testDwcUnsuccessfulTenantRetrieval()
+    {
+        RequestHeaderAccessor.executeWithHeaderContainer(Collections.emptyMap(), () -> {
+            final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
+            final Try<Tenant> tenantFailure = TenantAccessor.tryGetCurrentTenant();
+            final Try<Tenant> shouldBeFailure =
+                currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
+
+            assertThat(tenantFailure.isFailure()).isTrue();
+            assertThat(tenantFailure.getCause()).isInstanceOf(TenantAccessException.class);
+            assertThat(shouldBeFailure.isFailure()).isTrue();
+            assertThat(tenantFailure).isSameAs(shouldBeFailure);
+        });
     }
 }

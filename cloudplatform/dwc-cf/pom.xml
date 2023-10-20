@@ -54,10 +54,10 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-dwc</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>tenant-dwc</artifactId>
-		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>-->
+		<!--			<artifactId>tenant-dwc</artifactId>-->
+		<!--		</dependency>-->
 	</dependencies>
 	<build>
 		<plugins>
@@ -70,7 +70,7 @@
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant-dwc</usedDependency>
+						<!--						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant-dwc</usedDependency>-->
 					</usedDependencies>
 				</configuration>
 			</plugin>
