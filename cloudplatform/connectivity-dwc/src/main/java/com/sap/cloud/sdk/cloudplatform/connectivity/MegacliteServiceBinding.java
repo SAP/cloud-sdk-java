@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
-import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -124,11 +124,13 @@ public final class MegacliteServiceBinding implements ServiceBinding
     @Override
     public Map<String, Object> getCredentials()
     {
-        final Try<String> tenantId = Try.of(dwcConfiguration::providerTenant);
-        if( tenantId.isSuccess() ) {
-            return Collections.singletonMap("tenantid", tenantId.get());
+        try {
+            final String tenantId = dwcConfiguration.providerTenant();
+            return Collections.singletonMap("tenantid", tenantId);
         }
-        return Collections.emptyMap();
+        catch( final CloudPlatformException | IllegalArgumentException e ) {
+            return Collections.emptyMap();
+        }
     }
 
     /**
