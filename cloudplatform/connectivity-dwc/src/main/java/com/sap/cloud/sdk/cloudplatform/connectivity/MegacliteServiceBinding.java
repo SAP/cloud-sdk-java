@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents a (remote) service that is bound to Megaclite. Therefore, the application may reach the bound service by
@@ -58,6 +59,7 @@ import lombok.ToString;
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @EqualsAndHashCode
 @ToString
+@Slf4j
 public final class MegacliteServiceBinding implements ServiceBinding
 {
     @Nonnull
@@ -125,10 +127,10 @@ public final class MegacliteServiceBinding implements ServiceBinding
     public Map<String, Object> getCredentials()
     {
         try {
-            final String tenantId = dwcConfiguration.providerTenant();
-            return Collections.singletonMap("tenantid", tenantId);
+            return Collections.singletonMap("tenantid", dwcConfiguration.providerTenant());
         }
         catch( final CloudPlatformException | IllegalArgumentException e ) {
+            log.debug("Failed to get the provider tenant ID from the DWC configuration.", e);
             return Collections.emptyMap();
         }
     }
