@@ -663,7 +663,7 @@ public class ScpCfCloudPlatformTest
 
         // sanity check
         assertThat(serviceBinding.getName()).isEmpty();
-        assertThat(serviceBinding.getServiceName()).hasValue(String.valueOf(ServiceIdentifier.DESTINATION));
+        assertThat(serviceBinding.getServiceName()).hasValue(ServiceIdentifier.DESTINATION.toString());
         assertThat(serviceBinding.getServicePlan()).isEmpty();
         assertThat(serviceBinding.getTags()).isEmpty();
         // The dwcConfiguration cannot find the DWC_APPLICATION env var, so the credentials are empty
@@ -678,6 +678,6 @@ public class ScpCfCloudPlatformTest
         final Map<String, JsonArray> parsedVcapServices = sut.getVcapServices();
 
         // assert
-        assertThat(parsedVcapServices).containsOnlyKeys(String.valueOf(ServiceIdentifier.DESTINATION));
+        assertThat(parsedVcapServices).containsOnlyKeys(ServiceIdentifier.DESTINATION.toString());
     }
 }
