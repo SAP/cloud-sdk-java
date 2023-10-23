@@ -37,6 +37,9 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
+import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBinding;
+import com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 
@@ -472,6 +475,7 @@ public class ScpCfCloudPlatformTest
         assertThat(defaultAccessorClasses)
             .containsExactlyInAnyOrder(
                 SapVcapServicesServiceBindingAccessor.class,
+                MegacliteServiceBindingAccessor.class, // Is present because of the dwcBindingDoesNotThrow test
                 SapServiceOperatorServiceBindingIoAccessor.class,
                 SapServiceOperatorLayeredServiceBindingAccessor.class);
     }
@@ -644,5 +648,36 @@ public class ScpCfCloudPlatformTest
         assertThat(parsedBinding.get("label").getAsString()).isEqualTo("service-name");
         assertThat(parsedBinding.get("tags").getAsJsonArray()).isEmpty();
         assertThat(parsedBinding.get("credentials").getAsJsonObject().asMap()).isEmpty();
+    }
+
+    @Test
+    public void dwcBindingDoesNotThrow()
+    {
+        final MegacliteServiceBinding serviceBinding =
+            MegacliteServiceBinding
+                .forService(ServiceIdentifier.DESTINATION)
+                .providerConfiguration()
+                .name("destination-paas")
+                .version("v1")
+                .build();
+
+        // sanity check
+        assertThat(serviceBinding.getName()).isEmpty();
+        assertThat(serviceBinding.getServiceName()).hasValue(String.valueOf(ServiceIdentifier.DESTINATION));
+        assertThat(serviceBinding.getServicePlan()).isEmpty();
+        assertThat(serviceBinding.getTags()).isEmpty();
+        // The dwcConfiguration cannot find the DWC_APPLICATION env var, so the credentials are empty
+        assertThat(serviceBinding.getCredentials()).isEmpty();
+        assertThat(serviceBinding.getKeys()).isEmpty();
+
+        // setup subject under test
+        final ScpCfCloudPlatform sut = new ScpCfCloudPlatform();
+        sut.setServiceBindingAccessor(() -> Collections.singletonList(serviceBinding));
+
+        // does not throw
+        final Map<String, JsonArray> parsedVcapServices = sut.getVcapServices();
+
+        // assert
+        assertThat(parsedVcapServices).containsOnlyKeys(String.valueOf(ServiceIdentifier.DESTINATION));
     }
 }

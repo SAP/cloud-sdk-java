@@ -312,6 +312,24 @@ public class ScpCfDestinationServiceAdapterTest
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
     }
 
+    @Test
+    public void getDestinationServiceProviderTenantShouldThrowForDwcServiceBindings()
+    {
+        final MegacliteServiceBinding serviceBinding =
+            MegacliteServiceBinding
+                .forService(ServiceIdentifier.DESTINATION)
+                .providerConfiguration()
+                .name("destination-paas")
+                .version("v1")
+                .build();
+        final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
+        assertThatThrownBy(adapterToTest::getProviderTenantId)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessage(
+                "The provider tenant id is not defined in the service binding."
+                    + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
+    }
+
     private static ScpCfDestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
     {
         return new ScpCfDestinationServiceAdapter(null, () -> {

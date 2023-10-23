@@ -86,13 +86,19 @@ class ScpCfDestinationServiceAdapter
         try {
             final ServiceBinding binding = serviceBindingSupplier.get();
 
-            return TypedMapView.ofCredentials(binding).getString("tenantid");
+            final TypedMapView credentials = TypedMapView.ofCredentials(binding);
+            if( credentials.containsKey("tenantid") ) {
+                return credentials.getString("tenantid");
+            }
         }
         catch( final Exception e ) {
             throw new DestinationAccessException(
                 "Could not resolve destination to Destination Service on behalf of provider.",
                 e);
         }
+        throw new DestinationAccessException(
+            "The provider tenant id is not defined in the service binding."
+                + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
     }
 
     private Function<OnBehalfOf, HttpDestination> prepareServiceDestinationComputation()
