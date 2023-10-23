@@ -39,7 +39,6 @@ public class DwcPrincipalFacade extends DefaultPrincipalFacade
         return Try.of(DwcPrincipalFacade::extractPrincipalFromDwcHeaders);
     }
 
-    @SuppressWarnings( "deprecation" )
     @Nonnull
     private static Principal extractPrincipalFromDwcHeaders()
     {

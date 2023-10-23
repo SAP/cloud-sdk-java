@@ -52,7 +52,6 @@
 		<module>dwc-cf</module>
 		<module>cloudplatform-core-dwc-cf</module>
 		<module>cloudplatform-core-dwc</module>
-		<module>security-dwc</module>
 	</modules>
 	<scm>
 		<connection />

@@ -127,11 +127,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>security-dwc</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 				<artifactId>servlet</artifactId>
 				<version>${sdk.version}</version>
 			</dependency>
