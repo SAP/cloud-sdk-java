@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -84,6 +85,7 @@ public class OrderWithTimestampAllOf
      *
      * @return The set of properties names
      */
+    @JsonIgnore
     @Nonnull
     public Set<String> getCustomFieldNames()
     {
