@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -205,6 +206,7 @@ public class Soda
    * Get the names of the unrecognizable properties of the {@link Soda}.
    * @return The set of properties names
    */
+  @JsonIgnore
   @Nonnull
   public Set<String> getCustomFieldNames() {
     return cloudSdkCustomFields.keySet();
