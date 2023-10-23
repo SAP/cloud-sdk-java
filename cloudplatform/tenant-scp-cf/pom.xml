@@ -131,10 +131,6 @@
 			<artifactId>java-sap-vcap-services</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

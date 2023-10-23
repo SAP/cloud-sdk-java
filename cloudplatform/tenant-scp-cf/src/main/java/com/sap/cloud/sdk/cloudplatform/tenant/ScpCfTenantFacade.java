@@ -19,7 +19,6 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils;
 import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
@@ -127,8 +126,7 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
             return currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
         }
         return tryGetTenantFromAuthToken(AuthTokenAccessor.tryGetCurrentToken()) // read from user token
-            .orElse(() -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())) // read bindings
-            .orElse(this::tryExtractTenantFromDwcHeaders); // read from dwc header
+            .orElse(() -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())); // read bindings
     }
 
     @Nonnull
@@ -158,13 +156,5 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
             }
         }
         return Try.failure(new CloudPlatformException("Failed to extract tenant from service bindings."));
-    }
-
-    @Nonnull
-    private Try<ScpCfTenant> tryExtractTenantFromDwcHeaders()
-    {
-        return Try
-            .of(() -> new ScpCfTenant(DwcHeaderUtils.getDwcTenantIdOrThrow(), DwcHeaderUtils.getDwCSubdomainOrThrow()))
-            .recoverWith(Exception.class, e -> Try.failure(new TenantAccessException(e)));
     }
 }

@@ -15,10 +15,10 @@ import org.junit.Test;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ScpCfAuthTokenFacade;
-import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
 
@@ -47,7 +47,7 @@ public class ScpCfTenantFacadeXsuaaTest
     public void givenNoUserTokenAndXsuaaTenantThenExceptionIsReturned()
     {
         final Try<Tenant> tenantTry = new ScpCfTenantFacade().tryGetCurrentTenant();
-        VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(TenantAccessException.class);
+        VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(CloudPlatformException.class);
     }
 
     private ScpCfAuthTokenFacade mockCurrentTenant( final String userTenant )

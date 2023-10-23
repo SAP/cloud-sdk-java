@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cloud.sdk.cloudplatform;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.exception.DwcHeaderNotFoundException;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DwcHeaderNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
