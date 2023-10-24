@@ -64,6 +64,7 @@ public enum ScpCfDestinationRetrievalStrategy
      * @param identifier
      *            The string representation of a strategy.
      * @return The strategy enum value.
+     * @since 5.0.0
      */
     @Nullable
     public static ScpCfDestinationRetrievalStrategy ofIdentifier( @Nullable final String identifier )
