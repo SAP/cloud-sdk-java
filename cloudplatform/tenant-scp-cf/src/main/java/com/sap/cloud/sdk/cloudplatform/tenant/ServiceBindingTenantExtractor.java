@@ -36,7 +36,8 @@ enum ServiceBindingTenantExtractor
             .subdomain(
                 "url",
                 s -> Try.of(() -> URI.create(s).getHost()).map(h -> h.substring(0, h.indexOf('.'))).getOrElse(""))
-            .tenantId("zone_uuid"));
+            .tenantId("app_tid")
+            .tenantId("zone_uuid")); // outdated
 
     @Nonnull
     @Getter
