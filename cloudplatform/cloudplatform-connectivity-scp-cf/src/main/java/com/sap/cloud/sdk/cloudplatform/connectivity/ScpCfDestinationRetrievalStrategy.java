@@ -59,7 +59,7 @@ public enum ScpCfDestinationRetrievalStrategy
     }
 
     @Nullable
-    static ScpCfDestinationRetrievalStrategy ofIdentifier( @Nullable final String identifier )
+    public static ScpCfDestinationRetrievalStrategy ofIdentifier(@Nullable final String identifier)
     {
         return Stream
             .of(ScpCfDestinationRetrievalStrategy.values())
