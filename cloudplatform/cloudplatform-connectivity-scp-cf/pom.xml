@@ -175,6 +175,11 @@
 		<!-- scope "test" -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-dwc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>servlet</artifactId>
 			<scope>test</scope>
 		</dependency>
