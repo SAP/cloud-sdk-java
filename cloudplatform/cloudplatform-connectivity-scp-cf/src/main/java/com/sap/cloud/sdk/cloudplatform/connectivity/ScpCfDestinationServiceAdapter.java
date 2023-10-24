@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 
+import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -83,19 +84,20 @@ class ScpCfDestinationServiceAdapter
         if( providerTenantId != null ) {
             return providerTenantId;
         }
-        try {
-            final ServiceBinding binding = serviceBindingSupplier.get();
 
-            final TypedMapView credentials = TypedMapView.ofCredentials(binding);
-            if( credentials.containsKey("tenantid") ) {
-                return credentials.getString("tenantid");
-            }
+        final TypedMapView credentials = Try.of(() -> {
+            final ServiceBinding binding = serviceBindingSupplier.get();
+            return TypedMapView.ofCredentials(binding);
+        })
+            .getOrElseThrow(
+                e -> new DestinationAccessException(
+                    "Could not resolve destination to Destination Service on behalf of provider.",
+                    e));
+
+        if( credentials.containsKey("tenantid") ) {
+            return credentials.getString("tenantid");
         }
-        catch( final Exception e ) {
-            throw new DestinationAccessException(
-                "Could not resolve destination to Destination Service on behalf of provider.",
-                e);
-        }
+
         throw new DestinationAccessException(
             "The provider tenant id is not defined in the service binding."
                 + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
