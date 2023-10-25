@@ -39,7 +39,7 @@ public class DwcPrincipalFacadeTest
         final String dwcClient = "sb-dwc-client!1234";
 
         final Map<String, String> headers =
-            ImmutableMap.of(DWC_USER_HEADER, dwcUser, DWC_SCOPES_HEADER, dwcScopes, DWC_CLIENT_HEADER, dwcClient);
+            ImmutableMap.of(DwcHeaderUtils.DWC_USER_HEADER, dwcUser, DwcHeaderUtils.DWC_SCOPES_HEADER, dwcScopes, DwcHeaderUtils.DWC_CLIENT_HEADER, dwcClient);
 
         final DefaultPrincipal expectedPrincipal = new DefaultPrincipal("sample.user@mail.com");
 

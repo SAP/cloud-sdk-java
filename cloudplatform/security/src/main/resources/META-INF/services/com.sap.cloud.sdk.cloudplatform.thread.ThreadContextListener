@@ -1,1 +1,3 @@
 com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalThreadContextListener
+com.sap.cloud.sdk.cloudplatform.security.AuthTokenThreadContextListener
+com.sap.cloud.sdk.cloudplatform.security.BasicAuthenticationThreadContextListener

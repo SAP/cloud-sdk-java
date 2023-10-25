@@ -76,10 +76,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>security-scp-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>tenant</artifactId>
 		</dependency>
 		<dependency>
@@ -243,7 +239,6 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->

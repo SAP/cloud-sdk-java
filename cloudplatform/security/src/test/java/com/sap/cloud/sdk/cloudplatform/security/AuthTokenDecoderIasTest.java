@@ -44,7 +44,7 @@ import io.vavr.control.Try;
 public class AuthTokenDecoderIasTest
 {
     @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
+    public final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration.wireMockConfig().dynamicPort());
 
     @Mock
     private CloudPlatformFacade cloudPlatformFacade;
@@ -144,7 +144,7 @@ public class AuthTokenDecoderIasTest
     {
         final String encodedPublicKey = Base64.getEncoder().encodeToString(RSA_KEYS.getPublic().getEncoded());
         final String tokenKeys = String.format(TEMPLATE_TOKEN_KEYS, encodedPublicKey);
-        wireMockServer.stubFor(get(urlPathEqualTo("/oauth2/certs")).willReturn(okJson(tokenKeys)));
+        wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/oauth2/certs")).willReturn(WireMock.okJson(tokenKeys)));
     }
 
     @Before
@@ -153,7 +153,7 @@ public class AuthTokenDecoderIasTest
         final String oauthUrl = wireMockServer.baseUrl();
         final String openIdCOnfiguration = TEMPLATE_OPENID_CONFIGURATION.replaceAll("HOST", oauthUrl);
         wireMockServer
-            .stubFor(get(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson(openIdCOnfiguration)));
+            .stubFor(WireMock.get(WireMock.urlPathEqualTo("/.well-known/openid-configuration")).willReturn(WireMock.okJson(openIdCOnfiguration)));
     }
 
     @Before
