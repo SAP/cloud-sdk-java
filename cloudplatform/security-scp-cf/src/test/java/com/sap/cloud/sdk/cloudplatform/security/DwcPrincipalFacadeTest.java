@@ -1,8 +1,8 @@
 package com.sap.cloud.sdk.cloudplatform.security;
 
-import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_CLIENT_HEADER;
-import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_SCOPES_HEADER;
-import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_USER_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_CLIENT_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_SCOPES_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_USER_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;

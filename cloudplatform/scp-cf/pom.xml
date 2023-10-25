@@ -59,7 +59,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>tenant-scp-cf</artifactId>
+			<artifactId>tenant</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -74,7 +74,7 @@
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity-scp-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:servlet</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant-scp-cf</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>
 					</usedDependencies>
 				</configuration>
 			</plugin>

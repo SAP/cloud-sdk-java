@@ -37,7 +37,7 @@ public class ScpCfTenantFacadeXsuaaTest
         final String userTenant = "someUserTenant";
         mockCurrentTenant(userTenant);
 
-        final Try<Tenant> tenantTry = new ScpCfTenantFacade().tryGetCurrentTenant();
+        final Try<Tenant> tenantTry = new DefaultTenantFacade().tryGetCurrentTenant();
 
         VavrAssertions.assertThat(tenantTry).isSuccess();
         assertThat(tenantTry.get().getTenantId()).isEqualTo(userTenant);
@@ -46,7 +46,7 @@ public class ScpCfTenantFacadeXsuaaTest
     @Test
     public void givenNoUserTokenAndXsuaaTenantThenExceptionIsReturned()
     {
-        final Try<Tenant> tenantTry = new ScpCfTenantFacade().tryGetCurrentTenant();
+        final Try<Tenant> tenantTry = new DefaultTenantFacade().tryGetCurrentTenant();
         VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(CloudPlatformException.class);
     }
 

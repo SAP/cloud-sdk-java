@@ -70,7 +70,7 @@ public class ServiceBindingTenantExtractorTest
         platform.setEnvironmentVariableReader(env::get);
 
         final ThreadContextExecutor executor = ThreadContextExecutor.fromNewContext().withoutDefaultListeners();
-        final Try<Tenant> maybeTenant = executor.execute(() -> new ScpCfTenantFacade().tryGetCurrentTenant());
+        final Try<Tenant> maybeTenant = executor.execute(() -> new DefaultTenantFacade().tryGetCurrentTenant());
         assertThat(maybeTenant).containsExactly(parameter.getAssertedTenant());
     }
 }

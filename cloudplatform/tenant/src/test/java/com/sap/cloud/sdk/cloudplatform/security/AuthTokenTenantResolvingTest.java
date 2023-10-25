@@ -30,8 +30,8 @@ import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
@@ -147,7 +147,7 @@ public class AuthTokenTenantResolvingTest
         CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(cloudPlatform));
         // resetting the facades to the CF ones, as we want to test that the content of the JWT is actually read
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
-        TenantAccessor.setTenantFacade(new ScpCfTenantFacade());
+        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
         mockedAuthTokenFacade = Mockito.spy(new ScpCfAuthTokenFacade());
         AuthTokenAccessor.setAuthTokenFacade(mockedAuthTokenFacade);

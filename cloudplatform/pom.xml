@@ -48,7 +48,6 @@
 		<module>servlet</module>
 		<module>servlet-jakarta</module>
 		<module>tenant</module>
-		<module>tenant-scp-cf</module>
 		<module>dwc-cf</module>
 		<module>cloudplatform-core-dwc-cf</module>
 		<module>cloudplatform-core-dwc</module>

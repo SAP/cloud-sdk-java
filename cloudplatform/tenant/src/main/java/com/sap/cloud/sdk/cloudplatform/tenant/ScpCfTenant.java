@@ -11,8 +11,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Implementation of {@link Tenant} for SAP Business Technology Platform Cloud Foundry or when running on the SAP Deploy
- * with Confidence stack.
+ * Implementation of {@link Tenant} for SAP Business Technology Platform Cloud Foundry.
  */
 @EqualsAndHashCode( callSuper = true )
 @ToString( callSuper = true )
