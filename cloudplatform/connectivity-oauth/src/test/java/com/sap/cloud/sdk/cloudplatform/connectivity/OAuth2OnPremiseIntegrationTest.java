@@ -1,17 +1,5 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.apache.http.HttpHeaders;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.net.URI;
-import java.util.Collection;
-import java.util.Map;
-
-import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
-import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -23,6 +11,17 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestina
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+
+import java.util.Collection;
+import java.util.Map;
+
+import org.apache.http.HttpHeaders;
+import org.junit.Rule;
+import org.junit.Test;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 
 @SuppressWarnings( "unchecked" )
 public class OAuth2OnPremiseIntegrationTest

@@ -19,7 +19,6 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;

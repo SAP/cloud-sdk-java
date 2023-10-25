@@ -13,7 +13,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -34,8 +35,6 @@ import com.sap.cloud.security.xsuaa.tokenflows.ClientCredentialsTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.vavr.control.Try;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
