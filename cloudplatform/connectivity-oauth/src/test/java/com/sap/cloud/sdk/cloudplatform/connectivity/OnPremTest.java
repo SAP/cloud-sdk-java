@@ -8,12 +8,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,23 +19,21 @@ import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
-import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
-import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientCredentials;
-import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
-import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
-import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
+import com.sap.cloud.security.config.ClientIdentity;
 
-@SuppressWarnings( "unchecked" )
 public class OnPremTest
 {
+    private static final String MOCKED_RESPONSE_BODY =
+        "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}";
+    private static final ClientIdentity SOME_IDENTITY = new ClientCredentials("clientid", "clientsecret");
+    private static final ResilienceConfiguration NO_RESILIENCE =
+        ResilienceConfiguration.empty(OnPremTest.class.getName() + "_empty");
 
     @Rule
     public WireMockRule csMockServer = new WireMockRule(wireMockConfig().dynamicPort());
@@ -47,6 +42,8 @@ public class OnPremTest
     public void setUp()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
+
+        stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY)));
     }
 
     @After
@@ -59,20 +56,10 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImpl()
     {
-        stubFor(
-            post("/oauth/token")
-                .willReturn(
-                    okJson(
-                        "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}")));
+        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
 
-        final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), new ClientCredentials("clientid", "clientsecret"));
-
-        final String token1 =
-            service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, ResilienceConfiguration.empty("test"));
-        final String token2 =
-            service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, ResilienceConfiguration.empty("test"));
+        final String token1 = service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
+        final String token2 = service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -83,23 +70,11 @@ public class OnPremTest
     @Test
     public void multipleOAuth2ServiceImpl()
     {
-        stubFor(
-            post("/oauth/token")
-                .willReturn(
-                    okJson(
-                        "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}")));
+        final OAuth2ServiceImpl service1 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service2 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
 
-        final OAuth2ServiceImpl service1 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), new ClientCredentials("clientid", "clientsecret"));
-        final OAuth2ServiceImpl service2 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), new ClientCredentials("clientid", "clientsecret"));
-
-        final String token1 =
-            service1.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, ResilienceConfiguration.empty("test"));
-        final String token2 =
-            service2.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, ResilienceConfiguration.empty("test"));
+        final String token1 = service1.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
+        final String token2 = service2.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -110,32 +85,18 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImplSingleSubscriber()
     {
-        stubFor(
-            post("/oauth/token")
-                .willReturn(
-                    okJson(
-                        "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}")));
-
-        final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), new ClientCredentials("clientid", "clientsecret"));
+        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
 
         final String token1 =
             TenantAccessor
                 .executeWithTenant(
                     new DefaultTenant("abcd"),
-                    () -> service
-                        .retrieveAccessToken(
-                            OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                            ResilienceConfiguration.empty("test")));
+                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
         final String token2 =
             TenantAccessor
                 .executeWithTenant(
                     new DefaultTenant("abcd"),
-                    () -> service
-                        .retrieveAccessToken(
-                            OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                            ResilienceConfiguration.empty("test")));
+                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -146,32 +107,18 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImplMultipleSubscriber()
     {
-        stubFor(
-            post("/oauth/token")
-                .willReturn(
-                    okJson(
-                        "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}")));
-
-        final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), new ClientCredentials("clientid", "clientsecret"));
+        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
 
         final String token1 =
             TenantAccessor
                 .executeWithTenant(
                     new DefaultTenant("tenant 1"),
-                    () -> service
-                        .retrieveAccessToken(
-                            OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                            ResilienceConfiguration.empty("test")));
+                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
         final String token2 =
             TenantAccessor
                 .executeWithTenant(
                     new DefaultTenant("tenant 2"),
-                    () -> service
-                        .retrieveAccessToken(
-                            OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                            ResilienceConfiguration.empty("test")));
+                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -182,59 +129,26 @@ public class OnPremTest
     @Test
     public void httpClientTenantSeparation()
     {
+        // The reason for this test is to verify, that cookies set for one tenant are not forwarded to another tenant.
+        stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
 
-        final StubMapping stubMapping =
-            stubFor(
-                post("/oauth/token")
-                    .willReturn(
-                        okJson(
-                            "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}")
-                            .withHeader("Set-Cookie", "myCookie=123")));
-
-        final ClientCredentials identity = new ClientCredentials("clientid", "clientsecret");
-
-        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), identity);
-
-        /*final DefaultOAuth2TokenService tokenService =
-            new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
-        final OAuth2ServiceEndpointsProvider endpoints =
-            OAuth2ServiceImpl.Endpoints.fromBaseUri(URI.create(csMockServer.baseUrl()));
-        final XsuaaTokenFlows tokenFlow = new XsuaaTokenFlows(tokenService, endpoints, identity);
-
-        final OAuth2ServiceImpl service = new OAuth2ServiceImpl(tokenFlow);*/
+        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
 
         TenantAccessor
             .executeWithTenant(
                 new DefaultTenant("tenant1"),
-                () -> service
-                    .retrieveAccessToken(
-                        OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                        ResilienceConfiguration.empty("test")));
+                () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
         TenantAccessor
             .executeWithTenant(
                 new DefaultTenant("tenant2"),
-                () -> service
-                    .retrieveAccessToken(
-                        OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
-                        ResilienceConfiguration.empty("test")));
+                () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
 
         final List<ServeEvent> events = getAllServeEvents();
 
-        assertThat(events).allSatisfy(event -> {
-            assertThat(event.getRequest().getHeaders().all())
-                .noneSatisfy(header -> assertThat(header.key()).isEqualToIgnoringCase("Cookie"));
-        });
-        /*assertThat(events.get(0).getRequest().getHeaders().all())
-            .doesNotContain(HttpHeader.httpHeader("Cookie", "myCookie=123"));
-        assertThat(events.get(1).getRequest().getHeaders().all())
-                .doesNotContain(HttpHeader.httpHeader("Cookie", "myCookie=123"));*/
-    }
-
-    private static ServiceBindingDestinationOptions createOptionsWithCredentials(
-        final Map.Entry<String, Object>... entries )
-    {
-        final ServiceBinding binding = bindingWithCredentials(ServiceIdentifier.CONNECTIVITY, entries);
-
-        return ServiceBindingDestinationOptions.forService(binding).build();
+        assertThat(events).hasSize(2);
+        assertThat(events)
+            .allSatisfy(
+                event -> assertThat(event.getRequest().getHeaders().all())
+                    .noneSatisfy(header -> assertThat(header.key()).isEqualToIgnoringCase("Cookie")));
     }
 }

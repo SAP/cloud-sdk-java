@@ -48,15 +48,8 @@ class OAuth2ServiceImpl
 {
     private static final Cache<CacheKey, XsuaaTokenFlows> tokenFlowCache =
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
-    private XsuaaTokenFlows tokenFlows;
-    private String uri;
-    private ClientIdentity identity;
-
-    @Deprecated
-    OAuth2ServiceImpl( final XsuaaTokenFlows tokenFlows )
-    {
-        this.tokenFlows = tokenFlows;
-    }
+    private final String uri;
+    private final ClientIdentity identity;
 
     OAuth2ServiceImpl( final String uri, final ClientIdentity identity )
     {
@@ -75,20 +68,16 @@ class OAuth2ServiceImpl
         tokenFlowCache.invalidateAll();
     }
 
-    private static synchronized
-        XsuaaTokenFlows
-        getOrCreateTokenFlow( final String uri, final ClientIdentity identity, @Nullable final String zoneId )
+    private XsuaaTokenFlows getOrCreateTokenFlow( @Nullable final String zoneId )
     {
         final OAuth2ServiceEndpointsProvider endpoints = Endpoints.fromBaseUri(URI.create(uri));
 
         final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(endpoints).append(identity);
 
-        return tokenFlowCache.get(cacheKey, key -> createTokenFlow(identity, endpoints));
+        return tokenFlowCache.get(cacheKey, key -> createTokenFlow(endpoints));
     }
 
-    private static
-        XsuaaTokenFlows
-        createTokenFlow( final ClientIdentity identity, final OAuth2ServiceEndpointsProvider endpoints )
+    XsuaaTokenFlows createTokenFlow( final OAuth2ServiceEndpointsProvider endpoints )
     {
         final DefaultOAuth2TokenService tokenService =
             new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
@@ -151,8 +140,7 @@ class OAuth2ServiceImpl
                 throw new IllegalStateException("Unknown behalf " + behalf);
         }
 
-        final ClientCredentialsTokenFlow flow =
-            getOrCreateTokenFlow(uri, identity, zoneId).clientCredentialsTokenFlow();
+        final ClientCredentialsTokenFlow flow = getOrCreateTokenFlow(zoneId).clientCredentialsTokenFlow();
 
         if( zoneId != null ) {
             flow.zoneId(zoneId);
@@ -192,7 +180,7 @@ class OAuth2ServiceImpl
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");
         }
-        final JwtBearerTokenFlow flow = getOrCreateTokenFlow(uri, identity, token.getZoneId()).jwtBearerTokenFlow();
+        final JwtBearerTokenFlow flow = getOrCreateTokenFlow(token.getAppTid()).jwtBearerTokenFlow();
         flow.token(token);
 
         return Try
