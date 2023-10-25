@@ -143,13 +143,13 @@ class OAuth2ServiceImpl
                     "Unexpected state: An Auth Token was found in the current context, but the current tenant is undefined."
                         + "This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results."
                         + "Proceeding with tenant {} defined in the current token.",
-                    token.getZoneId());
+                    token.getAppTid());
             log.debug("The following token is used for the JwtBearerTokenFlow: {}", token);
-        } else if( !maybeTenant.get().equals(token.getZoneId()) ) {
+        } else if( !maybeTenant.get().equals(token.getAppTid()) ) {
             throw new CloudPlatformException(
                 "Unexpected state: Auth Token and tenant of the current context have different tenant IDs."
                     + "AuthTokenAccessor returned a token containing tenant ID "
-                    + token.getZoneId()
+                    + token.getAppTid()
                     + " while TenantAccessor returned "
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");

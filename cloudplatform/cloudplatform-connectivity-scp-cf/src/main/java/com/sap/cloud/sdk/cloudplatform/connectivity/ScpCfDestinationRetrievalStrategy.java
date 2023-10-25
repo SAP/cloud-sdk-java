@@ -58,8 +58,16 @@ public enum ScpCfDestinationRetrievalStrategy
         return identifier;
     }
 
+    /**
+     * Get the strategy by its identifier.
+     *
+     * @param identifier
+     *            The string representation of a strategy.
+     * @return The strategy enum value.
+     * @since 5.0.0
+     */
     @Nullable
-    static ScpCfDestinationRetrievalStrategy ofIdentifier( @Nullable final String identifier )
+    public static ScpCfDestinationRetrievalStrategy ofIdentifier( @Nullable final String identifier )
     {
         return Stream
             .of(ScpCfDestinationRetrievalStrategy.values())
