@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -215,10 +216,11 @@ public class OAuth2ServiceBindingDestinationLoaderTest
 
         sut = mockLoader(mock);
 
-        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+        final Try<Collection<Header>> result =
+            sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(DestinationAccessException.class);
+        assertThat(result.getCause()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

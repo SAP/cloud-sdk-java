@@ -54,6 +54,10 @@
 			<artifactId>tenant</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>caching</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
 			<artifactId>java-core-api</artifactId>
 		</dependency>
@@ -103,6 +107,10 @@
 		<dependency>
 			<groupId>io.vavr</groupId>
 			<artifactId>vavr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
