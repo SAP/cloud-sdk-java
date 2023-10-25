@@ -32,7 +32,8 @@ public class ScpCfTenantFacadeIasTest
             JwtGenerator
                 .getInstance(Service.IAS, "some arbitrary id")
                 .withClaimValue("iss", "http://" + SUBDOMAIN + ".some-host")
-                // According to TG02 the zone/tenant id is stored in the claim "zone_uuid"
+                // According to TG02 the zone/tenant id is stored in the claim "app_tid"
+                .withClaimValue("app_tid", TENANT_ID)
                 .withClaimValue("zone_uuid", TENANT_ID)
                 .createToken();
 

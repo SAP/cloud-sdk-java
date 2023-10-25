@@ -307,6 +307,8 @@ public class ScpCfCloudPlatform implements CloudPlatform
             .accept(
                 "tags",
                 () -> serviceBinding.getTags().stream().collect(JsonArray::new, JsonArray::add, JsonArray::addAll));
+        // DwC: The binding doesn't have credentials, MegacliteServiceBinding either reads the DWC_APPLICATION env var
+        // and returns the map {tenantid: <ProviderTenantId>}, or, returns an empty map if DWC_APPLICATION is not found.
         converter.accept("credentials", () -> convert(TypedMapView.ofCredentials(serviceBinding)));
 
         return convertedServiceBinding;
