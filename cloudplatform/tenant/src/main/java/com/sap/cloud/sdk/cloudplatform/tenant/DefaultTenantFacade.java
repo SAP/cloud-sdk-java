@@ -40,7 +40,9 @@ public class DefaultTenantFacade implements TenantFacade
 {
     private static final String XSUAA_JWT_ZONE_ID = "zid";
     private static final String IAS_JWT_ZONE_ID = "zone_uuid";
-    private static final List<String> TENANT_ID_CLAIMS = Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_ZONE_ID);
+    private static final String IAS_JWT_APP_TID = "app_tid";
+    private static final List<String> TENANT_ID_CLAIMS =
+            Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_APP_TID, IAS_JWT_ZONE_ID);
     private static final String JWT_ISSUER = "iss";
 
     @Nonnull
@@ -52,8 +54,7 @@ public class DefaultTenantFacade implements TenantFacade
         if( !maybeTenantId.isPresent() ) {
             throw new TenantAccessException(
                 "No tenant/zone identifier (one of these elements ["
-                    + TENANT_ID_CLAIMS.toString()
-                    + "]) found in JWT.");
+                    + TENANT_ID_CLAIMS + "]) found in JWT.");
         }
 
         return maybeTenantId.get();
