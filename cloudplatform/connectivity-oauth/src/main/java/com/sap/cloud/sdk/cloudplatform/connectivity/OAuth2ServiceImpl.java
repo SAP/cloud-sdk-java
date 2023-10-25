@@ -7,11 +7,14 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+
+import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -31,9 +34,10 @@ import com.sap.cloud.security.xsuaa.tokenflows.ClientCredentialsTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,20 +46,53 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OAuth2ServiceImpl
 {
-    private final XsuaaTokenFlows tokenFlows;
+    private static final Cache<CacheKey, XsuaaTokenFlows> tokenFlowCache =
+        Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+    private XsuaaTokenFlows tokenFlows;
+    private String uri;
+    private ClientIdentity identity;
 
+    @Deprecated
     OAuth2ServiceImpl( final XsuaaTokenFlows tokenFlows )
     {
         this.tokenFlows = tokenFlows;
     }
 
+    OAuth2ServiceImpl( final String uri, final ClientIdentity identity )
+    {
+        this.uri = uri;
+        this.identity = identity;
+    }
+
     static OAuth2ServiceImpl fromCredentials( final String uri, final ClientIdentity identity )
+    {
+        return new OAuth2ServiceImpl(uri, identity);
+    }
+
+    static void clearCache()
+    {
+        log.warn("Resetting the TokenFlows cache. This should not be done outside of testing.");
+        tokenFlowCache.invalidateAll();
+    }
+
+    private static synchronized
+        XsuaaTokenFlows
+        getOrCreateTokenFlow( final String uri, final ClientIdentity identity, @Nullable final String zoneId )
+    {
+        final OAuth2ServiceEndpointsProvider endpoints = Endpoints.fromBaseUri(URI.create(uri));
+
+        final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(endpoints).append(identity);
+
+        return tokenFlowCache.get(cacheKey, key -> createTokenFlow(identity, endpoints));
+    }
+
+    private static
+        XsuaaTokenFlows
+        createTokenFlow( final ClientIdentity identity, final OAuth2ServiceEndpointsProvider endpoints )
     {
         final DefaultOAuth2TokenService tokenService =
             new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
-        final OAuth2ServiceEndpointsProvider endpoints = Endpoints.fromBaseUri(URI.create(uri));
-        final XsuaaTokenFlows tokenFlow = new XsuaaTokenFlows(tokenService, endpoints, identity);
-        return new OAuth2ServiceImpl(tokenFlow);
+        return new XsuaaTokenFlows(tokenService, endpoints, identity);
     }
 
     @Nonnull
@@ -94,7 +131,6 @@ class OAuth2ServiceImpl
     @Nullable
     private OAuth2TokenResponse executeClientCredentialsFlow( final OnBehalfOf behalf )
     {
-        final ClientCredentialsTokenFlow flow = tokenFlows.clientCredentialsTokenFlow();
 
         @Nullable
         final String zoneId;
@@ -115,6 +151,9 @@ class OAuth2ServiceImpl
                 throw new IllegalStateException("Unknown behalf " + behalf);
         }
 
+        final ClientCredentialsTokenFlow flow =
+            getOrCreateTokenFlow(uri, identity, zoneId).clientCredentialsTokenFlow();
+
         if( zoneId != null ) {
             flow.zoneId(zoneId);
         }
@@ -127,7 +166,6 @@ class OAuth2ServiceImpl
     @Nullable
     private OAuth2TokenResponse executeUserExchangeFlow()
     {
-        final JwtBearerTokenFlow flow = tokenFlows.jwtBearerTokenFlow();
 
         final Try<DecodedJWT> maybeToken = AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt);
         final Try<String> maybeTenant = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId);
@@ -154,6 +192,7 @@ class OAuth2ServiceImpl
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");
         }
+        final JwtBearerTokenFlow flow = getOrCreateTokenFlow(uri, identity, token.getZoneId()).jwtBearerTokenFlow();
         flow.token(token);
 
         return Try
@@ -161,22 +200,21 @@ class OAuth2ServiceImpl
             .getOrElseThrow(e -> new TokenRequestFailedException("Failed to resolve access token.", e));
     }
 
-    @AllArgsConstructor
-    @Getter
-    private static class Endpoints implements OAuth2ServiceEndpointsProvider
+    @Value
+    static class Endpoints implements OAuth2ServiceEndpointsProvider
     {
         private static final String TOKEN_PATH = "/oauth/token";
         private static final String AUTHORIZE_PATH = "/oauth/authorize";
         private static final String KEYSET_PATH = "/token_keys";
 
         @Nonnull
-        private final URI tokenEndpoint;
+        URI tokenEndpoint;
 
         @Nullable
-        private final URI authorizeEndpoint;
+        URI authorizeEndpoint;
 
         @Nullable
-        private final URI jwksUri;
+        URI jwksUri;
 
         @Nonnull
         static Endpoints fromBaseUri( final URI baseUri )
