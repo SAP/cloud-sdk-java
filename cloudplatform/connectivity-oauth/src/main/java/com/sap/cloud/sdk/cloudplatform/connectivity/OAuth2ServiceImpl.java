@@ -45,6 +45,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OAuth2ServiceImpl
 {
+    /**
+     * Cache to reuse token flows and with that reuse the underlying response cache.
+     * <p>
+     * The {@code OAuth2ServiceImpl} is newly instantiated by {@code OAuth2DestinationBuilder} and
+     * {@code OAuth2ServiceBindingDestinationLoader} for each destination they build/load. This means, without the
+     * cache, also new {@code XsuaaTokenFlows} would be created for each destination, which in turns defeats the purpose
+     * of the response cache used therein.
+     * <p>
+     * The cache key is composed of the following parts:
+     * <ul>
+     * <li>{@code zoneId}, that way flow is tenant isolated, especially for the HttpClient used against the OAuth2
+     * service.</li>
+     * <li>{@code ClientIdentity}, to separate by the credentials used against the OAuth2 service.</li>
+     * <li>{@code Endpoints}, to separate by different OAuth2 services.</li>
+     * </ul>
+     */
     private static final Cache<CacheKey, XsuaaTokenFlows> tokenFlowCache =
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
     private final String uri;
