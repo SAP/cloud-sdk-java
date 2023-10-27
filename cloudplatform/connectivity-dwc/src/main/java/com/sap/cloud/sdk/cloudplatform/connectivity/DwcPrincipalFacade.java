@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
-
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;

@@ -2,11 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -14,7 +10,6 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
