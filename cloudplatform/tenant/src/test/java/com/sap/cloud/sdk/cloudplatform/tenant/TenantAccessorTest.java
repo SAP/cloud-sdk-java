@@ -22,7 +22,6 @@ import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
-import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNotFoundException;
 
@@ -58,7 +57,7 @@ public class TenantAccessorTest
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
-        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(ThreadContextAccessException.class);
+        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(TenantAccessException.class);
 
         TenantAccessor.executeWithTenant(() -> "custom1", () -> {
             assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("custom1");
@@ -76,7 +75,7 @@ public class TenantAccessorTest
             assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("custom1");
         });
 
-        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(ThreadContextAccessException.class);
+        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(TenantAccessException.class);
     }
 
     @Test
@@ -88,7 +87,7 @@ public class TenantAccessorTest
             // no ThreadContext managed
             final Try<Tenant> tenantTry = CompletableFuture.supplyAsync(TenantAccessor::tryGetCurrentTenant).get();
 
-            assertThat(tenantTry.getCause()).isInstanceOf(ThreadContextAccessException.class);
+            assertThat(tenantTry.getCause()).isInstanceOf(TenantAccessException.class);
         });
 
         final Tenant tenant =
@@ -243,9 +242,13 @@ public class TenantAccessorTest
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
-            assertThat(TenantAccessor.tryGetCurrentTenant().getCause())
-                .isInstanceOf(ThreadContextPropertyNotFoundException.class)
-                .hasMessage("Property '" + TenantThreadContextListener.PROPERTY_TENANT + "' does not exist.");
+            assertThat(TenantAccessor.tryGetCurrentTenant().getCause().getSuppressed())
+                .anyMatch(e -> e instanceof ThreadContextPropertyNotFoundException);
+            assertThat(TenantAccessor.tryGetCurrentTenant().getCause().getSuppressed())
+                .anyMatch(
+                    e -> e
+                        .getMessage()
+                        .equals("Property '" + TenantThreadContextListener.PROPERTY_TENANT + "' does not exist."));
         });
     }
 

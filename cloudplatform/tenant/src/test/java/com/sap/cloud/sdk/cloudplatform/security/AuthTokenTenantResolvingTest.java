@@ -35,7 +35,6 @@ import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
-import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
@@ -127,16 +126,12 @@ public class AuthTokenTenantResolvingTest
             + "  ]"
             + "}";
 
-    private final MockUtil mockUtil = new MockUtil();
-
     private ScpCfAuthTokenFacade mockedAuthTokenFacade;
 
     @Before
     public void before()
     {
         ScpCfCloudPlatform.invalidateCaches();
-
-        mockUtil.mockDefaults();
 
         final ScpCfCloudPlatform cloudPlatform = Mockito.spy(ScpCfCloudPlatform.class);
         cloudPlatform

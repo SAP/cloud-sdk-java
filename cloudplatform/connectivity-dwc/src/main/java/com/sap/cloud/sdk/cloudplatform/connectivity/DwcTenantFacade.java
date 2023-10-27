@@ -40,7 +40,6 @@ public class DwcTenantFacade extends DefaultTenantFacade
     private static Tenant extractTenantFromDwcHeaders()
     {
         try {
-            //final String providerTenant = DwcConfiguration.getInstance().providerTenant(); //TODO uncomment
             final String tenantId = DwcHeaderUtils.getDwcTenantIdOrThrow();
             final String subdomain = DwcHeaderUtils.getDwCSubdomainOrThrow();
             return new DwcTenant(tenantId, subdomain);

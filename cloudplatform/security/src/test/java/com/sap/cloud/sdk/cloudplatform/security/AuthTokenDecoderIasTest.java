@@ -4,10 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.security;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
@@ -24,6 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
@@ -144,7 +142,8 @@ public class AuthTokenDecoderIasTest
     {
         final String encodedPublicKey = Base64.getEncoder().encodeToString(RSA_KEYS.getPublic().getEncoded());
         final String tokenKeys = String.format(TEMPLATE_TOKEN_KEYS, encodedPublicKey);
-        wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/oauth2/certs")).willReturn(WireMock.okJson(tokenKeys)));
+        wireMockServer
+            .stubFor(WireMock.get(WireMock.urlPathEqualTo("/oauth2/certs")).willReturn(WireMock.okJson(tokenKeys)));
     }
 
     @Before
@@ -153,7 +152,10 @@ public class AuthTokenDecoderIasTest
         final String oauthUrl = wireMockServer.baseUrl();
         final String openIdCOnfiguration = TEMPLATE_OPENID_CONFIGURATION.replaceAll("HOST", oauthUrl);
         wireMockServer
-            .stubFor(WireMock.get(WireMock.urlPathEqualTo("/.well-known/openid-configuration")).willReturn(WireMock.okJson(openIdCOnfiguration)));
+            .stubFor(
+                WireMock
+                    .get(WireMock.urlPathEqualTo("/.well-known/openid-configuration"))
+                    .willReturn(WireMock.okJson(openIdCOnfiguration)));
     }
 
     @Before

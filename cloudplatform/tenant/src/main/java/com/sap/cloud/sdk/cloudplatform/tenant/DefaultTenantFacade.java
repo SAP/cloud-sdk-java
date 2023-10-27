@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +43,7 @@ public class DefaultTenantFacade implements TenantFacade
     private static final String IAS_JWT_ZONE_ID = "zone_uuid";
     private static final String IAS_JWT_APP_TID = "app_tid";
     private static final List<String> TENANT_ID_CLAIMS =
-            Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_APP_TID, IAS_JWT_ZONE_ID);
+        Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_APP_TID, IAS_JWT_ZONE_ID);
     private static final String JWT_ISSUER = "iss";
 
     @Nonnull
@@ -53,8 +54,7 @@ public class DefaultTenantFacade implements TenantFacade
 
         if( !maybeTenantId.isPresent() ) {
             throw new TenantAccessException(
-                "No tenant/zone identifier (one of these elements ["
-                    + TENANT_ID_CLAIMS + "]) found in JWT.");
+                "No tenant/zone identifier (one of these elements [" + TENANT_ID_CLAIMS + "]) found in JWT.");
         }
 
         return maybeTenantId.get();
@@ -95,8 +95,24 @@ public class DefaultTenantFacade implements TenantFacade
             return tenantFromThreadContextTry;
         }
 
-        return tryGetTenantFromAuthToken(AuthTokenAccessor.tryGetCurrentToken()) // read from user token
-            .orElse(() -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())); // read bindings
+        final List<Throwable> throwables = new ArrayList<>();
+        throwables.add(tenantFromThreadContextTry.getCause());
+
+        return tryGetTenantFromAuthToken(AuthTokenAccessor.tryGetCurrentToken())
+            .onFailure(throwables::add) // read from user token
+            .orElse(
+                () -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())
+                    .onFailure(throwables::add)) // read bindings
+            .orElse(() -> createFallbackException(throwables));
+    }
+
+    private Try<Tenant> createFallbackException( @Nonnull final List<? extends Throwable> throwables )
+    {
+        final TenantAccessException resultingException = new TenantAccessException("Failed to get current tenant.");
+
+        throwables.forEach(resultingException::addSuppressed);
+
+        return Try.failure(resultingException);
     }
 
     @Nonnull
