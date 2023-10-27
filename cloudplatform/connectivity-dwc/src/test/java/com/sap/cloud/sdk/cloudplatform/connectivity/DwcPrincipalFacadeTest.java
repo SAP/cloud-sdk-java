@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.cloudplatform.security;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_CLIENT_HEADER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_SCOPES_HEADER;
@@ -39,7 +39,7 @@ public class DwcPrincipalFacadeTest
         final String dwcClient = "sb-dwc-client!1234";
 
         final Map<String, String> headers =
-            ImmutableMap.of(DwcHeaderUtils.DWC_USER_HEADER, dwcUser, DwcHeaderUtils.DWC_SCOPES_HEADER, dwcScopes, DwcHeaderUtils.DWC_CLIENT_HEADER, dwcClient);
+            ImmutableMap.of(DWC_USER_HEADER, dwcUser, DWC_SCOPES_HEADER, dwcScopes, DWC_CLIENT_HEADER, dwcClient);
 
         final DefaultPrincipal expectedPrincipal = new DefaultPrincipal("sample.user@mail.com");
 
