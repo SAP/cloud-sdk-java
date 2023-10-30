@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.security;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
@@ -21,7 +22,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
@@ -42,7 +45,7 @@ import io.vavr.control.Try;
 public class AuthTokenDecoderIasTest
 {
     @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration.wireMockConfig().dynamicPort());
+    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
     @Mock
     private CloudPlatformFacade cloudPlatformFacade;
@@ -152,10 +155,7 @@ public class AuthTokenDecoderIasTest
         final String oauthUrl = wireMockServer.baseUrl();
         final String openIdCOnfiguration = TEMPLATE_OPENID_CONFIGURATION.replaceAll("HOST", oauthUrl);
         wireMockServer
-            .stubFor(
-                WireMock
-                    .get(WireMock.urlPathEqualTo("/.well-known/openid-configuration"))
-                    .willReturn(WireMock.okJson(openIdCOnfiguration)));
+                .stubFor(get(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson(openIdCOnfiguration)));
     }
 
     @Before
