@@ -43,11 +43,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
@@ -113,9 +114,9 @@ public class ScpCfDestinationServiceAdapterTest
     }
 
     @After
-    public void resetCloudPlatformAccessor()
+    public void resetServiceBindingAccessor()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
@@ -271,7 +272,7 @@ public class ScpCfDestinationServiceAdapterTest
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.empty());
-        mockCloudPlatformWithServiceBinding(binding);
+        mockServiceBindingAccessor(binding);
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
@@ -283,7 +284,7 @@ public class ScpCfDestinationServiceAdapterTest
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
-        mockCloudPlatformWithServiceBinding(binding);
+        mockServiceBindingAccessor(binding);
 
         assertThat(ScpCfDestinationServiceAdapter.getDestinationServiceBinding()).isSameAs(binding);
         Mockito.verify(binding, times(1)).getServiceIdentifier();
@@ -292,7 +293,7 @@ public class ScpCfDestinationServiceAdapterTest
     @Test
     public void testGetDestinationServiceBindingWithoutBinding()
     {
-        mockCloudPlatformWithServiceBinding();
+        mockServiceBindingAccessor();
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
@@ -306,7 +307,7 @@ public class ScpCfDestinationServiceAdapterTest
         when(firstBinding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
         when(secondBinding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
 
-        mockCloudPlatformWithServiceBinding(firstBinding, secondBinding);
+        mockServiceBindingAccessor(firstBinding, secondBinding);
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
@@ -374,15 +375,10 @@ public class ScpCfDestinationServiceAdapterTest
             .build();
     }
 
-    private static void mockCloudPlatformWithServiceBinding( @Nonnull final ServiceBinding... serviceBindings )
+    private static void mockServiceBindingAccessor( @Nonnull final ServiceBinding... serviceBindings )
     {
-        final CloudPlatformFacade platformFacade = mock(CloudPlatformFacade.class);
-
-        final ScpCfCloudPlatform platform = mock(ScpCfCloudPlatform.class);
-        when(platform.getServiceBindingAccessor())
-            .thenReturn(() -> Stream.of(serviceBindings).collect(Collectors.toList()));
-
-        when(platformFacade.tryGetCloudPlatform()).thenReturn(Try.success(platform));
-        CloudPlatformAccessor.setCloudPlatformFacade(platformFacade);
+        final ServiceBindingAccessor serviceBindingAccessor =
+            () -> Stream.of(serviceBindings).collect(Collectors.toList());
+        DefaultServiceBindingAccessor.setInstance(serviceBindingAccessor);
     }
 }

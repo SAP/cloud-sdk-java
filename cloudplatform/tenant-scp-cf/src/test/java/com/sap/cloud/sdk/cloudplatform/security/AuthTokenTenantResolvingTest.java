@@ -24,6 +24,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
@@ -134,17 +135,13 @@ public class AuthTokenTenantResolvingTest
     @Before
     public void before()
     {
-        ScpCfCloudPlatform.invalidateCaches();
-
         mockUtil.mockDefaults();
 
-        final ScpCfCloudPlatform cloudPlatform = Mockito.spy(ScpCfCloudPlatform.class);
-        cloudPlatform
-            .setServiceBindingAccessor(
+        DefaultServiceBindingAccessor
+            .setInstance(
                 new SapVcapServicesServiceBindingAccessor(
                     Collections.singletonMap("VCAP_SERVICES", VCAP_SERVICES)::get));
 
-        CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(cloudPlatform));
         // resetting the facades to the CF ones, as we want to test that the content of the JWT is actually read
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         TenantAccessor.setTenantFacade(new ScpCfTenantFacade());
@@ -156,7 +153,7 @@ public class AuthTokenTenantResolvingTest
     @After
     public void resetFacades()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultServiceBindingAccessor.setInstance(null);
         PrincipalAccessor.setPrincipalFacade(null);
         TenantAccessor.setTenantFacade(null);
         AuthTokenAccessor.setAuthTokenFacade(null);

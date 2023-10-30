@@ -12,13 +12,11 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.security.exception.AuthTokenAccessException;
@@ -55,27 +53,19 @@ public class AuthTokenDecoderTest
 
     private static final String AUTHORIZATION_BEARER_TOKEN = BEARER_PREFIX + AUTHORIZATION_TOKEN;
 
-    private void mockCloudPlatform()
+    private void mockServiceBindingAccessor()
     {
-        final ScpCfCloudPlatform cloudPlatform = Mockito.spy(ScpCfCloudPlatform.class);
-        cloudPlatform
-            .setServiceBindingAccessor(
+        DefaultServiceBindingAccessor
+            .setInstance(
                 new SapVcapServicesServiceBindingAccessor(
                     Collections.singletonMap("VCAP_SERVICES", VCAP_SERVICES)::get));
-
-        CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(cloudPlatform));
     }
 
     @Before
-    public void before()
-    {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
-    }
-
     @After
-    public void cleanupAccessors()
+    public void resetServiceBindingAccessor()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
@@ -85,7 +75,7 @@ public class AuthTokenDecoderTest
             DefaultRequestHeaderContainer
                 .fromSingleValueMap(Collections.singletonMap(HttpHeaders.AUTHORIZATION, AUTHORIZATION_BEARER_TOKEN));
 
-        mockCloudPlatform();
+        mockServiceBindingAccessor();
 
         final AuthToken authToken = new AuthTokenDecoderDefault().decode(headers).getOrNull();
         assertThat(authToken).isNotNull();
@@ -143,7 +133,7 @@ public class AuthTokenDecoderTest
             DefaultRequestHeaderContainer
                 .fromSingleValueMap(Collections.singletonMap(HttpHeaders.AUTHORIZATION, AuthenticationToken));
 
-        mockCloudPlatform();
+        mockServiceBindingAccessor();
 
         final AuthToken authToken = new AuthTokenDecoderDefault().decode(headers).getOrNull();
         assertThat(authToken).isNotNull();
@@ -158,7 +148,7 @@ public class AuthTokenDecoderTest
         final RequestHeaderContainer authorizationHeader =
             DefaultRequestHeaderContainer.builder().withHeader("aUtHoRiZaTiOn", AUTHORIZATION_BEARER_TOKEN).build();
 
-        mockCloudPlatform();
+        mockServiceBindingAccessor();
 
         final AuthToken authToken = new AuthTokenDecoderDefault().decode(authorizationHeader).getOrNull();
         assertThat(authToken).isNotNull();
