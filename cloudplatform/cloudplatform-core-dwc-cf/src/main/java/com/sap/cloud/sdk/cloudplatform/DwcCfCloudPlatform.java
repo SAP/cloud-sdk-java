@@ -20,7 +20,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.json.JsonSanitizer;
-import com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.vavr.control.Option;
@@ -329,7 +328,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * @param binding
      *            The service binding.
      * @deprecated Deprecated in favor of the
-     *             {@link com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor#registerServiceBinding(MegacliteServiceBinding)}
+     *             {@code com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.registerServiceBinding(MegacliteServiceBinding)}
      *             API.
      */
     @Deprecated
@@ -353,7 +352,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * @param binding
      *            The service binding.
      * @deprecated Deprecated in favor of the
-     *             {@link com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor#registerServiceBinding(MegacliteServiceBinding)}
+     *             {@code com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.registerServiceBinding(MegacliteServiceBinding)}
      *             API.
      */
     @Deprecated

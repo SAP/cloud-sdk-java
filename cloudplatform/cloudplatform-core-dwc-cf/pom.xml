@@ -42,11 +42,6 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-core</artifactId>
 		</dependency>
-		<!-- added for JavaDoc link -->
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-dwc</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-core-dwc</artifactId>
@@ -94,18 +89,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<configuration>
-					<ignoredUnusedDeclaredDependencies>
-						<!--Added for JavaDoc -->
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</ignoredUnusedDeclaredDependency>
-					</ignoredUnusedDeclaredDependencies>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
