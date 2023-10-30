@@ -36,6 +36,7 @@ jobs:
           command: detectExecuteScan
           flags: \
             --version=$PROJECT_VERSION \
+            --excludedDirectories=src \
         env:
           PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
           DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }}
