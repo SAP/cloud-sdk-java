@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import com.google.common.annotations.Beta;
+
 import io.vavr.control.Option;
 
 /**
@@ -65,7 +66,9 @@ public interface DwcCloudPlatform extends CloudPlatform
      * Returns the mapping of outbound-service-bindings.
      *
      * @return A mapping of outbound-service-bindings and service-meta information.
-     * @deprecated Deprecated in favor of the {@code com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.getServiceBindings()} API.
+     * @deprecated Deprecated in favor of the
+     *             {@code com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.getServiceBindings()}
+     *             API.
      */
     @Deprecated
     @Nonnull
