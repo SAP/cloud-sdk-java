@@ -21,6 +21,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,23 @@ class HttpClientWrapper extends CloseableHttpClient
     HttpClientWrapper( final CloseableHttpClient httpClient, final HttpDestinationProperties destination )
     {
         this.httpClient = httpClient;
+
+        // check destination is configured correctly
+        if( destination.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE)
+            && destination.get(DestinationProperty.PROXY_HOST).isEmpty() ) {
+            final boolean isProvider =
+                destination.get(DestinationProperty.TENANT_ID).filter(String::isEmpty).isDefined();
+            final boolean isBasicAuth =
+                destination
+                    .get(DestinationProperty.AUTH_TYPE)
+                    .orElse(() -> destination.get(DestinationProperty.AUTH_TYPE_FALLBACK))
+                    .contains(AuthenticationType.BASIC_AUTHENTICATION);
+            if( isProvider && isBasicAuth ) {
+                throw new DestinationAccessException(
+                    "Accessing an onpremise system on behalf of the provider tenant explicitly is currently not supported.");
+            }
+            throw new DestinationAccessException("Unable to resolve connectivity service binding.");
+        }
         this.destination = destination;
     }
 
