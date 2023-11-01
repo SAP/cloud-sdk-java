@@ -47,10 +47,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccesso
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
@@ -250,21 +247,6 @@ public class ScpCfDestinationServiceAdapterTest
 
         // case: service binding with tenantid
         assertThat(createSut(firstBindingWithTenantId).getProviderTenantId()).isEqualTo("foo");
-    }
-
-    @Test
-    public void testGetDestinationServiceBindingWithoutScpCfCloudPlatform()
-    {
-        final CloudPlatformException expectedCause = new CloudPlatformException();
-        final CloudPlatformFacade platformFacade = mock(CloudPlatformFacade.class);
-        when(platformFacade.tryGetCloudPlatform()).thenReturn(Try.failure(expectedCause));
-        CloudPlatformAccessor.setCloudPlatformFacade(platformFacade);
-
-        assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
-            .isExactlyInstanceOf(NoServiceBindingException.class)
-            .cause()
-            .isSameAs(expectedCause);
-        Mockito.verify(platformFacade, times(1)).tryGetCloudPlatform();
     }
 
     @Test

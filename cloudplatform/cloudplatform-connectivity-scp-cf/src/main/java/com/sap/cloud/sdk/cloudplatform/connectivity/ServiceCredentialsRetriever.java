@@ -8,11 +8,9 @@ import java.net.URI;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCertificate;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
-import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedException;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,26 +25,6 @@ class ServiceCredentialsRetriever
 
     private static final String XSUAA_URI = "url";
     private static final String XSUAA_TYPE = "credential-type";
-
-    OAuth2Credentials getCredentials( final String serviceName )
-        throws TokenRequestFailedException
-    {
-        try {
-            final ScpCfCloudPlatform platform = ScpCfCloudPlatform.getInstanceOrThrow();
-            final JsonObject serviceCredentials = platform.getServiceCredentials(serviceName);
-
-            return getCredentials(serviceCredentials);
-        }
-        catch( final Exception e ) {
-            throw new TokenRequestFailedException(
-                String
-                    .format(
-                        "Failed to get %s service client identifier and secret. Please make sure to correctly bind your application to a %s service instance.",
-                        serviceName,
-                        serviceName),
-                e);
-        }
-    }
 
     OAuth2Credentials getCredentials( final JsonObject serviceCredentials )
     {

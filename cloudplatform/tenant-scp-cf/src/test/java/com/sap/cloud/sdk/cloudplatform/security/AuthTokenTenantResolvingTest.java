@@ -5,7 +5,6 @@
 package com.sap.cloud.sdk.cloudplatform.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
 
 import java.net.URI;
 import java.util.Collections;
@@ -21,14 +20,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant;
@@ -38,7 +31,6 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
 public class AuthTokenTenantResolvingTest
@@ -206,16 +198,7 @@ public class AuthTokenTenantResolvingTest
 
         final String providerIssuerUrl = "https://my-provider.authentication.sap.hana.ondemand.com/oauth/token";
 
-        final ScpCfCloudPlatform cloudPlatform = Mockito.mock(ScpCfCloudPlatform.class);
-        final JsonElement url = new Gson().toJsonTree(Collections.singletonMap("url", providerIssuerUrl));
-        doReturn(url).when(cloudPlatform).getXsuaaServiceCredentials();
-        doReturn(xsAppName).when(cloudPlatform).getXsAppName();
-
-        final CloudPlatformFacade cloudPlatformFacade = Mockito.mock(ScpCfCloudPlatformFacade.class);
-        doReturn(Try.success(cloudPlatform)).when(cloudPlatformFacade).tryGetCloudPlatform();
-        CloudPlatformAccessor.setCloudPlatformFacade(cloudPlatformFacade);
-
-        final String jwt = createJwtForTenantAndSubdomain(tenantId, subdomain);
+        final String jwt = createJwtForTenantAndSubdomain(tenantId, subdomain, xsAppName, providerIssuerUrl);
         mockedAuthTokenFacade.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
             VavrAssertions.assertThat(mockedAuthTokenFacade.tryGetCurrentToken()).isSuccess();
 
@@ -239,12 +222,13 @@ public class AuthTokenTenantResolvingTest
     }
 
     @SneakyThrows
-    private static String createJwtForTenantAndSubdomain( final String tenantId, final String subdomain )
+    private static String createJwtForTenantAndSubdomain(
+        final String tenantId,
+        final String subdomain,
+        final String xsAppName,
+        final String xsuaaUrl )
     {
-        final ScpCfCloudPlatform platform = ScpCfCloudPlatform.getInstanceOrThrow();
-        final String xsAppName = platform.getXsAppName();
-        final String xsuaaServiceBindingUrl = platform.getXsuaaServiceCredentials().get("url").getAsString();
-        URI uri = new URI(xsuaaServiceBindingUrl);
+        URI uri = new URI(xsuaaUrl);
         final String newHost = subdomain + uri.getHost().substring(uri.getHost().indexOf("."));
         uri = new URI(uri.getScheme(), null, newHost, uri.getPort(), uri.getPath(), null, null);
         return JWT

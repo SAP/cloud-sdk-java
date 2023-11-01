@@ -99,7 +99,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *            {@link DefaultServiceBindingAccessor#getInstance()} will be queried and used every time.
      */
     @Beta
-    public void setServiceBindingAccessor( @Nullable final ServiceBindingAccessor serviceBindingAccessor )
+    private void setServiceBindingAccessor( @Nullable final ServiceBindingAccessor serviceBindingAccessor )
     {
         this.serviceBindingAccessor = serviceBindingAccessor;
     }
@@ -119,7 +119,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      */
     @Nonnull
     @Beta
-    public ServiceBindingAccessor getServiceBindingAccessor()
+    private ServiceBindingAccessor getServiceBindingAccessor()
     {
         if( serviceBindingAccessor == null ) {
             return DefaultServiceBindingAccessor.getInstance();
@@ -149,10 +149,10 @@ public class ScpCfCloudPlatform implements CloudPlatform
      * <p>
      * <strong>Caution:This method is not thread-safe!</strong>
      */
-    public static void invalidateCaches()
-    {
-        vcapApplicationCache.set(null);
-    }
+    //    public static void invalidateCaches()
+    //    {
+    //        vcapApplicationCache.set(null);
+    //    }
 
     /**
      * Be aware that this method is Beta (as indicated by the annotation) and therefore subject to breaking changes.
@@ -187,7 +187,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      * @return The environment variable with the given name, if present.
      */
     @Nonnull
-    public Option<String> getEnvironmentVariable( @Nonnull final String name )
+    private Option<String> getEnvironmentVariable( @Nonnull final String name )
     {
         return Option.of(environmentVariableReader.apply(name));
     }
@@ -232,7 +232,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there is an issue accessing the environment variable.
      */
     @Nonnull
-    public Map<String, JsonElement> getVcapApplication()
+    private Map<String, JsonElement> getVcapApplication()
         throws CloudPlatformException
     {
         if( vcapApplicationCache.get() == null ) {
@@ -244,7 +244,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
 
     // package private for testing
     @Nonnull
-    ServiceBindingAccessor newServiceBindingAccessorWithCustomEnvironmentVariableReader()
+    private ServiceBindingAccessor newServiceBindingAccessorWithCustomEnvironmentVariableReader()
     {
         log
             .debug(
@@ -372,7 +372,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there is an issue accessing the environment variable.
      */
     @Nonnull
-    public Map<String, JsonArray> getVcapServices()
+    private Map<String, JsonArray> getVcapServices()
         throws CloudPlatformException
     {
         return parseVcapServices();
@@ -473,7 +473,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the requested service.
      */
     @Nonnull
-    public JsonObject getServiceCredentials( @Nonnull final String serviceName )
+    private JsonObject getServiceCredentials( @Nonnull final String serviceName )
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -499,7 +499,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the requested service.
      */
     @Nonnull
-    public JsonObject getServiceCredentials( @Nonnull final String serviceName, @Nullable final String servicePlan )
+    private JsonObject getServiceCredentials( @Nonnull final String serviceName, @Nullable final String servicePlan )
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -585,7 +585,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the XSUAA service.
      */
     @Nonnull
-    public JsonObject getXsuaaServiceCredentials()
+    private JsonObject getXsuaaServiceCredentials()
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -614,7 +614,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the XSUAA service.
      */
     @Nonnull
-    public JsonObject getXsuaaServiceCredentials( @Nonnull final String servicePlan )
+    private JsonObject getXsuaaServiceCredentials( @Nonnull final String servicePlan )
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -631,7 +631,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there is an issue accessing the service credentials.
      */
     @Nonnull
-    public List<JsonObject> getXsuaaServiceCredentialsList()
+    private List<JsonObject> getXsuaaServiceCredentialsList()
         throws CloudPlatformException
     {
         return getCredentialsList(SERVICE_NAME_XSUAA);
@@ -717,7 +717,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to matching XSUAA service instances.
      */
     @Nonnull
-    public JsonObject getXsuaaServiceCredentials( @Nonnull final DecodedJWT jwt )
+    private JsonObject getXsuaaServiceCredentials( @Nonnull final DecodedJWT jwt )
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -752,7 +752,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      */
     @Beta
     @Nonnull
-    public Map<String, List<JsonObject>> getXsuaaCredentialsByPlan( @Nullable final DecodedJWT filterJwt )
+    private Map<String, List<JsonObject>> getXsuaaCredentialsByPlan( @Nullable final DecodedJWT filterJwt )
     {
         final Predicate<JsonObject> xsuaaPredicate = json -> {
             // no check required
@@ -789,7 +789,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      */
     @Nonnull
     @Beta
-    public
+    private
         Map<String, List<JsonObject>>
         getServiceCredentialsByPlan( @Nonnull final String name, @Nonnull final Predicate<JsonObject> filter )
             throws CloudPlatformException
@@ -814,7 +814,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the destination service.
      */
     @Nonnull
-    public JsonObject getDestinationServiceCredentials()
+    private JsonObject getDestinationServiceCredentials()
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -831,7 +831,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there is an issue accessing the service credentials.
      */
     @Nonnull
-    public List<JsonObject> getDestinationServiceCredentialsList()
+    private List<JsonObject> getDestinationServiceCredentialsList()
         throws CloudPlatformException
     {
         return getCredentialsList(SERVICE_NAME_DESTINATION);
@@ -850,7 +850,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the connectivity service.
      */
     @Nonnull
-    public JsonObject getConnectivityServiceCredentials()
+    private JsonObject getConnectivityServiceCredentials()
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException
@@ -867,7 +867,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there is an issue accessing the service credentials.
      */
     @Nonnull
-    public List<JsonObject> getConnectivityServiceCredentialsList()
+    private List<JsonObject> getConnectivityServiceCredentialsList()
         throws CloudPlatformException
     {
         return getCredentialsList(SERVICE_NAME_CONNECTIVITY);
