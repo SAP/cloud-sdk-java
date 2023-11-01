@@ -254,25 +254,22 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
         return Option.of(environmentVariableReader.apply(name));
     }
 
-    @Override
     @SuppressWarnings( "deprecation" )
     @Nonnull
-    public Option<DwcOutboundProxyBinding> getOutboundProxyBinding()
+    private Option<DwcOutboundProxyBinding> getOutboundProxyBinding()
     {
         return getOutboundProxyBinding(DwcOutboundProxyBinding.DEFAULT_SERVICE_BINDING_NAME);
     }
 
-    @Override
     @SuppressWarnings( "deprecation" )
     @Nonnull
-    public DwcOutboundProxyBinding getOutboundProxyBindingOrThrow()
+    private DwcOutboundProxyBinding getOutboundProxyBindingOrThrow()
     {
         return getOutboundProxyBindingOrThrow(DwcOutboundProxyBinding.DEFAULT_SERVICE_BINDING_NAME);
     }
 
-    @Override
     @Nonnull
-    public DwcOutboundProxyBinding getOutboundProxyBindingOrThrow( @Nonnull final String bindingName )
+    private DwcOutboundProxyBinding getOutboundProxyBindingOrThrow( @Nonnull final String bindingName )
     {
         return getOutboundProxyBinding(bindingName)
             .getOrElseThrow(
@@ -284,9 +281,8 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
                             MegacliteConfigurationLoader.DWC_APPLICATION)));
     }
 
-    @Override
     @Nonnull
-    public Option<DwcOutboundProxyBinding> getOutboundProxyBinding( @Nonnull final String bindingName )
+    private Option<DwcOutboundProxyBinding> getOutboundProxyBinding( @Nonnull final String bindingName )
     {
         return Option.of(outboundProxiesCache.computeIfAbsent(bindingName, any -> loadOutboundProxyBinding()));
     }
