@@ -836,8 +836,8 @@
 						</execution>
 					</executions>
 					<configuration>
-						<failOnWarning>false</failOnWarning>
-						<failBuild>false</failBuild>
+						<failOnWarning>true</failOnWarning>
+						<failBuild>true</failBuild>
 						<ignoreNonCompile>false</ignoreNonCompile>
 						<ignoredUnusedDeclaredDependencies combine.children="append">
 							<!--  ignore annotations that are not visible on bytecode level  -->
