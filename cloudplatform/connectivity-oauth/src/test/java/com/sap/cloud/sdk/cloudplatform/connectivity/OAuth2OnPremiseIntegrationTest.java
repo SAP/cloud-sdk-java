@@ -31,7 +31,7 @@ public class OAuth2OnPremiseIntegrationTest
     public WireMockRule csMockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
     @Test
-    public void doSomething()
+    public void destinationGetHeadersShouldRetrieveProxyAuthHeaderJustOnce()
     {
         stubFor(
             post("/oauth/token")
