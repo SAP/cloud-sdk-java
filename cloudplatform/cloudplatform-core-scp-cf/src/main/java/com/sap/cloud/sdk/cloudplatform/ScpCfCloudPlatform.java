@@ -137,8 +137,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      * @param environmentVariableReader
      *            A generic key-value mapping.
      */
-    @Override
-    public void setEnvironmentVariableReader( @Nonnull final Function<String, String> environmentVariableReader )
+    private void setEnvironmentVariableReader( @Nonnull final Function<String, String> environmentVariableReader )
     {
         this.environmentVariableReader = environmentVariableReader;
         setServiceBindingAccessor(newServiceBindingAccessorWithCustomEnvironmentVariableReader());
@@ -164,7 +163,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      */
     @Beta
     @Nonnull
-    public static ScpCfCloudPlatform getInstanceOrThrow()
+    private static ScpCfCloudPlatform getInstanceOrThrow()
         throws CloudPlatformException
     {
         final CloudPlatform cloudPlatform = CloudPlatformAccessor.getCloudPlatform();
@@ -379,8 +378,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationName()
+    private String getApplicationName()
         throws CloudPlatformException
     {
         final JsonElement applicationName = getVcapApplication().get(APPLICATION_NAME);
@@ -394,8 +392,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationProcessId()
+    private String getApplicationProcessId()
         throws CloudPlatformException
     {
         final JsonElement applicationProcessId = getVcapApplication().get(APPLICATION_PROCESS_ID);
@@ -409,8 +406,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationUrl()
+    private String getApplicationUrl()
         throws CloudPlatformException
     {
         final JsonElement applicationUrl = getVcapApplication().get(APPLICATION_URL);
@@ -439,7 +435,7 @@ public class ScpCfCloudPlatform implements CloudPlatform
      *             If there are multiple bindings to the XSUAA service.
      */
     @Nonnull
-    public String getXsAppName()
+    private String getXsAppName()
         throws CloudPlatformException,
             NoServiceBindingException,
             MultipleServiceBindingsException

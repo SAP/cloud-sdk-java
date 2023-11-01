@@ -97,8 +97,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationName()
+    private String getApplicationName()
         throws CloudPlatformException
     {
         final JsonElement applicationName = getVcapApplication().get(APPLICATION_NAME);
@@ -112,8 +111,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationProcessId()
+    private String getApplicationProcessId()
         throws CloudPlatformException
     {
         final JsonElement applicationProcessId = getVcapApplication().get(APPLICATION_PROCESS_ID);
@@ -130,8 +128,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
     }
 
     @Nonnull
-    @Override
-    public String getApplicationUrl()
+    private String getApplicationUrl()
         throws CloudPlatformException
     {
         final JsonElement applicationUrl = getVcapApplication().get(APPLICATION_URL);
