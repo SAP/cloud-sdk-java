@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
 
 import lombok.Getter;
 
@@ -17,7 +16,7 @@ import lombok.Getter;
  *
  * The {@link HttpDestination} allows setting a key store and/or a trust store.
  *
- * The {@link CloudPlatform} may have platform-specific security settings managed by the infrastructure.
+ * The CloudPlatform may have platform-specific security settings managed by the infrastructure.
  */
 public enum SecurityConfigurationStrategy
 {
@@ -26,7 +25,7 @@ public enum SecurityConfigurationStrategy
      */
     FROM_DESTINATION("from_destination"),
     /**
-     * The HTTP Security Configuration is taken from the {@link CloudPlatform}.
+     * The HTTP Security Configuration is taken from the CloudPlatform.
      */
     FROM_PLATFORM("from_platform");
 

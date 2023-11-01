@@ -14,8 +14,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
@@ -62,9 +60,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
 
     @Getter( AccessLevel.PACKAGE )
     private LocaleFacade localeFacade;
-
-    @Getter( AccessLevel.PACKAGE )
-    private CloudPlatformFacade cloudPlatformFacade;
 
     @Getter( AccessLevel.PACKAGE )
     private TenantFacade tenantFacade;
@@ -128,7 +123,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
      * Mocks common defaults for testing, in particular:
      * <ul>
      * <li>facades that are used to realize Cloud platform abstractions,</li>
-     * <li>the current {@link CloudPlatform},</li>
      * <li>the current {@link Locale},</li>
      * <li>the current {@link Tenant},</li>
      * <li>the current {@link Principal}</li>
