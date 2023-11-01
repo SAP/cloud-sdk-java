@@ -26,13 +26,12 @@ class MegacliteConfigurationLoader
     @Nonnull
     static DwcOutboundProxyBinding loadMegacliteUrl()
     {
-        final DwcCfCloudPlatform platform = DwcCfCloudPlatform.getInstanceOrThrow();
-        final Option<String> dwcApplication = platform.getEnvironmentVariable(DWC_APPLICATION);
+        final Option<String> dwcApplication = Option.of(System.getenv(DWC_APPLICATION));
         if( dwcApplication.isDefined() ) {
             return loadFromJson(dwcApplication.get());
         }
 
-        final Option<String> dwcMegacliteUrl = platform.getEnvironmentVariable(DWC_MEGACLITE_URL);
+        final Option<String> dwcMegacliteUrl = Option.of(System.getenv(DWC_MEGACLITE_URL));
         if( dwcMegacliteUrl.isEmpty() ) {
             throw new CloudPlatformException(
                 "No megaclite URL found in either "

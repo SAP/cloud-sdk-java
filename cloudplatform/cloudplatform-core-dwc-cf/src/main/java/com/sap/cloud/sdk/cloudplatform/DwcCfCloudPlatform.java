@@ -64,7 +64,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * <p>
      * <strong>Caution:This method is not thread-safe!</strong>
      */
-    public static void invalidateCaches()
+    private static void invalidateCaches()
     {
         vcapApplicationCache.set(null);
         vcapServicesCache.set(null);
@@ -81,7 +81,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      */
     @Beta
     @Nonnull
-    public static DwcCfCloudPlatform getInstanceOrThrow()
+    private static DwcCfCloudPlatform getInstanceOrThrow()
         throws CloudPlatformException
     {
         final CloudPlatform cloudPlatform = CloudPlatformAccessor.getCloudPlatform();
@@ -155,7 +155,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      *             If there is an issue accessing the environment variable.
      */
     @Nonnull
-    public Map<String, JsonElement> getVcapApplication()
+    private Map<String, JsonElement> getVcapApplication()
         throws CloudPlatformException
     {
         if( vcapApplicationCache.get() == null ) {
@@ -205,7 +205,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      *             If there is an issue accessing the environment variable.
      */
     @Nonnull
-    public Map<String, JsonArray> getVcapServices()
+    private Map<String, JsonArray> getVcapServices()
         throws CloudPlatformException
     {
         if( vcapServicesCache.get() == null ) {
@@ -252,7 +252,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * @return The environment variable with the given name, if present.
      */
     @Nonnull
-    public Option<String> getEnvironmentVariable( @Nonnull final String name )
+    private Option<String> getEnvironmentVariable( @Nonnull final String name )
     {
         return Option.of(environmentVariableReader.apply(name));
     }
@@ -302,7 +302,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * @param outboundProxy
      *            The name and URI of the proxy to use for outbound service calls.
      */
-    public void setOutboundProxyBinding( @Nonnull final DwcOutboundProxyBinding outboundProxy )
+    private void setOutboundProxyBinding( @Nonnull final DwcOutboundProxyBinding outboundProxy )
     {
         outboundProxiesCache.put(outboundProxy.getName(), outboundProxy);
     }
@@ -333,7 +333,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      *             API.
      */
     @Deprecated
-    public void registerSubscriberReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
+    private void registerSubscriberReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
     {
         outboundServices
             .put(
@@ -357,7 +357,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      *             API.
      */
     @Deprecated
-    public void registerProviderReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
+    private void registerProviderReuseDestinationService( @Nonnull final DwcOutboundServiceBinding binding )
     {
         outboundServices
             .put(
