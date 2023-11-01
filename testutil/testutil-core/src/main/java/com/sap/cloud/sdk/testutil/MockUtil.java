@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
@@ -50,11 +49,10 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  */
 @Slf4j
-public class MockUtil implements LocaleMocker, CloudPlatformMocker, TenantMocker, PrincipalMocker, SecretStoreMocker
+public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, SecretStoreMocker
 {
     static final List<String> CONFIG_FILE_EXTENSIONS = ImmutableList.of(".yml", ".yaml", ".json");
 
-    static final String MOCKED_CLOUD_APP_NAME = "testapp";
     static final String MOCKED_TENANT = "00000000-0000-0000-0000-000000000000";
     static final String MOCKED_PRINCIPAL = "MockedUser";
 
@@ -79,10 +77,6 @@ public class MockUtil implements LocaleMocker, CloudPlatformMocker, TenantMocker
 
     @Delegate
     private final DefaultLocaleMocker localeMocker = new DefaultLocaleMocker(this::resetLocaleFacade);
-
-    @Delegate
-    private final DefaultCloudPlatformMocker cloudPlatformMocker =
-        new DefaultCloudPlatformMocker(this::resetCloudPlatformFacade);
 
     @Delegate
     private final DefaultTenantMocker tenantMocker = new DefaultTenantMocker(this::resetTenantFacade);
@@ -145,12 +139,10 @@ public class MockUtil implements LocaleMocker, CloudPlatformMocker, TenantMocker
     public void mockDefaults()
     {
         resetLocaleFacade();
-        resetCloudPlatformFacade();
         resetTenantFacade();
         resetPrincipalFacade();
         resetSecretStoreFacade();
 
-        mockCurrentCloudPlatform();
         mockCurrentLocales();
         mockCurrentTenant();
         mockCurrentPrincipal();
@@ -168,16 +160,6 @@ public class MockUtil implements LocaleMocker, CloudPlatformMocker, TenantMocker
 
         LocaleAccessor.setLocaleFacade(localeFacade);
         return localeFacade;
-    }
-
-    private CloudPlatformFacade resetCloudPlatformFacade()
-    {
-        if( cloudPlatformFacade == null ) {
-            cloudPlatformFacade = () -> Try.success(cloudPlatformMocker.getCurrentCloudPlatform());
-        }
-
-        CloudPlatformAccessor.setCloudPlatformFacade(cloudPlatformFacade);
-        return cloudPlatformFacade;
     }
 
     private TenantFacade resetTenantFacade()
