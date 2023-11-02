@@ -404,9 +404,9 @@ public final class ResilienceDecorator
         @Nonnull
         @Override
         public <T> Supplier<T> decorateSupplier(
-            @Nonnull Supplier<T> supplier,
-            @Nonnull ResilienceConfiguration configuration,
-            @Nullable Function<? super Throwable, T> fallbackFunction )
+            @Nonnull final Supplier<T> supplier,
+            @Nonnull final ResilienceConfiguration configuration,
+            @Nullable final Function<? super Throwable, T> fallbackFunction )
         {
             throw exception;
         }
@@ -414,9 +414,9 @@ public final class ResilienceDecorator
         @Nonnull
         @Override
         public <T> Callable<T> decorateCallable(
-            @Nonnull Callable<T> callable,
-            @Nonnull ResilienceConfiguration configuration,
-            @Nullable Function<? super Throwable, T> fallbackFunction )
+            @Nonnull final Callable<T> callable,
+            @Nonnull final ResilienceConfiguration configuration,
+            @Nullable final Function<? super Throwable, T> fallbackFunction )
         {
             throw exception;
         }
