@@ -33,7 +33,7 @@ public class ResilienceDecoratorTest
     }
 
     @Test
-    public void testGetDefaultDecorationStrategyReturnsSingleInstance()
+    public void testGetDecorationStrategyReturnsSingleInstance()
     {
         final ResilienceDecorationStrategy singleStrategy = mock(ResilienceDecorationStrategy.class);
         mockDecorationStrategies(singleStrategy);
@@ -44,7 +44,7 @@ public class ResilienceDecoratorTest
     }
 
     @Test
-    public void testGetDefaultDecorationStrategyReturnsNoResilience()
+    public void testGetDecorationStrategyReturnsNoResilience()
     {
         mockDecorationStrategies();
 
@@ -55,7 +55,7 @@ public class ResilienceDecoratorTest
     }
 
     @Test
-    public void testGetDefaultDecorationStrategyReturnsThrowingStrategy()
+    public void testGetDecorationStrategyThrowsOnMultipleStrategies()
     {
         final ResilienceDecorationStrategy firstStrategy = mock(ResilienceDecorationStrategy.class);
         final ResilienceDecorationStrategy secondInstance = mock(ResilienceDecorationStrategy.class);
