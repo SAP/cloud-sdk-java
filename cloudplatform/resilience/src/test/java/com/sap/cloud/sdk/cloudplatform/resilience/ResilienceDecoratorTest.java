@@ -63,9 +63,6 @@ public class ResilienceDecoratorTest
 
         ResilienceDecorator.resetDecorationStrategy();
 
-        assertThat(ResilienceDecorator.tryGetDecorationStrategy().isFailure()).isTrue();
-        assertThat(ResilienceDecorator.tryGetDecorationStrategy().getCause())
-            .isExactlyInstanceOf(ObjectLookupFailedException.class);
         assertThatThrownBy(ResilienceDecorator::getDecorationStrategy)
             .isExactlyInstanceOf(ObjectLookupFailedException.class);
     }

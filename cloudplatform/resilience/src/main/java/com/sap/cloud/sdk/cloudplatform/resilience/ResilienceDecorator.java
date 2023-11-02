@@ -45,20 +45,6 @@ public final class ResilienceDecorator
     }
 
     /**
-     * Returns a {@link Try} that might contain the {@link ResilienceDecorationStrategy} that will be used to decorate
-     * resilient code, or an exception if the {@link ResilienceDecorationStrategy} couldn't be derived.
-     *
-     * @return A {@link Try} that might contain the {@link ResilienceDecorationStrategy} that will be used to decorate
-     *         resilient code, or an exception if the {@link ResilienceDecorationStrategy} couldn't be derived.
-     * @since 4.27.0
-     */
-    @Nonnull
-    public static Try<ResilienceDecorationStrategy> tryGetDecorationStrategy()
-    {
-        return decorationStrategy;
-    }
-
-    /**
      * Sets the {@link ResilienceDecorationStrategy} that will be used to decorate resilient code.
      *
      * @param decorationStrategy
