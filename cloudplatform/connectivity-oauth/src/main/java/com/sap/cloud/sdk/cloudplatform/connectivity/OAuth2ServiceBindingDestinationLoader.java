@@ -226,7 +226,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             .property(
                 OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                 createTokenRetrievalResilienceConfiguration(name))
-            .build();
+            .buildInternal();
     }
 
     @Nonnull
