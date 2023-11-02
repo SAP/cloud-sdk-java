@@ -167,3 +167,4 @@ blog: https://blogs.sap.com/?p=xxx
 
 - Fixed a bug where an `Authorization` header was attached multiple times to outgoing HTTP requests under some circumstances
 - Fixed an issue where the `DestinationType` of an `DefaultHttpDestination` could be changed to anything but `DestinationType.HTTP`
+- Fixed an issue with custom GSON serialization of OpenAPI generated classes having unexpected `customFieldNames` properties in JSON payload.
