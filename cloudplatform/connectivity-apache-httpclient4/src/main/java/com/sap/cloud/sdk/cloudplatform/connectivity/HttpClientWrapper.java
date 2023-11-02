@@ -79,6 +79,7 @@ class HttpClientWrapper extends CloseableHttpClient
         this.httpClient = httpClient;
 
         // check destination is configured correctly
+        // Any change here must be copied to DefaultHttpDestination.Builder.build()
         if( destination.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE)
             && destination.get(DestinationProperty.PROXY_HOST).isEmpty() ) {
 
