@@ -16,7 +16,7 @@ import lombok.Getter;
  *
  * The {@link HttpDestination} allows setting a key store and/or a trust store.
  *
- * The CloudPlatform may have platform-specific security settings managed by the infrastructure.
+ * The cloud platform (i.e. the environment) may have platform-specific security settings managed by the infrastructure.
  */
 public enum SecurityConfigurationStrategy
 {

@@ -22,11 +22,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -359,8 +358,7 @@ public class ScpCfDestinationServiceAdapterTest
 
     private static void mockServiceBindingAccessor( @Nonnull final ServiceBinding... serviceBindings )
     {
-        final ServiceBindingAccessor serviceBindingAccessor =
-            () -> Stream.of(serviceBindings).collect(Collectors.toList());
+        final ServiceBindingAccessor serviceBindingAccessor = () -> Arrays.asList(serviceBindings);
         DefaultServiceBindingAccessor.setInstance(serviceBindingAccessor);
     }
 }

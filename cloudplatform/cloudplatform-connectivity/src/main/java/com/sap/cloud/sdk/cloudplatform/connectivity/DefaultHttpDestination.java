@@ -900,7 +900,8 @@ public final class DefaultHttpDestination implements HttpDestination
 
         /**
          * Sets the {@link SecurityConfigurationStrategy} for outbound calls via this Destination to decide if the
-         * {@link SSLContext} should be derived from the Destination Configuration or from the CloudPlatform.
+         * {@link SSLContext} should be derived from the Destination Configuration or from the cloud platform (i.e. the
+         * environment).
          *
          * @param securityConfigurationStrategy
          *            The strategy to use
