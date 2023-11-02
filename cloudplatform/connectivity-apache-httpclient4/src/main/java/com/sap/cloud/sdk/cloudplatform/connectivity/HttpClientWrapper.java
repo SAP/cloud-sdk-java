@@ -81,18 +81,15 @@ class HttpClientWrapper extends CloseableHttpClient
         // check destination is configured correctly
         if( destination.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE)
             && destination.get(DestinationProperty.PROXY_HOST).isEmpty() ) {
-            final boolean isProvider =
-                destination.get(DestinationProperty.TENANT_ID).filter(String::isEmpty).isDefined();
-            final boolean isBasicAuth =
-                destination
-                    .get(DestinationProperty.AUTH_TYPE)
-                    .orElse(() -> destination.get(DestinationProperty.AUTH_TYPE_FALLBACK))
-                    .contains(AuthenticationType.BASIC_AUTHENTICATION);
-            if( isProvider && isBasicAuth ) {
-                throw new DestinationAccessException(
-                    "Accessing an onpremise system on behalf of the provider tenant explicitly is currently not supported.");
+
+            if( destination instanceof DefaultHttpDestination
+                && ((DefaultHttpDestination) destination).getFailedProxyDestination() != null ) {
+                // throw the original error that was stored
+                ((DefaultHttpDestination) destination).getFailedProxyDestination().get();
             }
-            throw new DestinationAccessException("Unable to resolve connectivity service binding.");
+            // throw a generic error
+            throw new DestinationAccessException(
+                "Unable to resolve connectivity service binding. Please check the logs.");
         }
         this.destination = destination;
     }
