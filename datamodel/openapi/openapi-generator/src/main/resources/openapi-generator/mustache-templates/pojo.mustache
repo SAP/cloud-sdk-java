@@ -172,6 +172,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * Get the names of the unrecognizable properties of the {@link {{classname}}}.
    * @return The set of properties names
    */
+  @JsonIgnore
   @Nonnull
   public Set<String> getCustomFieldNames() {
     return cloudSdkCustomFields.keySet();
