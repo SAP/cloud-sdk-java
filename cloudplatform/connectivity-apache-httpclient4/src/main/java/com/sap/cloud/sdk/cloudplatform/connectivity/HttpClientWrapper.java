@@ -21,6 +21,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,8 @@ class HttpClientWrapper extends CloseableHttpClient
 
             // throw the original error
             new DefaultHttpDestinationBuilderProxyHandler().handle(DefaultHttpDestination.fromDestination(destination));
+            // just in case the service binding has changed and the exception does not occur anymore
+            throw new DestinationAccessException("Unable to resolve connectivity service binding.");
         }
         this.destination = destination;
     }

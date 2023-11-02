@@ -953,6 +953,12 @@ public final class DefaultHttpDestination implements HttpDestination
                 if( proxyDestination.isSuccess() ) {
                     return proxyDestination.get();
                 }
+                if( proxyDestination.isFailure() ) {
+                    log
+                        .error(
+                            "Unable to resolve destination to connectivity service binding. This destination cannot be used other than reading its properties.",
+                            proxyDestination.getCause());
+                }
             }
 
             return buildInternal();

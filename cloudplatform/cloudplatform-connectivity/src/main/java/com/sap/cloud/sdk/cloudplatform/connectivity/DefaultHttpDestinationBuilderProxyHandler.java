@@ -41,7 +41,7 @@ class DefaultHttpDestinationBuilderProxyHandler
      *
      * @param builder
      *            The builder.
-     * @throws DestinationNotFoundException
+     * @throws DestinationAccessException
      *             in case the handling was not successful.
      */
     @Nonnull
