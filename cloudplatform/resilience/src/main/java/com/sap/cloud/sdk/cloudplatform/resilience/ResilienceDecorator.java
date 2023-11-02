@@ -31,7 +31,8 @@ public final class ResilienceDecorator
      * properties.
      */
     @Nonnull
-    private static Try<ResilienceDecorationStrategy> decorationStrategy;
+    private static Try<ResilienceDecorationStrategy> decorationStrategy =
+        Try.of(ResilienceDecorator::getDefaultDecorationStrategy);
 
     /**
      * Returns the {@link ResilienceDecorationStrategy} that will be used to decorate resilient code,
@@ -41,7 +42,11 @@ public final class ResilienceDecorator
     @Nonnull
     public static ResilienceDecorationStrategy getDecorationStrategy()
     {
-        return decorationStrategy.get();
+        return decorationStrategy
+            .getOrElseThrow(
+                e -> new ResilienceRuntimeException(
+                    String.format("Failed to determine %s.", ResilienceDecorationStrategy.class.getName()),
+                    e));
     }
 
     /**
@@ -53,10 +58,6 @@ public final class ResilienceDecorator
     public static void setDecorationStrategy( @Nonnull final ResilienceDecorationStrategy decorationStrategy )
     {
         ResilienceDecorator.decorationStrategy = Try.success(decorationStrategy);
-    }
-
-    static {
-        decorationStrategy = Try.of(ResilienceDecorator::getDefaultDecorationStrategy);
     }
 
     /**

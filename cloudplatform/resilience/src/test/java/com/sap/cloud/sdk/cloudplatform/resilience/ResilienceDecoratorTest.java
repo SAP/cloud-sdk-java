@@ -64,7 +64,8 @@ public class ResilienceDecoratorTest
         ResilienceDecorator.resetDecorationStrategy();
 
         assertThatThrownBy(ResilienceDecorator::getDecorationStrategy)
-            .isExactlyInstanceOf(ObjectLookupFailedException.class);
+            .isExactlyInstanceOf(ResilienceRuntimeException.class)
+            .hasCauseExactlyInstanceOf(ObjectLookupFailedException.class);
     }
 
     private static void mockDecorationStrategies( @Nonnull final ResilienceDecorationStrategy... strategies )
