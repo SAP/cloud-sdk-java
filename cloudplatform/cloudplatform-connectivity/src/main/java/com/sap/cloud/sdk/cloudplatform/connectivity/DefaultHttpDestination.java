@@ -71,10 +71,6 @@ public final class DefaultHttpDestination implements HttpDestination
     @EqualsAndHashCode.Exclude
     private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
 
-    @Nullable
-    @Getter( AccessLevel.PACKAGE )
-    private final Try<DefaultHttpDestination> failedProxyDestination;
-
     // the following 'cached' fields are ALWAYS derived from the baseProperties and stored in the corresponding fields
     // to avoid additional computation at runtime ONLY.
     // this is why we are calling them 'cached'.
@@ -109,7 +105,6 @@ public final class DefaultHttpDestination implements HttpDestination
 
     private DefaultHttpDestination(
         @Nonnull final DestinationProperties baseProperties,
-        @Nullable final Try<DefaultHttpDestination> failedProxyDestination,
         @Nonnull final ComplexDestinationPropertyFactory destinationPropertyFactory,
         @Nullable final List<Header> customHeaders,
         @Nullable final KeyStore keyStore,
@@ -123,8 +118,6 @@ public final class DefaultHttpDestination implements HttpDestination
         }
 
         this.baseProperties = baseProperties;
-
-        this.failedProxyDestination = failedProxyDestination;
 
         this.customHeaders =
             customHeaders != null ? ImmutableList.<Header> builder().addAll(customHeaders).build() : ImmutableList.of();
@@ -523,7 +516,6 @@ public final class DefaultHttpDestination implements HttpDestination
         final List<Header> headers = Lists.newArrayList();
         final DefaultDestination.Builder builder = DefaultDestination.builder();
         final DefaultHttpDestinationBuilderProxyHandler proxyHandler = new DefaultHttpDestinationBuilderProxyHandler();
-        Try<DefaultHttpDestination> failedProxyDestination = null;
         KeyStore keyStore = null;
         KeyStore trustStore = null;
         final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
@@ -961,7 +953,6 @@ public final class DefaultHttpDestination implements HttpDestination
                 if( proxyDestination.isSuccess() ) {
                     return proxyDestination.get();
                 }
-                failedProxyDestination = proxyDestination;
             }
 
             return buildInternal();
@@ -971,7 +962,6 @@ public final class DefaultHttpDestination implements HttpDestination
         {
             return new DefaultHttpDestination(
                 builder.build(),
-                failedProxyDestination,
                 new ComplexDestinationPropertyFactory(),
                 headers,
                 keyStore,

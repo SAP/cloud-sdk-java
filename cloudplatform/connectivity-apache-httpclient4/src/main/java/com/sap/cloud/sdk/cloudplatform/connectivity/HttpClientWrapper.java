@@ -21,7 +21,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,14 +81,8 @@ class HttpClientWrapper extends CloseableHttpClient
         if( destination.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE)
             && destination.get(DestinationProperty.PROXY_HOST).isEmpty() ) {
 
-            if( destination instanceof DefaultHttpDestination
-                && ((DefaultHttpDestination) destination).getFailedProxyDestination() != null ) {
-                // throw the original error that was stored
-                ((DefaultHttpDestination) destination).getFailedProxyDestination().get();
-            }
-            // throw a generic error
-            throw new DestinationAccessException(
-                "Unable to resolve connectivity service binding. Please check the logs.");
+            // throw the original error
+            new DefaultHttpDestinationBuilderProxyHandler().handle(DefaultHttpDestination.fromDestination(destination));
         }
         this.destination = destination;
     }
