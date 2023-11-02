@@ -63,7 +63,6 @@
 				<configuration>
 					<usedDependencies>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant-dwc</usedDependency>
