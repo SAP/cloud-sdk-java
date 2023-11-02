@@ -85,7 +85,8 @@ class HttpClientWrapper extends CloseableHttpClient
             // throw the original error
             new DefaultHttpDestinationBuilderProxyHandler().handle(DefaultHttpDestination.fromDestination(destination));
             // just in case the service binding has changed and the exception does not occur anymore
-            throw new DestinationAccessException("Unable to resolve connectivity service binding.");
+            throw new DestinationAccessException(
+                "Unable to resolve connectivity service binding. Please check the logs.");
         }
         this.destination = destination;
     }
