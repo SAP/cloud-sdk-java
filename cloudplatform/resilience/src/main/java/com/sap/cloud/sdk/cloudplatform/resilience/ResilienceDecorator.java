@@ -4,22 +4,28 @@
 
 package com.sap.cloud.sdk.cloudplatform.resilience;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Accessor class for decorating functions with resilient properties.
  */
+@Slf4j
 public final class ResilienceDecorator
 {
     /**
@@ -48,11 +54,36 @@ public final class ResilienceDecorator
      *
      * @return The default decoration strategy.
      */
-    private static ResilienceDecorationStrategy getDefaultDecorationStrategy()
+    // package-private for testing
+    static ResilienceDecorationStrategy getDefaultDecorationStrategy()
     {
-        return FacadeLocator
-            .getFacade(ResilienceDecorationStrategy.class)
-            .getOrElse(NoResilienceDecorationStrategy::new);
+        final Collection<ResilienceDecorationStrategy> facades =
+            FacadeLocator.getFacades(ResilienceDecorationStrategy.class);
+        if( facades.size() > 1 ) {
+            final String classes = facades.stream().map(f -> f.getClass().getName()).collect(Collectors.joining(", "));
+            final String exceptionMessage =
+                String
+                    .format(
+                        "Too many implementations of %s found. Make sure to only have a single implementation of the interface on your classpath: %s",
+                        ResilienceDecorationStrategy.class.getName(),
+                        classes);
+            final String logMessage =
+                String
+                    .format(
+                        "%s. Using any resilience pattern will lead to an exception at runtime UNLESS the %s is explicitly overwritten using 'ResilienceDecorator.setDecorationStrategy(ResilienceDecorationStrategy)'.",
+                        exceptionMessage,
+                        ResilienceDecorationStrategy.class.getName());
+            log.warn(logMessage);
+
+            final ObjectLookupFailedException exception = new ObjectLookupFailedException(exceptionMessage);
+            return new ThrowingResilienceDecorationStrategy(exception);
+        }
+
+        if( facades.isEmpty() ) {
+            return new NoResilienceDecorationStrategy();
+        }
+
+        return facades.iterator().next();
     }
 
     /**
@@ -361,5 +392,33 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration )
     {
         return decorationStrategy.queueSupplier(supplier, configuration, null);
+    }
+
+    // package-private for testing
+    @RequiredArgsConstructor
+    static class ThrowingResilienceDecorationStrategy implements ResilienceDecorationStrategy
+    {
+        @Nonnull
+        private final ObjectLookupFailedException exception;
+
+        @Nonnull
+        @Override
+        public <T> Supplier<T> decorateSupplier(
+            @Nonnull Supplier<T> supplier,
+            @Nonnull ResilienceConfiguration configuration,
+            @Nullable Function<? super Throwable, T> fallbackFunction )
+        {
+            throw exception;
+        }
+
+        @Nonnull
+        @Override
+        public <T> Callable<T> decorateCallable(
+            @Nonnull Callable<T> callable,
+            @Nonnull ResilienceConfiguration configuration,
+            @Nullable Function<? super Throwable, T> fallbackFunction )
+        {
+            throw exception;
+        }
     }
 }
