@@ -18,10 +18,9 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 
 import com.google.common.base.Joiner;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 /**
  * Decorates the HttpClient of a given destination. This will allow the HttpClient user to send the relative url path
@@ -51,11 +50,11 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         this.httpClient = httpClient;
 
         if( destination.getProxyType().contains(ProxyType.ON_PREMISE)
-                && destination.getProxyConfiguration().isEmpty() ) {
+            && destination.getProxyConfiguration().isEmpty() ) {
             throw new DestinationAccessException(
-                    "Unable to create an HttpClient from the provided destination. "
-                            + "The destination is supposed to target an on-premise system but lacks the correct proxy configuration. "
-                            + "Please check the application logs for further details.");
+                "Unable to create an HttpClient from the provided destination. "
+                    + "The destination is supposed to target an on-premise system but lacks the correct proxy configuration. "
+                    + "Please check the application logs for further details.");
         }
         this.destination = destination;
     }
