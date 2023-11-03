@@ -713,7 +713,7 @@ public class ODataRequestResultGeneric
                 request.getProtocol());
 
         // populate headers
-        request.getHeaders().forEach(( k, values ) -> values.forEach(v -> nextReadRequest.addHeader(k, v)));
+        request.getHeaders().forEach(nextReadRequest::setHeader);
 
         // execute request
         return Try.of(() -> nextReadRequest.execute(httpClient));
