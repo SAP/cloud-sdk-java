@@ -51,8 +51,8 @@ class OAuth2ServiceImpl
      * <p>
      * The {@code OAuth2ServiceImpl} is newly instantiated by {@code OAuth2DestinationBuilder} and
      * {@code OAuth2ServiceBindingDestinationLoader} for each destination they build/load. This means, without the
-     * cache, also new {@code OAuth2TokenService} would be created for each destination, which in turns defeats the purpose
-     * of the response cache used therein.
+     * cache, also new {@code OAuth2TokenService} would be created for each destination, which in turns defeats the
+     * purpose of the response cache used therein.
      * <p>
      * The cache key is composed of the following parts:
      * <ul>
