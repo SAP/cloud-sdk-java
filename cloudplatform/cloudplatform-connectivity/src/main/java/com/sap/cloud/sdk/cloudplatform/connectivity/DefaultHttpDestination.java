@@ -949,7 +949,6 @@ public final class DefaultHttpDestination implements HttpDestination
 
             // handle proxy type == OnPremise
             if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
-                // Any change here must be copied to HttpClientWrapper(s) constructors
                 try {
                     return proxyHandler.handle(this);
                 }
