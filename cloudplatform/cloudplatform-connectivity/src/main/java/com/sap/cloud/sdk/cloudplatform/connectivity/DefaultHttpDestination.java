@@ -954,12 +954,9 @@ public final class DefaultHttpDestination implements HttpDestination
                 if( proxyDestination.isSuccess() ) {
                     return proxyDestination.get();
                 }
-                if( proxyDestination.isFailure() ) {
-                    log
-                        .error(
-                            "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.",
-                            proxyDestination.getCause());
-                }
+                final String msg =
+                    "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.";
+                log.error(msg, proxyDestination.getCause());
             }
 
             return buildInternal();
