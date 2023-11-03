@@ -1,16 +1,13 @@
 /*
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cloud.sdk.cloudplatform.connectivity;
+package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -19,12 +16,8 @@ import lombok.ToString;
 @Beta
 @ToString( callSuper = true )
 @EqualsAndHashCode( callSuper = true )
-public class DwcTenant extends DefaultTenant implements TenantWithSubdomain
+public class DwcTenant extends DefaultTenant
 {
-    @Getter
-    @Nonnull
-    private final String subdomain;
-
     /**
      * Creates a new {@link DwcTenant}.
      *
@@ -35,8 +28,7 @@ public class DwcTenant extends DefaultTenant implements TenantWithSubdomain
      */
     public DwcTenant( @Nonnull final String tenantId, @Nonnull final String subdomain )
     {
-        super(tenantId);
-        this.subdomain = subdomain;
+        super(tenantId, subdomain);
     }
 
     /**

@@ -65,7 +65,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         Try.success(new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none()))));
 
     private static final Try<Tenant> NO_TENANT = Try.failure(new IllegalStateException());
-    private static final Try<Tenant> SOME_TENANT_1 = Try.success(new DefaultTenant("foo",""));
+    private static final Try<Tenant> SOME_TENANT_1 = Try.success(new DefaultTenant("foo", ""));
     private static final Try<Tenant> SOME_TENANT_2 = Try.success(new DefaultTenant("bar", ""));
 
     private static final Try<Principal> SOME_PRINCIPAL = Try.success(new DefaultPrincipal("p"));

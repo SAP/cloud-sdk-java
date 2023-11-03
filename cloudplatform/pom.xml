@@ -33,7 +33,6 @@
 	<modules>
 		<module>scp-cf</module>
 		<module>cloudplatform-core</module>
-		<module>cloudplatform-core-scp-cf</module>
 		<module>caching</module>
 		<module>cloudplatform-connectivity</module>
 		<module>cloudplatform-connectivity-scp-cf</module>

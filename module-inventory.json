@@ -89,17 +89,6 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
-    "artifactId": "cloudplatform-core-scp-cf",
-    "packaging": "jar",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "cloudplatform/cloudplatform-core-scp-cf/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
-    "parentArtifactId": "cloudplatform-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "cloudplatform-parent",
     "packaging": "pom",
     "releaseAudience": "Public",

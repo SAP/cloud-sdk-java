@@ -43,10 +43,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-scp-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity-scp-cf</artifactId>
 		</dependency>
 		<dependency>
@@ -70,7 +66,6 @@
 				<configuration>
 					<usedDependencies>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:caching</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-scp-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity-scp-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:servlet</usedDependency>

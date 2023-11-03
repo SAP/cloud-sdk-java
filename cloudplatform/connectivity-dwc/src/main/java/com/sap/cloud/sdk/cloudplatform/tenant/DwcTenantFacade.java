@@ -1,15 +1,13 @@
 /*
  * Copyright (c) 2023 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cloud.sdk.cloudplatform.connectivity;
+package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
-import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
+import com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;

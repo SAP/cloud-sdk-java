@@ -1,7 +1,7 @@
-package com.sap.cloud.sdk.cloudplatform.connectivity;
+package com.sap.cloud.sdk.cloudplatform.tenant;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_SUBDOMAIN_HEADER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_TENANT_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_SUBDOMAIN_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_TENANT_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
@@ -11,9 +11,6 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
