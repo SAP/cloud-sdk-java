@@ -253,6 +253,8 @@
 					<ignoredNonTestScopedDependencies>
 						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
 						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
+						<!-- needed for exception classes (i.e. NoServiceBindingException) -->
+						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>

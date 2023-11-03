@@ -16,10 +16,11 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccesso
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 
 import io.vavr.control.Option;
-import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,10 +41,13 @@ class DefaultHttpDestinationBuilderProxyHandler
      *
      * @param builder
      *            The builder.
-     * @return {@code null} in case the handling was not successful.
+     * @throws DestinationAccessException
+     *             in case the handling was not successful.
      */
-    @Nullable
+    @Nonnull
     DefaultHttpDestination handle( @Nonnull final DefaultHttpDestination.Builder builder )
+        throws DestinationAccessException,
+            DestinationNotFoundException
     {
         // add location id header provider, useful to identify one of multiple cloud connectors
         builder.headerProviders(new SapConnectivityLocationIdHeaderProvider());
@@ -51,8 +55,7 @@ class DefaultHttpDestinationBuilderProxyHandler
         // resolve connectivity service binding, necessary for on-premise proxying
         final ServiceBinding serviceBinding = getServiceBindingConnectivity();
         if( serviceBinding == null ) {
-            log.error("Unable to resolve connectivity service binding.");
-            return null;
+            throw new DestinationAccessException("Unable to resolve connectivity service binding.");
         }
 
         final OnBehalfOf derivedOnBehalfOf = deriveOnBehalfOf(builder);
@@ -65,17 +68,7 @@ class DefaultHttpDestinationBuilderProxyHandler
                 .withOption(ServiceBindingDestinationOptions.Options.ProxyOptions.destinationToBeProxied(destination))
                 .build();
 
-        final Try<HttpDestination> result = getServiceBindingDestinationLoader().tryGetDestination(options);
-        if( result.isFailure() ) {
-            log.error("Unable to resolve destination to connectivity service binding.", result.getCause());
-            return null;
-        }
-        if( !(result.get() instanceof DefaultHttpDestination) ) {
-            final String msg = "Unexpected destination type for connectivity service binding proxy: {}";
-            log.error(msg, result.getClass());
-            return null;
-        }
-        return (DefaultHttpDestination) result.get();
+        return (DefaultHttpDestination) getServiceBindingDestinationLoader().getDestination(options);
     }
 
     // Auth type            | retrieval option | tenant   | user      | result

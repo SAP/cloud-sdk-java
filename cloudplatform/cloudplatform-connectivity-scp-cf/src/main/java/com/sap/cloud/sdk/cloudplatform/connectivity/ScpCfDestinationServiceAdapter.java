@@ -26,13 +26,12 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHeader;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
@@ -237,22 +236,9 @@ class ScpCfDestinationServiceAdapter
     // package-private for testing
     static ServiceBinding getDestinationServiceBinding()
     {
-        final ScpCfCloudPlatform cloudPlatform;
-        try {
-            cloudPlatform = ScpCfCloudPlatform.getInstanceOrThrow();
-        }
-        catch( final CloudPlatformException e ) {
-            throw new NoServiceBindingException(
-                String
-                    .format(
-                        "Unable to access the %s instance. Is the application running in a different environment?",
-                        ScpCfCloudPlatform.class),
-                e);
-        }
-
         final List<ServiceBinding> matchingBindings =
-            cloudPlatform
-                .getServiceBindingAccessor()
+            DefaultServiceBindingAccessor
+                .getInstance()
                 .getServiceBindings()
                 .stream()
                 .filter(binding -> ServiceIdentifier.DESTINATION.equals(binding.getServiceIdentifier().orElse(null)))
