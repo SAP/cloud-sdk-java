@@ -6,6 +6,7 @@ package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -130,9 +131,11 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
     @Nonnull
     private Try<ScpCfTenant> tryGetTenantFromServiceBinding()
     {
+        final List<ServiceBinding> serviceBindings = DefaultServiceBindingAccessor.getInstance().getServiceBindings();
+
         for( final ServiceBindingTenantExtractor extractor : ServiceBindingTenantExtractor.values() ) {
             final Optional<ScpCfTenant> tenant =
-                streamServiceCredentialsByPlan(extractor.getService())
+                streamServiceCredentialsByPlan(serviceBindings, extractor.getService())
                     .peek(obj -> log.trace("Trying to extract tenant information from service binding {}.", obj))
                     .flatMap(obj -> extractor.getExtractor().apply(obj).toJavaStream())
                     .findFirst();
@@ -145,11 +148,11 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
     }
 
     @Nonnull
-    private Stream<Map<String, Object>> streamServiceCredentialsByPlan( @Nonnull final String serviceName )
+    private Stream<Map<String, Object>> streamServiceCredentialsByPlan(
+        @Nonnull final Collection<ServiceBinding> serviceBindings,
+        @Nonnull final String serviceName )
     {
-        return DefaultServiceBindingAccessor
-            .getInstance()
-            .getServiceBindings()
+        return serviceBindings
             .stream()
             .filter(binding -> serviceName.equals(binding.getServiceName().orElse(null)))
             .map(ServiceBinding::getCredentials);
