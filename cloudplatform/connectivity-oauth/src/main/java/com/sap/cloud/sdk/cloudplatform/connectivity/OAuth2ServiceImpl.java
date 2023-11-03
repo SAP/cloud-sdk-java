@@ -66,13 +66,13 @@ class OAuth2ServiceImpl
 
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
-    private final OnBehalfOf behalf;
+    private final OnBehalfOf onBehalfOf;
 
-    OAuth2ServiceImpl( final String uri, final ClientIdentity identity, final OnBehalfOf behalf )
+    OAuth2ServiceImpl( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
-        this.behalf = behalf;
+        this.onBehalfOf = onBehalfOf;
     }
 
     static void clearCache()
@@ -90,12 +90,13 @@ class OAuth2ServiceImpl
     }
 
     @Nonnull
-    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
+    String
+        retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
     {
-        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", behalf);
+        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", onBehalfOf);
 
         final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
-            switch( behalf ) {
+            switch( onBehalfOf ) {
                 case TECHNICAL_USER_PROVIDER:
                     log.debug("Using subdomain of provider tenant.");
                     return executeClientCredentialsFlow(null);
@@ -112,7 +113,7 @@ class OAuth2ServiceImpl
                     return executeUserExchangeFlow();
 
                 default:
-                    throw new IllegalStateException("Unknown behalf " + behalf);
+                    throw new IllegalStateException("Unknown behalf " + onBehalfOf);
             }
         }, resilienceConfig);
 
