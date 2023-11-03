@@ -31,6 +31,7 @@ import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
+import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 import com.sap.cloud.security.xsuaa.tokenflows.ClientCredentialsTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
@@ -61,14 +62,14 @@ class OAuth2ServiceImpl
      * <li>{@code Endpoints}, to separate by different OAuth2 services.</li>
      * </ul>
      */
-    private static final Cache<CacheKey, XsuaaTokenFlows> tokenFlowCache =
+    private static final Cache<CacheKey, OAuth2TokenService> tokenServiceCache =
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
-    private final String uri;
+    private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
 
     OAuth2ServiceImpl( final String uri, final ClientIdentity identity )
     {
-        this.uri = uri;
+        endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
     }
 
@@ -79,23 +80,15 @@ class OAuth2ServiceImpl
 
     static void clearCache()
     {
-        log.warn("Resetting the TokenFlows cache. This should not be done outside of testing.");
-        tokenFlowCache.invalidateAll();
+        log.warn("Resetting the TokenService cache. This should not be done outside of testing.");
+        tokenServiceCache.invalidateAll();
     }
 
-    private XsuaaTokenFlows getOrCreateTokenFlow( @Nullable final String zoneId )
+    XsuaaTokenFlows createTokenFlow( final String zoneId )
     {
-        final OAuth2ServiceEndpointsProvider endpoints = Endpoints.fromBaseUri(URI.create(uri));
-
-        final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(endpoints).append(identity);
-
-        return tokenFlowCache.get(cacheKey, key -> createTokenFlow(endpoints));
-    }
-
-    XsuaaTokenFlows createTokenFlow( final OAuth2ServiceEndpointsProvider endpoints )
-    {
-        final DefaultOAuth2TokenService tokenService =
-            new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
+        final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(identity);
+        final OAuth2TokenService tokenService =
+            tokenServiceCache.get(cacheKey, key -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
         return new XsuaaTokenFlows(tokenService, endpoints, identity);
     }
 
@@ -155,7 +148,7 @@ class OAuth2ServiceImpl
                 throw new IllegalStateException("Unknown behalf " + behalf);
         }
 
-        final ClientCredentialsTokenFlow flow = getOrCreateTokenFlow(zoneId).clientCredentialsTokenFlow();
+        final ClientCredentialsTokenFlow flow = createTokenFlow(zoneId).clientCredentialsTokenFlow();
 
         if( zoneId != null ) {
             flow.zoneId(zoneId);
@@ -195,7 +188,7 @@ class OAuth2ServiceImpl
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");
         }
-        final JwtBearerTokenFlow flow = getOrCreateTokenFlow(token.getAppTid()).jwtBearerTokenFlow();
+        final JwtBearerTokenFlow flow = createTokenFlow(token.getAppTid()).jwtBearerTokenFlow();
         flow.token(token);
 
         return Try
