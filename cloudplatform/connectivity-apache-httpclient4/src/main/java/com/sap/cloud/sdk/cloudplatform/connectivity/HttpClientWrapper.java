@@ -78,16 +78,12 @@ class HttpClientWrapper extends CloseableHttpClient
     {
         this.httpClient = httpClient;
 
-        // check destination is configured correctly
-        // Any change here must be copied to DefaultHttpDestination.Builder.build()
-        if( destination.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE)
-            && destination.get(DestinationProperty.PROXY_HOST).isEmpty() ) {
-
-            // throw the original error
-            new DefaultHttpDestinationBuilderProxyHandler().handle(DefaultHttpDestination.fromDestination(destination));
-            // just in case the service binding has changed and the exception does not occur anymore
+        if( destination.getProxyType().contains(ProxyType.ON_PREMISE)
+            && destination.getProxyConfiguration().isEmpty() ) {
             throw new DestinationAccessException(
-                "Unable to resolve connectivity service binding. Please check the logs.");
+                "Unable to create an HttpClient from the provided destination. "
+                    + "The destination is supposed to target an on-premise system but lacks the correct proxy configuration. "
+                    + "Please check the application logs for further details.");
         }
         this.destination = destination;
     }
