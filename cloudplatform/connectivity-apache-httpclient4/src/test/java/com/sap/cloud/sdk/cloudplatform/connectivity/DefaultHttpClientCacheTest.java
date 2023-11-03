@@ -286,7 +286,7 @@ public class DefaultHttpClientCacheTest
         }
 
         // make sure the cache entries for the untested tenant were not invalidated
-        mockedTenant = new DefaultTenant(untestedTenantId,"");
+        mockedTenant = new DefaultTenant(untestedTenantId, "");
         assertThat(unclearedClientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
@@ -297,7 +297,7 @@ public class DefaultHttpClientCacheTest
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
         final String tenantId = "tenant#1";
-        mockedTenant = new DefaultTenant(tenantId,"");
+        mockedTenant = new DefaultTenant(tenantId, "");
 
         final String untestedPrincipalId = "some-principal";
         mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);
@@ -329,7 +329,7 @@ public class DefaultHttpClientCacheTest
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
         final String tenantId = "tenant#1";
-        mockedTenant = new DefaultTenant(tenantId,"");
+        mockedTenant = new DefaultTenant(tenantId, "");
 
         final String untestedPrincipalId = "some-principal";
         mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);

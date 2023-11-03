@@ -245,7 +245,7 @@ public class CacheFilterTest
         final CacheFilter currentTenantFilter = CacheFilter.keyMatchesTenant();
         assertThat(currentTenantFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
 
-        CacheFilter specificTenantFilter = CacheFilter.keyMatchesTenant(new DefaultTenant(tenantId,""));
+        CacheFilter specificTenantFilter = CacheFilter.keyMatchesTenant(new DefaultTenant(tenantId, ""));
         assertThat(specificTenantFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
 
         specificTenantFilter = CacheFilter.keyMatchesTenant(new DefaultTenant("other-tenant", ""));
