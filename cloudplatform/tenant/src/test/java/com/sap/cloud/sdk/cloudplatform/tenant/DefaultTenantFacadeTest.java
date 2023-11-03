@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import io.vavr.control.Try;
 
 @Deprecated
-public class ScpCfTenantFacadeTest
+public class DefaultTenantFacadeTest
 {
     private static final AuthToken JWT_WITHOUT_TENANT = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
 

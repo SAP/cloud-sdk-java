@@ -145,8 +145,7 @@ public class AuthTokenDecoderIasTest
     {
         final String encodedPublicKey = Base64.getEncoder().encodeToString(RSA_KEYS.getPublic().getEncoded());
         final String tokenKeys = String.format(TEMPLATE_TOKEN_KEYS, encodedPublicKey);
-        wireMockServer
-            .stubFor(WireMock.get(WireMock.urlPathEqualTo("/oauth2/certs")).willReturn(WireMock.okJson(tokenKeys)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/oauth2/certs")).willReturn(okJson(tokenKeys)));
     }
 
     @Before

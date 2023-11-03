@@ -33,8 +33,9 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
- /**
- * Default implementation of {@link TenantFacade} which provides access to tenant information on SAP Business Technology Platform Cloud Foundry.
+/**
+ * Default implementation of {@link TenantFacade} which provides access to tenant information on SAP Business Technology
+ * Platform Cloud Foundry.
  */
 @Slf4j
 public class DefaultTenantFacade implements TenantFacade
@@ -136,11 +137,11 @@ public class DefaultTenantFacade implements TenantFacade
             return Try.failure(subdomainTry.getCause());
         }
 
-        return Try.of(() -> new ScpCfTenant(tenantIdTry.get(), subdomainTry.get()));
+        return Try.of(() -> new DefaultTenant(tenantIdTry.get(), subdomainTry.get()));
     }
 
     @Nonnull
-    private Try<ScpCfTenant> tryGetTenantFromServiceBinding( @Nonnull final Try<CloudPlatform> platform )
+    private Try<DefaultTenant> tryGetTenantFromServiceBinding( @Nonnull final Try<CloudPlatform> platform )
     {
         for( final ServiceBindingTenantExtractor extractor : ServiceBindingTenantExtractor.values() ) {
             final Try<Iterable<JsonObject>> bindings =
@@ -154,7 +155,7 @@ public class DefaultTenantFacade implements TenantFacade
                 continue;
             }
 
-            final Optional<ScpCfTenant> tenant =
+            final Optional<DefaultTenant> tenant =
                 Streams
                     .stream(bindings.get())
                     .peek(obj -> log.trace("Trying to extract tenant information from service binding {}.", obj))

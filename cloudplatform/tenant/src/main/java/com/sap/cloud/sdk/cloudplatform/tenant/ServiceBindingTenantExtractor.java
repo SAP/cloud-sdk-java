@@ -46,9 +46,9 @@ enum ServiceBindingTenantExtractor
     @Nonnull
     @Getter
     @ToString.Exclude
-    private final Function<JsonObject, Option<ScpCfTenant>> extractor;
+    private final Function<JsonObject, Option<DefaultTenant>> extractor;
 
-    private static class Extraction implements Function<JsonObject, Option<ScpCfTenant>>
+    private static class Extraction implements Function<JsonObject, Option<DefaultTenant>>
     {
         private Function<JsonObject, Option<String>> tenantIdLogic = obj -> Option.none();
         private Function<JsonObject, Option<String>> subdomainLogic = obj -> Option.none();
@@ -92,11 +92,11 @@ enum ServiceBindingTenantExtractor
         }
 
         @Override
-        public Option<ScpCfTenant> apply( final JsonObject obj )
+        public Option<DefaultTenant> apply( final JsonObject obj )
         {
             final Option<String> subdomain = subdomainLogic.apply(obj);
             final Option<String> tenantId = tenantIdLogic.apply(obj);
-            return tenantId.flatMap(id -> subdomain.map(domain -> new ScpCfTenant(id, domain)));
+            return tenantId.flatMap(id -> subdomain.map(domain -> new DefaultTenant(id, domain)));
         }
     }
 }

@@ -6,11 +6,11 @@ package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import org.junit.Test;
 
-public class ScpCfTenantTest
+public class DefaultTenantTest
 {
     @Test( expected = NullPointerException.class )
-    public void testTenantIdNull()
+    public void testNullParameters()
     {
-        new ScpCfTenant(null, null);
+        new DefaultTenant(null, null);
     }
 }

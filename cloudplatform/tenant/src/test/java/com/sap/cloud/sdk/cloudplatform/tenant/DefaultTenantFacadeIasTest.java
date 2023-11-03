@@ -20,7 +20,7 @@ import com.sap.cloud.security.token.Token;
 
 import io.vavr.control.Try;
 
-public class ScpCfTenantFacadeIasTest
+public class DefaultTenantFacadeIasTest
 {
     private static final String TENANT_ID = "a89ea924-d9c2-4eab-84fb-3ffcaadf5d24";
     private static final String SUBDOMAIN = "some-subdomain";
@@ -58,7 +58,7 @@ public class ScpCfTenantFacadeIasTest
     @Test
     public void subdomainShouldBeReadFromIasToken()
     {
-        final ScpCfTenant tenant = (ScpCfTenant) TenantAccessor.getCurrentTenant();
+        final DefaultTenant tenant = (DefaultTenant) TenantAccessor.getCurrentTenant();
         assertThat(tenant.getSubdomain()).isEqualTo(SUBDOMAIN);
     }
 }

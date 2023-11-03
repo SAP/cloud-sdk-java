@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.*;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_SUBDOMAIN_HEADER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DwcHeaderUtils.DWC_TENANT_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;

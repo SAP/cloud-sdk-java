@@ -18,7 +18,7 @@ import com.sap.cloud.security.x509.Certificate;
 
 class SecurityContextDecoratorTest
 {
-    private static final Token token = Mockito.mock(Token.class);
+    private static final Token token = mock(Token.class);
     private static final Certificate cert = Mockito.mock(Certificate.class);
 
     @BeforeEach

@@ -23,7 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import io.vavr.control.Try;
 
 @Deprecated
-public class ScpCfTenantFacadeXsuaaTest
+public class DefaultTenantFacadeXsuaaTest
 {
     @After
     public void resetAuthTokenAccessor()
@@ -50,7 +50,7 @@ public class ScpCfTenantFacadeXsuaaTest
         VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(TenantAccessException.class);
     }
 
-    private DefaultAuthTokenFacade mockCurrentTenant(final String userTenant )
+    private DefaultAuthTokenFacade mockCurrentTenant( final String userTenant )
     {
         final AuthToken jwtWithTenant = createJwtWithTenant(userTenant);
 

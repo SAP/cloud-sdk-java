@@ -30,8 +30,8 @@ import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
-import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
@@ -186,7 +186,7 @@ public class AuthTokenTenantResolvingTest
 
             final Tenant tenant = TenantAccessor.getCurrentTenant();
             assertThat(tenant.getTenantId()).isEqualTo(tenantId);
-            assertThat(tenant).isInstanceOf(ScpCfTenant.class);
+            assertThat(tenant).isInstanceOf(DefaultTenant.class);
             assertThat(((TenantWithSubdomain) tenant).getSubdomain()).isEqualTo(subdomain);
 
             VavrAssertions.assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isFailure();
@@ -227,7 +227,7 @@ public class AuthTokenTenantResolvingTest
 
             final Tenant tenant = TenantAccessor.getCurrentTenant();
             assertThat(tenant.getTenantId()).isEqualTo(tenantId);
-            assertThat(tenant).isInstanceOf(ScpCfTenant.class);
+            assertThat(tenant).isInstanceOf(DefaultTenant.class);
             assertThat(((TenantWithSubdomain) tenant).getSubdomain()).isEqualTo(subdomain);
 
             VavrAssertions.assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isFailure();

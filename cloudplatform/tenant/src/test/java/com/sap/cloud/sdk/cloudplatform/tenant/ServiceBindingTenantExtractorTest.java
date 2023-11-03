@@ -34,7 +34,7 @@ public class ServiceBindingTenantExtractorTest
     static class Parameter
     {
         String givenVcapServices;
-        ScpCfTenant assertedTenant;
+        DefaultTenant assertedTenant;
     }
 
     @Parameterized.Parameters
@@ -43,16 +43,16 @@ public class ServiceBindingTenantExtractorTest
         return new Parameter[] {
             new Parameter(
                 "{\"xsuaa\":[{\"plan\":\"application\",\"credentials\":{\"identityzone\":\"sub1\",\"tenantid\":\"tenant1\"}}]}",
-                new ScpCfTenant("tenant1", "sub1")),
+                new DefaultTenant("tenant1", "sub1")),
             new Parameter(
                 "{\"xsuaa\":[{\"plan\":\"broker\",\"credentials\":{\"identityzone\":\"sub2\",\"zoneid\":\"tenant2\"}}]}",
-                new ScpCfTenant("tenant2", "sub2")),
+                new DefaultTenant("tenant2", "sub2")),
             new Parameter(
                 "{\"xsuaa\":[{\"plan\":\"application\",\"credentials\":{\"identityzone\":\"sub3\",\"identityzoneid\":\"tenant3\"}}]}",
-                new ScpCfTenant("tenant3", "sub3")),
+                new DefaultTenant("tenant3", "sub3")),
             new Parameter(
                 "{\"identity\":[{\"plan\":\"application\",\"credentials\":{\"zone_uuid\":\"tenant4\",\"url\":\"https://sub4.some.domain.com\"}}]}",
-                new ScpCfTenant("tenant4", "sub4")) };
+                new DefaultTenant("tenant4", "sub4")) };
     }
 
     @Before
