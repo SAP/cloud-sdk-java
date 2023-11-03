@@ -20,14 +20,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.HttpHeaders;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
@@ -45,9 +42,6 @@ public class AuthTokenDecoderIasTest
 {
     @Rule
     public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
-    @Mock
-    private CloudPlatformFacade cloudPlatformFacade;
 
     private final RSAKeys RSA_KEYS = RSAKeys.generate();
 
@@ -71,36 +65,6 @@ public class AuthTokenDecoderIasTest
             + "  \"code_challenge_methods_supported\" : [ \"plain\", \"S256\" ],"
             + "  \"tls_client_certificate_bound_access_tokens\" : true"
             + "}";
-
-    private static final String TEMPLATE_VCAP_SERVICES =
-        "{"
-            + "    \"identity\": ["
-            + "      {"
-            + "        \"label\": \"identity\","
-            + "        \"provider\": null,"
-            + "        \"plan\": \"application\","
-            + "        \"name\": \"cf-sprias-ias\","
-            + "        \"tags\": [],"
-            + "        \"instance_guid\": \"9b2e9264-78ef-4316-b776-3a91d4d4b717\","
-            + "        \"instance_name\": \"cf-sprias-ias\","
-            + "        \"binding_guid\": \"68835e70-0342-4e24-91c3-5ba54b12a0cd\","
-            + "        \"binding_name\": null,"
-            + "        \"credentials\": {"
-            + "          \"clientid\": \"2aba8ab2-edc3-4666-b2ed-90b2b47e60e3\","
-            + "          \"clientsecret\": \"xnDE_A.8@Bi-?ZP8W/jsW2::w:CmlbTjU\","
-            + "          \"domain\": \"localhost\","
-            + "          \"zone_uuid\": \"a89ea924-d9c2-4eab-84fb-3ffcaadf5d24\","
-            + "          \"app_tid\": \"a89ea924-d9c2-4eab-84fb-3ffcaadf5d24\","
-            + "          \"domains\": ["
-            + "            \"localhost\""
-            + "          ],"
-            + "          \"url\": \"HOST\""
-            + "        },"
-            + "        \"syslog_drain_url\": null,"
-            + "        \"volume_mounts\": []"
-            + "      }"
-            + "    ]"
-            + "  }";
 
     private static final String TEMPLATE_TOKEN_KEYS =
         "{"
@@ -159,15 +123,12 @@ public class AuthTokenDecoderIasTest
     @Before
     public void prepareVcapServices()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(cloudPlatformFacade);
-
         AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade(new AuthTokenDecoderDefault()));
     }
 
     @After
     public void cleanPlatform()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
         AuthTokenAccessor.setAuthTokenFacade(null); // reset auth token facade to clear underlying VCAP_SERVICES data
     }
 
