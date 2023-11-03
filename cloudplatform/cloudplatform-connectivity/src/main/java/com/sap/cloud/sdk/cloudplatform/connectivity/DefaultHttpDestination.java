@@ -949,14 +949,15 @@ public final class DefaultHttpDestination implements HttpDestination
 
             // handle proxy type == OnPremise
             if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
-                // Any change here must be copied to the HttpClientWrapper constructor
-                final Try<DefaultHttpDestination> proxyDestination = Try.of(() -> proxyHandler.handle(this));
-                if( proxyDestination.isSuccess() ) {
-                    return proxyDestination.get();
+                // Any change here must be copied to HttpClientWrapper(s) constructors
+                try {
+                    return proxyHandler.handle(this);
                 }
-                final String msg =
-                    "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.";
-                log.error(msg, proxyDestination.getCause());
+                catch( final Exception e ) {
+                    final String msg =
+                        "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.";
+                    log.error(msg, e);
+                }
             }
 
             return buildInternal();
