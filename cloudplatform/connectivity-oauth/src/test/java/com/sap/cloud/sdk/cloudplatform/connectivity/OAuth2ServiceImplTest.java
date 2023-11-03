@@ -4,9 +4,10 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -33,6 +34,7 @@ public class OAuth2ServiceImplTest
     {
         final XsuaaTokenFlows tokenFlows = mock(XsuaaTokenFlows.class);
         final ClientCredentialsTokenFlow clientCredentialsTokenFlows = mock(ClientCredentialsTokenFlow.class);
+        final ClientCredentials identity = new ClientCredentials("clientid", "clientsecret");
 
         when(tokenFlows.clientCredentialsTokenFlow()).thenReturn(clientCredentialsTokenFlows);
         doReturn(clientCredentialsTokenFlows).when(clientCredentialsTokenFlows).zoneId(anyString());
@@ -42,13 +44,8 @@ public class OAuth2ServiceImplTest
         // as per API contract, that seems to be a valid outcome.
         doReturn(null).when(clientCredentialsTokenFlows).execute();
 
-        final OAuth2ServiceImpl sut =
-            spy(
-                new OAuth2ServiceImpl(
-                    "some.uri",
-                    new ClientCredentials("clientid", "clientsecret"),
-                    OnBehalfOf.TECHNICAL_USER_PROVIDER));
-        doReturn(tokenFlows).when(sut).createTokenFlow(any());
+        final OAuth2ServiceImpl sut = spy(new OAuth2ServiceImpl("some.uri", identity, TECHNICAL_USER_PROVIDER));
+        doReturn(tokenFlows).when(sut).getTokenFlowFactory(isNull());
 
         assertThatThrownBy(() -> sut.retrieveAccessToken(NO_RESILIENCE))
             .isExactlyInstanceOf(DestinationOAuthTokenException.class)

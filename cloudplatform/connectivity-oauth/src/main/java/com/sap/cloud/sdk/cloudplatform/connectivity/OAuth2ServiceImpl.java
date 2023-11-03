@@ -63,6 +63,7 @@ class OAuth2ServiceImpl
      */
     private static final Cache<CacheKey, OAuth2TokenService> tokenServiceCache =
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
@@ -80,7 +81,7 @@ class OAuth2ServiceImpl
         tokenServiceCache.invalidateAll();
     }
 
-    XsuaaTokenFlows createTokenFlow( final String zoneId )
+    XsuaaTokenFlows getTokenFlowFactory( final String zoneId )
     {
         final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(identity);
         final OAuth2TokenService tokenService =
@@ -96,10 +97,20 @@ class OAuth2ServiceImpl
         final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
             switch( onBehalfOf ) {
                 case TECHNICAL_USER_PROVIDER:
+                    log.debug("Using subdomain of provider tenant.");
+                    return executeClientCredentialsFlow(null);
+
                 case TECHNICAL_USER_CURRENT_TENANT:
-                    return executeClientCredentialsFlow();
+                    final String zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
+                    if( zoneId == null ) {
+                        log.debug("No current tenant/zone available.");
+                        log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
+                    }
+                    return executeClientCredentialsFlow(zoneId);
+
                 case NAMED_USER_CURRENT_TENANT:
                     return executeUserExchangeFlow();
+
                 default:
                     throw new IllegalStateException("Unknown behalf " + onBehalfOf);
             }
@@ -121,30 +132,9 @@ class OAuth2ServiceImpl
     }
 
     @Nullable
-    private OAuth2TokenResponse executeClientCredentialsFlow()
+    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final String zoneId )
     {
-
-        @Nullable
-        final String zoneId;
-
-        switch( onBehalfOf ) {
-            case TECHNICAL_USER_PROVIDER:
-                log.debug("Using subdomain of provider tenant.");
-                zoneId = null;
-                break;
-            case TECHNICAL_USER_CURRENT_TENANT:
-                zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
-                if( zoneId == null ) {
-                    log.debug("No current tenant/zone available.");
-                    log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unknown behalf " + onBehalfOf);
-        }
-
-        final ClientCredentialsTokenFlow flow = createTokenFlow(zoneId).clientCredentialsTokenFlow();
-
+        final ClientCredentialsTokenFlow flow = getTokenFlowFactory(zoneId).clientCredentialsTokenFlow();
         if( zoneId != null ) {
             flow.zoneId(zoneId);
         }
@@ -183,7 +173,7 @@ class OAuth2ServiceImpl
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");
         }
-        final JwtBearerTokenFlow flow = createTokenFlow(token.getAppTid()).jwtBearerTokenFlow();
+        final JwtBearerTokenFlow flow = getTokenFlowFactory(token.getAppTid()).jwtBearerTokenFlow();
         flow.token(token);
 
         return Try
