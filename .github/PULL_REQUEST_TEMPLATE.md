@@ -33,7 +33,6 @@ By default some items are marked not relevant because we don't need them frequen
 - [ ] ~Error handling created / updated & covered by the tests above~
 - [ ] ~Documentation updated~
 - [ ] ~Release notes updated~
-- [ ] ~Updated `module-inventory.json`~
 
 <!--
 An example DoD that is not yet completed might look like this:
@@ -43,12 +42,10 @@ An example DoD that is not yet completed might look like this:
 - [x] ~Error handling created / updated & covered by the tests above~
 - [x] ~Documentation updated~
 - [ ] ~Release notes updated~
-- [x] ~Updated `module-inventory.json`~
 
 Which would mean:
 
 > I implemented the functionality and declared the scope of my changes in the description above. 
 > I still have to add some tests but don't have to change any error handling or documentation.
 > However, I have not yet considered if we need release notes. 
-> But we don't need to update the `module-inventory.json`.
 -->
