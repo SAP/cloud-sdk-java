@@ -81,39 +81,26 @@ public class DestinationLoaderChain implements DestinationLoader
         final ArrayList<Throwable> suppressedList = new ArrayList<>();
 
         for( final DestinationLoader loader : loaders ) {
-            log
-                .debug(
-                    "Delegating destination lookup for destination {} to the destination loader {}.",
-                    destinationName,
-                    loader.getClass().getSimpleName());
+            final String msg = "Delegating destination lookup for destination {} to the destination loader {}.";
+            log.debug(msg, destinationName, loader.getClass().getSimpleName());
 
             final Try<Destination> result = loader.tryGetDestination(destinationName, options);
 
             if( result.isSuccess() ) {
-                log
-                    .debug(
-                        "Destination loader {} successfully loaded destination {}.",
-                        loader.getClass().getSimpleName(),
-                        destinationName);
+                final String msg1 = "Destination loader {} successfully loaded destination {}.";
+                log.debug(msg1, loader.getClass().getSimpleName(), destinationName);
 
                 return result;
             }
             final Throwable cause = result.getCause();
 
             if( !hasCauseAssignableFrom(cause, DestinationNotFoundException.class) ) {
-                log
-                    .debug(
-                        "Destination loader {} returned an exception when loading destination {}:",
-                        loader.getClass().getSimpleName(),
-                        destinationName,
-                        cause);
+                final String msg1 = "Destination loader {} returned an exception when loading destination {}:";
+                log.debug(msg1, loader.getClass().getSimpleName(), destinationName, cause);
                 return result;
             }
-            log
-                .debug(
-                    "No destination with name '{}' was found in destination loader {}.",
-                    destinationName,
-                    loader.getClass().getSimpleName());
+            final String msg1 = "No destination with name '{}' was found in destination loader {}.";
+            log.debug(msg1, destinationName, loader.getClass().getSimpleName());
 
             suppressedList.add(cause);
         }

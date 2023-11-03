@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
@@ -195,12 +194,8 @@ public final class DefaultHttpDestination implements HttpDestination
         aggregatedHeaderProviders.addAll(customHeaderProviders);
         aggregatedHeaderProviders.addAll(headerProvidersFromClassLoading);
 
-        log
-            .debug(
-                "Found these {} destination header providers for a {}: {}",
-                aggregatedHeaderProviders.size(),
-                getClass().getSimpleName(),
-                Joiner.on(",").join(aggregatedHeaderProviders));
+        final String msg = "Found these {} destination header providers for a {}: {}";
+        log.debug(msg, aggregatedHeaderProviders.size(), getClass().getSimpleName(), aggregatedHeaderProviders);
 
         final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
 
@@ -240,28 +235,18 @@ public final class DefaultHttpDestination implements HttpDestination
                         .collect(Collectors.toList());
 
                 if( headersToAdd.isEmpty() ) {
-                    log
-                        .warn(
-                            "Did not find any '{}' headers to add to the outgoing request, even though Authentication type '{}' is set.",
-                            HttpHeaders.AUTHORIZATION,
-                            AuthenticationType.TOKEN_FORWARDING);
+                    final String msg =
+                        "Did not find any '{}' headers to add to the outgoing request, even though Authentication type '{}' is set.";
+                    log.warn(msg, HttpHeaders.AUTHORIZATION, AuthenticationType.TOKEN_FORWARDING);
+
                     if( log.isDebugEnabled() ) {
-                        final Try<RequestHeaderContainer> maybeRequestHeaders =
-                            RequestHeaderAccessor.tryGetHeaderContainer();
-                        if( maybeRequestHeaders.isFailure() ) {
-                            log
-                                .debug(
-                                    "The incoming request headers could not be accessed.",
-                                    maybeRequestHeaders.getCause());
-                        } else if( maybeRequestHeaders.get() == null ) {
-                            log.debug("The incoming request headers could not be accessed.");
+                        final Try<RequestHeaderContainer> tryReqHeaders = RequestHeaderAccessor.tryGetHeaderContainer();
+                        if( tryReqHeaders.isFailure() || tryReqHeaders.get() == null ) {
+                            final String msg_req = "The incoming request headers could not be accessed.";
+                            log.debug(msg_req, tryReqHeaders.isFailure() ? tryReqHeaders.getCause() : null);
                         } else {
-                            final String allHeaders = String.join(", ", maybeRequestHeaders.get().getHeaderNames());
-                            log
-                                .debug(
-                                    "Unable to find an '{}' header in the following headers: {}",
-                                    HttpHeaders.AUTHORIZATION,
-                                    allHeaders);
+                            final String msg_headers = "Unable to find an '{}' header in the following headers: {}";
+                            log.debug(msg_headers, HttpHeaders.AUTHORIZATION, tryReqHeaders.get().getHeaderNames());
                         }
                     }
                 }

@@ -52,21 +52,11 @@ public final class DestinationAccessor
     {
         if( log.isInfoEnabled() ) {
             if( loader != null ) {
-                log
-                    .info(
-                        "Setting the current "
-                            + DestinationLoader.class.getSimpleName()
-                            + " used to a custom instance of "
-                            + loader.getClass().getSimpleName()
-                            + ".");
+                final String msg = "Setting the current {} used to a custom instance of {}.";
+                log.info(msg, DestinationLoader.class.getSimpleName(), loader.getClass().getSimpleName());
             } else {
-                log
-                    .info(
-                        "Resetting the current "
-                            + DestinationLoader.class.getSimpleName()
-                            + " used to the default "
-                            + DestinationLoaderChain.class.getSimpleName()
-                            + ".");
+                final String msg = "Resetting the current {} used to the default {}.";
+                log.info(msg, DestinationLoader.class.getSimpleName(), DestinationLoaderChain.class.getSimpleName());
             }
         }
         DestinationAccessor.loader = Option.of(loader).getOrElse(DestinationAccessor::initDestinationLoader);
@@ -74,13 +64,8 @@ public final class DestinationAccessor
 
     private static DestinationLoader initDestinationLoader()
     {
-        log
-            .info(
-                "Creating a new DestinationLoaderChain with "
-                    + EnvVarDestinationLoader.class.getSimpleName()
-                    + " as the primary "
-                    + DestinationLoader.class.getSimpleName()
-                    + " implementation.");
+        final String msg = "Creating a new DestinationLoaderChain with {} as the primary {} implementation.";
+        log.info(msg, EnvVarDestinationLoader.class.getSimpleName(), DestinationLoader.class.getSimpleName());
 
         final DestinationLoaderChain.DestinationLoaderChainBuilder loaderChainBuilder =
             DestinationLoaderChain.builder(new EnvVarDestinationLoader());
@@ -89,13 +74,8 @@ public final class DestinationAccessor
 
         loaderFromModule.peek(loader -> {
             if( log.isInfoEnabled() ) {
-                log
-                    .info(
-                        "Using an instance of "
-                            + loader.getClass().getSimpleName()
-                            + " as the secondary "
-                            + DestinationLoader.class.getSimpleName()
-                            + " implementation.");
+                final String inf = "Using an instance of {} as the secondary {} implementation.";
+                log.info(inf, loader.getClass().getSimpleName(), DestinationLoader.class.getSimpleName());
             }
             loaderChainBuilder.append(loader);
         });
