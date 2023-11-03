@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -37,6 +36,8 @@ import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,20 +62,29 @@ class OAuth2ServiceImpl
      * <li>{@code ClientIdentity}, to separate by the credentials used against the OAuth2 service.</li>
      * </ul>
      */
-    private static final Cache<CacheKey, OAuth2TokenService> tokenServiceCache =
+    private static final Cache<ClientIdentity, OAuth2TokenService> tokenServiceCache =
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
-    private final OAuth2ServiceEndpointsProvider endpoints;
-    private final ClientIdentity identity;
 
-    OAuth2ServiceImpl( final String uri, final ClientIdentity identity )
+    @Nonnull
+    @Getter( AccessLevel.PACKAGE )
+    private final XsuaaTokenFlows flows;
+
+    @Nonnull
+    @Getter( AccessLevel.PACKAGE )
+    private final OnBehalfOf behalf;
+
+    OAuth2ServiceImpl( final String uri, final ClientIdentity identity, final OnBehalfOf behalf )
     {
-        endpoints = Endpoints.fromBaseUri(URI.create(uri));
-        this.identity = identity;
+        final OAuth2ServiceEndpointsProvider endpoints = Endpoints.fromBaseUri(URI.create(uri));
+        final OAuth2TokenService tokenService =
+            tokenServiceCache.get(identity, key -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
+        flows = new XsuaaTokenFlows(tokenService, endpoints, identity);
+        this.behalf = behalf;
     }
 
-    static OAuth2ServiceImpl fromCredentials( final String uri, final ClientIdentity identity )
+    static OAuth2ServiceImpl fromCredentials( final String uri, final ClientIdentity identity, final OnBehalfOf behalf )
     {
-        return new OAuth2ServiceImpl(uri, identity);
+        return new OAuth2ServiceImpl(uri, identity, behalf);
     }
 
     static void clearCache()
@@ -83,29 +93,30 @@ class OAuth2ServiceImpl
         tokenServiceCache.invalidateAll();
     }
 
-    XsuaaTokenFlows createTokenFlow( final String zoneId )
-    {
-        final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(identity);
-        final OAuth2TokenService tokenService =
-            tokenServiceCache.get(cacheKey, key -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
-        return new XsuaaTokenFlows(tokenService, endpoints, identity);
-    }
-
     @Nonnull
-    String
-        retrieveAccessToken( @Nonnull final OnBehalfOf behalf, @Nonnull final ResilienceConfiguration resilienceConfig )
+    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
     {
-        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", behalf);
+        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", getBehalf());
 
         final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
-            switch( behalf ) {
+            switch( getBehalf() ) {
                 case TECHNICAL_USER_PROVIDER:
+                    log.debug("Using subdomain of provider tenant.");
+                    return executeClientCredentialsFlow(null);
+
                 case TECHNICAL_USER_CURRENT_TENANT:
-                    return executeClientCredentialsFlow(behalf);
+                    final String zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
+                    if( zoneId == null ) {
+                        log.debug("No current tenant/zone available.");
+                        log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
+                    }
+                    return executeClientCredentialsFlow(zoneId);
+
                 case NAMED_USER_CURRENT_TENANT:
                     return executeUserExchangeFlow();
+
                 default:
-                    throw new IllegalStateException("Unknown behalf " + behalf);
+                    throw new IllegalStateException("Unknown behalf " + getBehalf());
             }
         }, resilienceConfig);
 
@@ -125,33 +136,11 @@ class OAuth2ServiceImpl
     }
 
     @Nullable
-    private OAuth2TokenResponse executeClientCredentialsFlow( final OnBehalfOf behalf )
+    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final String zoneId )
     {
-
-        @Nullable
-        final String zoneId;
-
-        switch( behalf ) {
-            case TECHNICAL_USER_PROVIDER:
-                log.debug("Using subdomain of provider tenant.");
-                zoneId = null;
-                break;
-            case TECHNICAL_USER_CURRENT_TENANT:
-                zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
-                if( zoneId == null ) {
-                    log.debug("No current tenant/zone available.");
-                    log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unknown behalf " + behalf);
-        }
-
-        final ClientCredentialsTokenFlow flow = createTokenFlow(zoneId).clientCredentialsTokenFlow();
-
-        if( zoneId != null ) {
-            flow.zoneId(zoneId);
-        }
+        // create new token flow object
+        final ClientCredentialsTokenFlow flow = getFlows().clientCredentialsTokenFlow();
+        flow.zoneId(zoneId);
 
         return Try
             .of(flow::execute)
@@ -187,7 +176,9 @@ class OAuth2ServiceImpl
                     + maybeTenant.get()
                     + ". This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.");
         }
-        final JwtBearerTokenFlow flow = createTokenFlow(token.getAppTid()).jwtBearerTokenFlow();
+
+        // create new token flow object
+        final JwtBearerTokenFlow flow = getFlows().jwtBearerTokenFlow();
         flow.token(token);
 
         return Try

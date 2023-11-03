@@ -24,8 +24,6 @@ class OAuthHeaderProvider implements DestinationHeaderProvider
     @Nonnull
     private final OAuth2ServiceImpl oauth2service;
     @Nonnull
-    private final OnBehalfOf behalf;
-    @Nonnull
     private final String authHeaderName;
 
     @Nonnull
@@ -38,7 +36,7 @@ class OAuthHeaderProvider implements DestinationHeaderProvider
             destination.get(PROPERTY_OAUTH2_RESILIENCE_CONFIG, ResilienceConfiguration.class);
 
         final String accessToken =
-            oauth2service.retrieveAccessToken(behalf, resilienceConfig.getOrElseThrow(IllegalStateException::new));
+            oauth2service.retrieveAccessToken(resilienceConfig.getOrElseThrow(IllegalStateException::new));
 
         return singletonList(new Header(authHeaderName, "Bearer " + accessToken));
     }

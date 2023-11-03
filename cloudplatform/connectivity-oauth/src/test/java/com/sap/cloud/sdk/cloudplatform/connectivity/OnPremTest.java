@@ -60,10 +60,12 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImpl()
     {
-        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        final String token1 = service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
-        final String token2 = service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
+        final String token1 = service.retrieveAccessToken(NO_RESILIENCE);
+        final String token2 = service.retrieveAccessToken(NO_RESILIENCE);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -74,11 +76,15 @@ public class OnPremTest
     @Test
     public void multipleOAuth2ServiceImpl()
     {
-        final OAuth2ServiceImpl service1 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
-        final OAuth2ServiceImpl service2 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service1 =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        final OAuth2ServiceImpl service2 =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        final String token1 = service1.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
-        final String token2 = service2.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE);
+        final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
+        final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -89,18 +95,16 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImplSingleSubscriber()
     {
-        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
-                .executeWithTenant(
-                    new DefaultTenant("abcd"),
-                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("abcd"), () -> service.retrieveAccessToken(NO_RESILIENCE));
         final String token2 =
             TenantAccessor
-                .executeWithTenant(
-                    new DefaultTenant("abcd"),
-                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("abcd"), () -> service.retrieveAccessToken(NO_RESILIENCE));
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -111,18 +115,16 @@ public class OnPremTest
     @Test
     public void singleOAuth2ServiceImplMultipleSubscriber()
     {
-        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
-                .executeWithTenant(
-                    new DefaultTenant("tenant 1"),
-                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("tenant 1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
         final String token2 =
             TenantAccessor
-                .executeWithTenant(
-                    new DefaultTenant("tenant 2"),
-                    () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("tenant 2"), () -> service.retrieveAccessToken(NO_RESILIENCE));
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -136,16 +138,14 @@ public class OnPremTest
         // The reason for this test is to verify, that cookies set for one tenant are not forwarded to another tenant.
         stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
 
-        final OAuth2ServiceImpl service = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         TenantAccessor
-            .executeWithTenant(
-                new DefaultTenant("tenant1"),
-                () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+            .executeWithTenant(new DefaultTenant("tenant1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
         TenantAccessor
-            .executeWithTenant(
-                new DefaultTenant("tenant2"),
-                () -> service.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE));
+            .executeWithTenant(new DefaultTenant("tenant2"), () -> service.retrieveAccessToken(NO_RESILIENCE));
 
         final List<ServeEvent> events = getAllServeEvents();
 
@@ -159,11 +159,15 @@ public class OnPremTest
     @Test
     public void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
     {
-        final OAuth2ServiceImpl service1 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
-        final OAuth2ServiceImpl service2 = OAuth2ServiceImpl.fromCredentials(csMockServer2.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service1 =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        final OAuth2ServiceImpl service2 =
+            OAuth2ServiceImpl
+                .fromCredentials(csMockServer2.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final String token1 = service1.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE);
-        final String token2 = service2.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE);
+        final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
+        final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token2");

@@ -5,7 +5,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -42,11 +41,12 @@ public class OAuth2ServiceImplTest
         // as per API contract, that seems to be a valid outcome.
         doReturn(null).when(clientCredentialsTokenFlows).execute();
 
+        final ClientCredentials identity = new ClientCredentials("clientid", "clientsecret");
         final OAuth2ServiceImpl sut =
-            spy(new OAuth2ServiceImpl("some.uri", new ClientCredentials("clientid", "clientsecret")));
-        doReturn(tokenFlows).when(sut).createTokenFlow(any());
+            spy(new OAuth2ServiceImpl("some.uri", identity, OnBehalfOf.TECHNICAL_USER_PROVIDER));
+        doReturn(tokenFlows).when(sut).getFlows();
 
-        assertThatThrownBy(() -> sut.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE))
+        assertThatThrownBy(() -> sut.retrieveAccessToken(NO_RESILIENCE))
             .isExactlyInstanceOf(DestinationOAuthTokenException.class)
             .hasMessageContaining("OAuth2 token request failed");
     }
