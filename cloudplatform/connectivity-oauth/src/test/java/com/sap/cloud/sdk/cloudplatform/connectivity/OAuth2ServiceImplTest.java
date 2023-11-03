@@ -43,10 +43,14 @@ public class OAuth2ServiceImplTest
         doReturn(null).when(clientCredentialsTokenFlows).execute();
 
         final OAuth2ServiceImpl sut =
-            spy(new OAuth2ServiceImpl("some.uri", new ClientCredentials("clientid", "clientsecret")));
+            spy(
+                new OAuth2ServiceImpl(
+                    "some.uri",
+                    new ClientCredentials("clientid", "clientsecret"),
+                    OnBehalfOf.TECHNICAL_USER_PROVIDER));
         doReturn(tokenFlows).when(sut).createTokenFlow(any());
 
-        assertThatThrownBy(() -> sut.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_PROVIDER, NO_RESILIENCE))
+        assertThatThrownBy(() -> sut.retrieveAccessToken(NO_RESILIENCE))
             .isExactlyInstanceOf(DestinationOAuthTokenException.class)
             .hasMessageContaining("OAuth2 token request failed");
     }

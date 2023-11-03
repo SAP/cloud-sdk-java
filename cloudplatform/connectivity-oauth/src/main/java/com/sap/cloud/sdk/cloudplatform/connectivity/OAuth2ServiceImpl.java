@@ -65,16 +65,13 @@ class OAuth2ServiceImpl
         Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
+    private final OnBehalfOf onBehalfOf;
 
-    OAuth2ServiceImpl( final String uri, final ClientIdentity identity )
+    OAuth2ServiceImpl( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
-    }
-
-    static OAuth2ServiceImpl fromCredentials( final String uri, final ClientIdentity identity )
-    {
-        return new OAuth2ServiceImpl(uri, identity);
+        this.onBehalfOf = onBehalfOf;
     }
 
     static void clearCache()
@@ -92,20 +89,19 @@ class OAuth2ServiceImpl
     }
 
     @Nonnull
-    String
-        retrieveAccessToken( @Nonnull final OnBehalfOf behalf, @Nonnull final ResilienceConfiguration resilienceConfig )
+    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
     {
-        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", behalf);
+        log.debug("Retrieving Access Token from XSUAA on behalf of {}.", onBehalfOf);
 
         final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
-            switch( behalf ) {
+            switch( onBehalfOf ) {
                 case TECHNICAL_USER_PROVIDER:
                 case TECHNICAL_USER_CURRENT_TENANT:
-                    return executeClientCredentialsFlow(behalf);
+                    return executeClientCredentialsFlow();
                 case NAMED_USER_CURRENT_TENANT:
                     return executeUserExchangeFlow();
                 default:
-                    throw new IllegalStateException("Unknown behalf " + behalf);
+                    throw new IllegalStateException("Unknown behalf " + onBehalfOf);
             }
         }, resilienceConfig);
 
@@ -125,13 +121,13 @@ class OAuth2ServiceImpl
     }
 
     @Nullable
-    private OAuth2TokenResponse executeClientCredentialsFlow( final OnBehalfOf behalf )
+    private OAuth2TokenResponse executeClientCredentialsFlow()
     {
 
         @Nullable
         final String zoneId;
 
-        switch( behalf ) {
+        switch( onBehalfOf ) {
             case TECHNICAL_USER_PROVIDER:
                 log.debug("Using subdomain of provider tenant.");
                 zoneId = null;
@@ -144,7 +140,7 @@ class OAuth2ServiceImpl
                 }
                 break;
             default:
-                throw new IllegalStateException("Unknown behalf " + behalf);
+                throw new IllegalStateException("Unknown behalf " + onBehalfOf);
         }
 
         final ClientCredentialsTokenFlow flow = createTokenFlow(zoneId).clientCredentialsTokenFlow();
