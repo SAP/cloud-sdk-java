@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -15,6 +16,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
+@RequiredArgsConstructor
 public class DefaultTenant implements TenantWithSubdomain
 {
     /**
@@ -31,20 +33,6 @@ public class DefaultTenant implements TenantWithSubdomain
     @Getter
     @Nonnull
     private final String subdomain;
-
-    /**
-     * Creates a new {@link DefaultTenant}.
-     *
-     * @param tenantId
-     *            The identifier of the tenant or zone.
-     * @param subdomain
-     *            The subdomain of the tenant.
-     */
-    public DefaultTenant( @Nonnull final String tenantId, @Nonnull final String subdomain )
-    {
-        this.tenantId = tenantId;
-        this.subdomain = subdomain;
-    }
 
     /**
      * Creates a mocked {@link DefaultTenant} with an empty tenant identifier.
