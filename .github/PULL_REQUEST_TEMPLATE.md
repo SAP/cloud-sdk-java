@@ -19,17 +19,6 @@ Please provide a short description of what your change does and why it is needed
 - [ ] Task1 
 - [ ] Task2 
   - [ ] SubTask1 
- 
-## Release Timeline for this Change
-
-<!-- 
-Do you want this change to be part of a certain release?
-If so, please state the release hereafter (replace `XY` with the release number).
-Otherwise, this change gets merged and thereby released as time permits.
--->
-
-_This PR is relevant for the release version XY._
-
 
 ## Definition of Done
 
