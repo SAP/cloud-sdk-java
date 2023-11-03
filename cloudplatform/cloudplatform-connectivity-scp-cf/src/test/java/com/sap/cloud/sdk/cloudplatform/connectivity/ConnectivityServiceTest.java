@@ -33,7 +33,6 @@ import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
@@ -60,7 +59,7 @@ public class ConnectivityServiceTest
     public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
     @Before
-    public void setupCloudPlatform()
+    public void setupServiceBinding()
     {
         final ServiceBinding connectivityService =
             new DefaultServiceBindingBuilder()
@@ -81,9 +80,9 @@ public class ConnectivityServiceTest
     }
 
     @After
-    public void resetCloudPlatform()
+    public void resetServiceBinding()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
     }
 
     @AfterClass
