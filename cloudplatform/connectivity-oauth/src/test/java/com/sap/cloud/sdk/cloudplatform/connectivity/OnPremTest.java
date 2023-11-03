@@ -61,8 +61,7 @@ public class OnPremTest
     public void singleOAuth2ServiceImpl()
     {
         final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
         final String token1 = service.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service.retrieveAccessToken(NO_RESILIENCE);
@@ -77,11 +76,9 @@ public class OnPremTest
     public void multipleOAuth2ServiceImpl()
     {
         final OAuth2ServiceImpl service1 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
         final OAuth2ServiceImpl service2 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
         final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
@@ -96,8 +93,7 @@ public class OnPremTest
     public void singleOAuth2ServiceImplSingleSubscriber()
     {
         final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
@@ -116,8 +112,7 @@ public class OnPremTest
     public void singleOAuth2ServiceImplMultipleSubscriber()
     {
         final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
@@ -139,8 +134,7 @@ public class OnPremTest
         stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
 
         final OAuth2ServiceImpl service =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         TenantAccessor
             .executeWithTenant(new DefaultTenant("tenant1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
@@ -160,11 +154,9 @@ public class OnPremTest
     public void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
     {
         final OAuth2ServiceImpl service1 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         final OAuth2ServiceImpl service2 =
-            OAuth2ServiceImpl
-                .fromCredentials(csMockServer2.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2ServiceImpl(csMockServer2.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);

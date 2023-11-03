@@ -140,7 +140,7 @@ public class OAuth2DestinationBuilder
     public static BuilderWithTargetUrl forTargetUrl( @Nonnull final String targetUrl )
     {
         return ( tokenUrl ) -> ( client, behalf ) -> ( properties ) -> () -> {
-            final OAuth2ServiceImpl oauth2service = OAuth2ServiceImpl.fromCredentials(tokenUrl, client, behalf);
+            final OAuth2ServiceImpl oauth2service = new OAuth2ServiceImpl(tokenUrl, client, behalf);
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
             // random uuid to make sure equals and hash code works effectively by reference
