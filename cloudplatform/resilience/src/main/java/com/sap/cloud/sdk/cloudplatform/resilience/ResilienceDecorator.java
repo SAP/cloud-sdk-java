@@ -4,22 +4,26 @@
 
 package com.sap.cloud.sdk.cloudplatform.resilience;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
-import lombok.Getter;
-import lombok.Setter;
+import io.vavr.control.Try;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Accessor class for decorating functions with resilient properties.
  */
+@Slf4j
 public final class ResilienceDecorator
 {
     /**
@@ -27,12 +31,33 @@ public final class ResilienceDecorator
      * properties.
      */
     @Nonnull
-    @Getter
-    @Setter
-    private static ResilienceDecorationStrategy decorationStrategy;
+    private static Try<ResilienceDecorationStrategy> decorationStrategy =
+        Try.of(ResilienceDecorator::getDefaultDecorationStrategy);
 
-    static {
-        decorationStrategy = getDefaultDecorationStrategy();
+    /**
+     * Returns the {@link ResilienceDecorationStrategy} that will be used to decorate resilient code,
+     *
+     * @return The {@link ResilienceDecorationStrategy} that will be used to decorate resilient code.
+     */
+    @Nonnull
+    public static ResilienceDecorationStrategy getDecorationStrategy()
+    {
+        return decorationStrategy
+            .getOrElseThrow(
+                e -> new ResilienceRuntimeException(
+                    String.format("Failed to determine %s.", ResilienceDecorationStrategy.class.getName()),
+                    e));
+    }
+
+    /**
+     * Sets the {@link ResilienceDecorationStrategy} that will be used to decorate resilient code.
+     *
+     * @param decorationStrategy
+     *            The {@link ResilienceDecorationStrategy} that will be used to decorate resilient code.
+     */
+    public static void setDecorationStrategy( @Nonnull final ResilienceDecorationStrategy decorationStrategy )
+    {
+        ResilienceDecorator.decorationStrategy = Try.success(decorationStrategy);
     }
 
     /**
@@ -40,7 +65,7 @@ public final class ResilienceDecorator
      */
     public static void resetDecorationStrategy()
     {
-        decorationStrategy = getDefaultDecorationStrategy();
+        decorationStrategy = Try.of(ResilienceDecorator::getDefaultDecorationStrategy);
     }
 
     /**
@@ -50,9 +75,31 @@ public final class ResilienceDecorator
      */
     private static ResilienceDecorationStrategy getDefaultDecorationStrategy()
     {
-        return FacadeLocator
-            .getFacade(ResilienceDecorationStrategy.class)
-            .getOrElse(NoResilienceDecorationStrategy::new);
+        final Collection<ResilienceDecorationStrategy> facades =
+            FacadeLocator.getFacades(ResilienceDecorationStrategy.class);
+        if( facades.size() > 1 ) {
+            final String classes = facades.stream().map(f -> f.getClass().getName()).collect(Collectors.joining(", "));
+            final String exceptionMessage =
+                String
+                    .format(
+                        "Too many implementations of %s found. Make sure to only have a single implementation of the interface on your classpath: %s",
+                        ResilienceDecorationStrategy.class.getName(),
+                        classes);
+            final String logMessage =
+                String
+                    .format(
+                        "%s. Using any resilience pattern will lead to an exception at runtime UNLESS the %s is explicitly overwritten using 'ResilienceDecorator.setDecorationStrategy(ResilienceDecorationStrategy)'.",
+                        exceptionMessage,
+                        ResilienceDecorationStrategy.class.getName());
+            log.warn(logMessage);
+            throw new ObjectLookupFailedException(exceptionMessage);
+        }
+
+        if( facades.isEmpty() ) {
+            return new NoResilienceDecorationStrategy();
+        }
+
+        return facades.iterator().next();
     }
 
     /**
@@ -66,7 +113,7 @@ public final class ResilienceDecorator
      */
     public static void clearCache( @Nonnull final ResilienceConfiguration configuration )
     {
-        decorationStrategy.clearCache(configuration);
+        getDecorationStrategy().clearCache(configuration);
     }
 
     /**
@@ -83,7 +130,7 @@ public final class ResilienceDecorator
         void
         clearCache( @Nonnull final ResilienceConfiguration configuration, @Nonnull final CacheFilter filter )
     {
-        decorationStrategy.clearCache(configuration, filter);
+        getDecorationStrategy().clearCache(configuration, filter);
     }
 
     /**
@@ -97,7 +144,7 @@ public final class ResilienceDecorator
      */
     public static void clearAllCacheEntries( @Nonnull final ResilienceConfiguration configuration )
     {
-        decorationStrategy.clearAllCacheEntries(configuration);
+        getDecorationStrategy().clearAllCacheEntries(configuration);
     }
 
     /**
@@ -117,7 +164,7 @@ public final class ResilienceDecorator
         @Nonnull final Supplier<T> supplier,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        return decorationStrategy.decorateSupplier(supplier, configuration);
+        return getDecorationStrategy().decorateSupplier(supplier, configuration);
     }
 
     /**
@@ -137,7 +184,7 @@ public final class ResilienceDecorator
         @Nonnull final Supplier<T> supplier,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        return decorationStrategy.executeSupplier(supplier, configuration);
+        return getDecorationStrategy().executeSupplier(supplier, configuration);
     }
 
     /**
@@ -160,7 +207,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.decorateSupplier(supplier, configuration, fallbackFunction);
+        return getDecorationStrategy().decorateSupplier(supplier, configuration, fallbackFunction);
     }
 
     /**
@@ -183,7 +230,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.executeSupplier(supplier, configuration, fallbackFunction);
+        return getDecorationStrategy().executeSupplier(supplier, configuration, fallbackFunction);
     }
 
     /**
@@ -203,7 +250,7 @@ public final class ResilienceDecorator
         @Nonnull final Callable<T> callable,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        return decorationStrategy.decorateCallable(callable, configuration);
+        return getDecorationStrategy().decorateCallable(callable, configuration);
     }
 
     /**
@@ -228,7 +275,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration )
         throws Exception
     {
-        return decorationStrategy.executeCallable(callable, configuration);
+        return getDecorationStrategy().executeCallable(callable, configuration);
     }
 
     /**
@@ -251,7 +298,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.decorateCallable(callable, configuration, fallbackFunction);
+        return getDecorationStrategy().decorateCallable(callable, configuration, fallbackFunction);
     }
 
     /**
@@ -274,7 +321,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.executeCallable(callable, configuration, fallbackFunction);
+        return getDecorationStrategy().executeCallable(callable, configuration, fallbackFunction);
     }
 
     /**
@@ -297,7 +344,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.queueCallable(callable, configuration, fallbackFunction);
+        return getDecorationStrategy().queueCallable(callable, configuration, fallbackFunction);
     }
 
     /**
@@ -317,7 +364,7 @@ public final class ResilienceDecorator
         @Nonnull final Callable<T> callable,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        return decorationStrategy.queueCallable(callable, configuration, null);
+        return getDecorationStrategy().queueCallable(callable, configuration, null);
     }
 
     /**
@@ -340,7 +387,7 @@ public final class ResilienceDecorator
         @Nonnull final ResilienceConfiguration configuration,
         @Nullable final Function<? super Throwable, T> fallbackFunction )
     {
-        return decorationStrategy.queueSupplier(supplier, configuration, fallbackFunction);
+        return getDecorationStrategy().queueSupplier(supplier, configuration, fallbackFunction);
     }
 
     /**
@@ -360,6 +407,6 @@ public final class ResilienceDecorator
         @Nonnull final Supplier<T> supplier,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        return decorationStrategy.queueSupplier(supplier, configuration, null);
+        return getDecorationStrategy().queueSupplier(supplier, configuration, null);
     }
 }

@@ -42,6 +42,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - BTP Cloud Foundry Workflow API: `com.sap.cloud.sdk.services:scp-workflow-cf`
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
+  - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
   - Archetypes - SAP CP Cloud Foundry + TomEE: `com.sap.cloud.sdk.archetypes:scp-cf-tomee`
   - Related to the Auditlog service:
     - Cloud Platform - Auditlog: `com.sap.cloud.sdk.cloudplatform:auditlog`
@@ -96,6 +97,14 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.security.principal.SimplePrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringCollectionPrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringPrincipalAttribute`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor`
 - Following public methods have been removed:
   - Related to the `Destination` API:
     - The `Destination#decorate` method has been removed without replacement.
@@ -158,3 +167,4 @@ blog: https://blogs.sap.com/?p=xxx
 
 - Fixed a bug where an `Authorization` header was attached multiple times to outgoing HTTP requests under some circumstances
 - Fixed an issue where the `DestinationType` of an `DefaultHttpDestination` could be changed to anything but `DestinationType.HTTP`
+- Fixed an issue with custom GSON serialization of OpenAPI generated classes having unexpected `customFieldNames` properties in JSON payload.

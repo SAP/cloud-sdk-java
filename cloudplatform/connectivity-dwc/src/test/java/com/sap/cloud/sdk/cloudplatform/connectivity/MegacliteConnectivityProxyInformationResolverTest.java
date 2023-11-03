@@ -22,20 +22,15 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
 public class MegacliteConnectivityProxyInformationResolverTest
@@ -57,20 +52,6 @@ public class MegacliteConnectivityProxyInformationResolverTest
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "NOT OK"))
             .when(failureResponse)
             .getStatusLine();
-    }
-
-    @BeforeClass
-    public static void prepareCloudPlatform()
-    {
-        final CloudPlatform mock = mock(CloudPlatform.class);
-
-        CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(mock));
-    }
-
-    @AfterClass
-    public static void resetCloudPlatform()
-    {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
     }
 
     private MegacliteConnectivityProxyInformationResolver sut;

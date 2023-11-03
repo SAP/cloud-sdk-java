@@ -25,7 +25,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
@@ -901,7 +900,8 @@ public final class DefaultHttpDestination implements HttpDestination
 
         /**
          * Sets the {@link SecurityConfigurationStrategy} for outbound calls via this Destination to decide if the
-         * {@link SSLContext} should be derived from the Destination Configuration or from the {@link CloudPlatform}.
+         * {@link SSLContext} should be derived from the Destination Configuration or from the cloud platform (i.e. the
+         * environment).
          *
          * @param securityConfigurationStrategy
          *            The strategy to use

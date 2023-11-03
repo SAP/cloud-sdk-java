@@ -4,9 +4,13 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -27,7 +31,7 @@ class SerializationTest
     }
 
     @Test
-    void testPUT()
+    void testPutPayload()
     {
         // @formatter:off
         expected =
@@ -45,6 +49,26 @@ class SerializationTest
         sut.sodasPut(obj);
 
         verify(expected);
+    }
+
+    @Test
+    void testJacksonSerialization()
+        throws JsonProcessingException
+    {
+        // @formatter:off
+        expected =
+               "{\n" +
+               "  \"name\": \"Cola\",\n" +
+               "  \"brand\": \"Coca-Cola\",\n" +
+               "  \"quantity\": 100,\n" +
+               "  \"price\": 1.5,\n" +
+               "  \"id\": 0\n" +
+               "}";
+        // @formatter:on
+
+        final SodaWithId obj = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+
+        assertThat(new ObjectMapper().writeValueAsString(obj)).isEqualToIgnoringWhitespace(expected);
     }
 
     private void verify( String requestBody )
