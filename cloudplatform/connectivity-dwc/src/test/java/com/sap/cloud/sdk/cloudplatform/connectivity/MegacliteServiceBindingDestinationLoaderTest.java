@@ -371,7 +371,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     private static void mockTenant( @Nullable final String id )
     {
         final Try<Tenant> tenant =
-            Option.of(id).toTry().recover(any -> UUID.randomUUID().toString()).map(DefaultTenant::new);
+            Option.of(id).toTry().recover(any -> UUID.randomUUID().toString()).map(tenantId -> new DefaultTenant(tenantId, ""));
 
         TenantAccessor.setTenantFacade(() -> tenant);
     }

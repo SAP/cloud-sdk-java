@@ -43,8 +43,8 @@ public class GetOrComputeAllDestinationsCommandTest
     private static final String DESTINATION_NAME = "SomeDestinationName";
 
     private static final DestinationOptions EMPTY_OPTIONS = DestinationOptions.builder().build();
-    private static final Tenant t1 = new DefaultTenant("tenant-1");
-    private static final Tenant t2 = new DefaultTenant("tenant-2");
+    private static final Tenant t1 = new DefaultTenant("tenant-1", "");
+    private static final Tenant t2 = new DefaultTenant("tenant-2", "");
 
     private Cache<CacheKey, List<Destination>> allDestinationsCache;
     private Cache<CacheKey, ReentrantLock> isolationLocks;

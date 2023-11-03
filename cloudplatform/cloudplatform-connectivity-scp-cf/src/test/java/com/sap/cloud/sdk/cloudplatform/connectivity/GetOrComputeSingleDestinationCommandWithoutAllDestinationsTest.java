@@ -58,7 +58,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     @Nullable
     private static final Tenant NO_TENANT = null;
     @Nonnull
-    private static final Tenant TENANT = new DefaultTenant("T1");
+    private static final Tenant TENANT = new DefaultTenant("T1", "");
     @Nullable
     private static final Principal NO_PRINCIPAL = null;
     @Nonnull

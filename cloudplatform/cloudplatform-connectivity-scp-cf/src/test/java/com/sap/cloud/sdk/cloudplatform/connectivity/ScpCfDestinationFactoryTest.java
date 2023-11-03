@@ -28,7 +28,7 @@ class ScpCfDestinationFactoryTest
     @Test
     void testTenantIsSet()
     {
-        final Tenant tenant = new DefaultTenant("tenant1");
+        final Tenant tenant = new DefaultTenant("tenant1", "");
 
         response.getDestinationConfiguration().put("Type", "HTTP");
         response.getDestinationConfiguration().put("URL", "http://foo/");

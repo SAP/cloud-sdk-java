@@ -27,7 +27,7 @@ public class CacheKeyTest
     public static void setupAccessors()
     {
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(new DefaultPrincipal("P")));
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("T")));
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("T", "")));
     }
 
     @AfterClass
@@ -90,7 +90,7 @@ public class CacheKeyTest
     public void testOf()
     {
         final String tenantOrZoneId = "tenantOrZoneId";
-        final Tenant tenant = new DefaultTenant(tenantOrZoneId);
+        final Tenant tenant = new DefaultTenant(tenantOrZoneId, "");
         final Principal principal = new DefaultPrincipal("user");
 
         assertThat(CacheKey.of(null, null).getTenantId()).isEmpty();
