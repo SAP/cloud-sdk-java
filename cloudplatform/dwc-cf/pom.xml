@@ -44,10 +44,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>security</artifactId>
 		</dependency>
 		<dependency>
@@ -67,7 +63,6 @@
 				<configuration>
 					<usedDependencies>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>

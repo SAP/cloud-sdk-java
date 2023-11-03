@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.GRANT_TYPE;
 import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.GRANT_TYPE_CLIENT_CREDENTIALS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +29,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
@@ -43,7 +41,6 @@ import com.sap.cloud.security.token.SecurityContext;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.token.TokenClaims;
 
-import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
 public class XsuaaSecurityTest
@@ -105,12 +102,9 @@ public class XsuaaSecurityTest
         }
     }
 
-    // Workaround to mock local VCAP services lookup
     @Before
-    public void mockCloudPlatform()
+    public void mockServiceBindingAccessor()
     {
-        final ScpCfCloudPlatform platform = spy(ScpCfCloudPlatform.class);
-
         final Token templateToken = rule.getPreconfiguredJwtGenerator().createToken();
         final String xsuaaUrl = templateToken.getHeaderParameterAsString("jku").replaceAll("token_keys$", "");
 
@@ -132,16 +126,14 @@ public class XsuaaSecurityTest
                     xsuaaUrl);
 
         final String vcap = String.format("{\"connectivity\":%s,\"xsuaa\":%s}", connectivity, xsuaa);
-        platform
-            .setServiceBindingAccessor(
+        DefaultServiceBindingAccessor
+            .setInstance(
                 new SapVcapServicesServiceBindingAccessor(Collections.singletonMap("VCAP_SERVICES", vcap)::get));
-
-        CloudPlatformAccessor.setCloudPlatformFacade(() -> Try.success(platform));
     }
 
     @After
-    public void resetCloudPlatform()
+    public void resetServiceBindingAccessor()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultServiceBindingAccessor.setInstance(null);
     }
 }

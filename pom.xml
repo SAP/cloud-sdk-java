@@ -298,13 +298,12 @@
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
-			<!--Used in cloudplatform-core-dwc-cf-->
+			<!-- Used in connectivity-apache-httpclient4 and connectivity-apache-httpclient5 -->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcpkix-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
 			</dependency>
-			<!--Used in intregation-tests and cloudplatform-core-dwc-cf-->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>
