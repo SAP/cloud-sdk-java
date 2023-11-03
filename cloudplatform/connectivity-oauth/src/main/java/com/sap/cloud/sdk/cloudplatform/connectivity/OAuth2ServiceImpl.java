@@ -90,8 +90,7 @@ class OAuth2ServiceImpl
     }
 
     @Nonnull
-    String
-        retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
+    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
     {
         log.debug("Retrieving Access Token from XSUAA on behalf of {}.", onBehalfOf);
 
