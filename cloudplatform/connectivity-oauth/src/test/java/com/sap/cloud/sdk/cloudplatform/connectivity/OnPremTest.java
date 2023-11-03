@@ -30,19 +30,24 @@ public class OnPremTest
 {
     private static final String MOCKED_RESPONSE_BODY =
         "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}";
+    private static final String ALTERNATIVE_MOCKED_RESPONSE_BODY =
+        "{\"access_token\": \"token2\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}";
     private static final ClientIdentity SOME_IDENTITY = new ClientCredentials("clientid", "clientsecret");
     private static final ResilienceConfiguration NO_RESILIENCE =
         ResilienceConfiguration.empty(OnPremTest.class.getName() + "_empty");
 
     @Rule
     public WireMockRule csMockServer = new WireMockRule(wireMockConfig().dynamicPort());
+    @Rule
+    public WireMockRule csMockServer2 = new WireMockRule(wireMockConfig().dynamicPort());
 
     @Before
     public void setUp()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
-        stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY)));
+        csMockServer.stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY)));
+        csMockServer2.stubFor(post("/oauth/token").willReturn(okJson(ALTERNATIVE_MOCKED_RESPONSE_BODY)));
     }
 
     @After
@@ -149,5 +154,21 @@ public class OnPremTest
             .allSatisfy(
                 event -> assertThat(event.getRequest().getHeaders().all())
                     .noneSatisfy(header -> assertThat(header.key()).isEqualToIgnoringCase("Cookie")));
+    }
+
+    @Test
+    public void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
+    {
+        final OAuth2ServiceImpl service1 = OAuth2ServiceImpl.fromCredentials(csMockServer.baseUrl(), SOME_IDENTITY);
+        final OAuth2ServiceImpl service2 = OAuth2ServiceImpl.fromCredentials(csMockServer2.baseUrl(), SOME_IDENTITY);
+
+        final String token1 = service1.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE);
+        final String token2 = service2.retrieveAccessToken(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, NO_RESILIENCE);
+
+        assertThat(token1).isEqualTo("token");
+        assertThat(token2).isEqualTo("token2");
+
+        csMockServer.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
+        csMockServer2.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
     }
 }
