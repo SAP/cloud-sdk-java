@@ -51,18 +51,26 @@ final class DwcConfiguration
         this.providerTenant = Lazy.of(() -> providerTenant);
     }
 
+    @Nonnull
     URI megacliteUrl()
+        throws CloudPlatformException,
+            IllegalArgumentException
     {
         return megacliteUrl.get();
     }
 
+    @Nonnull
     String providerTenant()
+        throws CloudPlatformException,
+            IllegalArgumentException
     {
         return providerTenant.get();
     }
 
     @Nonnull
     private static URI loadMegacliteUri( @Nonnull final Function<String, String> environmentVariableReader )
+        throws CloudPlatformException,
+            IllegalArgumentException
     {
         final Option<String> dwcApplication = Option.of(environmentVariableReader.apply(DWC_APPLICATION));
         if( dwcApplication.isEmpty() ) {
@@ -75,6 +83,8 @@ final class DwcConfiguration
 
     @Nonnull
     private static String loadProviderTenantId( @Nonnull final Function<String, String> environmentVariableReader )
+        throws CloudPlatformException,
+            IllegalArgumentException
     {
         final Option<String> dwcApplication = Option.of(environmentVariableReader.apply(DWC_APPLICATION));
         if( dwcApplication.isEmpty() ) {
