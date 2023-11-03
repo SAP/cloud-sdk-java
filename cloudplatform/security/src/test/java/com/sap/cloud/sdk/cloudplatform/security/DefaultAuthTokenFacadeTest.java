@@ -40,7 +40,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
-public class ScpCfAuthTokenFacadeTest
+public class DefaultAuthTokenFacadeTest
 {
     @Before
     @After
@@ -56,7 +56,7 @@ public class ScpCfAuthTokenFacadeTest
         RequestHeaderAccessor.setFallbackHeaderContainer(null);
     }
 
-    private final ScpCfAuthTokenFacade facade = new ScpCfAuthTokenFacade();
+    private final DefaultAuthTokenFacade facade = new DefaultAuthTokenFacade();
 
     @Test
     public void testExecute()
@@ -86,7 +86,7 @@ public class ScpCfAuthTokenFacadeTest
         assertThat(request).isSameAs(mockedAuthToken);
     }
 
-    private static class FailingAuthTokenFacade extends ScpCfAuthTokenFacade
+    private static class FailingAuthTokenFacade extends DefaultAuthTokenFacade
     {
         @Nonnull
         @Override
@@ -99,7 +99,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testExecuteWithFallback()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
 
         final AuthToken successAuthToken = mock(AuthToken.class);
@@ -115,7 +115,7 @@ public class ScpCfAuthTokenFacadeTest
         });
 
         // check if fallback is used
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacadeTest.FailingAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacadeTest.FailingAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
 
         AuthTokenAccessor.executeWithFallbackAuthToken(() -> fallbackAuthToken, () -> {
@@ -126,7 +126,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testExecuteWithException()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
 
         assertThatThrownBy(() -> AuthTokenAccessor.executeWithAuthToken(mock(AuthToken.class), () -> {
@@ -139,7 +139,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testExecuteWithFallbackWithException()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
 
         final AuthToken request = mock(AuthToken.class);
@@ -176,7 +176,7 @@ public class ScpCfAuthTokenFacadeTest
         AuthTokenAccessor.setFallbackToken(() -> globalFallback);
         assertThat(AuthTokenAccessor.getCurrentToken()).isSameAs(globalFallback);
 
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         assertThat(AuthTokenAccessor.getCurrentToken()).isSameAs(globalFallback);
 
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
@@ -203,7 +203,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testWrongPropertyType()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
         ThreadContextExecutor
             .fromNewContext()
@@ -217,7 +217,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testMissingRequest()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
             VavrAssertions
@@ -232,7 +232,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testMissingRequestHeader()
     {
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade());
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
         ThreadContextExecutor
             .fromNewContext()
@@ -266,7 +266,7 @@ public class ScpCfAuthTokenFacadeTest
         final AuthTokenDecoder authTokenDecoder = mock(AuthTokenDecoder.class);
         when(authTokenDecoder.decode(eq(headers))).thenReturn(Try.success(authToken));
 
-        final ScpCfAuthTokenFacade authTokenFacade = spy(new ScpCfAuthTokenFacade(authTokenDecoder));
+        final DefaultAuthTokenFacade authTokenFacade = spy(new DefaultAuthTokenFacade(authTokenDecoder));
         AuthTokenAccessor.setAuthTokenFacade(authTokenFacade);
 
         // perform the actual test
@@ -283,7 +283,7 @@ public class ScpCfAuthTokenFacadeTest
     public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final AuthTokenFacade customFacade = mock(AuthTokenFacade.class);
-        assertThat(customFacade).isNotInstanceOf(ScpCfAuthTokenFacade.class);
+        assertThat(customFacade).isNotInstanceOf(DefaultAuthTokenFacade.class);
 
         AuthTokenAccessor.setAuthTokenFacade(customFacade);
 
@@ -295,7 +295,7 @@ public class ScpCfAuthTokenFacadeTest
     @Test
     public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
-        final AuthTokenFacade customFacade = spy(ScpCfAuthTokenFacade.class);
+        final AuthTokenFacade customFacade = spy(DefaultAuthTokenFacade.class);
         assertThat(customFacade).isInstanceOf(ExecutableAuthTokenFacade.class);
 
         AuthTokenAccessor.setAuthTokenFacade(customFacade);
@@ -323,7 +323,7 @@ public class ScpCfAuthTokenFacadeTest
         final AuthToken authToken = mock(AuthToken.class);
         when(authTokenDecoder.decode(eq(headers))).thenReturn(Try.success(authToken));
 
-        final ScpCfAuthTokenFacade authTokenFacade = spy(new ScpCfAuthTokenFacade(authTokenDecoder));
+        final DefaultAuthTokenFacade authTokenFacade = spy(new DefaultAuthTokenFacade(authTokenDecoder));
         AuthTokenAccessor.setAuthTokenFacade(authTokenFacade);
 
         // spy AuthTokenThreadContextListener

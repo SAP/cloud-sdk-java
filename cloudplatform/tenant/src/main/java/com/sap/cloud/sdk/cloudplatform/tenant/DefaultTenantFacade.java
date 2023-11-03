@@ -33,8 +33,8 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Abstract base class for {@link TenantFacade}s.
+ /**
+ * Default implementation of {@link TenantFacade} which provides access to tenant information on SAP Business Technology Platform Cloud Foundry.
  */
 @Slf4j
 public class DefaultTenantFacade implements TenantFacade

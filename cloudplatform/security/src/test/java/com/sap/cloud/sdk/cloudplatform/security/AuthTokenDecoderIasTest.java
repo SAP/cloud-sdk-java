@@ -163,7 +163,7 @@ public class AuthTokenDecoderIasTest
     {
         CloudPlatformAccessor.setCloudPlatformFacade(cloudPlatformFacade);
 
-        AuthTokenAccessor.setAuthTokenFacade(new ScpCfAuthTokenFacade(new AuthTokenDecoderDefault()));
+        AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade(new AuthTokenDecoderDefault()));
     }
 
     @After

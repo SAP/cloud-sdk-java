@@ -17,7 +17,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
-import com.sap.cloud.sdk.cloudplatform.security.ScpCfAuthTokenFacade;
+import com.sap.cloud.sdk.cloudplatform.security.DefaultAuthTokenFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
@@ -50,11 +50,11 @@ public class ScpCfTenantFacadeXsuaaTest
         VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(TenantAccessException.class);
     }
 
-    private ScpCfAuthTokenFacade mockCurrentTenant( final String userTenant )
+    private DefaultAuthTokenFacade mockCurrentTenant(final String userTenant )
     {
         final AuthToken jwtWithTenant = createJwtWithTenant(userTenant);
 
-        final ScpCfAuthTokenFacade mockedFacade = mock(ScpCfAuthTokenFacade.class);
+        final DefaultAuthTokenFacade mockedFacade = mock(DefaultAuthTokenFacade.class);
         when(mockedFacade.tryGetCurrentToken()).thenReturn(Try.success(jwtWithTenant));
         AuthTokenAccessor.setAuthTokenFacade(mockedFacade);
 

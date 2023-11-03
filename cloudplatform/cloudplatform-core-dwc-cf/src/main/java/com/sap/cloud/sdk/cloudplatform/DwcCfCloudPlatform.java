@@ -328,7 +328,7 @@ public class DwcCfCloudPlatform implements DwcCloudPlatform
      * @param binding
      *            The service binding.
      * @deprecated Deprecated in favor of the
-     *             {@code com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.registerServiceBinding(MegacliteServiceBinding)}
+     *             {@code MegacliteServiceBindingAccessor.getServiceBindings()}
      *             API.
      */
     @Deprecated

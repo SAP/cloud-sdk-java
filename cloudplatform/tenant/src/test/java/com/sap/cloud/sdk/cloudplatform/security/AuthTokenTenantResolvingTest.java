@@ -126,7 +126,7 @@ public class AuthTokenTenantResolvingTest
             + "  ]"
             + "}";
 
-    private ScpCfAuthTokenFacade mockedAuthTokenFacade;
+    private DefaultAuthTokenFacade mockedAuthTokenFacade;
 
     @Before
     public void before()
@@ -144,7 +144,7 @@ public class AuthTokenTenantResolvingTest
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
-        mockedAuthTokenFacade = Mockito.spy(new ScpCfAuthTokenFacade());
+        mockedAuthTokenFacade = Mockito.spy(new DefaultAuthTokenFacade());
         AuthTokenAccessor.setAuthTokenFacade(mockedAuthTokenFacade);
     }
 

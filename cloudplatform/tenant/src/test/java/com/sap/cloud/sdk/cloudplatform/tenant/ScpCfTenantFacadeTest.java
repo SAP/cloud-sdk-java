@@ -16,7 +16,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
-import com.sap.cloud.sdk.cloudplatform.security.ScpCfAuthTokenFacade;
+import com.sap.cloud.sdk.cloudplatform.security.DefaultAuthTokenFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
@@ -30,7 +30,7 @@ public class ScpCfTenantFacadeTest
 {
     private static final AuthToken JWT_WITHOUT_TENANT = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
 
-    private static final ScpCfAuthTokenFacade TOKEN_FACADE_WITHOUT_TENANT = mock(ScpCfAuthTokenFacade.class);
+    private static final DefaultAuthTokenFacade TOKEN_FACADE_WITHOUT_TENANT = mock(DefaultAuthTokenFacade.class);
     static {
         when(TOKEN_FACADE_WITHOUT_TENANT.tryGetCurrentToken()).thenReturn(Try.success(JWT_WITHOUT_TENANT));
     }

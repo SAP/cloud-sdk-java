@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor( access = AccessLevel.PACKAGE )
-public class ScpCfAuthTokenFacade extends ExecutableAuthTokenFacade
+public class DefaultAuthTokenFacade extends ExecutableAuthTokenFacade
 {
     @Nonnull
     private AuthTokenDecoder tokenDecoder;
@@ -33,7 +33,7 @@ public class ScpCfAuthTokenFacade extends ExecutableAuthTokenFacade
     /**
      * Default constructor.
      */
-    public ScpCfAuthTokenFacade()
+    public DefaultAuthTokenFacade()
     {
         this(new AuthTokenDecoderDefault());
     }
