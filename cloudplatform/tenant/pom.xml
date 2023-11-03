@@ -41,10 +41,10 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-scp-cf</artifactId>
-		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>-->
+		<!--			<artifactId>cloudplatform-core-scp-cf</artifactId>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>security</artifactId>
@@ -57,17 +57,25 @@
 			<groupId>io.vavr</groupId>
 			<artifactId>vavr</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>com.google.code.gson</groupId>-->
+		<!--			<artifactId>gson</artifactId>-->
+		<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>com.google.guava</groupId>-->
+		<!--			<artifactId>guava</artifactId>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-core-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-access-api</artifactId>
 		</dependency>
 		<!-- scope "provided" -->
 		<dependency>

@@ -7,22 +7,21 @@ package com.sap.cloud.sdk.cloudplatform.tenant;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Payload;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Streams;
-import com.google.gson.JsonObject;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
+import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
@@ -101,9 +100,8 @@ public class DefaultTenantFacade implements TenantFacade
 
         return tryGetTenantFromAuthToken(AuthTokenAccessor.tryGetCurrentToken())
             .onFailure(throwables::add) // read from user token
-            .orElse(
-                () -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())
-                    .onFailure(throwables::add)) // read bindings
+            .orElse(this::tryGetTenantFromServiceBinding)
+            .onFailure(throwables::add) // read bindings
             .orElse(() -> createFallbackException(throwables));
     }
 
@@ -141,23 +139,13 @@ public class DefaultTenantFacade implements TenantFacade
     }
 
     @Nonnull
-    private Try<DefaultTenant> tryGetTenantFromServiceBinding( @Nonnull final Try<CloudPlatform> platform )
+    private Try<DefaultTenant> tryGetTenantFromServiceBinding()
     {
+        final List<ServiceBinding> serviceBindings = DefaultServiceBindingAccessor.getInstance().getServiceBindings();
+
         for( final ServiceBindingTenantExtractor extractor : ServiceBindingTenantExtractor.values() ) {
-            final Try<Iterable<JsonObject>> bindings =
-                platform
-                    .map(ScpCfCloudPlatform.class::cast)
-                    .map(p -> p.getServiceCredentialsByPlan(extractor.getService(), filter -> true).values())
-                    .map(Iterables::concat);
-
-            if( bindings.isFailure() ) {
-                log.debug("Unable to parse service bindings for {}.", extractor.getService(), bindings.getCause());
-                continue;
-            }
-
             final Optional<DefaultTenant> tenant =
-                Streams
-                    .stream(bindings.get())
+                streamServiceCredentialsByPlan(serviceBindings, extractor.getService())
                     .peek(obj -> log.trace("Trying to extract tenant information from service binding {}.", obj))
                     .flatMap(obj -> extractor.getExtractor().apply(obj).toJavaStream())
                     .findFirst();
@@ -167,6 +155,17 @@ public class DefaultTenantFacade implements TenantFacade
             }
         }
         return Try.failure(new CloudPlatformException("Failed to extract tenant from service bindings."));
+    }
+
+    @Nonnull
+    private Stream<Map<String, Object>> streamServiceCredentialsByPlan(
+        @Nonnull final Collection<ServiceBinding> serviceBindings,
+        @Nonnull final String serviceName )
+    {
+        return serviceBindings
+            .stream()
+            .filter(binding -> serviceName.equals(binding.getServiceName().orElse(null)))
+            .map(ServiceBinding::getCredentials);
     }
 
     @Nullable
