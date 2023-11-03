@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
