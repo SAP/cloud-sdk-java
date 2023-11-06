@@ -30,15 +30,20 @@ public class DefaultTenant implements TenantWithSubdomain
      * The subdomain of the tenant.
      */
     @EqualsAndHashCode.Exclude
-    @Getter
-    @Nonnull
+    @Nullable
     private final String subdomain;
-
+    
     /**
-     * Creates a mocked {@link DefaultTenant} with an empty tenant identifier.
+     * Creates a {@link DefaultTenant} without subdomain.
      */
-    public DefaultTenant()
+    public DefaultTenant( @Nonnull final String tenantId)
     {
-        this("", "");
+        this(tenantId, null);
+    }
+
+    @Nonnull
+    @Override
+    public String getSubdomain() {
+        return Objects.requireNonNull(subdomain, "Subdomain is not available for this tenant.");
     }
 }
