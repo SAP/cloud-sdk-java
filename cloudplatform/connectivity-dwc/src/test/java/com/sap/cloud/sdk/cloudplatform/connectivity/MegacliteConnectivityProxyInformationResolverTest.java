@@ -82,7 +82,7 @@ public class MegacliteConnectivityProxyInformationResolverTest
 
         doReturn(failureResponse).when(sut).makeHttpRequest(any());
 
-        final URI proxyUrl = TenantAccessor.executeWithTenant(new DefaultTenant("foo", ""), sut::getProxyUrl);
+        final URI proxyUrl = TenantAccessor.executeWithTenant(new DefaultTenant("foo"), sut::getProxyUrl);
         assertThat(proxyUrl)
             .describedAs("The proxy URL should be the same across all tenants")
             .isEqualTo(sut.getProxyUrl());
@@ -101,7 +101,7 @@ public class MegacliteConnectivityProxyInformationResolverTest
 
         doReturn(failureResponse).when(sut).makeHttpRequest(any());
 
-        TenantAccessor.executeWithTenant(new DefaultTenant("foo", ""), () -> {
+        TenantAccessor.executeWithTenant(new DefaultTenant("foo"), () -> {
             assertThatThrownBy(sut::getAuthorizationToken)
                 .isInstanceOf(IllegalStateException.class)
                 .hasCauseInstanceOf(ResilienceRuntimeException.class)

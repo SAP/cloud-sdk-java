@@ -32,8 +32,8 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.MultipleServiceBindingsException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.NoServiceBindingException;
+import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
+import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 

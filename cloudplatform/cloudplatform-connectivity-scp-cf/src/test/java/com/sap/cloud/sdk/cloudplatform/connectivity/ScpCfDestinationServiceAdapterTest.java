@@ -23,6 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,8 +48,8 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.MultipleServiceBindingsException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.NoServiceBindingException;
+import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
+import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
@@ -292,6 +293,25 @@ public class ScpCfDestinationServiceAdapterTest
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
+    }
+
+    @Test
+    public void getDestinationServiceProviderTenantShouldThrowForMissingId()
+    {
+        final ServiceBinding serviceBinding =
+            DefaultServiceBinding
+                .builder()
+                .copy(Collections.singletonMap("credentials", Collections.emptyMap()))
+                .withServiceName(SERVICE_NAME)
+                .withCredentialsKey("credentials")
+                .build();
+
+        final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
+        assertThatThrownBy(adapterToTest::getProviderTenantId)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessage(
+                "The provider tenant id is not defined in the service binding."
+                    + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
     }
 
     private static ScpCfDestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )

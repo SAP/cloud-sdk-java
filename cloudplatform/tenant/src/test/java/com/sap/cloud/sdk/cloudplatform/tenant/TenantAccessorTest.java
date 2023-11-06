@@ -45,7 +45,7 @@ public class TenantAccessorTest
     {
         final String tenantOrZoneId = "tenantOrZoneId";
 
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant(tenantOrZoneId, "")));
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant(tenantOrZoneId)));
 
         final Tenant currentTenant = TenantAccessor.getCurrentTenant();
 

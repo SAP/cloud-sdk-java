@@ -322,8 +322,8 @@ public class ScpCfDestinationLoaderTest
         // to reset execution counters. Remember that all test methods are executed in parallel.
         CacheManager.invalidateAll();
 
-        providerTenant = new DefaultTenant("provider-tenant", "");
-        subscriberTenant = new DefaultTenant("subscriber-tenant", "");
+        providerTenant = new DefaultTenant("provider-tenant");
+        subscriberTenant = new DefaultTenant("subscriber-tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(subscriberTenant));
 
         principal1 = new DefaultPrincipal("principal-1");
@@ -1282,7 +1282,7 @@ public class ScpCfDestinationLoaderTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final Tenant tenant = new DefaultTenant("tenant", "");
+        final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
@@ -1324,7 +1324,7 @@ public class ScpCfDestinationLoaderTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final Tenant tenant = new DefaultTenant("tenant", "");
+        final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
@@ -1372,7 +1372,7 @@ public class ScpCfDestinationLoaderTest
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         ScpCfDestinationLoader.Cache.enableChangeDetection();
-        final Tenant tenant = new DefaultTenant("tenant", "");
+        final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
 
         final AtomicReference<Destination> destination = new AtomicReference<>();
@@ -1451,7 +1451,7 @@ public class ScpCfDestinationLoaderTest
         final Principal principalA = new DefaultPrincipal("PrincipalA");
         final Principal principalB = new DefaultPrincipal("PrincipalB");
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(principalB));
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("tenant", "")));
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("tenant")));
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
@@ -1548,7 +1548,7 @@ public class ScpCfDestinationLoaderTest
             ScpCfDestinationLoader
                 .builder()
                 .withTimeLimiterConfiguration(TimeLimiterConfiguration.of(Duration.ofSeconds(100)))
-                .withProviderTenant(new DefaultTenant("Foo", ""))
+                .withProviderTenant(new DefaultTenant("Foo"))
                 .build();
         assertThat(loader.getSingleDestResilience().timeLimiterConfiguration().timeoutDuration())
             .isEqualTo(Duration.ofSeconds(100));
