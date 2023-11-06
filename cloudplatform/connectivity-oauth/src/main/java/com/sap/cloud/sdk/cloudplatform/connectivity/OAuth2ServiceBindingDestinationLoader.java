@@ -260,8 +260,8 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     {
         log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
 
-        final OAuth2ServiceImpl oAuth2Service = OAuth2ServiceImpl.fromCredentials(tokenUrl.toString(), clientIdentity);
-        return new OAuthHeaderProvider(oAuth2Service, behalf, authHeader);
+        final OAuth2ServiceImpl oAuth2Service = new OAuth2ServiceImpl(tokenUrl.toString(), clientIdentity, behalf);
+        return new OAuthHeaderProvider(oAuth2Service, authHeader);
     }
 
     @Nonnull
