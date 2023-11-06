@@ -23,6 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -295,15 +296,16 @@ public class ScpCfDestinationServiceAdapterTest
     }
 
     @Test
-    public void getDestinationServiceProviderTenantShouldThrowForDwcServiceBindings()
+    public void getDestinationServiceProviderTenantShouldThrowForMissingId()
     {
-        final MegacliteServiceBinding serviceBinding =
-            MegacliteServiceBinding
-                .forService(ServiceIdentifier.DESTINATION)
-                .providerConfiguration()
-                .name("destination-paas")
-                .version("v1")
+        final ServiceBinding serviceBinding =
+            DefaultServiceBinding
+                .builder()
+                .copy(Collections.singletonMap("credentials", Collections.emptyMap()))
+                .withServiceName(SERVICE_NAME)
+                .withCredentialsKey("credentials")
                 .build();
+
         final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
         assertThatThrownBy(adapterToTest::getProviderTenantId)
             .isInstanceOf(DestinationAccessException.class)

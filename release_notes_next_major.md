@@ -43,6 +43,11 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
   - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
+  - Cloud Platform - Core SAP Cloud Platform on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-scp-cf`
+  - Cloud Platform - Security SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:security-dwc`
+  - Cloud Platform - Security SAP CP Cloud Foundry: `com.sap.cloud.sdk.cloudplatform:security-scp-cf`
+  - Cloud Platform - Tenant SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:tenant-dwc`
+  - Business Technology Platform - Tenant SAP CP Cloud Foundry: `com.sap.cloud.sdk.cloudplatform:tenant-scp-cf`
   - Archetypes - SAP CP Cloud Foundry + TomEE: `com.sap.cloud.sdk.archetypes:scp-cf-tomee`
   - Related to the Auditlog service:
     - Cloud Platform - Auditlog: `com.sap.cloud.sdk.cloudplatform:auditlog`
@@ -72,7 +77,12 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.naming.JndiLookupAccessor`
     - `com.sap.cloud.sdk.cloudplatform.naming.JndiLookupFacade`
     - `com.sap.cloud.sdk.cloudplatform.naming.DefaultJndiLookupFacade`
-  - Within the [Cloud Platform - Security-Scp-Cf](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:security-scp-cf) Module:
+  - Related to Tenant:
+    - `com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant`
+    - `com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenantFacade`
+    - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenant`
+    - Please use the respective `Default` classes instead.
+  - Related to Principal:
     - `com.sap.cloud.sdk.cloudplatform.security.principal.ScpCfPrincipal`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.ScpCfPrincipalFacade`
     - Please use the respective `Default` classes instead.
@@ -139,12 +149,30 @@ blog: https://blogs.sap.com/?p=xxx
   - All classes related to the Apache Http Client 4 have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity` to a new module `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4`
   - All classes related to the Apache Http Client 5 have been moved from `com.sap.cloud.sdk.frameworks:apache-httpclient5` to `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5`
   - All classes related to Resilience4j have been moved from `com.sap.cloud.sdk.frameworks:resilience4j` to `com.sap.cloud.sdk.cloudplatform:resilience4j`
+  - The following classes have been moved from `com.sap.cloud.sdk.cloudplatform:secuirty-scp-cf` to '`com.sap.cloud.sdk.cloudplatform:security`:
+    - `AuthTokenThreadContextListener`
+    - `BasicAuthenticationAccessor`
+    - `BasicAuthenticationFacade`
+    - `BasicAuthenticationThreadContextListener`
+    - `DefaultAuthTokenFacade`
+    - `DefaultBasicAuthenticationFacade`
+    - `SecurityContextThreadContextDecorator`
+    - `ScpCfSecretStore`
+    - `ScpCfSecretStoreFacade`
+    - `BasicAuthenicationAccessException`
+  - The following classes have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`:
+    - `DwcHeaderUtils`
+    - `DwcHeaderNotFoundException`
+  - `com.sap.cloud.sdk.cloudplatform.security.DwcPrincipalFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:security-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
+  - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenantFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:tenant-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
 - The `HttpClientAccessor` and `ApacheHttpClient5Accessor` classes are generalised to accept `Destination` instances, making invocations to `.asHttp()` superfluous when obtaining HTTP clients.
 - The `getSslContext()` method was removed from the `CloudPlatform` interface and the implementation was moved to the modules `connectivity-apache-httpclient4` and `connectivity-apache-httpclient5`.
 - The OData, OpenAPI and SOAP APIs are generalised to accept instances of `Destination`, making invocations to `.asHttp()` superfluous when executing OData or REST requests.
     - OData V2 and OpenAPI clients need to be re-generated to adjust for this change.
 - The public constructor of `DefaultPrincipal` now only accepts a String argument for `principalId`.
 - The `PrincipalFacade` of the `PrincipalAccessor` will default to `DefaultPrincipalFacade` in the case that a facade cannot be found.
+- The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
+- The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
 
 ## newFunctionality
 
@@ -155,6 +183,7 @@ blog: https://blogs.sap.com/?p=xxx
   - The `DefaultHttpDestination.Builder` can now be constructed from an existing `DefaultHttpDestination` instance by using `DefaultHttpDestination.toBuilder()`.
   - The `DefaultDestination.Builder` can now be constructed from an existing `DefaultDestination` instance by using `DefaultDestination.toBuilder()`.
 - The `BasicCredentials` and `BearerCredentials` classes now offer a new method `#getHttpHeaderValue()` which will return the encoded and prefixed value of the credentials, e.g. `"Basic <encodedCredentials>"` or `"Bearer <token>"`.
+- A `DefaultTenant` can now be initialised with an optional `subdomain` in addition to the required `tenantId`
 
 ## improvements
 

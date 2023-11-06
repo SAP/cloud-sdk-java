@@ -39,25 +39,13 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core</artifactId>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 		<!-- added for the JavaDoc link to the new MegacliteServiceBindingAccessor -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-dwc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.vavr</groupId>
-			<artifactId>vavr</artifactId>
 		</dependency>
 		<!-- scope "provided" -->
 		<dependency>

@@ -87,7 +87,7 @@ public final class AuthTokenAccessor
         if( facades.size() == 1 ) {
             return facades.iterator().next();
         }
-        return authTokenFacade = AuthTokenFacade.NULL;
+        return authTokenFacade = new DefaultAuthTokenFacade();
     }
 
     /**
