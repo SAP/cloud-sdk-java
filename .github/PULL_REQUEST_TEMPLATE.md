@@ -7,7 +7,7 @@ The following sections are designed to help you in providing context for your pu
 ## Context
 <!-- If there is a GitHub item, please insert it here: --> 
 
-GitHub Item: https://github.com/SAP/cloud-sdk-java-backlog/issues/x
+SAP/cloud-sdk-java-backlog#ISSUENUMBER.
 
 
 Please provide a short description of what your change does and why it is needed.
