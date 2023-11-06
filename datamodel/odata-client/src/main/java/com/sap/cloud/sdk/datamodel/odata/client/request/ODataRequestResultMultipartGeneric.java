@@ -97,10 +97,10 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
         final List<List<HttpResponse>> batchedResponse = getBatchedResponses();
         if( batchedResponse.size() <= responsePosition._1() ) {
             final String msg =
-                "Illegal batch response item size: "
+                "Illegal batch response size: "
                     + batchedResponse.size()
-                    + ". Lower than requested size: "
-                    + responsePosition._1();
+                    + ". Lower than "
+                    + (responsePosition._1() + 1);
             throw new ODataResponseException(batchRequest, httpResponse, msg, null);
         }
         final List<HttpResponse> subResponses = batchedResponse.get(responsePosition._1());

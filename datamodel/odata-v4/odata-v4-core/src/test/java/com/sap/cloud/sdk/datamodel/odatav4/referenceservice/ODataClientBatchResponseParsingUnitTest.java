@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -111,6 +112,36 @@ public class ODataClientBatchResponseParsingUnitTest
         final List<Person> resultRead2 = batchResponse.getResult(read2).asList(Person.class);
         assertThat(resultRead1).isNotNull().hasSize(1).doesNotContainNull().doesNotContainAnyElementsOf(resultRead2);
         assertThat(resultRead2).isNotNull().hasSize(2).doesNotContainNull().doesNotContainAnyElementsOf(resultRead1);
+    }
+
+    @Test
+    public void testBatchWithReadsOnMissingResponse()
+    {
+        // 2 requests but only 1 response
+        final String requestBody = readResourceFileCrlf("BatchOnlyReadsMissingRequest.txt");
+        final String responseBody = readResourceFileCrlf("BatchOnlyReadsMissingResponse.txt");
+
+        // Prepare test objects
+        final ODataEntityKey entityKey1 = new ODataEntityKey(V4).addKeyProperty("key", "klauskinski");
+        final ODataRequestReadByKey readByKey1 = new ODataRequestReadByKey("/", "People", entityKey1, "", V4);
+        final ODataEntityKey entityKey2 = new ODataEntityKey(V4).addKeyProperty("key", "DanielBruehl");
+        final ODataRequestReadByKey readByKey2 = new ODataRequestReadByKey("/", "People", entityKey2, "", V4);
+        final ODataRequestBatch batchRequest =
+            new ODataRequestBatch("/", V4, uuidProvider).addReadByKey(readByKey1).addReadByKey(readByKey2);
+
+        final HttpClient httpClient = MockedHttpClient.of(requestBody, responseBody);
+        final ODataRequestResultMultipartGeneric batchResponse = batchRequest.execute(httpClient);
+
+        // Test assertion: response object not null and healthy
+        assertThat(batchResponse).isNotNull();
+        assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+
+        // Test assertion: response payload cannot be extracted, DanielBruehl is missing
+        final List<Person> resultRead1 = batchResponse.getResult(readByKey1).asList(Person.class);
+        assertThat(resultRead1).isNotNull().hasSize(1).doesNotContainNull();
+        assertThatThrownBy(() -> batchResponse.getResult(readByKey2))
+            .isExactlyInstanceOf(ODataResponseException.class)
+            .hasMessage("Illegal batch response size: 1. Lower than 2");
     }
 
     @Test
