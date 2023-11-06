@@ -31,11 +31,11 @@ public class DwcTenantFacadeTest
         final Map<String, String> headers =
             ImmutableMap.of(DWC_TENANT_HEADER, "tenant-value", DWC_SUBDOMAIN_HEADER, "subdomain-value");
 
-        final DwcTenant expectedTenant = new DwcTenant("tenant-value", "subdomain-value");
+        final DefaultTenant expectedTenant = new DefaultTenant("tenant-value", "subdomain-value");
 
         RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> {
             final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
-            final DwcTenant currentTenant = (DwcTenant) TenantAccessor.getCurrentTenant();
+            final DefaultTenant currentTenant = (DefaultTenant) TenantAccessor.getCurrentTenant();
             final Try<Tenant> shouldBeSuccess =
                 currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
 

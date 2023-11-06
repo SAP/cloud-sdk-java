@@ -40,7 +40,7 @@ public class DwcTenantFacade extends DefaultTenantFacade
         try {
             final String tenantId = DwcHeaderUtils.getDwcTenantIdOrThrow();
             final String subdomain = DwcHeaderUtils.getDwCSubdomainOrThrow();
-            return new DwcTenant(tenantId, subdomain);
+            return new DefaultTenant(tenantId, subdomain);
         }
         catch( final Exception e ) {
             throw new TenantAccessException(e);
