@@ -23,6 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -292,6 +293,25 @@ public class ScpCfDestinationServiceAdapterTest
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
+    }
+
+    @Test
+    public void getDestinationServiceProviderTenantShouldThrowForMissingId()
+    {
+        final ServiceBinding serviceBinding =
+            DefaultServiceBinding
+                .builder()
+                .copy(Collections.singletonMap("credentials", Collections.emptyMap()))
+                .withServiceName(SERVICE_NAME)
+                .withCredentialsKey("credentials")
+                .build();
+
+        final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
+        assertThatThrownBy(adapterToTest::getProviderTenantId)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessage(
+                "The provider tenant id is not defined in the service binding."
+                    + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
     }
 
     private static ScpCfDestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
