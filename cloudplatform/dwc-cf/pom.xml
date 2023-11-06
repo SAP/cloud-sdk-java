@@ -40,10 +40,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>security</artifactId>
 		</dependency>
 		<dependency>
@@ -62,7 +58,6 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<usedDependencies>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>

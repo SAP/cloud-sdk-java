@@ -47,7 +47,6 @@
 		<module>servlet-jakarta</module>
 		<module>tenant</module>
 		<module>dwc-cf</module>
-		<module>cloudplatform-core-dwc</module>
 	</modules>
 	<scm>
 		<connection />
