@@ -2,8 +2,8 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.Options.ProxyOptions;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
@@ -70,10 +71,9 @@ public class DefaultHttpDestinationBuilderProxyHandlerTest
     {
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.builder("http://foo");
 
-        // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
-
-        assertThat(result).isNull();
+        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasMessage("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
@@ -83,10 +83,9 @@ public class DefaultHttpDestinationBuilderProxyHandlerTest
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder("http://foo").proxyType(ProxyType.INTERNET);
 
-        // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
-
-        assertThat(result).isNull();
+        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasMessage("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
@@ -96,10 +95,9 @@ public class DefaultHttpDestinationBuilderProxyHandlerTest
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder("http://foo").proxyType(ProxyType.ON_PREMISE);
 
-        // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
-
-        assertThat(result).isNull();
+        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasMessage("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
@@ -341,10 +339,9 @@ public class DefaultHttpDestinationBuilderProxyHandlerTest
         final DefaultHttpDestination.Builder builder1 = DefaultHttpDestination.builder("http://foo");
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromDestination(builder1.build());
 
-        // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
-
-        assertThat(result).isNull();
+        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasMessage("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
