@@ -5,11 +5,14 @@
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.Objects;
 
 /**
  * Implementation of {@link Tenant} which can be used on SAP Business Technology Platform Cloud Foundry.

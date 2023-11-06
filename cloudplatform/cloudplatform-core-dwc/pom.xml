@@ -61,7 +61,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
-						<!-- Javadoc Comments -->
+						<!-- required for JavaDoc -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 				</configuration>
