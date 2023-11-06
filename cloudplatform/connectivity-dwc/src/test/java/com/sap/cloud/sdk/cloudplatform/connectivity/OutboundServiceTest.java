@@ -56,7 +56,7 @@ public class OutboundServiceTest
     public void setup()
     {
         CacheManager.invalidateAll();
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("subscriber-tenant-id", "")));
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("subscriber-tenant-id")));
 
         final DwcConfiguration dwcConfig = new DwcConfiguration(URI.create("https://localhost/"), "provider-tenant-id");
         final MegacliteDestinationFactory destinationFactory = new MegacliteDestinationFactory(dwcConfig);

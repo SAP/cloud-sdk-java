@@ -50,8 +50,8 @@ import io.vavr.control.Try;
 
 class DestinationRetrievalStrategyResolverTest
 {
-    private static final Tenant providerT = new DefaultTenant("provider", "");
-    private static final Tenant subscriberT = new DefaultTenant("subscriber", "");
+    private static final Tenant providerT = new DefaultTenant("provider");
+    private static final Tenant subscriberT = new DefaultTenant("subscriber");
     private DestinationRetrievalStrategyResolver sut;
 
     private Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever;

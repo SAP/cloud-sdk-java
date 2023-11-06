@@ -375,7 +375,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
                 .of(id)
                 .toTry()
                 .recover(any -> UUID.randomUUID().toString())
-                .map(tenantId -> new DefaultTenant(tenantId, ""));
+                .map(tenantId -> new DefaultTenant(tenantId));
 
         TenantAccessor.setTenantFacade(() -> tenant);
     }

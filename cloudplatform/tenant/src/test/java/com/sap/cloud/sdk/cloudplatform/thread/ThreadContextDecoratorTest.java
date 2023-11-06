@@ -102,7 +102,7 @@ class ThreadContextDecoratorTest
                             .getHeaderValues("tenant")
                             .stream()
                             .findAny()
-                            .map(tenantId -> new DefaultTenant(tenantId, ""))
+                            .map(tenantId -> new DefaultTenant(tenantId))
                             .get());
             return maybeTenantFromHeaders;
         }
