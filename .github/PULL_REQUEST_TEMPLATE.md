@@ -7,7 +7,7 @@ The following sections are designed to help you in providing context for your pu
 ## Context
 <!-- If there is a GitHub item, please insert it here: --> 
 
-Closes SAP/cloud-sdk-java-backlog#ISSUENUMBER.
+SAP/cloud-sdk-java-backlog#ISSUENUMBER.
 
 
 Please provide a short description of what your change does and why it is needed.
