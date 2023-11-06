@@ -242,11 +242,11 @@ public final class DefaultHttpDestination implements HttpDestination
                     if( log.isDebugEnabled() ) {
                         final Try<RequestHeaderContainer> tryReqHeaders = RequestHeaderAccessor.tryGetHeaderContainer();
                         if( tryReqHeaders.isFailure() || tryReqHeaders.get() == null ) {
-                            final String msg_req = "The incoming request headers could not be accessed.";
-                            log.debug(msg_req, tryReqHeaders.isFailure() ? tryReqHeaders.getCause() : null);
+                            final String msgReq = "The incoming request headers could not be accessed.";
+                            log.debug(msgReq, tryReqHeaders.isFailure() ? tryReqHeaders.getCause() : null);
                         } else {
-                            final String msg_headers = "Unable to find an '{}' header in the following headers: {}";
-                            log.debug(msg_headers, HttpHeaders.AUTHORIZATION, tryReqHeaders.get().getHeaderNames());
+                            final String msgHeaders = "Unable to find an '{}' header in the following headers: {}";
+                            log.debug(msgHeaders, HttpHeaders.AUTHORIZATION, tryReqHeaders.get().getHeaderNames());
                         }
                     }
                 }
