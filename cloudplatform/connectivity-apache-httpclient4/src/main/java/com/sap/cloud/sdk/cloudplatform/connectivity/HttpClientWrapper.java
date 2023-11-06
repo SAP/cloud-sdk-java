@@ -21,6 +21,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,14 @@ class HttpClientWrapper extends CloseableHttpClient
     HttpClientWrapper( final CloseableHttpClient httpClient, final HttpDestinationProperties destination )
     {
         this.httpClient = httpClient;
+
+        if( destination.getProxyType().contains(ProxyType.ON_PREMISE)
+            && destination.getProxyConfiguration().isEmpty() ) {
+            throw new DestinationAccessException(
+                "Unable to create an HttpClient from the provided destination. "
+                    + "The destination is supposed to target an on-premise system but lacks the correct proxy configuration. "
+                    + "Please check the application logs for further details.");
+        }
         this.destination = destination;
     }
 

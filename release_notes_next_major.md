@@ -42,6 +42,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - BTP Cloud Foundry Workflow API: `com.sap.cloud.sdk.services:scp-workflow-cf`
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
+  - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
   - Archetypes - SAP CP Cloud Foundry + TomEE: `com.sap.cloud.sdk.archetypes:scp-cf-tomee`
   - Related to the Auditlog service:
     - Cloud Platform - Auditlog: `com.sap.cloud.sdk.cloudplatform:auditlog`
@@ -96,6 +97,14 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.security.principal.SimplePrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringCollectionPrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringPrincipalAttribute`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor`
 - Following public methods have been removed:
   - Related to the `Destination` API:
     - The `Destination#decorate` method has been removed without replacement.
@@ -128,6 +137,8 @@ blog: https://blogs.sap.com/?p=xxx
     As usual, the specific error cause is attached to the exception.
 - The following classes have been moved or their modules have been renamed:
   - All classes related to the Apache Http Client 4 have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity` to a new module `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4`
+  - All classes related to the Apache Http Client 5 have been moved from `com.sap.cloud.sdk.frameworks:apache-httpclient5` to `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5`
+  - All classes related to Resilience4j have been moved from `com.sap.cloud.sdk.frameworks:resilience4j` to `com.sap.cloud.sdk.cloudplatform:resilience4j`
 - The `HttpClientAccessor` and `ApacheHttpClient5Accessor` classes are generalised to accept `Destination` instances, making invocations to `.asHttp()` superfluous when obtaining HTTP clients.
 - The `getSslContext()` method was removed from the `CloudPlatform` interface and the implementation was moved to the modules `connectivity-apache-httpclient4` and `connectivity-apache-httpclient5`.
 - The OData, OpenAPI and SOAP APIs are generalised to accept instances of `Destination`, making invocations to `.asHttp()` superfluous when executing OData or REST requests.
@@ -156,3 +167,4 @@ blog: https://blogs.sap.com/?p=xxx
 
 - Fixed a bug where an `Authorization` header was attached multiple times to outgoing HTTP requests under some circumstances
 - Fixed an issue where the `DestinationType` of an `DefaultHttpDestination` could be changed to anything but `DestinationType.HTTP`
+- Fixed an issue with custom GSON serialization of OpenAPI generated classes having unexpected `customFieldNames` properties in JSON payload.

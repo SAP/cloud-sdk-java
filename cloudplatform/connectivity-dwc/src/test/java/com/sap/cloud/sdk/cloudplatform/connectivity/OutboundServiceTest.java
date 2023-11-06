@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -73,7 +72,6 @@ public class OutboundServiceTest
     {
         TenantAccessor.setTenantFacade(null);
         RequestHeaderAccessor.setHeaderFacade(null);
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
         HttpClientAccessor.setHttpClientFactory(null);
     }
 

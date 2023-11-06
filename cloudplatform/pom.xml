@@ -40,7 +40,9 @@
 		<module>connectivity-dwc</module>
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
+		<module>connectivity-apache-httpclient5</module>
 		<module>resilience</module>
+		<module>resilience4j</module>
 		<module>security</module>
 		<module>security-scp-cf</module>
 		<module>servlet</module>
@@ -48,7 +50,6 @@
 		<module>tenant</module>
 		<module>tenant-scp-cf</module>
 		<module>dwc-cf</module>
-		<module>cloudplatform-core-dwc-cf</module>
 		<module>cloudplatform-core-dwc</module>
 		<module>security-dwc</module>
 		<module>tenant-dwc</module>

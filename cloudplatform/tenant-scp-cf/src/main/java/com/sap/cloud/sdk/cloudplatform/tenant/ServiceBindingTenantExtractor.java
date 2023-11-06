@@ -5,12 +5,10 @@
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -36,7 +34,8 @@ enum ServiceBindingTenantExtractor
             .subdomain(
                 "url",
                 s -> Try.of(() -> URI.create(s).getHost()).map(h -> h.substring(0, h.indexOf('.'))).getOrElse(""))
-            .tenantId("zone_uuid"));
+            .tenantId("app_tid")
+            .tenantId("zone_uuid")); // outdated
 
     @Nonnull
     @Getter
@@ -45,12 +44,12 @@ enum ServiceBindingTenantExtractor
     @Nonnull
     @Getter
     @ToString.Exclude
-    private final Function<JsonObject, Option<ScpCfTenant>> extractor;
+    private final Function<Map<String, Object>, Option<ScpCfTenant>> extractor;
 
-    private static class Extraction implements Function<JsonObject, Option<ScpCfTenant>>
+    private static class Extraction implements Function<Map<String, Object>, Option<ScpCfTenant>>
     {
-        private Function<JsonObject, Option<String>> tenantIdLogic = obj -> Option.none();
-        private Function<JsonObject, Option<String>> subdomainLogic = obj -> Option.none();
+        private Function<Map<String, Object>, Option<String>> tenantIdLogic = obj -> Option.none();
+        private Function<Map<String, Object>, Option<String>> subdomainLogic = obj -> Option.none();
 
         public Extraction tenantId( @Nonnull final String key )
         {
@@ -75,8 +74,8 @@ enum ServiceBindingTenantExtractor
         }
 
         @Nonnull
-        private static Function<JsonObject, Option<String>> concatLogic(
-            @Nonnull final Function<JsonObject, Option<String>> logic,
+        private static Function<Map<String, Object>, Option<String>> concatLogic(
+            @Nonnull final Function<Map<String, Object>, Option<String>> logic,
             @Nonnull final String key,
             @Nonnull final Function<String, String> f )
         {
@@ -85,13 +84,13 @@ enum ServiceBindingTenantExtractor
                 .orElse(
                     () -> Option
                         .of(o.get(key))
-                        .filter(JsonElement::isJsonPrimitive)
-                        .map(JsonElement::getAsString)
+                        .filter(value -> value instanceof String)
+                        .map(value -> (String) value)
                         .map(f));
         }
 
         @Override
-        public Option<ScpCfTenant> apply( final JsonObject obj )
+        public Option<ScpCfTenant> apply( final Map<String, Object> obj )
         {
             final Option<String> subdomain = subdomainLogic.apply(obj);
             final Option<String> tenantId = tenantIdLogic.apply(obj);

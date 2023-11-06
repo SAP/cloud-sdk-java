@@ -119,7 +119,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.frameworks</groupId>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>resilience4j</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -156,7 +156,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.frameworks:resilience4j</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
 						<ignoredUnusedDeclaredDependency>com.github.ben-manes.caffeine:jcache</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 				</configuration>

@@ -270,7 +270,9 @@ public class MegacliteServiceBindingDestinationLoaderTest
 
         sut.setConnectivityResolver(mock);
 
-        final DefaultHttpDestination baseDestination =
+        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(sut);
+
+        final DefaultHttpDestination result =
             DefaultHttpDestination
                 .builder(baseUrl)
                 .name("foo")
@@ -279,14 +281,6 @@ public class MegacliteServiceBindingDestinationLoaderTest
                 .property(DestinationProperty.SAP_LANGUAGE.getKeyName(), "en")
                 .proxyType(ProxyType.ON_PREMISE)
                 .build();
-
-        final ServiceBindingDestinationOptions options =
-            ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.CONNECTIVITY)
-                .withOption(ProxyOptions.destinationToBeProxied(baseDestination))
-                .build();
-
-        final HttpDestination result = sut.getDestination(options);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
         assertThat(result.get(DestinationProperty.PROXY_URI).get()).isEqualTo(proxyUrl);

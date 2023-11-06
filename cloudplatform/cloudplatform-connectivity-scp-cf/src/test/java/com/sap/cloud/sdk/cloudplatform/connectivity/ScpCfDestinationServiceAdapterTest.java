@@ -22,11 +22,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,13 +42,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
@@ -113,9 +110,9 @@ public class ScpCfDestinationServiceAdapterTest
     }
 
     @After
-    public void resetCloudPlatformAccessor()
+    public void resetServiceBindingAccessor()
     {
-        CloudPlatformAccessor.setCloudPlatformFacade(null);
+        DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
@@ -252,26 +249,11 @@ public class ScpCfDestinationServiceAdapterTest
     }
 
     @Test
-    public void testGetDestinationServiceBindingWithoutScpCfCloudPlatform()
-    {
-        final CloudPlatformException expectedCause = new CloudPlatformException();
-        final CloudPlatformFacade platformFacade = mock(CloudPlatformFacade.class);
-        when(platformFacade.tryGetCloudPlatform()).thenReturn(Try.failure(expectedCause));
-        CloudPlatformAccessor.setCloudPlatformFacade(platformFacade);
-
-        assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
-            .isExactlyInstanceOf(NoServiceBindingException.class)
-            .cause()
-            .isSameAs(expectedCause);
-        Mockito.verify(platformFacade, times(1)).tryGetCloudPlatform();
-    }
-
-    @Test
     public void testGetDestinationServiceBindingChecksForServiceName()
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.empty());
-        mockCloudPlatformWithServiceBinding(binding);
+        mockServiceBindingAccessor(binding);
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
@@ -283,7 +265,7 @@ public class ScpCfDestinationServiceAdapterTest
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
-        mockCloudPlatformWithServiceBinding(binding);
+        mockServiceBindingAccessor(binding);
 
         assertThat(ScpCfDestinationServiceAdapter.getDestinationServiceBinding()).isSameAs(binding);
         Mockito.verify(binding, times(1)).getServiceIdentifier();
@@ -292,7 +274,7 @@ public class ScpCfDestinationServiceAdapterTest
     @Test
     public void testGetDestinationServiceBindingWithoutBinding()
     {
-        mockCloudPlatformWithServiceBinding();
+        mockServiceBindingAccessor();
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
@@ -306,10 +288,28 @@ public class ScpCfDestinationServiceAdapterTest
         when(firstBinding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
         when(secondBinding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
 
-        mockCloudPlatformWithServiceBinding(firstBinding, secondBinding);
+        mockServiceBindingAccessor(firstBinding, secondBinding);
 
         assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
+    }
+
+    @Test
+    public void getDestinationServiceProviderTenantShouldThrowForDwcServiceBindings()
+    {
+        final MegacliteServiceBinding serviceBinding =
+            MegacliteServiceBinding
+                .forService(ServiceIdentifier.DESTINATION)
+                .providerConfiguration()
+                .name("destination-paas")
+                .version("v1")
+                .build();
+        final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
+        assertThatThrownBy(adapterToTest::getProviderTenantId)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessage(
+                "The provider tenant id is not defined in the service binding."
+                    + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
     }
 
     private static ScpCfDestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
@@ -356,15 +356,9 @@ public class ScpCfDestinationServiceAdapterTest
             .build();
     }
 
-    private static void mockCloudPlatformWithServiceBinding( @Nonnull final ServiceBinding... serviceBindings )
+    private static void mockServiceBindingAccessor( @Nonnull final ServiceBinding... serviceBindings )
     {
-        final CloudPlatformFacade platformFacade = mock(CloudPlatformFacade.class);
-
-        final ScpCfCloudPlatform platform = mock(ScpCfCloudPlatform.class);
-        when(platform.getServiceBindingAccessor())
-            .thenReturn(() -> Stream.of(serviceBindings).collect(Collectors.toList()));
-
-        when(platformFacade.tryGetCloudPlatform()).thenReturn(Try.success(platform));
-        CloudPlatformAccessor.setCloudPlatformFacade(platformFacade);
+        final ServiceBindingAccessor serviceBindingAccessor = () -> Arrays.asList(serviceBindings);
+        DefaultServiceBindingAccessor.setInstance(serviceBindingAccessor);
     }
 }

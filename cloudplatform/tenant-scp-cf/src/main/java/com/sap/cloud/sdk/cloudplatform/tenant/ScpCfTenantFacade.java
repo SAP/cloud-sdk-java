@@ -6,20 +6,19 @@ package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Payload;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Streams;
-import com.google.gson.JsonObject;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatform;
-import com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor;
-import com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
+import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
@@ -38,7 +37,9 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
 {
     private static final String XSUAA_JWT_ZONE_ID = "zid";
     private static final String IAS_JWT_ZONE_ID = "zone_uuid";
-    private static final List<String> TENANT_ID_CLAIMS = Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_ZONE_ID);
+    private static final String IAS_JWT_APP_TID = "app_tid";
+    private static final List<String> TENANT_ID_CLAIMS =
+        Arrays.asList(XSUAA_JWT_ZONE_ID, IAS_JWT_APP_TID, IAS_JWT_ZONE_ID);
     private static final String JWT_ISSUER = "iss";
 
     @Nonnull
@@ -49,9 +50,7 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
 
         if( !maybeTenantId.isPresent() ) {
             throw new TenantAccessException(
-                "No tenant/zone identifier (one of these elements ["
-                    + TENANT_ID_CLAIMS.toString()
-                    + "]) found in JWT.");
+                "No tenant/zone identifier (one of these elements [" + TENANT_ID_CLAIMS + "]) found in JWT.");
         }
 
         return maybeTenantId.get();
@@ -126,27 +125,17 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
             return currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
         }
         return tryGetTenantFromAuthToken(AuthTokenAccessor.tryGetCurrentToken()) // read from user token
-            .orElse(() -> tryGetTenantFromServiceBinding(CloudPlatformAccessor.tryGetCloudPlatform())); // read bindings
+            .orElse(this::tryGetTenantFromServiceBinding); // read bindings
     }
 
     @Nonnull
-    private Try<ScpCfTenant> tryGetTenantFromServiceBinding( @Nonnull final Try<CloudPlatform> platform )
+    private Try<ScpCfTenant> tryGetTenantFromServiceBinding()
     {
+        final List<ServiceBinding> serviceBindings = DefaultServiceBindingAccessor.getInstance().getServiceBindings();
+
         for( final ServiceBindingTenantExtractor extractor : ServiceBindingTenantExtractor.values() ) {
-            final Try<Iterable<JsonObject>> bindings =
-                platform
-                    .map(ScpCfCloudPlatform.class::cast)
-                    .map(p -> p.getServiceCredentialsByPlan(extractor.getService(), filter -> true).values())
-                    .map(Iterables::concat);
-
-            if( bindings.isFailure() ) {
-                log.debug("Unable to parse service bindings for {}.", extractor.getService(), bindings.getCause());
-                continue;
-            }
-
             final Optional<ScpCfTenant> tenant =
-                Streams
-                    .stream(bindings.get())
+                streamServiceCredentialsByPlan(serviceBindings, extractor.getService())
                     .peek(obj -> log.trace("Trying to extract tenant information from service binding {}.", obj))
                     .flatMap(obj -> extractor.getExtractor().apply(obj).toJavaStream())
                     .findFirst();
@@ -157,4 +146,16 @@ public class ScpCfTenantFacade extends DefaultTenantFacade
         }
         return Try.failure(new CloudPlatformException("Failed to extract tenant from service bindings."));
     }
+
+    @Nonnull
+    private Stream<Map<String, Object>> streamServiceCredentialsByPlan(
+        @Nonnull final Collection<ServiceBinding> serviceBindings,
+        @Nonnull final String serviceName )
+    {
+        return serviceBindings
+            .stream()
+            .filter(binding -> serviceName.equals(binding.getServiceName().orElse(null)))
+            .map(ServiceBinding::getCredentials);
+    }
+
 }

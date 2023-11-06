@@ -15,13 +15,16 @@ import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents a (remote) service that is bound to Megaclite. Therefore, the application may reach the bound service by
@@ -56,6 +59,7 @@ import lombok.ToString;
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @EqualsAndHashCode
 @ToString
+@Slf4j
 public final class MegacliteServiceBinding implements ServiceBinding
 {
     @Nonnull
@@ -65,6 +69,10 @@ public final class MegacliteServiceBinding implements ServiceBinding
     private final MandateConfiguration providerConfiguration;
     @Nullable
     private final MandateConfiguration subscriberConfiguration;
+
+    @Nonnull
+    @Setter( AccessLevel.PACKAGE )
+    private DwcConfiguration dwcConfiguration = DwcConfiguration.getInstance();
 
     @Nonnull
     @Override
@@ -118,7 +126,13 @@ public final class MegacliteServiceBinding implements ServiceBinding
     @Override
     public Map<String, Object> getCredentials()
     {
-        return Collections.emptyMap();
+        try {
+            return Collections.singletonMap("tenantid", dwcConfiguration.providerTenant());
+        }
+        catch( final CloudPlatformException | IllegalArgumentException e ) {
+            log.debug("Failed to get the provider tenant ID from the DWC configuration.", e);
+            return Collections.emptyMap();
+        }
     }
 
     /**

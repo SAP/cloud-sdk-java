@@ -62,7 +62,7 @@
 			<artifactId>resilience</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.frameworks</groupId>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>resilience4j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
@@ -175,6 +175,11 @@
 		<!-- scope "test" -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-dwc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>servlet</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -242,12 +247,14 @@
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.frameworks:resilience4j</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
 						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
+						<!-- needed for exception classes (i.e. NoServiceBindingException) -->
+						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>
