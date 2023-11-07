@@ -145,6 +145,7 @@ blog: https://blogs.sap.com/?p=xxx
     - OData V2 and OpenAPI clients need to be re-generated to adjust for this change.
 - The public constructor of `DefaultPrincipal` now only accepts a String argument for `principalId`.
 - The `PrincipalFacade` of the `PrincipalAccessor` will default to `DefaultPrincipalFacade` in the case that a facade cannot be found.
+- The `RequestHeaderContainer` no longer splits header values.
 
 ## newFunctionality
 
