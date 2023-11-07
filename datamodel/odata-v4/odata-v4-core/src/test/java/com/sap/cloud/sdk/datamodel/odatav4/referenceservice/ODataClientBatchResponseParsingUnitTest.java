@@ -8,7 +8,6 @@ import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -136,13 +135,16 @@ public class ODataClientBatchResponseParsingUnitTest
         assertThat(batchResponse).isNotNull();
         assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
-        // Test assertion: response payload cannot be extracted, DanielBruehl is missing
-        assertThatThrownBy(() -> batchResponse.getResult(readByKey1))
-                .isExactlyInstanceOf(ODataResponseException.class)
-                .hasMessage("Unexpected OData response: 2 batch requests were executed, but the OData server returned 1 batch responses.");
-        assertThatThrownBy(() -> batchResponse.getResult(readByKey2))
-            .isExactlyInstanceOf(ODataResponseException.class)
-            .hasMessage("Unexpected OData response: 2 batch requests were executed, but the OData server returned 1 batch responses.");
+        // Test assertion:
+        // response payload is 404
+        assertThatExceptionOfType(ODataServiceErrorException.class)
+            .isThrownBy(() -> batchResponse.getResult(readByKey1))
+            .satisfies(e -> assertThat(e.getHttpCode()).isEqualTo(404));
+        // response payload cannot be extracted, response is missing
+        assertThatExceptionOfType(ODataResponseException.class)
+            .isThrownBy(() -> batchResponse.getResult(readByKey2))
+            .withMessage(
+                "Illegal OData response: at least 2 batch requests were executed, but the OData server returned only 1 batch responses.");
     }
 
     @Test
