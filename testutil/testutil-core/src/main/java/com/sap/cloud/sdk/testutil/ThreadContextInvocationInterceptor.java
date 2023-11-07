@@ -6,6 +6,8 @@ package com.sap.cloud.sdk.testutil;
 
 import java.lang.reflect.Method;
 
+import javax.annotation.Nonnull;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
@@ -20,9 +22,9 @@ public class ThreadContextInvocationInterceptor implements InvocationInterceptor
 {
     @Override
     public void interceptTestMethod(
-        Invocation<Void> invocation,
-        ReflectiveInvocationContext<Method> invocationContext,
-        ExtensionContext extensionContext )
+        @Nonnull final Invocation<Void> invocation,
+        @Nonnull final ReflectiveInvocationContext<Method> invocationContext,
+        @Nonnull final ExtensionContext extensionContext )
     {
         ThreadContextExecutor.fromNewContext().execute(() -> {
             try {

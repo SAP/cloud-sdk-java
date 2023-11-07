@@ -157,9 +157,9 @@ public class EntityLink<LinkT extends EntityLink<LinkT, EntityT, SubEntityT>, En
         @Nonnull final ExpressionFluentHelper<SubEntityT> filterExpression )
     {
         final ValueBoolean exp =
-            (( protocol, prefixes ) -> getFieldName()
+            ( protocol, prefixes ) -> getFieldName()
                 + "/"
-                + filterExpression.getDelegateExpressionWithoutOuterParentheses().getExpression(protocol, prefixes));
+                + filterExpression.getDelegateExpressionWithoutOuterParentheses().getExpression(protocol, prefixes);
         return new ExpressionFluentHelper<>(exp);
     }
 }

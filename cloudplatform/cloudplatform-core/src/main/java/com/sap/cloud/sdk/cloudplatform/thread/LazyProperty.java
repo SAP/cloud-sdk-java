@@ -33,7 +33,7 @@ class LazyProperty<T> extends Property<T>
     @Nullable
     private Try<T> cachedLazyValue = null;
 
-    protected LazyProperty( @Nonnull final Supplier<T> lazyValueFactory, boolean isConfidential )
+    protected LazyProperty( @Nonnull final Supplier<T> lazyValueFactory, final boolean isConfidential )
     {
         super(isConfidential);
         this.lazyValueFactory = lazyValueFactory;
