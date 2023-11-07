@@ -49,21 +49,21 @@ public final class DefaultThreadContextExecutorService implements ThreadContextE
     }
 
     @Nonnull
-    <T> Callable<T> decorate( @Nonnull final Callable<T> task )
+    private <T> Callable<T> decorate( @Nonnull final Callable<T> task )
     {
         log.debug("Creating new ThreadContextExecutor for: {}", task);
         return decorate(task, ThreadContextExecutor.fromCurrentOrNewContext());
     }
 
     @Nonnull
-    <T> Callable<T> decorate( @Nonnull final Callable<T> task, ThreadContext threadContext )
+    private <T> Callable<T> decorate( @Nonnull final Callable<T> task, @Nonnull final ThreadContext threadContext )
     {
         log.debug("Creating new ThreadContextExecutor with ThreadContext: {} for: {}", threadContext, task);
         return decorate(task, ThreadContextExecutor.using(threadContext));
     }
 
     @Nonnull
-    <T> Callable<T> decorate(
+    private <T> Callable<T> decorate(
         @Nonnull final Callable<T> task,
         @Nonnull final ThreadContextExecutor threadContextExecutor )
     {
@@ -81,21 +81,23 @@ public final class DefaultThreadContextExecutorService implements ThreadContextE
     }
 
     @Nonnull
-    Runnable decorate( @Nonnull final Runnable task )
+    private Runnable decorate( @Nonnull final Runnable task )
     {
         log.debug("Creating new ThreadContextExecutor for: {}", task);
         return decorate(task, ThreadContextExecutor.fromCurrentOrNewContext());
     }
 
     @Nonnull
-    Runnable decorate( @Nonnull final Runnable task, @Nonnull final ThreadContext threadContext )
+    private Runnable decorate( @Nonnull final Runnable task, @Nonnull final ThreadContext threadContext )
     {
         log.debug("Creating new ThreadContextExecutor with ThreadContext: {} for: {}", threadContext, task);
         return decorate(task, ThreadContextExecutor.using(threadContext));
     }
 
     @Nonnull
-    Runnable decorate( @Nonnull final Runnable task, @Nonnull final ThreadContextExecutor threadContextExecutor )
+    private
+        Runnable
+        decorate( @Nonnull final Runnable task, @Nonnull final ThreadContextExecutor threadContextExecutor )
     {
         final Callable<Object> callable = decorate(() -> {
             task.run();

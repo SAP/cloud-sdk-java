@@ -179,7 +179,7 @@ class NamespaceClassGenerator
     private JDefinedClass generateEntityClassStub(
         final JClassContainer namespacePackage,
         final String javaClassName,
-        boolean isMediaStreamExposed )
+        final boolean isMediaStreamExposed )
         throws JClassAlreadyExistsException
     {
         final JDefinedClass entityClass = namespacePackage._class(JMod.PUBLIC, javaClassName);

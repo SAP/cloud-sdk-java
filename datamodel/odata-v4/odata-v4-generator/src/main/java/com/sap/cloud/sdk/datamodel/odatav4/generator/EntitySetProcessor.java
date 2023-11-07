@@ -26,19 +26,16 @@ final class EntitySetProcessor
     private final Map<String, JDefinedClass> generatedEnumTypes = new HashMap<>();
 
     private final Service service;
-    private final String odataEndpointPath;
 
     private final NamespaceClassGenerator namespaceClassGenerator;
     private final ServiceClassGenerator serviceClassGenerator;
 
     EntitySetProcessor(
         final Service service,
-        final String odataEndpointPath,
         final NamespaceClassGenerator namespaceClassGenerator,
         final ServiceClassGenerator serviceClassGenerator )
     {
         this.service = service;
-        this.odataEndpointPath = odataEndpointPath;
         this.namespaceClassGenerator = namespaceClassGenerator;
         this.serviceClassGenerator = serviceClassGenerator;
     }
