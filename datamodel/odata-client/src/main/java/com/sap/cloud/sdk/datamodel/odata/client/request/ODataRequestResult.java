@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.checkerframework.checker.units.qual.A;
 
 /**
  * Generic type of an OData request result.
