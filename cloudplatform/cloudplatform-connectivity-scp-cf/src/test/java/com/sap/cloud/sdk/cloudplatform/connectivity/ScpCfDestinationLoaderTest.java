@@ -71,7 +71,6 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
-import com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
@@ -1211,7 +1210,7 @@ public class ScpCfDestinationLoaderTest
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
 
-        final DefaultTenantFacade mockedTenantFacade = spy(ScpCfTenantFacade.class);
+        final DefaultTenantFacade mockedTenantFacade = spy(DefaultTenantFacade.class);
         TenantAccessor.setTenantFacade(mockedTenantFacade);
 
         final CompletableFuture<Void> firstThread =

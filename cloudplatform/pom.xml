@@ -33,7 +33,6 @@
 	<modules>
 		<module>scp-cf</module>
 		<module>cloudplatform-core</module>
-		<module>cloudplatform-core-scp-cf</module>
 		<module>caching</module>
 		<module>cloudplatform-connectivity</module>
 		<module>cloudplatform-connectivity-scp-cf</module>
@@ -44,15 +43,10 @@
 		<module>resilience</module>
 		<module>resilience4j</module>
 		<module>security</module>
-		<module>security-scp-cf</module>
 		<module>servlet</module>
 		<module>servlet-jakarta</module>
 		<module>tenant</module>
-		<module>tenant-scp-cf</module>
 		<module>dwc-cf</module>
-		<module>cloudplatform-core-dwc</module>
-		<module>security-dwc</module>
-		<module>tenant-dwc</module>
 	</modules>
 	<scm>
 		<connection />
