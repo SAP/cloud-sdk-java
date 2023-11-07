@@ -11,13 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -32,15 +31,8 @@ import lombok.RequiredArgsConstructor;
 @Beta
 @EqualsAndHashCode
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
-public class DefaultRequestHeaderContainer implements RequestHeaderContainer
+public final class DefaultRequestHeaderContainer implements RequestHeaderContainer
 {
-    @Nonnull
-    private static final String SET_COOKIE_HEADER = "Set-Cookie";
-    @Nonnull
-    private static final String HEADER_VALUE_DELIMITER = ",";
-    @Nonnull
-    private static final String COOKIE_VALUE_DELIMITER = ";";
-
     @Nonnull
     private final ImmutableListMultimap<String, String> headers;
 
@@ -81,7 +73,7 @@ public class DefaultRequestHeaderContainer implements RequestHeaderContainer
                 continue;
             }
 
-            normalizedResult.putAll(normalize(headerName), normalize(headerValues));
+            normalizedResult.putAll(normalize(headerName), Iterables.filter(headerValues, Objects::nonNull));
         }
 
         return new DefaultRequestHeaderContainer(normalizedResult.build());
@@ -91,15 +83,6 @@ public class DefaultRequestHeaderContainer implements RequestHeaderContainer
     private static String normalize( @Nonnull final String headerName )
     {
         return headerName.trim().toLowerCase();
-    }
-
-    @Nonnull
-    private static Iterable<String> normalize( @Nonnull final Iterable<String> headerValues )
-    {
-        return StreamSupport
-            .stream(headerValues.spliterator(), false)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
     }
 
     @Nonnull
