@@ -42,6 +42,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - BTP Cloud Foundry Workflow API: `com.sap.cloud.sdk.services:scp-workflow-cf`
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
+  - Cloud Platform - Core SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc`
   - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
   - Cloud Platform - Core SAP Cloud Platform on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-scp-cf`
   - Cloud Platform - Security SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:security-dwc`
