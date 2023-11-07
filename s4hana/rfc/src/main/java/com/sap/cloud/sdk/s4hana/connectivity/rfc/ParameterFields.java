@@ -23,6 +23,9 @@ import lombok.ToString;
 /**
  * Create requests from fields.
  *
+ * @param <RequestT>
+ *            The generic type of the request.
+ *
  * @deprecated This module will be discontinued, along with its classes and methods.
  */
 @EqualsAndHashCode
