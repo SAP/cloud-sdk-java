@@ -81,11 +81,6 @@ public class DefaultRequestHeaderContainer implements RequestHeaderContainer
                 continue;
             }
 
-            // Note: Currently customers are unable to influence the way header values are split.
-            // This might become an issue in the future, for example, if the system doesn't obey to the HTTP specification (e.g. comma "," should not be used to split header values).
-            // To enable such edge-cases, we might consider adding a factory for the "RequestHeaderCollection" where customers would be able to apply their own splitting logic.
-            // Such a factory could also be used to inject/remove headers from the initial servlet request.
-
             normalizedResult.putAll(normalize(headerName), normalize(headerValues));
         }
 
