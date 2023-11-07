@@ -339,7 +339,7 @@ public abstract class VdmObject<ObjectT>
             final Object originalValue = changedOriginalField.getValue();
             final Object currentValue = currentFields.get(changedOriginalField.getKey());
 
-            if( (originalValue != null && !originalValue.equals(currentValue))
+            if( originalValue != null && !originalValue.equals(currentValue)
                 || originalValue == null && currentValue != null ) {
 
                 changedFields.put(changedOriginalField.getKey(), currentValue);
