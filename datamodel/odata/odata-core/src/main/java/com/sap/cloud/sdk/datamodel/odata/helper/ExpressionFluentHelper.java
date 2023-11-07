@@ -31,9 +31,12 @@ public class ExpressionFluentHelper<EntityT>
 
     /**
      * Creates a new helper based on an arbitrary, untyped filter expression.
-     *
+     * <p>
      * Instances of this class can be used to pass an unchecked {@link ValueBoolean} to fluent helpers. This approach
      * discards type safety and is generally discouraged.
+     *
+     * @param delegateExpression
+     *            The expression to delegate to.
      */
     public ExpressionFluentHelper( @Nonnull final ValueBoolean delegateExpression )
     {

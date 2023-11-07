@@ -27,12 +27,22 @@ public interface ValueDateTimeOffset
     @Nonnull
     ValueDateTimeOffset NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueDateTimeOffset} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueDateTimeOffset}.
+     * @return A {@link ValueDateTimeOffset} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueDateTimeOffset literal( @Nonnull final OffsetDateTime v )
     {
         return ( protocol, prefixes ) -> protocol.getDateTimeOffsetSerializer().apply(v);
     }
 
+    /**
+     * OData expression for date time offset values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueDateTimeOffset
     {

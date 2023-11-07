@@ -28,12 +28,22 @@ public interface ValueDate
     @Nonnull
     ValueDate NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueDate} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueDate}.
+     * @return A {@link ValueDate} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueDate literal( @Nonnull final LocalDate v )
     {
         return ( protocol, prefixes ) -> v.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+    /**
+     * OData expression for date values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueDate
     {

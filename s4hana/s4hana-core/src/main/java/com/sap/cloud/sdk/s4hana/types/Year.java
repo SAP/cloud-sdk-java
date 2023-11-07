@@ -20,6 +20,14 @@ public class Year extends Number implements Comparable<Year>
     private static final long serialVersionUID = 1853026793702193492L;
     private final Integer year;
 
+    /**
+     * Creates a new instance of {@link Year}.
+     *
+     * @param year
+     *            The year.
+     * @throws IllegalArgumentException
+     *             If the given year is less than 1900.
+     */
     public Year( final int year )
     {
         if( year < 1900 ) {
@@ -66,6 +74,17 @@ public class Year extends Number implements Comparable<Year>
         return year.compareTo(other.year);
     }
 
+    /**
+     * Creates a new instance of {@link Year} from the given string.
+     *
+     * @param str
+     *            The string to parse.
+     * @return A new instance of {@link Year}.
+     * @throws NumberFormatException
+     *             If the given string cannot be parsed.
+     * @throws IllegalArgumentException
+     *             If the given year is less than 1900.
+     */
     @Nonnull
     public static Year fromString( @Nonnull final String str )
         throws NumberFormatException

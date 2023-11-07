@@ -124,6 +124,15 @@ public class JCoFieldToResultReader
         }
     }
 
+    /**
+     * Creates a new result.
+     *
+     * @param field
+     *            The field to create the result from.
+     * @param resultElementFactory
+     *            The factory to create the result element from.
+     * @return The new result.
+     */
     @Nonnull
     public
         AbstractRemoteFunctionRequestResult.Result

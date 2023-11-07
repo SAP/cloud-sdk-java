@@ -306,6 +306,13 @@ public class JCoTransaction<RequestT extends AbstractRemoteFunctionRequest<Reque
         return requestResult;
     }
 
+    /**
+     * Returns the results of the return parameters of the given {@code result}.
+     *
+     * @param result
+     *            The result to get the return parameter results from.
+     * @return The results of the return parameters of the given {@code result}.
+     */
     protected List<AbstractRemoteFunctionRequestResult.Result> getReturnParameterResults( final RequestResultT result )
     {
         final Set<String> returnParameterNames = result.getRequest().getReturnParameterNames();

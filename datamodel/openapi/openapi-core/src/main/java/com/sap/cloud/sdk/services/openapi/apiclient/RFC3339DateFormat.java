@@ -15,6 +15,9 @@ import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
+/**
+ * Date format according to the <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC3339</a>.
+ */
 public class RFC3339DateFormat extends DateFormat
 {
     private static final long serialVersionUID = 1L;

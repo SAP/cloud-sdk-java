@@ -60,6 +60,13 @@ public final class ThreadContextAccessor
         }
     }
 
+    /**
+     * Returns the current {@link ThreadContext}.
+     *
+     * @return The current {@link ThreadContext}.
+     * @throws ThreadContextAccessException
+     *             If the current {@link ThreadContext} cannot be accessed.
+     */
     @Nonnull
     public static ThreadContext getCurrentContext()
         throws ThreadContextAccessException

@@ -265,6 +265,8 @@ public final class BatchResponse implements AutoCloseable
     }
 
     /**
+     * Closes the underlying HTTP response entity.
+     *
      * @since 4.15.0
      */
     @Beta
