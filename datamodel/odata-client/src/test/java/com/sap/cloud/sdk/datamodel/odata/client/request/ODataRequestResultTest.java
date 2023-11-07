@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,14 +86,18 @@ public class ODataRequestResultTest
     private static HttpResponse mockResponseWithHeaders(
         @Nonnull final Map.Entry<String, Collection<String>>... entries )
     {
-        final Header[] headers = Arrays.stream(entries).flatMap(entry -> entry.getValue().stream().map(value -> {
-            final Header header = mock(Header.class);
-            when(header.getName()).thenReturn(entry.getKey());
-            when(header.getValue()).thenReturn(value);
-            return header;
-        })).toArray(Header[]::new);
+        final Collection<Header> headers = new ArrayList<>();
+        for( final Map.Entry<String, Collection<String>> entry : entries ) {
+            for( final String value : entry.getValue() ) {
+                final Header header = mock(Header.class);
+                when(header.getName()).thenReturn(entry.getKey());
+                when(header.getValue()).thenReturn(value);
+
+                headers.add(header);
+            }
+        }
         final HttpResponse response = mock(HttpResponse.class);
-        when(response.getAllHeaders()).thenReturn(headers);
+        when(response.getAllHeaders()).thenReturn(headers.toArray(new Header[0]));
 
         return response;
     }
