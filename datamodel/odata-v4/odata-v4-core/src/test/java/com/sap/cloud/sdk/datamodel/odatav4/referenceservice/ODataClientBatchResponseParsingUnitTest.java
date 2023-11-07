@@ -137,11 +137,12 @@ public class ODataClientBatchResponseParsingUnitTest
         assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
         // Test assertion: response payload cannot be extracted, DanielBruehl is missing
-        final List<Person> resultRead1 = batchResponse.getResult(readByKey1).asList(Person.class);
-        assertThat(resultRead1).isNotNull().hasSize(1).doesNotContainNull();
+        assertThatThrownBy(() -> batchResponse.getResult(readByKey1))
+                .isExactlyInstanceOf(ODataResponseException.class)
+                .hasMessage("Unexpected OData response: 2 batch requests were executed, but the OData server returned 1 batch responses.");
         assertThatThrownBy(() -> batchResponse.getResult(readByKey2))
             .isExactlyInstanceOf(ODataResponseException.class)
-            .hasMessage("Illegal batch response size: 1. Lower than 2");
+            .hasMessage("Unexpected OData response: 2 batch requests were executed, but the OData server returned 1 batch responses.");
     }
 
     @Test
