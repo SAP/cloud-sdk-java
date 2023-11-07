@@ -96,7 +96,7 @@ class CodeModelClassGenerator
         logger.info("Processing OData service '" + serviceTitle + "' at " + odataEndpointPath);
 
         final EntitySetProcessor entitySetProcessor =
-            new EntitySetProcessor(service, odataEndpointPath, namespaceClassGenerator, serviceClassGenerator);
+            new EntitySetProcessor(service, namespaceClassGenerator, serviceClassGenerator);
         final NamingContext entityClassNamingContext =
             new NamingContext(NamingContext.NameEqualityStrategy.CASE_INSENSITIVE);
 

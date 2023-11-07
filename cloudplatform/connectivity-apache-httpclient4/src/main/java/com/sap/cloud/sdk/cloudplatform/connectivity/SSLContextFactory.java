@@ -49,14 +49,14 @@ class SSLContextFactory
     private final SSLContextBuilder sslContextBuilder;
 
     SSLContextFactory(
-        @Nullable SSLContextBuilder sslContextBuilder,
-        @Nullable PlatformSslContextProvider sslContextProvider )
+        @Nullable final SSLContextBuilder sslContextBuilder,
+        @Nullable final PlatformSslContextProvider sslContextProvider )
     {
         this.sslContextBuilder = sslContextBuilder != null ? sslContextBuilder : SSLContextBuilder.create();
         this.sslContextProvider = sslContextProvider != null ? sslContextProvider : new CfPlatformSslContextProvider();
     }
 
-    SSLContextFactory( @Nullable PlatformSslContextProvider sslContextProvider )
+    SSLContextFactory( @Nullable final PlatformSslContextProvider sslContextProvider )
     {
         this(null, sslContextProvider);
     }

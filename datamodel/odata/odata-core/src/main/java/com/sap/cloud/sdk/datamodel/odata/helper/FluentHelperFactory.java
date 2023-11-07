@@ -230,7 +230,7 @@ class FluentHelperFactory
             @Nullable
             protected JsonElement refineJsonResponse( @Nullable JsonElement jsonElement )
             {
-                if( (jsonElement instanceof JsonObject) && ((JsonObject) jsonElement).has(getFunctionName()) ) {
+                if( jsonElement instanceof JsonObject && ((JsonObject) jsonElement).has(getFunctionName()) ) {
                     jsonElement = ((JsonObject) jsonElement).get(getFunctionName());
                 }
                 return super.refineJsonResponse(jsonElement);

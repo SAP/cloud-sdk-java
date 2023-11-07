@@ -9,8 +9,6 @@ import javax.annotation.Nullable;
 
 import io.vavr.control.Option;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Base class for an OData entity.
