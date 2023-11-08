@@ -81,9 +81,7 @@ public class HeadersHandlingTest
                 "SimpleKey=SimpleValue",
                 "KeyWithoutAValue",
                 "KeyWithCommaValue=Value, which contains a comma",
-                "MultiValueKey1=Value 1, with comma",
-                "MultiValueKey2=Value 2",
-                "MultiValueKey3");
+                "MultiValueKey1=Value 1, with comma; MultiValueKey2=Value 2 ; MultiValueKey3;");
     }
 
     @Test
