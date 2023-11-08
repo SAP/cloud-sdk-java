@@ -16,12 +16,28 @@ public interface ValueEnum extends Expressions.OperandSingle, FilterableComparis
     @Nonnull
     ValueEnum NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueEnum} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueEnum}.
+     * @return A {@link ValueEnum} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueEnum literal( @Nonnull final String v )
     {
         return ( protocol, prefixes ) -> "'" + v + "'";
     }
 
+    /**
+     * Returns a {@link ValueEnum} from the given {@code enumType} and {@code v}.
+     *
+     * @param enumType
+     *            The enum type.
+     * @param v
+     *            The value to be transformed into a {@link ValueEnum}.
+     * @return A {@link ValueEnum} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueEnum literal( @Nonnull final String enumType, @Nonnull final String v )
     {

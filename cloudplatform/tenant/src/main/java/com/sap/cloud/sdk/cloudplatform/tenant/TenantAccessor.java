@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public final class TenantAccessor
 {
     @Nonnull
-    private static Try<TenantFacade> tenantFacade = FacadeLocator.getFacade(TenantFacade.class);
+    private static TenantFacade tenantFacade = loadFacadeOrDefault();
 
     /**
      * Global fallback {@link Tenant}. By default, no fallback is used, i.e., the fallback is {@code null}. A global
@@ -46,10 +46,10 @@ public final class TenantAccessor
      *
      * @return The {@link TenantFacade} instance, or {@code null}.
      */
-    @Nullable
+    @Nonnull
     public static TenantFacade getTenantFacade()
     {
-        return tenantFacade.getOrNull();
+        return tenantFacade;
     }
 
     /**
@@ -60,7 +60,7 @@ public final class TenantAccessor
     @Nonnull
     public static Try<TenantFacade> tryGetTenantFacade()
     {
-        return tenantFacade;
+        return Try.success(tenantFacade);
     }
 
     /**
@@ -72,10 +72,18 @@ public final class TenantAccessor
     public static void setTenantFacade( @Nullable final TenantFacade tenantFacade )
     {
         if( tenantFacade == null ) {
-            TenantAccessor.tenantFacade = FacadeLocator.getFacade(TenantFacade.class);
+            TenantAccessor.tenantFacade = loadFacadeOrDefault();
         } else {
-            TenantAccessor.tenantFacade = Try.success(tenantFacade);
+            TenantAccessor.tenantFacade = tenantFacade;
         }
+    }
+
+    private static TenantFacade loadFacadeOrDefault()
+    {
+        return FacadeLocator.getFacade(TenantFacade.class).getOrElseGet(e -> {
+            log.debug("No TenantFacade found via FacadeLocator. Falling back to DefaultTenantFacade.");
+            return new DefaultTenantFacade();
+        });
     }
 
     /**
@@ -124,7 +132,7 @@ public final class TenantAccessor
     @Nonnull
     public static Try<Tenant> tryGetCurrentTenant()
     {
-        final Try<Tenant> tenantTry = tenantFacade.flatMap(TenantFacade::tryGetCurrentTenant);
+        final Try<Tenant> tenantTry = tenantFacade.tryGetCurrentTenant();
         if( tenantTry.isSuccess() || fallbackTenant == null ) {
             return tenantTry;
         }

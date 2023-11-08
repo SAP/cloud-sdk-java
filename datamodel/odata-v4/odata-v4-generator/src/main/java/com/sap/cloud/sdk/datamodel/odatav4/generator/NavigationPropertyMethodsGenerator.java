@@ -107,7 +107,6 @@ class NavigationPropertyMethodsGenerator
             if( navigationPropertyField != null && associatedEntity != null ) {
                 addNavigationPropertyLogic(
                     navigationPropertyField,
-                    keyProperties,
                     mapType,
                     toMapOfNavigationPropertiesMethod,
                     fromMapBlock,
@@ -175,7 +174,6 @@ class NavigationPropertyMethodsGenerator
 
     private void addNavigationPropertyLogic(
         final JFieldVar navigationPropertyField,
-        final List<EntityPropertyModel> keyProperties,
         final JClass mapType,
         final JMethod toMapOfNavigationPropertiesMethod,
         final JBlock fromMapBlock,
@@ -185,8 +183,7 @@ class NavigationPropertyMethodsGenerator
         final boolean isOneToMany = navigationProperty.getMultiplicity() == Multiplicity.MANY;
         final JType returnType = navigationPropertyField.type();
 
-        final JFieldVar navPropertyConstantField =
-            createNavigationPropertyConstant(navigationProperty, associatedEntity, isOneToMany);
+        createNavigationPropertyConstant(navigationProperty, associatedEntity, isOneToMany);
 
         // add navPropertyConstantField class to EntitySelectable java docs
         //JavadocUtils.addFieldReference(selectableInterface, entityClass, navPropertyConstantField);

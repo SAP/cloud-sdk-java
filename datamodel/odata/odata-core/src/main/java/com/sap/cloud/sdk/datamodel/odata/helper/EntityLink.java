@@ -62,6 +62,12 @@ public class EntityLink<LinkT extends EntityLink<LinkT, EntityT, SubEntityT>, En
         }
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param toCopy
+     *            The link to copy.
+     */
     protected EntityLink( @Nonnull final EntityLink<LinkT, EntityT, SubEntityT> toCopy )
     {
         this(toCopy, null, null);
@@ -102,20 +108,26 @@ public class EntityLink<LinkT extends EntityLink<LinkT, EntityT, SubEntityT>, En
      * may not be not required, since getSelections() provide implicit expand definitions.
      * E.g. select(to_BusinessPartnerRole/*) => expand(to_BusinessPartner)
      */
+
+    /**
+     * Returns a list of expansions for this link.
+     *
+     * @return A list of expansions for this link.
+     */
     @Nonnull
     public List<String> getExpansions()
     {
         if( descendants.isEmpty() ) {
             return Lists.newArrayList(getFieldName());
-        } else {
-            final List<String> result = new ArrayList<>();
-            for( final EntityLink<?, ?, ?> descendant : descendants ) {
-                for( final String name : descendant.getExpansions() ) {
-                    result.add(getFieldName() + "/" + name);
-                }
-            }
-            return result;
         }
+
+        final List<String> result = new ArrayList<>();
+        for( final EntityLink<?, ?, ?> descendant : descendants ) {
+            for( final String name : descendant.getExpansions() ) {
+                result.add(getFieldName() + "/" + name);
+            }
+        }
+        return result;
     }
 
     @Nonnull
@@ -138,6 +150,13 @@ public class EntityLink<LinkT extends EntityLink<LinkT, EntityT, SubEntityT>, En
         return result;
     }
 
+    /**
+     * Returns the given {@code link} in a type-safe manner.
+     *
+     * @param link
+     *            The link to cast.
+     * @return The given {@code link} in a type-safe manner.
+     */
     @SuppressWarnings( "unchecked" )
     @Nonnull
     protected LinkT translateLinkType( final EntityLink<LinkT, EntityT, SubEntityT> link )
@@ -157,9 +176,9 @@ public class EntityLink<LinkT extends EntityLink<LinkT, EntityT, SubEntityT>, En
         @Nonnull final ExpressionFluentHelper<SubEntityT> filterExpression )
     {
         final ValueBoolean exp =
-            (( protocol, prefixes ) -> getFieldName()
+            ( protocol, prefixes ) -> getFieldName()
                 + "/"
-                + filterExpression.getDelegateExpressionWithoutOuterParentheses().getExpression(protocol, prefixes));
+                + filterExpression.getDelegateExpressionWithoutOuterParentheses().getExpression(protocol, prefixes);
         return new ExpressionFluentHelper<>(exp);
     }
 }

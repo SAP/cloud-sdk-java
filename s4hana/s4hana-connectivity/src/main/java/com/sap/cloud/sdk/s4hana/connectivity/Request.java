@@ -69,12 +69,17 @@ public abstract class Request<RequestT extends Request<RequestT, RequestResultT>
     }
 
     /**
+     * Returns the method name that originally constructed this ERP request.
+     *
      * @return The method name that originally constructed this ERP request. This information is used for debugging.
      */
     @Nonnull
     public abstract String getConstructedByMethod();
 
     /**
+     * Returns a String representation of the data being accessed by this request. If present, an audit log entry is
+     * written using the given data.
+     *
      * @return A optional String representation of the data being access by this request. If present, an audit log entry
      *         is written using the given data.
      */

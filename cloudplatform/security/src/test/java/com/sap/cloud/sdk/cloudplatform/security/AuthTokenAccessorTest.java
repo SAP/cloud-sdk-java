@@ -43,13 +43,13 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void defaultFacadeShouldBeNullImplementation()
+    public void defaultFacadeFallbackIsSuccess()
     {
-        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isSameAs(AuthTokenFacade.NULL);
+        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isInstanceOf(DefaultAuthTokenFacade.class);
     }
 
     @Test
-    public void noImplementationShouldUseNullImplementation()
+    public void noImplementationShouldUseDefaultImplementation()
     {
         final FacadeLocator.MockableInstance mockedFacadeLocator = mock(FacadeLocator.MockableInstance.class);
         when(mockedFacadeLocator.getFacades(AuthTokenFacade.class)).thenReturn(Collections.emptyList());
@@ -57,7 +57,7 @@ public class AuthTokenAccessorTest
 
         AuthTokenAccessor.setAuthTokenFacade(null);
 
-        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isSameAs(AuthTokenFacade.NULL);
+        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isInstanceOf(DefaultAuthTokenFacade.class);
 
     }
 

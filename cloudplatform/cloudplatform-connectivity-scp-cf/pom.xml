@@ -72,14 +72,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-scp-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>security-scp-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>tenant</artifactId>
 		</dependency>
 		<dependency>
@@ -175,22 +167,12 @@
 		<!-- scope "test" -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-dwc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>servlet</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.testutil</groupId>
 			<artifactId>testutil-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>tenant-scp-cf</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -248,11 +230,12 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:security-scp-cf</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
 						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
+						<!-- needed for exception classes (i.e. NoServiceBindingException) -->
+						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>

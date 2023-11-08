@@ -130,6 +130,8 @@ public class DefaultBatchResponseResult implements BatchResponse
     }
 
     /**
+     * Closes the underlying HTTP response entity.
+     *
      * @since 4.15.0
      */
     @Beta

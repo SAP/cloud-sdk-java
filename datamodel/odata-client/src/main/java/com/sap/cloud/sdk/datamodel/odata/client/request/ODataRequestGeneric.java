@@ -162,6 +162,20 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     }
 
     /**
+     * Replace a header with multiple values in the OData HTTP request.
+     *
+     * @param key
+     *            The header name.
+     * @param values
+     *            The header values.
+     * @since 4.27.0
+     */
+    public void setHeader( @Nonnull final String key, @Nonnull final Collection<String> values )
+    {
+        headers.put(key, new ArrayList<>(values));
+    }
+
+    /**
      * Add a header to the OData HTTP request.
      *
      * @param key

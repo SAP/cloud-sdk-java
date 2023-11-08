@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,11 +13,7 @@ import java.util.TreeMap;
 import javax.annotation.Nonnull;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
-
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 /**
  * Generic type of an OData request result.
@@ -73,35 +70,18 @@ public interface ODataRequestResult
     default Map<String, Iterable<String>> getAllHeaderValues()
     {
         final Header[] allHeaders = getHttpResponse().getAllHeaders();
-        final Multimap<String, String> result =
-            Multimaps.newListMultimap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER), ArrayList::new);
+        final Map<String, Collection<String>> result = new TreeMap<>(String::compareToIgnoreCase);
 
         for( final Header header : allHeaders ) {
             final String headerName = header.getName();
+            final String headerValue = header.getValue();
 
-            if( headerName.equalsIgnoreCase("Set-Cookie") ) {
-                /*
-                handle the "Set-Cookie" special case, where multiple values of the same header field are not separated
-                by a comma (",") but rather by semicolon (";").
-                From the RFC 7230 - Section 3.2.2 Field Order
-                (https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2):
-                "Note: In practice, the "Set-Cookie" header field ([RFC6265]) often
-                 appears multiple times in a response message and does not use the
-                 list syntax, violating the above requirements on multiple header
-                 fields with the same name.  Since it cannot be combined into a
-                 single field-value, recipients ought to handle "Set-Cookie" as a
-                 special case while processing header fields.  (See Appendix A.2.3
-                 of [Kri2001] for details.)"
-                 */
-                for( final String element : header.getValue().split(";") ) {
-                    result.put(headerName, element.trim());
-                }
-            } else {
-                for( final HeaderElement element : header.getElements() ) {
-                    result.put(headerName, element.toString());
-                }
+            if( headerValue == null ) {
+                continue;
             }
+
+            result.computeIfAbsent(headerName, key -> new ArrayList<>()).add(headerValue);
         }
-        return Collections.unmodifiableMap(result.asMap());
+        return Collections.unmodifiableMap(result);
     }
 }

@@ -57,21 +57,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>cloudplatform-core-scp-cf</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>cloudplatform-core-dwc</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>cloudplatform-core-dwc-cf</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 				<artifactId>caching</artifactId>
 				<version>${sdk.version}</version>
 			</dependency>
@@ -122,16 +107,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>security-scp-cf</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>security-dwc</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 				<artifactId>servlet</artifactId>
 				<version>${sdk.version}</version>
 			</dependency>
@@ -143,16 +118,6 @@
 			<dependency>
 				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 				<artifactId>tenant</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>tenant-scp-cf</artifactId>
-				<version>${sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-				<artifactId>tenant-dwc</artifactId>
 				<version>${sdk.version}</version>
 			</dependency>
 			<dependency>

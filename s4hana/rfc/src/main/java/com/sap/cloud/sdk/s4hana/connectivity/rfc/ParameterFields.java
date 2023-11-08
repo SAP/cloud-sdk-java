@@ -23,6 +23,9 @@ import lombok.ToString;
 /**
  * Create requests from fields.
  *
+ * @param <RequestT>
+ *            The generic type of the request.
+ *
  * @deprecated This module will be discontinued, along with its classes and methods.
  */
 @EqualsAndHashCode
@@ -37,11 +40,21 @@ public class ParameterFields<RequestT>
     @Nonnull
     private final List<Value<?>> valueList;
 
+    /**
+     * Returns the number of fields.
+     *
+     * @return The number of fields.
+     */
     public int size()
     {
         return valueList.size();
     }
 
+    /**
+     * Returns whether the fields are empty.
+     *
+     * @return Whether the fields are empty.
+     */
     public boolean isEmpty()
     {
         return valueList.isEmpty();
@@ -54,6 +67,19 @@ public class ParameterFields<RequestT>
         return this;
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     * @param <T>
+     *            The generic value type.
+     */
     @Nonnull
     public <
         T extends com.sap.cloud.sdk.s4hana.serialization.ErpType<T>>
@@ -63,6 +89,21 @@ public class ParameterFields<RequestT>
         return field(Value.ofField(name, value, null));
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, {@code value}, and {@code typeConverter}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @param typeConverter
+     *            The converter to convert the value to an ERP type.
+     * @return The ParameterFields to allow for fluent formulation.
+     * @param <T>
+     *            The generic value type.
+     */
     @Nonnull
     public <T> ParameterFields<RequestT> field(
         @Nonnull final String name,
@@ -73,6 +114,17 @@ public class ParameterFields<RequestT>
         return field(Value.ofField(name, value, typeConverter));
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -81,6 +133,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.BooleanConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -89,6 +152,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.ByteConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -97,6 +171,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.CharacterConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -105,6 +190,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, null);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -113,6 +209,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.ShortConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -121,6 +228,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.IntegerConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -129,6 +247,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.LongConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -137,6 +266,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.FloatConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -145,6 +285,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.DoubleConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -153,6 +304,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.BigIntegerConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -161,6 +323,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.BigDecimalConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public ParameterFields<RequestT> field(
         @Nonnull final String name,
@@ -170,6 +343,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.YearConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -178,6 +362,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.LocalDateConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -186,6 +381,17 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.LocalTimeConverter.INSTANCE);
     }
 
+    /**
+     * Adds a field with the given {@code name}, {@code dataType}, and {@code value}.
+     *
+     * @param name
+     *            The field name.
+     * @param dataType
+     *            The data type of the field.
+     * @param value
+     *            The value of the field.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public
         ParameterFields<RequestT>
@@ -194,6 +400,15 @@ public class ParameterFields<RequestT>
         return field(name, dataType, value, com.sap.cloud.sdk.s4hana.serialization.LocaleConverter.INSTANCE);
     }
 
+    /**
+     * Adds the given fields.
+     *
+     * @param other
+     *            The first field to add.
+     * @param others
+     *            The other fields to add.
+     * @return The ParameterFields to allow for fluent formulation.
+     */
     @Nonnull
     public ParameterFields<RequestT> fields( @Nonnull final Fields other, @Nonnull final Fields... others )
     {
@@ -246,6 +461,11 @@ public class ParameterFields<RequestT>
         return new ParameterFields<>(this, innerFields);
     }
 
+    /**
+     * Ends the fluent parameter building by returning the request.
+     *
+     * @return The request.
+     */
     @Nonnull
     public RequestT end()
     {
