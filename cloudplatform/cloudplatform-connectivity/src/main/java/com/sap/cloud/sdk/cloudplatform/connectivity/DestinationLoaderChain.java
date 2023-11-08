@@ -82,13 +82,13 @@ public class DestinationLoaderChain implements DestinationLoader
 
         for( final DestinationLoader loader : loaders ) {
             final String msg = "Delegating destination lookup for destination {} to the destination loader {}.";
-            log.debug(msg, destinationName, loader.getClass().getSimpleName());
+            log.debug(msg, destinationName, loader.getClass());
 
             final Try<Destination> result = loader.tryGetDestination(destinationName, options);
 
             if( result.isSuccess() ) {
                 final String msg1 = "Destination loader {} successfully loaded destination {}.";
-                log.debug(msg1, loader.getClass().getSimpleName(), destinationName);
+                log.debug(msg1, loader.getClass(), destinationName);
 
                 return result;
             }
@@ -96,11 +96,11 @@ public class DestinationLoaderChain implements DestinationLoader
 
             if( !hasCauseAssignableFrom(cause, DestinationNotFoundException.class) ) {
                 final String msg1 = "Destination loader {} returned an exception when loading destination {}:";
-                log.debug(msg1, loader.getClass().getSimpleName(), destinationName, cause);
+                log.debug(msg1, loader.getClass(), destinationName, cause);
                 return result;
             }
             final String msg1 = "No destination with name '{}' was found in destination loader {}.";
-            log.debug(msg1, destinationName, loader.getClass().getSimpleName());
+            log.debug(msg1, destinationName, loader.getClass());
 
             suppressedList.add(cause);
         }
