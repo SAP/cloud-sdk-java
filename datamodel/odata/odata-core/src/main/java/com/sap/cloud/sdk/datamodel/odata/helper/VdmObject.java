@@ -53,6 +53,8 @@ public abstract class VdmObject<ObjectT>
     protected final transient Map<String, Object> changedOriginalFields = new HashMap<>();
 
     /**
+     * Returns the names of all custom fields of this object.
+     *
      * @return The names of the custom fields of this object.
      */
     @Nonnull
@@ -62,7 +64,9 @@ public abstract class VdmObject<ObjectT>
     }
 
     /**
-     * @return All of the names & values of custom fields as a map.
+     * Returns all custom field names and values of this object.
+     *
+     * @return All names & values of custom fields as a map.
      */
     @JsonAnyGetter
     @Nonnull
@@ -199,12 +203,16 @@ public abstract class VdmObject<ObjectT>
     }
 
     /**
+     * Returns the class of this object.
+     *
      * @return The class of this object.
      */
     @Nonnull
     public abstract Class<ObjectT> getType();
 
     /**
+     * Returns the compound key of this object.
+     *
      * @return The compound key of this object.
      */
     @Nonnull
@@ -213,6 +221,15 @@ public abstract class VdmObject<ObjectT>
         return new HashMap<>();
     }
 
+    /**
+     * Sets the values of all custom fields contained in the given {@code values}.
+     * <p>
+     * Afterwards, marks all fields as unchanged.
+     * </p>
+     *
+     * @param values
+     *            The map of custom fields to set.
+     */
     protected void fromMap( final Map<String, Object> values )
     {
         for( final Map.Entry<String, Object> entry : values.entrySet() ) {
@@ -222,42 +239,77 @@ public abstract class VdmObject<ObjectT>
         resetChangedFields();
     }
 
+    /**
+     * Returns a map of all custom fields contained in this object.
+     *
+     * @return A map of all custom fields contained in this object.
+     */
     @Nonnull
     protected Map<String, Object> toMapOfCustomFields()
     {
         return Maps.newHashMap(getCustomFields());
     }
 
+    /**
+     * Returns a set of all custom field names contained in this object.
+     *
+     * @return A set of all custom field names contained in this object.
+     */
     @Nonnull
     protected Set<String> getSetOfCustomFields()
     {
         return Sets.newHashSet(getCustomFields().keySet());
     }
 
+    /**
+     * Returns a map of all fields contained in this object.
+     *
+     * @return A map of all fields contained in this object.
+     */
     @Nonnull
     protected Map<String, Object> toMapOfFields()
     {
         return new HashMap<>();
     }
 
+    /**
+     * Returns a set of all field names contained in this object.
+     *
+     * @return A set of all field names contained in this object.
+     */
     @Nonnull
     protected Set<String> getSetOfFields()
     {
         return Sets.newHashSet(toMapOfFields().keySet());
     }
 
+    /**
+     * Returns a map of all navigation properties contained in this object.
+     *
+     * @return A map of all navigation properties contained in this object.
+     */
     @Nonnull
     protected Map<String, Object> toMapOfNavigationProperties()
     {
         return new HashMap<>();
     }
 
+    /**
+     * Returns a set of all navigation property names contained in this object.
+     *
+     * @return A set of all navigation property names contained in this object.
+     */
     @Nonnull
     protected Set<String> getSetOfNavigationProperties()
     {
         return Sets.newHashSet(toMapOfNavigationProperties().keySet());
     }
 
+    /**
+     * Returns a map of all fields, navigation properties, and custom fields contained in this object.
+     *
+     * @return A map of all fields, navigation properties, and custom fields contained in this object.
+     */
     @Nonnull
     protected Map<String, Object> toMap()
     {

@@ -187,23 +187,31 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     }
 
     /**
+     * Returns the class of the string-based ERP type.
+     *
      * @return The class of the string-based ERP type.
      */
     @Nonnull
     public abstract Class<T> getType();
 
     /**
+     * Returns the maximum length of the string-based ERP type.
+     *
      * @return The maximum length of the string-based ERP type.
      */
     public abstract int getMaxLength();
 
     /**
+     * Returns the strategy of how the type should handle fill characters.
+     *
      * @return The strategy of how the type should handle fill characters.
      */
     @Nonnull
     public abstract FillCharStrategy getFillCharStrategy();
 
     /**
+     * Returns the character that is used to add or strip fill characters.
+     *
      * @return The character that is used to add or strip fill characters.
      */
     public char getFillChar()
@@ -212,6 +220,8 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     }
 
     /**
+     * Returns whether this string-based ERP type is empty.
+     *
      * @return {@code true} if the contained string value is empty, {@code false} otherwise.
      */
     public final boolean isEmpty()
@@ -220,6 +230,8 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     }
 
     /**
+     * Returns whether this instance represents the default value.
+     *
      * @return {@code true} if this instance represents the default {@link SapClient#DEFAULT}, {@code false} otherwise.
      */
     public final boolean isDefault()

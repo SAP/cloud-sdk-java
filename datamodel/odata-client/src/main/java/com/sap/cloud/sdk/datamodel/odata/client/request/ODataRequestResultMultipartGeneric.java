@@ -68,6 +68,11 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
     }
 
     /**
+     * Gets the {@link ODataRequestResultGeneric} for the given {@code request}.
+     *
+     * @param request
+     *            The request for which the result should be returned.
+     * @return The result for the given {@code request}.
      * @throws ODataResponseException
      *             When the OData batch response cannot be parsed or HTTP response is not healthy.
      * @throws IllegalArgumentException

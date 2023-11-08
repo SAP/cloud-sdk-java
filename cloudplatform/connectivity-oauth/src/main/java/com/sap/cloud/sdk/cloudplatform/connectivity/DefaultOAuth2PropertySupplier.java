@@ -160,6 +160,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
      *            The type of the entry to obtain.
      * @param path
      *            The path to the entry to obtain.
+     * @return The entry from the credentials block of the service binding.
      * @throws DestinationAccessException
      *             If the property was not found or could not be converted to the requested type.
      * @see #getCredential(Class, String...) for a variant that doesn't throw
@@ -183,6 +184,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
      *            The type of the entry to obtain.
      * @param path
      *            The path to the entry to obtain.
+     * @return The entry from the credentials block of the service binding.
      * @see #getCredentialOrThrow(Class, String...)
      */
     @Nonnull
@@ -201,6 +203,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
      *            The type of the entry to obtain.
      * @param path
      *            The path to the entry to obtain.
+     * @return The oauth property from the credentials block of the service binding.
      * @throws DestinationAccessException
      *             If the property was not found or could not be converted to the requested type.
      * @see #getOAuthCredential(Class, String...) (Class, String...) for a variant that doesn't throw
@@ -228,6 +231,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
      *            The type of the entry to obtain.
      * @param path
      *            The path to the entry to obtain.
+     * @return The oauth property from the credentials block of the service binding.
      * @see #getOAuthCredential(Class, String...)
      */
     @Nonnull

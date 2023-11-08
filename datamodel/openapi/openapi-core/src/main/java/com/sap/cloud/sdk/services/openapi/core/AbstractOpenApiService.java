@@ -33,6 +33,13 @@ public abstract class AbstractOpenApiService implements OpenApiService
         apiClient = createApiClientFromDestination(destination);
     }
 
+    /**
+     * Constructor for the {@link AbstractOpenApiService}.
+     *
+     * @param apiClient
+     *            The {@link ApiClient} that should be used to perform HTTP requests against this
+     *            {@link AbstractOpenApiService}.
+     */
     protected AbstractOpenApiService( @Nonnull final ApiClient apiClient )
     {
         this.apiClient = apiClient;

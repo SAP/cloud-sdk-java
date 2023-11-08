@@ -24,6 +24,12 @@ import lombok.EqualsAndHashCode;
 @Deprecated
 public class SoapGsonResultElementFactory extends GsonResultElementFactory
 {
+    /**
+     * Creates a new instance of {@code SoapGsonResultElementFactory}.
+     *
+     * @param gsonBuilder
+     *            The {@code GsonBuilder} to be used for creating the {@code ResultElement}.
+     */
     public SoapGsonResultElementFactory( @Nonnull final GsonBuilder gsonBuilder )
     {
         super(gsonBuilder);

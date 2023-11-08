@@ -285,6 +285,11 @@ public class DefaultCollectedResultCollection implements CollectedResultCollecti
         return collectSetFromObject(new BigDecimalExtractor());
     }
 
+    /**
+     * Returns an iterator over the elements of this collection.
+     *
+     * @return An iterator over the elements of this collection.
+     */
     @Nonnull
     public Iterator<ResultElement> iterator()
     {

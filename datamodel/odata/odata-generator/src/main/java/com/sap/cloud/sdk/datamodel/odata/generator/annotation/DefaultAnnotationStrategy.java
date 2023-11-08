@@ -94,7 +94,6 @@ public class DefaultAnnotationStrategy implements AnnotationStrategy
      * <li>Lombok {@link Data}</li>
      * <li>Lombok {@link ToString} with parameters {@code doNotUseGetters=true} and {@code callSuper=true}</li>
      * <li>Lombok {@link EqualsAndHashCode} with parameters {@code doNotUseGetters=true} and {@code callSuper=true}</li>
-     * </li>
      * <li>Gson {@link JsonAdapter} with default parameter set to {@code ODataVdmEntityAdapterFactory.class}, for
      * deserializing OData responses.</li>
      * </ul>
@@ -267,7 +266,6 @@ public class DefaultAnnotationStrategy implements AnnotationStrategy
      * <li>Lombok {@link Data}</li>
      * <li>Lombok {@link ToString} with parameters {@code doNotUseGetters=true} and {@code callSuper=true}</li>
      * <li>Lombok {@link EqualsAndHashCode} with parameters {@code doNotUseGetters=true} and {@code callSuper=true}</li>
-     * </li>
      * <li>Gson {@link JsonAdapter} with default parameter set to {@code ODataVdmEntityAdapterFactory.class}, for
      * deserializing OData responses.</li>
      * </ul>

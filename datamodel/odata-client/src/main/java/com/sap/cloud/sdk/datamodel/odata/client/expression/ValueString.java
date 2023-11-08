@@ -25,6 +25,13 @@ public interface ValueString
     @Nonnull
     ValueString NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueString} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueString}.
+     * @return A {@link ValueString} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueString literal( @Nonnull final String v )
     {
@@ -32,6 +39,9 @@ public interface ValueString
         return ( protocol, prefixes ) -> "'" + escapedValue + "'";
     }
 
+    /**
+     * OData expression on string values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueString
     {

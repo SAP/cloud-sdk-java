@@ -27,12 +27,22 @@ public interface ValueDateTime
     @Nonnull
     ValueDateTime NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueDateTime} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueDateTime}.
+     * @return A {@link ValueDateTime} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueDateTime literal( @Nonnull final LocalDateTime v )
     {
         return ( protocol, prefixes ) -> protocol.getDateTimeSerializer().apply(v);
     }
 
+    /**
+     * OData expression for date time values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueDateTime
     {

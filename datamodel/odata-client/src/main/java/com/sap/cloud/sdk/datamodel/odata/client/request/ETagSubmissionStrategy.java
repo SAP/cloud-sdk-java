@@ -28,6 +28,13 @@ public enum ETagSubmissionStrategy
      */
     SUBMIT_ANY_MATCH_ETAG;
 
+    /**
+     * Returns the value of the IF-MATCH header to be sent based on the given {@code maybeVersionIdentifier}.
+     *
+     * @param maybeVersionIdentifier
+     *            The version identifier to be sent in the IF-MATCH header.
+     * @return The value of the IF-MATCH header to be sent, or {@code null} if no header should be sent.
+     */
     @Nullable
     public String getHeaderFromVersionIdentifier( @Nonnull final Option<String> maybeVersionIdentifier )
     {
