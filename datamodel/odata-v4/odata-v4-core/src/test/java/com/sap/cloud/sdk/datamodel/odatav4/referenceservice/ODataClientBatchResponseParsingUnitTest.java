@@ -121,12 +121,17 @@ public class ODataClientBatchResponseParsingUnitTest
         final String responseBody = readResourceFileCrlf("BatchOnlyReadsMissingResponse.txt");
 
         // Prepare test objects
-        final ODataEntityKey entityKey1 = new ODataEntityKey(V4).addKeyProperty("key", "klauskinski");
+        final ODataEntityKey entityKey1 = new ODataEntityKey(V4).addKeyProperty("key", "one");
         final ODataRequestReadByKey readByKey1 = new ODataRequestReadByKey("/", "People", entityKey1, "", V4);
-        final ODataEntityKey entityKey2 = new ODataEntityKey(V4).addKeyProperty("key", "DanielBruehl");
+        final ODataEntityKey entityKey2 = new ODataEntityKey(V4).addKeyProperty("key", "two");
         final ODataRequestReadByKey readByKey2 = new ODataRequestReadByKey("/", "People", entityKey2, "", V4);
+        final ODataEntityKey entityKey3 = new ODataEntityKey(V4).addKeyProperty("key", "three");
+        final ODataRequestReadByKey readByKey3 = new ODataRequestReadByKey("/", "People", entityKey3, "", V4);
         final ODataRequestBatch batchRequest =
-            new ODataRequestBatch("/", V4, uuidProvider).addReadByKey(readByKey1).addReadByKey(readByKey2);
+            new ODataRequestBatch("/", V4, uuidProvider)
+                .addReadByKey(readByKey1)
+                .addReadByKey(readByKey2)
+                .addReadByKey(readByKey3);
 
         final HttpClient httpClient = MockedHttpClient.of(requestBody, responseBody);
         final ODataRequestResultMultipartGeneric batchResponse = batchRequest.execute(httpClient);
@@ -136,15 +141,18 @@ public class ODataClientBatchResponseParsingUnitTest
         assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
         // Test assertion:
-        // response payload is 404
+        // response payload1 is 200
+        assertThat(batchResponse.getResult(readByKey1)).isNotNull();
+
+        // response payload2 is 404
         assertThatExceptionOfType(ODataServiceErrorException.class)
-            .isThrownBy(() -> batchResponse.getResult(readByKey1))
-            .satisfies(e -> assertThat(e.getHttpCode()).isEqualTo(404));
-        // response payload cannot be extracted, response is missing
-        assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> batchResponse.getResult(readByKey2))
-            .withMessage(
-                "Illegal OData response: at least 2 batch requests were executed, but the OData server returned only 1 batch responses.");
+            .satisfies(e -> assertThat(e.getHttpCode()).isEqualTo(404));
+
+        // response payload3 cannot be extracted, response is missing
+        assertThatExceptionOfType(ODataResponseException.class)
+            .isThrownBy(() -> batchResponse.getResult(readByKey3))
+            .withMessage("Unable to extract batch response item at position 3. The response contains only 2 items.");
     }
 
     @Test
