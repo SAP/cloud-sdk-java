@@ -24,7 +24,7 @@ public class DestinationOptionsTest
         final DestinationOptions options1 = DestinationOptions.builder().parameterIfAbsent("foo", "bar").build();
         final DestinationOptions options2 = DestinationOptions.builder(options1).parameterIfAbsent("foo", 42).build();
         final DestinationOptions options3 =
-                DestinationOptions.builder().parameter("foo", "bar").parameterIfAbsent("foo", 42).build();
+            DestinationOptions.builder().parameter("foo", "bar").parameterIfAbsent("foo", 42).build();
 
         final DestinationOptions optionsX = DestinationOptions.builder().build();
 
