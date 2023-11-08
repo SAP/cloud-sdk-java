@@ -25,7 +25,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
@@ -72,9 +71,6 @@ public class ScpCfDestinationLoader implements DestinationLoader
         CircuitBreakerConfiguration.of().waitDuration(Duration.ofMinutes(1));
 
     private static final Gson GSON = new Gson();
-    private static final TypeToken<List<Map<String, String>>> TYPE_TOKEN = new TypeToken<List<Map<String, String>>>()
-    {
-    };
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
@@ -108,21 +104,6 @@ public class ScpCfDestinationLoader implements DestinationLoader
                 DEFAULT_TIME_LIMITER,
                 DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
             createResilienceConfiguration("allDestResilience", DEFAULT_TIME_LIMITER, DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
-    }
-
-    /**
-     * Create instance with a specific TimeLimiter timeout {@link Duration}.
-     *
-     * @param timeLimiterTimeout
-     *            The maximum {@link Duration} a request may take before the TimeLimiter interrupts the request.
-     * @deprecated Please use {@link Builder#withTimeLimiterConfiguration} to supply a time limiter configuration.
-     */
-    @Deprecated
-    public ScpCfDestinationLoader( @Nonnull final Duration timeLimiterTimeout )
-    {
-        this(new ScpCfDestinationServiceAdapter());
-        singleDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
-        allDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
     }
 
     @Nonnull

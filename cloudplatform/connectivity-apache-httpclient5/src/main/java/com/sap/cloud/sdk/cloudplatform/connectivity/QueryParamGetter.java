@@ -27,7 +27,6 @@ class QueryParamGetter
 
     private static final char[] SAFE_CHARS_IN_QUERY_VALUES = { '_', '*', '-', ':', ',', '/', '\'', '(', ')', '.', '|' };
 
-    @SuppressWarnings( "UnstableApiUsage" )
     private static final Escaper URL_QUERY_ESCAPER = new PercentEscaper(new String(SAFE_CHARS_IN_QUERY_VALUES), false);
 
     /**
@@ -53,11 +52,9 @@ class QueryParamGetter
                             + URL_QUERY_ESCAPER.escape(propertyValue.get());
                     queryParams.add(queryParam);
                 } else {
-                    log
-                        .debug(
-                            "Cannot find value for property \""
-                                + propertyKey
-                                + "\" defined in destination. Skipping the query parameter.");
+                    final String msg =
+                        "Cannot find value for property \"{}\" defined in destination. Skipping the query parameter.";
+                    log.debug(msg, propertyKey);
                 }
             }
         }

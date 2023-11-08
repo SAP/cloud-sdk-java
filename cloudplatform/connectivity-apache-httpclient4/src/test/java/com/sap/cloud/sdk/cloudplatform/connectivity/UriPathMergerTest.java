@@ -82,6 +82,15 @@ public class UriPathMergerTest
     }
 
     @Test
+    public void testMergeWithIPv6Request()
+    {
+        testMerge(
+            "http://[2001:db8:3c4d:15::1a2f:1a2b]:60403/foo/",
+            "some-xml.xml",
+            URI.create("http://[2001:db8:3c4d:15::1a2f:1a2b]:60403/foo/some-xml.xml"));
+    }
+
+    @Test
     public void testMergeWithODataRequestPath()
     {
         testMerge(

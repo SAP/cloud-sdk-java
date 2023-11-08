@@ -95,6 +95,15 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
+    public void testCustomServiceCanBeRegisteredLegacy()
+    {
+        OAuth2ServiceBindingDestinationLoader
+            .registerPropertySupplier(TEST_SERVICE, DefaultOAuth2PropertySupplier::new);
+
+        assertThat(DEFAULT_SERVICE_RESOLVERS).anyMatch(f -> f.matches(OPTIONS_WITH_EMPTY_BINDING));
+    }
+
+    @Test
     public void testOptionsMatcher()
     {
         OAuth2ServiceBindingDestinationLoader
