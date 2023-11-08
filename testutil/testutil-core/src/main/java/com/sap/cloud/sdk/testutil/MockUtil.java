@@ -4,7 +4,6 @@
 
 package com.sap.cloud.sdk.testutil;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
