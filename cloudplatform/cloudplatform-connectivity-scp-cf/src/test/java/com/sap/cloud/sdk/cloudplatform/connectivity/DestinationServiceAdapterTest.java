@@ -62,7 +62,7 @@ import com.sap.cloud.security.test.JwtGenerator;
 
 import io.vavr.control.Try;
 
-public class ScpCfDestinationServiceAdapterTest
+public class DestinationServiceAdapterTest
 {
     private static final MockUtil mockutil = new MockUtil();
 
@@ -119,7 +119,7 @@ public class ScpCfDestinationServiceAdapterTest
     @Test
     public void testWithoutUserTokenExchange()
     {
-        final ScpCfDestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
         // test parameters
         final String servicePath = "/service/path";
@@ -161,7 +161,7 @@ public class ScpCfDestinationServiceAdapterTest
     @Test
     public void testWithUserTokenExchange()
     {
-        final ScpCfDestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
         // test parameters
         final String servicePath = "/service/path";
@@ -217,7 +217,7 @@ public class ScpCfDestinationServiceAdapterTest
     @Test
     public void getDestinationServiceProviderTenantShouldReturnProviderTenantFromServiceBinding()
     {
-        final ScpCfDestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
         final String providerTenantId = adapterToTest.getProviderTenantId();
         assertThat(providerTenantId).isEqualTo(PROVIDER_TENANT_ID);
     }
@@ -256,7 +256,7 @@ public class ScpCfDestinationServiceAdapterTest
         when(binding.getServiceIdentifier()).thenReturn(Optional.empty());
         mockServiceBindingAccessor(binding);
 
-        assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
+        assertThatThrownBy(DestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
         Mockito.verify(binding, times(1)).getServiceIdentifier();
     }
@@ -268,7 +268,7 @@ public class ScpCfDestinationServiceAdapterTest
         when(binding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
         mockServiceBindingAccessor(binding);
 
-        assertThat(ScpCfDestinationServiceAdapter.getDestinationServiceBinding()).isSameAs(binding);
+        assertThat(DestinationServiceAdapter.getDestinationServiceBinding()).isSameAs(binding);
         Mockito.verify(binding, times(1)).getServiceIdentifier();
     }
 
@@ -277,7 +277,7 @@ public class ScpCfDestinationServiceAdapterTest
     {
         mockServiceBindingAccessor();
 
-        assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
+        assertThatThrownBy(DestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(NoServiceBindingException.class);
     }
 
@@ -291,7 +291,7 @@ public class ScpCfDestinationServiceAdapterTest
 
         mockServiceBindingAccessor(firstBinding, secondBinding);
 
-        assertThatThrownBy(ScpCfDestinationServiceAdapter::getDestinationServiceBinding)
+        assertThatThrownBy(DestinationServiceAdapter::getDestinationServiceBinding)
             .isExactlyInstanceOf(MultipleServiceBindingsException.class);
     }
 
@@ -306,7 +306,7 @@ public class ScpCfDestinationServiceAdapterTest
                 .withCredentialsKey("credentials")
                 .build();
 
-        final ScpCfDestinationServiceAdapter adapterToTest = createSut(serviceBinding);
+        final DestinationServiceAdapter adapterToTest = createSut(serviceBinding);
         assertThatThrownBy(adapterToTest::getProviderTenantId)
             .isInstanceOf(DestinationAccessException.class)
             .hasMessage(
@@ -314,9 +314,9 @@ public class ScpCfDestinationServiceAdapterTest
                     + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
     }
 
-    private static ScpCfDestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
+    private static DestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
     {
-        return new ScpCfDestinationServiceAdapter(null, () -> {
+        return new DestinationServiceAdapter(null, () -> {
             if( serviceBindings.length == 0 ) {
                 throw new NoServiceBindingException();
             }

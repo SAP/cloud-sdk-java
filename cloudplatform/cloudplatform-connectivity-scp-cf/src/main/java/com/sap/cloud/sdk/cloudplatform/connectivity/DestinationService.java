@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 @SuppressWarnings( "PMD.TooManyStaticImports" )
-public class ScpCfDestinationLoader implements DestinationLoader
+public class DestinationService implements DestinationLoader
 {
     private static final String PATH_DEFAULT = "/destinations/";
 
@@ -78,7 +78,7 @@ public class ScpCfDestinationLoader implements DestinationLoader
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
-    private final ScpCfDestinationServiceAdapter adapter;
+    private final DestinationServiceAdapter adapter;
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
@@ -91,15 +91,15 @@ public class ScpCfDestinationLoader implements DestinationLoader
     /**
      * Create instance with all default settings
      */
-    public ScpCfDestinationLoader()
+    public DestinationService()
     {
-        this(new ScpCfDestinationServiceAdapter());
+        this(new DestinationServiceAdapter());
     }
 
     /**
      * Create instance with a specific adapter and default resilience
      */
-    ScpCfDestinationLoader( @Nonnull final ScpCfDestinationServiceAdapter adapter )
+    DestinationService( @Nonnull final DestinationServiceAdapter adapter )
     {
         this(
             adapter,
@@ -118,9 +118,9 @@ public class ScpCfDestinationLoader implements DestinationLoader
      * @deprecated Please use {@link Builder#withTimeLimiterConfiguration} to supply a time limiter configuration.
      */
     @Deprecated
-    public ScpCfDestinationLoader( @Nonnull final Duration timeLimiterTimeout )
+    public DestinationService( @Nonnull final Duration timeLimiterTimeout )
     {
-        this(new ScpCfDestinationServiceAdapter());
+        this(new DestinationServiceAdapter());
         singleDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
         allDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
     }
@@ -132,7 +132,7 @@ public class ScpCfDestinationLoader implements DestinationLoader
         @Nonnull final CircuitBreakerConfiguration circuitBreakerConfiguration )
     {
         return ResilienceConfiguration
-            .of(ScpCfDestinationLoader.class + identifier)
+            .of(DestinationService.class + identifier)
             .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
             .timeLimiterConfiguration(timeLimiterConfiguration)
             .circuitBreakerConfiguration(circuitBreakerConfiguration);
@@ -152,7 +152,7 @@ public class ScpCfDestinationLoader implements DestinationLoader
             DestinationNotFoundException
     {
         final String servicePath = PATH_DEFAULT + destName;
-        final Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever =
+        final Function<Strategy, DestinationServiceV1Response> destinationRetriever =
             strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
 
         final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
@@ -161,13 +161,13 @@ public class ScpCfDestinationLoader implements DestinationLoader
 
         final DestinationRetrieval retrieval = destinationRetrievalStrategyResolver.prepareSupplier(options);
 
-        return ScpCfDestinationFactory.fromDestinationServiceV1Response(retrieval.get(), retrieval.getOnBehalfOf());
+        return DestinationServiceFactory.fromDestinationServiceV1Response(retrieval.get(), retrieval.getOnBehalfOf());
     }
 
     @Nonnull
-    private ScpCfDestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
+    private DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
     {
-        final ScpCfDestinationServiceV1Response response =
+        final DestinationServiceV1Response response =
             deserializeDestinationResponse(
                 strategy.isForwardToken()
                     ? adapter.getConfigurationAsJsonWithUserToken(servicePath, strategy.getBehalf())
@@ -242,11 +242,11 @@ public class ScpCfDestinationLoader implements DestinationLoader
     }
 
     @Nonnull
-    private static ScpCfDestinationServiceV1Response deserializeDestinationResponse( @Nonnull final String json )
+    private static DestinationServiceV1Response deserializeDestinationResponse( @Nonnull final String json )
         throws DestinationAccessException
     {
         try {
-            return GSON.fromJson(json, ScpCfDestinationServiceV1Response.class);
+            return GSON.fromJson(json, DestinationServiceV1Response.class);
         }
         catch( final Exception e ) {
             log.debug("Failed to parse destination response payload: {}", json);
@@ -564,7 +564,7 @@ public class ScpCfDestinationLoader implements DestinationLoader
          * <p>
          * Enabling the <em>change detection</em> mode has the following implications: <br>
          * 1. Destinations will be cached for a longer period of time.<br>
-         * 2. The {@link ScpCfDestinationLoader.Cache} will regularly check for updates in the Destination service.<br>
+         * 2. The {@link DestinationService.Cache} will regularly check for updates in the Destination service.<br>
          * 3. Individual destinations will be re-fetched from the Destination service if <strong>either (A)</strong> an
          * authentication token is expired (same behavior as without the <em>change detection</em> mode) <strong>or
          * (B)</strong> the destination has been updated recently in the Destination service (e.g. via the BTP Cockpit),
@@ -722,7 +722,7 @@ public class ScpCfDestinationLoader implements DestinationLoader
         }
 
         private static Try<Destination> getOrComputeDestination(
-            @Nonnull final ScpCfDestinationLoader loader,
+            @Nonnull final DestinationService loader,
             @Nonnull final String destinationName,
             @Nonnull final DestinationOptions options,
             @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader )
@@ -840,12 +840,12 @@ public class ScpCfDestinationLoader implements DestinationLoader
          * @since 4.4.0
          */
         @Nonnull
-        public ScpCfDestinationLoader build()
+        public DestinationService build()
         {
             final TimeLimiterConfiguration timeLimiter =
                 timeLimiterConfiguration != null ? timeLimiterConfiguration : DEFAULT_TIME_LIMITER;
-            return new ScpCfDestinationLoader(
-                new ScpCfDestinationServiceAdapter(null, null, providerTenantId),
+            return new DestinationService(
+                new DestinationServiceAdapter(null, null, providerTenantId),
                 createResilienceConfiguration("singleDestResilience", timeLimiter, DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
                 createResilienceConfiguration("allDestResilience", timeLimiter, DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
         }

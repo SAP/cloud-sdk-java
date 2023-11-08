@@ -3,7 +3,7 @@
  */
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationAuthToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
 
 import java.util.ArrayList;
 import java.util.Collections;

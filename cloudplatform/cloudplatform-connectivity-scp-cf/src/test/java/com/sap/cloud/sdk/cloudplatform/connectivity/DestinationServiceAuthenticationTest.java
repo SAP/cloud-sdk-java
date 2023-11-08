@@ -32,7 +32,7 @@ import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.vavr.control.Try;
 
-public class ScpCfDestinationLoaderAuthenticationTest
+public class DestinationServiceAuthenticationTest
 {
     private static final String OAUTH_TOKEN =
         "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vczRzZGsuYXV0aGVudGljYXRpb24uc2FwLmhhbmEub25kZW1hbmQuY29tL3Rva2VuX2tleXMiLCJraWQiOiJrZXktaWQtMSIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNWJmMWFlOTBkMTI0ZTIyODcwM2FiMzBjM2E0NWJlZCIsImV4dF9hdHRyIjp7ImVuaGFuY2VyIjoiWFNVQUEiLCJ6ZG4iOiJzNHNkayIsInNlcnZpY2VpbnN0YW5jZWlkIjoiN2Q3NTMyNzQtM2ZkMC00ZTI4LThhNjUtYTgxYmZiMzcyZDI5In0sInhzLnVzZXIuYXR0cmlidXRlcyI6e30sImdyYW50ZWRfc2NvcGVzIjpbIm9wZW5pZCIsInVhYS51c2VyIl0sInhzLnN5c3RlbS5hdHRyaWJ1dGVzIjp7InhzLnJvbGVjb2xsZWN0aW9ucyI6WyJFbmQtdG8tRW5kIFRlc3RlciJdfSwiZ2l2ZW5fbmFtZSI6IkpvaG4iLCJmYW1pbHlfbmFtZSI6IkJ1cGFfTWFzdGVyX1NwZWNpYWxpIiwic3ViIjoiMjY4NGVhZWUtMzc0My00ODI0LWJjYmQtZjAxOTNmM2E5ODllIiwic2NvcGUiOlsib3BlbmlkIiwidWFhLnVzZXIiXSwiY2xpZW50X2lkIjoic2ItY2xvbmU3ZDc1MzI3NDNmZDA0ZTI4OGE2NWE4MWJmYjM3MmQyOSFiMjQ5OXxkZXN0aW5hdGlvbi14c2FwcG5hbWUhYjQzMyIsImNpZCI6InNiLWNsb25lN2Q3NTMyNzQzZmQwNGUyODhhNjVhODFiZmIzNzJkMjkhYjI0OTl8ZGVzdGluYXRpb24teHNhcHBuYW1lIWI0MzMiLCJhenAiOiJzYi1jbG9uZTdkNzUzMjc0M2ZkMDRlMjg4YTY1YTgxYmZiMzcyZDI5IWIyNDk5fGRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiNDMzIiwicmV2b2NhYmxlIjp0cnVlLCJncmFudF90eXBlIjoidXNlcl90b2tlbiIsInVzZXJfaWQiOiIyNjg0ZWFlZS0zNzQzLTQ4MjQtYmNiZC1mMDE5M2YzYTk4OWUiLCJvcmlnaW4iOiJtYS5hY2NvdW50czQwMC5vbmRlbWFuZC5jb20iLCJ1c2VyX25hbWUiOiJwMDAwMjI3IiwiZW1haWwiOiJidXBhX21hc3Rlcl9zcGVjaWFsaUBleGFtcGxlLmNvbSIsImF1dGhfdGltZSI6MTU2MjA3MzkyMCwicmV2X3NpZyI6IjVjMGRiYjdmIiwiaWF0IjoxNTYyMDczOTIwLCJleHAiOjE1NjIxMTcxMjAsImlzcyI6Imh0dHA6Ly9zNHNkay5sb2NhbGhvc3Q6ODA4MC91YWEvb2F1dGgvdG9rZW4iLCJ6aWQiOiJhODllYTkyNC1kOWMyLTRlYWItODRmYi0zZmZjYWFkZjVkMjQiLCJhdWQiOltdfQ.hXbWBNRILiXjQUx8QqYyj7jvnoUnhj379HI5ZguVc6Y1J1DXX0v-tL1OqEOpmaxvUP7F0SbHYN6Lgk6dL-9qgY-O_QpeHX7TEG8d3X6ajQGtUrsxk-ISYUNjQppcgaS0JccZd5vHQKWylm3zfTVAuiop6XopYR4JIpxFuXuR1SBgrLxUKB40eyEmhAr2D5CSgIwAlfZMmaEoc4eRtM7IPOyEEb0IjlmQSgpiYevwSfzcDE2uaxRV-BH7oM-VFlqecbil_I04zBqCNh3IN6gekUPL8Owt7IafW0s27fT1jtz9Njy6ixzOOqTaqoDe3vljN6v4jRCeTd3w32jgSpqt6A";
@@ -45,9 +45,9 @@ public class ScpCfDestinationLoaderAuthenticationTest
         DestinationOptions
             .builder()
             .augmentBuilder(
-                ScpCfDestinationOptionsAugmenter
+                DestinationServiceOptionsAugmenter
                     .augmenter()
-                    .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
+                    .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
             .build();
 
     private static final MockUtil mockUtil = new MockUtil();
@@ -59,7 +59,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @After
     public void resetDestinationCache()
     {
-        ScpCfDestinationLoader.Cache.reset();
+        DestinationService.Cache.reset();
     }
 
     @Before
@@ -90,7 +90,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
         mockUtil.clearTenants();
         mockUtil.clearPrincipals();
 
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payload =
             ImmutableMap
@@ -115,8 +115,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination dest =
-            new ScpCfDestinationLoader(destinationService).tryGetDestination(DESTINATION_NAME).get();
+        final Destination dest = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME).get();
 
         assertThat(dest.asHttp()).isInstanceOf(DefaultHttpDestination.class);
 
@@ -133,7 +132,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @Test
     public void testOAuthWithUserPropagation()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payloadBroken =
             ImmutableMap
@@ -221,7 +220,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .getConfigurationAsJson(SERVICE_PATH_DESTINATION, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
         final Destination dest =
-            new ScpCfDestinationLoader(destinationService)
+            new DestinationService(destinationService)
                 .tryGetDestination(DESTINATION_NAME, DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE)
                 .get();
 
@@ -232,11 +231,8 @@ public class ScpCfDestinationLoaderAuthenticationTest
         assertThat(dest.asHttp().getHeaders())
             .containsExactlyInAnyOrder(new Header("Authorization", "Bearer " + OAUTH_TOKEN));
 
-        final ScpCfDestinationServiceV1Response.DestinationAuthToken token =
-            (ScpCfDestinationServiceV1Response.DestinationAuthToken) dest
-                .get(DestinationProperty.AUTH_TOKENS)
-                .get()
-                .get(0);
+        final DestinationServiceV1Response.DestinationAuthToken token =
+            (DestinationServiceV1Response.DestinationAuthToken) dest.get(DestinationProperty.AUTH_TOKENS).get().get(0);
         assertThat(token.getExpiryTimestamp()).isNotNull();
 
         verify(destinationService, times(1))
@@ -249,7 +245,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @Test
     public void testOAuthWithProvidedSystemUser()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payloadSuccess =
             ImmutableMap
@@ -294,8 +290,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination dest =
-            new ScpCfDestinationLoader(destinationService).tryGetDestination(DESTINATION_NAME).get();
+        final Destination dest = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME).get();
 
         assertThat(dest.asHttp()).isInstanceOf(DefaultHttpDestination.class);
 
@@ -312,7 +307,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @Test
     public void testOAuth2JwtBearer()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final String oAuthToken = "testToken";
 
@@ -398,7 +393,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .getConfigurationAsJson(SERVICE_PATH_DESTINATION, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
         final Destination dest =
-            new ScpCfDestinationLoader(destinationService)
+            new DestinationService(destinationService)
                 .tryGetDestination(DESTINATION_NAME, DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE)
                 .get();
 
@@ -421,7 +416,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
         mockUtil.clearTenants();
         mockUtil.clearPrincipals();
 
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final String oAuthToken = "testToken";
 
         final Object payloadSuccess =
@@ -466,8 +461,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination dest =
-            new ScpCfDestinationLoader(destinationService).tryGetDestination(DESTINATION_NAME).get();
+        final Destination dest = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME).get();
 
         assertThat(dest.asHttp()).isInstanceOf(DefaultHttpDestination.class);
         assertThat(dest.asHttp().getAuthenticationType()).isEqualTo(AuthenticationType.OAUTH2_PASSWORD);
@@ -482,7 +476,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @Test
     public void testSAMLAssertion()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final String samlToken = "testToken";
 
         final Object payloadFailure =
@@ -559,7 +553,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .getConfigurationAsJson(SERVICE_PATH_DESTINATION, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
         final Destination dest =
-            new ScpCfDestinationLoader(destinationService)
+            new DestinationService(destinationService)
                 .tryGetDestination(DESTINATION_NAME, DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE)
                 .get();
 
@@ -584,7 +578,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     {
         final String assertionCookie = "MYSAPSSO2=SomeInterestingStringHere1234";
 
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payloadSuccess =
             ImmutableMap
@@ -625,8 +619,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination dest =
-            new ScpCfDestinationLoader(destinationService).tryGetDestination(DESTINATION_NAME).get();
+        final Destination dest = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME).get();
 
         assertThat(dest.asHttp()).isInstanceOf(DefaultHttpDestination.class);
 
@@ -640,7 +633,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     {
         final String assertionCookie = "MYSAPSSO2=SomeInterestingStringHere1234";
 
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payloadFailure =
             ImmutableMap
@@ -718,7 +711,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .getConfigurationAsJson(SERVICE_PATH_DESTINATION, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
         final Destination dest =
-            new ScpCfDestinationLoader(destinationService)
+            new DestinationService(destinationService)
                 .tryGetDestination(DESTINATION_NAME, DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE)
                 .get();
 
@@ -738,7 +731,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
     @Test
     public void testSAPAssertionSSOFailure()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
         final Object payloadFailure =
             ImmutableMap
@@ -765,7 +758,7 @@ public class ScpCfDestinationLoaderAuthenticationTest
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Try<Destination> des = new ScpCfDestinationLoader(destinationService).tryGetDestination(DESTINATION_NAME);
+        final Try<Destination> des = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME);
         assertThat(des).isNotNull();
         assertThat(des.getCause())
             .isExactlyInstanceOf(DestinationAccessException.class)

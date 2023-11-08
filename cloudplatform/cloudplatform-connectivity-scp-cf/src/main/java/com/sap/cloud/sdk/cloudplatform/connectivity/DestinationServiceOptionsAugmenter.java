@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @NoArgsConstructor
 @Slf4j
-public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugmenter
+public class DestinationServiceOptionsAugmenter implements DestinationOptionsAugmenter
 {
     static final String DESTINATION_RETRIEVAL_STRATEGY_KEY = "scp.cf.destinationRetrievalStrategy";
     static final String DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY = "scp.cf.destinationTokenExchangeStrategy";
@@ -25,14 +25,14 @@ public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugme
     private final Map<String, Object> parameters = new HashMap<>();
 
     /**
-     * Creates instances of {@link ScpCfDestinationOptionsAugmenter} in a builder-like style.
+     * Creates instances of {@link DestinationServiceOptionsAugmenter} in a builder-like style.
      *
      * @return A new augmenter instance.
      */
     @Nonnull
-    public static ScpCfDestinationOptionsAugmenter augmenter()
+    public static DestinationServiceOptionsAugmenter augmenter()
     {
-        return new ScpCfDestinationOptionsAugmenter();
+        return new DestinationServiceOptionsAugmenter();
     }
 
     /**
@@ -44,15 +44,14 @@ public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugme
      * @return The same augmenter that called this method.
      */
     @Nonnull
-    public ScpCfDestinationOptionsAugmenter retrievalStrategy(
-        @Nonnull final ScpCfDestinationRetrievalStrategy strategy )
+    public DestinationServiceOptionsAugmenter retrievalStrategy( @Nonnull final DestinationServiceStrategy strategy )
     {
         parameters.put(DESTINATION_RETRIEVAL_STRATEGY_KEY, strategy);
         return this;
     }
 
     /**
-     * Sets the {@link ScpCfDestinationTokenExchangeStrategy} to use when loading destinations. Not setting this value
+     * Sets the {@link DestinationTokenExchangeStrategy} to use when loading destinations. Not setting this value
      * results in the platform default behavior.
      *
      * @param strategy
@@ -60,8 +59,8 @@ public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugme
      * @return The same augmenter that called this method.
      */
     @Nonnull
-    public ScpCfDestinationOptionsAugmenter tokenExchangeStrategy(
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy strategy )
+    public DestinationServiceOptionsAugmenter tokenExchangeStrategy(
+        @Nonnull final DestinationTokenExchangeStrategy strategy )
     {
         parameters.put(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY, strategy);
         return this;
@@ -84,22 +83,21 @@ public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugme
      *         {@link io.vavr.control.Option.None}.
      */
     @Nonnull
-    public static Option<ScpCfDestinationRetrievalStrategy> getRetrievalStrategy(
-        @Nonnull final DestinationOptions options )
+    public static Option<DestinationServiceStrategy> getRetrievalStrategy( @Nonnull final DestinationOptions options )
     {
         final Option<Object> strategy = options.get(DESTINATION_RETRIEVAL_STRATEGY_KEY);
 
         if( strategy.isDefined() && strategy.get() instanceof String ) {
             return Option
-                .of(ScpCfDestinationRetrievalStrategy.ofIdentifier((String) strategy.get()))
+                .of(DestinationServiceStrategy.ofIdentifier((String) strategy.get()))
                 .onEmpty(() -> log.warn("Unsupported destination retrieval strategy: {}", strategy.get()));
         }
 
-        return strategy.map(ScpCfDestinationRetrievalStrategy.class::cast);
+        return strategy.map(DestinationServiceStrategy.class::cast);
     }
 
     /**
-     * Retrieves the configured {@link ScpCfDestinationTokenExchangeStrategy} to use when loading destinations.
+     * Retrieves the configured {@link DestinationTokenExchangeStrategy} to use when loading destinations.
      *
      * @param options
      *            The destination options instance that stores the key/value pair.
@@ -107,17 +105,17 @@ public class ScpCfDestinationOptionsAugmenter implements DestinationOptionsAugme
      *         {@link io.vavr.control.Option.None}.
      */
     @Nonnull
-    public static Option<ScpCfDestinationTokenExchangeStrategy> getTokenExchangeStrategy(
+    public static Option<DestinationTokenExchangeStrategy> getTokenExchangeStrategy(
         @Nonnull final DestinationOptions options )
     {
         final Option<Object> strategy = options.get(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY);
 
         if( strategy.isDefined() && strategy.get() instanceof String ) {
             return Option
-                .of(ScpCfDestinationTokenExchangeStrategy.ofIdentifier((String) strategy.get()))
+                .of(DestinationTokenExchangeStrategy.ofIdentifier((String) strategy.get()))
                 .onEmpty(() -> log.warn("Unsupported token exchange strategy: {}", strategy.get()));
         }
 
-        return strategy.map(ScpCfDestinationTokenExchangeStrategy.class::cast);
+        return strategy.map(DestinationTokenExchangeStrategy.class::cast);
     }
 }

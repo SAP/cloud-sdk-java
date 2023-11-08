@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 class DestinationRetrieval
 {
     @Nonnull
-    private final Supplier<ScpCfDestinationServiceV1Response> result;
+    private final Supplier<DestinationServiceV1Response> result;
 
     @Nonnull
     private final OnBehalfOf onBehalfOf;
 
-    ScpCfDestinationServiceV1Response get()
+    DestinationServiceV1Response get()
     {
         return getResult().get();
     }

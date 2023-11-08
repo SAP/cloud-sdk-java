@@ -5,16 +5,16 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.SYSTEM_USER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +44,7 @@ class DestinationRetrievalStrategyResolver
 {
     private static final Strategy tokenExchangeOnlyStrategy = new Strategy(NAMED_USER_CURRENT_TENANT, false);
     private final Supplier<String> providerTenantIdSupplier;
-    private final Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever;
+    private final Function<Strategy, DestinationServiceV1Response> destinationRetriever;
     private final Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
 
     static final String JWT_ATTR_EXT = "ext_attr";
@@ -60,7 +60,7 @@ class DestinationRetrievalStrategyResolver
 
     static DestinationRetrievalStrategyResolver forSingleDestination(
         final Supplier<String> providerTenantIdSupplier,
-        final Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever )
+        final Function<Strategy, DestinationServiceV1Response> destinationRetriever )
     {
         return new DestinationRetrievalStrategyResolver(
             providerTenantIdSupplier,
@@ -79,8 +79,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     Strategy resolveSingleRequestStrategy(
-        @Nonnull final ScpCfDestinationRetrievalStrategy retrievalStrategy,
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceStrategy retrievalStrategy,
+        @Nonnull final DestinationTokenExchangeStrategy tokenExchangeStrategy )
     {
         final OnBehalfOf behalfTechnicalUser;
 
@@ -118,11 +118,11 @@ class DestinationRetrievalStrategyResolver
 
     DestinationRetrieval prepareSupplier( @Nonnull final DestinationOptions options )
     {
-        final ScpCfDestinationRetrievalStrategy retrievalStrategy =
-            ScpCfDestinationOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
+        final DestinationServiceStrategy retrievalStrategy =
+            DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
 
-        final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy =
-            ScpCfDestinationOptionsAugmenter
+        final DestinationTokenExchangeStrategy tokenExchangeStrategy =
+            DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(options)
                 .getOrElse(this::getDefaultTokenExchangeStrategy);
 
@@ -146,7 +146,7 @@ class DestinationRetrievalStrategyResolver
      * @return The current default token exchange strategy.
      */
     @Nonnull
-    private ScpCfDestinationTokenExchangeStrategy getDefaultTokenExchangeStrategy()
+    private DestinationTokenExchangeStrategy getDefaultTokenExchangeStrategy()
     {
         // extract extended attributes from current token, or null<br>
         final Map<String, Object> attributes =
@@ -162,8 +162,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     DestinationRetrieval prepareSupplier(
-        @Nonnull final ScpCfDestinationRetrievalStrategy retrievalStrategy,
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceStrategy retrievalStrategy,
+        @Nonnull final DestinationTokenExchangeStrategy tokenExchangeStrategy )
         throws DestinationAccessException
     {
         log
@@ -176,7 +176,7 @@ class DestinationRetrievalStrategyResolver
         if( tokenExchangeStrategy == LOOKUP_THEN_EXCHANGE ) {
             final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
             return new DestinationRetrieval(() -> {
-                final ScpCfDestinationServiceV1Response result = destinationRetriever.apply(strategy);
+                final DestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
                     return result;
                 }
@@ -193,8 +193,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
-        @Nonnull final ScpCfDestinationRetrievalStrategy retrievalStrategy,
-        @Nullable final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceStrategy retrievalStrategy,
+        @Nullable final DestinationTokenExchangeStrategy tokenExchangeStrategy )
     {
         if( retrievalStrategy == ONLY_SUBSCRIBER && currentTenantIsProvider() ) {
             throw new DestinationAccessException(
@@ -222,8 +222,8 @@ class DestinationRetrievalStrategyResolver
 
     Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
     {
-        final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy =
-            ScpCfDestinationOptionsAugmenter.getTokenExchangeStrategy(options).getOrElse(LOOKUP_ONLY);
+        final DestinationTokenExchangeStrategy tokenExchangeStrategy =
+            DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options).getOrElse(LOOKUP_ONLY);
         if( tokenExchangeStrategy != LOOKUP_ONLY ) {
             log
                 .warn(
@@ -231,15 +231,14 @@ class DestinationRetrievalStrategyResolver
                     tokenExchangeStrategy,
                     LOOKUP_ONLY);
         }
-        final ScpCfDestinationRetrievalStrategy retrievalStrategy =
-            ScpCfDestinationOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
+        final DestinationServiceStrategy retrievalStrategy =
+            DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
 
         return prepareSupplierAllDestinations(retrievalStrategy);
     }
 
-    Supplier<List<Destination>>
-        prepareSupplierAllDestinations( @Nonnull final ScpCfDestinationRetrievalStrategy strategy )
-            throws IllegalArgumentException
+    Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationServiceStrategy strategy )
+        throws IllegalArgumentException
     {
         warnOrThrowOnDeprecatedOrUnsupportedCombinations(strategy, null);
         switch( strategy ) {
@@ -257,8 +256,7 @@ class DestinationRetrievalStrategyResolver
         }
     }
 
-    boolean doesDestinationConfigurationRequireUserTokenExchange(
-        @Nonnull final ScpCfDestinationServiceV1Response response )
+    boolean doesDestinationConfigurationRequireUserTokenExchange( @Nonnull final DestinationServiceV1Response response )
     {
         final Map<String, String> destinationConfiguration = response.getDestinationConfiguration();
         final Try<AuthenticationType> authenticationType = determineAuthenticationType(destinationConfiguration);

@@ -15,9 +15,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationOptionsAugmenter.augmenter;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
@@ -36,7 +36,7 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 
 import io.vavr.control.Try;
 
-public class ScpCfDestinationLoaderWithoutTokenTest
+public class DestinationServiceWithoutTokenTest
 {
     private static final String PAYLOAD_AUTH_TOKEN_ERROR =
         "{\"destinationConfiguration\":{\"Name\":\"Foo\",\"Type\":\"HTTP\",\"URL\":\"https://example.com\",\"Authentication\":\"OAuth2UserTokenExchange\",\"ProxyType\":\"Internet\"},\"authTokens\":[{\"error\":\"some-error-message\"}]}";
@@ -59,7 +59,7 @@ public class ScpCfDestinationLoaderWithoutTokenTest
         stubFor(post(urlEqualTo("/token/oauth/token")).willReturn(okForJson(oauth)));
 
         serviceBinding =
-            ScpCfDestinationServiceAdapterTest
+            DestinationServiceAdapterTest
                 .serviceBinding(
                     "clientId",
                     "clientSecret",
@@ -82,14 +82,13 @@ public class ScpCfDestinationLoaderWithoutTokenTest
         stubFor(get(anyUrl()).willReturn(okJson(PAYLOAD_AUTH_TOKEN_ERROR)));
 
         // prepare test
-        final ScpCfDestinationServiceAdapter adapter =
-            new ScpCfDestinationServiceAdapter(null, () -> serviceBinding, null);
+        final DestinationServiceAdapter adapter = new DestinationServiceAdapter(null, () -> serviceBinding, null);
 
-        final ScpCfDestinationOptionsAugmenter augment = augmenter().tokenExchangeStrategy(FORWARD_USER_TOKEN);
+        final DestinationServiceOptionsAugmenter augment = augmenter().tokenExchangeStrategy(FORWARD_USER_TOKEN);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(augment).build();
 
         // run test
-        final Try<Destination> maybeDestination = new ScpCfDestinationLoader(adapter).tryGetDestination("Foo", options);
+        final Try<Destination> maybeDestination = new DestinationService(adapter).tryGetDestination("Foo", options);
         assertThat(maybeDestination).isEmpty();
         assertThat(maybeDestination.getCause())
             .isInstanceOf(DestinationAccessException.class)
@@ -107,14 +106,13 @@ public class ScpCfDestinationLoaderWithoutTokenTest
         stubFor(get(anyUrl()).willReturn(okJson(PAYLOAD_AUTH_TOKEN_ERROR)));
 
         // prepare test
-        final ScpCfDestinationServiceAdapter adapter =
-            new ScpCfDestinationServiceAdapter(null, () -> serviceBinding, null);
+        final DestinationServiceAdapter adapter = new DestinationServiceAdapter(null, () -> serviceBinding, null);
 
-        final ScpCfDestinationOptionsAugmenter augment = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        final DestinationServiceOptionsAugmenter augment = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(augment).build();
 
         // run test
-        final Try<Destination> maybeDestination = new ScpCfDestinationLoader(adapter).tryGetDestination("Foo", options);
+        final Try<Destination> maybeDestination = new DestinationService(adapter).tryGetDestination("Foo", options);
         assertThat(maybeDestination).isEmpty();
         assertThat(maybeDestination.getCause())
             .isInstanceOf(DestinationAccessException.class)

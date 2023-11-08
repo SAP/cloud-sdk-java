@@ -4,7 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationLoader.Cache.DEFAULT_EXPIRATION_DURATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache.DEFAULT_EXPIRATION_DURATION;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,13 +28,13 @@ import lombok.extern.slf4j.Slf4j;
  * Builds a {@link DefaultHttpDestination} from the JSON response of the SCP Cloud Foundry Destination Service.
  */
 @Slf4j
-class ScpCfDestinationFactory
+class DestinationServiceFactory
 {
     private static final String PROVIDER_TENANT_ID = ""; // as per contract in DestinationProperty.TENANT_ID
 
     // for testing only
     @Nonnull
-    static Destination fromDestinationServiceV1Response( @Nonnull final ScpCfDestinationServiceV1Response response )
+    static Destination fromDestinationServiceV1Response( @Nonnull final DestinationServiceV1Response response )
         throws DestinationAccessException
     {
         return fromDestinationServiceV1Response(response, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
@@ -42,7 +42,7 @@ class ScpCfDestinationFactory
 
     @Nonnull
     static Destination fromDestinationServiceV1Response(
-        @Nonnull final ScpCfDestinationServiceV1Response response,
+        @Nonnull final DestinationServiceV1Response response,
         @Nonnull final OnBehalfOf onBehalfOf )
         throws DestinationAccessException
     {
@@ -90,14 +90,14 @@ class ScpCfDestinationFactory
 
     private static Destination handleHttpDestination(
         @Nonnull final DefaultDestination baseProperties,
-        @Nullable final List<ScpCfDestinationServiceV1Response.DestinationCertificate> certificates,
-        @Nullable final List<ScpCfDestinationServiceV1Response.DestinationAuthToken> authTokens )
+        @Nullable final List<DestinationServiceV1Response.DestinationCertificate> certificates,
+        @Nullable final List<DestinationServiceV1Response.DestinationAuthToken> authTokens )
     {
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromProperties(baseProperties);
 
         // enable certificates and truststore/keystore
         if( certificates != null && !certificates.isEmpty() ) {
-            certificates.forEach(ScpCfDestinationFactory::determineAndSetCertificateExpirationTime);
+            certificates.forEach(DestinationServiceFactory::determineAndSetCertificateExpirationTime);
             builder.property(DestinationProperty.CERTIFICATES, certificates);
 
             final DestinationKeyStoreExtractor keyStoreExtractor = new DestinationKeyStoreExtractor(builder::get);
@@ -125,22 +125,22 @@ class ScpCfDestinationFactory
     }
 
     private static void setExpirationTimestamp(
-        @Nonnull final ScpCfDestinationServiceV1Response.DestinationAuthToken authToken,
+        @Nonnull final DestinationServiceV1Response.DestinationAuthToken authToken,
         @Nonnull final AuthenticationType authType )
     {
         Option<Long> maybeExpiresIn =
             Option.of(authToken.getExpiresIn()).filter(val -> !StringUtils.isBlank(val)).map(Long::valueOf);
         // any auth token other than basic auth headers without expiration date are assumed to expire after default duration
         if( maybeExpiresIn.isEmpty() && authType != AuthenticationType.BASIC_AUTHENTICATION ) {
-            maybeExpiresIn = ScpCfDestinationLoader.Cache.getExpirationDuration().map(Duration::getSeconds);
+            maybeExpiresIn = DestinationService.Cache.getExpirationDuration().map(Duration::getSeconds);
         }
         maybeExpiresIn.map(val -> LocalDateTime.now().plusSeconds(val)).peek(authToken::setExpiryTimestamp);
     }
 
     private static void determineAndSetCertificateExpirationTime(
-        @Nonnull final ScpCfDestinationServiceV1Response.DestinationCertificate cert )
+        @Nonnull final DestinationServiceV1Response.DestinationCertificate cert )
     {
-        if( !ScpCfDestinationLoader.Cache.isEnabled() || !ScpCfDestinationLoader.Cache.isChangeDetectionEnabled() ) {
+        if( !DestinationService.Cache.isEnabled() || !DestinationService.Cache.isChangeDetectionEnabled() ) {
             // currently parsing certificates and determining the actual expiration time is not yet implemented
             return;
         }
@@ -150,7 +150,7 @@ class ScpCfDestinationFactory
         // To be "up to date" (according to the change detection interval configured), we write this time to the destination
         // This date is picked up by the change detection, if enabled. If not enabled, this date is disregarded
         final Duration duration =
-            ScpCfDestinationLoader.Cache.getExpirationDuration().getOrElse(DEFAULT_EXPIRATION_DURATION);
+            DestinationService.Cache.getExpirationDuration().getOrElse(DEFAULT_EXPIRATION_DURATION);
 
         cert.setExpiryTimestamp(LocalDateTime.now().plus(duration));
     }

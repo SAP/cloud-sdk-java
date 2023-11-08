@@ -4,10 +4,10 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,7 +55,7 @@ class GetOrComputeSingleDestinationCommand
     private final Supplier<Destination> destinationSupplier;
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
-    private final ScpCfDestinationTokenExchangeStrategy exchangeStrategy;
+    private final DestinationTokenExchangeStrategy exchangeStrategy;
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
 
@@ -70,8 +70,8 @@ class GetOrComputeSingleDestinationCommand
         final Supplier<Destination> destinationSupplier =
             () -> destinationRetriever.apply(destinationName, destinationOptions);
 
-        final ScpCfDestinationTokenExchangeStrategy exchangeStrategy =
-            ScpCfDestinationOptionsAugmenter
+        final DestinationTokenExchangeStrategy exchangeStrategy =
+            DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(destinationOptions)
                 .getOrElse(LOOKUP_THEN_EXCHANGE);
 
@@ -184,7 +184,7 @@ class GetOrComputeSingleDestinationCommand
 
     private void throwIfPrincipalIsUnavailable(
         @Nonnull final String destinationName,
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy exchangeStrategy )
+        @Nonnull final DestinationTokenExchangeStrategy exchangeStrategy )
     {
         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
             throw new IllegalStateException(
@@ -198,7 +198,7 @@ class GetOrComputeSingleDestinationCommand
     private void logErroneousCombinations(
         @Nonnull final DestinationProperties result,
         @Nonnull final String destinationName,
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy exchangeStrategy )
+        @Nonnull final DestinationTokenExchangeStrategy exchangeStrategy )
     {
 
         if( DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == LOOKUP_ONLY ) {
@@ -209,7 +209,7 @@ class GetOrComputeSingleDestinationCommand
                         + " Caching the destination for all users of the current tenant since it was obtained without user token exchange. ",
                     destinationName,
                     exchangeStrategy,
-                    ScpCfDestinationTokenExchangeStrategy.class.getSimpleName());
+                    DestinationTokenExchangeStrategy.class.getSimpleName());
         }
 
         if( !DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == EXCHANGE_ONLY ) {
@@ -220,7 +220,7 @@ class GetOrComputeSingleDestinationCommand
                         + " Caching the destination for the current user of the current tenant since it was obtained with a user token.",
                     destinationName,
                     exchangeStrategy,
-                    ScpCfDestinationTokenExchangeStrategy.class.getSimpleName());
+                    DestinationTokenExchangeStrategy.class.getSimpleName());
         }
     }
 
@@ -262,7 +262,7 @@ class GetOrComputeSingleDestinationCommand
 
     /**
      * currently this effectively limits the cache duration to the change detection interval, because change detection
-     * on certificates isn't possible in all cases See the note on {@link ScpCfDestinationFactory} where this property
+     * on certificates isn't possible in all cases See the note on {@link DestinationServiceFactory} where this property
      * is set
      */
     private static boolean certificateIsExpired( final Destination destination )
@@ -271,7 +271,7 @@ class GetOrComputeSingleDestinationCommand
             .get(DestinationProperty.CERTIFICATES)
             .toStream()
             .flatMap(Functions.identity())
-            .map(t -> ((ScpCfDestinationServiceV1Response.DestinationCertificate) t).getExpiryTimestamp())
+            .map(t -> ((DestinationServiceV1Response.DestinationCertificate) t).getExpiryTimestamp())
             .filter(Objects::nonNull)
             .min()
             .filter(t -> LocalDateTime.now().plusSeconds(EXPIRATION_BUFFER_TIME).isAfter(t))
@@ -284,7 +284,7 @@ class GetOrComputeSingleDestinationCommand
             .get(DestinationProperty.AUTH_TOKENS)
             .toStream()
             .flatMap(Functions.identity())
-            .map(t -> ((ScpCfDestinationServiceV1Response.DestinationAuthToken) t).getExpiryTimestamp())
+            .map(t -> ((DestinationServiceV1Response.DestinationAuthToken) t).getExpiryTimestamp())
             .filter(Objects::nonNull)
             .min()
             .filter(t -> LocalDateTime.now().plusSeconds(EXPIRATION_BUFFER_TIME).isAfter(t))
@@ -316,11 +316,10 @@ class GetOrComputeSingleDestinationCommand
      * <strong>Caution:</strong> This operation is <strong>not</strong> symmetric!
      *
      * @param destinationFromGetAllEndPoint
-     *            The {@link DestinationProperties} as retrieved via
-     *            {@link ScpCfDestinationLoader#tryGetAllDestinations()}.
+     *            The {@link DestinationProperties} as retrieved via {@link DestinationService#tryGetAllDestinations()}.
      * @param individuallyRetrievedDestination
      *            The {@link DestinationProperties} as retrieved via
-     *            {@link ScpCfDestinationLoader#tryGetDestination(String)}.
+     *            {@link DestinationService#tryGetDestination(String)}.
      * @return A boolean value that indicates whether all properties of {@code destinationFromGetAllEndPoint} are also
      *         contained in {@code individuallyRetrievedDestination}.
      */

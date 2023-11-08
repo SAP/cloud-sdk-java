@@ -31,7 +31,7 @@ import lombok.Setter;
  */
 @Data
 @Beta
-public class ScpCfDestinationServiceV1Response
+public class DestinationServiceV1Response
 {
     @SerializedName( "owner" )
     private DestinationOwner owner;

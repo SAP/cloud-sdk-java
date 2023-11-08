@@ -1,6 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationCertificate;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,9 +71,9 @@ public class DestinationKeyStoreExtractorTest
     @Test
     public void testMissingCertificateInformation()
     {
-        final ScpCfDestinationServiceAdapter destinationService = mock(ScpCfDestinationServiceAdapter.class);
-        final ScpCfDestinationLoader loader = new ScpCfDestinationLoader(destinationService);
-        ScpCfDestinationLoader.Cache.enableChangeDetection();
+        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
+        final DestinationService loader = new DestinationService(destinationService);
+        DestinationService.Cache.enableChangeDetection();
 
         final Map<String, String> destinationConfiguration =
             ImmutableMap

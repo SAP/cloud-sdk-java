@@ -72,14 +72,14 @@ public class GetOrComputeDestinationCommandTest
     {
         final DestinationOptions options = DestinationOptions.builder().build();
         // make sure there is no token exchange strategy set
-        assertThat(ScpCfDestinationOptionsAugmenter.getTokenExchangeStrategy(options)).isEmpty();
+        assertThat(DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options)).isEmpty();
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
                 .prepareCommand("destination", options, destinationCache, isolationLocks, ( foo, bar ) -> null, null)
                 .get();
 
-        assertThat(sut.getExchangeStrategy()).isEqualTo(ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
+        assertThat(sut.getExchangeStrategy()).isEqualTo(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class GetOrComputeDestinationCommandTest
         TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey expectedCacheKey = CacheKey.ofTenantIsolation();
 
-            assertCacheKeysMatchExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY, expectedCacheKey);
+            assertCacheKeysMatchExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY, expectedCacheKey);
         });
     }
 
@@ -100,7 +100,7 @@ public class GetOrComputeDestinationCommandTest
             final CacheKey expectedAdditionalCacheKey = CacheKey.ofTenantAndPrincipalIsolation();
 
             assertCacheKeysMatchExchangeStrategy(
-                ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
+                DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
                 expectedCacheKey,
                 expectedAdditionalCacheKey);
         }));
@@ -114,7 +114,7 @@ public class GetOrComputeDestinationCommandTest
             final CacheKey expectedAdditionalCacheKey = CacheKey.ofTenantAndPrincipalIsolation();
 
             assertCacheKeysMatchExchangeStrategy(
-                ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN,
+                DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN,
                 expectedCacheKey,
                 expectedAdditionalCacheKey);
         }));
@@ -125,19 +125,19 @@ public class GetOrComputeDestinationCommandTest
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey cacheKey = CacheKey.ofTenantAndPrincipalIsolation();
-            assertCacheKeysMatchExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY, cacheKey);
+            assertCacheKeysMatchExchangeStrategy(DestinationTokenExchangeStrategy.EXCHANGE_ONLY, cacheKey);
         }));
     }
 
     private void assertCacheKeysMatchExchangeStrategy(
-        ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy,
+        DestinationTokenExchangeStrategy tokenExchangeStrategy,
         CacheKey expectedCacheKey )
     {
         assertCacheKeysMatchExchangeStrategy(tokenExchangeStrategy, expectedCacheKey, null);
     }
 
     private void assertCacheKeysMatchExchangeStrategy(
-        ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy,
+        DestinationTokenExchangeStrategy tokenExchangeStrategy,
         CacheKey expectedCacheKey,
         CacheKey expectedAdditionalCacheKey )
     {
@@ -145,7 +145,7 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter.augmenter().tokenExchangeStrategy(tokenExchangeStrategy))
+                    DestinationServiceOptionsAugmenter.augmenter().tokenExchangeStrategy(tokenExchangeStrategy))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -187,9 +187,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -224,9 +224,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -262,9 +262,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -316,9 +316,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -365,9 +365,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         cacheKeyWithTenantAndPrincipal.append(DESTINATION_NAME, options);
@@ -424,9 +424,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         final BiFunction<String, DestinationOptions, Destination> function =
@@ -462,9 +462,9 @@ public class GetOrComputeDestinationCommandTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         tenantCacheKey.append(DESTINATION_NAME, options);
@@ -510,8 +510,8 @@ public class GetOrComputeDestinationCommandTest
     {
         // destination in single cache has valid auth token
         final Destination cachedDestination;
-        final ScpCfDestinationServiceV1Response.DestinationAuthToken authToken =
-            mock(ScpCfDestinationServiceV1Response.DestinationAuthToken.class);
+        final DestinationServiceV1Response.DestinationAuthToken authToken =
+            mock(DestinationServiceV1Response.DestinationAuthToken.class);
         final LocalDateTime expiryTimestamp = LocalDateTime.now().plusDays(1L);
         when(authToken.getExpiryTimestamp()).thenReturn(expiryTimestamp);
 

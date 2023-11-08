@@ -4,10 +4,10 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -235,7 +235,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             DestinationOptions
                 .builder()
                 .augmentBuilder(
-                    ScpCfDestinationOptionsAugmenter
+                    DestinationServiceOptionsAugmenter
                         .augmenter()
                         .tokenExchangeStrategy(testParameters.getTokenExchangeStrategy()))
                 .build();
@@ -391,7 +391,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         final SoftAssertions softly = new SoftAssertions();
         final Collection<TestParameters> remainingTestParameters = createTestParameters();
         for( final AuthenticationType authenticationType : AuthenticationType.values() ) {
-            for( final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy : ScpCfDestinationTokenExchangeStrategy
+            for( final DestinationTokenExchangeStrategy tokenExchangeStrategy : DestinationTokenExchangeStrategy
                 .values() ) {
                 removeTestParametersOrLogError(
                     softly,
@@ -408,7 +408,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nonnull final SoftAssertions softly,
         @Nonnull final Collection<TestParameters> remainingTestParameters,
         @Nonnull final AuthenticationType authenticationType,
-        @Nullable final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nullable final DestinationTokenExchangeStrategy tokenExchangeStrategy )
     {
         final boolean removed = remainingTestParameters.removeIf(t -> {
             if( authenticationType != t.getAuthenticationType() ) {
@@ -436,7 +436,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     @Nonnull
     private static TestParametersBuilder createTestCase(
         @Nonnull final AuthenticationType authenticationType,
-        @Nonnull final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationTokenExchangeStrategy tokenExchangeStrategy )
     {
         return new TestParametersBuilder(authenticationType, tokenExchangeStrategy);
     }
@@ -452,7 +452,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nonnull
         private final Collection<AuthenticationType> authenticationTypes = new HashSet<>();
         @Nonnull
-        private final Collection<ScpCfDestinationTokenExchangeStrategy> tokenExchangeStrategies = new HashSet<>();
+        private final Collection<DestinationTokenExchangeStrategy> tokenExchangeStrategies = new HashSet<>();
         @Nonnull
         private final Collection<UserSpecificTestParameters> userTestParameters = new ArrayList<>();
 
@@ -476,8 +476,8 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         @Nonnull
         public TestParametersBatchBuilder forTokenExchangeStrategies(
-            @Nonnull final ScpCfDestinationTokenExchangeStrategy firstTokenExchangeStrategy,
-            @Nonnull final ScpCfDestinationTokenExchangeStrategy... furtherTokenExchangeStrategies )
+            @Nonnull final DestinationTokenExchangeStrategy firstTokenExchangeStrategy,
+            @Nonnull final DestinationTokenExchangeStrategy... furtherTokenExchangeStrategies )
         {
             tokenExchangeStrategies.add(firstTokenExchangeStrategy);
             tokenExchangeStrategies.addAll(Arrays.asList(furtherTokenExchangeStrategies));
@@ -486,7 +486,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         @Nonnull
         public TestParametersBatchBuilder forTokenExchangeStrategies(
-            @Nonnull final Collection<ScpCfDestinationTokenExchangeStrategy> tokenExchangeStrategies )
+            @Nonnull final Collection<DestinationTokenExchangeStrategy> tokenExchangeStrategies )
         {
             this.tokenExchangeStrategies.addAll(tokenExchangeStrategies);
             return this;
@@ -512,7 +512,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         {
             final Collection<TestParameters> result = new ArrayList<>();
             for( final AuthenticationType authenticationType : authenticationTypes ) {
-                for( final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy : tokenExchangeStrategies ) {
+                for( final DestinationTokenExchangeStrategy tokenExchangeStrategy : tokenExchangeStrategies ) {
                     result.add(new TestParameters(authenticationType, tokenExchangeStrategy, userTestParameters));
                 }
             }
@@ -527,7 +527,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nonnull
         private final AuthenticationType authenticationType;
         @Nonnull
-        private final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy;
+        private final DestinationTokenExchangeStrategy tokenExchangeStrategy;
         @Nonnull
         private final Collection<UserSpecificTestParameters> userTestParameters;
 
@@ -560,7 +560,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nonnull
         private final AuthenticationType authenticationType;
         @Nonnull
-        private final ScpCfDestinationTokenExchangeStrategy tokenExchangeStrategy;
+        private final DestinationTokenExchangeStrategy tokenExchangeStrategy;
         @Nonnull
         private final Collection<UserSpecificTestParameters> userTestParameters = new ArrayList<>();
 

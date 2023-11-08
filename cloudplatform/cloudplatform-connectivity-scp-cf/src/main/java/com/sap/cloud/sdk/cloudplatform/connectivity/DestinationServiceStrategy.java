@@ -18,7 +18,7 @@ import lombok.Getter;
  * Foundry. There can be destinations defined on the tenant hosting the application (provider), or on the tenant(s) that
  * have subscribed to the application (subscriber). Platform default behaviour is represented by null values.
  */
-public enum ScpCfDestinationRetrievalStrategy
+public enum DestinationServiceStrategy
 {
 
     /**
@@ -47,7 +47,7 @@ public enum ScpCfDestinationRetrievalStrategy
     @Nonnull
     private final String identifier;
 
-    ScpCfDestinationRetrievalStrategy( @Nonnull final String identifier )
+    DestinationServiceStrategy( @Nonnull final String identifier )
     {
         this.identifier = identifier;
     }
@@ -67,10 +67,10 @@ public enum ScpCfDestinationRetrievalStrategy
      * @since 5.0.0
      */
     @Nullable
-    public static ScpCfDestinationRetrievalStrategy ofIdentifier( @Nullable final String identifier )
+    public static DestinationServiceStrategy ofIdentifier( @Nullable final String identifier )
     {
         return Stream
-            .of(ScpCfDestinationRetrievalStrategy.values())
+            .of(DestinationServiceStrategy.values())
             .filter(s -> s.getIdentifier().equalsIgnoreCase(identifier))
             .findFirst()
             .orElse(null);

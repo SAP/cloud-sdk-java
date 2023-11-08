@@ -8,9 +8,9 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationAuthToken;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
 
-class ScpCfDestinationServiceV1ResponseTest
+class DestinationServiceV1ResponseTest
 {
     private static final Gson gson = new Gson();
 
@@ -43,7 +43,7 @@ class ScpCfDestinationServiceV1ResponseTest
                 + "  ]\n"
                 + "}";
 
-        final ScpCfDestinationServiceV1Response sut = gson.fromJson(payload, ScpCfDestinationServiceV1Response.class);
+        final DestinationServiceV1Response sut = gson.fromJson(payload, DestinationServiceV1Response.class);
 
         final Map<String, String> expectedConfig = new HashMap<>();
         expectedConfig.put("Name", "DummySAPAssertionSSODestination");

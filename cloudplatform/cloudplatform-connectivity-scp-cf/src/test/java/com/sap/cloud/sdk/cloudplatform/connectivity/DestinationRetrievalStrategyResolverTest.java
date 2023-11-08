@@ -5,16 +5,16 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -54,7 +54,7 @@ class DestinationRetrievalStrategyResolverTest
     private static final Tenant subscriberT = new DefaultTenant("subscriber");
     private DestinationRetrievalStrategyResolver sut;
 
-    private Function<Strategy, ScpCfDestinationServiceV1Response> destinationRetriever;
+    private Function<Strategy, DestinationServiceV1Response> destinationRetriever;
     private Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
 
     @RegisterExtension
@@ -64,7 +64,7 @@ class DestinationRetrievalStrategyResolverTest
     @BeforeEach
     void prepareResolver()
     {
-        destinationRetriever = (Function<Strategy, ScpCfDestinationServiceV1Response>) mock(Function.class);
+        destinationRetriever = (Function<Strategy, DestinationServiceV1Response>) mock(Function.class);
         allDestinationRetriever = (Function<OnBehalfOf, List<Destination>>) mock(Function.class);
         sut =
             spy(
@@ -79,7 +79,7 @@ class DestinationRetrievalStrategyResolverTest
     {
         final SoftAssertions softly = new SoftAssertions();
 
-        final List<Tuple3<ScpCfDestinationRetrievalStrategy, ScpCfDestinationTokenExchangeStrategy, Strategy>> testCases =
+        final List<Tuple3<DestinationServiceStrategy, DestinationTokenExchangeStrategy, Strategy>> testCases =
             new ArrayList<>();
 
         testCases.add(Tuple.of(CURRENT_TENANT, LOOKUP_ONLY, new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
@@ -106,7 +106,7 @@ class DestinationRetrievalStrategyResolverTest
     @Test
     void testExceptionsAreThrownOnIllegalCombinations()
     {
-        final List<Tuple3<ScpCfDestinationRetrievalStrategy, ScpCfDestinationTokenExchangeStrategy, Tenant>> testCases =
+        final List<Tuple3<DestinationServiceStrategy, DestinationTokenExchangeStrategy, Tenant>> testCases =
             new ArrayList<>();
 
         final SoftAssertions softly = new SoftAssertions();

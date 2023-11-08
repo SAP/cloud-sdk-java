@@ -43,7 +43,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class ScpCfDestinationServiceAdapter
+class DestinationServiceAdapter
 {
     private static final String SERVICE_PATH = "destination-configuration/v1";
 
@@ -57,12 +57,12 @@ class ScpCfDestinationServiceAdapter
     @Nullable
     private final String providerTenantId;
 
-    ScpCfDestinationServiceAdapter()
+    DestinationServiceAdapter()
     {
         this(null, null, null);
     }
 
-    ScpCfDestinationServiceAdapter(
+    DestinationServiceAdapter(
         @Nullable final Function<OnBehalfOf, HttpDestination> serviceDestinationLoader,
         @Nullable final Supplier<ServiceBinding> serviceBindingSupplier,
         @Nullable final String providerTenantId )
@@ -72,7 +72,7 @@ class ScpCfDestinationServiceAdapter
         this.serviceBindingSupplier =
             serviceBindingSupplier != null
                 ? serviceBindingSupplier
-                : ScpCfDestinationServiceAdapter::getDestinationServiceBinding;
+                : DestinationServiceAdapter::getDestinationServiceBinding;
         this.providerTenantId = providerTenantId;
     }
 

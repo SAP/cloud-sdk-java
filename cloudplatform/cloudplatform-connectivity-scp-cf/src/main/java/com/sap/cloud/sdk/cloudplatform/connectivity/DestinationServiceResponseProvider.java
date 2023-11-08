@@ -16,7 +16,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 @FunctionalInterface
-public interface ScpCfDestinationServiceResponseProvider
+public interface DestinationServiceResponseProvider
 {
     /**
      * Query SCP CF Destination Service with the given URI.
@@ -26,5 +26,5 @@ public interface ScpCfDestinationServiceResponseProvider
      * @return The deserialized service response.
      */
     @Nullable
-    ScpCfDestinationServiceV1Response provideResponse( @Nonnull final URI destinationServiceUri );
+    DestinationServiceV1Response provideResponse( @Nonnull final URI destinationServiceUri );
 }

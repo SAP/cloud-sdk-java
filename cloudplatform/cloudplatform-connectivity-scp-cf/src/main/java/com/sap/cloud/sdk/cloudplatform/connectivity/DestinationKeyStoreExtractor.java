@@ -3,7 +3,7 @@
  */
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationCertificate;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

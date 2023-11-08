@@ -9,10 +9,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationOptionsAugmenter.augmenter;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +58,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantFacade;
 import io.vavr.control.Try;
 import lombok.Value;
 
-public class ScpCfDestinationLoaderPrincipalPropagationTest
+public class DestinationServicePrincipalPropagationTest
 {
     private static final Try<AuthToken> NO_AUTH_TOKEN = Try.failure(new IllegalStateException());
     private static final Try<AuthToken> SOME_AUTH_TOKEN =
@@ -83,7 +83,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
     private final AuthTokenFacade authTokenFacade = mock(AuthTokenFacade.class);
     private final TenantFacade tenantFacade = mock(TenantFacade.class);
     private final PrincipalFacade principalFacade = mock(PrincipalFacade.class);
-    private final ScpCfDestinationServiceAdapter destinationServiceAdapter = mock(ScpCfDestinationServiceAdapter.class);
+    private final DestinationServiceAdapter destinationServiceAdapter = mock(DestinationServiceAdapter.class);
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
@@ -108,7 +108,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
                 .build();
 
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-        ScpCfDestinationLoader.Cache.reset();
+        DestinationService.Cache.reset();
         AuthTokenAccessor.setAuthTokenFacade(authTokenFacade);
         TenantAccessor.setTenantFacade(tenantFacade);
         PrincipalAccessor.setPrincipalFacade(principalFacade);
@@ -139,7 +139,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
     @Test
     public void testFailingHeadersWithNoCurrentToken()
     {
-        final ScpCfDestinationLoader sut = new ScpCfDestinationLoader(destinationServiceAdapter);
+        final DestinationService sut = new DestinationService(destinationServiceAdapter);
         final Destination result = sut.tryGetDestination("test").get();
 
         // assertions
@@ -161,7 +161,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
         // test
-        final ScpCfDestinationLoader sut = new ScpCfDestinationLoader(destinationServiceAdapter);
+        final DestinationService sut = new DestinationService(destinationServiceAdapter);
         final Destination result = sut.tryGetDestination("test").get();
 
         // assertions
@@ -200,7 +200,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
         // test
-        final ScpCfDestinationLoader sut = new ScpCfDestinationLoader(destinationServiceAdapter);
+        final DestinationService sut = new DestinationService(destinationServiceAdapter);
         final Destination result = sut.tryGetDestination("test").get();
 
         // change tenant to subscriber
@@ -225,7 +225,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
     {
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
-        final ScpCfDestinationRetrievalStrategy NO_STRATEGY = null;
+        final DestinationServiceStrategy NO_STRATEGY = null;
         final Case[] cases =
             new Case[] {
                 //  TEST        TENANT GET   TENANT GET   RETRIEVAL
@@ -264,7 +264,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
             doReturn(c.destinationTenant).when(tenantFacade).tryGetCurrentTenant();
 
             // test
-            final ScpCfDestinationLoader sut = new ScpCfDestinationLoader(destinationServiceAdapter);
+            final DestinationService sut = new DestinationService(destinationServiceAdapter);
             final Try<Destination> tryGetDestination = sut.tryGetDestination("test", c.options);
 
             // assertion retrieval
@@ -293,7 +293,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         static Case successful(
             final Try<Tenant> destinationTenant,
             final Try<Tenant> runtimeTenant,
-            final ScpCfDestinationRetrievalStrategy strategy )
+            final DestinationServiceStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
@@ -311,7 +311,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         static Case failHeader(
             final Try<Tenant> destinationTenant,
             final Try<Tenant> runtimeTenant,
-            final ScpCfDestinationRetrievalStrategy strategy )
+            final DestinationServiceStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
@@ -330,7 +330,7 @@ public class ScpCfDestinationLoaderPrincipalPropagationTest
         }
 
         // test case: failing to get destination
-        static Case failRetrie( final Try<Tenant> destinationTenant, final ScpCfDestinationRetrievalStrategy strategy )
+        static Case failRetrie( final Try<Tenant> destinationTenant, final DestinationServiceStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {

@@ -8,20 +8,20 @@ import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationAuthToken;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceV1Response.DestinationCertificate;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
-class ScpCfDestinationFactoryTest
+class DestinationServiceFactoryTest
 {
-    private ScpCfDestinationServiceV1Response response;
+    private DestinationServiceV1Response response;
 
     @BeforeEach
     void setup()
     {
-        response = new ScpCfDestinationServiceV1Response();
+        response = new DestinationServiceV1Response();
         response.setDestinationConfiguration(new HashMap<>());
     }
 
@@ -35,7 +35,7 @@ class ScpCfDestinationFactoryTest
 
         final Destination result =
             TenantAccessor
-                .executeWithTenant(tenant, () -> ScpCfDestinationFactory.fromDestinationServiceV1Response(response));
+                .executeWithTenant(tenant, () -> DestinationServiceFactory.fromDestinationServiceV1Response(response));
 
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThat(result.get(DestinationProperty.TENANT_ID)).contains(tenant.getTenantId());
@@ -47,7 +47,7 @@ class ScpCfDestinationFactoryTest
         response.getDestinationConfiguration().put("Type", "HTTP");
         response.getDestinationConfiguration().put("URL", "http://foo/");
 
-        final Destination result = ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThat(result.get(DestinationProperty.TENANT_ID)).contains("");
@@ -58,7 +58,7 @@ class ScpCfDestinationFactoryTest
     {
         response.getDestinationConfiguration().put("foo", "bar");
 
-        final Destination result = ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
         assertThat(result).isInstanceOf(DefaultDestination.class);
         assertThat(result.get("foo")).contains("bar");
@@ -70,7 +70,7 @@ class ScpCfDestinationFactoryTest
         response.getDestinationConfiguration().put("Type", "RFC");
         response.getDestinationConfiguration().put("Name", "rfcDestination");
 
-        final Destination result = ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
         assertThat(result).isInstanceOf(DefaultRfcDestination.class);
         assertThat(result.get(DestinationProperty.TYPE)).contains(DestinationType.RFC);
@@ -90,7 +90,7 @@ class ScpCfDestinationFactoryTest
         final DestinationCertificate certificate = new DestinationCertificate();
         response.setCertificates(Collections.singletonList(certificate));
 
-        final Destination result = ScpCfDestinationFactory.fromDestinationServiceV1Response(response);
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThat(result.get(DestinationProperty.TYPE)).contains(DestinationType.HTTP);

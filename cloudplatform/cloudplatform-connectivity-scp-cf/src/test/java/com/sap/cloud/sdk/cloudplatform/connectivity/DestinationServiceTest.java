@@ -4,15 +4,15 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationOptionsAugmenter.DESTINATION_RETRIEVAL_STRATEGY_KEY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationOptionsAugmenter.DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationOptionsAugmenter.augmenter;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationRetrievalStrategy.ONLY_SUBSCRIBER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_RETRIEVAL_STRATEGY_KEY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -78,7 +78,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class ScpCfDestinationLoaderTest
+public class DestinationServiceTest
 {
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes
 
@@ -308,8 +308,8 @@ public class ScpCfDestinationLoaderTest
     @Rule
     public TokenRule token = TokenRule.createXsuaa();
 
-    private ScpCfDestinationServiceAdapter scpCfDestinationServiceAdapter;
-    private ScpCfDestinationLoader loader;
+    private DestinationServiceAdapter scpCfDestinationServiceAdapter;
+    private DestinationService loader;
     private Tenant providerTenant;
     private DefaultTenant subscriberTenant;
     private DefaultPrincipal principal1;
@@ -332,23 +332,23 @@ public class ScpCfDestinationLoaderTest
 
         scpCfDestinationServiceAdapter =
             spy(
-                new ScpCfDestinationServiceAdapter(
+                new DestinationServiceAdapter(
                     behalf -> DefaultHttpDestination.builder("").build(),
                     () -> mock(ServiceBinding.class),
                     providerTenant.getTenantId()));
         loader =
-            new ScpCfDestinationLoader(
+            new DestinationService(
                 scpCfDestinationServiceAdapter,
-                ScpCfDestinationLoader
+                DestinationService
                     .createResilienceConfiguration(
                         "singleDestResilience",
                         TimeLimiterConfiguration.disabled(),
-                        ScpCfDestinationLoader.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
-                ScpCfDestinationLoader
+                        DestinationService.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
+                DestinationService
                     .createResilienceConfiguration(
                         "allDestResilience",
                         TimeLimiterConfiguration.disabled(),
-                        ScpCfDestinationLoader.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
+                        DestinationService.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
 
         final String httResponseProvider = createHttpDestinationServiceResponse(destinationName, providerUrl);
         final String httpResponseSubscriber = createHttpDestinationServiceResponse(destinationName, subscriberUrl);
@@ -375,7 +375,7 @@ public class ScpCfDestinationLoaderTest
     @After
     public void resetDestinationCache()
     {
-        ScpCfDestinationLoader.Cache.reset();
+        DestinationService.Cache.reset();
     }
 
     @AfterClass
@@ -391,8 +391,8 @@ public class ScpCfDestinationLoaderTest
         // this test ensures that the cache
         // 1. exists by default (i.e. out-of-the-box) and
         // 2. is empty, so that modifying the cache at application startup won't lead to a warning
-        assertThat(ScpCfDestinationLoader.Cache.isEnabled()).isTrue();
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isZero();
+        assertThat(DestinationService.Cache.isEnabled()).isTrue();
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isZero();
     }
 
     @Test
@@ -481,26 +481,26 @@ public class ScpCfDestinationLoaderTest
         HttpClientAccessor.setHttpClientFactory(dest -> cl);
 
         // prepare adapter
-        final ScpCfDestinationServiceAdapter adapter =
+        final DestinationServiceAdapter adapter =
             spy(
-                new ScpCfDestinationServiceAdapter(
+                new DestinationServiceAdapter(
                     anyBehalf -> serviceDestination,
                     () -> mock(ServiceBinding.class),
                     providerTenant.getTenantId()));
         // prepare loader
-        final ScpCfDestinationLoader loaderToTest =
-            new ScpCfDestinationLoader(
+        final DestinationService loaderToTest =
+            new DestinationService(
                 adapter,
-                ScpCfDestinationLoader
+                DestinationService
                     .createResilienceConfiguration(
                         "singleDestResilience",
                         TimeLimiterConfiguration.of(Duration.ofSeconds(5)),
-                        ScpCfDestinationLoader.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
-                ScpCfDestinationLoader
+                        DestinationService.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
+                DestinationService
                     .createResilienceConfiguration(
                         "allDestResilience",
                         TimeLimiterConfiguration.of(Duration.ofSeconds(5)),
-                        ScpCfDestinationLoader.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
+                        DestinationService.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
 
         // actual test
         assertThatThrownBy(() -> loaderToTest.tryGetDestination(destinationName).get())
@@ -520,16 +520,16 @@ public class ScpCfDestinationLoaderTest
     @Test
     public void testDestinationServiceTimeoutDisabled()
     {
-        ScpCfDestinationLoader sut = ScpCfDestinationLoader.builder().withProviderTenant(providerTenant).build();
+        DestinationService sut = DestinationService.builder().withProviderTenant(providerTenant).build();
         assertThat(sut.getSingleDestResilience().timeLimiterConfiguration().isEnabled()).isTrue();
         assertThat(sut.getAllDestResilience().timeLimiterConfiguration().isEnabled()).isTrue();
         assertThat(sut.getSingleDestResilience().timeLimiterConfiguration())
-            .isEqualTo(ScpCfDestinationLoader.DEFAULT_TIME_LIMITER);
+            .isEqualTo(DestinationService.DEFAULT_TIME_LIMITER);
         assertThat(sut.getAllDestResilience().timeLimiterConfiguration())
-            .isEqualTo(ScpCfDestinationLoader.DEFAULT_TIME_LIMITER);
+            .isEqualTo(DestinationService.DEFAULT_TIME_LIMITER);
 
         sut =
-            ScpCfDestinationLoader
+            DestinationService
                 .builder()
                 .withTimeLimiterConfiguration(TimeLimiterConfiguration.disabled())
                 .withProviderTenant(providerTenant)
@@ -658,8 +658,8 @@ public class ScpCfDestinationLoaderTest
                 .augmentBuilder(builder -> builder.parameter(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY, exchangeOnly))
                 .build();
 
-        assertThat(ScpCfDestinationOptionsAugmenter.getRetrievalStrategy(options)).contains(ALWAYS_PROVIDER);
-        assertThat(ScpCfDestinationOptionsAugmenter.getTokenExchangeStrategy(options)).contains(EXCHANGE_ONLY);
+        assertThat(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options)).contains(ALWAYS_PROVIDER);
+        assertThat(DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options)).contains(EXCHANGE_ONLY);
     }
 
     @Test
@@ -707,12 +707,12 @@ public class ScpCfDestinationLoaderTest
 
         final HttpDestination destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options).get().asHttp();
 
-        final List<ScpCfDestinationServiceV1Response.DestinationAuthToken> authTokens =
+        final List<DestinationServiceV1Response.DestinationAuthToken> authTokens =
             destination
                 .get(DestinationProperty.AUTH_TOKENS)
                 .get()
                 .stream()
-                .map(ScpCfDestinationServiceV1Response.DestinationAuthToken.class::cast)
+                .map(DestinationServiceV1Response.DestinationAuthToken.class::cast)
                 .filter(t -> t.getHttpHeaderSuggestion() != null)
                 .collect(Collectors.toList());
 
@@ -873,7 +873,7 @@ public class ScpCfDestinationLoaderTest
                 "/destinations/" + destinationName,
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
     }
 
     @Test
@@ -958,7 +958,7 @@ public class ScpCfDestinationLoaderTest
     @Test
     public void testAlwaysFetchDestinationWhenCacheIsDisabled()
     {
-        ScpCfDestinationLoader.Cache.disable();
+        DestinationService.Cache.disable();
         tryGetDestinationTwice("Subscriber-CCT", responseDestinationWithNoAuthToken, 2);
     }
 
@@ -1090,11 +1090,11 @@ public class ScpCfDestinationLoaderTest
 
         final CacheKey tenantCacheKey = CacheKey.ofTenantOptionalIsolation().append(destinationName, options);
 
-        final ReentrantLock tenantLock = ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(tenantCacheKey);
+        final ReentrantLock tenantLock = DestinationService.Cache.isolationLocks().getIfPresent(tenantCacheKey);
         assertThat(tenantLock).isNotNull();
 
         final ReentrantLock tenantLockSpy = spy(tenantLock);
-        ScpCfDestinationLoader.Cache.isolationLocks().put(tenantCacheKey, tenantLockSpy);
+        DestinationService.Cache.isolationLocks().put(tenantCacheKey, tenantLockSpy);
 
         doAnswer(invocation -> {
             mainThreadLatch.countDown();
@@ -1115,8 +1115,7 @@ public class ScpCfDestinationLoaderTest
         verify(scpCfDestinationServiceAdapter, times(1))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination cachedDestination =
-            ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(tenantCacheKey);
+        final Destination cachedDestination = DestinationService.Cache.instanceSingle().getIfPresent(tenantCacheKey);
 
         softly.assertThat(cachedDestination).isNotNull();
         softly.assertAll();
@@ -1231,14 +1230,14 @@ public class ScpCfDestinationLoaderTest
         final CacheKey firstTenantCacheKey = CacheKey.fromIds("TenantA", null).append(destinationName, options);
         final CacheKey secondTenantCacheKey = CacheKey.fromIds("TenantB", null).append(destinationName, options);
 
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks()).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(firstTenantCacheKey)).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(secondTenantCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstTenantCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondTenantCacheKey)).isNotNull();
 
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(firstTenantCacheKey)).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(secondTenantCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstTenantCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondTenantCacheKey)).isNotNull();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -1297,14 +1296,14 @@ public class ScpCfDestinationLoaderTest
         final CacheKey firstCacheKey = CacheKey.of(tenant, principal1).append(destinationName, options);
         final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
 
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks()).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondCacheKey)).isNotNull();
 
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
@@ -1340,14 +1339,14 @@ public class ScpCfDestinationLoaderTest
         final CacheKey firstCacheKey = CacheKey.of(tenant, principal1).append(destinationName, options);
         final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
 
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks()).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
         //If exchange strategy is LOOKUP_THEN_EXCHANGE, then isolation locks are obtained per tenant
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().estimatedSize()).isEqualTo(1L);
-        assertThat(ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(isolationLockKey)).isNotNull();
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(1L);
+        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(isolationLockKey)).isNotNull();
 
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -1371,7 +1370,7 @@ public class ScpCfDestinationLoaderTest
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        ScpCfDestinationLoader.Cache.enableChangeDetection();
+        DestinationService.Cache.enableChangeDetection();
         final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
 
@@ -1416,7 +1415,7 @@ public class ScpCfDestinationLoaderTest
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        ScpCfDestinationLoader.Cache.enableChangeDetection();
+        DestinationService.Cache.enableChangeDetection();
         final int circuitBreakerBuffer =
             ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE
                 * Math.round(ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_FAILURE_RATE_THRESHOLD)
@@ -1489,11 +1488,11 @@ public class ScpCfDestinationLoaderTest
 
         final CacheKey tenantCacheKey = CacheKey.ofTenantOptionalIsolation().append(destinationName, options);
 
-        final ReentrantLock tenantLock = ScpCfDestinationLoader.Cache.isolationLocks().getIfPresent(tenantCacheKey);
+        final ReentrantLock tenantLock = DestinationService.Cache.isolationLocks().getIfPresent(tenantCacheKey);
         assertThat(tenantLock).isNotNull();
 
         final ReentrantLock tenantLockSpy = spy(tenantLock);
-        ScpCfDestinationLoader.Cache.isolationLocks().put(tenantCacheKey, tenantLockSpy);
+        DestinationService.Cache.isolationLocks().put(tenantCacheKey, tenantLockSpy);
 
         doAnswer(invocation -> {
             mainThreadLatch.countDown();
@@ -1520,11 +1519,11 @@ public class ScpCfDestinationLoaderTest
         final CacheKey principalBCacheKey = CacheKey.fromIds("tenant", "PrincipalB").append(destinationName, options);
 
         final Destination cachedPrincipalADestination =
-            ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(principalACacheKey);
+            DestinationService.Cache.instanceSingle().getIfPresent(principalACacheKey);
         softly.assertThat(cachedPrincipalADestination).isNotNull();
 
         final Destination cachedPrincipalBDestination =
-            ScpCfDestinationLoader.Cache.instanceSingle().getIfPresent(principalBCacheKey);
+            DestinationService.Cache.instanceSingle().getIfPresent(principalBCacheKey);
         softly.assertThat(cachedPrincipalBDestination).isNotNull();
 
         softly.assertAll();
@@ -1544,8 +1543,8 @@ public class ScpCfDestinationLoaderTest
     @Test
     public void testSetTimeLimiterTimeout()
     {
-        final ScpCfDestinationLoader loader =
-            ScpCfDestinationLoader
+        final DestinationService loader =
+            DestinationService
                 .builder()
                 .withTimeLimiterConfiguration(TimeLimiterConfiguration.of(Duration.ofSeconds(100)))
                 .withProviderTenant(new DefaultTenant("Foo"))
@@ -1643,7 +1642,7 @@ public class ScpCfDestinationLoaderTest
             System.out.println("[" + LocalDateTime.now() + "] Got " + name);
             PrincipalAccessor.setPrincipalFacade(null);
         }
-        assertThat(ScpCfDestinationLoader.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
+        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
         assertThat(httpClient).isSameAs(HttpClientAccessor.getHttpClient(destination));
     }
 

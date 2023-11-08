@@ -15,7 +15,7 @@ import lombok.Getter;
  * Enumeration which represents the strategies for performing a user token exchange, if necessary, upon retrieving a
  * destination from the Destination service on BTP Cloud Foundry.
  */
-public enum ScpCfDestinationTokenExchangeStrategy
+public enum DestinationTokenExchangeStrategy
 {
     /**
      * Default strategy of forwarding current user access token to the destination lookup.
@@ -28,7 +28,7 @@ public enum ScpCfDestinationTokenExchangeStrategy
     /**
      * Classic strategy of performing the user token exchange actively when necessary.
      * <p>
-     * When this strategy is used, the {@link ScpCfDestinationLoader} first performs a "look up" of the destination by
+     * When this strategy is used, the {@link DestinationService} first performs a "look up" of the destination by
      * issuing a client credentials request to the destination service. The response then contains the destination,
      * which is needed to determine the actual authentication type. Afterwards, depending that authentication type, a
      * user token exchange might be performed automatically.
@@ -48,7 +48,7 @@ public enum ScpCfDestinationTokenExchangeStrategy
      * Use this strategy if you <b>know for sure</b> that the requested destination requires a user token exchange for
      * the authentication.
      * <p>
-     * <b>Caution</b>: The {@link ScpCfDestinationLoader} skips the initial "look up" request against the destination
+     * <b>Caution</b>: The {@link DestinationService} skips the initial "look up" request against the destination
      * service, which is usually needed to determine whether a user token exchange is needed. Instead, the user token
      * exchange is performed immediately, which might cause errors if the destination is not suited for that flow.
      */
@@ -58,7 +58,7 @@ public enum ScpCfDestinationTokenExchangeStrategy
     @Nonnull
     private final String identifier;
 
-    ScpCfDestinationTokenExchangeStrategy( @Nonnull final String identifier )
+    DestinationTokenExchangeStrategy( @Nonnull final String identifier )
     {
         this.identifier = identifier;
     }
@@ -70,10 +70,10 @@ public enum ScpCfDestinationTokenExchangeStrategy
     }
 
     @Nullable
-    static ScpCfDestinationTokenExchangeStrategy ofIdentifier( @Nullable final String identifier )
+    static DestinationTokenExchangeStrategy ofIdentifier( @Nullable final String identifier )
     {
         return Stream
-            .of(ScpCfDestinationTokenExchangeStrategy.values())
+            .of(DestinationTokenExchangeStrategy.values())
             .filter(s -> s.getIdentifier().equalsIgnoreCase(identifier))
             .findFirst()
             .orElse(null);
