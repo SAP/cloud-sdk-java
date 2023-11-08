@@ -194,8 +194,8 @@ public final class DefaultHttpDestination implements HttpDestination
         aggregatedHeaderProviders.addAll(customHeaderProviders);
         aggregatedHeaderProviders.addAll(headerProvidersFromClassLoading);
 
-        final String msg = "Found these {} destination header providers for a {}: {}";
-        log.debug(msg, aggregatedHeaderProviders.size(), getClass().getSimpleName(), aggregatedHeaderProviders);
+        final String msg = "Found these {} destination header providers: {}";
+        log.debug(msg, aggregatedHeaderProviders.size(), aggregatedHeaderProviders);
 
         final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
 
