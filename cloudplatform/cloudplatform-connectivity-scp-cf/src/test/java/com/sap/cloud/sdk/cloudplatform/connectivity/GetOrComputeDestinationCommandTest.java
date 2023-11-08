@@ -79,7 +79,7 @@ public class GetOrComputeDestinationCommandTest
                 .prepareCommand("destination", options, destinationCache, isolationLocks, ( foo, bar ) -> null, null)
                 .get();
 
-        assertThat(sut.getExchangeStrategy()).isEqualTo(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
+        assertThat(sut.getExchangeStrategy()).isEqualTo(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class GetOrComputeDestinationCommandTest
         TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey expectedCacheKey = CacheKey.ofTenantIsolation();
 
-            assertCacheKeysMatchExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY, expectedCacheKey);
+            assertCacheKeysMatchExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY, expectedCacheKey);
         });
     }
 
@@ -100,7 +100,7 @@ public class GetOrComputeDestinationCommandTest
             final CacheKey expectedAdditionalCacheKey = CacheKey.ofTenantAndPrincipalIsolation();
 
             assertCacheKeysMatchExchangeStrategy(
-                DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
+                DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
                 expectedCacheKey,
                 expectedAdditionalCacheKey);
         }));
@@ -114,7 +114,7 @@ public class GetOrComputeDestinationCommandTest
             final CacheKey expectedAdditionalCacheKey = CacheKey.ofTenantAndPrincipalIsolation();
 
             assertCacheKeysMatchExchangeStrategy(
-                DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN,
+                DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN,
                 expectedCacheKey,
                 expectedAdditionalCacheKey);
         }));
@@ -125,19 +125,19 @@ public class GetOrComputeDestinationCommandTest
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey cacheKey = CacheKey.ofTenantAndPrincipalIsolation();
-            assertCacheKeysMatchExchangeStrategy(DestinationTokenExchangeStrategy.EXCHANGE_ONLY, cacheKey);
+            assertCacheKeysMatchExchangeStrategy(DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY, cacheKey);
         }));
     }
 
     private void assertCacheKeysMatchExchangeStrategy(
-        DestinationTokenExchangeStrategy tokenExchangeStrategy,
+        DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
         CacheKey expectedCacheKey )
     {
         assertCacheKeysMatchExchangeStrategy(tokenExchangeStrategy, expectedCacheKey, null);
     }
 
     private void assertCacheKeysMatchExchangeStrategy(
-        DestinationTokenExchangeStrategy tokenExchangeStrategy,
+        DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
         CacheKey expectedCacheKey,
         CacheKey expectedAdditionalCacheKey )
     {
@@ -189,7 +189,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -226,7 +226,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_ONLY))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -264,7 +264,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -318,7 +318,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         expectedCacheKey.append(DESTINATION_NAME, options);
@@ -367,7 +367,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         cacheKeyWithTenantAndPrincipal.append(DESTINATION_NAME, options);
@@ -426,7 +426,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         final BiFunction<String, DestinationOptions, Destination> function =
@@ -464,7 +464,7 @@ public class GetOrComputeDestinationCommandTest
                 .augmentBuilder(
                     DestinationServiceOptionsAugmenter
                         .augmenter()
-                        .tokenExchangeStrategy(DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN))
+                        .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN))
                 .build();
 
         tenantCacheKey.append(DESTINATION_NAME, options);

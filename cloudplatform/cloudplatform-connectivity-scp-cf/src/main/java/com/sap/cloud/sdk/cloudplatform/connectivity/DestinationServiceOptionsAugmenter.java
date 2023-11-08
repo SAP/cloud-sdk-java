@@ -44,14 +44,15 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @return The same augmenter that called this method.
      */
     @Nonnull
-    public DestinationServiceOptionsAugmenter retrievalStrategy( @Nonnull final DestinationServiceStrategy strategy )
+    public DestinationServiceOptionsAugmenter retrievalStrategy(
+        @Nonnull final DestinationServiceRetrievalStrategy strategy )
     {
         parameters.put(DESTINATION_RETRIEVAL_STRATEGY_KEY, strategy);
         return this;
     }
 
     /**
-     * Sets the {@link DestinationTokenExchangeStrategy} to use when loading destinations. Not setting this value
+     * Sets the {@link DestinationServiceTokenExchangeStrategy} to use when loading destinations. Not setting this value
      * results in the platform default behavior.
      *
      * @param strategy
@@ -60,7 +61,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      */
     @Nonnull
     public DestinationServiceOptionsAugmenter tokenExchangeStrategy(
-        @Nonnull final DestinationTokenExchangeStrategy strategy )
+        @Nonnull final DestinationServiceTokenExchangeStrategy strategy )
     {
         parameters.put(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY, strategy);
         return this;
@@ -83,21 +84,22 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      *         {@link io.vavr.control.Option.None}.
      */
     @Nonnull
-    public static Option<DestinationServiceStrategy> getRetrievalStrategy( @Nonnull final DestinationOptions options )
+    public static Option<DestinationServiceRetrievalStrategy> getRetrievalStrategy(
+        @Nonnull final DestinationOptions options )
     {
         final Option<Object> strategy = options.get(DESTINATION_RETRIEVAL_STRATEGY_KEY);
 
         if( strategy.isDefined() && strategy.get() instanceof String ) {
             return Option
-                .of(DestinationServiceStrategy.ofIdentifier((String) strategy.get()))
+                .of(DestinationServiceRetrievalStrategy.ofIdentifier((String) strategy.get()))
                 .onEmpty(() -> log.warn("Unsupported destination retrieval strategy: {}", strategy.get()));
         }
 
-        return strategy.map(DestinationServiceStrategy.class::cast);
+        return strategy.map(DestinationServiceRetrievalStrategy.class::cast);
     }
 
     /**
-     * Retrieves the configured {@link DestinationTokenExchangeStrategy} to use when loading destinations.
+     * Retrieves the configured {@link DestinationServiceTokenExchangeStrategy} to use when loading destinations.
      *
      * @param options
      *            The destination options instance that stores the key/value pair.
@@ -105,17 +107,17 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      *         {@link io.vavr.control.Option.None}.
      */
     @Nonnull
-    public static Option<DestinationTokenExchangeStrategy> getTokenExchangeStrategy(
+    public static Option<DestinationServiceTokenExchangeStrategy> getTokenExchangeStrategy(
         @Nonnull final DestinationOptions options )
     {
         final Option<Object> strategy = options.get(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY);
 
         if( strategy.isDefined() && strategy.get() instanceof String ) {
             return Option
-                .of(DestinationTokenExchangeStrategy.ofIdentifier((String) strategy.get()))
+                .of(DestinationServiceTokenExchangeStrategy.ofIdentifier((String) strategy.get()))
                 .onEmpty(() -> log.warn("Unsupported token exchange strategy: {}", strategy.get()));
         }
 
-        return strategy.map(DestinationTokenExchangeStrategy.class::cast);
+        return strategy.map(DestinationServiceTokenExchangeStrategy.class::cast);
     }
 }

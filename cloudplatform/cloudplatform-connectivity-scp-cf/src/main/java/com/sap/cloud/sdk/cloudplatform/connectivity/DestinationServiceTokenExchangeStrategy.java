@@ -15,7 +15,7 @@ import lombok.Getter;
  * Enumeration which represents the strategies for performing a user token exchange, if necessary, upon retrieving a
  * destination from the Destination service on BTP Cloud Foundry.
  */
-public enum DestinationTokenExchangeStrategy
+public enum DestinationServiceTokenExchangeStrategy
 {
     /**
      * Default strategy of forwarding current user access token to the destination lookup.
@@ -58,7 +58,7 @@ public enum DestinationTokenExchangeStrategy
     @Nonnull
     private final String identifier;
 
-    DestinationTokenExchangeStrategy( @Nonnull final String identifier )
+    DestinationServiceTokenExchangeStrategy( @Nonnull final String identifier )
     {
         this.identifier = identifier;
     }
@@ -70,10 +70,10 @@ public enum DestinationTokenExchangeStrategy
     }
 
     @Nullable
-    static DestinationTokenExchangeStrategy ofIdentifier( @Nullable final String identifier )
+    static DestinationServiceTokenExchangeStrategy ofIdentifier( @Nullable final String identifier )
     {
         return Stream
-            .of(DestinationTokenExchangeStrategy.values())
+            .of(DestinationServiceTokenExchangeStrategy.values())
             .filter(s -> s.getIdentifier().equalsIgnoreCase(identifier))
             .findFirst()
             .orElse(null);

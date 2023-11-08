@@ -4,10 +4,10 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,7 +55,7 @@ class GetOrComputeSingleDestinationCommand
     private final Supplier<Destination> destinationSupplier;
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
-    private final DestinationTokenExchangeStrategy exchangeStrategy;
+    private final DestinationServiceTokenExchangeStrategy exchangeStrategy;
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
 
@@ -70,7 +70,7 @@ class GetOrComputeSingleDestinationCommand
         final Supplier<Destination> destinationSupplier =
             () -> destinationRetriever.apply(destinationName, destinationOptions);
 
-        final DestinationTokenExchangeStrategy exchangeStrategy =
+        final DestinationServiceTokenExchangeStrategy exchangeStrategy =
             DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(destinationOptions)
                 .getOrElse(LOOKUP_THEN_EXCHANGE);
@@ -184,7 +184,7 @@ class GetOrComputeSingleDestinationCommand
 
     private void throwIfPrincipalIsUnavailable(
         @Nonnull final String destinationName,
-        @Nonnull final DestinationTokenExchangeStrategy exchangeStrategy )
+        @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
     {
         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
             throw new IllegalStateException(
@@ -198,7 +198,7 @@ class GetOrComputeSingleDestinationCommand
     private void logErroneousCombinations(
         @Nonnull final DestinationProperties result,
         @Nonnull final String destinationName,
-        @Nonnull final DestinationTokenExchangeStrategy exchangeStrategy )
+        @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
     {
 
         if( DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == LOOKUP_ONLY ) {
@@ -209,7 +209,7 @@ class GetOrComputeSingleDestinationCommand
                         + " Caching the destination for all users of the current tenant since it was obtained without user token exchange. ",
                     destinationName,
                     exchangeStrategy,
-                    DestinationTokenExchangeStrategy.class.getSimpleName());
+                    DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
 
         if( !DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == EXCHANGE_ONLY ) {
@@ -220,7 +220,7 @@ class GetOrComputeSingleDestinationCommand
                         + " Caching the destination for the current user of the current tenant since it was obtained with a user token.",
                     destinationName,
                     exchangeStrategy,
-                    DestinationTokenExchangeStrategy.class.getSimpleName());
+                    DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
     }
 

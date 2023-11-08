@@ -5,13 +5,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
@@ -79,7 +79,7 @@ class DestinationRetrievalStrategyResolverTest
     {
         final SoftAssertions softly = new SoftAssertions();
 
-        final List<Tuple3<DestinationServiceStrategy, DestinationTokenExchangeStrategy, Strategy>> testCases =
+        final List<Tuple3<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, Strategy>> testCases =
             new ArrayList<>();
 
         testCases.add(Tuple.of(CURRENT_TENANT, LOOKUP_ONLY, new Strategy(TECHNICAL_USER_CURRENT_TENANT, false)));
@@ -106,7 +106,7 @@ class DestinationRetrievalStrategyResolverTest
     @Test
     void testExceptionsAreThrownOnIllegalCombinations()
     {
-        final List<Tuple3<DestinationServiceStrategy, DestinationTokenExchangeStrategy, Tenant>> testCases =
+        final List<Tuple3<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, Tenant>> testCases =
             new ArrayList<>();
 
         final SoftAssertions softly = new SoftAssertions();

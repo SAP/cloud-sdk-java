@@ -47,7 +47,7 @@ public class DestinationServiceAuthenticationTest
             .augmentBuilder(
                 DestinationServiceOptionsAugmenter
                     .augmenter()
-                    .tokenExchangeStrategy(DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
+                    .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
             .build();
 
     private static final MockUtil mockUtil = new MockUtil();

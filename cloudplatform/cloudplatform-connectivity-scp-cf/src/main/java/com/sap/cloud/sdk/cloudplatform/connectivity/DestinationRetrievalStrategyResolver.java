@@ -5,13 +5,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.SYSTEM_USER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
@@ -79,8 +79,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     Strategy resolveSingleRequestStrategy(
-        @Nonnull final DestinationServiceStrategy retrievalStrategy,
-        @Nonnull final DestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
+        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
     {
         final OnBehalfOf behalfTechnicalUser;
 
@@ -118,10 +118,10 @@ class DestinationRetrievalStrategyResolver
 
     DestinationRetrieval prepareSupplier( @Nonnull final DestinationOptions options )
     {
-        final DestinationServiceStrategy retrievalStrategy =
+        final DestinationServiceRetrievalStrategy retrievalStrategy =
             DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
 
-        final DestinationTokenExchangeStrategy tokenExchangeStrategy =
+        final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy =
             DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(options)
                 .getOrElse(this::getDefaultTokenExchangeStrategy);
@@ -146,7 +146,7 @@ class DestinationRetrievalStrategyResolver
      * @return The current default token exchange strategy.
      */
     @Nonnull
-    private DestinationTokenExchangeStrategy getDefaultTokenExchangeStrategy()
+    private DestinationServiceTokenExchangeStrategy getDefaultTokenExchangeStrategy()
     {
         // extract extended attributes from current token, or null<br>
         final Map<String, Object> attributes =
@@ -162,8 +162,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     DestinationRetrieval prepareSupplier(
-        @Nonnull final DestinationServiceStrategy retrievalStrategy,
-        @Nonnull final DestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
+        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
         throws DestinationAccessException
     {
         log
@@ -193,8 +193,8 @@ class DestinationRetrievalStrategyResolver
     }
 
     private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
-        @Nonnull final DestinationServiceStrategy retrievalStrategy,
-        @Nullable final DestinationTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
+        @Nullable final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
     {
         if( retrievalStrategy == ONLY_SUBSCRIBER && currentTenantIsProvider() ) {
             throw new DestinationAccessException(
@@ -222,7 +222,7 @@ class DestinationRetrievalStrategyResolver
 
     Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
     {
-        final DestinationTokenExchangeStrategy tokenExchangeStrategy =
+        final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy =
             DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options).getOrElse(LOOKUP_ONLY);
         if( tokenExchangeStrategy != LOOKUP_ONLY ) {
             log
@@ -231,14 +231,15 @@ class DestinationRetrievalStrategyResolver
                     tokenExchangeStrategy,
                     LOOKUP_ONLY);
         }
-        final DestinationServiceStrategy retrievalStrategy =
+        final DestinationServiceRetrievalStrategy retrievalStrategy =
             DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
 
         return prepareSupplierAllDestinations(retrievalStrategy);
     }
 
-    Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationServiceStrategy strategy )
-        throws IllegalArgumentException
+    Supplier<List<Destination>>
+        prepareSupplierAllDestinations( @Nonnull final DestinationServiceRetrievalStrategy strategy )
+            throws IllegalArgumentException
     {
         warnOrThrowOnDeprecatedOrUnsupportedCombinations(strategy, null);
         switch( strategy ) {

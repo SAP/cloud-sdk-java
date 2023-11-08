@@ -10,9 +10,9 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ALWAYS_PROVIDER;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -225,7 +225,7 @@ public class DestinationServicePrincipalPropagationTest
     {
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
-        final DestinationServiceStrategy NO_STRATEGY = null;
+        final DestinationServiceRetrievalStrategy NO_STRATEGY = null;
         final Case[] cases =
             new Case[] {
                 //  TEST        TENANT GET   TENANT GET   RETRIEVAL
@@ -293,7 +293,7 @@ public class DestinationServicePrincipalPropagationTest
         static Case successful(
             final Try<Tenant> destinationTenant,
             final Try<Tenant> runtimeTenant,
-            final DestinationServiceStrategy strategy )
+            final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
@@ -311,7 +311,7 @@ public class DestinationServicePrincipalPropagationTest
         static Case failHeader(
             final Try<Tenant> destinationTenant,
             final Try<Tenant> runtimeTenant,
-            final DestinationServiceStrategy strategy )
+            final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
@@ -330,7 +330,9 @@ public class DestinationServicePrincipalPropagationTest
         }
 
         // test case: failing to get destination
-        static Case failRetrie( final Try<Tenant> destinationTenant, final DestinationServiceStrategy strategy )
+        static
+            Case
+            failRetrie( final Try<Tenant> destinationTenant, final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
