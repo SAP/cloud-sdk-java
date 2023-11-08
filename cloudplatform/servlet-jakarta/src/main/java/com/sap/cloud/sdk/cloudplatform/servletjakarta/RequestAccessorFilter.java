@@ -68,7 +68,7 @@ public class RequestAccessorFilter implements Filter
         } else {
             if( log.isWarnEnabled() ) {
                 final String msg = "Failed to initialize {}: request not of type {}.";
-                log.warn(msg, ThreadContext.class.getSimpleName(), HttpServletRequest.class.getName());
+                log.warn(msg, ThreadContext.class, HttpServletRequest.class);
             }
         }
     }
