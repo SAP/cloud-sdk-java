@@ -27,12 +27,22 @@ public interface ValueDuration
     @Nonnull
     ValueEnum NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueDuration} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueDuration}.
+     * @return A {@link ValueDuration} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueDuration literal( @Nonnull final Duration v )
     {
         return ( protocol, prefixes ) -> "duration'" + v + "'";
     }
 
+    /**
+     * OData expression for duration values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueDuration
     {

@@ -29,6 +29,13 @@ public interface ValueCollection
     @Nonnull
     ValueCollection NULL = Expressions.Operand.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueCollection} instance from the given {@code v}.
+     *
+     * @param v
+     *            The values to be transformed into a {@link ValueCollection}.
+     * @return A {@link ValueCollection} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueCollection literal( @Nonnull final Iterable<?> v )
     {
@@ -41,6 +48,9 @@ public interface ValueCollection
             + "]";
     }
 
+    /**
+     * OData expression for generic value collections.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueCollection
     {

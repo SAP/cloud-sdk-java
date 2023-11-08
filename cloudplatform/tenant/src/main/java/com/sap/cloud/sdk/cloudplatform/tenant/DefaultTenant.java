@@ -38,6 +38,9 @@ public class DefaultTenant implements TenantWithSubdomain
 
     /**
      * Creates a {@link DefaultTenant} without subdomain.
+     *
+     * @param tenantId
+     *            The identifier of the tenant.
      */
     public DefaultTenant( @Nonnull final String tenantId )
     {

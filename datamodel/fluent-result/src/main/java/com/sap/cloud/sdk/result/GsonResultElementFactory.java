@@ -27,18 +27,39 @@ public class GsonResultElementFactory implements ResultElementFactory<JsonElemen
     @Nonnull
     protected final GsonBuilder gsonBuilder;
 
+    /**
+     * Returns a {@link ResultPrimitive} from the given {@code resultElement}.
+     *
+     * @param resultElement
+     *            The {@code JsonElement} to be converted.
+     * @return The {@code ResultPrimitive} instance.
+     */
     @Nonnull
     protected ResultPrimitive newPrimitive( @Nonnull final JsonElement resultElement )
     {
         return new GsonResultPrimitive(resultElement.getAsJsonPrimitive());
     }
 
+    /**
+     * Returns a {@link ResultObject} from the given {@code resultElement}.
+     *
+     * @param resultElement
+     *            The {@code JsonElement} to be converted.
+     * @return The {@code ResultObject} instance.
+     */
     @Nonnull
     protected ResultObject newObject( @Nonnull final JsonElement resultElement )
     {
         return new GsonResultObject(resultElement.getAsJsonObject(), this);
     }
 
+    /**
+     * Returns a {@link ResultCollection} from the given {@code resultElement}.
+     *
+     * @param resultElement
+     *            The {@code JsonElement} to be converted.
+     * @return The {@code ResultCollection} instance.
+     */
     @Nonnull
     protected ResultCollection newCollection( @Nonnull final JsonElement resultElement )
     {
