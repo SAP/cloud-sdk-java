@@ -31,9 +31,9 @@ public class SecurityContextThreadContextDecorator implements ThreadContextDecor
     public <T> Callable<T> decorateCallable( @Nonnull final Callable<T> callable )
     {
         try {
-            getClass().getClassLoader().loadClass("com.sap.cloud.security.token.SecurityContext");
+            Class.forName("com.sap.cloud.security.token.SecurityContext", true, this.getClass().getClassLoader());
         }
-        catch( final Exception e ) {
+        catch( final ClassNotFoundException e ) {
             log.debug("SecurityContext class not found, no propagation to new Thread necessary.");
             return callable;
         }
