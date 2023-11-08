@@ -103,7 +103,7 @@ public class ModificationResponseTest
         assertThat(modification.getModifiedEntity().getServicePathForFetch()).isEqualTo(SERVICE_PATH);
 
         assertThat(modification.getResponseHeaders()).containsOnlyKeys("fizz");
-        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz", "bizz=1");
+        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz, bizz=1");
     }
 
     @Test
