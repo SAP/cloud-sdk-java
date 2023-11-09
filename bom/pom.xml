@@ -64,7 +64,7 @@
 		<commons-io.version>2.14.0</commons-io.version>
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
-		<!--Used in essential modules: cloudplatform-connectivity, cloudplatform-connectivity-scp-cf, odata-client, odata-core, securitys-->
+		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
 		<commons-lang3.version>3.13.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
@@ -235,7 +235,7 @@
 				<artifactId>axis2-kernel</artifactId>
 				<version>${axis2.version}</version>
 			</dependency>
-			<!--Used in essential modules: cloudplatform-connectivity, cloudplatform-connectivity-scp-cf, odata-client, odata-core, security-->
+			<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, security-->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
