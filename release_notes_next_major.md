@@ -64,9 +64,11 @@ blog: https://blogs.sap.com/?p=xxx
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestinationBuilder`
     - Within the [Cloud Platform - Connectivity SAP BTP Cloud Foundry](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity-scp-cf) Module:
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.AccessToken`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfHttpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfRfcDestination`
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceResponseProvider`
     - Within the [SAP S/4HANA - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.s4hana%20AND%20a:s4hana-connectivity) Module:
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination`
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationProperties`
@@ -108,6 +110,14 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.security.principal.SimplePrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringCollectionPrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringPrincipalAttribute`
+    - `com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAttributeException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.KeyStoreAccessException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.SecretStoreAccessException`
     - `com.sap.cloud.sdk.cloudplatform.CloudPlatform`
     - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform`
     - `com.sap.cloud.sdk.cloudplatform.DwcCloudPlatform`
@@ -116,6 +126,17 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade`
     - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatformFacade`
     - `com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.WithRuntimeDependencies`
+    - `com.sap.cloud.sdk.cloudplatform.exception.ConstraintViolationException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.DependencyNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityAlreadyExistsException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.StringParsingException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.UnsupportedCloudFeatureException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.MissingConfigException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.VersionNotSupportedException`
+    - `com.sap.cloud.sdk.testutil.ThreadContextInvocationInterceptor`
+    - `com.sap.cloud.sdk.testutil.ThrowableAssertionUtil`
 - Following public methods have been removed:
   - Related to the `Destination` API:
     - The `Destination#decorate` method has been removed without replacement.
