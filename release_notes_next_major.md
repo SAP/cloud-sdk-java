@@ -167,6 +167,9 @@ blog: https://blogs.sap.com/?p=xxx
   - The `BearerCredentials` behavior has been adjusted slightly: The `getToken()` method no longer just returns the value passed in via the constructor but instead is now guaranteed to **NOT** contain the prefix `"Bearer "`. To compensate this change, the `#getHttpHeaderValue()` method has been added, which is guaranteed to contain the `"Bearer "` prefix.
   - Invoking `HttpDestination#getHeaders(...)` may throw a `ResilienceRuntimeException` in case On-Premise Connectivity proxy headers cannot be resolved.
     As usual, the specific error cause is attached to the exception.
+  - The deprecated `ClientCredentialsHttpDestination` has been removed in favor of the improved `OAuth2DestinationBuilder`.
+  - The `OAuth2DestinationBuilder` has been changed to allow for setting arbitrary destination properties after the OAuth2 configuration has been set.
+    - The `.withProperties(..)` aspect of the builder has been replaced with `.withProperty(..)`.
 - The following classes have been moved or their modules have been renamed:
   - All classes related to the Apache Http Client 4 have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity` to a new module `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4`
   - All classes related to the Apache Http Client 5 have been moved from `com.sap.cloud.sdk.frameworks:apache-httpclient5` to `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5`
