@@ -97,7 +97,7 @@ public class ModificationResponseTest
         assertThat(modification.getModifiedEntity()).isEqualTo(new TestObject("bar"));
 
         assertThat(modification.getResponseHeaders()).containsOnlyKeys("fizz");
-        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz", "bizz=1");
+        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz, bizz=1");
     }
 
     @Test

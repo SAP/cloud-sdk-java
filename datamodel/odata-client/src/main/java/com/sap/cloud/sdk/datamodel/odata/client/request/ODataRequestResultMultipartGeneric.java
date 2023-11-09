@@ -94,7 +94,13 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
         }
 
         log.debug("Looking for request {} in batch response at position {}", request, responsePosition);
-        final List<HttpResponse> subResponses = getBatchedResponses().get(responsePosition._1());
+        final List<List<HttpResponse>> batchResponseItems = getBatchedResponses();
+        if( responsePosition._1() >= batchResponseItems.size() ) {
+            String msg = "Unable to extract batch response item at position %s. The response contains only %s items.";
+            msg = String.format(msg, responsePosition._1() + 1, batchResponseItems.size());
+            throw new ODataResponseException(batchRequest, httpResponse, msg, null);
+        }
+        final List<HttpResponse> subResponses = batchResponseItems.get(responsePosition._1());
 
         final boolean isSingleResponse = responsePosition._2() == null || responsePosition._2() >= subResponses.size();
         final HttpResponse response = subResponses.get(isSingleResponse ? 0 : responsePosition._2());
