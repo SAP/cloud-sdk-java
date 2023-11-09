@@ -70,7 +70,6 @@ public class OAuth2DestinationBuilderTest
                 .forTargetUrl(mockServer.baseUrl())
                 .withTokenEndpoint(mockServer.baseUrl())
                 .withClient(new ClientCredentials("clientid", "clientsecret"), OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT)
-                .withProperties(Collections.singletonMap("foo", "bar"))
                 .build();
 
         // direct invocation test assertion
@@ -98,7 +97,6 @@ public class OAuth2DestinationBuilderTest
                 .forTargetUrl(mockServer.baseUrl())
                 .withTokenEndpoint(mockServer.baseUrl())
                 .withClient(new ClientCredentials("clientid", "clientsecret"), OnBehalfOf.NAMED_USER_CURRENT_TENANT)
-                .withProperties(Collections.singletonMap("foo", "bar"))
                 .build();
 
         final String token = JwtGenerator.getInstance(Service.XSUAA, "client-id").createToken().getTokenValue();
@@ -119,5 +117,22 @@ public class OAuth2DestinationBuilderTest
         mockServer.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing(token)));
         mockServer.verify(1, getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer PERSONAL")));
         AuthTokenAccessor.setAuthTokenFacade(null);
+    }
+
+    @Test
+    public void testOtherBuilderMethodsCanBeUsed() {
+        final DefaultHttpDestination destination =
+                OAuth2DestinationBuilder
+                    .forTargetUrl(mockServer.baseUrl())
+                    .withTokenEndpoint(mockServer.baseUrl())
+                    .withClient(new ClientCredentials("clientid", "clientsecret"), OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .name("my-destination")
+                    .header("my-header", "my-value")
+                    .property("foo", "bar")
+                    .build();
+        assertThat(destination.get(DestinationProperty.NAME)).contains("my-destination");
+        assertThat(destination.get("foo")).contains("bar");
+        assertThat(destination.customHeaders).containsExactly(new Header("my-header", "my-value"));
+
     }
 }

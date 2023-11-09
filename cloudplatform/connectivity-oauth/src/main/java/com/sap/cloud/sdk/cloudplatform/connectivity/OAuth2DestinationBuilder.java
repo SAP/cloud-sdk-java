@@ -73,60 +73,9 @@ public class OAuth2DestinationBuilder
          * @since 4.10.0
          */
         @Nonnull
-        BuilderWithClient withClient( @Nonnull final ClientIdentity clientIdentity, @Nonnull final OnBehalfOf behalf );
+        DefaultHttpDestination.Builder withClient( @Nonnull final ClientIdentity clientIdentity, @Nonnull final OnBehalfOf behalf );
     }
 
-    /**
-     * Helper interface to serve optional properties.
-     *
-     * @since 4.10.0
-     */
-    @FunctionalInterface
-    @Beta
-    public interface BuilderWithClient
-    {
-        /**
-         * Apply destination properties.
-         *
-         * @param properties
-         *            The destination properties.
-         * @return The same builder instance.
-         * @since 4.10.0
-         */
-        @Nonnull
-        BuilderWithProperties withProperties( @Nonnull final Map<String, String> properties );
-
-        /**
-         * Finalize build process.
-         *
-         * @return A new {@link HttpDestination} instance.
-         * @since 4.10.0
-         */
-        @Nonnull
-        default HttpDestination build()
-        {
-            return withProperties(Collections.emptyMap()).build();
-        }
-    }
-
-    /**
-     * Helper interface to serve build method.
-     *
-     * @since 4.10.0
-     */
-    @FunctionalInterface
-    @Beta
-    public interface BuilderWithProperties
-    {
-        /**
-         * Finalize build process.
-         *
-         * @return A new {@link HttpDestination} instance.
-         * @since 4.10.0
-         */
-        @Nonnull
-        HttpDestination build();
-    }
 
     /**
      * Static factory method to initialize a fluent API builder.
@@ -139,7 +88,7 @@ public class OAuth2DestinationBuilder
     @Nonnull
     public static BuilderWithTargetUrl forTargetUrl( @Nonnull final String targetUrl )
     {
-        return ( tokenUrl ) -> ( client, behalf ) -> ( properties ) -> () -> {
+        return ( tokenUrl ) -> ( client, behalf ) -> {
             final OAuth2ServiceImpl oauth2service = new OAuth2ServiceImpl(tokenUrl, client, behalf);
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
@@ -147,16 +96,13 @@ public class OAuth2DestinationBuilder
             final String destinationName = UUID.randomUUID().toString();
             destinationBuilder.name(destinationName);
 
-            properties.forEach(destinationBuilder::property);
-
             destinationBuilder
                 .property(
                     OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                     createTokenRetrievalResilienceConfiguration(destinationName));
 
             return destinationBuilder
-                .headerProviders(new OAuthHeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION))
-                .build();
+                .headerProviders(new OAuthHeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION));
         };
     }
 
