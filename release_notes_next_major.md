@@ -187,6 +187,7 @@ blog: https://blogs.sap.com/?p=xxx
     - `DwcHeaderNotFoundException`
   - `com.sap.cloud.sdk.cloudplatform.security.DwcPrincipalFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:security-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
   - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenantFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:tenant-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
+  - The module `cloudplatform-connectivity-scp-cf` got renamed to `connectivity-destination-service`, and all classes therein that started with `ScpCf...` got this prefix renamed to `DestinatinService...`. To prevent breaking changes with the renamed module the `cloudplatform-connectivity-scp-cf` module is still available as a dependency, but it is empty and just contains a reference to the new module `connectivity-destination-service`.
 - The `HttpClientAccessor` and `ApacheHttpClient5Accessor` classes are generalised to accept `Destination` instances, making invocations to `.asHttp()` superfluous when obtaining HTTP clients.
 - The `getSslContext()` method was removed from the `CloudPlatform` interface and the implementation was moved to the modules `connectivity-apache-httpclient4` and `connectivity-apache-httpclient5`.
 - The OData, OpenAPI and SOAP APIs are generalised to accept instances of `Destination`, making invocations to `.asHttp()` superfluous when executing OData or REST requests.
