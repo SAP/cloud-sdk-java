@@ -34,7 +34,8 @@
 		<module>modules-bom</module>
 		<module>s4hana</module>
 		<module>testutil</module>
-	</modules>
+        <module>dependency-bundles/connectivity</module>
+    </modules>
 	<scm>
 		<connection />
 		<url />
