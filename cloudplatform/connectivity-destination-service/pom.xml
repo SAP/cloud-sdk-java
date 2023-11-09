@@ -75,10 +75,6 @@
 			<artifactId>tenant</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.security.xsuaa</groupId>
-			<artifactId>token-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -183,6 +179,11 @@
 		<dependency>
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.security.xsuaa</groupId>
+			<artifactId>token-client</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
