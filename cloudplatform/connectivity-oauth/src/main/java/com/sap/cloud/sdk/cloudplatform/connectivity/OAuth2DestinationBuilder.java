@@ -5,8 +5,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -73,9 +71,9 @@ public class OAuth2DestinationBuilder
          * @since 4.10.0
          */
         @Nonnull
-        DefaultHttpDestination.Builder withClient( @Nonnull final ClientIdentity clientIdentity, @Nonnull final OnBehalfOf behalf );
+        DefaultHttpDestination.Builder
+            withClient( @Nonnull final ClientIdentity clientIdentity, @Nonnull final OnBehalfOf behalf );
     }
-
 
     /**
      * Static factory method to initialize a fluent API builder.
