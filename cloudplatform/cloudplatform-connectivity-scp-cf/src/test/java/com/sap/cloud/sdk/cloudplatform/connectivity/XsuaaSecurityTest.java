@@ -13,9 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -33,7 +30,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccesso
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.servlet.RequestAccessorFilter;
+import com.sap.cloud.sdk.cloudplatform.servletjakarta.RequestAccessorFilter;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.SecurityTestRule;
@@ -41,6 +38,9 @@ import com.sap.cloud.security.token.SecurityContext;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.token.TokenClaims;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 public class XsuaaSecurityTest

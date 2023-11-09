@@ -127,7 +127,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
-		<wiremock.version>2.35.1</wiremock.version>
+		<wiremock.version>3.0.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.8</byte-buddy.version>
@@ -356,8 +356,8 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8</artifactId>
+				<groupId>org.wiremock</groupId>
+				<artifactId>wiremock</artifactId>
 				<version>${wiremock.version}</version>
 				<scope>test</scope>
 			</dependency>
@@ -488,25 +488,6 @@
 				<groupId>net.bytebuddy</groupId>
 				<artifactId>byte-buddy</artifactId>
 				<version>${byte-buddy.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- Added to resolve dependency convergence with wiremock-jre8 -->
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<!-- Added to resolve dependency convergence with wiremock-jre8 -->
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<!-- Added to resolve dependency convergence between wiremock-jre8 and jetty -->
-			<dependency>
-				<groupId>org.ow2.asm</groupId>
-				<artifactId>asm</artifactId>
-				<version>9.5</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- Added to resolve dependency convergence between httpclient5, httpclient, and olingo-odata2-core -->
