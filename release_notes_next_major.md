@@ -177,6 +177,7 @@ blog: https://blogs.sap.com/?p=xxx
 - The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
 - The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
 - The **internal** Spring version has been updated to `6.0.13` (from `5.3.29`). This change makes the SAP Cloud SDK compatible with Spring 6.X by default.
+  As a consequence, the [scp-cf](https://search.maven.org/artifact/com.sap.cloud.sdk.cloudplatform/scp-cf) module now comes with our [servlet-jakarta](https://search.maven.org/artifact/com.sap.cloud.sdk.cloudplatform/servlet-jakarta) (instead of the outdated [servlet](https://search.maven.org/artifact/com.sap.cloud.sdk.cloudplatform/servlet)) module out of the box.
   Customers that need an older Spring version (e.g. SAP Java Buildpack users) have to make sure to correctly overwrite the Spring version in their project.
   Please refer to [our documentation](https://sap.github.io/cloud-sdk/docs/java/guides/manage-dependencies#overriding-dependency-versions-of-the-sap-cloud-sdk-bill-of-material) for guidance.
 

@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>servlet</artifactId>
+			<artifactId>servlet-jakarta</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
