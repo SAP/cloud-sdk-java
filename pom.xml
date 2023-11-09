@@ -45,7 +45,8 @@
 		<!--  do not modify the following line, it is updated by the versioning script  -->
 		<sdk.version>5.0.0-alpha-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
-		<java.version>17</java.version>
+		<java.release.version>8</java.release.version>
+		<java.compiler.version>17</java.compiler.version>
 		<java.failOnWarning>true</java.failOnWarning>
 		<java.compilerArgument />
 		<audience />
@@ -556,7 +557,7 @@
 										<version>${maven.version}</version>
 									</requireMavenVersion>
 									<requireJavaVersion>
-										<version>${java.version}</version>
+										<version>${java.compiler.version}</version>
 									</requireJavaVersion>
 									<banDistributionManagement />
 									<banDuplicatePomDependencyVersions />
@@ -842,7 +843,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.11.0</version>
 					<configuration>
-						<release>${java.version}</release>
+						<release>${java.release.version}</release>
+						<compilerVersion>${java.compiler.version}</compilerVersion>
 						<showWarnings>true</showWarnings>
 						<showDeprecation>true</showDeprecation>
 						<failOnWarning>${java.failOnWarning}</failOnWarning>
@@ -1029,7 +1031,7 @@
 							<ruleset>/rulesets/java/maven-pmd-plugin-default.xml</ruleset>
 						</rulesets>
 						<linkXRef>false</linkXRef>
-						<targetJdk>${java.version}</targetJdk>
+						<targetJdk>${java.release.version}</targetJdk>
 						<excludes>
 							<exclude>${codeAnalysisExclusions}</exclude>
 						</excludes>
