@@ -51,7 +51,6 @@
 		<!-- Keep these two versions consistent with the one from: com.sap.cloud.security.xsuaa:parent -->
 		<!-- see https://github.com/SAP/cloud-security-xsuaa-integration/blob/master/pom.xml -->
 		<scp-cf.xsuaa-client.version>2.14.2</scp-cf.xsuaa-client.version>
-		<spring.version>5.3.29</spring.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>1.7.36</slf4j.version>

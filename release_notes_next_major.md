@@ -176,6 +176,9 @@ blog: https://blogs.sap.com/?p=xxx
 - The `ODataRequestResult` no longer splits header values.
 - The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
 - The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
+- The **internal** Spring version has been updated to `6.0.13` (from `5.3.29`). This change makes the SAP Cloud SDK compatible with Spring 6.X by default.
+  Customers that need an older Spring version (e.g. SAP Java Buildpack users) have to make sure to correctly overwrite the Spring version in their project.
+  Please refer to [our documentation](https://sap.github.io/cloud-sdk/docs/java/guides/manage-dependencies#overriding-dependency-versions-of-the-sap-cloud-sdk-bill-of-material) for guidance.
 
 ## newFunctionality
 
@@ -194,6 +197,11 @@ blog: https://blogs.sap.com/?p=xxx
 - The `Destination#asHttp()` and `Destination#asRfc()` methods no longer always return a new instance of `HttpDestination` and `RfcDestination` if the current objects is already a `HttpDestination` or `RfcDestination` respectively.
 - `Destination#asHttp()` no longer throws an exception in case the `Destination` originates from the Destination service and the attached auth token contains an error.
   Instead, an exception will be thrown upon invoking the `getHeaders()` method, for example, during request execution.
+
+- Dependency Updates:
+  - Other dependency updates:
+    - Major version updates:
+      - Update `org.springframework.spring-framework-bom` from `5.3.29` to `6.0.13`. **Note** This dependency is used by the SDK **internally only**. In other words: This update **does not** affect consuming projects that use the `sdk-bom` for dependency management.
 
 ## fixedIssues
 
