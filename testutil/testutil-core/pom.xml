@@ -67,7 +67,7 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
+				<groupId>org.wiremock</groupId>
 				<artifactId>wiremock-jre8</artifactId>
 				<version>${wiremock.version}</version>
 				<scope>compile</scope>
