@@ -8,6 +8,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createHttpConfig;
+import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createServerConnector;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
@@ -31,7 +33,6 @@ import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -48,7 +49,7 @@ import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServer;
+import com.github.tomakehurst.wiremock.jetty11.Jetty11HttpServer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
@@ -290,7 +291,7 @@ public abstract class ClientCertificateAuthenticationLocalTest
         }
     }
 
-    private static class MyJettyServer extends JettyHttpServer
+    private static class MyJettyServer extends Jetty11HttpServer
     {
         MyJettyServer(
             final Options options,
@@ -302,17 +303,17 @@ public abstract class ClientCertificateAuthenticationLocalTest
 
         @Override
         protected ServerConnector createHttpsConnector(
-            Server server,
             String bindAddress,
             HttpsSettings httpsSettings,
             JettySettings jettySettings,
             NetworkTrafficListener listener )
         {
-            final SslContextFactory sslContextFactory = getCustomizedSslContextFactory(httpsSettings);
+            final MySslContextFactory sslContextFactory = getCustomizedSslContextFactory(httpsSettings);
             final HttpConfiguration httpConfig = createHttpConfig(jettySettings);
             httpConfig.addCustomizer(new SecureRequestCustomizer());
             final int port = httpsSettings.port();
             return createServerConnector(
+                jettyServer,
                 bindAddress,
                 jettySettings,
                 port,
@@ -321,9 +322,9 @@ public abstract class ClientCertificateAuthenticationLocalTest
                 new HttpConnectionFactory(httpConfig));
         }
 
-        private SslContextFactory getCustomizedSslContextFactory( final HttpsSettings httpsSettings )
+        private MySslContextFactory getCustomizedSslContextFactory( final HttpsSettings httpsSettings )
         {
-            final SslContextFactory sslContextFactory = new MySslContextFactory();
+            final MySslContextFactory sslContextFactory = new MySslContextFactory();
             sslContextFactory.setKeyStorePath(httpsSettings.keyStorePath());
             sslContextFactory.setKeyManagerPassword(httpsSettings.keyStorePassword());
             sslContextFactory.setKeyStoreType(httpsSettings.keyStoreType());
