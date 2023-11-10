@@ -18,7 +18,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
 
 import io.vavr.control.Option;
 
-public class ScpCfDestinationLoaderCacheTest
+public class DestinationServiceCacheTest
 {
     @After
     public void resetCache()
