@@ -64,9 +64,11 @@ blog: https://blogs.sap.com/?p=xxx
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestinationBuilder`
     - Within the [Cloud Platform - Connectivity SAP BTP Cloud Foundry](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity-scp-cf) Module:
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.AccessToken`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfHttpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfRfcDestination`
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceResponseProvider`
     - Within the [SAP S/4HANA - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.s4hana%20AND%20a:s4hana-connectivity) Module:
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination`
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationProperties`
@@ -108,6 +110,14 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.security.principal.SimplePrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringCollectionPrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringPrincipalAttribute`
+    - `com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAttributeException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.KeyStoreAccessException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.SecretStoreAccessException`
     - `com.sap.cloud.sdk.cloudplatform.CloudPlatform`
     - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform`
     - `com.sap.cloud.sdk.cloudplatform.DwcCloudPlatform`
@@ -116,6 +126,17 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade`
     - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatformFacade`
     - `com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.WithRuntimeDependencies`
+    - `com.sap.cloud.sdk.cloudplatform.exception.ConstraintViolationException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.DependencyNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityAlreadyExistsException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.StringParsingException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.UnsupportedCloudFeatureException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.MissingConfigException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.VersionNotSupportedException`
+    - `com.sap.cloud.sdk.testutil.ThreadContextInvocationInterceptor`
+    - `com.sap.cloud.sdk.testutil.ThrowableAssertionUtil`
 - Following public methods have been removed:
   - Related to the `Destination` API:
     - The `Destination#decorate` method has been removed without replacement.
@@ -146,6 +167,9 @@ blog: https://blogs.sap.com/?p=xxx
   - The `BearerCredentials` behavior has been adjusted slightly: The `getToken()` method no longer just returns the value passed in via the constructor but instead is now guaranteed to **NOT** contain the prefix `"Bearer "`. To compensate this change, the `#getHttpHeaderValue()` method has been added, which is guaranteed to contain the `"Bearer "` prefix.
   - Invoking `HttpDestination#getHeaders(...)` may throw a `ResilienceRuntimeException` in case On-Premise Connectivity proxy headers cannot be resolved.
     As usual, the specific error cause is attached to the exception.
+  - The deprecated `ClientCredentialsHttpDestination` has been removed in favor of the improved `OAuth2DestinationBuilder`.
+  - The `OAuth2DestinationBuilder` has been changed to allow for setting arbitrary destination properties after the OAuth2 configuration has been set.
+    - The `.withProperties(..)` aspect of the builder has been replaced with `.withProperty(..)`.
 - The following classes have been moved or their modules have been renamed:
   - All classes related to the Apache Http Client 4 have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity` to a new module `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4`
   - All classes related to the Apache Http Client 5 have been moved from `com.sap.cloud.sdk.frameworks:apache-httpclient5` to `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5`
@@ -166,6 +190,7 @@ blog: https://blogs.sap.com/?p=xxx
     - `DwcHeaderNotFoundException`
   - `com.sap.cloud.sdk.cloudplatform.security.DwcPrincipalFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:security-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
   - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenantFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:tenant-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
+  - The module `cloudplatform-connectivity-scp-cf` got renamed to `connectivity-destination-service`, and all classes therein that started with `ScpCf...` got this prefix renamed to `DestinatinService...`. To prevent breaking changes with the renamed module the `cloudplatform-connectivity-scp-cf` module is still available as a dependency, but it is empty and just contains a reference to the new module `connectivity-destination-service`.
 - The `HttpClientAccessor` and `ApacheHttpClient5Accessor` classes are generalised to accept `Destination` instances, making invocations to `.asHttp()` superfluous when obtaining HTTP clients.
 - The `getSslContext()` method was removed from the `CloudPlatform` interface and the implementation was moved to the modules `connectivity-apache-httpclient4` and `connectivity-apache-httpclient5`.
 - The OData, OpenAPI and SOAP APIs are generalised to accept instances of `Destination`, making invocations to `.asHttp()` superfluous when executing OData or REST requests.

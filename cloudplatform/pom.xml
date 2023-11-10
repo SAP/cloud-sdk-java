@@ -36,6 +36,7 @@
 		<module>caching</module>
 		<module>cloudplatform-connectivity</module>
 		<module>cloudplatform-connectivity-scp-cf</module>
+		<module>connectivity-destination-service</module>
 		<module>connectivity-dwc</module>
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
