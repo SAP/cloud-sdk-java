@@ -14,38 +14,38 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContextExecutorService;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
-public class ResilienceDecoratorQueuedOperationsTest
+class ResilienceDecoratorQueuedOperationsTest
 {
     private static final ResilienceConfiguration CONFIG =
         ResilienceConfiguration.of(ResilienceDecoratorQueuedOperationsTest.class);
 
-    @Before
-    public void prepareDecorator()
+    @BeforeEach
+    void prepareDecorator()
     {
         ResilienceDecorator.setDecorationStrategy(new ResilienceDecorationStrategyTest.TestDecorationStrategy());
     }
 
-    @After
-    public void resetDecorator()
+    @AfterEach
+    void resetDecorator()
     {
         ResilienceDecorator.resetDecorationStrategy();
     }
 
-    @After
-    public void resetExecutor()
+    @AfterEach
+    void resetExecutor()
     {
         ThreadContextExecutors.setExecutor(null);
     }
 
     @Test
-    public void testQueuedCallable()
+    void testQueuedCallable()
         throws ExecutionException,
             InterruptedException
     {
@@ -56,7 +56,7 @@ public class ResilienceDecoratorQueuedOperationsTest
     }
 
     @Test
-    public void testQueuedCallableFallback()
+    void testQueuedCallableFallback()
         throws ExecutionException,
             InterruptedException
     {
@@ -76,7 +76,7 @@ public class ResilienceDecoratorQueuedOperationsTest
     }
 
     @Test
-    public void testQueuedCallableWithExecutor()
+    void testQueuedCallableWithExecutor()
         throws ExecutionException,
             InterruptedException
     {
@@ -98,7 +98,7 @@ public class ResilienceDecoratorQueuedOperationsTest
     }
 
     @Test
-    public void testQueuedSupplier()
+    void testQueuedSupplier()
         throws ExecutionException,
             InterruptedException
     {
@@ -109,7 +109,7 @@ public class ResilienceDecoratorQueuedOperationsTest
     }
 
     @Test
-    public void testQueuedSupplierFallback()
+    void testQueuedSupplierFallback()
         throws ExecutionException,
             InterruptedException
     {
@@ -129,7 +129,7 @@ public class ResilienceDecoratorQueuedOperationsTest
     }
 
     @Test
-    public void testQueuedSupplierWithExecutor()
+    void testQueuedSupplierWithExecutor()
         throws ExecutionException,
             InterruptedException
     {
