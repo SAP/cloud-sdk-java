@@ -11,31 +11,29 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Product;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-@RunWith( Parameterized.class )
-@RequiredArgsConstructor
-public class ODataFetchMediaStreamTest
+@WireMockTest
+class ODataFetchMediaStreamTest
 {
     private static final String SRV_PATH = SdkGroceryStoreService.DEFAULT_SERVICE_PATH;
     private static final SdkGroceryStoreService SRV = new DefaultSdkGroceryStoreService().withServicePath(SRV_PATH);
@@ -66,30 +64,25 @@ public class ODataFetchMediaStreamTest
             + "}"
             + "}";
 
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         stubFor(get(urlPathMatching(SRV_PATH + "/Products")).willReturn(okJson(JSON_RESPONSE)));
     }
 
-    @Parameterized.Parameters( name = "File: {0}" )
-    public static List<String> data()
+    static List<String> data()
     {
         return Arrays.asList("ODataFetchMediaStreamTest/test.txt", "ODataFetchMediaStreamTest/SAP_logo.png");
     }
 
-    private final String file;
-
-    @Test
+    @ParameterizedTest
+    @MethodSource( "data" )
     @SneakyThrows
-    public void testWithFile()
+    void testWithFile( @Nonnull final String file )
     {
         stubFor(get(urlPathMatching(SRV_PATH + "/Products\\((.*)\\)/\\$value")).willReturn(ok().withBodyFile(file)));
 
@@ -97,12 +90,12 @@ public class ODataFetchMediaStreamTest
 
         for( final Product product : products ) {
             try( final InputStream productMedia = product.fetchMediaStream() ) {
-                assertInputStreamMatchesFile(productMedia);
+                assertInputStreamMatchesFile(productMedia, file);
             }
         }
         for( final Product product : products ) {
             try( final InputStream productMedia = product.fetchMediaStream() ) {
-                assertInputStreamMatchesFile(productMedia);
+                assertInputStreamMatchesFile(productMedia, file);
             }
         }
 
@@ -111,7 +104,7 @@ public class ODataFetchMediaStreamTest
     }
 
     @SneakyThrows
-    private void assertInputStreamMatchesFile( final InputStream productMedia )
+    private void assertInputStreamMatchesFile( @Nonnull final InputStream productMedia, @Nonnull final String file )
     {
         assertThat(productMedia).isNotNull();
         assertThat(productMedia.available()).isGreaterThan(0);
