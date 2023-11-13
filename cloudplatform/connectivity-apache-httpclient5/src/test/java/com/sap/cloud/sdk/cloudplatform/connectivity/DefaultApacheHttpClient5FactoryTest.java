@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -44,36 +45,39 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
 import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
-public class DefaultApacheHttpClient5FactoryTest
+class DefaultApacheHttpClient5FactoryTest
 {
     private static final int TEST_TIMEOUT = 300_000;
     private static final Duration CLIENT_TIMEOUT = Duration.ofSeconds(10L);
     private static final int MAX_CONNECTIONS = 10;
     private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
 
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-    @Rule
-    public final WireMockRule secondWireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
+    @RegisterExtension
+    static final WireMockExtension wireMockServer =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
+    @RegisterExtension
+    static final WireMockExtension secondWireMockServer =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     private SoftAssertions softly;
     private ApacheHttpClient5Factory sut;
     private HttpRequestInterceptor requestInterceptor;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
-    public void setup()
+    void setup()
     {
         softly = new SoftAssertions();
 
@@ -90,7 +94,7 @@ public class DefaultApacheHttpClient5FactoryTest
 
     @Test
     @SneakyThrows
-    public void testHttpClientUsesTimeout()
+    void testHttpClientUsesTimeout()
     {
         wireMockServer.stubFor(get(urlEqualTo("/timeout")).willReturn(ok().withFixedDelay(5_000)));
 
@@ -121,9 +125,10 @@ public class DefaultApacheHttpClient5FactoryTest
         softly.assertAll();
     }
 
-    @Test( timeout = TEST_TIMEOUT )
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
-    public void testHttpClientUsesMaxConnections()
+    void testHttpClientUsesMaxConnections()
     {
         wireMockServer.stubFor(get(urlEqualTo("/max-connections-1")).willReturn(ok()));
         wireMockServer.stubFor(get(urlEqualTo("/max-connections-2")).willReturn(ok()));
@@ -142,9 +147,10 @@ public class DefaultApacheHttpClient5FactoryTest
         assertCannotBeExecutedInParallel(firstRequest, secondRequest, client);
     }
 
-    @Test( timeout = TEST_TIMEOUT )
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
-    public void testHttpClientUsesMaxConnectionsPerRoute()
+    void testHttpClientUsesMaxConnectionsPerRoute()
     {
         wireMockServer.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
         secondWireMockServer.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
@@ -166,7 +172,7 @@ public class DefaultApacheHttpClient5FactoryTest
 
     @Test
     @SneakyThrows
-    public void testProxyConfigurationIsConsidered()
+    void testProxyConfigurationIsConsidered()
     {
         wireMockServer.stubFor(get(urlEqualTo("/proxy")).willReturn(ok()));
 
