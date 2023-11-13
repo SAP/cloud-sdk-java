@@ -19,13 +19,13 @@ import java.io.Reader;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
@@ -33,30 +33,28 @@ import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CfPlatformSslContextProviderTest
+class CfPlatformSslContextProviderTest
 {
     private static final SSLContext mockContext = mock(SSLContext.class, "Initial mock");
     private static final SSLContext updatedMockContext = mock(SSLContext.class, "Updated mock");
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private CfPlatformSslContextProvider providerToTest;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         providerToTest = spy(new CfPlatformSslContextProvider());
     }
 
     @Test
-    public void testUnstubbedAccessUsesDefaultContext()
+    void testUnstubbedAccessUsesDefaultContext()
         throws NoSuchAlgorithmException
     {
         assertThat(providerToTest.tryGetContext().get()).isSameAs(SSLContext.getDefault());
     }
 
     @Test
-    public void testCacheAccess()
+    void testCacheAccess()
     {
         doReturn(Try.success(mockContext)).when(providerToTest).tryLoadInstanceIdentity();
 
@@ -72,7 +70,7 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testCacheDuration()
+    void testCacheDuration()
     {
         doReturn(Try.success(mockContext)).when(providerToTest).tryLoadInstanceIdentity();
         providerToTest.setCacheDuration(Duration.ZERO);
@@ -87,7 +85,7 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testBuildpackAccess()
+    void testBuildpackAccess()
         throws NoSuchAlgorithmException
     {
         providerToTest.setSecurityProviderAvailable(true);
@@ -99,11 +97,11 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testFileSystemAccess()
+    void testFileSystemAccess( @Nonnull @TempDir final File tempFolder )
         throws IOException
     {
-        final String cert = tempFolder.newFile("cert").getAbsolutePath();
-        final String key = tempFolder.newFile("key").getAbsolutePath();
+        final String cert = File.createTempFile("cert", "", tempFolder).getAbsolutePath();
+        final String key = File.createTempFile("key", "", tempFolder).getAbsolutePath();
 
         mockEnvVars(cert, key);
         doReturn(Try.success(mockContext)).when(providerToTest).tryGetContext(any(Reader.class), any());
@@ -115,15 +113,15 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testLastModifiedCheck()
+    void testLastModifiedCheck( @Nonnull @TempDir final File tempFolder )
         throws IOException,
             InterruptedException
     {
         providerToTest.setCacheDuration(Duration.ZERO);
 
-        File certFile = tempFolder.newFile("cert");
+        File certFile = File.createTempFile("cert", "", tempFolder);
         String cert = certFile.getAbsolutePath();
-        final String key = tempFolder.newFile("key").getAbsolutePath();
+        final String key = File.createTempFile("key", "", tempFolder).getAbsolutePath();
         mockEnvVars(cert, key);
 
         long certFileModified = certFile.lastModified();
@@ -142,7 +140,7 @@ public class CfPlatformSslContextProviderTest
         // the file system time stamp does not recognise milliseconds
         // we need to wait at least one full second to get a new timestamp on the new file
         Thread.sleep(Duration.ofSeconds(3).toMillis());
-        certFile = tempFolder.newFile("certFileUpdated");
+        certFile = File.createTempFile("certFileUpdated", "", tempFolder);
         certFileModified = certFile.lastModified();
         log.warn("updated file is: {}", certFileModified);
 
@@ -157,7 +155,7 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testFileNotFound()
+    void testFileNotFound()
     {
         mockEnvVars("/foo/file/that/does/not/exist", "/bar/file/that/does/not/exist");
 
@@ -168,7 +166,7 @@ public class CfPlatformSslContextProviderTest
     }
 
     @Test
-    public void testOnlyKeyDefined()
+    void testOnlyKeyDefined()
     {
         mockEnvVars(null, "/bar/file/that/does/not/exist");
 
@@ -189,8 +187,8 @@ public class CfPlatformSslContextProviderTest
         });
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         CfPlatformSslContextProvider.setEnvironmentVariableReader(System::getenv);
     }
