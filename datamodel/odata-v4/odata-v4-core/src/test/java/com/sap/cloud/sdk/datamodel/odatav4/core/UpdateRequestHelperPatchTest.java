@@ -19,8 +19,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.assertj.core.util.Lists;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.google.gson.annotations.JsonAdapter;
@@ -33,7 +33,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class UpdateRequestHelperPatchTest
+class UpdateRequestHelperPatchTest
 {
     private static final String TEST_DEFAULT_SERVICE_PATH = "/odata/default";
 
@@ -241,7 +241,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleBigDecimalPropertyPatchPayload()
+    void testSimpleBigDecimalPropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -253,7 +253,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleDoublePropertyPatchPayload()
+    void testSimpleDoublePropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -265,7 +265,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleIntegerPropertyPatchPayload()
+    void testSimpleIntegerPropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -277,7 +277,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleStringPropertyPatchPayload()
+    void testSimpleStringPropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -289,7 +289,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleLocalDatePropertyPatchPayload()
+    void testSimpleLocalDatePropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -304,7 +304,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleSingleCharacterDatePropertyPatchPayload()
+    void testSimpleSingleCharacterDatePropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -316,7 +316,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSimpleBooleanPropertyPatchPayload()
+    void testSimpleBooleanPropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -328,7 +328,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testDirectSimpleCollectionPropertyPatchPayload()
+    void testDirectSimpleCollectionPropertyPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").build();
@@ -339,7 +339,7 @@ public class UpdateRequestHelperPatchTest
         assertEquals("{\"Emails\":[\"foo@sap.com\"],\"@odata.type\":\"#TestEntity\"}", json, JSONCompareMode.LENIENT);
     }
 
-    @Ignore( "Indirect changes on entity properties are not tracked. CLOUDECOSYSTEM-8217" )
+    @Disabled( "Indirect changes on entity properties are not tracked. CLOUDECOSYSTEM-8217" )
     //    @Test
     public void testIndirectCollectionPropertyViaGetPatchPayload()
         throws Exception
@@ -353,7 +353,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testNavigationPropertyExistingPatchPayload()
+    void testNavigationPropertyExistingPatchPayload()
         throws Exception
     {
         final TestEntity entityFoo = TestEntity.builder().name("Foo").value(BigDecimal.ZERO).build();
@@ -369,7 +369,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testNavigationPropertyNewPatchPayload()
+    void testNavigationPropertyNewPatchPayload()
         throws Exception
     {
         final TestEntity entityFoo = TestEntity.builder().name("Foo").value(BigDecimal.ZERO).build();
@@ -389,7 +389,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testNavigationPropertyChangePatchPayload()
+    void testNavigationPropertyChangePatchPayload()
         throws Exception
     {
         final TestEntity entityFoo = TestEntity.builder().name("Foo").value(BigDecimal.ZERO).build();
@@ -406,7 +406,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testNavigationPropertyCyclicPatchPayload()
+    void testNavigationPropertyCyclicPatchPayload()
         throws Exception
     {
         final TestEntity entityBar = new TestEntity();
@@ -432,7 +432,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSetComplexMember()
+    void testSetComplexMember()
         throws Exception
     {
         final TestComplex complex = TestComplex.builder().stringProperty("Foo").build();
@@ -449,7 +449,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testRemoveComplexMember()
+    void testRemoveComplexMember()
         throws Exception
     {
         final TestEntity entity =
@@ -461,7 +461,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testUpdateFieldOfComplexMember()
+    void testUpdateFieldOfComplexMember()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().complexProperty(new TestComplex()).build();
@@ -475,7 +475,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testRemoveFieldOfComplexMember()
+    void testRemoveFieldOfComplexMember()
         throws Exception
     {
         final TestComplex complex = TestComplex.builder().stringProperty("Foo").build();
@@ -492,7 +492,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testUpdateFieldOfNestedComplexMember()
+    void testUpdateFieldOfNestedComplexMember()
         throws Exception
     {
         final TestComplex complexChild = new TestComplex();
@@ -509,7 +509,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testRemoveFieldOfNestedComplexMember()
+    void testRemoveFieldOfNestedComplexMember()
         throws Exception
     {
         final TestComplex complexChild = TestComplex.builder().stringProperty("Child").build();
@@ -526,7 +526,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSetNullableCollectionToEmpty()
+    void testSetNullableCollectionToEmpty()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().build();
@@ -538,7 +538,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSetEmptyToCollectionToEmpty()
+    void testSetEmptyToCollectionToEmpty()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().complexProperties(new ArrayList<>()).build();
@@ -549,7 +549,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testRemoveCollection()
+    void testRemoveCollection()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().complexProperties(new ArrayList<>()).build();
@@ -560,7 +560,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testSetCollectionOfComplexProperties()
+    void testSetCollectionOfComplexProperties()
         throws Exception
     {
         final TestComplex complex = TestComplex.builder().stringProperty("Foo").build();
@@ -577,7 +577,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testUpdateComplexMemberInCollection()
+    void testUpdateComplexMemberInCollection()
         throws Exception
     {
         final TestComplex collectionMember = new TestComplex();
@@ -593,7 +593,7 @@ public class UpdateRequestHelperPatchTest
     }
 
     @Test
-    public void testRemoveFieldOfComplexMemberInCollection()
+    void testRemoveFieldOfComplexMemberInCollection()
         throws Exception
     {
         final TestComplex collectionMember = TestComplex.builder().stringProperty("Foo").build();
@@ -607,7 +607,7 @@ public class UpdateRequestHelperPatchTest
             JSONCompareMode.LENIENT);
     }
 
-    @Ignore( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
+    @Disabled( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
     //    @Test
     public void testAddMemberToComplexCollection()
         throws Exception
@@ -622,7 +622,7 @@ public class UpdateRequestHelperPatchTest
             JSONCompareMode.LENIENT);
     }
 
-    @Ignore( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
+    @Disabled( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
     //    @Test
     public void testRemoveMemberFromComplexCollection()
         throws Exception

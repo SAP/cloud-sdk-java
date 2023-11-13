@@ -6,8 +6,8 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
@@ -16,14 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -38,7 +40,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class CollectionValueFunctionRequestBuilderTest
+@WireMockTest
+class CollectionValueFunctionRequestBuilderTest
 {
     private static final String SERVICE_PATH = "/odata/default";
     private static final String FUNCTION_NAME = "TestFunction";
@@ -55,17 +58,15 @@ public class CollectionValueFunctionRequestBuilderTest
 
         FUNCTION_PARAMETERS = ODataFunctionParameters.of(FUNCTION_PARAMETER_MAP, ODataProtocol.V4);
     }
-    private static final String ODATA_FUNCTION_PARAMETER_WITH_SPECIAL_CHARACTER = "(stringParameter='t''est')";
 
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
+    private static final String ODATA_FUNCTION_PARAMETER_WITH_SPECIAL_CHARACTER = "(stringParameter='t''est')";
 
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Data
@@ -100,7 +101,7 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionQueryWithoutParameters()
+    void testFunctionQueryWithoutParameters()
     {
         final CollectionValueFunctionRequestBuilder<Void> requestBuilder =
             new CollectionValueFunctionRequestBuilder<>(SERVICE_PATH, FUNCTION_NAME, Void.class);
@@ -109,7 +110,7 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionQueryWithMethodParameters()
+    void testFunctionQueryWithMethodParameters()
     {
         final CollectionValueFunctionRequestBuilder<Void> requestBuilder =
             new CollectionValueFunctionRequestBuilder<Void>(
@@ -123,7 +124,7 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionQueryWithSpecialCharactersInMethodParameters()
+    void testFunctionQueryWithSpecialCharactersInMethodParameters()
     {
         final ODataFunctionParameters parameters =
             new ODataFunctionParameters(ODataProtocol.V4).addParameter("stringParameter", "t'est");
@@ -137,7 +138,7 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionQueryWithMapParameters()
+    void testFunctionQueryWithMapParameters()
     {
         final CollectionValueFunctionRequestBuilder<Void> requestBuilder =
             new CollectionValueFunctionRequestBuilder<>(
@@ -151,12 +152,11 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionWithPrimitiveResponse()
+    void testFunctionWithPrimitiveResponse()
     {
-        wireMockServer
-            .stubFor(
-                get(urlPathEqualTo(SERVICE_PATH + '/' + FUNCTION_NAME + "()"))
-                    .willReturn(okJson("{" + "\"value\" : [ 3.14f, 9.81f ]" + "}")));
+        stubFor(
+            get(urlPathEqualTo(SERVICE_PATH + '/' + FUNCTION_NAME + "()"))
+                .willReturn(okJson("{" + "\"value\" : [ 3.14f, 9.81f ]" + "}")));
 
         final CollectionValueFunctionRequestBuilder<Float> requestBuilder =
             new CollectionValueFunctionRequestBuilder<>(SERVICE_PATH, FUNCTION_NAME, Float.class);
@@ -168,14 +168,13 @@ public class CollectionValueFunctionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionWithEntityResponse()
+    void testFunctionWithEntityResponse()
     {
-        wireMockServer
-            .stubFor(
-                get(urlPathEqualTo(SERVICE_PATH + '/' + FUNCTION_NAME + "()"))
-                    .willReturn(
-                        okJson(
-                            "{ \"value\" : [" + "{ \"Name\" : \"Tester1\" }," + "{ \"Name\" : \"Tester2\" }" + "]}")));
+
+        stubFor(
+            get(urlPathEqualTo(SERVICE_PATH + '/' + FUNCTION_NAME + "()"))
+                .willReturn(
+                    okJson("{ \"value\" : [" + "{ \"Name\" : \"Tester1\" }," + "{ \"Name\" : \"Tester2\" }" + "]}")));
 
         final CollectionValueFunctionRequestBuilder<TestEntity> requestBuilder =
             new CollectionValueFunctionRequestBuilder<>(SERVICE_PATH, FUNCTION_NAME, TestEntity.class);

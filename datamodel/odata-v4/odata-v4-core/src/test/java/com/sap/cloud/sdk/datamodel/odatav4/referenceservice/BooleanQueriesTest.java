@@ -5,16 +5,16 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class BooleanQueriesTest
+class BooleanQueriesTest
 {
     @Test
-    public void testGetFilteredWithNot()
+    void testGetFilteredWithNot()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.USER_NAME.length().greaterThanEqual(8).not());
@@ -24,7 +24,7 @@ public class BooleanQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithAnd()
+    void testGetFilteredWithAnd()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -36,7 +36,7 @@ public class BooleanQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithOr()
+    void testGetFilteredWithOr()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()

@@ -12,12 +12,14 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.conn.ConnectionPoolTimeoutException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -28,7 +30,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 
-public class ODatav4BatchConnectionTest
+class ODatav4BatchConnectionTest
 {
     private static final String RESPONSE_CONTENT_TYPE =
         "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
@@ -46,8 +48,8 @@ public class ODatav4BatchConnectionTest
     private WireMockServer server;
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         server = new WireMockRule(wireMockConfig().dynamicPort());
         server.start();
@@ -63,15 +65,15 @@ public class ODatav4BatchConnectionTest
                     .build());
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         server.shutdown();
         HttpClientAccessor.setHttpClientFactory(null);
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsNoChangeset()
+    void testNoConnectionTimeoutWhenBatchResponseContainsNoChangeset()
     {
         server
             .stubFor(
@@ -92,7 +94,7 @@ public class ODatav4BatchConnectionTest
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsChangeset()
+    void testNoConnectionTimeoutWhenBatchResponseContainsChangeset()
     {
         server
             .stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
@@ -132,7 +134,7 @@ public class ODatav4BatchConnectionTest
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsError()
+    void testNoConnectionTimeoutWhenBatchResponseContainsError()
     {
         server.stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_ERROR)));
 
@@ -156,9 +158,10 @@ public class ODatav4BatchConnectionTest
         }
     }
 
-    @Test( timeout = 300_000L )
-    @Ignore( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
-    public void testConnectionTimeoutWhenBatchResponseIsNotConsumedFully()
+    @Test
+    @Timeout( value = 300_000L, unit = TimeUnit.MILLISECONDS )
+    @Disabled( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
+    void testConnectionTimeoutWhenBatchResponseIsNotConsumedFully()
     {
         server
             .stubFor(

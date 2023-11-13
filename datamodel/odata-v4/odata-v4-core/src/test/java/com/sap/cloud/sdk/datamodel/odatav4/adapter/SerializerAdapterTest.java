@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +19,7 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.L
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 
-public class SerializerAdapterTest
+class SerializerAdapterTest
 {
     private static final City CITY =
         City.builder().name("Potsdam").countryRegion("Brandenburg").region("Deutschland").build();
@@ -41,7 +41,7 @@ public class SerializerAdapterTest
             .build();
 
     @Test
-    public void testCompatibleNonNullGsonAndJackson()
+    void testCompatibleNonNullGsonAndJackson()
         throws JsonProcessingException
     {
         // GSON
@@ -60,7 +60,7 @@ public class SerializerAdapterTest
     }
 
     @Test
-    public void testCompatibleNullableGsonAndJackson()
+    void testCompatibleNullableGsonAndJackson()
         throws JsonProcessingException
     {
         // GSON

@@ -2,7 +2,7 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.expression.FilterableBoolean;
@@ -13,10 +13,10 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class SelectNestedComplexPropertiesTest
+class SelectNestedComplexPropertiesTest
 {
     @Test
-    public void testSelectComplexProperty()
+    void testSelectComplexProperty()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().select(Person.FIRST_NAME, Person.LAST_NAME, Person.ADDRESS_INFO);
@@ -27,7 +27,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testSelectNestedComplexProperty()
+    void testSelectNestedComplexProperty()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -43,7 +43,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testSelectSimplePropertyInNestedComplexProperty()
+    void testSelectSimplePropertyInNestedComplexProperty()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -59,7 +59,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testSelectComplexPropertyInNavigationProperty()
+    void testSelectComplexPropertyInNavigationProperty()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -73,7 +73,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testAnyInNestedComplexPropertyCollection()
+    void testAnyInNestedComplexPropertyCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -87,7 +87,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testAnyInAnyPropertyCollection()
+    void testAnyInAnyPropertyCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -99,7 +99,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testAnyBesidesAllPropertyCollection()
+    void testAnyBesidesAllPropertyCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -116,7 +116,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testLambdaParameterLevelsForSameEntity()
+    void testLambdaParameterLevelsForSameEntity()
     {
         final FilterableBoolean<Person> lvl3 = Person.USER_NAME.equalTo("c1").or(Person.USER_NAME.equalTo("c2"));
 
@@ -147,7 +147,7 @@ public class SelectNestedComplexPropertiesTest
     }
 
     @Test
-    public void testLambdaParameterLevelsForDifferentEntities()
+    void testLambdaParameterLevelsForDifferentEntities()
     {
         final FilterableBoolean<PlanItem> lvl3 =
             PlanItem.CONFIRMATION_CODE.equalTo("c1").or(PlanItem.CONFIRMATION_CODE.equalTo("c2"));

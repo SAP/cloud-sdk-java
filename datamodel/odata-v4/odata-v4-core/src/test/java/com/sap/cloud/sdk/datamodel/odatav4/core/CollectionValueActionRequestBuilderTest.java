@@ -14,20 +14,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
@@ -43,21 +45,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class CollectionValueActionRequestBuilderTest
+@WireMockTest
+class CollectionValueActionRequestBuilderTest
 {
     private static final String DEFAULT_SERVICE_PATH = "/odata/default";
     private static final String ODATA_ACTION = "TestAction";
 
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
-        wireMockServer.stubFor(head(anyUrl()).willReturn(ok()));
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+        stubFor(head(anyUrl()).willReturn(ok()));
     }
 
     private static String readResourceFile( final String resourceFileName )
@@ -123,12 +123,11 @@ public class CollectionValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithPrimitiveResponse()
+    void testActionWithPrimitiveResponse()
     {
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                    .willReturn(okJson("{\"value\" : [ 3.14, 9.81 ]}")));
+        stubFor(
+            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
+                .willReturn(okJson("{\"value\" : [ 3.14, 9.81 ]}")));
 
         final CollectionValueActionRequestBuilder<Float> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, Float.class);
@@ -153,12 +152,12 @@ public class CollectionValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithStringResponse()
+    void testActionWithStringResponse()
     {
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                    .willReturn(okJson("{" + "\"value\" : [ \"It\", \"works\",\"as\",\"expected\" ]" + "}")));
+
+        stubFor(
+            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
+                .willReturn(okJson("{" + "\"value\" : [ \"It\", \"works\",\"as\",\"expected\" ]" + "}")));
 
         final CollectionValueActionRequestBuilder<String> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, String.class);
@@ -183,17 +182,17 @@ public class CollectionValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithComplexTypeResponse()
+    void testActionWithComplexTypeResponse()
     {
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                    .willReturn(
-                        okJson(
-                            "{ \"value\" : ["
-                                + "{ \"City\" : \"Stockholm\" ,\"Country\" : \"Sweden\"},"
-                                + "{ \"City\" : \"Dubrovnik\",\"Country\" : \"Croatia\" }"
-                                + "]}")));
+
+        stubFor(
+            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
+                .willReturn(
+                    okJson(
+                        "{ \"value\" : ["
+                            + "{ \"City\" : \"Stockholm\" ,\"Country\" : \"Sweden\"},"
+                            + "{ \"City\" : \"Dubrovnik\",\"Country\" : \"Croatia\" }"
+                            + "]}")));
 
         final CollectionValueActionRequestBuilder<ComplexType> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, ComplexType.class);
@@ -218,14 +217,12 @@ public class CollectionValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithEntityResponse()
+    void testActionWithEntityResponse()
     {
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                    .willReturn(
-                        okJson(
-                            "{ \"value\" : [" + "{ \"Name\" : \"Tester1\" }," + "{ \"Name\" : \"Tester2\" }" + "]}")));
+        stubFor(
+            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
+                .willReturn(
+                    okJson("{ \"value\" : [" + "{ \"Name\" : \"Tester1\" }," + "{ \"Name\" : \"Tester2\" }" + "]}")));
 
         final CollectionValueActionRequestBuilder<TestEntity> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, TestEntity.class);
@@ -250,12 +247,11 @@ public class CollectionValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithoutCsrfTokenRetrievalIfSkipped()
+    void testActionWithoutCsrfTokenRetrievalIfSkipped()
     {
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                    .willReturn(okJson("{\"value\" : [ 3.14, 9.81 ]}")));
+        stubFor(
+            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
+                .willReturn(okJson("{\"value\" : [ 3.14, 9.81 ]}")));
 
         final CollectionValueActionRequestBuilder<Float> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, Float.class);
