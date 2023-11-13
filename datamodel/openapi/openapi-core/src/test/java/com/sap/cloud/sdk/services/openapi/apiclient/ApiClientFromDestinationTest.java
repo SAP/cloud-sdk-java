@@ -8,22 +8,23 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
-public class ApiClientFromDestinationTest
+class ApiClientFromDestinationTest
 {
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+    @RegisterExtension
+    static final WireMockExtension wireMockRule =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     @Test
-    public void testServiceInvocation()
+    void testServiceInvocation()
     {
         final HttpDestination testDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
 
@@ -33,7 +34,7 @@ public class ApiClientFromDestinationTest
     }
 
     @Test
-    public void testExceptionIsThrown()
+    void testExceptionIsThrown()
     {
         final HttpDestination testDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
 

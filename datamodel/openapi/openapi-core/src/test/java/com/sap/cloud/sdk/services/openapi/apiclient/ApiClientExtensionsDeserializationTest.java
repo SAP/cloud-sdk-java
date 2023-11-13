@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,7 +40,7 @@ import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ApiClientExtensionsDeserializationTest
+class ApiClientExtensionsDeserializationTest
 {
     @Nonnull
     private static final String BASE_PATH = "http://localhost:8080";
@@ -48,7 +48,7 @@ public class ApiClientExtensionsDeserializationTest
     private static final String RELATIVE_PATH = "/outer";
 
     @Test
-    public void testDeserializeResponseWithNestedExtensions()
+    void testDeserializeResponseWithNestedExtensions()
     {
         final ApiClient apiClient = new ApiClient().setBasePath(BASE_PATH);
         final RestTemplate restTemplate = apiClient.getRestTemplate();
