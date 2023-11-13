@@ -6,16 +6,16 @@ package com.sap.cloud.sdk.cloudplatform.thread;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
 import io.vavr.control.Try;
 
-public class PropertyTest
+class PropertyTest
 {
     @Test
-    public void testEquality()
+    void testEquality()
     {
         assertThat(Property.of(Try.success("MyValue"))).isEqualTo(Property.of(Try.success("MyValue")));
         assertThat(Property.ofConfidential(Try.success("MyValue")))
@@ -31,7 +31,7 @@ public class PropertyTest
     }
 
     @Test
-    public void testConfidentialToString()
+    void testConfidentialToString()
     {
         assertThat(Property.of("my value")).hasToString("Property(value=Success(my value))");
         assertThat(Property.ofTry(Try.failure(new ShouldNotHappenException("my message"))))

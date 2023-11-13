@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -20,18 +20,18 @@ import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderFacade;
 
 import io.vavr.control.Try;
 
-public class DefaultLocaleFacadeTest
+class DefaultLocaleFacadeTest
 {
     private static final RequestHeaderFacade NO_HEADER_FACADE = () -> Try.failure(new NoSuchElementException());
 
-    @After
-    public void cleanUp()
+    @AfterEach
+    void cleanUp()
     {
         RequestHeaderAccessor.setHeaderFacade(null);
     }
 
     @Test
-    public void testFallback()
+    void testFallback()
     {
         RequestHeaderAccessor.setHeaderFacade(NO_HEADER_FACADE);
 
@@ -41,7 +41,7 @@ public class DefaultLocaleFacadeTest
     }
 
     @Test
-    public void testOnlyHeaders()
+    void testOnlyHeaders()
     {
         final String weightedLoc = "fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5";
         final RequestHeaderContainer headers = mock(RequestHeaderContainer.class);

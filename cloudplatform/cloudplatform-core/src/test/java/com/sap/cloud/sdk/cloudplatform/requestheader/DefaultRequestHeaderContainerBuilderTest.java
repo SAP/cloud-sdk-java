@@ -12,12 +12,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRequestHeaderContainerBuilderTest
+class DefaultRequestHeaderContainerBuilderTest
 {
     @Test
-    public void testBuildFromScratch()
+    void testBuildFromScratch()
     {
         final RequestHeaderContainer.Builder sut = DefaultRequestHeaderContainer.builder();
 
@@ -41,7 +41,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testCopyAllHeaders()
+    void testCopyAllHeaders()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -60,7 +60,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testAddNewHeader()
+    void testAddNewHeader()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -81,7 +81,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testAddNewValue()
+    void testAddNewValue()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -100,7 +100,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testRemoveHeader()
+    void testRemoveHeader()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -118,7 +118,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testRemoveHeaderIsCaseInsensitive()
+    void testRemoveHeaderIsCaseInsensitive()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -136,7 +136,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testReplaceHeader()
+    void testReplaceHeader()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));
@@ -161,7 +161,7 @@ public class DefaultRequestHeaderContainerBuilderTest
     }
 
     @Test
-    public void testClear()
+    void testClear()
     {
         final Map<String, Collection<String>> rawHeaders = new HashMap<>();
         rawHeaders.put("Header1", Collections.singletonList("Value1-1"));

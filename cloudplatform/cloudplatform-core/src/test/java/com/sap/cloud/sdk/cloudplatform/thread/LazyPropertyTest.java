@@ -14,15 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyException;
 
-public class LazyPropertyTest
+class LazyPropertyTest
 {
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testGetValueIsEvaluatedOnce()
+    void testGetValueIsEvaluatedOnce()
     {
         final Supplier<String> supplier = (Supplier<String>) mock(Supplier.class);
         when(supplier.get()).thenReturn("foo");
@@ -43,7 +43,7 @@ public class LazyPropertyTest
     }
 
     @Test
-    public void testCopiedPropertyIsAlsoLazy()
+    void testCopiedPropertyIsAlsoLazy()
     {
         final Supplier<Integer> supplier = new AtomicInteger()::getAndIncrement;
 
@@ -60,7 +60,7 @@ public class LazyPropertyTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testToStringDoesNotCallSupplier()
+    void testToStringDoesNotCallSupplier()
     {
         final Supplier<String> supplier = (Supplier<String>) mock(Supplier.class);
         when(supplier.get()).thenReturn("foo");
@@ -79,7 +79,7 @@ public class LazyPropertyTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testSupplierReturnsNull()
+    void testSupplierReturnsNull()
     {
         final Supplier<String> supplier = (Supplier<String>) mock(Supplier.class);
         when(supplier.get()).thenReturn(null);
