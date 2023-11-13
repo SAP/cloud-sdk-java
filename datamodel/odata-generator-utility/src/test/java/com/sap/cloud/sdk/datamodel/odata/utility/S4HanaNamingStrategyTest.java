@@ -14,16 +14,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class S4HanaNamingStrategyTest
+class S4HanaNamingStrategyTest
 {
     @Test
-    public void testDefaultNameSourceIsLabel()
+    void testDefaultNameSourceIsLabel()
     {
         assertThat(new S4HanaNamingStrategy().getNameSource()).isEqualTo(NameSource.LABEL);
     }
 
     @Test
-    public void testGenerateJavaClassNameFromName()
+    void testGenerateJavaClassNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -36,7 +36,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testSuffixAppendedWhenJavaClassNameIsKeyword()
+    void testSuffixAppendedWhenJavaClassNameIsKeyword()
     {
         final String suffix = "Entity";
 
@@ -48,7 +48,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testSuffixAppendedWhenNavigationPropertyBuilderIsKeyword()
+    void testSuffixAppendedWhenNavigationPropertyBuilderIsKeyword()
     {
         final String suffix = "Property";
 
@@ -57,7 +57,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaClassNameFromLabel()
+    void testGenerateJavaClassNameFromLabel()
     {
         final String someEntityName = "SomeEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -99,7 +99,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromName()
+    void testGenerateJavaFieldNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -118,7 +118,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromLabel()
+    void testGenerateJavaFieldNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -136,7 +136,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromName()
+    void testGenerateJavaConstantNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -152,7 +152,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromLabel()
+    void testGenerateJavaConstantNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -161,7 +161,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyFieldName()
+    void testGenerateJavaNavigationPropertyFieldName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -173,7 +173,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyConstantName()
+    void testGenerateJavaNavigationPropertyConstantName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -185,7 +185,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodName()
+    void testGenerateJavaMethodName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -207,7 +207,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaBuilderMethodName()
+    void testGenerateJavaBuilderMethodName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -233,7 +233,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromName()
+    void testGenerateJavaOperationMethodNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -244,7 +244,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromLabel()
+    void testGenerateJavaOperationMethodNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -264,7 +264,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParamNameFromName()
+    void testGenerateJavaMethodParamNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -275,7 +275,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParamNameWithSpacesInLabels()
+    void testGenerateJavaMethodParamNameWithSpacesInLabels()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -295,7 +295,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromName()
+    void testGenerateJavaFluentHelperClassNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -306,7 +306,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromLabel()
+    void testGenerateJavaFluentHelperClassNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
