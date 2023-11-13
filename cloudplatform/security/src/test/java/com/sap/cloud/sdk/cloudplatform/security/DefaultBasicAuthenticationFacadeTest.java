@@ -45,7 +45,7 @@ class DefaultBasicAuthenticationFacadeTest
     private static final String UNICODE_BASE64 = "Basic 8J+YgDrwn5ih";
 
     @AfterEach
-    public void resetAccessors()
+    void resetAccessors()
     {
         ThreadContextAccessor.tryGetThreadContextFacade().peek(ThreadContextFacade::removeCurrentContext);
         ThreadContextAccessor.setThreadContextFacade(null);

@@ -6,24 +6,24 @@ package com.sap.cloud.sdk.cloudplatform.security;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -37,12 +37,9 @@ import com.sap.cloud.security.token.TokenHeader;
 
 import io.vavr.control.Try;
 
-@RunWith( MockitoJUnitRunner.class )
-public class AuthTokenDecoderIasTest
+@WireMockTest
+class AuthTokenDecoderIasTest
 {
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private final RSAKeys RSA_KEYS = RSAKeys.generate();
 
     private String tokenA;
@@ -78,10 +75,10 @@ public class AuthTokenDecoderIasTest
             + "  } ]"
             + "}";
 
-    @Before
-    public void prepareInboundAccessToken()
+    @BeforeEach
+    void prepareInboundAccessToken( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final String oauthUrl = wireMockServer.baseUrl();
+        final String oauthUrl = wm.getHttpBaseUrl();
         final Token tokenTenantA =
             JwtGenerator
                 .getInstance(Service.IAS, "2aba8ab2-edc3-4666-b2ed-90b2b47e60e3")
@@ -103,37 +100,37 @@ public class AuthTokenDecoderIasTest
         tokenA = tokenTenantA.getTokenValue();
     }
 
-    @Before
-    public void prepareOAuthCertEndpoint()
+    @BeforeEach
+    void prepareOAuthCertEndpoint()
     {
         final String encodedPublicKey = Base64.getEncoder().encodeToString(RSA_KEYS.getPublic().getEncoded());
         final String tokenKeys = String.format(TEMPLATE_TOKEN_KEYS, encodedPublicKey);
-        wireMockServer.stubFor(get(urlPathEqualTo("/oauth2/certs")).willReturn(okJson(tokenKeys)));
+        stubFor(get(urlPathEqualTo("/oauth2/certs")).willReturn(okJson(tokenKeys)));
     }
 
-    @Before
-    public void prepareOpenIdConfiguration()
+    @BeforeEach
+    void prepareOpenIdConfiguration( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final String oauthUrl = wireMockServer.baseUrl();
+        final String oauthUrl = wm.getHttpBaseUrl();
         final String openIdCOnfiguration = TEMPLATE_OPENID_CONFIGURATION.replaceAll("HOST", oauthUrl);
-        wireMockServer
-            .stubFor(get(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson(openIdCOnfiguration)));
+
+        stubFor(get(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson(openIdCOnfiguration)));
     }
 
-    @Before
-    public void prepareVcapServices()
+    @BeforeEach
+    void prepareVcapServices()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade(new AuthTokenDecoderDefault()));
     }
 
-    @After
-    public void cleanPlatform()
+    @AfterEach
+    void cleanPlatform()
     {
         AuthTokenAccessor.setAuthTokenFacade(null); // reset auth token facade to clear underlying VCAP_SERVICES data
     }
 
     @Test
-    public void testAuthTokenAccessorWithHeaders()
+    void testAuthTokenAccessorWithHeaders()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer.builder().withHeader("Authorization", "bearer " + tokenA).build();
@@ -145,7 +142,7 @@ public class AuthTokenDecoderIasTest
     }
 
     @Test
-    public void givenIasTokenThenDecodeAndValidateShouldSucceedWithThatToken()
+    void givenIasTokenThenDecodeAndValidateShouldSucceedWithThatToken()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -159,7 +156,7 @@ public class AuthTokenDecoderIasTest
     }
 
     @Test
-    public void testMissingAuthorizationHeader()
+    void testMissingAuthorizationHeader()
     {
         final RequestHeaderContainer headers = DefaultRequestHeaderContainer.fromSingleValueMap(Collections.emptyMap());
 
@@ -169,7 +166,7 @@ public class AuthTokenDecoderIasTest
     }
 
     @Test
-    public void testMultipleAuthorizationHeaders()
+    void testMultipleAuthorizationHeaders()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -182,7 +179,7 @@ public class AuthTokenDecoderIasTest
     }
 
     @Test
-    public void testInvalidJwt()
+    void testInvalidJwt()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -193,7 +190,7 @@ public class AuthTokenDecoderIasTest
     }
 
     @Test
-    public void testCaseInsensitiveBearer()
+    void testCaseInsensitiveBearer()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
