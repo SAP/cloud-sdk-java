@@ -7,13 +7,13 @@ package com.sap.cloud.sdk.s4hana.connectivity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated
-public class MessageTypeTest
+class MessageTypeTest
 {
     @Test
-    public void testOfIdentifier()
+    void testOfIdentifier()
     {
         assertThat(com.sap.cloud.sdk.s4hana.serialization.MessageType.ofIdentifier("S"))
             .isEqualTo(com.sap.cloud.sdk.s4hana.serialization.MessageType.SUCCESS);
