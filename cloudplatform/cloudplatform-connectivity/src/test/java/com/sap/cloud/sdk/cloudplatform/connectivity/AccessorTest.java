@@ -8,9 +8,9 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -22,11 +22,11 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
-public class AccessorTest
+class AccessorTest
 {
-    @Before
-    @After
-    public void resetAccessors()
+    @BeforeEach
+    @AfterEach
+    void resetAccessors()
     {
         // reset the facades
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
@@ -58,7 +58,7 @@ public class AccessorTest
     }
 
     @Test
-    public void testNesting()
+    void testNesting()
     {
         assertNoTenantAvailable();
         assertNoPrincipalAvailable();
@@ -81,7 +81,7 @@ public class AccessorTest
     }
 
     @Test
-    public void testNestingWithOverriding()
+    void testNestingWithOverriding()
     {
         assertNoTenantAvailable();
         assertNoPrincipalAvailable();
@@ -120,7 +120,7 @@ public class AccessorTest
     }
 
     @Test
-    public void testNestingWithFallback()
+    void testNestingWithFallback()
     {
         assertNoTenantAvailable();
         assertNoPrincipalAvailable();
@@ -143,7 +143,7 @@ public class AccessorTest
     }
 
     @Test
-    public void testNestingWithGlobalFallback()
+    void testNestingWithGlobalFallback()
     {
         assertNoTenantAvailable();
         assertNoPrincipalAvailable();
@@ -188,28 +188,28 @@ public class AccessorTest
     }
 
     @Test
-    public void testTenantFallbackReturnsNull()
+    void testTenantFallbackReturnsNull()
     {
         TenantAccessor.setFallbackTenant(() -> null);
         assertNoTenantAvailable();
     }
 
     @Test
-    public void testPrincipalFallbackReturnsNull()
+    void testPrincipalFallbackReturnsNull()
     {
         PrincipalAccessor.setFallbackPrincipal(() -> null);
         assertNoPrincipalAvailable();
     }
 
     @Test
-    public void testExecuteWithFallbackReturnsNull()
+    void testExecuteWithFallbackReturnsNull()
     {
         TenantAccessor.executeWithFallbackTenant(() -> null, this::assertNoTenantAvailable);
         PrincipalAccessor.executeWithFallbackPrincipal(() -> null, this::assertNoPrincipalAvailable);
     }
 
     @Test
-    public void testNestingWithResilience()
+    void testNestingWithResilience()
     {
         ResilienceDecorator.executeSupplier(() -> {
             testNesting();

@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 import java.security.KeyStore;
@@ -14,12 +13,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultHttpDestinationBuilderTest
+class DefaultHttpDestinationBuilderTest
 {
     @Test
-    public void testFromMap()
+    void testFromMap()
     {
         final Map<String, Object> map = new HashMap<>();
         map.put("foo", "bar");
@@ -31,7 +30,7 @@ public class DefaultHttpDestinationBuilderTest
     }
 
     @Test
-    public void testFromProperties()
+    void testFromProperties()
     {
         final DefaultDestination baseProperties =
             DefaultDestination.builder().property("foo", "bar").property("bar", 42).build();
@@ -42,7 +41,7 @@ public class DefaultHttpDestinationBuilderTest
     }
 
     @Test
-    public void testFromPropertiesWithDefaultHttpDestination()
+    void testFromPropertiesWithDefaultHttpDestination()
     {
         final Header header = new Header("StaticHeader", "value");
         final DefaultHttpDestination baseDestination =
@@ -63,7 +62,7 @@ public class DefaultHttpDestinationBuilderTest
     }
 
     @Test
-    public void testFromDestinationWithDefaultDestination()
+    void testFromDestinationWithDefaultDestination()
     {
         final DefaultDestination baseProperties =
             DefaultDestination.builder().property("foo", "bar").property("bar", 42).build();
@@ -74,7 +73,7 @@ public class DefaultHttpDestinationBuilderTest
     }
 
     @Test
-    public void testFromDestination()
+    void testFromDestination()
     {
         final Header header = new Header("StaticHeader", "value");
         final DestinationHeaderProvider headerProvider = mock(DestinationHeaderProvider.class);
@@ -105,7 +104,7 @@ public class DefaultHttpDestinationBuilderTest
     }
 
     @Test
-    public void testFromDestinationThrowsOnIllegalInputType()
+    void testFromDestinationThrowsOnIllegalInputType()
     {
         assertThatThrownBy(() -> DefaultHttpDestination.fromDestination(mock(Destination.class)))
             .isExactlyInstanceOf(IllegalArgumentException.class)

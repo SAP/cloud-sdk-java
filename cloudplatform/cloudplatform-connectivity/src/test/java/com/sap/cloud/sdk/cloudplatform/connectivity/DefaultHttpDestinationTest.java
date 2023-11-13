@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.security.BasicAuthHeaderEncoder;
@@ -31,12 +31,12 @@ import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 
 import lombok.SneakyThrows;
 
-public class DefaultHttpDestinationTest
+class DefaultHttpDestinationTest
 {
     private static final URI VALID_URI = URI.create("https://www.sap.de");
 
     @Test
-    public void testGetDelegation()
+    void testGetDelegation()
     {
         final String someKey = "someKey";
         final Object someValue = new Object();
@@ -51,7 +51,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testCannotBeConstructedFromDestinationWithoutUri()
+    void testCannotBeConstructedFromDestinationWithoutUri()
     {
         final DefaultDestination emptyDestination = DefaultDestination.builder().build();
 
@@ -59,7 +59,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testCanBeConstructedFromDestinationWithUri()
+    void testCanBeConstructedFromDestinationWithUri()
     {
         final DestinationProperties validHttpDestination = DefaultHttpDestination.builder(VALID_URI).build();
 
@@ -67,7 +67,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testGetUriSuccessfully()
+    void testGetUriSuccessfully()
     {
         final DestinationProperties filledDestination = DefaultHttpDestination.builder(VALID_URI).build();
 
@@ -79,7 +79,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testGetUriThrowsExceptionOnFailedCast()
+    void testGetUriThrowsExceptionOnFailedCast()
     {
         final String defaultUriKey = "url";
         final Object somethingNonUri = 42;
@@ -93,14 +93,14 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testFromMapThrowsExceptionOnMissingUri()
+    void testFromMapThrowsExceptionOnMissingUri()
     {
         assertThatThrownBy(() -> DefaultHttpDestination.fromMap(Collections.emptyMap()).build())
             .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testFromPropertiesThrowsExceptionOnMissingUri()
+    void testFromPropertiesThrowsExceptionOnMissingUri()
     {
         final DefaultDestination baseDestination = DefaultDestination.builder().build();
 
@@ -109,7 +109,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testEqual()
+    void testEqual()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder(URI.create("https://uri1")).build();
         final DefaultHttpDestination equal1 = DefaultHttpDestination.builder(URI.create("https://uri1")).build();
@@ -118,7 +118,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testNotEqual()
+    void testNotEqual()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder(URI.create("https://uri1")).build();
         final DefaultHttpDestination dest2 = DefaultHttpDestination.builder(URI.create("https://uri2")).build();
@@ -127,7 +127,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testEqualsIsImplemented()
+    void testEqualsIsImplemented()
     {
         final Header dummyHeader = new Header("name", "value");
 
@@ -140,7 +140,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testHashCodeIsImplemented()
+    void testHashCodeIsImplemented()
     {
         final Header dummyHeader = new Header("name", "value");
 
@@ -153,7 +153,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testKeyStoreAndKeyStorePasswordCanBeSetAndRead()
+    void testKeyStoreAndKeyStorePasswordCanBeSetAndRead()
     {
         final KeyStore keyStore = mock(KeyStore.class);
         final String keyStorePassword = "some-password";
@@ -167,7 +167,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testTrustStoreCanBeSetAndRead()
+    void testTrustStoreCanBeSetAndRead()
     {
         final KeyStore trustStore = mock(KeyStore.class);
         final String uri = "some-uri";
@@ -179,7 +179,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testSetSecurityConfigurationStrategy()
+    void testSetSecurityConfigurationStrategy()
     {
         final DefaultHttpDestination destinationWithPlatformStrategy =
             DefaultHttpDestination
@@ -206,7 +206,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testCopyPropertiesOfExistingHttpDestinationWithModification()
+    void testCopyPropertiesOfExistingHttpDestinationWithModification()
     {
         final URI uri = URI.create("foo");
         final Header header = new Header("foo", "bar");
@@ -241,7 +241,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testCopyPropertiesOfExistingHttpDestinationWithoutModifications()
+    void testCopyPropertiesOfExistingHttpDestinationWithoutModifications()
     {
         final URI uri = URI.create("URI");
         final Header customHeader = new Header("custom-header", "custom-header-value");
@@ -316,7 +316,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testCopyPropertiesOfExistingHttpDestinationsAndAddHeaderProviders()
+    void testCopyPropertiesOfExistingHttpDestinationsAndAddHeaderProviders()
     {
         final Header header1 = new Header("foo", "bar");
         final Header header2 = new Header("foo1", "bar1");
@@ -366,7 +366,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testGetInternetProxyConfiguration()
+    void testGetInternetProxyConfiguration()
         throws URISyntaxException
     {
         final HttpDestination setViaConvenience =
@@ -397,7 +397,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testProxyInformationIsLoaded()
+    void testProxyInformationIsLoaded()
     {
         final HttpDestination destination =
             DefaultHttpDestination
@@ -418,7 +418,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testDestinationPropertiesToHeaderParameters()
+    void testDestinationPropertiesToHeaderParameters()
     {
         final URI uri = URI.create("https://www.example.com");
         final Header header = new Header("foo3", "bar3");
@@ -443,7 +443,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testDuplicatesSameHeaderAddedAsPropertiesAndHeader()
+    void testDuplicatesSameHeaderAddedAsPropertiesAndHeader()
     {
         final URI uri = URI.create("https://www.example.com");
         final Header header = new Header("foo", "bar");
@@ -457,7 +457,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testOverwriteHeaderFromDestinationProperties()
+    void testOverwriteHeaderFromDestinationProperties()
     {
         final URI uri = URI.create("https://www.example.com");
 
@@ -512,7 +512,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testProxyConfigurationWithUnsupportedCredentials()
+    void testProxyConfigurationWithUnsupportedCredentials()
     {
         final URI uri = URI.create("foo.bar");
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.builder(uri);
@@ -529,7 +529,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testBasicCredentialsAreEncodedInProxyAuth()
+    void testBasicCredentialsAreEncodedInProxyAuth()
     {
         final URI uri = URI.create("foo.bar");
 
@@ -545,7 +545,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testBearerPrefixIsAddedToProxyAuth()
+    void testBearerPrefixIsAddedToProxyAuth()
     {
         final URI uri = URI.create("foo.bar");
 
@@ -595,7 +595,7 @@ public class DefaultHttpDestinationTest
     }
 
     @Test
-    public void testToBuilderContainsAllProperties()
+    void testToBuilderContainsAllProperties()
     {
         final Header header = new Header("StaticHeader", "value");
         final DestinationHeaderProvider headerProvider = mock(DestinationHeaderProvider.class);
