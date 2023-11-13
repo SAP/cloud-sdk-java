@@ -34,7 +34,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
-public class ODataRequestActionTest
+class ODataRequestActionTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
@@ -45,7 +45,7 @@ public class ODataRequestActionTest
     private HttpClient client;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
@@ -54,13 +54,13 @@ public class ODataRequestActionTest
     }
 
     @AfterEach
-    public void teardown()
+    void teardown()
     {
         wireMockServer.stop();
     }
 
     @Test
-    public void testActionWithoutParameters()
+    void testActionWithoutParameters()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 
@@ -83,7 +83,7 @@ public class ODataRequestActionTest
     }
 
     @Test
-    public void testActionWithParameters()
+    void testActionWithParameters()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 
@@ -126,7 +126,7 @@ public class ODataRequestActionTest
     }
 
     @Test
-    public void testActionWithoutCsrfTokenIfSkipped()
+    void testActionWithoutCsrfTokenIfSkipped()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 

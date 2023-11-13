@@ -42,7 +42,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public class ODataResponsePrimitiveDataParsingTest
+class ODataResponsePrimitiveDataParsingTest
 {
     public enum ColorEnum
     {
@@ -175,7 +175,7 @@ public class ODataResponsePrimitiveDataParsingTest
     }
 
     @Test
-    public void testDataTypeParsingByReferenceObject()
+    void testDataTypeParsingByReferenceObject()
     {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
 
@@ -201,7 +201,7 @@ public class ODataResponsePrimitiveDataParsingTest
     }
 
     @Test
-    public void testDataTypeParsingByNumberDeserializationStrategy()
+    void testDataTypeParsingByNumberDeserializationStrategy()
     {
         final Map<NumberDeserializationStrategy, Consumer<Object>> assertions =
             ImmutableMap

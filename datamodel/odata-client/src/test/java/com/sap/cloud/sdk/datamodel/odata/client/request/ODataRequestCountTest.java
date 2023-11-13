@@ -6,15 +6,17 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
@@ -25,11 +27,9 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.OrderExpression;
 import com.sap.cloud.sdk.datamodel.odata.client.query.Order;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-public class ODataRequestCountTest
+@WireMockTest
+class ODataRequestCountTest
 {
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String SERVICE_PATH = "/some/path/SOME_API";
     private static final String ENTITY_NAME = "A_EntityName";
     private static final String FULL_URL = SERVICE_PATH + "/" + ENTITY_NAME + "/$count";
@@ -38,19 +38,18 @@ public class ODataRequestCountTest
 
     private Destination httpDestination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        httpDestination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
-        wireMockServer
-            .stubFor(
-                get(urlPathEqualTo(FULL_URL))
-                    .willReturn(ok(EXPECTED_STRING_VALUE).withHeader("Content-Type", "text/plain; charset=utf-8")));
+        stubFor(
+            get(urlPathEqualTo(FULL_URL))
+                .willReturn(ok(EXPECTED_STRING_VALUE).withHeader("Content-Type", "text/plain; charset=utf-8")));
     }
 
     @Test
-    public void testCountWithV2Protocol()
+    void testCountWithV2Protocol()
     {
         final ODataProtocol protocol = ODataProtocol.V2;
 
@@ -65,7 +64,7 @@ public class ODataRequestCountTest
     }
 
     @Test
-    public void testCountWithV4Protocol()
+    void testCountWithV4Protocol()
     {
         final ODataProtocol protocol = ODataProtocol.V4;
 
@@ -80,7 +79,7 @@ public class ODataRequestCountTest
     }
 
     @Test
-    public void testConstructorWithStructuredQuery()
+    void testConstructorWithStructuredQuery()
     {
         final StructuredQuery structuredQuery =
             StructuredQuery

@@ -34,7 +34,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.OrderExpression;
 import com.sap.cloud.sdk.datamodel.odata.client.query.Order;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-public class ODataRequestReadTest
+class ODataRequestReadTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String ODATA_SERVICE_PATH = "/service/";
@@ -44,7 +44,7 @@ public class ODataRequestReadTest
     private Destination destination;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
@@ -52,13 +52,13 @@ public class ODataRequestReadTest
     }
 
     @AfterEach
-    public void teardown()
+    void teardown()
     {
         wireMockServer.stop();
     }
 
     @Test
-    public void testQueryParameters()
+    void testQueryParameters()
     {
         final HttpClient client = HttpClientAccessor.getHttpClient(destination);
         wireMockServer
@@ -93,7 +93,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testV4QueryExpand()
+    void testV4QueryExpand()
     {
         final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V4);
         final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V4);
@@ -106,7 +106,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testV4QuerySelectAndFilter()
+    void testV4QuerySelectAndFilter()
     {
         final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V4);
         final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V4);
@@ -130,7 +130,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testV2QueryExpand()
+    void testV2QueryExpand()
     {
         final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V2);
         final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V2);
@@ -148,7 +148,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testV2QuerySelectAndFilter()
+    void testV2QuerySelectAndFilter()
     {
         final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V2);
         final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V2);
@@ -174,7 +174,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testExceptionWhenUnencodedQueryString()
+    void testExceptionWhenUnencodedQueryString()
     {
         final String servicePath = "/odata/v4/Service/";
         final String entityName = "Authors";
@@ -187,7 +187,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testGuavaUrlEscaperEscapedQueryString()
+    void testGuavaUrlEscaperEscapedQueryString()
     {
         final String servicePath = "/odata/v4/Service/";
         final String entityName = "Authors";
@@ -205,7 +205,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testBuildQueryStringWithStructuredQueryV2()
+    void testBuildQueryStringWithStructuredQueryV2()
     {
         final String servicePath = "/odata/v2/Service/";
         final String entityName = "Authors";
@@ -229,7 +229,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testBuildQueryStringWithStructuredQueryV4()
+    void testBuildQueryStringWithStructuredQueryV4()
     {
         final String servicePath = "/odata/v4/Service/";
         final String entityName = "Authors";
@@ -253,7 +253,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testCustomParameterswithStructuredQuery()
+    void testCustomParameterswithStructuredQuery()
     {
         final String entityName = "Authors";
         final String customKey = "$key";
@@ -272,7 +272,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testCustomParametersOnNestedQuery()
+    void testCustomParametersOnNestedQuery()
     {
         final StructuredQuery query = StructuredQuery.asNestedQueryOnProperty("name", ODataProtocol.V4);
 
@@ -280,7 +280,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testCustomParametersWithEmptyKey()
+    void testCustomParametersWithEmptyKey()
     {
         final StructuredQuery query = StructuredQuery.onEntity("name", ODataProtocol.V4);
 
@@ -288,7 +288,7 @@ public class ODataRequestReadTest
     }
 
     @Test
-    public void testConstructorWithStructuredQuery()
+    void testConstructorWithStructuredQuery()
     {
         final StructuredQuery structuredQuery =
             StructuredQuery

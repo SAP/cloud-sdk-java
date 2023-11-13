@@ -295,7 +295,7 @@ class ExpressionsTest
     }
 
     @Test
-    public void testGlobalFunctions()
+    void testGlobalFunctions()
     {
         assertThat(FilterExpressionTemporal.maxDateTime().getExpression(ODataProtocol.V4)).isEqualTo("maxdatetime()");
         assertThat(FilterExpressionTemporal.minDateTime().getExpression(ODataProtocol.V4)).isEqualTo("mindatetime()");

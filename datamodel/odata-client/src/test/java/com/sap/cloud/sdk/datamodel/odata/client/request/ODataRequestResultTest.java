@@ -15,12 +15,12 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ODataRequestResultTest
+class ODataRequestResultTest
 {
     @Test
-    public void testGetAllHeaderHeaderValuesRemovesNullValues()
+    void testGetAllHeaderHeaderValuesRemovesNullValues()
     {
         final HttpResponse httpResponse =
             mockResponseWithHeaders(entry("Header", Arrays.asList("Value", null, "   ", null)));
@@ -35,7 +35,7 @@ public class ODataRequestResultTest
     }
 
     @Test
-    public void testGetAllHeaderValuesDoesNotSplitValues()
+    void testGetAllHeaderValuesDoesNotSplitValues()
     {
         final HttpResponse httpResponse =
             mockResponseWithHeaders(entry("Header", Collections.singletonList("Value1-1, Value1-2")));
@@ -50,7 +50,7 @@ public class ODataRequestResultTest
     }
 
     @Test
-    public void testGetAllHeaderValuesDoesNotSplitCookieValues()
+    void testGetAllHeaderValuesDoesNotSplitCookieValues()
     {
         final HttpResponse httpResponse =
             mockResponseWithHeaders(entry("Set-Cookie", Collections.singletonList("Value1-1; Value1-2")));
@@ -65,7 +65,7 @@ public class ODataRequestResultTest
     }
 
     @Test
-    public void testGetAllHeaderValuesMergesNamesCaseInsensitively()
+    void testGetAllHeaderValuesMergesNamesCaseInsensitively()
     {
         final HttpResponse httpResponse =
             mockResponseWithHeaders(
