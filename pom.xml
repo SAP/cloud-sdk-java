@@ -110,7 +110,7 @@
 		<maven-plugin.version>3.8.1</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
-		<caffeine.version>3.1.8</caffeine.version>
+		<caffeine.version>2.9.3</caffeine.version>
 		<javax-javaee.version>8.0.1</javax-javaee.version>
 		<!-- Keep TomEE version in sync with com.sap.cloud.sjb.cf:cf-tomee7-bom -->
 		<arquillian-tomee.version>7.0.7</arquillian-tomee.version>
