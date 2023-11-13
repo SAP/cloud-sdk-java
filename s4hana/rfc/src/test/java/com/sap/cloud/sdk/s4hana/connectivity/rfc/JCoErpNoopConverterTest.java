@@ -11,37 +11,42 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import javax.annotation.Nonnull;
 
-import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith( Parameterized.class )
-@RequiredArgsConstructor
+import lombok.Data;
+
 @Deprecated
-public class JCoErpNoopConverterTest
+class JCoErpNoopConverterTest
 {
-    private final Number inputNumber;
-    private final String expectedResult;
+    @Data
+    private static class TestParameters
+    {
+        @Nonnull
+        Number inputNumber;
+        @Nonnull
+        String expectedResult;
+    }
 
     private com.sap.cloud.sdk.s4hana.connectivity.ErpTypeSerializer serializer;
 
-    @Before
-    public void initialize()
+    @BeforeEach
+    void initialize()
     {
         serializer = JCoErpNoopConverter.overrideNumbers(new com.sap.cloud.sdk.s4hana.connectivity.ErpTypeSerializer());
     }
 
-    @Test
-    public void testSerialization()
+    @ParameterizedTest
+    @MethodSource( "createTestNumbers" )
+    void testSerialization( @Nonnull final Number inputNumber, @Nonnull final String expectedResult )
     {
         assertEquals(inputNumber.getClass().getSimpleName(), serializer.toErp(inputNumber).get(), expectedResult);
     }
 
-    @Parameterized.Parameters
-    public static List<Object[]> createTestNumbers()
+    static List<Object[]> createTestNumbers()
     {
         return Arrays
             .asList(

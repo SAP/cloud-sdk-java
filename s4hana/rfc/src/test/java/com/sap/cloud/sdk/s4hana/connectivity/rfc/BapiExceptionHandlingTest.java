@@ -7,7 +7,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 import static org.mockito.Mockito.mock;
 
 @Deprecated
-public class BapiExceptionHandlingTest
+class BapiExceptionHandlingTest
     extends
     AbstractRemoteFunctionExceptionHandlingTest<BapiRequest, BapiRequestResult, BapiTransactionFactory, JCoTransaction<BapiRequest, BapiRequestResult>>
 {
