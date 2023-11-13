@@ -91,16 +91,16 @@ public class DestinationServiceCacheTest
     public void testSize()
     {
         Cache<CacheKey, ?> cacheSingle = DestinationService.Cache.instanceSingle();
-        Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();
+        final Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();
 
         // sut
         DestinationService.Cache.setSizeLimit(100);
         assertThat(cacheSingle).isNotSameAs(cacheSingle = DestinationService.Cache.instanceSingle());
-        assertThat(cacheAll).isNotSameAs(cacheAll = DestinationService.Cache.instanceAll());
+        assertThat(cacheAll).isSameAs(DestinationService.Cache.instanceAll());
 
         // sut
         DestinationService.Cache.disableSizeLimit();
         assertThat(cacheSingle).isNotSameAs(DestinationService.Cache.instanceSingle());
-        assertThat(cacheAll).isNotSameAs(DestinationService.Cache.instanceAll());
+        assertThat(cacheAll).isSameAs(DestinationService.Cache.instanceAll());
     }
 }
