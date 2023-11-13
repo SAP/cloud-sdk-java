@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -38,7 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 
 import io.vavr.control.Option;
 
-public class DestinationKeyStoreExtractorTest
+class DestinationKeyStoreExtractorTest
 {
     private static final String MOCKED_DESTINATION_NAME = "Testname";
     private static final URI VALID_URI = URI.create("https://www.sap.de");
@@ -65,11 +65,11 @@ public class DestinationKeyStoreExtractorTest
 
     private static final String TRUST_STORE_FILE_WITH_UNSUPPORTED_EXTENSION = "trustcert.jpg";
 
-    @Rule
-    public TokenRule token = TokenRule.createXsuaa();
+    @RegisterExtension
+    TokenRule token = TokenRule.createXsuaa();
 
     @Test
-    public void testMissingCertificateInformation()
+    void testMissingCertificateInformation()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final DestinationService loader = new DestinationService(destinationService);
@@ -127,7 +127,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetKeyStoreWithJksFile()
+    void testGetKeyStoreWithJksFile()
         throws KeyStoreException
     {
         final String fileLocation = JKS_FILE_KEY_STORE_LOCATION;
@@ -156,7 +156,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetKeyStoreWithPkcs12File()
+    void testGetKeyStoreWithPkcs12File()
         throws KeyStoreException
     {
         final String fileLocation = PKCS12_FILE_KEY_STORE_LOCATION;
@@ -180,7 +180,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetTrustStoreFromCrtFile()
+    void testGetTrustStoreFromCrtFile()
         throws KeyStoreException
     {
         final String fileLocation = CERTIFICATE_FILE_LOCATION_WITH_CRT_EXTENSION;
@@ -206,7 +206,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetTrustStoreFromCerFile()
+    void testGetTrustStoreFromCerFile()
         throws KeyStoreException
     {
         final String fileLocation = CERTIFICATE_FILE_LOCATION_WITH_CER_EXTENSION;
@@ -232,7 +232,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetTrustStoreFromJksFile()
+    void testGetTrustStoreFromJksFile()
         throws KeyStoreException
     {
         final String fileLocation = JKS_FILE_KEY_STORE_LOCATION;
@@ -258,7 +258,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetKeyStoreWithPkcs12FileNoPassword()
+    void testGetKeyStoreWithPkcs12FileNoPassword()
     {
         final String fileContent = PKCS12_FILE_KEY_STORE_CONTENT_NO_PASSWORD;
 
@@ -277,7 +277,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetKeyStoreWithPkcs12FileEmptyPassword()
+    void testGetKeyStoreWithPkcs12FileEmptyPassword()
     {
         final String fileContent = PKCS12_FILE_KEY_STORE_CONTENT_NO_PASSWORD;
 
@@ -297,7 +297,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetTrustStoreFromUnsupportedFileExtension()
+    void testGetTrustStoreFromUnsupportedFileExtension()
     {
         assertThatExceptionOfType(DestinationAccessException.class).isThrownBy(() -> {
             final String fileLocation = TRUST_STORE_FILE_WITH_UNSUPPORTED_EXTENSION;
@@ -321,7 +321,7 @@ public class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    public void testGetTrustStoreFromDerFile()
+    void testGetTrustStoreFromDerFile()
         throws KeyStoreException
     {
         final String fileLocation = CERTIFICATE_FILE_LOCATION_WITH_DER_EXTENSION;

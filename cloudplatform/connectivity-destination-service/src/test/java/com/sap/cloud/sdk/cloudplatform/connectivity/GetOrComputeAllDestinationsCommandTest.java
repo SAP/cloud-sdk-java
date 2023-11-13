@@ -17,13 +17,15 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -37,7 +39,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class GetOrComputeAllDestinationsCommandTest
+class GetOrComputeAllDestinationsCommandTest
 {
     private static final int TEST_TIMEOUT = 300_000; // 5 minutes
     private static final String DESTINATION_NAME = "SomeDestinationName";
@@ -49,23 +51,23 @@ public class GetOrComputeAllDestinationsCommandTest
     private Cache<CacheKey, List<Destination>> allDestinationsCache;
     private Cache<CacheKey, ReentrantLock> isolationLocks;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         CacheManager.invalidateAll();
         allDestinationsCache = Caffeine.newBuilder().build();
         isolationLocks = Caffeine.newBuilder().build();
     }
 
-    @After
-    public void resetDestinationCache()
+    @AfterEach
+    void resetDestinationCache()
     {
         CacheManager.invalidateAll();
     }
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testCommandIsIdempotent()
+    void testCommandIsIdempotent()
     {
         final Destination destination = DefaultDestination.builder().name(DESTINATION_NAME).build();
         final Supplier<Try<List<Destination>>> tryGetAllDestinations =
@@ -97,10 +99,11 @@ public class GetOrComputeAllDestinationsCommandTest
         verify(tryGetAllDestinations, times(1)).get();
     }
 
-    @Test( timeout = TEST_TIMEOUT )
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
     @SuppressWarnings( "unchecked" )
-    public void testIsolationAndAtomicityPerTenant()
+    void testIsolationAndAtomicityPerTenant()
     {
         final CountDownLatch mainThreadLatch = new CountDownLatch(1);
         final CountDownLatch getAllLatch = new CountDownLatch(1);

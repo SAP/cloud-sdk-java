@@ -17,11 +17,11 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 
 import org.apache.http.HttpHeaders;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -32,7 +32,7 @@ import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.vavr.control.Try;
 
-public class DestinationServiceAuthenticationTest
+class DestinationServiceAuthenticationTest
 {
     private static final String OAUTH_TOKEN =
         "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vczRzZGsuYXV0aGVudGljYXRpb24uc2FwLmhhbmEub25kZW1hbmQuY29tL3Rva2VuX2tleXMiLCJraWQiOiJrZXktaWQtMSIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNWJmMWFlOTBkMTI0ZTIyODcwM2FiMzBjM2E0NWJlZCIsImV4dF9hdHRyIjp7ImVuaGFuY2VyIjoiWFNVQUEiLCJ6ZG4iOiJzNHNkayIsInNlcnZpY2VpbnN0YW5jZWlkIjoiN2Q3NTMyNzQtM2ZkMC00ZTI4LThhNjUtYTgxYmZiMzcyZDI5In0sInhzLnVzZXIuYXR0cmlidXRlcyI6e30sImdyYW50ZWRfc2NvcGVzIjpbIm9wZW5pZCIsInVhYS51c2VyIl0sInhzLnN5c3RlbS5hdHRyaWJ1dGVzIjp7InhzLnJvbGVjb2xsZWN0aW9ucyI6WyJFbmQtdG8tRW5kIFRlc3RlciJdfSwiZ2l2ZW5fbmFtZSI6IkpvaG4iLCJmYW1pbHlfbmFtZSI6IkJ1cGFfTWFzdGVyX1NwZWNpYWxpIiwic3ViIjoiMjY4NGVhZWUtMzc0My00ODI0LWJjYmQtZjAxOTNmM2E5ODllIiwic2NvcGUiOlsib3BlbmlkIiwidWFhLnVzZXIiXSwiY2xpZW50X2lkIjoic2ItY2xvbmU3ZDc1MzI3NDNmZDA0ZTI4OGE2NWE4MWJmYjM3MmQyOSFiMjQ5OXxkZXN0aW5hdGlvbi14c2FwcG5hbWUhYjQzMyIsImNpZCI6InNiLWNsb25lN2Q3NTMyNzQzZmQwNGUyODhhNjVhODFiZmIzNzJkMjkhYjI0OTl8ZGVzdGluYXRpb24teHNhcHBuYW1lIWI0MzMiLCJhenAiOiJzYi1jbG9uZTdkNzUzMjc0M2ZkMDRlMjg4YTY1YTgxYmZiMzcyZDI5IWIyNDk5fGRlc3RpbmF0aW9uLXhzYXBwbmFtZSFiNDMzIiwicmV2b2NhYmxlIjp0cnVlLCJncmFudF90eXBlIjoidXNlcl90b2tlbiIsInVzZXJfaWQiOiIyNjg0ZWFlZS0zNzQzLTQ4MjQtYmNiZC1mMDE5M2YzYTk4OWUiLCJvcmlnaW4iOiJtYS5hY2NvdW50czQwMC5vbmRlbWFuZC5jb20iLCJ1c2VyX25hbWUiOiJwMDAwMjI3IiwiZW1haWwiOiJidXBhX21hc3Rlcl9zcGVjaWFsaUBleGFtcGxlLmNvbSIsImF1dGhfdGltZSI6MTU2MjA3MzkyMCwicmV2X3NpZyI6IjVjMGRiYjdmIiwiaWF0IjoxNTYyMDczOTIwLCJleHAiOjE1NjIxMTcxMjAsImlzcyI6Imh0dHA6Ly9zNHNkay5sb2NhbGhvc3Q6ODA4MC91YWEvb2F1dGgvdG9rZW4iLCJ6aWQiOiJhODllYTkyNC1kOWMyLTRlYWItODRmYi0zZmZjYWFkZjVkMjQiLCJhdWQiOltdfQ.hXbWBNRILiXjQUx8QqYyj7jvnoUnhj379HI5ZguVc6Y1J1DXX0v-tL1OqEOpmaxvUP7F0SbHYN6Lgk6dL-9qgY-O_QpeHX7TEG8d3X6ajQGtUrsxk-ISYUNjQppcgaS0JccZd5vHQKWylm3zfTVAuiop6XopYR4JIpxFuXuR1SBgrLxUKB40eyEmhAr2D5CSgIwAlfZMmaEoc4eRtM7IPOyEEb0IjlmQSgpiYevwSfzcDE2uaxRV-BH7oM-VFlqecbil_I04zBqCNh3IN6gekUPL8Owt7IafW0s27fT1jtz9Njy6ixzOOqTaqoDe3vljN6v4jRCeTd3w32jgSpqt6A";
@@ -52,31 +52,31 @@ public class DestinationServiceAuthenticationTest
 
     private static final MockUtil mockUtil = new MockUtil();
 
-    @Rule
-    public TokenRule token = TokenRule.createXsuaa();
+    @RegisterExtension
+    TokenRule token = TokenRule.createXsuaa();
 
-    @Before
-    @After
-    public void resetDestinationCache()
+    @BeforeEach
+    @AfterEach
+    void resetDestinationCache()
     {
         DestinationService.Cache.reset();
     }
 
-    @Before
-    public void mockUser()
+    @BeforeEach
+    void mockUser()
     {
         mockUtil.mockCurrentTenant();
         mockUtil.mockCurrentPrincipal();
     }
 
-    @After
-    public void clearUser()
+    @AfterEach
+    void clearUser()
     {
         mockUtil.clearTenants();
         mockUtil.clearPrincipals();
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
@@ -84,7 +84,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testBasic()
+    void testBasic()
     {
         // basic authentication should also work without a user
         mockUtil.clearTenants();
@@ -130,7 +130,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testOAuthWithUserPropagation()
+    void testOAuthWithUserPropagation()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
@@ -243,7 +243,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testOAuthWithProvidedSystemUser()
+    void testOAuthWithProvidedSystemUser()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
@@ -305,7 +305,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testOAuth2JwtBearer()
+    void testOAuth2JwtBearer()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
@@ -410,7 +410,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testOAuth2Password()
+    void testOAuth2Password()
     {
         // OAuth2 Password should also work without a user
         mockUtil.clearTenants();
@@ -474,7 +474,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testSAMLAssertion()
+    void testSAMLAssertion()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final String samlToken = "testToken";
@@ -574,7 +574,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testSAPAssertionSSOSuccess()
+    void testSAPAssertionSSOSuccess()
     {
         final String assertionCookie = "MYSAPSSO2=SomeInterestingStringHere1234";
 
@@ -629,7 +629,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testSAPAssertionSSOWithUserTokenExchange()
+    void testSAPAssertionSSOWithUserTokenExchange()
     {
         final String assertionCookie = "MYSAPSSO2=SomeInterestingStringHere1234";
 
@@ -729,7 +729,7 @@ public class DestinationServiceAuthenticationTest
     }
 
     @Test
-    public void testSAPAssertionSSOFailure()
+    void testSAPAssertionSSOFailure()
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 

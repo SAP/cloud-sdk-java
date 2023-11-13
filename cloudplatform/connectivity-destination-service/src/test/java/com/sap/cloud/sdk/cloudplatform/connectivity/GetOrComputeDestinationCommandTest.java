@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -42,7 +42,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class GetOrComputeDestinationCommandTest
+class GetOrComputeDestinationCommandTest
 {
     private static final String DESTINATION_NAME = "SomeDestinationName";
     private static final DestinationOptions EMPTY_OPTIONS = DestinationOptions.builder().build();
@@ -53,22 +53,22 @@ public class GetOrComputeDestinationCommandTest
     private Cache<CacheKey, Destination> destinationCache;
     private Cache<CacheKey, ReentrantLock> isolationLocks;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         destinationCache = Caffeine.newBuilder().build();
         isolationLocks = Caffeine.newBuilder().build();
     }
 
-    @After
-    public void cleanUp()
+    @AfterEach
+    void cleanUp()
     {
         destinationCache.invalidateAll();
         isolationLocks.invalidateAll();
     }
 
     @Test
-    public void testDefaultTokenExchangeStrategy()
+    void testDefaultTokenExchangeStrategy()
     {
         final DestinationOptions options = DestinationOptions.builder().build();
         // make sure there is no token exchange strategy set
@@ -83,7 +83,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testPrepareCommandWithLookupOnlyExchangeStrategy()
+    void testPrepareCommandWithLookupOnlyExchangeStrategy()
     {
         TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey expectedCacheKey = CacheKey.ofTenantIsolation();
@@ -93,7 +93,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testPrepareCommandWithLookupThenExchangeStrategy()
+    void testPrepareCommandWithLookupThenExchangeStrategy()
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey expectedCacheKey = CacheKey.ofTenantIsolation();
@@ -107,7 +107,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testPrepareCommandWithForwardUserTokenStrategy()
+    void testPrepareCommandWithForwardUserTokenStrategy()
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey expectedCacheKey = CacheKey.ofTenantIsolation();
@@ -121,7 +121,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testPrepareCommandWithExchangeOnlyStrategy()
+    void testPrepareCommandWithExchangeOnlyStrategy()
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
             final CacheKey cacheKey = CacheKey.ofTenantAndPrincipalIsolation();
@@ -173,7 +173,7 @@ public class GetOrComputeDestinationCommandTest
      * {@code ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY} forces the destination to be cached for a tenant
      */
     @Test
-    public void testLookupOnlyOnUserTokenDestination()
+    void testLookupOnlyOnUserTokenDestination()
     {
         final Destination scpCfDestination =
             DefaultHttpDestination
@@ -210,7 +210,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testLookupOnlyExchangeStrategy()
+    void testLookupOnlyExchangeStrategy()
     {
         final Destination scpCfDestination =
             DefaultHttpDestination
@@ -247,7 +247,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testLookupThenExchangeStrategy()
+    void testLookupThenExchangeStrategy()
     {
         final Destination scpCfDestination =
             DefaultHttpDestination
@@ -301,7 +301,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testForwardUserTokenStrategyForUserPropagationDestination()
+    void testForwardUserTokenStrategyForUserPropagationDestination()
     {
         final Destination scpCfUserPropagationDestination =
             DefaultHttpDestination
@@ -357,7 +357,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testForwardUserTokenStrategyForUserPropagationDestinationWithoutJwt()
+    void testForwardUserTokenStrategyForUserPropagationDestinationWithoutJwt()
     {
         final CacheKey cacheKeyWithTenantAndPrincipal = CacheKey.of(t1, p1);
         final CacheKey tenantCacheKey = CacheKey.of(t1, null);
@@ -411,7 +411,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testForwardUserTokenStrategyForUserPropagationDestinationWithoutPrincipalUnexpectedState()
+    void testForwardUserTokenStrategyForUserPropagationDestinationWithoutPrincipalUnexpectedState()
     {
         final Destination scpCfUserPropagationDestination =
             DefaultHttpDestination
@@ -447,7 +447,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testForwardUserTokenStrategyForClientCredentialsDestination()
+    void testForwardUserTokenStrategyForClientCredentialsDestination()
     {
         final Destination scpCfClientCredentialsDestination =
             DefaultHttpDestination
@@ -506,7 +506,7 @@ public class GetOrComputeDestinationCommandTest
     @Test
     @SuppressWarnings( "unchecked" )
     @SneakyThrows
-    public void testChangeDetectionOnValidAuthToken()
+    void testChangeDetectionOnValidAuthToken()
     {
         // destination in single cache has valid auth token
         final Destination cachedDestination;
@@ -555,7 +555,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testChangeDetectionIgnoresPropertiesNotFromDestinationService()
+    void testChangeDetectionIgnoresPropertiesNotFromDestinationService()
     {
         final Destination destination =
             getPreparedBuilder()
@@ -572,7 +572,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testChangeDetectionDetectsChangedProperties()
+    void testChangeDetectionDetectsChangedProperties()
     {
         final Destination destination =
             getPreparedBuilder()
@@ -589,7 +589,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testChangeDetectionDetectsAddedProperties()
+    void testChangeDetectionDetectsAddedProperties()
     {
         final Destination destination =
             getPreparedBuilder()
@@ -609,7 +609,7 @@ public class GetOrComputeDestinationCommandTest
 
     @SuppressWarnings( "unchecked" )
     @Test
-    public void testFirstDestinationAccessDoesNotTriggerGetAllRequest()
+    void testFirstDestinationAccessDoesNotTriggerGetAllRequest()
     {
         // the getAll call only happens on the second access of a destination
         // the first access is always a cache miss and thus no change detection is triggered
@@ -636,7 +636,7 @@ public class GetOrComputeDestinationCommandTest
     }
 
     @Test
-    public void testChangeDetectionDetectsDeletedProperties()
+    void testChangeDetectionDetectsDeletedProperties()
     {
         final Collection<String> oldRelevantProperties = getPreparedRelevantProperties();
         oldRelevantProperties.add("to-be-deleted-property");

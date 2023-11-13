@@ -12,7 +12,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.doReturn;
@@ -20,15 +19,17 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -44,7 +45,8 @@ import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 
 import io.vavr.control.Try;
 
-public class ConnectivityServiceTest
+@WireMockTest
+class ConnectivityServiceTest
 {
     private static final String XSUAA_SERVICE_ROOT = "/xsuaa";
     private static final String XSUAA_SERVICE_PATH = XSUAA_SERVICE_ROOT + "/oauth/token";
@@ -55,11 +57,8 @@ public class ConnectivityServiceTest
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
 
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
-    @Before
-    public void setupServiceBinding()
+    @BeforeEach
+    void setupServiceBinding( @Nonnull final WireMockRuntimeInfo wm )
     {
         final ServiceBinding connectivityService =
             new DefaultServiceBindingBuilder()
@@ -69,7 +68,7 @@ public class ConnectivityServiceTest
                         .<String, Object> builder()
                         .put("clientid", CLIENT_CREDENTIALS.getClientId())
                         .put("clientsecret", CLIENT_CREDENTIALS.getClientSecret())
-                        .put("url", "http://localhost:" + wireMockServer.port() + XSUAA_SERVICE_ROOT)
+                        .put("url", "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT)
                         .put("uri", "http://foobar/")
                         .put("onpremise_proxy_host", "localhost")
                         .put("onpremise_proxy_port", "1234")
@@ -79,20 +78,20 @@ public class ConnectivityServiceTest
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
     }
 
-    @After
-    public void resetServiceBinding()
+    @AfterEach
+    void resetServiceBinding()
     {
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
     }
 
     @Test
-    public void testConnectivityServiceWithStrategyCompatibility()
+    void testConnectivityServiceWithStrategyCompatibility()
     {
         // test parameters
         final String providerTenantId = "";
@@ -138,7 +137,7 @@ public class ConnectivityServiceTest
     }
 
     @Test
-    public void testConnectivityServiceWitStrategyDisabledPrincipalPropagation()
+    void testConnectivityServiceWitStrategyDisabledPrincipalPropagation()
     {
         // test parameters
         final String providerTenantId = "";
@@ -173,7 +172,7 @@ public class ConnectivityServiceTest
     }
 
     @Test
-    public void testConnectivityServiceWithStrategyRecommended()
+    void testConnectivityServiceWithStrategyRecommended()
     {
         // test parameters
         final String providerTenantId = "";
@@ -216,7 +215,7 @@ public class ConnectivityServiceTest
     }
 
     @Test
-    public void testConnectivityServiceWithInvalidXsuaaCredentials()
+    void testConnectivityServiceWithInvalidXsuaaCredentials()
     {
         // test parameters
         final String providerTenantId = "";

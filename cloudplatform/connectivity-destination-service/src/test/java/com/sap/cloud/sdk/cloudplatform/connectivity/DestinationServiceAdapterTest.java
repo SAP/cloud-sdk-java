@@ -14,7 +14,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
@@ -31,16 +30,16 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
@@ -62,12 +61,10 @@ import com.sap.cloud.security.test.JwtGenerator;
 
 import io.vavr.control.Try;
 
-public class DestinationServiceAdapterTest
+@WireMockTest
+class DestinationServiceAdapterTest
 {
     private static final MockUtil mockutil = new MockUtil();
-
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
     private static final String SERVICE_NAME = "destination";
     private static final ClientCredentials CLIENT_CREDENTIALS =
@@ -84,40 +81,40 @@ public class DestinationServiceAdapterTest
     private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
     private static ServiceBinding DEFAULT_SERVICE_BINDING;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupSession()
     {
         mockutil.mockCurrentPrincipal();
         mockutil.mockCurrentTenant();
     }
 
-    @Before
-    public void createDefaultBinding()
+    @BeforeEach
+    void createDefaultBinding( @Nonnull final WireMockRuntimeInfo wm )
     {
         DEFAULT_SERVICE_BINDING =
             serviceBinding(
                 CLIENT_CREDENTIALS.getClientId(),
                 CLIENT_CREDENTIALS.getClientSecret(),
-                "http://localhost:" + wireMockServer.port() + DESTINATION_SERVICE_ROOT + "/",
-                "http://localhost:" + wireMockServer.port() + XSUAA_SERVICE_ROOT + "/",
+                "http://localhost:" + wm.getHttpPort() + DESTINATION_SERVICE_ROOT + "/",
+                "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/",
                 PROVIDER_TENANT_ID);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);
     }
 
-    @After
-    public void resetServiceBindingAccessor()
+    @AfterEach
+    void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
-    public void testWithoutUserTokenExchange()
+    void testWithoutUserTokenExchange()
     {
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
@@ -159,7 +156,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void testWithUserTokenExchange()
+    void testWithUserTokenExchange()
     {
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
@@ -215,7 +212,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void getDestinationServiceProviderTenantShouldReturnProviderTenantFromServiceBinding()
+    void getDestinationServiceProviderTenantShouldReturnProviderTenantFromServiceBinding()
     {
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
         final String providerTenantId = adapterToTest.getProviderTenantId();
@@ -223,7 +220,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void getDestinationServiceProviderTenantShouldThrowExceptionIfTenantIdIsNotFound()
+    void getDestinationServiceProviderTenantShouldThrowExceptionIfTenantIdIsNotFound()
     {
         // case: no service binding
         assertThatThrownBy(() -> createSut().getProviderTenantId())
@@ -250,7 +247,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void testGetDestinationServiceBindingChecksForServiceName()
+    void testGetDestinationServiceBindingChecksForServiceName()
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.empty());
@@ -262,7 +259,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void testGetDestinationServiceBindingUsesCorrectServiceIdentifier()
+    void testGetDestinationServiceBindingUsesCorrectServiceIdentifier()
     {
         final ServiceBinding binding = mock(ServiceBinding.class);
         when(binding.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
@@ -273,7 +270,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void testGetDestinationServiceBindingWithoutBinding()
+    void testGetDestinationServiceBindingWithoutBinding()
     {
         mockServiceBindingAccessor();
 
@@ -282,7 +279,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void testGetDestinationServiceBindingWithMultipleBindings()
+    void testGetDestinationServiceBindingWithMultipleBindings()
     {
         final ServiceBinding firstBinding = mock(ServiceBinding.class);
         final ServiceBinding secondBinding = mock(ServiceBinding.class);
@@ -296,7 +293,7 @@ public class DestinationServiceAdapterTest
     }
 
     @Test
-    public void getDestinationServiceProviderTenantShouldThrowForMissingId()
+    void getDestinationServiceProviderTenantShouldThrowForMissingId()
     {
         final ServiceBinding serviceBinding =
             DefaultServiceBinding

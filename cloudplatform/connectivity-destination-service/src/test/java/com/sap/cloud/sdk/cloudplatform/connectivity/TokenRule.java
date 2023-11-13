@@ -39,7 +39,7 @@ import lombok.RequiredArgsConstructor;
  * </pre>
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
-public class TokenRule implements TestRule, AfterEachCallback, BeforeEachCallback
+class TokenRule implements TestRule, AfterEachCallback, BeforeEachCallback
 {
     @Getter
     private final JWTCreator.Builder tokenBuilder;
