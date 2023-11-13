@@ -68,11 +68,9 @@ public final class DestinationUtility
         if( !StringUtils.isBlank(systemUser)
             && (authType == AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION
                 || authType == AuthenticationType.SAP_ASSERTION_SSO) ) {
-            log
-                .debug(
-                    "Destination properties do not qualify for user token exchange: authentication type is {}, but property {} is set.",
-                    authType,
-                    SYSTEM_USER.getKeyName());
+            final String msg =
+                "Destination properties do not qualify for user token exchange: authentication type is {}, but property {} is set.";
+            log.debug(msg, authType, SYSTEM_USER.getKeyName());
             return false;
         }
 

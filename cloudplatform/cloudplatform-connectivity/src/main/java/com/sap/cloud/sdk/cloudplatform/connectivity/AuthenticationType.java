@@ -142,16 +142,7 @@ public enum AuthenticationType
             return ofIdentifier(identifier);
         }
         catch( final IllegalArgumentException e ) {
-            if( log.isWarnEnabled() ) {
-                log
-                    .warn(
-                        AuthenticationType.class.getSimpleName()
-                            + " '"
-                            + identifier
-                            + "' is not supported. Falling back to "
-                            + defaultAuthenticationType
-                            + ".");
-            }
+            log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultAuthenticationType);
             return defaultAuthenticationType;
         }
     }

@@ -101,14 +101,7 @@ public enum DestinationType
         }
         catch( final IllegalArgumentException e ) {
             if( log.isWarnEnabled() ) {
-                log
-                    .warn(
-                        DestinationType.class.getSimpleName()
-                            + " '"
-                            + identifier
-                            + "' is not supported. Falling back to "
-                            + defaultDestinationType
-                            + ".");
+                log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultDestinationType);
             }
             return defaultDestinationType;
         }
