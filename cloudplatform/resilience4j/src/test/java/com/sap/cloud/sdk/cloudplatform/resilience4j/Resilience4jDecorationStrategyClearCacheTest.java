@@ -36,7 +36,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class Resilience4jDecorationStrategyClearCacheTest
+class Resilience4jDecorationStrategyClearCacheTest
 {
     @SuppressWarnings( "deprecation" )
     @Nonnull

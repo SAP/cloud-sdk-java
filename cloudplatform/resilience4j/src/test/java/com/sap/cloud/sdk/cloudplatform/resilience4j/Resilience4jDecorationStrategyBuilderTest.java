@@ -15,23 +15,23 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.time.Duration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 
 import io.vavr.control.Try;
 
-public class Resilience4jDecorationStrategyBuilderTest
+class Resilience4jDecorationStrategyBuilderTest
 {
     @Test
-    public void testExistingDefaultDecorators()
+    void testExistingDefaultDecorators()
     {
         assertThat(Resilience4jDecorationStrategy.DEFAULT_DECORATORS).isNotEmpty();
     }
 
     @Test
-    public void testEqualityForDefaultDecorators()
+    void testEqualityForDefaultDecorators()
     {
         final GenericDecorator[] defaultDecorators =
             Resilience4jDecorationStrategy.DEFAULT_DECORATORS.toArray(new GenericDecorator[0]);
@@ -42,7 +42,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testEqualityForNoDecorators()
+    void testEqualityForNoDecorators()
     {
         assertThat(Resilience4jDecorationStrategy.builder().build())
             .isEqualTo(new Resilience4jDecorationStrategy(new GenericDecorator[0]))
@@ -50,7 +50,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testEqualityForCustomDecorators()
+    void testEqualityForCustomDecorators()
     {
         final GenericDecorator customDecorator = mock(GenericDecorator.class);
         assertThat(Resilience4jDecorationStrategy.builder().decorator(customDecorator).build())
@@ -59,7 +59,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testDefaultDecorators()
+    void testDefaultDecorators()
     {
         final Resilience4jDecorationStrategy strategy = new Resilience4jDecorationStrategy();
         final String s = strategy.executeSupplier("foo"::toString, ResilienceConfiguration.of("testDefaultDecorators"));
@@ -67,7 +67,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testEmptyDecorators()
+    void testEmptyDecorators()
     {
         final Resilience4jDecorationStrategy emptyStrategy = Resilience4jDecorationStrategy.builder().build();
 
@@ -88,7 +88,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testCustomDecorators()
+    void testCustomDecorators()
     {
         // create custom, trackable decorator
         final GenericDecorator customDecorator = spy(GenericDecorator.class);
@@ -105,7 +105,7 @@ public class Resilience4jDecorationStrategyBuilderTest
     }
 
     @Test
-    public void testCombinedDecorators()
+    void testCombinedDecorators()
     {
         // create custom, trackable decorators
         final GenericDecorator customDecoratorFirst = spy(GenericDecorator.class);

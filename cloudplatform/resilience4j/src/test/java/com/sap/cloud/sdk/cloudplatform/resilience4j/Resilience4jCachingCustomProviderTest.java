@@ -20,9 +20,9 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
 import com.sap.cloud.sdk.cloudplatform.cache.SerializableCacheKey;
@@ -31,7 +31,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationKey;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 
-public class Resilience4jCachingCustomProviderTest
+class Resilience4jCachingCustomProviderTest
 {
     private static Cache<SerializableCacheKey, Object> cache;
 
@@ -46,34 +46,34 @@ public class Resilience4jCachingCustomProviderTest
         }
     }
 
-    @BeforeClass
-    public static void setupResilienceStrategy()
+    @BeforeAll
+    static void setupResilienceStrategy()
     {
         ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
     }
 
-    @BeforeClass
-    public static void setupSystemProperty()
+    @BeforeAll
+    static void setupSystemProperty()
     {
         System.setProperty(Caching.JAVAX_CACHE_CACHING_PROVIDER, CustomProvider.class.getName());
     }
 
-    @AfterClass
-    public static void cleanSystemProperty()
+    @AfterAll
+    static void cleanSystemProperty()
     {
         System.clearProperty(Caching.JAVAX_CACHE_CACHING_PROVIDER);
     }
 
     @SuppressWarnings( "unchecked" )
-    @BeforeClass
-    public static void setupCacheManager()
+    @BeforeAll
+    static void setupCacheManager()
     {
         cache = (Cache<SerializableCacheKey, Object>) mock(Cache.class);
         doReturn(cache).when(CustomProvider.cacheManager).getCache(ArgumentMatchers.eq("test.caching.provider.custom"));
     }
 
     @Test
-    public void testCachingByCountingInvocations()
+    void testCachingByCountingInvocations()
         throws Exception
     {
         final ResilienceIsolationKey key = ResilienceIsolationKey.of(ResilienceIsolationMode.NO_ISOLATION);
