@@ -42,6 +42,13 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - BTP Cloud Foundry Workflow API: `com.sap.cloud.sdk.services:scp-workflow-cf`
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
+  - Cloud Platform - Core SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc`
+  - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
+  - Cloud Platform - Core SAP Cloud Platform on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-scp-cf`
+  - Cloud Platform - Security SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:security-dwc`
+  - Cloud Platform - Security SAP CP Cloud Foundry: `com.sap.cloud.sdk.cloudplatform:security-scp-cf`
+  - Cloud Platform - Tenant SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:tenant-dwc`
+  - Business Technology Platform - Tenant SAP CP Cloud Foundry: `com.sap.cloud.sdk.cloudplatform:tenant-scp-cf`
   - Archetypes - SAP CP Cloud Foundry + TomEE: `com.sap.cloud.sdk.archetypes:scp-cf-tomee`
   - Related to the Auditlog service:
     - Cloud Platform - Auditlog: `com.sap.cloud.sdk.cloudplatform:auditlog`
@@ -57,9 +64,11 @@ blog: https://blogs.sap.com/?p=xxx
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.AbstractScpDestinationBuilder`
     - Within the [Cloud Platform - Connectivity SAP BTP Cloud Foundry](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity-scp-cf) Module:
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.AccessToken`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfHttpDestination`
       - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfRfcDestination`
+      - `com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfDestinationServiceResponseProvider`
     - Within the [SAP S/4HANA - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.s4hana%20AND%20a:s4hana-connectivity) Module:
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination`
       - `com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationProperties`
@@ -71,7 +80,12 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.naming.JndiLookupAccessor`
     - `com.sap.cloud.sdk.cloudplatform.naming.JndiLookupFacade`
     - `com.sap.cloud.sdk.cloudplatform.naming.DefaultJndiLookupFacade`
-  - Within the [Cloud Platform - Security-Scp-Cf](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:security-scp-cf) Module:
+  - Related to Tenant:
+    - `com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenant`
+    - `com.sap.cloud.sdk.cloudplatform.tenant.ScpCfTenantFacade`
+    - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenant`
+    - Please use the respective `Default` classes instead.
+  - Related to Principal:
     - `com.sap.cloud.sdk.cloudplatform.security.principal.ScpCfPrincipal`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.ScpCfPrincipalFacade`
     - Please use the respective `Default` classes instead.
@@ -96,6 +110,33 @@ blog: https://blogs.sap.com/?p=xxx
     - `com.sap.cloud.sdk.cloudplatform.security.principal.SimplePrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringCollectionPrincipalAttribute`
     - `com.sap.cloud.sdk.cloudplatform.security.principal.StringPrincipalAttribute`
+    - `com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAttributeException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.ScpCfSecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStore`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreFacade`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.KeyStoreAccessException`
+    - `com.sap.cloud.sdk.cloudplatform.security.secret.exception.SecretStoreAccessException`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatform`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.ScpCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.DwcCfCloudPlatformFacade`
+    - `com.sap.cloud.sdk.cloudplatform.CloudPlatformAccessor`
+    - `com.sap.cloud.sdk.cloudplatform.WithRuntimeDependencies`
+    - `com.sap.cloud.sdk.cloudplatform.exception.ConstraintViolationException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.DependencyNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityAlreadyExistsException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.EntityNotFoundException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.StringParsingException`
+    - `com.sap.cloud.sdk.cloudplatform.exception.UnsupportedCloudFeatureException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.MissingConfigException`
+    - `com.sap.cloud.sdk.s4hana.connectivity.exception.VersionNotSupportedException`
+    - `com.sap.cloud.sdk.testutil.ThreadContextInvocationInterceptor`
+    - `com.sap.cloud.sdk.testutil.ThrowableAssertionUtil`
 - Following public methods have been removed:
   - Related to the `Destination` API:
     - The `Destination#decorate` method has been removed without replacement.
@@ -126,16 +167,40 @@ blog: https://blogs.sap.com/?p=xxx
   - The `BearerCredentials` behavior has been adjusted slightly: The `getToken()` method no longer just returns the value passed in via the constructor but instead is now guaranteed to **NOT** contain the prefix `"Bearer "`. To compensate this change, the `#getHttpHeaderValue()` method has been added, which is guaranteed to contain the `"Bearer "` prefix.
   - Invoking `HttpDestination#getHeaders(...)` may throw a `ResilienceRuntimeException` in case On-Premise Connectivity proxy headers cannot be resolved.
     As usual, the specific error cause is attached to the exception.
+  - The deprecated `ClientCredentialsHttpDestination` has been removed in favor of the improved `OAuth2DestinationBuilder`.
+  - The `OAuth2DestinationBuilder` has been changed to allow for setting arbitrary destination properties after the OAuth2 configuration has been set.
+    - The `.withProperties(..)` aspect of the builder has been replaced with `.withProperty(..)`.
 - The following classes have been moved or their modules have been renamed:
   - All classes related to the Apache Http Client 4 have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity` to a new module `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4`
   - All classes related to the Apache Http Client 5 have been moved from `com.sap.cloud.sdk.frameworks:apache-httpclient5` to `com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5`
   - All classes related to Resilience4j have been moved from `com.sap.cloud.sdk.frameworks:resilience4j` to `com.sap.cloud.sdk.cloudplatform:resilience4j`
+  - The following classes have been moved from `com.sap.cloud.sdk.cloudplatform:secuirty-scp-cf` to '`com.sap.cloud.sdk.cloudplatform:security`:
+    - `AuthTokenThreadContextListener`
+    - `BasicAuthenticationAccessor`
+    - `BasicAuthenticationFacade`
+    - `BasicAuthenticationThreadContextListener`
+    - `DefaultAuthTokenFacade`
+    - `DefaultBasicAuthenticationFacade`
+    - `SecurityContextThreadContextDecorator`
+    - `ScpCfSecretStore`
+    - `ScpCfSecretStoreFacade`
+    - `BasicAuthenicationAccessException`
+  - The following classes have been moved from `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`:
+    - `DwcHeaderUtils`
+    - `DwcHeaderNotFoundException`
+  - `com.sap.cloud.sdk.cloudplatform.security.DwcPrincipalFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:security-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
+  - `com.sap.cloud.sdk.cloudplatform.tenant.DwcTenantFacade` has been moved from `com.sap.cloud.sdk.cloudplatform:tenant-dwc` to `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
+  - The module `cloudplatform-connectivity-scp-cf` got renamed to `connectivity-destination-service`, and all classes therein that started with `ScpCf...` got this prefix renamed to `DestinatinService...`. To prevent breaking changes with the renamed module the `cloudplatform-connectivity-scp-cf` module is still available as a dependency, but it is empty and just contains a reference to the new module `connectivity-destination-service`.
 - The `HttpClientAccessor` and `ApacheHttpClient5Accessor` classes are generalised to accept `Destination` instances, making invocations to `.asHttp()` superfluous when obtaining HTTP clients.
 - The `getSslContext()` method was removed from the `CloudPlatform` interface and the implementation was moved to the modules `connectivity-apache-httpclient4` and `connectivity-apache-httpclient5`.
 - The OData, OpenAPI and SOAP APIs are generalised to accept instances of `Destination`, making invocations to `.asHttp()` superfluous when executing OData or REST requests.
     - OData V2 and OpenAPI clients need to be re-generated to adjust for this change.
 - The public constructor of `DefaultPrincipal` now only accepts a String argument for `principalId`.
 - The `PrincipalFacade` of the `PrincipalAccessor` will default to `DefaultPrincipalFacade` in the case that a facade cannot be found.
+- The `RequestHeaderContainer` no longer splits header values.
+- The `ODataRequestResult` no longer splits header values.
+- The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
+- The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
 
 ## newFunctionality
 
@@ -146,6 +211,7 @@ blog: https://blogs.sap.com/?p=xxx
   - The `DefaultHttpDestination.Builder` can now be constructed from an existing `DefaultHttpDestination` instance by using `DefaultHttpDestination.toBuilder()`.
   - The `DefaultDestination.Builder` can now be constructed from an existing `DefaultDestination` instance by using `DefaultDestination.toBuilder()`.
 - The `BasicCredentials` and `BearerCredentials` classes now offer a new method `#getHttpHeaderValue()` which will return the encoded and prefixed value of the credentials, e.g. `"Basic <encodedCredentials>"` or `"Bearer <token>"`.
+- A `DefaultTenant` can now be initialised with an optional `subdomain` in addition to the required `tenantId`
 
 ## improvements
 
@@ -158,3 +224,4 @@ blog: https://blogs.sap.com/?p=xxx
 
 - Fixed a bug where an `Authorization` header was attached multiple times to outgoing HTTP requests under some circumstances
 - Fixed an issue where the `DestinationType` of an `DefaultHttpDestination` could be changed to anything but `DestinationType.HTTP`
+- Fixed an issue with custom GSON serialization of OpenAPI generated classes having unexpected `customFieldNames` properties in JSON payload.

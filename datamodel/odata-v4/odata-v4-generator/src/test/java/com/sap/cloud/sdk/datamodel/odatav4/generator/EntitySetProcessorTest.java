@@ -18,7 +18,7 @@ class EntitySetProcessorTest
     void processFunctionImportsShouldThrowODataExceptionOnNonExistentHttpMethod()
     {
         final Service service = mockServiceClassWithSingleFunctionImportWithoutHttMethod();
-        final EntitySetProcessor esp = new EntitySetProcessor(service, null, null, null);
+        final EntitySetProcessor esp = new EntitySetProcessor(service, null, null);
 
         assertThatThrownBy(() -> esp.processFunctionImports(null, new NamingContext()))
             .isInstanceOf(ODataGeneratorReadException.class);

@@ -505,6 +505,14 @@ public class ErpHttpRequestExecutor<RequestT extends Request<RequestT, RequestRe
         }
     }
 
+    /**
+     * Logs the read access attempt of the given {@code request} for the given {@code destination}.
+     *
+     * @param request
+     *            The request that attempted to read data.
+     * @param destination
+     *            The destination that was used for the read attempt.
+     */
     protected void logReadAccessAttempt( final Request<?, ?> request, final HttpDestination destination )
     {
         @Nullable

@@ -126,7 +126,7 @@ public final class StructuredQuery implements QuerySerializable
      *
      * @param subqueries
      *            Query objects on properties to be expanded. The {@link StructuredQuery#getEntityOrPropertyName()} will
-     *            be th
+     *            be the key for fields that should be expanded.
      * @return This query object with the added selections.
      */
     @Nonnull
@@ -143,6 +143,13 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * Query modified to limit which entities should be contained in the result set.
+     *
+     * @param filters
+     *            Filter objects on properties to be filtered.
+     * @return This query object with the added filters.
+     */
     @Nonnull
     @SuppressWarnings( "varargs" )
     public StructuredQuery filter( @Nonnull final ValueBoolean... filters )
@@ -151,6 +158,13 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * Query modifier to limit how many entities should be contained in the result set.
+     *
+     * @param top
+     *            The number of entities to include in the result set at most.
+     * @return This query object with the top limit included.
+     */
     @Nonnull
     public StructuredQuery top( @Nonnull final Number top )
     {
@@ -158,6 +172,13 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * Query modifier to skip a certain amount of results before then adding entities.
+     *
+     * @param skip
+     *            The number of entities that shall be skipped before actually filling the result set.
+     * @return This query object with the skip operation included.
+     */
     @Nonnull
     public StructuredQuery skip( @Nonnull final Number skip )
     {
@@ -165,6 +186,18 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * <b>Adds</b> an {@code orderBy} expression to this query object.
+     * <p>
+     * If there is no {@code orderBy} operation present yet, a new one will be created.
+     * </p>
+     *
+     * @param field
+     *            The name of the field that should for ordering the result set.
+     * @param order
+     *            The {@link Order}.
+     * @return This query object with the order by operation <b>added</b>.
+     */
     @Nonnull
     public StructuredQuery orderBy( @Nonnull final String field, @Nonnull final Order order )
     {
@@ -176,6 +209,13 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * Sets the {@code orderBy} operation for this query object, overwriting any existing {@code orderBy} operations.
+     *
+     * @param ordering
+     *            The {@link OrderExpression} to be used.
+     * @return This query object with the given {@code ordering} set.
+     */
     @Nonnull
     public StructuredQuery orderBy( @Nonnull final OrderExpression ordering )
     {
@@ -183,6 +223,13 @@ public final class StructuredQuery implements QuerySerializable
         return this;
     }
 
+    /**
+     * Sets the {@code search} operation for this query object.
+     *
+     * @param search
+     *            The value to be searched for.
+     * @return This query object with the {@code search} operation set.
+     */
     @Nonnull
     public StructuredQuery search( @Nonnull final String search )
     {

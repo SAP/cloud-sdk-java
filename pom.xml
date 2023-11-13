@@ -95,7 +95,7 @@
 		<!--  Fully internal (test) dependencies  -->
 		<!-- Keep Spring version in sync with bom/pom.xml -->
 		<spring.version>5.3.29</spring.version>
-		<spring-security.version>5.8.5</spring-security.version>
+		<spring-security.version>5.8.6</spring-security.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<junit.version>4.13.2</junit.version>
 		<assertj-core.version>3.24.2</assertj-core.version>
@@ -117,7 +117,7 @@
 		<openapi-generator.version>7.0.1</openapi-generator.version>
 		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
-		<jetty.version>9.4.52.v20230823</jetty.version>
+		<jetty.version>9.4.53.v20231009</jetty.version>
 		<protobuf-java.version>3.24.3</protobuf-java.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
@@ -295,13 +295,12 @@
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
 			</dependency>
-			<!--Used in cloudplatform-core-dwc-cf-->
+			<!-- Used in connectivity-apache-httpclient4 and connectivity-apache-httpclient5 -->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcpkix-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
 			</dependency>
-			<!--Used in intregation-tests and cloudplatform-core-dwc-cf-->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>

@@ -40,23 +40,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>cloudplatform-core-dwc-cf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>security-dwc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-dwc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>tenant-dwc</artifactId>
+			<artifactId>scp-cf</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -66,12 +54,13 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<usedDependencies>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:security-dwc</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant-dwc</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:scp-cf</usedDependency>
 					</usedDependencies>
+					<ignoredUsedUndeclaredDependencies>
+						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:security</ignoredUsedUndeclaredDependency>
+						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:tenant</ignoredUsedUndeclaredDependency>
+					</ignoredUsedUndeclaredDependencies>
 				</configuration>
 			</plugin>
 			<!-- create an empty javadoc jar for Maven Central -->

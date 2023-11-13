@@ -70,6 +70,8 @@ public abstract class VdmObject<ObjectT>
     protected final transient Map<String, Object> changedOriginalFields = new HashMap<>();
 
     /**
+     * Returns the names of the custom fields of this object.
+     *
      * @return The names of the custom fields of this object.
      */
     @Nonnull
@@ -79,6 +81,8 @@ public abstract class VdmObject<ObjectT>
     }
 
     /**
+     * Returns the names and values of a custom field.
+     *
      * @return All of the names & values of custom fields as a map.
      */
     @JsonAnyGetter
@@ -196,6 +200,8 @@ public abstract class VdmObject<ObjectT>
     }
 
     /**
+     * Returns the annotation properties.
+     *
      * @return List of OData annotation properties.
      */
     @Nonnull
@@ -208,18 +214,24 @@ public abstract class VdmObject<ObjectT>
     }
 
     /**
+     * Returns the EDMX type of this entity.
+     *
      * @return The EDMX type of this entity.
      */
     @Nonnull
     public abstract String getOdataType();
 
     /**
+     * Returns the class of this object.
+     *
      * @return The class of this object.
      */
     @Nonnull
     public abstract Class<ObjectT> getType();
 
     /**
+     * Returns the compound key of this object.
+     *
      * @return The compound key of this object.
      */
     @Nonnull

@@ -42,6 +42,10 @@
 			<artifactId>cloudplatform-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.sap.cloud.security</groupId>
+			<artifactId>java-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 		</dependency>
@@ -61,6 +65,10 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -71,6 +79,11 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -91,6 +104,26 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-jre8</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.security</groupId>
+			<artifactId>java-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding</groupId>
+			<artifactId>java-sap-vcap-services</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-access-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

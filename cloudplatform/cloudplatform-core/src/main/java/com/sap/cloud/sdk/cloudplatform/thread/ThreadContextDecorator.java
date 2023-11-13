@@ -14,6 +14,9 @@ import javax.annotation.Nonnull;
  */
 public interface ThreadContextDecorator
 {
+    /**
+     * Defines the default priorities for decorators. Smaller priorities are applied first.
+     */
     class DefaultPriorities
     {
         public static final int SCP_CF_SECURITY_CONTEXT_DECORATOR = -1;

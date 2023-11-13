@@ -89,18 +89,18 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationSplitsHeaderValues()
+    public void creationDoesNotSplitHeaderValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key", Arrays.asList("Value1", "Value2,Value3"));
 
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
-        assertThat(sut.getHeaderValues("Key")).containsExactlyInAnyOrder("Value1", "Value2", "Value3");
+        assertThat(sut.getHeaderValues("Key")).containsExactlyInAnyOrder("Value1", "Value2,Value3");
     }
 
     @Test
-    public void creationSplitsCookieValues()
+    public void creationDoesNotSplitCookieValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Set-Cookie", Arrays.asList("cookie1=value1", "cookie2=value2;cookie3;"));
@@ -108,33 +108,11 @@ public class DefaultRequestHeaderContainerTest
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
         assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder("cookie1=value1", "cookie2=value2", "cookie3");
+            .containsExactlyInAnyOrder("cookie1=value1", "cookie2=value2;cookie3;");
     }
 
     @Test
-    public void creationSplitsCookieValuesCaseInsensitively()
-    {
-        final Map<String, Collection<String>> input = new HashMap<>();
-        input.put("set-cookie", Collections.singletonList("cookie1=value1;cookie2=value2"));
-        input.put("SET-COOKIE", Collections.singletonList("cookie3;cookie4"));
-        input
-            .put("sEt-CoOkIe", Arrays.asList("cookie5=value5", "cookie6=value6;cookie7=value, which contains a comma"));
-
-        final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
-
-        assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder(
-                "cookie1=value1",
-                "cookie2=value2",
-                "cookie3",
-                "cookie4",
-                "cookie5=value5",
-                "cookie6=value6",
-                "cookie7=value, which contains a comma");
-    }
-
-    @Test
-    public void creationTrimsValues()
+    public void creationDoesNotTrimValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Header1", Collections.singletonList("  Value1-1   "));
@@ -144,10 +122,21 @@ public class DefaultRequestHeaderContainerTest
 
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
-        assertThat(sut.getHeaderValues("Header1")).containsExactlyInAnyOrder("Value1-1");
-        assertThat(sut.getHeaderValues("Header2")).containsExactlyInAnyOrder("Value2-1", "Value2-2");
+        assertThat(sut.getHeaderValues("Header1")).containsExactlyInAnyOrder("  Value1-1   ");
+        assertThat(sut.getHeaderValues("Header2")).containsExactlyInAnyOrder("  Value2-1  ,  Value2-2   ");
         assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder("cookie1  = cookie-value1", "cookie2 = cookie-value2", "cookie3");
+            .containsExactlyInAnyOrder("  cookie1  = cookie-value1  ", "  cookie2 = cookie-value2  ; cookie3  ");
+    }
+
+    @Test
+    public void creationRemovesNullValues()
+    {
+        final Map<String, Collection<String>> input = new HashMap<>();
+        input.put("Header", Arrays.asList("Value1-1", "", null, "   ", null));
+
+        final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
+
+        assertThat(sut.getHeaderValues("Header")).containsExactlyInAnyOrder("Value1-1", "", "   ");
     }
 
     @Test

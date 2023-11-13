@@ -60,6 +60,10 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     @Getter( AccessLevel.PROTECTED )
     private final Map<String, String> parametersForRequestOnly = new LinkedHashMap<>();
 
+    /**
+     * The CSRF token retriever to be used for all explicit and implicit requests that are part of this FluentHelper
+     * implementation.
+     */
     @Nonnull
     @Getter( AccessLevel.PROTECTED )
     protected CsrfTokenRetriever csrfTokenRetriever = CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER;
@@ -86,6 +90,11 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
         this.entityCollection = entityCollection;
     }
 
+    /**
+     * Returns the current fluent helper instance.
+     *
+     * @return The current fluent helper instance.
+     */
     @SuppressWarnings( "unchecked" )
     @Nonnull
     protected FluentHelperT getThis()
@@ -94,6 +103,7 @@ public abstract class FluentHelperBasic<FluentHelperT, EntityT, ResultT> impleme
     }
 
     @Nullable
+    @Override
     public abstract ResultT executeRequest( @Nonnull final Destination destination );
 
     /**

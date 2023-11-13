@@ -33,6 +33,13 @@ public interface ValueBinary extends Expressions.OperandSingle, FilterableCompar
      */
     Function<String, byte[]> DECODE_FROM_STRING = Base64.getDecoder()::decode;
 
+    /**
+     * Returns a {@link ValueBinary} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueBinary}.
+     * @return A {@link ValueBinary} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueBinary literal( @Nonnull final byte[] v )
     {
@@ -40,6 +47,9 @@ public interface ValueBinary extends Expressions.OperandSingle, FilterableCompar
         return ( protocol, prefixes ) -> "binary'" + value + "'";
     }
 
+    /**
+     * OData expression for binary values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueBinary
     {

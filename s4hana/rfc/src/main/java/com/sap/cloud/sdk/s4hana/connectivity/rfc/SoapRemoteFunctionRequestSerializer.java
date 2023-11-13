@@ -143,6 +143,13 @@ public class SoapRemoteFunctionRequestSerializer<RequestT extends AbstractRemote
         return soapDocument.createElementNS(SOAP_NAMESPACE_URI, elementName);
     }
 
+    /**
+     * Returns the results of the return parameters.
+     *
+     * @param result
+     *            The result of the request.
+     * @return The results of the return parameters.
+     */
     protected List<AbstractRemoteFunctionRequestResult.Result> getReturnParameterResults( final RequestResultT result )
     {
         final Set<String> returnParameterNames = result.getRequest().getReturnParameterNames();

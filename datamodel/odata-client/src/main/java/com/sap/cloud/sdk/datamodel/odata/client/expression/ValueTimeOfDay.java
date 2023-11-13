@@ -27,12 +27,22 @@ public interface ValueTimeOfDay
     @Nonnull
     ValueTimeOfDay NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueTimeOfDay} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueTimeOfDay}.
+     * @return A {@link ValueTimeOfDay} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueTimeOfDay literal( @Nonnull final LocalTime v )
     {
         return ( protocol, prefixes ) -> protocol.getTimeOfDaySerializer().apply(v);
     }
 
+    /**
+     * OData expression for time of day values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueTimeOfDay
     {

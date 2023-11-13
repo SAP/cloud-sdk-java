@@ -21,12 +21,12 @@ stages:
     checkstyle:
       high: '14'# Open tasks (to do or fix me)
       normal: '0'
-      low: '216'
+      low: '0'
     findbugs: #SpotBugs
       high: '0'
       normal: '0'
       low: '0'
     pmd:
       high: '0'
-      normal: '19'
-      low: '10'
+      normal: '6'
+      low: '2'
