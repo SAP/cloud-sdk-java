@@ -40,7 +40,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class PaginationUnitTest
+class PaginationUnitTest
 {
     private static final int PAGE_SIZE = 20;
     private static final int ENTITIES_COUNT = 91;
@@ -62,7 +62,7 @@ public class PaginationUnitTest
         "{ \"d\" : { \"results\": [ { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('TRADH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"TRADH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('TRAIH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"TRAIH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VAFFE')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VAFFE\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VICTE')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VICTE\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VINET')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VINET\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WANDK')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WANDK\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WARTH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WARTH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WELLI')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WELLI\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WHITC')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WHITC\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WILMK')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WILMK\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WOLZA')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WOLZA\" } ] } }";
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         server = new WireMockRule(wireMockConfig().dynamicPort());
         server.start();
@@ -101,7 +101,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAll()
+    void testGetAll()
     {
         final List<Customer> result =
             newCustomerRead().select(Customer.CUSTOMER_ID).withPreferredPageSize(PAGE_SIZE).executeRequest(destination);
@@ -116,7 +116,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAllIteratingEntities()
+    void testGetAllIteratingEntities()
     {
         final Iterable<Customer> result =
             newCustomerRead()
@@ -141,7 +141,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAllStreamingEntities()
+    void testGetAllStreamingEntities()
     {
         final Stream<Customer> result =
             newCustomerRead()
@@ -166,7 +166,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAllIteratingPages()
+    void testGetAllIteratingPages()
     {
         final Iterable<List<Customer>> result =
             newCustomerRead()

@@ -11,9 +11,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -21,12 +22,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.apache.http.client.HttpClient;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.http.client.HttpClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -38,11 +41,9 @@ import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
 
 import lombok.SneakyThrows;
 
-public class ODataV2BatchFunctionImportTest
+@WireMockTest
+class ODataV2BatchFunctionImportTest
 {
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String X_CSRF_TOKEN_HEADER_KEY = "x-csrf-token";
     private static final String X_CSRF_TOKEN_HEADER_FETCH_VALUE = "fetch";
     private static final String X_CSRF_TOKEN_HEADER_VALUE = "awesome-csrf-token";
@@ -53,23 +54,23 @@ public class ODataV2BatchFunctionImportTest
     private static final String REQUEST_BODY_POST_WITH_CUSTOM_HEADER =
         readResourceFileCrlf("BatchRequestFunctionImportWithPostWithCustomHeader.txt");
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before()
     {
-        server
-            .stubFor(
-                head(urlEqualTo("/"))
-                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase(X_CSRF_TOKEN_HEADER_FETCH_VALUE))
-                    .willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
+
+        stubFor(
+            head(urlEqualTo("/"))
+                .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase(X_CSRF_TOKEN_HEADER_FETCH_VALUE))
+                .willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
 
         final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
-        server.stubFor(post(urlEqualTo(REQUEST_URL_BATCH)).willReturn(okForContentType(contentType, RESPONSE_BODY)));
+        stubFor(post(urlEqualTo(REQUEST_URL_BATCH)).willReturn(okForContentType(contentType, RESPONSE_BODY)));
     }
 
     @Test
-    public void testIllegalStateExceptionWhenFunctionImportUsingHttpGetInChangeSet()
+    void testIllegalStateExceptionWhenFunctionImportUsingHttpGetInChangeSet( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch.TestFunctionImportSingleResultHttpGet functionImport =
             new TestVdmEntityBatch.TestFunctionImportSingleResultHttpGet("John", "Doe");
@@ -84,9 +85,9 @@ public class ODataV2BatchFunctionImportTest
     }
 
     @Test
-    public void testFunctionImportUsingHttpPostInChangeSet()
+    void testFunctionImportUsingHttpPostInChangeSet( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch.TestFunctionImportHttpPost functionImport =
             new TestVdmEntityBatch.TestFunctionImportHttpPost("John", "Doe");
@@ -97,26 +98,27 @@ public class ODataV2BatchFunctionImportTest
             .endChangeSet()
             .executeRequest(destination);
 
-        server.verify(postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH)).withRequestBody(equalTo(REQUEST_BODY_POST)));
+        verify(postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH)).withRequestBody(equalTo(REQUEST_BODY_POST)));
     }
 
     @Test
-    public void testFunctionImportUsingHttpGetInBatchRequest()
+    void testFunctionImportUsingHttpGetInBatchRequest( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch.TestFunctionImportSingleResultHttpGet functionImport =
             new TestVdmEntityBatch.TestFunctionImportSingleResultHttpGet("John", "Doe");
 
         new TestVdmEntityBatch("").addReadOperations(functionImport).executeRequest(destination);
 
-        server.verify(postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH)).withRequestBody(equalTo(REQUEST_BODY_GET)));
+        verify(postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH)).withRequestBody(equalTo(REQUEST_BODY_GET)));
     }
 
     @Test
-    public void testIllegalStateExceptionWhenFunctionImportUsingHttpPostInReadOperation()
+    void
+        testIllegalStateExceptionWhenFunctionImportUsingHttpPostInReadOperation( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch.TestFunctionImportHttpPost functionImport =
             new TestVdmEntityBatch.TestFunctionImportHttpPost("John", "Doe");
@@ -127,9 +129,9 @@ public class ODataV2BatchFunctionImportTest
     }
 
     @Test
-    public void testFunctionImportUsingHttpPostInChangeSetWithCustomHeader()
+    void testFunctionImportUsingHttpPostInChangeSetWithCustomHeader( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch.TestFunctionImportHttpPost functionImport =
             new TestVdmEntityBatch.TestFunctionImportHttpPost("John", "Doe").withHeader("foo", "bar");
@@ -140,10 +142,9 @@ public class ODataV2BatchFunctionImportTest
             .endChangeSet()
             .executeRequest(destination);
 
-        server
-            .verify(
-                postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH))
-                    .withRequestBody(equalTo(REQUEST_BODY_POST_WITH_CUSTOM_HEADER)));
+        verify(
+            postRequestedFor(urlPathEqualTo(REQUEST_URL_BATCH))
+                .withRequestBody(equalTo(REQUEST_BODY_POST_WITH_CUSTOM_HEADER)));
     }
 
     @SneakyThrows
@@ -158,9 +159,9 @@ public class ODataV2BatchFunctionImportTest
     }
 
     @Test
-    public void testLowLevelToHighLevel()
+    void testLowLevelToHighLevel( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final Destination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final Destination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final TestVdmEntityBatch testVdmEntityBatch = new TestVdmEntityBatch("");
 

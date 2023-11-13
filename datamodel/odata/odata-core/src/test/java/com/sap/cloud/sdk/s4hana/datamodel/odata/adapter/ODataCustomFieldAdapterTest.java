@@ -17,17 +17,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-public class ODataCustomFieldAdapterTest
+class ODataCustomFieldAdapterTest
 {
     private static final Gson GSON = new Gson();
 
     @Test
-    public void testReadInteger()
+    void testReadInteger()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader(String.valueOf(Integer.MAX_VALUE)));
@@ -37,7 +37,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadLong()
+    void testReadLong()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader(String.valueOf(Long.MAX_VALUE)));
@@ -47,7 +47,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadDouble()
+    void testReadDouble()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader(String.valueOf(Double.MAX_VALUE)));
@@ -57,7 +57,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadBoolean()
+    void testReadBoolean()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader(String.valueOf(true)));
@@ -67,7 +67,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadParsesDateString()
+    void testReadParsesDateString()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("\"/Date(1643775600000)/\""));
@@ -80,7 +80,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadMalformedDateStringLeadsToNull()
+    void testReadMalformedDateStringLeadsToNull()
         throws IOException
     {
         // The given timestamp exceeds the allowed maximum while still conforming to the regex used to match Date strings.
@@ -93,7 +93,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadDoesntParseOffsetDateTimeString()
+    void testReadDoesntParseOffsetDateTimeString()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("\"/Date(2022-02-02T04:20:00Z)/\""));
@@ -103,7 +103,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadString()
+    void testReadString()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("\"foo\""));
@@ -113,7 +113,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadArrayOfPrimitives()
+    void testReadArrayOfPrimitives()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("[\"foo\", \"bar\"]"));
@@ -123,7 +123,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadObjectOfPrimitives()
+    void testReadObjectOfPrimitives()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("{\"foo\": \"bar\", \"baz\": 42}"));
@@ -137,7 +137,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadDeferredObjectLeadsToNull()
+    void testReadDeferredObjectLeadsToNull()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("{\"__deferred\": \"some value\"}"));
@@ -147,7 +147,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadSkipsMetadata()
+    void testReadSkipsMetadata()
         throws IOException
     {
         final JsonReader jsonReader =
@@ -162,7 +162,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadReturnsResultsOnRootLevel()
+    void testReadReturnsResultsOnRootLevel()
         throws IOException
     {
         final JsonReader jsonReader = new JsonReader(new StringReader("{\"results\": {\"key\": \"value\"}}"));
@@ -175,7 +175,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadExpectsDeferredToBeTheLastObject()
+    void testReadExpectsDeferredToBeTheLastObject()
     {
         final ODataCustomFieldAdapter sut = new ODataCustomFieldAdapter(GSON);
 
@@ -197,7 +197,7 @@ public class ODataCustomFieldAdapterTest
     }
 
     @Test
-    public void testReadExpectsResultsToBeTheLastObject()
+    void testReadExpectsResultsToBeTheLastObject()
     {
         final ODataCustomFieldAdapter sut = new ODataCustomFieldAdapter(GSON);
 

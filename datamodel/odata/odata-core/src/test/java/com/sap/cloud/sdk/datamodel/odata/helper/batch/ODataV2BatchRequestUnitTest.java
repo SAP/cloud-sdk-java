@@ -58,7 +58,7 @@ import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
 import lombok.SneakyThrows;
 import lombok.Value;
 
-public class ODataV2BatchRequestUnitTest
+class ODataV2BatchRequestUnitTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String X_CSRF_TOKEN_HEADER_KEY = "x-csrf-token";
@@ -110,7 +110,7 @@ public class ODataV2BatchRequestUnitTest
     }
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         server.start();
         destination = DefaultHttpDestination.builder(server.baseUrl()).build();
@@ -136,7 +136,7 @@ public class ODataV2BatchRequestUnitTest
     }
 
     @AfterEach
-    public void shutdown()
+    void shutdown()
     {
         server.shutdown();
         HttpClientAccessor.setHttpClientFactory(null);
@@ -296,7 +296,7 @@ public class ODataV2BatchRequestUnitTest
     }
 
     @Test
-    public void testBatchWithoutCsrfTokenIfSkipped()
+    void testBatchWithoutCsrfTokenIfSkipped()
     {
         new TestVdmEntityBatch("/").withoutCsrfToken().executeRequest(destination);
 
@@ -323,7 +323,7 @@ public class ODataV2BatchRequestUnitTest
 
     @Test
     @SneakyThrows
-    public void testBatchOpenConnection()
+    void testBatchOpenConnection()
     {
         final int N = MAX_PARALLEL_CONNECTIONS * 2;
         final List<InputStream> inputStreams = new ArrayList<>();

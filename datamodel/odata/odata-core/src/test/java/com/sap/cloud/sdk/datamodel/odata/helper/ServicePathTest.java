@@ -19,7 +19,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -31,12 +30,12 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.JsonAdapter;
@@ -62,25 +61,24 @@ import lombok.EqualsAndHashCode;
  *   GET /A_RelatedEntitySet(Id) -> single entity from A_RelatedType
  *   GET /A_RelatedEntitySet(Id)/to_TransitiveEntity -> multiple entities from A_TransitiveType
  */
+@WireMockTest
 public class ServicePathTest
 {
     private static final String SERVICE_A = "/path/to/serviceA";
     private static final String SERVICE_B = "/path/to/serviceB";
 
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().gzipDisabled(true).dynamicPort());
     private HttpDestination destination;
 
-    @Before
-    public void setupDestination()
+    @BeforeEach
+    void setupDestination( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         stubFor(head(urlEqualTo(SERVICE_A)).willReturn(ok()));
         stubFor(head(urlEqualTo(SERVICE_B)).willReturn(ok()));
     }
 
     @Test
-    public void testChildEntityFromGet()
+    void testChildEntityFromGet()
     {
         final String responseEntityListWithRelated =
             createPayloadMultiple(createTestEntity("72", createRelatedEntity("13857", null)));
@@ -108,7 +106,7 @@ public class ServicePathTest
     }
 
     @Test
-    public void testChildEntityFromGetByKey()
+    void testChildEntityFromGetByKey()
     {
         final String resonseEntityWithRelated =
             createPayloadSingle(createTestEntity("72", createRelatedEntity("13857", null)));
@@ -137,7 +135,7 @@ public class ServicePathTest
     }
 
     @Test
-    public void testChildEntityFromCreate()
+    void testChildEntityFromCreate()
     {
         final String resonseEntityWithRelated =
             createPayloadSingle(createTestEntity("72", createRelatedEntity("13857", null)));
@@ -167,7 +165,7 @@ public class ServicePathTest
     }
 
     @Test
-    public void testChildEntityFromUpdate()
+    void testChildEntityFromUpdate()
     {
         final String responseEntity = createPayloadSingle(createTestEntity("72", null));
         stubFor(get(urlPathMatching(SERVICE_B + "/A_EntitySet\\('(.*)'\\)")).willReturn(okJson(responseEntity)));
@@ -209,7 +207,7 @@ public class ServicePathTest
     }
 
     @Test
-    public void testChildEntityFromNavigationProperty()
+    void testChildEntityFromNavigationProperty()
     {
         final String responseEntity = createPayloadSingle(createTestEntity("72", null));
         stubFor(get(urlPathMatching(SERVICE_B + "/A_EntitySet\\('(.*)'\\)")).willReturn(okJson(responseEntity)));
@@ -240,7 +238,7 @@ public class ServicePathTest
     }
 
     @Test
-    public void testChildEntityFromFunctionImport()
+    void testChildEntityFromFunctionImport()
         throws IOException
     {
         final String responseFunctionImport =
