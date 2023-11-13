@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -21,12 +21,12 @@ import com.sap.cloud.security.config.CredentialType;
 
 import lombok.RequiredArgsConstructor;
 
-public class DefaultOAuth2PropertySupplierTest
+class DefaultOAuth2PropertySupplierTest
 {
     private DefaultOAuth2PropertySupplier sut;
 
     @Test
-    public void testValueConverter()
+    void testValueConverter()
     {
         assertThat(convert(null, String.class)).isNull();
         assertThat(convert(null, URI.class)).isNull();
@@ -53,7 +53,7 @@ public class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
-    public void testCredentialAccess()
+    void testCredentialAccess()
     {
         final ServiceBinding binding =
             new ServiceBindingBuilder(ServiceIdentifier.DESTINATION)
@@ -75,7 +75,7 @@ public class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
-    public void testOAuthCredentialAccess()
+    void testOAuthCredentialAccess()
     {
         final ServiceBinding binding =
             new ServiceBindingBuilder(ServiceIdentifier.DESTINATION)
@@ -95,7 +95,7 @@ public class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
-    public void testClientSecretIsTheDefault()
+    void testClientSecretIsTheDefault()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions

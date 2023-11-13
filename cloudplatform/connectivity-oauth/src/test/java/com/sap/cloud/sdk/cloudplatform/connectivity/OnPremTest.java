@@ -12,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
 
-public class OnPremTest
+class OnPremTest
 {
     private static final String MOCKED_RESPONSE_BODY =
         "{\"access_token\": \"token\", \"token_type\": \"Bearer\", \"expires_in\": 50000, \"scope\": \"uaa.resource\", \"jti\": \"abc456\"}";
@@ -36,13 +36,15 @@ public class OnPremTest
     private static final ResilienceConfiguration NO_RESILIENCE =
         ResilienceConfiguration.empty(OnPremTest.class.getName() + "_empty");
 
-    @Rule
-    public WireMockRule csMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-    @Rule
-    public WireMockRule csMockServer2 = new WireMockRule(wireMockConfig().dynamicPort());
+    @RegisterExtension
+    static final WireMockExtension csMockServer =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
+    @RegisterExtension
+    static final WireMockExtension csMockServer2 =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -50,15 +52,15 @@ public class OnPremTest
         csMockServer2.stubFor(post("/oauth/token").willReturn(okJson(ALTERNATIVE_MOCKED_RESPONSE_BODY)));
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         TenantAccessor.setTenantFacade(null);
         OAuth2ServiceImpl.clearCache();
     }
 
     @Test
-    public void singleOAuth2ServiceImpl()
+    void singleOAuth2ServiceImpl()
     {
         final OAuth2ServiceImpl service =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
@@ -69,11 +71,11 @@ public class OnPremTest
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
 
-        verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
+        csMockServer.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
     }
 
     @Test
-    public void multipleOAuth2ServiceImpl()
+    void multipleOAuth2ServiceImpl()
     {
         final OAuth2ServiceImpl service1 =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
@@ -86,11 +88,11 @@ public class OnPremTest
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
 
-        verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
+        csMockServer.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
     }
 
     @Test
-    public void singleOAuth2ServiceImplSingleSubscriber()
+    void singleOAuth2ServiceImplSingleSubscriber()
     {
         final OAuth2ServiceImpl service =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -105,11 +107,11 @@ public class OnPremTest
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
 
-        verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
+        csMockServer.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
     }
 
     @Test
-    public void singleOAuth2ServiceImplMultipleSubscriber()
+    void singleOAuth2ServiceImplMultipleSubscriber()
     {
         final OAuth2ServiceImpl service =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -124,14 +126,16 @@ public class OnPremTest
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
 
-        verify(2, postRequestedFor(urlEqualTo("/oauth/token")));
+        csMockServer.verify(2, postRequestedFor(urlEqualTo("/oauth/token")));
     }
 
     @Test
-    public void httpClientTenantSeparation()
+    void httpClientTenantSeparation()
     {
         // The reason for this test is to verify, that cookies set for one tenant are not forwarded to another tenant.
-        stubFor(post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
+        csMockServer
+            .stubFor(
+                post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
 
         final OAuth2ServiceImpl service =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -141,7 +145,7 @@ public class OnPremTest
         TenantAccessor
             .executeWithTenant(new DefaultTenant("tenant2"), () -> service.retrieveAccessToken(NO_RESILIENCE));
 
-        final List<ServeEvent> events = getAllServeEvents();
+        final List<ServeEvent> events = csMockServer.getAllServeEvents();
 
         assertThat(events).hasSize(2);
         assertThat(events)
@@ -151,7 +155,7 @@ public class OnPremTest
     }
 
     @Test
-    public void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
+    void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
     {
         final OAuth2ServiceImpl service1 =
             new OAuth2ServiceImpl(csMockServer.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
