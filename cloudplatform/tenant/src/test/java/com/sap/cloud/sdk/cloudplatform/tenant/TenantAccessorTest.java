@@ -13,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
@@ -27,11 +27,11 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
-public class TenantAccessorTest
+class TenantAccessorTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         // reset the facade
         TenantAccessor.setTenantFacade(null);
@@ -41,7 +41,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testGetCurrentTenant()
+    void testGetCurrentTenant()
     {
         final String tenantOrZoneId = "tenantOrZoneId";
 
@@ -53,7 +53,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -79,7 +79,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteAsync()
+    void testExecuteAsync()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -110,7 +110,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallback()
+    void testExecuteWithFallback()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -134,7 +134,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithException()
+    void testExecuteWithException()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -147,7 +147,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallbackWithException()
+    void testExecuteWithFallbackWithException()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -176,7 +176,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testGlobalFallback()
+    void testGlobalFallback()
     {
         TenantAccessor.setFallbackTenant(() -> () -> "globalFallback");
         assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("globalFallback");
@@ -207,7 +207,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testWrongPropertyType()
+    void testWrongPropertyType()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -221,7 +221,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testMissingThreadContext()
+    void testMissingThreadContext()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -237,7 +237,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testMissingThreadContextProperty()
+    void testMissingThreadContextProperty()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -253,7 +253,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
+    void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final TenantFacade customFacade = () -> Try.failure(new IllegalStateException());
         assertThat(customFacade).isNotInstanceOf(DefaultTenantFacade.class);
@@ -266,7 +266,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
+    void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
         final TenantFacade customFacade = spy(DefaultTenantFacade.class);
         assertThat(customFacade).isInstanceOf(DefaultTenantFacade.class);
