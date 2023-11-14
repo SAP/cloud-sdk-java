@@ -39,7 +39,7 @@ class SdkGroceryStoreServiceTest
     private static final int HTTP_NO_CONTENT = 204;
 
     @RegisterExtension
-    static final WireMockExtension server =
+    static final WireMockExtension SERVER =
         WireMockExtension
             .newInstance()
             .options(options().usingFilesUnderClasspath(SdkGroceryStoreServiceTest.class.getSimpleName()).dynamicPort())
@@ -52,7 +52,7 @@ class SdkGroceryStoreServiceTest
     @BeforeEach
     void setup()
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
     }
 
     @Test

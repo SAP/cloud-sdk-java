@@ -57,7 +57,6 @@ class ODataV2BatchFunctionImportTest
     @BeforeEach
     void before()
     {
-
         stubFor(
             head(urlEqualTo("/"))
                 .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase(X_CSRF_TOKEN_HEADER_FETCH_VALUE))

@@ -170,7 +170,6 @@ class CollectionValueFunctionRequestBuilderTest
     @Test
     void testFunctionWithEntityResponse()
     {
-
         stubFor(
             get(urlPathEqualTo(SERVICE_PATH + '/' + FUNCTION_NAME + "()"))
                 .willReturn(

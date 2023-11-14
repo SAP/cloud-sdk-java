@@ -65,10 +65,10 @@ class DefaultApacheHttpClient5FactoryTest
     private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
 
     @RegisterExtension
-    static final WireMockExtension wireMockServer =
+    static final WireMockExtension WIRE_MOCK_SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
     @RegisterExtension
-    static final WireMockExtension secondWireMockServer =
+    static final WireMockExtension SECOND_WIRE_MOCK_SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     private SoftAssertions softly;
@@ -96,7 +96,7 @@ class DefaultApacheHttpClient5FactoryTest
     @SneakyThrows
     void testHttpClientUsesTimeout()
     {
-        wireMockServer.stubFor(get(urlEqualTo("/timeout")).willReturn(ok().withFixedDelay(5_000)));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/timeout")).willReturn(ok().withFixedDelay(5_000)));
 
         final ApacheHttpClient5Factory factoryWithTooLittleTimeout =
             new DefaultApacheHttpClient5Factory(
@@ -112,7 +112,7 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor);
 
-        final ClassicHttpRequest request = new HttpGet(wireMockServer.url("/timeout"));
+        final ClassicHttpRequest request = new HttpGet(WIRE_MOCK_SERVER.url("/timeout"));
 
         final HttpClient clientWithTooLittleTimeout = factoryWithTooLittleTimeout.createHttpClient();
         assertThatThrownBy(() -> clientWithTooLittleTimeout.execute(request, ignoreResponse()))
@@ -130,8 +130,8 @@ class DefaultApacheHttpClient5FactoryTest
     @SneakyThrows
     void testHttpClientUsesMaxConnections()
     {
-        wireMockServer.stubFor(get(urlEqualTo("/max-connections-1")).willReturn(ok()));
-        wireMockServer.stubFor(get(urlEqualTo("/max-connections-2")).willReturn(ok()));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-1")).willReturn(ok()));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-2")).willReturn(ok()));
 
         final ApacheHttpClient5Factory sut =
             new DefaultApacheHttpClient5Factory(
@@ -141,8 +141,8 @@ class DefaultApacheHttpClient5FactoryTest
                 requestInterceptor);
 
         final HttpClient client = sut.createHttpClient();
-        final ClassicHttpRequest firstRequest = new HttpGet(wireMockServer.url("/max-connections-1"));
-        final ClassicHttpRequest secondRequest = new HttpGet(wireMockServer.url("/max-connections-2"));
+        final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-1"));
+        final ClassicHttpRequest secondRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-2"));
 
         assertCannotBeExecutedInParallel(firstRequest, secondRequest, client);
     }
@@ -152,8 +152,8 @@ class DefaultApacheHttpClient5FactoryTest
     @SneakyThrows
     void testHttpClientUsesMaxConnectionsPerRoute()
     {
-        wireMockServer.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
-        secondWireMockServer.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
+        SECOND_WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
 
         final ApacheHttpClient5Factory sut =
             new DefaultApacheHttpClient5Factory(
@@ -162,8 +162,8 @@ class DefaultApacheHttpClient5FactoryTest
                 1,
                 requestInterceptor);
 
-        final ClassicHttpRequest firstRequest = new HttpGet(wireMockServer.url("/max-connections-per-route"));
-        final ClassicHttpRequest secondRequest = new HttpGet(secondWireMockServer.url("/max-connections-per-route"));
+        final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-per-route"));
+        final ClassicHttpRequest secondRequest = new HttpGet(SECOND_WIRE_MOCK_SERVER.url("/max-connections-per-route"));
         final HttpClient client = sut.createHttpClient();
 
         assertCanBeExecutedInParallel(firstRequest, secondRequest, client);
@@ -174,11 +174,11 @@ class DefaultApacheHttpClient5FactoryTest
     @SneakyThrows
     void testProxyConfigurationIsConsidered()
     {
-        wireMockServer.stubFor(get(urlEqualTo("/proxy")).willReturn(ok()));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/proxy")).willReturn(ok()));
 
         final DefaultHttpDestination destination = DefaultHttpDestination.builder("http://www.sap.com").build();
         final DefaultHttpDestination spiedDestination = spy(destination);
-        doReturn(Option.of(ProxyConfiguration.of(wireMockServer.baseUrl(), new BasicCredentials("user", "pass"))))
+        doReturn(Option.of(ProxyConfiguration.of(WIRE_MOCK_SERVER.baseUrl(), new BasicCredentials("user", "pass"))))
             .when(spiedDestination)
             .getProxyConfiguration();
 
@@ -197,14 +197,14 @@ class DefaultApacheHttpClient5FactoryTest
             final RouteInfo httpRoute = context.getHttpRoute();
             assertThat(httpRoute).isNotNull();
             assertThat(httpRoute.getHopCount()).isEqualTo(2);
-            assertThat(httpRoute.getHopTarget(0)).isEqualTo(HttpHost.create(wireMockServer.baseUrl()));
+            assertThat(httpRoute.getHopTarget(0)).isEqualTo(HttpHost.create(WIRE_MOCK_SERVER.baseUrl()));
             assertThat(httpRoute.getHopTarget(1)).isEqualTo(HttpHost.create("http://www.sap.com:80"));
 
             return null;
         }).when(requestInterceptor).process(any(), any(), any());
 
         try( final ClassicHttpResponse response = httpClient.execute(new HttpGet("/proxy"), r -> r) ) {
-            wireMockServer.verify(getRequestedFor(urlEqualTo("/proxy")));
+            WIRE_MOCK_SERVER.verify(getRequestedFor(urlEqualTo("/proxy")));
             assertThat(response.getCode()).isEqualTo(HttpStatus.SC_OK);
         }
     }
