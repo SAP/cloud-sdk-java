@@ -5,8 +5,6 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -49,7 +47,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.ApiKeyAuth;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.Authentication;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.HttpBasicAuth;
@@ -738,7 +735,7 @@ public final class ApiClient
 
         final ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, returnType);
 
-        statusCode = extractStatusCode(responseEntity);
+        statusCode = responseEntity.getStatusCode().value();
         responseHeaders = responseEntity.getHeaders();
 
         if( statusCode == 204 ) {
@@ -771,20 +768,6 @@ public final class ApiClient
                     }
                 }
             }
-        }
-    }
-
-    private static int extractStatusCode( @Nonnull final ResponseEntity<?> responseEntity )
-    {
-        try {
-            final Method getStatusCode = responseEntity.getClass().getDeclaredMethod("getStatusCode");
-            final Object statusCode = getStatusCode.invoke(responseEntity);
-
-            final Method getValue = statusCode.getClass().getDeclaredMethod("value");
-            return (int) getValue.invoke(statusCode);
-        }
-        catch( final Exception e ) {
-            throw new IllegalStateException("Unable to extract the status code from the response.", e);
         }
     }
 
@@ -823,7 +806,7 @@ public final class ApiClient
         final HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         try {
-            setHttpClientDependingOnSpringVersion(httpRequestFactory, destination);
+            httpRequestFactory.setHttpClient(ApacheHttpClient5Accessor.getHttpClient(destination));
         }
         catch( final Exception e ) {
             throw new IllegalStateException("Unable to set the HttpClient for the RestTemplate.", e);
@@ -832,41 +815,5 @@ public final class ApiClient
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(httpRequestFactory));
 
         return restTemplate;
-    }
-
-    private static void setHttpClientDependingOnSpringVersion(
-        @Nonnull final HttpComponentsClientHttpRequestFactory httpRequestFactory,
-        @Nonnull final Destination destination )
-        throws InvocationTargetException,
-            IllegalAccessException
-    {
-        try {
-            final Method setHttpClient =
-                httpRequestFactory
-                    .getClass()
-                    .getDeclaredMethod("setHttpClient", org.apache.http.client.HttpClient.class);
-
-            setHttpClient.invoke(httpRequestFactory, HttpClientAccessor.getHttpClient(destination));
-            return;
-        }
-        catch( final NoSuchMethodException e ) {
-            // method does not exist, so the project must be using Spring 6
-        }
-
-        try {
-            final Method setHttpClient =
-                httpRequestFactory
-                    .getClass()
-                    .getDeclaredMethod("setHttpClient", org.apache.hc.client5.http.classic.HttpClient.class);
-
-            setHttpClient.invoke(httpRequestFactory, ApacheHttpClient5Accessor.getHttpClient(destination));
-            return;
-        }
-        catch( final NoSuchMethodException e ) {
-            // method does not exist, so the project must be using Spring 5
-        }
-
-        throw new IllegalStateException(
-            "Unable to set the HttpClient for the RestTemplate. Please make sure that you are using Spring 5 or 6.");
     }
 }
