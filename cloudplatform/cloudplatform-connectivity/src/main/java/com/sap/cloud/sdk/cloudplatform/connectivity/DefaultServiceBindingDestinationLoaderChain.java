@@ -73,10 +73,7 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         if( delegateLoaders.isEmpty() ) {
-            log
-                .warn(
-                    "This {} has no delegate loaders. As a consequence, the transformation will not be attempted.",
-                    getClass());
+            log.warn("No delegate loaders. As a consequence, the transformation will not be attempted.");
             return NoDelegateLoadersExceptionHolder.NO_DELEGATE_LOADERS;
         }
 
@@ -85,13 +82,9 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
         for( final ServiceBindingDestinationLoader loader : delegateLoaders ) {
             final Try<HttpDestination> result = loader.tryGetDestination(options);
             if( log.isDebugEnabled() ) {
-                log
-                    .debug(
-                        "Transformation of service binding ({}) to an {} using an instance of {} {}.",
-                        serviceBindingToString(serviceBinding),
-                        HttpDestination.class,
-                        loader.getClass(),
-                        result.isSuccess() ? "succeeded" : "failed");
+                final String msg = "Transformation of service binding ({}) to an {} using an instance of {} {}.";
+                final String state = result.isSuccess() ? "succeeded" : "failed";
+                log.debug(msg, serviceBindingToString(serviceBinding), HttpDestination.class, loader.getClass(), state);
             }
 
             if( result.isSuccess() ) {
