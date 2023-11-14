@@ -128,7 +128,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
-		<wiremock.version>3.3.1</wiremock.version>
+		<wiremock.version>3.0.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.8</byte-buddy.version>
@@ -357,8 +357,8 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.wiremock</groupId>
-				<artifactId>wiremock</artifactId>
+				<groupId>com.github.tomakehurst</groupId>
+				<artifactId>wiremock-jre8</artifactId>
 				<version>${wiremock.version}</version>
 				<scope>test</scope>
 			</dependency>
