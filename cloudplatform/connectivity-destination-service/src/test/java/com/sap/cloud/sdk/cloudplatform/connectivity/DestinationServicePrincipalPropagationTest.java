@@ -106,6 +106,8 @@ class DestinationServicePrincipalPropagationTest
                 .withCredentials(credentials)
                 .build();
 
+        OAuth2ServiceImpl.clearCache();
+
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
         DestinationService.Cache.reset();
         AuthTokenAccessor.setAuthTokenFacade(authTokenFacade);
@@ -133,6 +135,7 @@ class DestinationServicePrincipalPropagationTest
         AuthTokenAccessor.setAuthTokenFacade(null);
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);
+        OAuth2ServiceImpl.clearCache();
     }
 
     @Test

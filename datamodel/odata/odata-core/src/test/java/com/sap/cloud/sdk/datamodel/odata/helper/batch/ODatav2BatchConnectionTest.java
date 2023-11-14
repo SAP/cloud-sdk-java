@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.noContent;
 import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.sap.cloud.sdk.datamodel.odata.helper.batch.TestVdmEntityBatch.TestEntityByKey;
 import static com.sap.cloud.sdk.datamodel.odata.helper.batch.TestVdmEntityBatch.TestEntityCreate;
 import static com.sap.cloud.sdk.datamodel.odata.helper.batch.TestVdmEntityBatch.TestEntityDelete;
@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +28,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -40,6 +42,7 @@ import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
 
 import lombok.SneakyThrows;
 
+@WireMockTest
 class ODatav2BatchConnectionTest
 {
     private static final String RESPONSE_CONTENT_TYPE =
@@ -48,7 +51,6 @@ class ODatav2BatchConnectionTest
     private static final String RESPONSE_WITHOUT_CHANGESET = readResourceFileCrlf("BatchResponseWithoutChangeset.txt");
     private static final String RESPONSE_WITH_ERROR = readResourceFileCrlf("BatchResponseWithError.txt");
     private static final int MAX_PARALLEL_CONNECTIONS = 10;
-    private WireMockServer server;
     private DefaultHttpDestination destination;
 
     @SneakyThrows
@@ -63,12 +65,10 @@ class ODatav2BatchConnectionTest
     }
 
     @BeforeEach
-    void setup()
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        server = new WireMockRule(wireMockConfig().dynamicPort());
-        server.start();
-        server.stubFor(head(UrlPattern.ANY).willReturn(noContent()));
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        stubFor(head(UrlPattern.ANY).willReturn(noContent()));
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         HttpClientAccessor
             .setHttpClientFactory(
                 DefaultHttpClientFactory
@@ -81,16 +81,13 @@ class ODatav2BatchConnectionTest
     @AfterEach
     void teardown()
     {
-        server.shutdown();
         HttpClientAccessor.setHttpClientFactory(null);
     }
 
     @Test
     void testNoConnectionTimeoutWhenBatchResponseContainsNoChangeset()
     {
-        server
-            .stubFor(
-                post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
 
         for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
             final TestEntityRead read = new TestEntityRead();
@@ -108,8 +105,7 @@ class ODatav2BatchConnectionTest
     @Test
     void testNoConnectionTimeoutWhenBatchResponseContainsChangeset()
     {
-        server
-            .stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
 
         final TestEntityRead read = new TestEntityRead();
         final TestEntityByKey readByKey = new TestEntityByKey(ImmutableMap.of("IntegerValue", 9000));
@@ -144,7 +140,7 @@ class ODatav2BatchConnectionTest
     @Test
     void testNoConnectionTimeoutWhenBatchResponseContainsError()
     {
-        server.stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_ERROR)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_ERROR)));
 
         final TestEntityRead read = new TestEntityRead();
         final TestEntityByKey readByKey = new TestEntityByKey(ImmutableMap.of("IntegerValue", 9000));
@@ -169,8 +165,7 @@ class ODatav2BatchConnectionTest
     @Disabled( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
     void testConnectionTimeoutWhenBatchResponseIsNotConsumedFully()
     {
-        server
-            .stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
 
         final TestEntityRead read = new TestEntityRead();
         final TestEntityByKey readByKey = new TestEntityByKey(ImmutableMap.of("IntegerValue", 9000));

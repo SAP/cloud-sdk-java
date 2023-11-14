@@ -23,7 +23,6 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.annotation.Nonnull;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
 
@@ -39,6 +38,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -49,8 +49,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty9.JettyHttpServer;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType;
@@ -67,7 +66,7 @@ import lombok.SneakyThrows;
 import lombok.Value;
 
 @SuppressWarnings( "deprecation" )
-public abstract class ClientCertificateAuthenticationLocalTest
+abstract class ClientCertificateAuthenticationLocalTest
 {
     private static final String ODATA_ENDPOINT_URL = "/sap/opu/odata/sap/API_ENTITIES";
     private static final String ODATA_FUNCTION_IMPORT_URL = ODATA_ENDPOINT_URL + "/MyEntityCollection.*";
@@ -79,15 +78,6 @@ public abstract class ClientCertificateAuthenticationLocalTest
     static void beforeClass()
     {
         responseJson = readResourceFile("odataResponse.json");
-    }
-
-    @BeforeEach
-    void before()
-    {
-        CacheManager.invalidateAll();
-        // remove?
-        WireMock
-            .stubFor(WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
     }
 
     @Value
@@ -108,10 +98,9 @@ public abstract class ClientCertificateAuthenticationLocalTest
         private final Class<MyEntity> type = MyEntity.class;
     }
 
-    @WireMockTest
-    public static class HostCorrectlyConfiguredTest extends ClientCertificateAuthenticationLocalTest
+    static class HostCorrectlyConfiguredTest extends ClientCertificateAuthenticationLocalTest
     {
-        private final CcaTestConfig testConfig =
+        private static final CcaTestConfig testConfig =
             CcaTestConfig
                 .builder()
                 .hostKeyStoreFile("cca-host.jks")
@@ -120,14 +109,28 @@ public abstract class ClientCertificateAuthenticationLocalTest
                 .clientKeyStorePassword("cca-password")
                 .build();
 
+        @RegisterExtension
+        static final WireMockExtension erpServer =
+            WireMockExtension.newInstance().options(getWireMockConfiguration(testConfig)).build();
+
+        @BeforeEach
+        void before()
+        {
+            CacheManager.invalidateAll();
+            // remove?
+            erpServer
+                .stubFor(
+                    WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
+        }
+
         @Test
-        void testClientCorrectlyConfigured( @Nonnull final WireMockRuntimeInfo wm )
+        void testClientCorrectlyConfigured()
             throws Exception
         {
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(wm.getHttpBaseUrl())
+                        .builder(erpServer.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .keyStore(getClientKeyStore(testConfig))
@@ -144,16 +147,18 @@ public abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // request had no authorization header
-            verify(getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(HttpHeaders.AUTHORIZATION));
+            erpServer
+                .verify(
+                    getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(HttpHeaders.AUTHORIZATION));
         }
 
         @Test
-        void testClientNotConfigured( @Nonnull final WireMockRuntimeInfo wm )
+        void testClientNotConfigured()
         {
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(wm.getHttpBaseUrl())
+                        .builder(erpServer.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .trustAllCertificates()
@@ -171,24 +176,37 @@ public abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            erpServer.verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
         }
     }
 
-    @WireMockTest
     static class HostNotConfiguredTest extends ClientCertificateAuthenticationLocalTest
     {
-        private final CcaTestConfig testConfig =
+        private static final CcaTestConfig testConfig =
             CcaTestConfig.builder().clientKeyStoreFile("cca-client.p12").clientKeyStorePassword("cca-password").build();
 
+        @RegisterExtension
+        static final WireMockExtension erpServer =
+            WireMockExtension.newInstance().options(getWireMockConfiguration(testConfig)).build();
+
+        @BeforeEach
+        void before()
+        {
+            CacheManager.invalidateAll();
+            // remove?
+            erpServer
+                .stubFor(
+                    WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
+        }
+
         @Test
-        void testClientCorrectlyConfigured( @Nonnull final WireMockRuntimeInfo wm )
+        void testClientCorrectlyConfigured()
             throws Exception
         {
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(wm.getHttpBaseUrl())
+                        .builder(erpServer.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .keyStore(getClientKeyStore(testConfig))
@@ -209,7 +227,7 @@ public abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            erpServer.verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
         }
     }
 
