@@ -220,11 +220,6 @@ blog: https://blogs.sap.com/?p=xxx
 - `Destination#asHttp()` no longer throws an exception in case the `Destination` originates from the Destination service and the attached auth token contains an error.
   Instead, an exception will be thrown upon invoking the `getHeaders()` method, for example, during request execution.
 
-- Dependency Updates:
-  - Other dependency updates:
-    - Major version updates:
-      - Update `com.github.ben-manes.caffeine:caffeine` from `2.9.3` to `3.1.8`
-
 ## fixedIssues
 
 - Fixed a bug where an `Authorization` header was attached multiple times to outgoing HTTP requests under some circumstances
