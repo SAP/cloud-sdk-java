@@ -11,7 +11,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -48,7 +47,7 @@ import lombok.With;
 class VdmEntityVersionIdentifierTest
 {
     @RegisterExtension
-    static final WireMockExtension erpServer =
+    static final WireMockExtension ERP_SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort().gzipDisabled(true)).build();
 
     private static final String key1val = "2015";
@@ -143,9 +142,9 @@ class VdmEntityVersionIdentifierTest
     @BeforeEach
     void before()
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
-        erpServer.stubFor(head(urlEqualTo(ODATA_ENDPOINT_URL)).willReturn(WireMock.ok()));
-        erpServer
+        destination = DefaultHttpDestination.builder(ERP_SERVER.baseUrl()).build();
+        ERP_SERVER.stubFor(head(urlEqualTo(ODATA_ENDPOINT_URL)).willReturn(WireMock.ok()));
+        ERP_SERVER
             .stubFor(
                 get(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withBody(getDocumentItemResponseBody)));
     }
@@ -153,7 +152,7 @@ class VdmEntityVersionIdentifierTest
     @Test
     void testVersionIdentifier()
     {
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
 
         final TestEntity item =
             FluentHelperFactory
@@ -171,7 +170,7 @@ class VdmEntityVersionIdentifierTest
             .update(ODATA_COLLECTION, item)
             .executeRequest(destination);
 
-        erpServer
+        ERP_SERVER
             .verify(
                 patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL))
                     .withHeader("If-Match", equalTo(versionIdentifierInResponseBody)));
@@ -180,14 +179,14 @@ class VdmEntityVersionIdentifierTest
     @Test
     void testVersionIdentifierSetInHeader()
     {
-        erpServer
+        ERP_SERVER
             .stubFor(
                 get(urlEqualTo(ODATA_DOCUMENT_ITEM_URL))
                     .willReturn(
                         aResponse()
                             .withBody(getDocumentItemResponseBody)
                             .withHeader("ETag", versionIdentifierInHeader)));
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
 
         final TestEntity item =
             FluentHelperFactory
@@ -205,7 +204,7 @@ class VdmEntityVersionIdentifierTest
             .update(ODATA_COLLECTION, item)
             .executeRequest(destination);
 
-        erpServer
+        ERP_SERVER
             .verify(
                 patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL))
                     .withHeader("If-Match", equalTo(versionIdentifierInHeader)));
@@ -214,7 +213,7 @@ class VdmEntityVersionIdentifierTest
     @Test
     void testIgnoreVersionIdentifier()
     {
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
 
         final TestEntity item =
             FluentHelperFactory
@@ -233,13 +232,13 @@ class VdmEntityVersionIdentifierTest
             .matchAnyVersionIdentifier()
             .executeRequest(destination);
 
-        erpServer.verify(patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).withHeader("If-Match", equalTo("*")));
+        ERP_SERVER.verify(patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).withHeader("If-Match", equalTo("*")));
     }
 
     @Test
     void testIgnoreVersionIdentifierEvenIfNoVersionIdentifierPresent()
     {
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(ok()));
 
         final TestEntity item = new TestEntity().withKey1(key1val).withKey2(key2val).withKey3(key3val);
 
@@ -254,13 +253,13 @@ class VdmEntityVersionIdentifierTest
             .matchAnyVersionIdentifier()
             .executeRequest(destination);
 
-        erpServer.verify(patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).withHeader("If-Match", equalTo("*")));
+        ERP_SERVER.verify(patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).withHeader("If-Match", equalTo("*")));
     }
 
     @Test
     void testExceptionWhenExpiredVersionIdentifierIsSent()
     {
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withStatus(412)));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withStatus(412)));
 
         final TestEntity item =
             FluentHelperFactory
@@ -290,7 +289,7 @@ class VdmEntityVersionIdentifierTest
     @Test
     void testExceptionWhenVersionIdentifierMissing()
     {
-        erpServer.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withStatus(428)));
+        ERP_SERVER.stubFor(patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withStatus(428)));
 
         final TestEntity item =
             FluentHelperFactory
@@ -320,10 +319,10 @@ class VdmEntityVersionIdentifierTest
     @Test
     void testVersionIdentifierSentAndFetchedEvenAfterUpdate()
     {
-        erpServer
+        ERP_SERVER
             .stubFor(
                 get(urlEqualTo(ODATA_DOCUMENT_ITEM_URL)).willReturn(aResponse().withBody(getDocumentItemResponseBody)));
-        erpServer
+        ERP_SERVER
             .stubFor(
                 patch(urlEqualTo(ODATA_DOCUMENT_ITEM_URL))
                     .willReturn(ok().withHeader("ETag", versionIdentifierInHeader)));
@@ -345,7 +344,7 @@ class VdmEntityVersionIdentifierTest
                 .update(ODATA_COLLECTION, item)
                 .executeRequest(destination);
 
-        erpServer
+        ERP_SERVER
             .verify(
                 patchRequestedFor(urlEqualTo(ODATA_DOCUMENT_ITEM_URL))
                     .withHeader("If-Match", equalTo(versionIdentifierInResponseBody)));

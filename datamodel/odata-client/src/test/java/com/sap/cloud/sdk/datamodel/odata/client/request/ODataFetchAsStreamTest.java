@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,18 +36,18 @@ class ODataFetchAsStreamTest
     private static final String PDF_FILE_NAME = "POT01.pdf";
 
     @RegisterExtension
-    static final WireMockExtension server =
+    static final WireMockExtension SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     private void testFileAsStream( final String fileName, final ODataProtocol oDataProtocol )
         throws IOException
     {
-        server
+        SERVER
             .stubFor(
                 get(WireMock.anyUrl())
                     .willReturn(ok().withBody(readResourceFile(ODataFetchAsStreamTest.class, "files/" + fileName))));
 
-        final Destination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final Destination destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
         final ODataResourcePath resource =
             ODataResourcePath
@@ -72,7 +71,7 @@ class ODataFetchAsStreamTest
             }
         }
 
-        server.verify(getRequestedFor(urlEqualTo(SERVICE_URL + "/Airports('BER')/$value")));
+        SERVER.verify(getRequestedFor(urlEqualTo(SERVICE_URL + "/Airports('BER')/$value")));
     }
 
     @Test
