@@ -152,7 +152,6 @@ class SingleValueFunctionRequestBuilderTest
     @Test
     void testFunctionWithPrimitiveResponse()
     {
-
         stubFor(
             get(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_FUNCTION + "()"))
                 .willReturn(okJson("{" + "\"value\" : 3.14" + "}")));
@@ -168,7 +167,6 @@ class SingleValueFunctionRequestBuilderTest
     @Test
     void testFunctionWithStringResponse()
     {
-
         stubFor(
             get(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_FUNCTION + "()"))
                 .willReturn(okJson("{" + "\"value\" : \"Works\"" + "}")));
@@ -184,7 +182,6 @@ class SingleValueFunctionRequestBuilderTest
     @Test
     void testFunctionWithEntityResponse()
     {
-
         stubFor(
             get(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_FUNCTION + "()"))
                 .willReturn(okJson("{" + "\"Name\" : \"Tester\"" + "}")));

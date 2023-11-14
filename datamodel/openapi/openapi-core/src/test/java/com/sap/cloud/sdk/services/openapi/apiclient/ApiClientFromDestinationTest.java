@@ -20,13 +20,13 @@ import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 class ApiClientFromDestinationTest
 {
     @RegisterExtension
-    static final WireMockExtension wireMockRule =
+    static final WireMockExtension SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     @Test
     void testServiceInvocation()
     {
-        final HttpDestination testDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final HttpDestination testDestination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
         final MyTestAbstractOpenApiService service = new MyTestAbstractOpenApiService(testDestination);
 
@@ -36,7 +36,7 @@ class ApiClientFromDestinationTest
     @Test
     void testExceptionIsThrown()
     {
-        final HttpDestination testDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final HttpDestination testDestination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
         final MyExceptionThrowingServiceAbstract service = new MyExceptionThrowingServiceAbstract(testDestination);
 
@@ -52,7 +52,7 @@ class ApiClientFromDestinationTest
 
         void foo()
         {
-            assertThat(apiClient.getBasePath()).isEqualTo(wireMockRule.baseUrl());
+            assertThat(apiClient.getBasePath()).isEqualTo(SERVER.baseUrl());
         }
     }
 

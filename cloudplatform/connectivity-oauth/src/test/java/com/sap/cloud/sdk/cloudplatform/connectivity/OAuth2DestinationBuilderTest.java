@@ -47,13 +47,11 @@ class OAuth2DestinationBuilderTest
     @BeforeEach
     void setup()
     {
-
         stubFor(
             post(urlEqualTo("/oauth/token"))
                 .withHeader("Authorization", absent())
                 .withRequestBody(notContaining("&assertion="))
                 .willReturn(okJson("{\"access_token\":\"TECHNICAL\",\"expires_in\":42}")));
-
         stubFor(
             post(urlEqualTo("/oauth/token"))
                 .withRequestBody(containing("&assertion="))
@@ -134,6 +132,5 @@ class OAuth2DestinationBuilderTest
         assertThat(destination.get(DestinationProperty.NAME)).contains("my-destination");
         assertThat(destination.get("foo")).contains("bar");
         assertThat(destination.customHeaders).containsExactly(new Header("my-header", "my-value"));
-
     }
 }
