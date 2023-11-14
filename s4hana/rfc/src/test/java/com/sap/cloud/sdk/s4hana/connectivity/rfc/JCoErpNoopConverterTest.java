@@ -4,7 +4,7 @@
 
 package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -43,7 +43,7 @@ class JCoErpNoopConverterTest
     @MethodSource( "createTestNumbers" )
     void testSerialization( @Nonnull final Number inputNumber, @Nonnull final String expectedResult )
     {
-        assertEquals(inputNumber.getClass().getSimpleName(), serializer.toErp(inputNumber).get(), expectedResult);
+        assertThat(serializer.toErp(inputNumber).get()).isEqualTo(expectedResult);
     }
 
     static List<Object[]> createTestNumbers()
