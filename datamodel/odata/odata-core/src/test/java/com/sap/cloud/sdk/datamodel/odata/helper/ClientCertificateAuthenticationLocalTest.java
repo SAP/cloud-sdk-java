@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createHttpConfig;
 import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createServerConnector;
