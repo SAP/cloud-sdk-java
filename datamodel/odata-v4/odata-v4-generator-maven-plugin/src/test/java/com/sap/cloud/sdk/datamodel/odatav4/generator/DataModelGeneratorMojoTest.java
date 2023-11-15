@@ -4,23 +4,29 @@
 
 package com.sap.cloud.sdk.datamodel.odatav4.generator;
 
-import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
-import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
-import com.sap.cloud.sdk.datamodel.odatav4.generator.annotation.DefaultAnnotationStrategy;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.io.File;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
+import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
+import com.sap.cloud.sdk.datamodel.odatav4.generator.annotation.DefaultAnnotationStrategy;
 
 public class DataModelGeneratorMojoTest
 {
     @RegisterExtension
     static MavenPluginExtension extension =
-            new MavenPluginExtension()
-                    .withBasePath(new File(DataModelGeneratorMojoTest.class.getClassLoader().getResource(DataModelGeneratorMojoTest.class.getSimpleName()).getFile()))
-                    .withGoal("generate");
+        new MavenPluginExtension()
+            .withBasePath(
+                new File(
+                    DataModelGeneratorMojoTest.class
+                        .getClassLoader()
+                        .getResource(DataModelGeneratorMojoTest.class.getSimpleName())
+                        .getFile()))
+            .withGoal("generate");
 
     @Test
     void testMe()

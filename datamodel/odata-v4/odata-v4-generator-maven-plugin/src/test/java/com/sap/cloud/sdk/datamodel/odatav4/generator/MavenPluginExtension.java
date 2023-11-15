@@ -60,20 +60,20 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
     private File baseDir;
     private Mojo mojo;
 
-    public MavenPluginExtension withGoal(final String goal )
+    public MavenPluginExtension withGoal( final String goal )
     {
         this.goal = goal;
         return this;
     }
 
-    public MavenPluginExtension withBasePath(final File basePath )
+    public MavenPluginExtension withBasePath( final File basePath )
     {
         this.baseDir = basePath;
         return this;
     }
 
     private Map<String, MojoDescriptor> loadGoals()
-            throws ComponentLookupException,
+        throws ComponentLookupException,
             IOException,
             PlexusConfigurationException
     {
@@ -85,56 +85,56 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
         final XmlStreamReader reader = XmlStreamReader.builder().setInputStream(resource.openStream()).get();
 
         final Map<String, Object> contextData =
-                container
-                        .getContext()
-                        .getContextData()
-                        .entrySet()
-                        .stream()
-                        .collect(Collectors.toMap(Object::toString, Function.identity()));
+            container
+                .getContext()
+                .getContextData()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Object::toString, Function.identity()));
         try(
-                final InterpolationFilterReader interpolationFilterReader =
-                        new InterpolationFilterReader(new BufferedReader(reader), contextData) ) {
+            final InterpolationFilterReader interpolationFilterReader =
+                new InterpolationFilterReader(new BufferedReader(reader), contextData) ) {
 
             final PluginDescriptor pluginDescriptor = new PluginDescriptorBuilder().build(interpolationFilterReader);
 
             final Artifact artifact =
-                    container
-                            .lookup(RepositorySystem.class)
-                            .createArtifact(
-                                    pluginDescriptor.getGroupId(),
-                                    pluginDescriptor.getArtifactId(),
-                                    pluginDescriptor.getVersion(),
-                                    ".jar");
+                container
+                    .lookup(RepositorySystem.class)
+                    .createArtifact(
+                        pluginDescriptor.getGroupId(),
+                        pluginDescriptor.getArtifactId(),
+                        pluginDescriptor.getVersion(),
+                        ".jar");
             artifact.setFile(artifactFile);
             pluginDescriptor.setPluginArtifact(artifact);
             pluginDescriptor.setArtifacts(Collections.singletonList(artifact));
             pluginDescriptor.getComponents().forEach(container::addComponentDescriptor);
             return pluginDescriptor
-                    .getMojos()
-                    .stream()
-                    .collect(Collectors.toMap(MojoDescriptor::getGoal, Function.identity()));
+                .getMojos()
+                .stream()
+                .collect(Collectors.toMap(MojoDescriptor::getGoal, Function.identity()));
         }
     }
 
     private static ContainerConfiguration getContainerConfiguration()
     {
         return new DefaultContainerConfiguration()
-                .setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader()))
-                .setClassPathScanning(PlexusConstants.SCANNING_INDEX)
-                .setAutoWiring(true)
-                .setName("maven");
+            .setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader()))
+            .setClassPathScanning(PlexusConstants.SCANNING_INDEX)
+            .setAutoWiring(true)
+            .setName("maven");
     }
 
     @Override
-    public void afterEach(final ExtensionContext extensionContext )
+    public void afterEach( final ExtensionContext extensionContext )
     {
         mojo = null;
     }
 
     @SuppressWarnings( "deprecation" )
     @Override
-    public void beforeEach(final ExtensionContext extensionContext )
-            throws Exception
+    public void beforeEach( final ExtensionContext extensionContext )
+        throws Exception
     {
         final String role = "org.apache.maven.plugin.Mojo";
         final MojoDescriptor descriptor = goals.get(goal);
@@ -183,7 +183,7 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
     }
 
     @Override
-    public void afterAll(final ExtensionContext extensionContext )
+    public void afterAll( final ExtensionContext extensionContext )
     {
         container.dispose();
         container = null;
@@ -192,8 +192,8 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
     }
 
     @Override
-    public void beforeAll(final ExtensionContext extensionContext )
-            throws Exception
+    public void beforeAll( final ExtensionContext extensionContext )
+        throws Exception
     {
         container = new DefaultPlexusContainer(getContainerConfiguration());
         configurator = container.lookup(ComponentConfigurator.class, "basic");
