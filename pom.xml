@@ -119,6 +119,7 @@
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
+		<jetty.version>11.0.15</jetty.version>
 		<protobuf-java.version>3.24.3</protobuf-java.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
@@ -357,8 +358,8 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8</artifactId>
+				<groupId>org.wiremock</groupId>
+				<artifactId>wiremock</artifactId>
 				<version>${wiremock.version}</version>
 				<scope>test</scope>
 			</dependency>
@@ -384,6 +385,31 @@
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-params</artifactId>
 				<version>${junit.jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!--Only used in odata-core-->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-http</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-io</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-util</artifactId>
+				<version>${jetty.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<!--Used in odata generator and open api generator maven plugins-->
