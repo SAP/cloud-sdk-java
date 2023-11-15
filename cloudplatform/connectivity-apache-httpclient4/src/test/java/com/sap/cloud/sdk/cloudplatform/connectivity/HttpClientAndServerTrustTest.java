@@ -152,11 +152,11 @@ class HttpClientAndServerTrustTest
             CertificateException,
             NoSuchAlgorithmException
     {
-        final KeyStore ks = KeyStore.getInstance("JKS");
-
-        ks.load(new FileInputStream(location), password.toCharArray());
-
-        return ks;
+        try( final FileInputStream is = new FileInputStream(location) ) {
+            final KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(is, password.toCharArray());
+            return ks;
+        }
     }
 
     private File copyResourceToTemporaryFolder( final String resourceName, final File temporaryFolder )
