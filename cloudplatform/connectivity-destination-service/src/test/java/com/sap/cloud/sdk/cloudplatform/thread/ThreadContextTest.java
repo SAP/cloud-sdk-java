@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadC
 import static com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalThreadContextListener.PROPERTY_PRINCIPAL;
 import static com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener.PROPERTY_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -24,9 +25,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener;
@@ -38,20 +36,14 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
 import lombok.SneakyThrows;
 
 @SuppressWarnings( "DanglingJavadoc" ) // we are using JavaDoc-style comments (with a different color!) to better indicate lambda/thread beginnings and ends
-@RunWith( MockitoJUnitRunner.class )
 class ThreadContextTest
 {
     private static final int TEST_TIMEOUT = 300_000; // 5 minutes
     private static final String VALUE = "value";
 
-    @Mock
-    private RequestHeaderContainer mockedRequestHeaders;
-
-    @Mock
-    private Tenant mockedTenant;
-
-    @Mock
-    private Principal mockedPrincipal;
+    private final RequestHeaderContainer mockedRequestHeaders = mock(RequestHeaderContainer.class);
+    private final Tenant mockedTenant = mock(Tenant.class);
+    private final Principal mockedPrincipal = mock(Principal.class);
 
     @Nonnull
     private ExecutorService executorService;

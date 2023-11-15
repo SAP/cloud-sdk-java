@@ -23,10 +23,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
@@ -36,11 +35,13 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.servlet.RequestAccessorFilter;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.Service;
+import com.sap.cloud.security.test.SecurityTest;
 import com.sap.cloud.security.test.SecurityTestRule;
 import com.sap.cloud.security.token.SecurityContext;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.token.TokenClaims;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 public class XsuaaSecurityTest
@@ -61,17 +62,23 @@ public class XsuaaSecurityTest
         }
     }
 
-    @ClassRule
-    public static final SecurityTestRule rule =
-        SecurityTestRule
-            .getInstance(Service.XSUAA)
+    public static final SecurityTest rule =
+        new SecurityTest(Service.XSUAA)
             .useApplicationServer()
             .addApplicationServlet(TestServlet.class, "/app")
             .addApplicationServletFilter(RequestAccessorFilter.class);
 
-    @After
+    @BeforeEach
+    public void setup()
+        throws Exception
+    {
+        rule.setup();
+    }
+
+    @AfterEach
     public void tearDown()
     {
+        rule.tearDown();
         SecurityContext.clearToken();
     }
 
@@ -102,7 +109,8 @@ public class XsuaaSecurityTest
         }
     }
 
-    @Before
+    @SneakyThrows
+    @BeforeEach
     public void mockServiceBindingAccessor()
     {
         final Token templateToken = rule.getPreconfiguredJwtGenerator().createToken();
@@ -131,7 +139,7 @@ public class XsuaaSecurityTest
                 new SapVcapServicesServiceBindingAccessor(Collections.singletonMap("VCAP_SERVICES", vcap)::get));
     }
 
-    @After
+    @AfterEach
     public void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
