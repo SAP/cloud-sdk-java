@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createHttpConfig;
@@ -81,6 +82,14 @@ abstract class ClientCertificateAuthenticationLocalTest
         responseJson = readResourceFile("odataResponse.json");
     }
 
+    @BeforeEach
+    void before()
+    {
+        CacheManager.invalidateAll();
+        // remove?
+        stubFor(WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
+    }
+
     @Value
     @Builder
     private static class CcaTestConfig
@@ -92,7 +101,7 @@ abstract class ClientCertificateAuthenticationLocalTest
     }
 
     @Getter
-    public static class MyEntity extends VdmEntity<MyEntity>
+    static class MyEntity extends VdmEntity<MyEntity>
     {
         private static final String ENTITY_COLLECTION = "MyEntityCollection";
         private final String entityCollection = ENTITY_COLLECTION;
@@ -112,17 +121,11 @@ abstract class ClientCertificateAuthenticationLocalTest
 
         @RegisterExtension
         static final WireMockExtension ERP_SERVER =
-            WireMockExtension.newInstance().options(getWireMockConfiguration(TEST_CONFIG)).build();
-
-        @BeforeEach
-        void before()
-        {
-            CacheManager.invalidateAll();
-            // remove?
-            ERP_SERVER
-                .stubFor(
-                    WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
-        }
+            WireMockExtension
+                .newInstance()
+                .options(getWireMockConfiguration(TEST_CONFIG))
+                .configureStaticDsl(true)
+                .build();
 
         @Test
         void testClientCorrectlyConfigured()
@@ -148,9 +151,7 @@ abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // request had no authorization header
-            ERP_SERVER
-                .verify(
-                    getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(HttpHeaders.AUTHORIZATION));
+            verify(getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(HttpHeaders.AUTHORIZATION));
         }
 
         @Test
@@ -177,7 +178,7 @@ abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            ERP_SERVER.verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
         }
     }
 
@@ -188,17 +189,11 @@ abstract class ClientCertificateAuthenticationLocalTest
 
         @RegisterExtension
         static final WireMockExtension ERP_SERVER =
-            WireMockExtension.newInstance().options(getWireMockConfiguration(TEST_CONFIG)).build();
-
-        @BeforeEach
-        void before()
-        {
-            CacheManager.invalidateAll();
-            // remove?
-            ERP_SERVER
-                .stubFor(
-                    WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
-        }
+            WireMockExtension
+                .newInstance()
+                .options(getWireMockConfiguration(TEST_CONFIG))
+                .configureStaticDsl(true)
+                .build();
 
         @Test
         void testClientCorrectlyConfigured()
@@ -228,7 +223,7 @@ abstract class ClientCertificateAuthenticationLocalTest
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            ERP_SERVER.verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
         }
     }
 
