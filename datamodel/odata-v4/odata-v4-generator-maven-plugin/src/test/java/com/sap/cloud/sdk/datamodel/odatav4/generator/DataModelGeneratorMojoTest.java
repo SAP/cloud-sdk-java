@@ -4,35 +4,28 @@
 
 package com.sap.cloud.sdk.datamodel.odatav4.generator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
-import java.io.File;
-import java.net.URL;
-
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
-import org.junit.Test;
-
 import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
 import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
 import com.sap.cloud.sdk.datamodel.odatav4.generator.annotation.DefaultAnnotationStrategy;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import java.io.File;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class DataModelGeneratorMojoTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule();
+    @RegisterExtension
+    static MavenPluginExtension extension =
+            new MavenPluginExtension()
+                    .withBasePath(new File(DataModelGeneratorMojoTest.class.getClassLoader().getResource(DataModelGeneratorMojoTest.class.getSimpleName()).getFile()))
+                    .withGoal("generate");
 
     @Test
-    public void test()
-        throws Exception
+    void testMe()
     {
-        final URL resource = getClass().getClassLoader().getResource(getClass().getSimpleName());
-        assertThat(resource).isNotNull();
-
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
+        final DataModelGeneratorMojo mojo = extension.getMojo();
         final DataModelGenerator generator = mojo.getDataModelGenerator();
 
         assertSoftly(softly -> {
