@@ -44,7 +44,7 @@ import com.sap.cloud.security.token.TokenClaims;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-public class XsuaaSecurityTest
+class XsuaaSecurityTest
 {
     @Slf4j
     public static class TestServlet extends HttpServlet
@@ -69,21 +69,21 @@ public class XsuaaSecurityTest
             .addApplicationServletFilter(RequestAccessorFilter.class);
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         rule.setup();
     }
 
     @AfterEach
-    public void tearDown()
+    void tearDown()
     {
         rule.tearDown();
         SecurityContext.clearToken();
     }
 
     @Test
-    public void requestWithValidTokenRequest()
+    void requestWithValidTokenRequest()
         throws IOException
     {
         final Token token =
@@ -111,7 +111,7 @@ public class XsuaaSecurityTest
 
     @SneakyThrows
     @BeforeEach
-    public void mockServiceBindingAccessor()
+    void mockServiceBindingAccessor()
     {
         final Token templateToken = rule.getPreconfiguredJwtGenerator().createToken();
         final String xsuaaUrl = templateToken.getHeaderParameterAsString("jku").replaceAll("token_keys$", "");
@@ -140,7 +140,7 @@ public class XsuaaSecurityTest
     }
 
     @AfterEach
-    public void resetServiceBindingAccessor()
+    void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
     }
