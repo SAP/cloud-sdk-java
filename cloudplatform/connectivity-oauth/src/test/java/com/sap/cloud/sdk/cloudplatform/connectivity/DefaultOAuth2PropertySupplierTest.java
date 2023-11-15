@@ -111,7 +111,7 @@ class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
-    public void testCredentialTypeInstanceSecret()
+    void testCredentialTypeInstanceSecret()
     {
         final ServiceBinding binding =
             new ServiceBindingBuilder(ServiceIdentifier.of("testInstanceSecret"))
@@ -128,7 +128,7 @@ class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
-    public void testCredentialTypeX509()
+    void testCredentialTypeX509()
     {
         final ServiceBinding binding =
             new ServiceBindingBuilder(ServiceIdentifier.of("testX509"))

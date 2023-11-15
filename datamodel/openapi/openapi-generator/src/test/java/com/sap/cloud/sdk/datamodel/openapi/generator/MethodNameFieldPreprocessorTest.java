@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MethodNameFieldPreprocessorTest
+class MethodNameFieldPreprocessorTest
 {
     @Test
-    public void testSodastoreApiWithMethodNameExtensionField()
+    void testSodastoreApiWithMethodNameExtensionField()
         throws IOException
     {
         final Path inputFilePath =
@@ -44,7 +44,7 @@ public class MethodNameFieldPreprocessorTest
     }
 
     @Test
-    public void testSodastoreApiWithEmptyMethodNameExtensionField()
+    void testSodastoreApiWithEmptyMethodNameExtensionField()
         throws IOException
     {
         final Path inputFilePath =
@@ -68,7 +68,7 @@ public class MethodNameFieldPreprocessorTest
     }
 
     @Test
-    public void testSodastoreApiWithExtensionFieldAndOperationWithoutParameters()
+    void testSodastoreApiWithExtensionFieldAndOperationWithoutParameters()
         throws IOException
     {
         final Path inputFilePath =
@@ -89,7 +89,7 @@ public class MethodNameFieldPreprocessorTest
     }
 
     @Test
-    public void testSodastoreApiWithoutMethodNameExtensionField()
+    void testSodastoreApiWithoutMethodNameExtensionField()
         throws IOException
     {
         final Path inputFilePath =

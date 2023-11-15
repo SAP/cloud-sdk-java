@@ -29,7 +29,7 @@ import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class DatamodelMetadataGeneratorIntegrationTest
+class DatamodelMetadataGeneratorIntegrationTest
 {
     private static final URI GENERATOR_REPOSITORY_LINK = URI.create("https://www.example.com");
     private static final MavenCoordinate GENERATOR_MAVEN_COORDINATE =

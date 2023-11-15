@@ -25,7 +25,7 @@ import com.google.common.io.Resources;
 
 import io.vavr.control.Try;
 
-public class DefaultMavenRepositoryAccessorTest
+class DefaultMavenRepositoryAccessorTest
 {
     private static final String RELATIVE_PATH = "/com/sap/cloud/sdk/datamodel/odata-generator/maven-metadata.xml";
     private static final MavenCoordinate MAVEN_COORDINATE =

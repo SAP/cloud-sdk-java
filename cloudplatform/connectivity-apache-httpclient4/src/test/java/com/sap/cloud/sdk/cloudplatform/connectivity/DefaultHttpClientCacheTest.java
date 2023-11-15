@@ -191,7 +191,7 @@ class DefaultHttpClientCacheTest
 
     @Test
     //This is a known limitation of excluding header providers in the equality check of destinations
-    public void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
+    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
         final Header header1 = new Header("foo", "bar");

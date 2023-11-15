@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class JavaServiceMethodResolverTest
+class JavaServiceMethodResolverTest
 {
     private static final Path path =
         Paths.get("src/test/resources/" + JavaServiceMethodResolverTest.class.getSimpleName());
@@ -40,7 +40,7 @@ public class JavaServiceMethodResolverTest
     }
 
     @Test
-    public void testMethodGreet()
+    void testMethodGreet()
     {
         final Optional<JavaServiceMethodResolver> methodResolution = getMethodResolver("greet", "pet", "feed");
 
@@ -53,7 +53,7 @@ public class JavaServiceMethodResolverTest
     }
 
     @Test
-    public void testMethodPet()
+    void testMethodPet()
     {
         final Optional<JavaServiceMethodResolver> methodResolution = getMethodResolver("pet", "greet", "feed");
 
@@ -67,7 +67,7 @@ public class JavaServiceMethodResolverTest
     }
 
     @Test
-    public void testMethodFeed()
+    void testMethodFeed()
     {
         final Optional<JavaServiceMethodResolver> methodResolution = getMethodResolver("feed", "pet", "greet");
 
@@ -82,7 +82,7 @@ public class JavaServiceMethodResolverTest
     }
 
     @Test
-    public void testMethodPlay()
+    void testMethodPlay()
     {
         final Optional<JavaServiceMethodResolver> methodResolution = getMethodResolver("play");
 
@@ -94,7 +94,7 @@ public class JavaServiceMethodResolverTest
     }
 
     @Test
-    public void testMethodUnknown()
+    void testMethodUnknown()
     {
         final Optional<JavaServiceMethodResolver> methodResolution = getMethodResolver("unknown");
 

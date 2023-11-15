@@ -30,7 +30,7 @@ import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class DatamodelMetadataGenerationTest
+class DatamodelMetadataGenerationTest
 {
     @TempDir
     Path temporaryFolder = null;

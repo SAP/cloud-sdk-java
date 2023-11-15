@@ -17,10 +17,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-public class ApiClassNameFieldPreprocessorTest
+class ApiClassNameFieldPreprocessorTest
 {
     @Test
-    public void testExtensionFieldOnRootAndPathAndOperationLevel()
+    void testExtensionFieldOnRootAndPathAndOperationLevel()
         throws IOException
     {
         final Path inputFilePath =
@@ -77,7 +77,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testExtensionFieldOnOperationLevel()
+    void testExtensionFieldOnOperationLevel()
         throws IOException
     {
         final Path inputFilePath =
@@ -111,7 +111,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testExtensionFieldOnRootLevel()
+    void testExtensionFieldOnRootLevel()
         throws IOException
     {
         final Path inputFilePath =
@@ -138,7 +138,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testExtensionFieldOnPathLevel()
+    void testExtensionFieldOnPathLevel()
         throws IOException
     {
         final Path inputFilePath =
@@ -173,7 +173,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testEmptyNameExtensionField()
+    void testEmptyNameExtensionField()
         throws IOException
     {
         final Path inputFilePath =
@@ -194,7 +194,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testWithoutExtensionField()
+    void testWithoutExtensionField()
         throws IOException
     {
         final Path inputFilePath =
@@ -215,7 +215,7 @@ public class ApiClassNameFieldPreprocessorTest
     }
 
     @Test
-    public void testExtensionFieldWithApiSuffix()
+    void testExtensionFieldWithApiSuffix()
         throws IOException
     {
         final Path inputFilePath =

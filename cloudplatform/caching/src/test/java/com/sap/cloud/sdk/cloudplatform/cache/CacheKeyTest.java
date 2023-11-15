@@ -25,14 +25,14 @@ import lombok.RequiredArgsConstructor;
 class CacheKeyTest
 {
     @BeforeAll
-    public static void setupAccessors()
+    static void setupAccessors()
     {
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(new DefaultPrincipal("P")));
         TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("T")));
     }
 
     @AfterAll
-    public static void tearDownAccessors()
+    static void tearDownAccessors()
     {
         PrincipalAccessor.setPrincipalFacade(null);
         TenantAccessor.setTenantFacade(null);
