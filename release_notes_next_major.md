@@ -221,6 +221,7 @@ blog: https://blogs.sap.com/?p=xxx
   - Other dependency updates:
     - Major version updates:
       - Update `org.springframework.spring-framework-bom` from `5.3.29` to `6.0.13`. **Note** This dependency is used by the SDK **internally only**. In other words: This update **does not** affect consuming projects that use the `sdk-bom` for dependency management.
+      - Update `org.slf4j:slf4j-api` from `1.7.36` to `2.0.9`
 
 ## improvements
 
