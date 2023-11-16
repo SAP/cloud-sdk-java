@@ -70,7 +70,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     void testRemoveEntityPrefixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
@@ -80,7 +80,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     public
         void
@@ -93,7 +93,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntitySuffixData" )
     void testRemoveClassSuffixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
@@ -132,7 +132,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     void testRemovePropertyPrefixesInGenerateJavaFieldName( final String name, final String expectedJavaName )
     {
@@ -204,7 +204,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     void testRemovePropertyPrefixesInGenerateJavaMethodName( final String name, final String expectedJavaName )
     {
@@ -229,7 +229,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     public
         void
@@ -261,7 +261,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     public
         void
@@ -293,7 +293,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     public
         void
@@ -326,7 +326,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     public
         void
@@ -339,7 +339,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     void testKeepEntityPrefixesInGenerateJavaFluentHelperClassNameFromLabel(
         final String label,
@@ -353,7 +353,7 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntitySuffixData" )
     public
         void

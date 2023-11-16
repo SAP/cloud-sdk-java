@@ -35,7 +35,7 @@ class ODataFilterTest
     private static final EntityField<TestEntity, Integer> INT_FIELD = new EntityField<>("field");
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @EnumSource( TestInput.class )
     void testFilterExpression( @Nonnull final TestInput testInput )
     {

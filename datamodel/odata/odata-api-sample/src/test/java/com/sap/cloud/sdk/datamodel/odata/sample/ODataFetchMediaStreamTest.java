@@ -82,7 +82,7 @@ class ODataFetchMediaStreamTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "data" )
     @SneakyThrows
     void testWithFile( @Nonnull final String file )

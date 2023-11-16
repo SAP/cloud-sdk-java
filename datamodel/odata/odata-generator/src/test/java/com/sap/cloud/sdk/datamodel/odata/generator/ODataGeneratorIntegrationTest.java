@@ -88,7 +88,7 @@ class ODataGeneratorIntegrationTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @EnumSource( TestCase.class )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws IOException

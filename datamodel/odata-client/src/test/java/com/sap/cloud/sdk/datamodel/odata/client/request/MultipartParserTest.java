@@ -42,7 +42,7 @@ class MultipartParserTest
 
     @SneakyThrows
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testSimpleReadSuccess( @Nonnull final String newLine )
     {
@@ -87,7 +87,7 @@ class MultipartParserTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testEmptyReadSuccess( @Nonnull final String newLine )
     {
@@ -115,7 +115,7 @@ class MultipartParserTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testWrongDelimiterSuccess( @Nonnull final String newLine )
     {
@@ -130,7 +130,7 @@ class MultipartParserTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testNewLineBeforeReadSuccess( @Nonnull final String newLine )
     {
@@ -181,7 +181,7 @@ class MultipartParserTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testReadResultUncached( @Nonnull final String newLine )
     {
@@ -203,7 +203,7 @@ class MultipartParserTest
 
     @SneakyThrows
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultUncached( @Nonnull final String newLine )
     {
@@ -224,7 +224,7 @@ class MultipartParserTest
 
     @SneakyThrows
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultCached( @Nonnull final String newLine )
     {

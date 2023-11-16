@@ -47,7 +47,7 @@ class FunctionImportSingleDeserializationTest
     private static final String FUNCTION_NAME = "SomeFunction";
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource
     void testDeserializeSingleResponse( @Nonnull final TestInput<?> testInput, @Nonnull final WireMockRuntimeInfo wm )
     {

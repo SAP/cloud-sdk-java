@@ -146,7 +146,7 @@ class ODataV2BatchRequestUnitTest
 
     @SneakyThrows
     @ParameterizedTest( name = "{0}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
     void testAllOperations( @Nonnull final TestParameter parameter )
     {
@@ -201,7 +201,7 @@ class ODataV2BatchRequestUnitTest
 
     @SneakyThrows
     @ParameterizedTest( name = "{0}" )
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParametersWithCustomHeaders" )
     void testAllOperationsWithCustomHeaders( @Nonnull final TestParameter parameter )
     {

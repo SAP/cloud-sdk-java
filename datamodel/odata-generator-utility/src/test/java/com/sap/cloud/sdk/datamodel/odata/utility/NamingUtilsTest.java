@@ -38,7 +38,7 @@ class NamingUtilsTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getClassTestCases" )
     void testServiceNameToJavaClassName( final String input, final String expectedOutput )
     {
@@ -63,7 +63,7 @@ class NamingUtilsTest
     }
 
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getPackageTestCases" )
     void testServiceNameToJavaPackageName( final String input, final String expectedOutput )
     {

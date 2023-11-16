@@ -56,7 +56,7 @@ class ODataResponseExceptionTest
 
     @SneakyThrows
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
     void testEncodingGiven( @Nonnull final TestParameters parameters )
     {
@@ -74,7 +74,7 @@ class ODataResponseExceptionTest
 
     @SneakyThrows
     @ParameterizedTest
-    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
     void testEncodingUnknown( @Nonnull final TestParameters parameters )
     {
