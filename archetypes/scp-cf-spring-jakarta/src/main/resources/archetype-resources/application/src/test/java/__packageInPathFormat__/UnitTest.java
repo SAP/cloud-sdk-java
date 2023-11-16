@@ -3,13 +3,16 @@
 #set( $symbol_escape = '\' )
 package ${package};
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class UnitTest {
+public class UnitTest
+{
     @Test
-    public void test() {
+    public void test()
+    {
         assertTrue(true);
     }
 }
+
