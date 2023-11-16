@@ -82,9 +82,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
+    void testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
     {
         final String someEntityName = "SomeEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -231,9 +229,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
