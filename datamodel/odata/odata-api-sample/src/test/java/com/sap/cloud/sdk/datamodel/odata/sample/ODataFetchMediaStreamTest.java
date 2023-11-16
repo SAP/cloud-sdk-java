@@ -20,8 +20,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -82,7 +80,6 @@ class ODataFetchMediaStreamTest
     }
 
     @ParameterizedTest
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "data" )
     @SneakyThrows
     void testWithFile( @Nonnull final String file )

@@ -10,8 +10,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -70,7 +68,6 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     void testRemoveEntityPrefixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
@@ -80,11 +77,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
+    void testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
     {
         final String someEntityName = "SomeEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -93,7 +87,6 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntitySuffixData" )
     void testRemoveClassSuffixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
@@ -132,7 +125,6 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     void testRemovePropertyPrefixesInGenerateJavaFieldName( final String name, final String expectedJavaName )
     {
@@ -204,7 +196,6 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
     void testRemovePropertyPrefixesInGenerateJavaMethodName( final String name, final String expectedJavaName )
     {
@@ -229,11 +220,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -261,11 +249,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -293,11 +278,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -326,11 +308,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -339,7 +318,6 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
     void testKeepEntityPrefixesInGenerateJavaFluentHelperClassNameFromLabel(
         final String label,
@@ -353,11 +331,8 @@ class S4HanaNamingStrategyTest
     }
 
     @ParameterizedTest( name = "{0} -> {1}" )
-    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntitySuffixData" )
-    public
-        void
-        testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         assertThat(new S4HanaNamingStrategy(NameSource.NAME).generateJavaFluentHelperClassName(name, null))
             .isEqualToIgnoringCase(expectedJavaName + "FluentHelper");
