@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -26,7 +26,7 @@ import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoRepository;
 
 @Deprecated
-public class RfmRequestParameterTest
+class RfmRequestParameterTest
 {
     private static final String FUNCTION_NAME = "someFunction";
     private static final String FIELD_NAME = "field";
@@ -34,7 +34,7 @@ public class RfmRequestParameterTest
     private static final Destination destination = mock(Destination.class);
 
     @Test
-    public void testSupplyByteArrayParameter()
+    void testSupplyByteArrayParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -51,7 +51,7 @@ public class RfmRequestParameterTest
     }
 
     @Test
-    public void testSupplyDateParameter()
+    void testSupplyDateParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -72,7 +72,7 @@ public class RfmRequestParameterTest
     }
 
     @Test
-    public void testSupplyStringParameter()
+    void testSupplyStringParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -89,7 +89,7 @@ public class RfmRequestParameterTest
     }
 
     @Test
-    public void testSupplyBooleanParameter()
+    void testSupplyBooleanParameter()
         throws RemoteFunctionException,
             JCoException
     {

@@ -13,9 +13,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessException;
@@ -23,18 +23,18 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionEx
 
 import io.vavr.control.Try;
 
-public class RequestHeaderAccessorTest
+class RequestHeaderAccessorTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         RequestHeaderAccessor.setHeaderFacade(null);
         RequestHeaderAccessor.setFallbackHeaderContainer(null);
     }
 
     @Test
-    public void testFacadeIsCalled()
+    void testFacadeIsCalled()
     {
         final RequestHeaderFacade mockedFacade = mock(RequestHeaderFacade.class);
         when(mockedFacade.tryGetRequestHeaders()).thenReturn(Try.success(DefaultRequestHeaderContainer.EMPTY));
@@ -49,7 +49,7 @@ public class RequestHeaderAccessorTest
     }
 
     @Test
-    public void testExecuteWithCustomHeaders()
+    void testExecuteWithCustomHeaders()
     {
         final RequestHeaderContainer expectedHeaders =
             DefaultRequestHeaderContainer
@@ -67,7 +67,7 @@ public class RequestHeaderAccessorTest
     }
 
     @Test
-    public void testHeadersAreInheritedByChildContext()
+    void testHeadersAreInheritedByChildContext()
     {
         final RequestHeaderContainer expectedHeaders =
             DefaultRequestHeaderContainer
@@ -87,7 +87,7 @@ public class RequestHeaderAccessorTest
     }
 
     @Test
-    public void testFallbackIsUsed()
+    void testFallbackIsUsed()
     {
         final RequestHeaderFacade failingFacade = mock(RequestHeaderFacade.class);
         when(failingFacade.tryGetRequestHeaders()).thenReturn(Try.failure(new ThreadContextAccessException()));
@@ -111,7 +111,7 @@ public class RequestHeaderAccessorTest
     }
 
     @Test
-    public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
+    void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final RequestHeaderFacade customFacade = () -> Try.success(RequestHeaderContainer.EMPTY);
         assertThat(customFacade).isNotInstanceOf(DefaultRequestHeaderFacade.class);
@@ -125,7 +125,7 @@ public class RequestHeaderAccessorTest
     }
 
     @Test
-    public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
+    void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
         final RequestHeaderFacade customFacade = spy(DefaultRequestHeaderFacade.class);
         assertThat(customFacade).isInstanceOf(DefaultRequestHeaderFacade.class);

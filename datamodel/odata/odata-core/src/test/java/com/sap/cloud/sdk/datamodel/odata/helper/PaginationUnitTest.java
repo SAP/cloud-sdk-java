@@ -9,7 +9,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.assertj.core.api.Assertions;
@@ -24,7 +26,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -40,13 +43,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class PaginationUnitTest
+@WireMockTest
+class PaginationUnitTest
 {
     private static final int PAGE_SIZE = 20;
     private static final int ENTITIES_COUNT = 91;
     private static final int PAGES_COUNT = 5;
 
-    private WireMockRule server;
     private DefaultHttpDestination destination;
 
     // corresponds to https://services.odata.org/V4/Northwind/Northwind.svc/Customers?$select=CustomerID
@@ -62,51 +65,44 @@ public class PaginationUnitTest
         "{ \"d\" : { \"results\": [ { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('TRADH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"TRADH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('TRAIH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"TRAIH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VAFFE')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VAFFE\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VICTE')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VICTE\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('VINET')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"VINET\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WANDK')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WANDK\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WARTH')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WARTH\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WELLI')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WELLI\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WHITC')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WHITC\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WILMK')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WILMK\" }, { \"__metadata\": { \"uri\": \"https://services.odata.org/V2/Northwind/Northwind.svc/Customers('WOLZA')\", \"type\": \"NorthwindModel.Customer\" }, \"CustomerID\": \"WOLZA\" } ] } }";
 
     @BeforeEach
-    public void setup()
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        server = new WireMockRule(wireMockConfig().dynamicPort());
-        server.start();
-        server
-            .stubFor(
-                get(UrlPattern.ANY)
-                    .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
-                    .withQueryParam("$skiptoken", absent())
-                    .willReturn(okJson(page1)));
-        server
-            .stubFor(
-                get(UrlPattern.ANY)
-                    .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
-                    .withQueryParam("$skiptoken", equalTo("'ERNSH'"))
-                    .willReturn(okJson(page2)));
-        server
-            .stubFor(
-                get(UrlPattern.ANY)
-                    .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
-                    .withQueryParam("$skiptoken", equalTo("'LACOR'"))
-                    .willReturn(okJson(page3)));
-        server
-            .stubFor(
-                get(UrlPattern.ANY)
-                    .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
-                    .withQueryParam("$skiptoken", equalTo("'PRINI'"))
-                    .willReturn(okJson(page4)));
-        server
-            .stubFor(
-                get(UrlPattern.ANY)
-                    .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
-                    .withQueryParam("$skiptoken", equalTo("'TORTU'"))
-                    .willReturn(okJson(page5)));
+        stubFor(
+            get(UrlPattern.ANY)
+                .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
+                .withQueryParam("$skiptoken", absent())
+                .willReturn(okJson(page1)));
+        stubFor(
+            get(UrlPattern.ANY)
+                .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
+                .withQueryParam("$skiptoken", equalTo("'ERNSH'"))
+                .willReturn(okJson(page2)));
+        stubFor(
+            get(UrlPattern.ANY)
+                .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
+                .withQueryParam("$skiptoken", equalTo("'LACOR'"))
+                .willReturn(okJson(page3)));
+        stubFor(
+            get(UrlPattern.ANY)
+                .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
+                .withQueryParam("$skiptoken", equalTo("'PRINI'"))
+                .willReturn(okJson(page4)));
+        stubFor(
+            get(UrlPattern.ANY)
+                .withHeader("Prefer", equalTo("odata.maxpagesize=20"))
+                .withQueryParam("$skiptoken", equalTo("'TORTU'"))
+                .willReturn(okJson(page5)));
 
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testGetAll()
+    void testGetAll()
     {
         final List<Customer> result =
             newCustomerRead().select(Customer.CUSTOMER_ID).withPreferredPageSize(PAGE_SIZE).executeRequest(destination);
 
-        server.verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
+        verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
 
         Assertions
             .assertThat(result)
@@ -116,7 +112,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAllIteratingEntities()
+    void testGetAllIteratingEntities()
     {
         final Iterable<Customer> result =
             newCustomerRead()
@@ -125,23 +121,23 @@ public class PaginationUnitTest
                 .iteratingEntities()
                 .executeRequest(destination);
 
-        server.verify(1, getRequestedFor(UrlPattern.ANY));
+        verify(1, getRequestedFor(UrlPattern.ANY));
 
         int countPages = 0;
         int countEntities = 0;
         for( final Customer entity : result ) {
             if( countEntities++ % PAGE_SIZE == 0 ) {
-                server.verify(++countPages, getRequestedFor(UrlPattern.ANY));
+                verify(++countPages, getRequestedFor(UrlPattern.ANY));
             }
             assertThat(entity).extracting(Customer::getCustomerId).isNotNull();
         }
 
         assertThat(countEntities).isEqualTo(ENTITIES_COUNT);
-        server.verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
+        verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
     }
 
     @Test
-    public void testGetAllStreamingEntities()
+    void testGetAllStreamingEntities()
     {
         final Stream<Customer> result =
             newCustomerRead()
@@ -150,14 +146,14 @@ public class PaginationUnitTest
                 .streamingEntities()
                 .executeRequest(destination);
 
-        server.verify(1, getRequestedFor(UrlPattern.ANY));
+        verify(1, getRequestedFor(UrlPattern.ANY));
 
         final Stream<String> intermediateStream = result.map(Customer::getCustomerId).peek(Objects::requireNonNull);
-        server.verify(1, getRequestedFor(UrlPattern.ANY));
+        verify(1, getRequestedFor(UrlPattern.ANY));
 
         final long countEntities = intermediateStream.count();
         assertThat(countEntities).isEqualTo(ENTITIES_COUNT);
-        server.verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
+        verify(PAGES_COUNT, getRequestedFor(UrlPattern.ANY));
 
         // repeated access to stream is not permitted as of Java API
         assertThatIllegalStateException()
@@ -166,7 +162,7 @@ public class PaginationUnitTest
     }
 
     @Test
-    public void testGetAllIteratingPages()
+    void testGetAllIteratingPages()
     {
         final Iterable<List<Customer>> result =
             newCustomerRead()
@@ -175,12 +171,12 @@ public class PaginationUnitTest
                 .iteratingPages()
                 .executeRequest(destination);
 
-        server.verify(1, getRequestedFor(UrlPattern.ANY));
+        verify(1, getRequestedFor(UrlPattern.ANY));
 
         int countPages = 0;
         int countEntities = 0;
         for( final List<Customer> entities : result ) {
-            server.verify(++countPages, getRequestedFor(UrlPattern.ANY));
+            verify(++countPages, getRequestedFor(UrlPattern.ANY));
             countEntities += entities.size();
             Assertions.assertThat(entities).extracting(Customer::getCustomerId).allMatch(Objects::nonNull);
         }

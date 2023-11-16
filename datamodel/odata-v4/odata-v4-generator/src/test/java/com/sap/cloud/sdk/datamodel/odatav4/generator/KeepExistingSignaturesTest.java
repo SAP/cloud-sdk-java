@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import lombok.SneakyThrows;
 
-public class KeepExistingSignaturesTest
+class KeepExistingSignaturesTest
 {
     @TempDir
     Path path;
@@ -30,7 +30,7 @@ public class KeepExistingSignaturesTest
 
     @SneakyThrows
     @BeforeEach
-    public void setupPaths()
+    void setupPaths()
     {
         pathOutput = path.resolve("output");
         pathOld = path.resolve("old");

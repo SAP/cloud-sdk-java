@@ -10,12 +10,12 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationType.MAIL;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationType.RFC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DestinationTypeTest
+class DestinationTypeTest
 {
     @Test
-    public void getIdentifier()
+    void getIdentifier()
     {
         assertThat(HTTP.getIdentifier()).isEqualTo("HTTP");
         assertThat(RFC.getIdentifier()).isEqualTo("RFC");
@@ -24,7 +24,7 @@ public class DestinationTypeTest
     }
 
     @Test
-    public void ofIdentifier()
+    void ofIdentifier()
     {
         assertThat(DestinationType.ofIdentifier("HTTP")).isEqualTo(HTTP);
         assertThat(DestinationType.ofIdentifier("RFC")).isEqualTo(RFC);
@@ -33,7 +33,7 @@ public class DestinationTypeTest
     }
 
     @Test
-    public void ofIdentifierOrDefault()
+    void ofIdentifierOrDefault()
     {
         assertThat(DestinationType.ofIdentifierOrDefault("NonExisting", HTTP)).isEqualTo(HTTP);
     }

@@ -1,16 +1,20 @@
 package com.sap.cloud.sdk.services.openapi.genericreturntype;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 
@@ -35,17 +39,15 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
  *
  * This test case demonstrates that the returned Java type at runtime is a {@link LinkedHashMap}.
  */
-public class GenericReturnTypeTest
+@WireMockTest
+class GenericReturnTypeTest
 {
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-
     @Test
-    public void testGenericAccessToNonNestedJsonObject()
+    void testGenericAccessToNonNestedJsonObject( @Nonnull final WireMockRuntimeInfo wm )
     {
         final String responseBody = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
 
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 
@@ -59,11 +61,11 @@ public class GenericReturnTypeTest
     }
 
     @Test
-    public void testGenericAccessToNestedJsonObject()
+    void testGenericAccessToNestedJsonObject( @Nonnull final WireMockRuntimeInfo wm )
     {
         final String responseBody = "{" + "\"foo\": \"bar\"," + "\"bar\": {" + "\"foobar\": \"barfoo\"" + "}" + "}";
 
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 
@@ -82,11 +84,11 @@ public class GenericReturnTypeTest
     }
 
     @Test
-    public void testGenericAccessToArray()
+    void testGenericAccessToArray( @Nonnull final WireMockRuntimeInfo wm )
     {
         final String responseBody = "[\"foo\", \"bar\", \"foo\", \"bar\"]";
 
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 

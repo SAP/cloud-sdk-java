@@ -6,7 +6,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -18,10 +18,10 @@ import com.sap.cloud.sdk.s4hana.connectivity.rfc.exception.RemoteFunctionExcepti
 import com.sap.conn.jco.JCoRepository;
 
 @Deprecated
-public class RemoteFunctionCacheTest
+class RemoteFunctionCacheTest
 {
     @Test
-    public void testClearCacheForHttpDestination()
+    void testClearCacheForHttpDestination()
         throws RemoteFunctionException
     {
         final HttpDestination httpDestination = DefaultHttpDestination.builder("foo").build();
@@ -32,7 +32,7 @@ public class RemoteFunctionCacheTest
     }
 
     @Test
-    public void testClearCacheForRfcDestination()
+    void testClearCacheForRfcDestination()
         throws RemoteFunctionException
     {
         final JCoRepository jCoRepository = mock(JCoRepository.class);
@@ -44,7 +44,7 @@ public class RemoteFunctionCacheTest
     }
 
     @Test
-    public void testClearCacheForHttpDestinationWithFunctionName()
+    void testClearCacheForHttpDestinationWithFunctionName()
         throws RemoteFunctionException
     {
         final HttpDestination httpDestination = DefaultHttpDestination.builder("foo").build();
@@ -57,7 +57,7 @@ public class RemoteFunctionCacheTest
     }
 
     @Test
-    public void testClearCacheForRfcDestinationWithFunctionName()
+    void testClearCacheForRfcDestinationWithFunctionName()
         throws RemoteFunctionException
     {
         final String functionName = "BAPI_FOO";
@@ -71,7 +71,7 @@ public class RemoteFunctionCacheTest
     }
 
     @Test
-    public void testClearCacheForDefaultDestination()
+    void testClearCacheForDefaultDestination()
         throws RemoteFunctionException
     {
         RemoteFunctionCache.clearCache(mock(Destination.class));

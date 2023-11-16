@@ -11,7 +11,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -39,7 +39,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public class PropertyCustomSerializationTest
+class PropertyCustomSerializationTest
 {
     private static final User USER =
         new User(
@@ -81,7 +81,7 @@ public class PropertyCustomSerializationTest
     }
 
     @Test
-    public void testSerializationWithGson()
+    void testSerializationWithGson()
     {
         final String json = new Gson().toJson(USER);
         final User actual = new Gson().fromJson(json, User.class);
@@ -89,7 +89,7 @@ public class PropertyCustomSerializationTest
     }
 
     @Test
-    public void testSerializationWithJackson()
+    void testSerializationWithJackson()
         throws JsonProcessingException
     {
         final String json = new ObjectMapper().writeValueAsString(USER);

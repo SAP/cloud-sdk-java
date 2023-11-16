@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.typeconverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -30,7 +31,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-public class PrimitiveBasedObjectTest
+class PrimitiveBasedObjectTest
 {
     @Data
     private static final class MyObject
@@ -64,7 +65,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromString()
+    void fromString()
     {
         final ResultElement element = new GsonResultPrimitive(new JsonPrimitive("foo.txt"));
         final File f = new PrimitiveBasedObjectExtractor<>(File.class).extract(element);
@@ -72,7 +73,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromLong()
+    void fromLong()
     {
         final ResultElement element = new GsonResultPrimitive(new JsonPrimitive(10L));
         final MyYearWithLongValue f = new PrimitiveBasedObjectExtractor<>(MyYearWithLongValue.class).extract(element);
@@ -80,7 +81,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromLongList()
+    void fromLongList()
     {
         final List<Random> rnds = collectFromJson(Random.class, 10L, 100L, 1000L, 10000L);
         assertThat(rnds).hasSize(4).are(new Condition<Random>()
@@ -100,7 +101,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromInteger()
+    void fromInteger()
     {
         final ResultElement element = new GsonResultPrimitive(new JsonPrimitive(1996));
         final MyYear f = new PrimitiveBasedObjectExtractor<>(MyYear.class).extract(element);
@@ -108,7 +109,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromPrivateConstructor()
+    void fromPrivateConstructor()
     {
         final ResultElement element = new GsonResultPrimitive(new JsonPrimitive(1996));
         final MyYearWithPrivateConstructor f =
@@ -117,7 +118,7 @@ public class PrimitiveBasedObjectTest
     }
 
     @Test
-    public void fromBooleanList()
+    void fromBooleanList()
     {
         final List<MyOptional> b = collectFromJson(MyOptional.class, true, false, false, true);
         assertThat(b)
@@ -125,10 +126,11 @@ public class PrimitiveBasedObjectTest
             .containsExactly(new MyOptional(true), new MyOptional(false), new MyOptional(false), new MyOptional(true));
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void fromObject()
+    @Test
+    void fromObject()
     {
-        collectFromJson(MyObject.class, null, null);
+        assertThatThrownBy(() -> collectFromJson(MyObject.class, null, null))
+            .isExactlyInstanceOf(UnsupportedOperationException.class);
     }
 
     private <T> List<T> collectFromJson( final Class<T> cls, final Object... elements )

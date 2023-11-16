@@ -12,20 +12,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
-public class RequestHeaderContainerTest
+class RequestHeaderContainerTest
 {
     @Test
-    public void testEmptyDoesNotContainAnyHeaders()
+    void testEmptyDoesNotContainAnyHeaders()
     {
         assertThat(RequestHeaderContainer.EMPTY.getHeaderNames()).isEmpty();
     }
 
     @Test
-    public void testEmptyCanBeUsedToConstructADefaultRequestHeaderContainer()
+    void testEmptyCanBeUsedToConstructADefaultRequestHeaderContainer()
     {
         final RequestHeaderContainer.Builder sut = RequestHeaderContainer.EMPTY.toBuilder();
 
@@ -43,7 +43,7 @@ public class RequestHeaderContainerTest
     }
 
     @Test
-    public void testContainerToMap()
+    void testContainerToMap()
     {
         final RequestHeaderContainer container =
             RequestHeaderContainer.EMPTY

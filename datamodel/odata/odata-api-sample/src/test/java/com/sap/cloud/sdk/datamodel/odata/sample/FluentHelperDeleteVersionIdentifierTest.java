@@ -13,25 +13,24 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
+import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Address;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FluentHelperDeleteVersionIdentifierTest
+@WireMockTest
+class FluentHelperDeleteVersionIdentifierTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
     private static final int ADDRESS_ID = 123456;
     private static final String ODATA_QUERY_URL = ODATA_ENDPOINT_URL + "/Addresses(" + ADDRESS_ID + ")";
@@ -42,16 +41,16 @@ public class FluentHelperDeleteVersionIdentifierTest
 
     private HttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
         stubFor(head(urlEqualTo(ODATA_ENDPOINT_URL)).willReturn(ok().withHeader("x-csrf-token", "abc")));
         stubFor(delete(urlEqualTo(ODATA_QUERY_URL)).willReturn(noContent()));
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testVersionIdentifierIsSentByDefault()
+    void testVersionIdentifierIsSentByDefault()
     {
         final Address addressToDelete = Address.builder().id(ADDRESS_ID).build();
         addressToDelete.setVersionIdentifier(versionIdentifier);
@@ -64,7 +63,7 @@ public class FluentHelperDeleteVersionIdentifierTest
     }
 
     @Test
-    public void testNoHeaderIsSentByDefault()
+    void testNoHeaderIsSentByDefault()
     {
         final Address addressToDelete = Address.builder().id(ADDRESS_ID).build();
         service.deleteAddress(addressToDelete).executeRequest(destination);
@@ -73,7 +72,7 @@ public class FluentHelperDeleteVersionIdentifierTest
     }
 
     @Test
-    public void testMatchAnyVersionIdentifier()
+    void testMatchAnyVersionIdentifier()
     {
         final Address addressToDelete = Address.builder().id(ADDRESS_ID).build();
         addressToDelete.setVersionIdentifier("some-identifier");
@@ -83,7 +82,7 @@ public class FluentHelperDeleteVersionIdentifierTest
     }
 
     @Test
-    public void testDisableVersionIdentifier()
+    void testDisableVersionIdentifier()
     {
         final Address addressToDelete = Address.builder().id(ADDRESS_ID).build();
         addressToDelete.setVersionIdentifier("some-identifier");

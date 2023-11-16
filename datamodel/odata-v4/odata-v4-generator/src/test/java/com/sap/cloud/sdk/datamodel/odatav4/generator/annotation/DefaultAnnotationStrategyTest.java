@@ -24,13 +24,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class DefaultAnnotationStrategyTest
+class DefaultAnnotationStrategyTest
 {
     private static final int SOME_SMALL_NUMBER = 4;
     private static final int SOME_LARGE_NUMBER = 345;
 
     @Test
-    public void testGetAnnotationsForEntityAsUsual()
+    void testGetAnnotationsForEntityAsUsual()
     {
         final EntityAnnotationModel annotationModel = getEntityAnnotationModel("someJavaClassName", SOME_SMALL_NUMBER);
 
@@ -53,7 +53,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForEntityWithTooManyProperties()
+    void testGetAnnotationsForEntityWithTooManyProperties()
     {
         final EntityAnnotationModel annotationModel = getEntityAnnotationModel("someJavaClassName", SOME_LARGE_NUMBER);
 
@@ -73,7 +73,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForEntityPropertyWithSimpleBooleanType()
+    void testGetAnnotationsForEntityPropertyWithSimpleBooleanType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", true, "Boolean", null, null);
@@ -85,7 +85,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForEntityKeyPropertyWithSimpleStringType()
+    void testGetAnnotationsForEntityKeyPropertyWithSimpleStringType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getKeyEntityPropertyAnnotationModel("someEdmName", true, "String", null, null);
@@ -97,7 +97,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForEntityPropertyWithComplexType()
+    void testGetAnnotationsForEntityPropertyWithComplexType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", false, "someType", null, null);
@@ -109,7 +109,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForEntityPropertyWithDateType()
+    void testGetAnnotationsForEntityPropertyWithDateType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", true, "DateTime", null, null);
@@ -121,7 +121,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForAssociatedEntityWithSingleMultiplicity()
+    void testGetAnnotationsForAssociatedEntityWithSingleMultiplicity()
     {
         final NavigationPropertyAnnotationModel annotationModel =
             getNavigationPropertyAnnotationModel("someEdmName", false);
@@ -133,7 +133,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForAssociatedEntityWithManyMultiplicity()
+    void testGetAnnotationsForAssociatedEntityWithManyMultiplicity()
     {
         final NavigationPropertyAnnotationModel annotationModel =
             getNavigationPropertyAnnotationModel("someEdmName", true);
@@ -145,7 +145,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForComplexTypeAsUsual()
+    void testGetAnnotationsForComplexTypeAsUsual()
     {
         final EntityAnnotationModel annotationModel = getEntityAnnotationModel("someJavaClassName", SOME_SMALL_NUMBER);
 
@@ -168,7 +168,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForComplexTypeWithTooManyProperties()
+    void testGetAnnotationsForComplexTypeWithTooManyProperties()
     {
         final EntityAnnotationModel annotationModel = getEntityAnnotationModel("someJavaClassName", SOME_LARGE_NUMBER);
 
@@ -188,7 +188,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForComplexTypePropertyWithSimpleBooleanType()
+    void testGetAnnotationsForComplexTypePropertyWithSimpleBooleanType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", true, "Boolean", null, null);
@@ -200,7 +200,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForComplexTypePropertyWithComplexType()
+    void testGetAnnotationsForComplexTypePropertyWithComplexType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", false, "someEdmType", null, null);
@@ -212,7 +212,7 @@ public class DefaultAnnotationStrategyTest
     }
 
     @Test
-    public void testGetAnnotationsForComplexTypePropertyWithDateType()
+    void testGetAnnotationsForComplexTypePropertyWithDateType()
     {
         final EntityPropertyAnnotationModel annotationModel =
             getNormalEntityPropertyAnnotationModel("someEdmName", true, "DateTime", null, null);

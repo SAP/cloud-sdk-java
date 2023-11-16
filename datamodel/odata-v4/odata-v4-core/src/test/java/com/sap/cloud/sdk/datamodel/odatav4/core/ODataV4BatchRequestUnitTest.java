@@ -29,19 +29,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpClientFactory;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -52,7 +54,8 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultip
 
 import lombok.SneakyThrows;
 
-public class ODataV4BatchRequestUnitTest
+@WireMockTest
+class ODataV4BatchRequestUnitTest
 {
     private static final TestEntityService SERVICE = new TestEntityService()
     {
@@ -84,21 +87,19 @@ public class ODataV4BatchRequestUnitTest
     private static final CollectionValueActionRequestBuilder<String> ACT_MULTIPLE = SERVICE.actionMultipleResult();
     private static final int MAX_PARALLEL_CONNECTIONS = 10;
 
-    @Rule
-    public WireMockRule server = new WireMockRule(WIREMOCK_CONFIGURATION);
     private Destination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         // Mock CSRF token handling
-        server
-            .stubFor(
-                head(urlEqualTo("/"))
-                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalTo(X_CSRF_TOKEN_HEADER_FETCH_VALUE))
-                    .willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
+
+        stubFor(
+            head(urlEqualTo("/"))
+                .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalTo(X_CSRF_TOKEN_HEADER_FETCH_VALUE))
+                .willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
 
         // Mock OData Batch response
         final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
@@ -113,14 +114,14 @@ public class ODataV4BatchRequestUnitTest
                     .build());
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         HttpClientAccessor.setHttpClientFactory(null);
     }
 
     @Test
-    public void testAllOperations()
+    void testAllOperations()
     {
         for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
             // execute batched requests
@@ -185,7 +186,7 @@ public class ODataV4BatchRequestUnitTest
     }
 
     @Test
-    public void testIdenticalOperations()
+    void testIdenticalOperations()
     {
         final CreateRequestBuilder<TestEntity> identicalCreate = SERVICE.createTestEntity(ENTITY_CREATE);
 
@@ -209,7 +210,7 @@ public class ODataV4BatchRequestUnitTest
     }
 
     @Test
-    public void testBatchWithoutCsrfTokenRetrievalIfSkipped()
+    void testBatchWithoutCsrfTokenRetrievalIfSkipped()
     {
         SERVICE.batch().withoutCsrfToken().addReadOperations(READ_ALL).execute(destination);
 
@@ -220,7 +221,7 @@ public class ODataV4BatchRequestUnitTest
     }
 
     @Test
-    public void testLowLevelToHighLevel()
+    void testLowLevelToHighLevel()
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
@@ -272,7 +273,7 @@ public class ODataV4BatchRequestUnitTest
 
     @Test
     @SneakyThrows
-    public void testBatchOpenConnection()
+    void testBatchOpenConnection()
     {
         final int N = MAX_PARALLEL_CONNECTIONS * 2;
         final List<InputStream> inputStreams = new ArrayList<>();

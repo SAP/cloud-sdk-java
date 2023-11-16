@@ -7,33 +7,15 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-public class LegacyClassScannerTest
+class LegacyClassScannerTest
 {
     private static final LegacyClassScanner SCANNER = new LegacyClassScanner(new File("src/test/java"));
-    private static final String CLASS_NAME = LegacyClassScannerTest.class.getName();
-
-    private LegacyClassScannerTest(
-        final Object ignore1,
-        final Object ignore2,
-        final String a,
-        final Integer b,
-        final Object c )
-    {
-        // place holder
-    }
-
-    private void testMethod( final String a, final Integer b, final Object c )
-    {
-        // place holder
-    }
+    private static final String CLASS_NAME = LegacyClass.class.getName();
 
     @Test
-    public void testDetermineArgumentsForConstructor()
+    void testDetermineArgumentsForConstructor()
     {
         final List<List<String>> argumentSets =
             SCANNER
@@ -49,7 +31,7 @@ public class LegacyClassScannerTest
     }
 
     @Test
-    public void testDetermineArgumentsForMethod()
+    void testDetermineArgumentsForMethod()
     {
         final List<List<String>> argumentSets =
             SCANNER
@@ -65,7 +47,7 @@ public class LegacyClassScannerTest
     }
 
     @Test
-    public void testNoChange()
+    void testNoChange()
     {
         final List<List<String>> argumentSets =
             SCANNER
@@ -79,7 +61,7 @@ public class LegacyClassScannerTest
     }
 
     @Test
-    public void testErrorCase()
+    void testErrorCase()
     {
         Assertions
             .assertThatIllegalStateException()

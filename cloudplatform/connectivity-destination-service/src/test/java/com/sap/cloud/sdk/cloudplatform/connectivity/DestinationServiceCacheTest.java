@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.time.Duration;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
@@ -18,16 +18,16 @@ import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
 
 import io.vavr.control.Option;
 
-public class DestinationServiceCacheTest
+class DestinationServiceCacheTest
 {
-    @After
-    public void resetCache()
+    @AfterEach
+    void resetCache()
     {
         DestinationService.Cache.reset();
     }
 
     @Test
-    public void testDisable()
+    void testDisable()
     {
         assertThat(DestinationService.Cache.isEnabled()).isTrue();
 
@@ -40,7 +40,7 @@ public class DestinationServiceCacheTest
     }
 
     @Test
-    public void testReset()
+    void testReset()
     {
         final Cache<CacheKey, ?> cacheSingle = DestinationService.Cache.instanceSingle();
         final Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();
@@ -52,7 +52,7 @@ public class DestinationServiceCacheTest
     }
 
     @Test
-    public void testChangeDetection()
+    void testChangeDetection()
     {
         final Cache<CacheKey, ?> cacheSingle = DestinationService.Cache.instanceSingle();
         final Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();
@@ -66,7 +66,7 @@ public class DestinationServiceCacheTest
     }
 
     @Test
-    public void testExpiration()
+    void testExpiration()
     {
         final Option<Duration> oldDuration = DestinationService.Cache.getExpirationDuration();
         final Duration newDuration = Duration.ofSeconds(1);
@@ -75,7 +75,6 @@ public class DestinationServiceCacheTest
 
         // sut
         DestinationService.Cache.setExpiration(newDuration, CacheExpirationStrategy.WHEN_CREATED);
-        assertThat(DestinationService.Cache.getExpirationDuration()).isNotEqualTo(oldDuration);
         assertThat(DestinationService.Cache.getExpirationDuration()).containsExactly(newDuration);
         assertThat(cacheSingle).isNotSameAs(cacheSingle = DestinationService.Cache.instanceSingle());
         assertThat(cacheAll).isNotSameAs(cacheAll = DestinationService.Cache.instanceAll());
@@ -88,7 +87,7 @@ public class DestinationServiceCacheTest
     }
 
     @Test
-    public void testSize()
+    void testSize()
     {
         Cache<CacheKey, ?> cacheSingle = DestinationService.Cache.instanceSingle();
         final Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();

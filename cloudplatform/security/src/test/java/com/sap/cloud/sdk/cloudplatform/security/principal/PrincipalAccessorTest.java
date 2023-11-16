@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
@@ -29,11 +29,11 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
-public class PrincipalAccessorTest
+class PrincipalAccessorTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         // reset the facade
         PrincipalAccessor.setPrincipalFacade(null);
@@ -43,7 +43,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testGetCurrentPrincipal()
+    void testGetCurrentPrincipal()
     {
         final Principal principal = new DefaultPrincipal("user1");
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal));
@@ -54,7 +54,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
 
@@ -90,7 +90,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallback()
+    void testExecuteWithFallback()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isEmpty();
@@ -114,7 +114,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecuteWithException()
+    void testExecuteWithException()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isEmpty();
@@ -127,7 +127,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallbackWithException()
+    void testExecuteWithFallbackWithException()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isEmpty();
@@ -156,7 +156,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testGlobalFallback()
+    void testGlobalFallback()
     {
         PrincipalAccessor.setFallbackPrincipal(() -> new DefaultPrincipal("globalFallback"));
         assertThat(PrincipalAccessor.getCurrentPrincipal().getPrincipalId()).isEqualTo("globalFallback");
@@ -186,7 +186,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testWrongPropertyType()
+    void testWrongPropertyType()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
 
@@ -201,7 +201,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testMissingThreadContext()
+    void testMissingThreadContext()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
 
@@ -217,7 +217,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testMissingThreadContextProperty()
+    void testMissingThreadContextProperty()
     {
         PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
 
@@ -239,7 +239,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
+    void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final PrincipalFacade customFacade = () -> Try.failure(new IllegalStateException());
         assertThat(customFacade).isNotInstanceOf(DefaultPrincipalFacade.class);
@@ -252,7 +252,7 @@ public class PrincipalAccessorTest
     }
 
     @Test
-    public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
+    void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
         final PrincipalFacade customFacade = spy(DefaultPrincipalFacade.class);
         assertThat(customFacade).isInstanceOf(DefaultPrincipalFacade.class);

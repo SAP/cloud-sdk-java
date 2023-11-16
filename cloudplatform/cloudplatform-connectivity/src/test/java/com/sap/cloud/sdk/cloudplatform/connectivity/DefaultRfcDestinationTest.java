@@ -6,9 +6,9 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRfcDestinationTest
+class DefaultRfcDestinationTest
 {
     private static final String SOME_NAME = "Some Destination Name";
     private static final Object testObject = new Object();
@@ -21,7 +21,7 @@ public class DefaultRfcDestinationTest
             .build();
 
     @Test
-    public void testGetDelegation()
+    void testGetDelegation()
     {
         final DestinationProperties rfcDestination = DefaultRfcDestination.fromProperties(testProperties);
 
@@ -30,7 +30,7 @@ public class DefaultRfcDestinationTest
     }
 
     @Test
-    public void testNameIsRequired()
+    void testNameIsRequired()
     {
         final DefaultDestination emptyDestination = DefaultDestination.builder().build();
 
@@ -40,7 +40,7 @@ public class DefaultRfcDestinationTest
     }
 
     @Test
-    public void testEqualsAndHashCode()
+    void testEqualsAndHashCode()
     {
         final RfcDestination firstDestination = DefaultRfcDestination.fromProperties(testProperties);
         final RfcDestination secondDestination = DefaultRfcDestination.fromProperties(testProperties);

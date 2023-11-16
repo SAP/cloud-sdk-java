@@ -6,20 +6,20 @@ package com.sap.cloud.sdk.datamodel.odatav4.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestReadByKey;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEntity;
 import com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore.Shelf;
 import com.sap.cloud.sdk.datamodel.odatav4.sample.services.DefaultSdkGroceryStoreService;
 
-public class MultipleEntitySetsTest
+class MultipleEntitySetsTest
 {
 
     private static final DefaultSdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
 
     @Test
-    public void testFetchNavigationProperty()
+    void testFetchNavigationProperty()
     {
         final Shelf shelf = Shelf.builder().id(42).build();
         final ShopFloorShelf shopFloorShelf = new ShopFloorShelf();

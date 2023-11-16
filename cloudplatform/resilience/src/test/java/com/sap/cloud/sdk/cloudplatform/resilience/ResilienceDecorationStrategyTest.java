@@ -23,7 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
 import io.vavr.control.Try;
 
-public class ResilienceDecorationStrategyTest
+class ResilienceDecorationStrategyTest
 {
     public static class TestDecorationStrategy implements ResilienceDecorationStrategy
     {
@@ -66,7 +66,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testNamedThreadQueueCallable()
+        void testNamedThreadQueueCallable()
             throws ExecutionException,
                 InterruptedException
         {
@@ -77,7 +77,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testNamedThreadQueueSupplier()
+        void testNamedThreadQueueSupplier()
             throws ExecutionException,
                 InterruptedException
         {
@@ -88,7 +88,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testThreadNameFromExecutor()
+        void testThreadNameFromExecutor()
             throws ExecutionException,
                 InterruptedException
         {
@@ -99,7 +99,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testExecuteCallableWithFallback()
+        void testExecuteCallableWithFallback()
         {
             final String positiveTest =
                 new TestDecorationStrategy()
@@ -125,7 +125,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testThreadContextPropagated()
+        void testThreadContextPropagated()
         {
             ThreadContextExecutors.execute(() -> {
                 final ThreadContext parentThreadContext = ThreadContextAccessor.getCurrentContext();
@@ -146,7 +146,7 @@ public class ResilienceDecorationStrategyTest
         }
 
         @Test
-        public void testThreadContextPropagatedWithTimeLimiter()
+        void testThreadContextPropagatedWithTimeLimiter()
         {
             ThreadContextExecutors.execute(() -> {
                 final ThreadContext parentThreadContext = ThreadContextAccessor.getCurrentContext();

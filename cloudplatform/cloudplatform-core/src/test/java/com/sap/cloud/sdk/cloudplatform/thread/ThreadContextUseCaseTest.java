@@ -9,9 +9,9 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-public class ThreadContextUseCaseTest
+class ThreadContextUseCaseTest
 {
     @Data
     private static class TestInformation
@@ -42,14 +42,14 @@ public class ThreadContextUseCaseTest
         }
     }
 
-    @Before
-    public void addListener()
+    @BeforeEach
+    void addListener()
     {
         DefaultThreadContextListenerChain.registerDefaultListener(TestContextListener.getInstance());
     }
 
-    @After
-    public void removeListener()
+    @AfterEach
+    void removeListener()
     {
         DefaultThreadContextListenerChain.unregisterDefaultListener(TestContextListener.getInstance().getPriority());
     }
@@ -59,7 +59,7 @@ public class ThreadContextUseCaseTest
      * Assertion is focusing on values NOT being equal to each other.
      */
     @Test
-    public void testWithoutThreadContext()
+    void testWithoutThreadContext()
         throws Exception
     {
         final TestController impl = new TestController();
@@ -90,7 +90,7 @@ public class ThreadContextUseCaseTest
      * such that the properties of current ThreadContext will be inherited, e.g. happening in Resilience4jDecorationStrategy.
      */
     @Test
-    public void testWithThreadContext()
+    void testWithThreadContext()
     {
         final SoftAssertions softly = new SoftAssertions();
 

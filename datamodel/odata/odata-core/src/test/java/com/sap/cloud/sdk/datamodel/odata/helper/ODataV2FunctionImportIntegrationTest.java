@@ -15,7 +15,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -23,17 +22,18 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -44,11 +44,9 @@ import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ODataVdmEntityAdapterFac
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-public class ODataV2FunctionImportIntegrationTest
+@WireMockTest
+class ODataV2FunctionImportIntegrationTest
 {
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String ODATA_ENDPOINT_URL = "/path/to/service";
     private static final String ODATA_FUNCTION_IMPORT_URL = ODATA_ENDPOINT_URL + "/CancelItem.*";
     private static final String CSRF_TOKEN = "awesome-token";
@@ -80,14 +78,14 @@ public class ODataV2FunctionImportIntegrationTest
 
     private DefaultHttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testFunctionImportWithCsrfToken()
+    void testFunctionImportWithCsrfToken()
     {
         wiremockIssueCsrfTokenWithStatusCodeOk();
 
@@ -99,7 +97,7 @@ public class ODataV2FunctionImportIntegrationTest
     }
 
     @Test
-    public void testFunctionImportWithCsrfTokenAndServerErrorResponse()
+    void testFunctionImportWithCsrfTokenAndServerErrorResponse()
     {
         wiremockIssueCsrfToken(WireMock.serverError());
 
@@ -111,7 +109,7 @@ public class ODataV2FunctionImportIntegrationTest
     }
 
     @Test
-    public void testFunctionImportWithCsrfTokenAndMethodNotAllowedResponse()
+    void testFunctionImportWithCsrfTokenAndMethodNotAllowedResponse()
     {
         wiremockIssueCsrfToken(WireMock.status(HttpStatus.SC_METHOD_NOT_ALLOWED));
 
@@ -123,7 +121,7 @@ public class ODataV2FunctionImportIntegrationTest
     }
 
     @Test
-    public void testFunctionImportWithoutCsrfToken()
+    void testFunctionImportWithoutCsrfToken()
     {
         //Return OK but without csrf token in response header
         stubFor(
@@ -137,11 +135,11 @@ public class ODataV2FunctionImportIntegrationTest
 
         assertOnFunctionImportResponseEntity(materialDocumentItem);
 
-        server.verify(postRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(CSRF_TOKEN_HEADER_KEY));
+        verify(postRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(CSRF_TOKEN_HEADER_KEY));
     }
 
     @Test
-    public void testFunctionImportWithJsonError()
+    void testFunctionImportWithJsonError()
     {
         wiremockIssueCsrfTokenWithStatusCodeOk();
 
@@ -153,7 +151,7 @@ public class ODataV2FunctionImportIntegrationTest
     }
 
     @Test
-    public void testFunctionImportReturnsSanitizedXmlErrorBody()
+    void testFunctionImportReturnsSanitizedXmlErrorBody()
     {
         wiremockIssueCsrfTokenWithStatusCodeOk();
 
@@ -174,7 +172,7 @@ public class ODataV2FunctionImportIntegrationTest
      * this logic here, therefore we test it with a tab (\t) character.
      */
     @Test
-    public void testNonPrintableCharactersRemovedFromCsrfTokenValue()
+    void testNonPrintableCharactersRemovedFromCsrfTokenValue()
     {
         final String tokenWithNonPrintableCharacters = CSRF_TOKEN + "\t<CR><LF>%0a%0d<script>alert()</script>";
         final String tokenWithoutNonPrintableCharacters = CSRF_TOKEN + "<CR><LF>%0a%0d<script>alert()</script>";
@@ -191,10 +189,9 @@ public class ODataV2FunctionImportIntegrationTest
 
         getCancelItemFluentHelper().executeRequest(destination);
 
-        server
-            .verify(
-                postRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL))
-                    .withHeader(CSRF_TOKEN_HEADER_KEY, equalTo(tokenWithoutNonPrintableCharacters)));
+        verify(
+            postRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL))
+                .withHeader(CSRF_TOKEN_HEADER_KEY, equalTo(tokenWithoutNonPrintableCharacters)));
     }
 
     private void wiremockIssueCsrfToken( final ResponseDefinitionBuilder responseDefinitionBuilder )

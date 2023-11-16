@@ -32,7 +32,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.OrderExpression;
 import com.sap.cloud.sdk.datamodel.odata.client.query.Order;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-public class ODataQueryReadByKeyTest
+class ODataQueryReadByKeyTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String SERVICE_PATH = "/service/";
@@ -58,7 +58,7 @@ public class ODataQueryReadByKeyTest
     }
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
@@ -66,13 +66,13 @@ public class ODataQueryReadByKeyTest
     }
 
     @AfterEach
-    public void teardown()
+    void teardown()
     {
         wireMockServer.stop();
     }
 
     @Test
-    public void testRequestByEntityKey()
+    void testRequestByEntityKey()
     {
         final HttpClient client = HttpClientAccessor.getHttpClient(destination);
         wireMockServer
@@ -91,7 +91,7 @@ public class ODataQueryReadByKeyTest
     }
 
     @Test
-    public void testQueryParameters()
+    void testQueryParameters()
     {
         final HttpClient client = HttpClientAccessor.getHttpClient(destination);
         wireMockServer
@@ -121,7 +121,7 @@ public class ODataQueryReadByKeyTest
     }
 
     @Test
-    public void testConstructorWithStructuredQuery()
+    void testConstructorWithStructuredQuery()
     {
         final StructuredQuery structuredQuery =
             StructuredQuery

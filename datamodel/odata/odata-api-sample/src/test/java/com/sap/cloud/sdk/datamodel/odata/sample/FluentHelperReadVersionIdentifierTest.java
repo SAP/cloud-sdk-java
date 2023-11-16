@@ -8,7 +8,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -16,11 +15,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Product;
@@ -29,11 +28,9 @@ import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
 import io.vavr.control.Option;
 
-public class FluentHelperReadVersionIdentifierTest
+@WireMockTest
+class FluentHelperReadVersionIdentifierTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String NO_METADATA = null;
     private static final String NO_ETAG = null;
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
@@ -44,10 +41,10 @@ public class FluentHelperReadVersionIdentifierTest
 
     private HttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Nonnull
@@ -69,7 +66,7 @@ public class FluentHelperReadVersionIdentifierTest
     }
 
     @Test
-    public void testQueryExecuteSetsVersionIdentifierOnAllEntities()
+    void testQueryExecuteSetsVersionIdentifierOnAllEntities()
     {
         final String response =
             String
@@ -97,7 +94,7 @@ public class FluentHelperReadVersionIdentifierTest
     }
 
     @Test
-    public void testQueryExecuteSucceedsWithoutVersionIdentifierOnPartlyMissingMetadata()
+    void testQueryExecuteSucceedsWithoutVersionIdentifierOnPartlyMissingMetadata()
     {
         final String response =
             String
@@ -124,7 +121,7 @@ public class FluentHelperReadVersionIdentifierTest
     }
 
     @Test
-    public void testQueryExecuteSucceedsWithoutMetadata()
+    void testQueryExecuteSucceedsWithoutMetadata()
     {
         final String respons =
             String
@@ -146,7 +143,7 @@ public class FluentHelperReadVersionIdentifierTest
     }
 
     @Test
-    public void testQueryExecuteSucceedsWithoutVersionIdentifierOnPartlyMissingVersionIdentifier()
+    void testQueryExecuteSucceedsWithoutVersionIdentifierOnPartlyMissingVersionIdentifier()
     {
         final String response =
             String
@@ -173,7 +170,7 @@ public class FluentHelperReadVersionIdentifierTest
     }
 
     @Test
-    public void testQueryExecuteSucceedsWithoutVersionIdentifier()
+    void testQueryExecuteSucceedsWithoutVersionIdentifier()
     {
         final String response =
             String

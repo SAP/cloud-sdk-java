@@ -11,16 +11,16 @@ import java.io.StringReader;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.stream.JsonReader;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ZonedDateTimeAdapter;
 
-public class ZonedDateTimeAdapterTest
+class ZonedDateTimeAdapterTest
 {
 
     @Test
-    public void testDeserialization()
+    void testDeserialization()
         throws IOException
     {
         final String jsonInput = "\"/Date(1525730400000-0120)/\"";

@@ -14,7 +14,7 @@ import java.net.URI;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.collect.ImmutableMap;
@@ -23,13 +23,13 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
 import lombok.SneakyThrows;
 
-public class ODataUriFactoryTest
+class ODataUriFactoryTest
 {
     private static final String servicePath = "/A_Service";
     private static final String entityName = "A_Entity";
 
     @Test
-    public void testDoubleSlashesInPath()
+    void testDoubleSlashesInPath()
     {
         final String specialPath = "//" + servicePath + "////";
         final String expected = servicePath + "/" + entityName;
@@ -39,7 +39,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testSpecialCharactersInPath()
+    void testSpecialCharactersInPath()
     {
         final String specialPath = "Ä$_?Se&rv iß%ë#";
         final String expected = "/%C3%84$_%3FSe&rv%20i%C3%9F%25%C3%AB%23/" + entityName;
@@ -49,7 +49,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testSafeCharactersInPath()
+    void testSafeCharactersInPath()
     {
         final String specialPath = "A_Service/-._~!$'()*,;&=@:+";
         final String entityPath = "B_entityPath/-._~!$'()*,;&=@:+";
@@ -60,7 +60,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testEmptyEntityPath()
+    void testEmptyEntityPath()
     {
         final String expected = servicePath + "/";
 
@@ -69,7 +69,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testSpecialCharactersInEntityPath()
+    void testSpecialCharactersInEntityPath()
     {
         final String specialEntityPath = "A$_?En&ti t%y#";
         final String expected = servicePath + "/A$_%3FEn&ti%20t%25y%23";
@@ -80,7 +80,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testNoDoubleEncodingInQuery()
+    void testNoDoubleEncodingInQuery()
     {
         final String specialEntityPath = "A$_?En&ti t%y#";
         final String query =
@@ -98,7 +98,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testNoDoubleEncodingInParameter()
+    void testNoDoubleEncodingInParameter()
     {
         final String specialEntityPath = "A$_?En&ti t%y#";
         final String parameters = "('%25abc')";
@@ -112,7 +112,7 @@ public class ODataUriFactoryTest
     }
 
     @Test
-    public void testFilterWithForeignCharactersInQuery()
+    void testFilterWithForeignCharactersInQuery()
     {
         //Maps unencoded value to corresponding encoded value
         final ImmutableMap<String, String> encodingMap =
@@ -144,7 +144,7 @@ public class ODataUriFactoryTest
 
     @SneakyThrows
     @Test
-    public void testSpecialCharactersAgainstEndpoint()
+    void testSpecialCharactersAgainstEndpoint()
     {
         final WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
         wireMockServer.start();
@@ -163,7 +163,7 @@ public class ODataUriFactoryTest
 
     // Regression test for https://github.com/SAP/cloud-sdk/issues/741
     @Test
-    public void testPipeIsNotASafeQueryCharacter()
+    void testPipeIsNotASafeQueryCharacter()
     {
         final String query = "(Name eq 'Version|1')";
         final String expectedEncodedQuery = "(Name%20eq%20'Version%7C1')";

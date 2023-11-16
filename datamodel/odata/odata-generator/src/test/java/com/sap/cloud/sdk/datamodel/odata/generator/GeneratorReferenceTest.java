@@ -19,7 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.sun.codemodel.JCodeModel;
 
-public class GeneratorReferenceTest
+class GeneratorReferenceTest
 {
     private static final String REFLECTION_FIELD_CODE_MODEL = "codeModel";
     private static final String TEST_PACKAGE_NAMESPACE = "org.example.namespace";
