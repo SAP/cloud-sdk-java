@@ -53,6 +53,12 @@ class ODataRequestActionTest
         client = HttpClientAccessor.getHttpClient(destination);
     }
 
+    @AfterEach
+    void teardown()
+    {
+        wireMockServer.stop();
+    }
+
     @Test
     void testActionWithoutParameters()
     {
