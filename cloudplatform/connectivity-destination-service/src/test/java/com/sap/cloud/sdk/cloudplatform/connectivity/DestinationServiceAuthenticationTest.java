@@ -77,7 +77,7 @@ class DestinationServiceAuthenticationTest
     }
 
     @AfterAll
-    public static void resetFacades()
+    static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);

@@ -39,6 +39,8 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
@@ -144,8 +146,9 @@ class ODataV2BatchRequestUnitTest
 
     @SneakyThrows
     @ParameterizedTest( name = "{0}" )
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
-    public void testAllOperations( @Nonnull final TestParameter parameter )
+    void testAllOperations( @Nonnull final TestParameter parameter )
     {
         final TestVdmEntity entity12 = TestVdmEntity.builder().integerValue(12).build();
         final TestVdmEntity entity13 = TestVdmEntity.builder().integerValue(13).build();
@@ -198,8 +201,9 @@ class ODataV2BatchRequestUnitTest
 
     @SneakyThrows
     @ParameterizedTest( name = "{0}" )
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParametersWithCustomHeaders" )
-    public void testAllOperationsWithCustomHeaders( @Nonnull final TestParameter parameter )
+    void testAllOperationsWithCustomHeaders( @Nonnull final TestParameter parameter )
     {
         final TestVdmEntity entity12 = TestVdmEntity.builder().integerValue(12).build();
         final TestVdmEntity entity13 = TestVdmEntity.builder().integerValue(13).build();

@@ -189,7 +189,7 @@ jobs:
           unzip -D target.zip
       - name: Test
         run: |
-          mvn --batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1 org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
+          mvn $MVN_CLI_ARGS org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1

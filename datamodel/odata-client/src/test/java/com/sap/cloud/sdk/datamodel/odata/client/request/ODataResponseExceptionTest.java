@@ -18,6 +18,8 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -54,6 +56,7 @@ class ODataResponseExceptionTest
 
     @SneakyThrows
     @ParameterizedTest
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
     void testEncodingGiven( @Nonnull final TestParameters parameters )
     {
@@ -71,6 +74,7 @@ class ODataResponseExceptionTest
 
     @SneakyThrows
     @ParameterizedTest
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "getTestParameters" )
     void testEncodingUnknown( @Nonnull final TestParameters parameters )
     {

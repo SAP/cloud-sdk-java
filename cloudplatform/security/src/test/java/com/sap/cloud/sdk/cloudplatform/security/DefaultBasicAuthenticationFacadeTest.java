@@ -81,7 +81,7 @@ class DefaultBasicAuthenticationFacadeTest
 
     @ParameterizedTest
     @MethodSource( "provideTestCases" )
-    public void testBasicAuthentication( @Nonnull final TestCase testCase )
+    void testBasicAuthentication( @Nonnull final TestCase testCase )
     {
         testCase.setupThreadContextAccessor();
         testCase.setupRequestHeaderAccessor();

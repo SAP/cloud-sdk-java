@@ -475,7 +475,7 @@ class DefaultHttpDestinationTest
 
     @Test
     @SneakyThrows
-    public void testProxyConfigurationOverwritesExistingProperties()
+    void testProxyConfigurationOverwritesExistingProperties()
     {
         final DefaultDestination baseProperties =
             DefaultDestination

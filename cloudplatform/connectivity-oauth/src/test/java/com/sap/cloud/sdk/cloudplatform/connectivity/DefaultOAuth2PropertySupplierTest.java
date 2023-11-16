@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultOAuth2PropertySupplier.convert;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
@@ -18,6 +19,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.CredentialType;
 
 import lombok.RequiredArgsConstructor;
@@ -106,6 +108,45 @@ class DefaultOAuth2PropertySupplierTest
         sut = new DefaultOAuth2PropertySupplier(options);
 
         assertThat(sut.getCredentialType()).isEqualTo(CredentialType.BINDING_SECRET);
+    }
+
+    @Test
+    void testCredentialTypeInstanceSecret()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.of("testInstanceSecret"))
+                .with("credentials.uaa.credential-type", "instance-secret")
+                .build();
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.INSTANCE_SECRET);
+        assertThatCode(sut::getClientIdentity)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessage("Failed to resolve property [uaa][clientid] from service binding.");
+    }
+
+    @Test
+    void testCredentialTypeX509()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.of("testX509"))
+                .with("credentials.uaa.credential-type", "x509")
+                .with("credentials.uaa.clientid", "id")
+                .with("credentials.uaa.certificate", "cert")
+                .with("credentials.uaa.key", "key")
+                .build();
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509);
+        assertThat(sut.getClientIdentity()).isInstanceOfSatisfying(ClientCertificate.class, cc -> {
+            assertThat(cc.getId()).isEqualTo("id");
+            assertThat(cc.getCertificate()).isEqualTo("cert");
+            assertThat(cc.getKey()).isEqualTo("key");
+        });
     }
 
     @RequiredArgsConstructor

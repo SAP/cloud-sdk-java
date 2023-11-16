@@ -82,7 +82,7 @@ class DestinationServiceAdapterTest
     private static ServiceBinding DEFAULT_SERVICE_BINDING;
 
     @BeforeAll
-    public static void setupSession()
+    static void setupSession()
     {
         mockutil.mockCurrentPrincipal();
         mockutil.mockCurrentTenant();
@@ -101,7 +101,7 @@ class DestinationServiceAdapterTest
     }
 
     @AfterAll
-    public static void resetFacades()
+    static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);

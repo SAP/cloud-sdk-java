@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -29,7 +31,7 @@ import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class DatamodelMetadataGeneratorIntegrationTest
+class DatamodelMetadataGeneratorIntegrationTest
 {
     private static final URI GENERATOR_REPOSITORY_LINK = URI.create("https://www.example.com");
     private static final MavenCoordinate GENERATOR_MAVEN_COORDINATE =
@@ -247,6 +249,7 @@ public class DatamodelMetadataGeneratorIntegrationTest
     }
 
     @ParameterizedTest
+    @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @EnumSource( Testcase.class )
     void testDatamodelMetadataGeneration( final Testcase testCase, @TempDir final Path outputDirectory )
         throws IOException
