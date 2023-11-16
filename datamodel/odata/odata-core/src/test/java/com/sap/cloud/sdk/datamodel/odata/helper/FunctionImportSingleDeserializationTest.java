@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -45,6 +47,7 @@ class FunctionImportSingleDeserializationTest
     private static final String FUNCTION_NAME = "SomeFunction";
 
     @ParameterizedTest
+    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
     @MethodSource
     void testDeserializeSingleResponse( @Nonnull final TestInput<?> testInput, @Nonnull final WireMockRuntimeInfo wm )
     {

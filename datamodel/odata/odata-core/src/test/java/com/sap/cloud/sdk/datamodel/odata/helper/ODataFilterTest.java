@@ -14,6 +14,8 @@ import java.time.ZonedDateTime;
 
 import javax.annotation.Nonnull;
 
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -33,6 +35,7 @@ class ODataFilterTest
     private static final EntityField<TestEntity, Integer> INT_FIELD = new EntityField<>("field");
 
     @ParameterizedTest
+    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
     @EnumSource( TestInput.class )
     void testFilterExpression( @Nonnull final TestInput testInput )
     {

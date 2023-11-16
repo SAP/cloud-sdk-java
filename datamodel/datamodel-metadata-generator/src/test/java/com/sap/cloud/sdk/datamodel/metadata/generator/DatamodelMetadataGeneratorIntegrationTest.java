@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -247,6 +249,7 @@ class DatamodelMetadataGeneratorIntegrationTest
     }
 
     @ParameterizedTest
+    @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
     @EnumSource( Testcase.class )
     void testDatamodelMetadataGeneration( final Testcase testCase, @TempDir final Path outputDirectory )
         throws IOException
