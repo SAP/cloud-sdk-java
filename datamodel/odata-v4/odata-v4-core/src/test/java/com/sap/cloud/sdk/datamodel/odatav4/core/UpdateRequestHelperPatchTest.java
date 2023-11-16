@@ -341,7 +341,7 @@ class UpdateRequestHelperPatchTest
 
     @Disabled( "Indirect changes on entity properties are not tracked. CLOUDECOSYSTEM-8217" )
     //    @Test
-    public void testIndirectCollectionPropertyViaGetPatchPayload()
+    void testIndirectCollectionPropertyViaGetPatchPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").emails(Lists.newArrayList()).build();
@@ -609,7 +609,7 @@ class UpdateRequestHelperPatchTest
 
     @Disabled( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
     //    @Test
-    public void testAddMemberToComplexCollection()
+    void testAddMemberToComplexCollection()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().complexProperties(new ArrayList<>()).build();
@@ -624,7 +624,7 @@ class UpdateRequestHelperPatchTest
 
     @Disabled( "Tracking changes within a collection of complex properties is not yet supported. CLOUDECOSYSTEM-8217" )
     //    @Test
-    public void testRemoveMemberFromComplexCollection()
+    void testRemoveMemberFromComplexCollection()
         throws Exception
     {
         final TestComplex collectionMember = TestComplex.builder().stringProperty("Foo").build();

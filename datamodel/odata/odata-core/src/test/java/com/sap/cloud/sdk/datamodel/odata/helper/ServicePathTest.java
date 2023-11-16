@@ -62,7 +62,7 @@ import lombok.EqualsAndHashCode;
  *   GET /A_RelatedEntitySet(Id)/to_TransitiveEntity -> multiple entities from A_TransitiveType
  */
 @WireMockTest
-public class ServicePathTest
+class ServicePathTest
 {
     private static final String SERVICE_A = "/path/to/serviceA";
     private static final String SERVICE_B = "/path/to/serviceB";
