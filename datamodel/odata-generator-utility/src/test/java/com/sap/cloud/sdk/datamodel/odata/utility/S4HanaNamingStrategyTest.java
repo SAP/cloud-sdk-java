@@ -263,9 +263,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -295,9 +293,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -328,9 +324,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -355,9 +349,7 @@ class S4HanaNamingStrategyTest
     @ParameterizedTest( name = "{0} -> {1}" )
     @Execution( value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline" )
     @MethodSource( "provideEntitySuffixData" )
-    public
-        void
-        testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         assertThat(new S4HanaNamingStrategy(NameSource.NAME).generateJavaFluentHelperClassName(name, null))
             .isEqualToIgnoringCase(expectedJavaName + "FluentHelper");
