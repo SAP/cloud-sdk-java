@@ -7,7 +7,7 @@ applications:
   random-route: true
   path: application/target/${artifactId}-application.jar
   buildpacks:
-    - sap_java_buildpack
+    - java_buildpack
   env:
     TARGET_RUNTIME: main
     SPRING_PROFILES_ACTIVE: 'cloud'
