@@ -12,17 +12,6 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
-    "artifactId": "scp-cf-spring",
-    "packaging": "maven-archetype",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "archetypes/scp-cf-spring/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.archetypes",
-    "parentArtifactId": "archetypes-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "scp-cf-spring-jakarta",
     "packaging": "maven-archetype",
     "releaseAudience": "Public",
