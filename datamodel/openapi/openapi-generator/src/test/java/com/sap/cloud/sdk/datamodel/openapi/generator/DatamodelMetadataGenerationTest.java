@@ -55,7 +55,7 @@ class DatamodelMetadataGenerationTest
     @ParameterizedTest
     @Execution(value = ExecutionMode.SAME_THREAD, reason = "Avoid overloading the CI/CD pipeline")
     @EnumSource( TestCase.class )
-    public void testDatamodelMetadataGeneration( final TestCase testCase )
+    void testDatamodelMetadataGeneration( final TestCase testCase )
     {
         final Try<GenerationResult> generationResult = readInputSpecAndInvokeGenerator(testCase);
 
