@@ -43,7 +43,6 @@
 		<httpcore5.version>5.2.3</httpcore5.version>
 		<httpclient5.version>5.2.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
-		<javax-servlet.version>4.0.1</javax-servlet.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
 		<!-- XSUAA & Spring Security -->
 		<!-- Keep these two versions consistent with the one from: com.sap.cloud.security.xsuaa:parent -->
@@ -273,11 +272,6 @@
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
 				<version>${javax-inject.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${javax-servlet.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>jakarta.servlet</groupId>

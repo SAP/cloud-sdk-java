@@ -559,8 +559,6 @@
 									<bannedDependencies>
 										<message>Do not use deprecated dependencies.</message>
 										<excludes>
-											<exclude>javax.servlet:servlet-api</exclude>
-											<!--  use javax.servlet:javax.servlet-api  -->
 											<exclude>javax.ws.rs:jsr311-api</exclude>
 											<!--  use javax.ws.rs:javax.ws.rs-api  -->
 											<exclude>commons-httpclient:commons-httpclient</exclude>
@@ -635,7 +633,6 @@
 										<excludes>
 											<exclude>javax:javaee-api</exclude>
 											<exclude>javax.inject:javax.inject</exclude>
-											<exclude>javax.servlet:javax.servlet-api</exclude>
 											<exclude>javax.ws.rs:javax.ws.rs-api</exclude>
 										</excludes>
 										<includes>
@@ -643,8 +640,6 @@
 											<include>javax:javaee-api:*:*:test</include>
 											<include>javax.inject:javax.inject:*:*:provided</include>
 											<include>javax.inject:javax.inject:*:*:test</include>
-											<include>javax.servlet:javax.servlet-api:*:*:provided</include>
-											<include>javax.servlet:javax.servlet-api:*:*:test</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:provided</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:test</include>
 										</includes>
