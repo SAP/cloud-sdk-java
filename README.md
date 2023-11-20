@@ -3,10 +3,10 @@
 
 <a href="https://sap.github.io/cloud-sdk/docs/java/overview-cloud-sdk-for-java"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-for-java.svg" alt="SAP Cloud SDK for Java Logo" height="122.92" width="226.773"/></a>
 
-![build](https://github.com/SAP/cloud-sdk-java/workflows/build/badge.svg)
+![build](https://github.com/SAP/cloud-sdk-java/actions/workflows/build.yaml/badge.svg)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-java)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java)
 [![Fosstars security rating](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_badge.svg)](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_report.md)
-[![Maven Central](https://img.shields.io/badge/maven_central-4.0.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-modules-bom%20AND%20v:4.*)
+[![Maven Central](https://img.shields.io/badge/maven_central-5.0.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-modules-bom%20AND%20v:5.*)
 
 # SAP Cloud SDK for Java
 
@@ -31,7 +31,7 @@ The SAP Cloud SDK for Java makes it easy to build highly connected, resilient, m
 It enables you to perform outbound requests using various protocols while only writing the business logic.
 
 ## Release Notes
-- For an overview of the latest changes, please refer to our [release notes.](https://sap.github.io/cloud-sdk/docs/java/v5/release-notes).
+- For an overview of the latest changes, please refer to our [release notes](https://sap.github.io/cloud-sdk/docs/java/v5/release-notes).
 
 ## Documentation
 - Our documentation can be found [here](https://sap.github.io/cloud-sdk/docs/java/getting-started), which includes an [overview of available tutorials](https://sap.github.io/cloud-sdk/docs/java/guides/tutorial-overview-sdk-java).
