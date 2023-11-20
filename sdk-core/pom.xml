@@ -5,7 +5,6 @@
 		<groupId>com.sap.cloud.sdk</groupId>
 		<artifactId>sdk-parent</artifactId>
 		<version>5.0.0-alpha-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>sdk-core</artifactId>
 	<name>Core Features of the SAP Cloud SDK</name>

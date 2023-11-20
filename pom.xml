@@ -34,7 +34,7 @@
 		<module>modules-bom</module>
 		<module>s4hana</module>
 		<module>testutil</module>
-		<module>dependency-bundles/sdk-core</module>
+		<module>sdk-core</module>
 	</modules>
 	<scm>
 		<connection />
