@@ -17,15 +17,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.SneakyThrows;
 
-public class SerializerRaceConditionTest
+class SerializerRaceConditionTest
 {
     @SneakyThrows
     @Test
-    public void testRaceCondition()
+    void testRaceCondition()
     {
         final TestVdmEntity entity = new TestVdmEntity();
         entity.setStringValue("string");

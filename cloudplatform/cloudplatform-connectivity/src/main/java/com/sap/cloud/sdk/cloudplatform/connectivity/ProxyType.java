@@ -63,14 +63,7 @@ public enum ProxyType
         }
         catch( final IllegalArgumentException e ) {
             if( log.isWarnEnabled() ) {
-                log
-                    .warn(
-                        ProxyType.class.getSimpleName()
-                            + " '"
-                            + identifier
-                            + "' is not supported. Falling back to "
-                            + defaultProxyType
-                            + ".");
+                log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultProxyType);
             }
             return defaultProxyType;
         }

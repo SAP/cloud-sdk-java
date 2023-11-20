@@ -10,30 +10,30 @@ import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
-public class ResilienceDecoratorTest
+class ResilienceDecoratorTest
 {
-    @Before
-    @After
-    public void resetFacadeLocator()
+    @BeforeEach
+    @AfterEach
+    void resetFacadeLocator()
     {
         FacadeLocator.setMockableInstance(new FacadeLocator.MockableInstance());
     }
 
-    @After
-    public void resetDecorationStrategy()
+    @AfterEach
+    void resetDecorationStrategy()
     {
         ResilienceDecorator.resetDecorationStrategy();
     }
 
     @Test
-    public void testGetDecorationStrategyReturnsSingleInstance()
+    void testGetDecorationStrategyReturnsSingleInstance()
     {
         final ResilienceDecorationStrategy singleStrategy = mock(ResilienceDecorationStrategy.class);
         mockDecorationStrategies(singleStrategy);
@@ -44,7 +44,7 @@ public class ResilienceDecoratorTest
     }
 
     @Test
-    public void testGetDecorationStrategyReturnsNoResilience()
+    void testGetDecorationStrategyReturnsNoResilience()
     {
         mockDecorationStrategies();
 
@@ -55,7 +55,7 @@ public class ResilienceDecoratorTest
     }
 
     @Test
-    public void testGetDecorationStrategyThrowsOnMultipleStrategies()
+    void testGetDecorationStrategyThrowsOnMultipleStrategies()
     {
         final ResilienceDecorationStrategy firstStrategy = mock(ResilienceDecorationStrategy.class);
         final ResilienceDecorationStrategy secondInstance = mock(ResilienceDecorationStrategy.class);

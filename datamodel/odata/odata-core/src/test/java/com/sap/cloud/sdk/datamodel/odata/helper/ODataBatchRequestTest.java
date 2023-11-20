@@ -16,7 +16,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
@@ -29,13 +28,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -56,7 +55,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.With;
 
-public class ODataBatchRequestTest
+@WireMockTest
+class ODataBatchRequestTest
 {
     private static final String ODATA_SERVICE_PATH = "/service/path";
 
@@ -142,21 +142,18 @@ public class ODataBatchRequestTest
             + "\r\n"
             + "--4729730C52B1E9D05AAAB969F2FEE6970--";
 
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private HttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         stubFor(head(urlEqualTo(ODATA_SERVICE_PATH)).willReturn(ok()));
     }
 
     @Test
-    public void testTwoCreatesInOneChangeSet()
+    void testTwoCreatesInOneChangeSet()
     {
         // prepare mocked data
         final ResponseDefinitionBuilder response =
@@ -187,7 +184,7 @@ public class ODataBatchRequestTest
     }
 
     @Test
-    public void testTwoCreatesInMultipleChangeSets()
+    void testTwoCreatesInMultipleChangeSets()
     {
         // prepare mocked data
         final ResponseDefinitionBuilder response =
@@ -223,7 +220,7 @@ public class ODataBatchRequestTest
     }
 
     @Test
-    public void testUpdateDeleteOperationInOneChangeSet()
+    void testUpdateDeleteOperationInOneChangeSet()
     {
         final String concreteNameEndpoint = "A_TestEntity(%27Test%27)";
 
@@ -256,7 +253,7 @@ public class ODataBatchRequestTest
     }
 
     @Test
-    public void testUpdateWithPatchRetainingNullValues()
+    void testUpdateWithPatchRetainingNullValues()
     {
         final String concreteNameEndpoint = "A_TestEntity(%27Test%27)";
 
@@ -318,7 +315,7 @@ public class ODataBatchRequestTest
     }
 
     @Test
-    public void testEncodingInBatchedUpdate()
+    void testEncodingInBatchedUpdate()
     {
         final ResponseDefinitionBuilder response =
             okForContentType(

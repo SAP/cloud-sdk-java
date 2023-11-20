@@ -27,13 +27,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpHeaders;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odatav4.TestUtility;
 import com.sap.cloud.sdk.datamodel.odatav4.core.ModificationResponse;
@@ -44,7 +46,8 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.TrippinServ
 /**
  * Tests the proper submission of the entity version identifier, transmitted as ETag in the HTTP headers.
  */
-public class ETagTest
+@WireMockTest
+class ETagTest
 {
     private static final String SERVICE_URL = "/some/service";
     private static final String ENTITY_COLLECTION = "People";
@@ -67,16 +70,13 @@ public class ETagTest
 
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
-
     private DefaultHttpDestination destination;
     private final TrippinService service = new DefaultTrippinService().withServicePath(SERVICE_URL);
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         tellWiremockToReturnCsrfToken();
     }
@@ -95,7 +95,7 @@ public class ETagTest
     }
 
     @Test
-    public void testParseETagFromGetAllResponse()
+    void testParseETagFromGetAllResponse()
     {
         stubFor(get(urlEqualTo(GET_ALL_REQUEST_URL)).willReturn(okJson(GET_ALL_RESPONSE_BODY)));
 
@@ -105,7 +105,7 @@ public class ETagTest
     }
 
     @Test
-    public void testParseETagFromCreateResponse()
+    void testParseETagFromCreateResponse()
     {
         stubFor(
             post(urlEqualTo(CREATE_URL)).willReturn(okJson(GET_BY_KEY_RESPONSE_BODY).withHeader("ETag", ETAG_RUSSELL)));
@@ -122,7 +122,7 @@ public class ETagTest
     }
 
     @Test
-    public void testParseETagFromUpdateResponse()
+    void testParseETagFromUpdateResponse()
     {
         stubFor(
             patch(urlEqualTo(GET_BY_KEY_REQUEST_URL))
@@ -140,7 +140,7 @@ public class ETagTest
     }
 
     @Test
-    public void testParseETagFromGetByKeyResponse()
+    void testParseETagFromGetByKeyResponse()
     {
         stubFor(
             get(urlEqualTo(GET_BY_KEY_REQUEST_URL))
@@ -157,7 +157,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPATCHContainsEtagByDefault()
+    void testUpdateWithPATCHContainsEtagByDefault()
     {
         stubFor(
             patch(urlEqualTo(GET_BY_KEY_REQUEST_URL))
@@ -180,7 +180,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPATCHLacksETagIfDisabled()
+    void testUpdateWithPATCHLacksETagIfDisabled()
     {
         stubFor(
             patch(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent().withHeader("ETag", ETAG_RUSSELL_UPDATED)));
@@ -200,7 +200,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPATCHMatchesAnyETagIfChosen()
+    void testUpdateWithPATCHMatchesAnyETagIfChosen()
     {
         stubFor(
             patch(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent().withHeader("ETag", ETAG_RUSSELL_UPDATED)));
@@ -220,7 +220,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPUTContainsETagByDefault()
+    void testUpdateWithPUTContainsETagByDefault()
     {
         stubFor(
             put(urlEqualTo(GET_BY_KEY_REQUEST_URL))
@@ -243,7 +243,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPUTLacksETagIfDisabled()
+    void testUpdateWithPUTLacksETagIfDisabled()
     {
         stubFor(
             put(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent().withHeader("ETag", ETAG_RUSSELL_UPDATED)));
@@ -263,7 +263,7 @@ public class ETagTest
     }
 
     @Test
-    public void testUpdateWithPUTLacksMatchesAnyETagIfChosen()
+    void testUpdateWithPUTLacksMatchesAnyETagIfChosen()
     {
         stubFor(
             put(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent().withHeader("ETag", ETAG_RUSSELL_UPDATED)));
@@ -283,7 +283,7 @@ public class ETagTest
     }
 
     @Test
-    public void testDeleteContainsETagByDefault()
+    void testDeleteContainsETagByDefault()
     {
         stubFor(
             delete(urlEqualTo(GET_BY_KEY_REQUEST_URL))
@@ -302,7 +302,7 @@ public class ETagTest
     }
 
     @Test
-    public void testDeleteLacksEtagIfDisabled()
+    void testDeleteLacksEtagIfDisabled()
     {
         stubFor(delete(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent()));
 
@@ -316,7 +316,7 @@ public class ETagTest
     }
 
     @Test
-    public void testDeleteMatchesAnyETagIfChosen()
+    void testDeleteMatchesAnyETagIfChosen()
     {
         stubFor(delete(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent()));
 
@@ -330,7 +330,7 @@ public class ETagTest
     }
 
     @Test
-    public void testNoETagReceived()
+    void testNoETagReceived()
     {
         stubFor(get(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(okJson(GET_BY_KEY_RESPONSE_BODY)));
         final Person person = service.getPeopleByKey("russellwhyte").execute(destination);
@@ -339,7 +339,7 @@ public class ETagTest
     }
 
     @Test
-    public void testNoIfMatchIsSentOnEmptyETag()
+    void testNoIfMatchIsSentOnEmptyETag()
     {
         stubFor(any(urlEqualTo(GET_BY_KEY_REQUEST_URL)).willReturn(noContent()));
 
@@ -353,7 +353,7 @@ public class ETagTest
     }
 
     @Test
-    public void testOverwritingExistingETagOnEntity()
+    void testOverwritingExistingETagOnEntity()
     {
         stubFor(
             any(urlEqualTo(GET_BY_KEY_REQUEST_URL))

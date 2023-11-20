@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Disabled( "Test runs against a reference service on odata.org. Use it only to manually verify behaviour." )
-public class ODataResponseParsingIntegrationTest
+class ODataResponseParsingIntegrationTest
 {
     HttpClient httpClient;
 
@@ -184,7 +184,7 @@ public class ODataResponseParsingIntegrationTest
     }
 
     @BeforeEach
-    public void configure()
+    void configure()
     {
         final Destination dest = DefaultHttpDestination.builder("https://services.odata.org").build();
         httpClient = HttpClientAccessor.getHttpClient(dest);
@@ -192,7 +192,7 @@ public class ODataResponseParsingIntegrationTest
 
     //Validating response for primitive collections
     @Test
-    public void testEmailList()
+    void testEmailList()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -210,7 +210,7 @@ public class ODataResponseParsingIntegrationTest
 
     //Validating response for complex types
     @Test
-    public void testAddressInfo()
+    void testAddressInfo()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -229,7 +229,7 @@ public class ODataResponseParsingIntegrationTest
 
     //The below test tests an 1:1 navigation property
     @Test
-    public void testExpandedNavigationBestFriend()
+    void testExpandedNavigationBestFriend()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -246,7 +246,7 @@ public class ODataResponseParsingIntegrationTest
 
     //The below tests test an 1:n navigation property
     @Test
-    public void testExpandedNavigationFriends()
+    void testExpandedNavigationFriends()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -263,7 +263,7 @@ public class ODataResponseParsingIntegrationTest
     }
 
     @Test
-    public void testExpandedNavigationTrips()
+    void testExpandedNavigationTrips()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -280,7 +280,7 @@ public class ODataResponseParsingIntegrationTest
     }
 
     @Test
-    public void testExpandedNavigationTripsWithNestedRequest()
+    void testExpandedNavigationTripsWithNestedRequest()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -298,7 +298,7 @@ public class ODataResponseParsingIntegrationTest
 
     //Validating response for error message
     @Test
-    public void testServiceError()
+    void testServiceError()
     {
         final ODataRequestRead request =
             new ODataRequestRead(
@@ -310,7 +310,7 @@ public class ODataResponseParsingIntegrationTest
     }
 
     @Test
-    public void testExceptionWhenUnbufferedHttpEntityIsAccessedMultipleTimes()
+    void testExceptionWhenUnbufferedHttpEntityIsAccessedMultipleTimes()
     {
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);
@@ -322,7 +322,7 @@ public class ODataResponseParsingIntegrationTest
     }
 
     @Test
-    public void testWhenUnbufferedHttpEntityIsAccessedAfterAccessingBufferedHttpEntity()
+    void testWhenUnbufferedHttpEntityIsAccessedAfterAccessingBufferedHttpEntity()
     {
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);

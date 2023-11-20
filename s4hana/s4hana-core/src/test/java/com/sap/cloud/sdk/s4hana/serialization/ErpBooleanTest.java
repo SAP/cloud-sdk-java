@@ -5,14 +5,15 @@
 package com.sap.cloud.sdk.s4hana.serialization;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated
-public class ErpBooleanTest
+class ErpBooleanTest
 {
     @Test
-    public void testErpBoolean()
+    void testErpBoolean()
     {
         {
             final ErpBoolean erpBoolean = new ErpBoolean(true);
@@ -74,15 +75,15 @@ public class ErpBooleanTest
         }
     }
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testIllegalArgumentWithString()
+    @Test
+    void testIllegalArgumentWithString()
     {
-        new ErpBoolean("abc");
+        assertThatThrownBy(() -> new ErpBoolean("abc")).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testIllegalArgumentWithLowerCaseX()
+    @Test
+    void testIllegalArgumentWithLowerCaseX()
     {
-        new ErpBoolean("x");
+        assertThatThrownBy(() -> new ErpBoolean("x")).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

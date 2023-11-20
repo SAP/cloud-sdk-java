@@ -15,7 +15,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -43,7 +43,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
-public class ExtendedEntityClassTest
+class ExtendedEntityClassTest
 {
     private static final String PRODUCT_INPUT =
         "{"
@@ -150,7 +150,7 @@ public class ExtendedEntityClassTest
     }
 
     @Test
-    public void testGsonDeserialization()
+    void testGsonDeserialization()
     {
         final CustomProduct product = new Gson().fromJson(PRODUCT_INPUT, CustomProduct.class);
 
@@ -165,7 +165,7 @@ public class ExtendedEntityClassTest
     }
 
     @Test
-    public void testGsonSerialization()
+    void testGsonSerialization()
     {
         final CustomProduct customProduct = new CustomProduct();
         customProduct.setVersionIdentifier("testVersion");
@@ -185,7 +185,7 @@ public class ExtendedEntityClassTest
     }
 
     @Test
-    public void testJacksonDeserialization()
+    void testJacksonDeserialization()
         throws Exception
     {
         final ObjectMapper mapper = new ObjectMapper();
@@ -202,7 +202,7 @@ public class ExtendedEntityClassTest
     }
 
     @Test
-    public void testJacksonSerialization()
+    void testJacksonSerialization()
         throws Exception
     {
         final CustomProduct customProduct = new CustomProduct();
@@ -220,7 +220,7 @@ public class ExtendedEntityClassTest
     }
 
     @Test
-    public void testFromMapWithNavigationProperties()
+    void testFromMapWithNavigationProperties()
     {
         final Map<String, Object> productMap = new HashMap<>();
         final Collection<Map<String, Object>> listOfMaps = new ArrayList<>();

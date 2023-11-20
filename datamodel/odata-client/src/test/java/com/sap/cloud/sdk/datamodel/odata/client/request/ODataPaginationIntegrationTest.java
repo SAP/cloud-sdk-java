@@ -18,7 +18,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 @Disabled( "Test runs against a reference service on odata.org. Use it only to manually verify behaviour." )
-public class ODataPaginationIntegrationTest
+class ODataPaginationIntegrationTest
 {
     private static final Destination destination =
         DefaultHttpDestination.builder("https://services.odata.org/").build();
@@ -26,7 +26,7 @@ public class ODataPaginationIntegrationTest
     private static final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
     @Test
-    public void testCountOverPages()
+    void testCountOverPages()
     {
         final ODataRequestRead request =
             new ODataRequestRead("V4/Northwind/Northwind.svc", "Customers", "$count=true", ODataProtocol.V4);

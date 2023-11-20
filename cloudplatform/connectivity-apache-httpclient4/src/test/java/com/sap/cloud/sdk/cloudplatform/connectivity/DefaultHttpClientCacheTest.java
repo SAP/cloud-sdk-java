@@ -16,9 +16,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.http.client.HttpClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -30,7 +30,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 
-public class DefaultHttpClientCacheTest
+class DefaultHttpClientCacheTest
 {
 
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
@@ -52,16 +52,16 @@ public class DefaultHttpClientCacheTest
     private Principal mockedPrincipal = PRINCIPAL;
     private Tenant mockedTenant = TENANT;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         CacheManager.invalidateAll();
         PrincipalAccessor.setPrincipalFacade(() -> Option.of(mockedPrincipal).toTry());
         TenantAccessor.setTenantFacade(() -> Option.of(mockedTenant).toTry());
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         CacheManager.invalidateAll();
         PrincipalAccessor.setPrincipalFacade(null);
@@ -69,7 +69,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testGetClientExpiresAfterWrite()
+    void testGetClientExpiresAfterWrite()
     {
         final AtomicLong ticker = new AtomicLong(0);
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES, ticker::get);
@@ -99,7 +99,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -127,7 +127,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -157,7 +157,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testGetClientWithDestinationUsesTenantOptionalForIsolation()
+    void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -191,7 +191,7 @@ public class DefaultHttpClientCacheTest
 
     @Test
     //This is a known limitation of excluding header providers in the equality check of destinations
-    public void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
+    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
         final Header header1 = new Header("foo", "bar");
@@ -216,7 +216,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -256,7 +256,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testInvalidateTenantCacheEntries()
+    void testInvalidateTenantCacheEntries()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -292,7 +292,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testInvalidatePrincipalCacheEntries()
+    void testInvalidatePrincipalCacheEntries()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
@@ -324,7 +324,7 @@ public class DefaultHttpClientCacheTest
     }
 
     @Test
-    public void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
+    void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 

@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import org.assertj.core.api.Condition;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -42,19 +42,19 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 
-public class Resilience4jDecorationAsyncTest
+class Resilience4jDecorationAsyncTest
 {
     private static final String SUCCESS = "success";
     private static final String ERROR = "error";
 
-    @After
-    public void resetExecutor()
+    @AfterEach
+    void resetExecutor()
     {
         ThreadContextExecutors.setExecutor(null);
     }
 
     @Test
-    public void testAsyncExecution()
+    void testAsyncExecution()
         throws ExecutionException,
             InterruptedException
     {
@@ -81,7 +81,7 @@ public class Resilience4jDecorationAsyncTest
     }
 
     @Test
-    public void testTimeoutSyncExecution()
+    void testTimeoutSyncExecution()
     {
         final Semaphore threadsHavingStarted = new Semaphore(0);
         final Semaphore threadsAllowedToEnd = new Semaphore(0);
@@ -101,7 +101,7 @@ public class Resilience4jDecorationAsyncTest
     }
 
     @Test
-    public void testTimeoutAsyncExecution()
+    void testTimeoutAsyncExecution()
     {
         final Semaphore threadsHavingStarted = new Semaphore(0);
         final Semaphore threadsAllowedToEnd = new Semaphore(0);
@@ -123,7 +123,7 @@ public class Resilience4jDecorationAsyncTest
     }
 
     @Test
-    public void testManyConcurrentRequests()
+    void testManyConcurrentRequests()
         throws ExecutionException,
             InterruptedException
     {
@@ -168,7 +168,7 @@ public class Resilience4jDecorationAsyncTest
     }
 
     @Test
-    public void testBulkheadFullForConcurrentlyRunningRequests()
+    void testBulkheadFullForConcurrentlyRunningRequests()
     {
         final int numCalls = 3;
 
@@ -217,8 +217,8 @@ public class Resilience4jDecorationAsyncTest
     }
 
     @Test
-    @Ignore( "Test is unreliable on Jenkins. Use this to verify the behavior locally." )
-    public void testTimeoutExceptionWhenBulkheadIsNotFullForConcurrentlyRunningRequests()
+    @Disabled( "Test is unreliable on Jenkins. Use this to verify the behavior locally." )
+    void testTimeoutExceptionWhenBulkheadIsNotFullForConcurrentlyRunningRequests()
     {
         final int numCalls = 3;
 

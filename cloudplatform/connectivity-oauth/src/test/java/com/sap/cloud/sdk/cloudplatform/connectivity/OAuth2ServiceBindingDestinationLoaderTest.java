@@ -23,9 +23,9 @@ import java.util.ServiceLoader;
 import java.util.function.Predicate;
 
 import org.apache.http.HttpHeaders;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ import com.sap.cloud.security.config.ClientIdentity;
 
 import io.vavr.control.Try;
 
-public class OAuth2ServiceBindingDestinationLoaderTest
+class OAuth2ServiceBindingDestinationLoaderTest
 {
     private static final URI baseUrl = URI.create("baseUrl");
     private static final URI tokenUrl = URI.create("tokenUrl");
@@ -55,20 +55,20 @@ public class OAuth2ServiceBindingDestinationLoaderTest
         ServiceBindingDestinationOptions.forService(EMPTY_BINDING).build();
     private OAuth2ServiceBindingDestinationLoader sut;
 
-    @Before
-    public void initializeSubjectUnderTest()
+    @BeforeEach
+    void initializeSubjectUnderTest()
     {
         sut = new OAuth2ServiceBindingDestinationLoader();
     }
 
-    @After
-    public void resetSubjectUnderTest()
+    @AfterEach
+    void resetSubjectUnderTest()
     {
         OAuth2ServiceBindingDestinationLoader.resetPropertySuppliers();
     }
 
     @Test
-    public void testClassIsPickedUpByServiceLoaderPattern()
+    void testClassIsPickedUpByServiceLoaderPattern()
     {
         final ServiceLoader<ServiceBindingDestinationLoader> load =
             ServiceLoader.load(ServiceBindingDestinationLoader.class, getClass().getClassLoader());
@@ -77,14 +77,14 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testKnownMappingsAreRegistered()
+    void testKnownMappingsAreRegistered()
     {
         assertThat(DEFAULT_SERVICE_RESOLVERS)
             .containsExactlyElementsOf(BtpServicePropertySuppliers.getDefaultServiceResolvers());
     }
 
     @Test
-    public void testCustomServiceCanBeRegistered()
+    void testCustomServiceCanBeRegistered()
     {
         OAuth2ServiceBindingDestinationLoader
             .registerPropertySupplier(
@@ -95,7 +95,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testOptionsMatcher()
+    void testOptionsMatcher()
     {
         OAuth2ServiceBindingDestinationLoader
             .registerPropertySupplier(
@@ -116,7 +116,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
 
     @SuppressWarnings( "unchecked" )
     @Test
-    public void testOptionsMatchOrder()
+    void testOptionsMatchOrder()
     {
         final OAuth2PropertySupplier supplier = mock(OAuth2PropertySupplier.class);
         final Predicate<ServiceBindingDestinationOptions> matcher1 = mock(Predicate.class);
@@ -142,7 +142,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testUnknownService()
+    void testUnknownService()
     {
         final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
         assertThat(result.isFailure()).isTrue();
@@ -150,7 +150,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testMissingClientId()
+    void testMissingClientId()
     {
         final OAuth2PropertySupplier mock = new DefaultOAuth2PropertySupplier(OPTIONS_WITH_EMPTY_BINDING);
 
@@ -163,7 +163,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testMissingRequiredProperties()
+    void testMissingRequiredProperties()
     {
         final OAuth2PropertySupplier mock = spy(new DefaultOAuth2PropertySupplier(OPTIONS_WITH_EMPTY_BINDING));
         when(mock.isOAuth2Binding()).thenReturn(true);
@@ -177,7 +177,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testClientSecretBasedBinding()
+    void testClientSecretBasedBinding()
     {
         final ClientCredentials credentials = new ClientCredentials("id", "secret");
 
@@ -204,7 +204,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testInvalidCertificate()
+    void testInvalidCertificate()
     {
         final ClientCertificate certificate = new ClientCertificate("invalid cert", "invalid key", "id");
 
@@ -224,7 +224,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testErrorHandling()
+    void testErrorHandling()
     {
         final ImmutableMap<String, Object> bindingCredentials =
             ImmutableMap
@@ -328,7 +328,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testProxiedDestination()
+    void testProxiedDestination()
     {
         final DefaultHttpDestination baseDestination =
             DefaultHttpDestination
@@ -374,7 +374,7 @@ public class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testResilienceIsAdded()
+    void testResilienceIsAdded()
     {
         final DefaultHttpDestination baseDestination = DefaultHttpDestination.builder(baseUrl).name("foo").build();
 

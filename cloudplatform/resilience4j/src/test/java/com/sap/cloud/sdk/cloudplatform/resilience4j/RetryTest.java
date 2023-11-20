@@ -18,8 +18,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -32,10 +32,10 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionEx
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 
-public class RetryTest
+class RetryTest
 {
     @Test
-    public void testDisabledRetries()
+    void testDisabledRetries()
         throws Exception
     {
         final Callable<?> callableFailure = mock(Callable.class);
@@ -58,7 +58,7 @@ public class RetryTest
     }
 
     @Test
-    public void testRetriesWithoutWaitDurationFailure()
+    void testRetriesWithoutWaitDurationFailure()
         throws Exception
     {
         final int attempts = 5;
@@ -77,7 +77,7 @@ public class RetryTest
     }
 
     @Test
-    public void testRetriesWithoutWaitDurationSuccess()
+    void testRetriesWithoutWaitDurationSuccess()
         throws Exception
     {
         final int attempts = TestCallable.maxExpectedAttempts;
@@ -93,7 +93,7 @@ public class RetryTest
     }
 
     @Test
-    public void testExceptionPredicate()
+    void testExceptionPredicate()
         throws Exception
     {
         final Callable<?> callable = mock(Callable.class);
@@ -122,8 +122,8 @@ public class RetryTest
     }
 
     @Test
-    @Ignore( "Test is unreliable on jenkins. Use this to verify the timeout behaviour locally." )
-    public void testTimeLimiterWithRetries()
+    @Disabled( "Test is unreliable on jenkins. Use this to verify the timeout behaviour locally." )
+    void testTimeLimiterWithRetries()
         throws Exception
     {
         // Test that timeouts are applied to retries individually
@@ -153,7 +153,7 @@ public class RetryTest
     }
 
     @Test
-    public void testRetriesTriggerCircuitBreaker()
+    void testRetriesTriggerCircuitBreaker()
         throws Exception
     {
         final int circuitBreakerClosedBuffer = CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE;

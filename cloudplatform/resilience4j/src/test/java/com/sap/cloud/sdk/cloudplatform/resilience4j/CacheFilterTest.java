@@ -45,7 +45,7 @@ import lombok.SneakyThrows;
  * Executing the tests in the same thread to circumvent a race condition when creating caches in parallel.
  */
 @Execution( ExecutionMode.SAME_THREAD )
-public class CacheFilterTest
+class CacheFilterTest
 {
     @SuppressWarnings( "deprecation" )
     @Nonnull
@@ -61,7 +61,7 @@ public class CacheFilterTest
             .cacheConfiguration(ResilienceConfiguration.CacheConfiguration.of(Duration.ofDays(1)).withParameters(1));
 
     @BeforeEach
-    public void beforeEach()
+    void beforeEach()
     {
         ResilienceDecorator.clearAllCacheEntries(RESILIENCE_CONFIGURATION);
         invokedFilters = new ArrayList<>();
@@ -69,7 +69,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterAppliedToTheCache()
+    void testCacheFilterAppliedToTheCache()
     {
         final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
 
@@ -84,7 +84,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testAllCacheFiltersInvokedUntilOneMatches()
+    void testAllCacheFiltersInvokedUntilOneMatches()
     {
         tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
 
@@ -105,7 +105,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testClearCacheMethodAppliesDefaultFiltersAsConjunction()
+    void testClearCacheMethodAppliesDefaultFiltersAsConjunction()
     {
         mockUtil.setOrMockCurrentTenant("tenant1");
 
@@ -143,7 +143,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterAnd()
+    void testCacheFilterAnd()
     {
         final CacheFilter trueFilter = ( configuration, cacheKey, cacheEntry ) -> true;
         final CacheFilter falseFilter = ( configuration, cacheKey, cacheEntry ) -> false;
@@ -164,7 +164,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterOr()
+    void testCacheFilterOr()
     {
         final CacheFilter trueFilter = ( configuration, cacheKey, cacheEntry ) -> true;
         final CacheFilter falseFilter = ( configuration, cacheKey, cacheEntry ) -> false;
@@ -185,7 +185,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testFilterCacheByTenantAndThenByParameter()
+    void testFilterCacheByTenantAndThenByParameter()
     {
         mockUtil.setOrMockCurrentTenant("tenant1");
 
@@ -234,7 +234,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterFactoryMethodsForTenant()
+    void testCacheFilterFactoryMethodsForTenant()
     {
         final String tenantId = "tenant";
         mockUtil.setOrMockCurrentTenant(tenantId);
@@ -253,7 +253,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterFactoryMethodsForPrincipal()
+    void testCacheFilterFactoryMethodsForPrincipal()
     {
         final String principalId = "principal";
         mockUtil.setOrMockCurrentPrincipal(principalId);
@@ -272,7 +272,7 @@ public class CacheFilterTest
     }
 
     @Test
-    public void testCacheFilterFactoryMethodsForParameters()
+    void testCacheFilterFactoryMethodsForParameters()
     {
         final CacheFilter currentParametersFilter = CacheFilter.keyMatchesParameters();
 

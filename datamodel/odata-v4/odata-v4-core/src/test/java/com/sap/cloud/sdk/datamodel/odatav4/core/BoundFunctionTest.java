@@ -14,7 +14,7 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.L
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class BoundFunctionTest
+class BoundFunctionTest
 {
     private static final DefaultTrippinService service = new DefaultTrippinService().withServicePath("service-root");
     private static final Person person = Person.builder().userName("Fridolin").build();

@@ -13,10 +13,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.FileUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -26,17 +27,14 @@ import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
 
 import lombok.SneakyThrows;
 
-public class DatamodelMetadataGenerationTest
+class DatamodelMetadataGenerationTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
     private final Path TEST_RESOURCES_DIRECTORY = Paths.get("src/test/resources/" + getClass().getSimpleName());
 
     @Test
-    public void testDatamodelMetadataGeneration()
+    void testDatamodelMetadataGeneration( @Nonnull @TempDir final File temporaryFolder )
     {
-        final Path temporaryPath = temporaryFolder.getRoot().toPath();
+        final Path temporaryPath = temporaryFolder.toPath();
 
         executeDatamodelGenerator(temporaryPath);
 
@@ -45,10 +43,10 @@ public class DatamodelMetadataGenerationTest
 
     //Use this test method to regenerate the test comparison output based on the latest development
     // @Test
-    public void regenerateTestComparisonOutput()
+    public void regenerateTestComparisonOutput( @Nonnull @TempDir final File temporaryFolder )
         throws IOException
     {
-        final Path temporaryPath = temporaryFolder.getRoot().toPath();
+        final Path temporaryPath = temporaryFolder.toPath();
 
         executeDatamodelGenerator(temporaryPath);
 

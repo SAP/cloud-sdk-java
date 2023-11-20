@@ -5,10 +5,11 @@
 package com.sap.cloud.sdk.cloudplatform.cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
@@ -21,17 +22,17 @@ import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-public class CacheKeyTest
+class CacheKeyTest
 {
-    @BeforeClass
-    public static void setupAccessors()
+    @BeforeAll
+    static void setupAccessors()
     {
         PrincipalAccessor.setPrincipalFacade(() -> Try.success(new DefaultPrincipal("P")));
         TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("T")));
     }
 
-    @AfterClass
-    public static void tearDownAccessors()
+    @AfterAll
+    static void tearDownAccessors()
     {
         PrincipalAccessor.setPrincipalFacade(null);
         TenantAccessor.setTenantFacade(null);
@@ -51,7 +52,7 @@ public class CacheKeyTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final String a = "dummy";
         final int b = 42;
@@ -80,14 +81,15 @@ public class CacheKeyTest
         assertThat(cacheKey).isNotEqualTo(CacheKey.ofTenantIsolation().append(a, b, c));
     }
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testAppend()
+    @Test
+    void testAppend()
     {
-        CacheKey.ofTenantAndPrincipalIsolation().append("string", null);
+        assertThatThrownBy(() -> CacheKey.ofTenantAndPrincipalIsolation().append("string", null))
+            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testOf()
+    void testOf()
     {
         final String tenantOrZoneId = "tenantOrZoneId";
         final Tenant tenant = new DefaultTenant(tenantOrZoneId);
@@ -107,7 +109,7 @@ public class CacheKeyTest
     }
 
     @Test
-    public void testOfNoIsolation()
+    void testOfNoIsolation()
     {
         final CacheKey cacheKey = CacheKey.of(null, null);
 
@@ -116,7 +118,7 @@ public class CacheKeyTest
     }
 
     @Test
-    public void testOfTenantOnlyIsolation()
+    void testOfTenantOnlyIsolation()
     {
         final CacheKey cacheKey = CacheKey.ofTenantIsolation();
 
@@ -125,7 +127,7 @@ public class CacheKeyTest
     }
 
     @Test
-    public void testofTenantAndPrincipalIsolation()
+    void testofTenantAndPrincipalIsolation()
     {
         final CacheKey cacheKey = CacheKey.ofTenantAndPrincipalIsolation();
 

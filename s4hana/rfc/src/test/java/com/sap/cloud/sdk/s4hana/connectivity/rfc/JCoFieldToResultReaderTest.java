@@ -6,7 +6,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.gson.GsonBuilder;
@@ -14,13 +14,13 @@ import com.sap.cloud.sdk.result.GsonResultElementFactory;
 import com.sap.conn.jco.JCoField;
 
 @Deprecated
-public class JCoFieldToResultReaderTest
+class JCoFieldToResultReaderTest
 {
     private static final String FIELD_NAME = "field";
     private static final String STRING_VALUE = "string-value";
 
     @Test
-    public void testAccessingByteArrayPrimitiveAsString()
+    void testAccessingByteArrayPrimitiveAsString()
     {
         final JCoFieldToResultReader cut = new JCoFieldToResultReader();
 

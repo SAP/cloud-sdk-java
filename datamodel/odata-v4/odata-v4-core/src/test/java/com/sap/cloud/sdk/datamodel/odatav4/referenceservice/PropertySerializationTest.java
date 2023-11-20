@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +21,10 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.PersonGender;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 
-public class PropertySerializationTest
+class PropertySerializationTest
 {
     @Test
-    public void testEnum()
+    void testEnum()
     {
         final Person person = Person.builder().gender(PersonGender.FEMALE).firstName("Eve").build();
         final String json = new Gson().toJson(person);
@@ -37,7 +37,7 @@ public class PropertySerializationTest
     }
 
     @Test
-    public void testComplexCollection()
+    void testComplexCollection()
     {
         final City city = new City();
         city.setName("Potsdam");
@@ -65,7 +65,7 @@ public class PropertySerializationTest
     }
 
     @Test
-    public void testPrimitiveCollection()
+    void testPrimitiveCollection()
     {
         final String email = "eve@sap.com";
         final Person person = Person.builder().emails(Arrays.asList(email)).build();
@@ -78,7 +78,7 @@ public class PropertySerializationTest
     }
 
     @Test
-    public void testDateTimeGson()
+    void testDateTimeGson()
     {
         final OffsetDateTime date1 = LocalDate.of(2020, 2, 20).atStartOfDay().atOffset(ZoneOffset.UTC);
         final OffsetDateTime date2 = LocalDate.of(2020, 2, 20).atTime(3, 0).atOffset(ZoneOffset.ofHours(1));
@@ -100,7 +100,7 @@ public class PropertySerializationTest
     }
 
     @Test
-    public void testDateTimeJackson()
+    void testDateTimeJackson()
         throws JsonProcessingException
     {
         final OffsetDateTime date1 = LocalDate.of(2020, 2, 20).atStartOfDay().atOffset(ZoneOffset.UTC);

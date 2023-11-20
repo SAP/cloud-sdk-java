@@ -6,12 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class BasicAuthHeaderEncoderTest
+class BasicAuthHeaderEncoderTest
 {
     @Test
-    public void testEncodeUserNamePassword()
+    void testEncodeUserNamePassword()
     {
         final String username = "63b2dc0c-5c37-30a3-af7b-cc40c305484d";
         final String password = "1db8ec85-75b4-3593-9035-dc3b5b1aca73";

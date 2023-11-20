@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
-public class ODataDeltaLinkTest
+class ODataDeltaLinkTest
 {
     private static final String PAYLOAD_DELTA_LINK =
         "{"
@@ -27,7 +27,7 @@ public class ODataDeltaLinkTest
             + "}";
 
     @Test
-    public void testEmptyDeltaLinkV2()
+    void testEmptyDeltaLinkV2()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
@@ -40,7 +40,7 @@ public class ODataDeltaLinkTest
     }
 
     @Test
-    public void testEmptyDeltaLinkV4()
+    void testEmptyDeltaLinkV4()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
@@ -53,7 +53,7 @@ public class ODataDeltaLinkTest
     }
 
     @Test
-    public void testNotParsedDeltaLinkV2()
+    void testNotParsedDeltaLinkV2()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
@@ -66,7 +66,7 @@ public class ODataDeltaLinkTest
     }
 
     @Test
-    public void testParsedDeltaLinkV4()
+    void testParsedDeltaLinkV4()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
@@ -80,7 +80,7 @@ public class ODataDeltaLinkTest
     }
 
     @Test
-    public void testEmptyDeltaTokenV4()
+    void testEmptyDeltaTokenV4()
     {
         final String emptyToken = "{\"@odata.deltaLink\": \"/v1/foo/bar/endpoint?$deltatoken=&foo=bar\"}";
 

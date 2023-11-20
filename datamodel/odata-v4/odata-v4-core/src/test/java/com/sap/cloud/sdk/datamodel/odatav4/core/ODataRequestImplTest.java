@@ -6,15 +6,15 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 
-public class ODataRequestImplTest
+class ODataRequestImplTest
 {
     @Test
-    public void testRequestWithoutNestedRequests()
+    void testRequestWithoutNestedRequests()
     {
         final NavigationPropertyCollectionQuery<Person, Person> request =
             NavigationPropertyCollectionQuery.ofSubQuery("ASDF");
@@ -36,7 +36,7 @@ public class ODataRequestImplTest
     }
 
     @Test
-    public void testRequestWithNestedRequests()
+    void testRequestWithNestedRequests()
     {
         final NavigationPropertyCollectionQuery<Person, Person> request =
             NavigationPropertyCollectionQuery.ofSubQuery("ASDF");

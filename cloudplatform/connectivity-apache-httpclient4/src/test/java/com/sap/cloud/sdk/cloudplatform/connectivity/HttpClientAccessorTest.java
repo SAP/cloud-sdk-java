@@ -6,12 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HttpClientAccessorTest
+class HttpClientAccessorTest
 {
     @Test
-    public void testDefaultHttpClientCache()
+    void testDefaultHttpClientCache()
     {
         assertThat(HttpClientAccessor.getHttpClientCache()).isExactlyInstanceOf(DefaultHttpClientCache.class);
     }

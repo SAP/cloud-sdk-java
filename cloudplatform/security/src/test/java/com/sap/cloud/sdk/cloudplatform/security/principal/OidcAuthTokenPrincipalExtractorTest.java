@@ -6,8 +6,8 @@ package com.sap.cloud.sdk.cloudplatform.security.principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -20,16 +20,16 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAcc
 
 import io.vavr.control.Try;
 
-public class OidcAuthTokenPrincipalExtractorTest
+class OidcAuthTokenPrincipalExtractorTest
 {
-    @After
-    public void cleanUpMockedAuthTokenFacade()
+    @AfterEach
+    void cleanUpMockedAuthTokenFacade()
     {
         AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test
-    public void testExceptionIsThrownIfAuthTokenIsNotAvailable()
+    void testExceptionIsThrownIfAuthTokenIsNotAvailable()
     {
         mockAuthTokenFacadeWithMissingAuthToken();
 
@@ -40,7 +40,7 @@ public class OidcAuthTokenPrincipalExtractorTest
     }
 
     @Test
-    public void testExceptionIsThrownIfUserUuidIsNotAvailable()
+    void testExceptionIsThrownIfUserUuidIsNotAvailable()
     {
         mockAuthTokenFacade(JWT.create().withAudience("audience a", "audience b"));
 
@@ -51,7 +51,7 @@ public class OidcAuthTokenPrincipalExtractorTest
     }
 
     @Test
-    public void testReadPrincipal()
+    void testReadPrincipal()
     {
         mockAuthTokenFacade(JWT.create().withClaim("user_uuid", "principal id"));
 
