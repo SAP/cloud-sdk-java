@@ -18,8 +18,8 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -27,7 +27,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLi
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 
-public class TimeLimiterTest
+class TimeLimiterTest
 {
     private static final TimeLimiterConfiguration timeLimiterConfig =
         TimeLimiterConfiguration.of().timeoutDuration(Duration.ofMillis(100));
@@ -35,8 +35,8 @@ public class TimeLimiterTest
         ResilienceConfiguration.of("TimeLimiterTest.static").timeLimiterConfiguration(timeLimiterConfig);
 
     @Test
-    @Ignore( "Test is unreliable on jenkins. Use this to verify the timeout behaviour locally." )
-    public void testTimeLimiterWithRepeatingCalls()
+    @Disabled( "Test is unreliable on jenkins. Use this to verify the timeout behaviour locally." )
+    void testTimeLimiterWithRepeatingCalls()
         throws Exception
     {
         final Callable<Integer> callable = spy(new TestCallable());
@@ -52,7 +52,7 @@ public class TimeLimiterTest
     }
 
     @Test
-    public void testDisabledTimeLimiter()
+    void testDisabledTimeLimiter()
         throws Exception
     {
         // Test that the callable runs in the main thread

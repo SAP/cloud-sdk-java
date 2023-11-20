@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ import com.google.gson.GsonBuilder;
 import com.sap.cloud.sdk.typeconverter.ConvertedObject;
 
 @Deprecated
-public class ErpTypeSerializerTest
+class ErpTypeSerializerTest
 {
     private static final LocalDate DATE = LocalDate.of(2017, 12, 31);
     private static final LocalTime TIME = LocalTime.of(13, 13, 13);
@@ -39,7 +39,7 @@ public class ErpTypeSerializerTest
     private static final String TIME_STRING_ISO = "13:13:13";
 
     @Test
-    public void testToErp()
+    void testToErp()
     {
         final ErpTypeSerializer serializer = new ErpTypeSerializer();
 
@@ -64,7 +64,7 @@ public class ErpTypeSerializerTest
     }
 
     @Test
-    public void testFromErp()
+    void testFromErp()
     {
         final ErpTypeSerializer serializer = new ErpTypeSerializer();
 
@@ -89,7 +89,7 @@ public class ErpTypeSerializerTest
     }
 
     @Test
-    public void testGsonSerialization()
+    void testGsonSerialization()
     {
         final GsonBuilder gsonBuilder =
             new GsonBuilder().registerTypeAdapterFactory(new ErpTypeGsonTypeAdapterFactory());
@@ -102,7 +102,7 @@ public class ErpTypeSerializerTest
     }
 
     @Test
-    public void testGsonDeserialization()
+    void testGsonDeserialization()
     {
         final GsonBuilder gsonBuilder =
             new GsonBuilder().registerTypeAdapterFactory(new ErpTypeGsonTypeAdapterFactory());
@@ -115,7 +115,7 @@ public class ErpTypeSerializerTest
     }
 
     @Test
-    public void testJacksonSerialization()
+    void testJacksonSerialization()
         throws JsonProcessingException
     {
         final ObjectMapper mapper = new ObjectMapper();
@@ -128,7 +128,7 @@ public class ErpTypeSerializerTest
     }
 
     @Test
-    public void testJacksonDeserialization()
+    void testJacksonDeserialization()
         throws IOException
     {
         final ObjectMapper mapper = new ObjectMapper();

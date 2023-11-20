@@ -98,7 +98,6 @@
 		<spring.version>5.3.29</spring.version>
 		<spring-security.version>5.8.6</spring-security.version>
 		<slf4j.version>1.7.36</slf4j.version>
-		<junit.version>4.13.2</junit.version>
 		<assertj-core.version>3.24.2</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.5.0</mockito.version>
@@ -106,8 +105,8 @@
 		<arquillian.version>1.5.0.Final</arquillian.version>
 		<junit.jupiter.version>5.10.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
-		<olingo-v4.version>4.9.0</olingo-v4.version>
-		<olingo-v2.version>2.0.12</olingo-v2.version>
+		<olingo-v4.version>4.10.0</olingo-v4.version>
+		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.8.1</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
@@ -335,12 +334,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
 				<version>${assertj-core.version}</version>
@@ -367,12 +360,6 @@
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-engine</artifactId>
-				<version>${junit.jupiter.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
 				<version>${junit.jupiter.version}</version>
 				<scope>test</scope>
 			</dependency>
@@ -532,11 +519,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -850,7 +832,6 @@
 							<ignoredUnusedDeclaredDependency>org.projectlombok:lombok</ignoredUnusedDeclaredDependency>
 							<!-- By default, JUnit5 adapters are added to every module to ensure no tests are skipped -->
 							<ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter-engine</ignoredUnusedDeclaredDependency>
-							<ignoredUnusedDeclaredDependency>org.junit.vintage:junit-vintage-engine</ignoredUnusedDeclaredDependency>
 						</ignoredUnusedDeclaredDependencies>
 					</configuration>
 				</plugin>

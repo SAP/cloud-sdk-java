@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -29,7 +29,7 @@ import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
 @Deprecated
-public class BapiRequestTableAndStructureTest
+class BapiRequestTableAndStructureTest
 {
     private static final String FUNCTION_NAME = "BAPI_FUNCTION_NAME";
     private static final String TABLE_NAME = "IT_REQUEST";
@@ -37,7 +37,7 @@ public class BapiRequestTableAndStructureTest
     private static final Destination destination = mock(Destination.class);
 
     @Test
-    public void testSupplyTableParameter()
+    void testSupplyTableParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -58,7 +58,7 @@ public class BapiRequestTableAndStructureTest
     }
 
     @Test
-    public void testSupplyStructureParameter()
+    void testSupplyStructureParameter()
         throws RemoteFunctionException,
             JCoException
     {

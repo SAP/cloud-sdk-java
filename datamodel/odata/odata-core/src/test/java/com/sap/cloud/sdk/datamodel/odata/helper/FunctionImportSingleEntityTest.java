@@ -14,7 +14,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -27,12 +26,12 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -51,22 +50,20 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class FunctionImportSingleEntityTest
+@WireMockTest
+class FunctionImportSingleEntityTest
 {
     private static final String TEST_SERVICE_PATH = "/some/service/path";
     private static final String TEST_FUNCTION_NAME = "Testing";
     private static final String CSRF = "secret";
     private static final TestingEntity TEST_ENTITY = new TestingEntity("hello", "world");
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private HttpDestinationProperties destination;
 
-    @Before
-    public void assignMockedDestination()
+    @BeforeEach
+    void assignMockedDestination( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         final Map<String, ImmutableMap<String, TestingEntity>> functionResult =
             ImmutableMap.of("d", ImmutableMap.of(TEST_FUNCTION_NAME, TEST_ENTITY));
         stubFor(get(anyUrl()).willReturn(okForJson(functionResult)));
@@ -140,7 +137,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithPlusSign()
+    void testFunctionParameterWithPlusSign()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("foo", "ba+r");
@@ -152,7 +149,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithWhitespace()
+    void testFunctionParameterWithWhitespace()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("foo", "b a+  r ");
@@ -164,7 +161,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithQuotes()
+    void testFunctionParameterWithQuotes()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("GUID", UUID.fromString("571c74ab-c66a-4d34-ab32-ff16ec4653a5"));
@@ -178,7 +175,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithSpecialCharacters()
+    void testFunctionParameterWithSpecialCharacters()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("Address", "Unusual? Road #99 with 100%");
@@ -192,7 +189,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithParentheses()
+    void testFunctionParameterWithParentheses()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("Address", "Potsdam (Germany)");
@@ -204,7 +201,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testCustomJsonResponseParsing()
+    void testCustomJsonResponseParsing()
     {
         final String jsonResponse = "{\"d\":{\"CUSTOM_OBJECT\":{\"id\":\"hello\",\"text\":\"world\"}}}";
         final MappingBuilder requestMapping = get(urlEqualTo(TEST_SERVICE_PATH + "/Testing"));
@@ -231,7 +228,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionParameterWithConventionalValue()
+    void testFunctionParameterWithConventionalValue()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
         functionImport.addParameter("Address", "Potsdam");
@@ -243,7 +240,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionImportWithoutParameters()
+    void testFunctionImportWithoutParameters()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
 
@@ -254,7 +251,7 @@ public class FunctionImportSingleEntityTest
     }
 
     @Test
-    public void testFunctionImportReturnsNullAsResponseBody()
+    void testFunctionImportReturnsNullAsResponseBody()
     {
         final SingleEntityFunctionImport functionImport = new SingleEntityFunctionImport();
 

@@ -17,7 +17,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -26,10 +26,10 @@ import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.vavr.control.Try;
 
-public class SSLContextFactoryTest
+class SSLContextFactoryTest
 {
     @Test
-    public void testDestinationWithDefaultSettings()
+    void testDestinationWithDefaultSettings()
         throws GeneralSecurityException,
             IOException
     {
@@ -52,7 +52,7 @@ public class SSLContextFactoryTest
     }
 
     @Test
-    public void testDestinationsWithSpecifiedTlsVersion()
+    void testDestinationsWithSpecifiedTlsVersion()
         throws GeneralSecurityException,
             IOException
     {
@@ -69,7 +69,7 @@ public class SSLContextFactoryTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testDestinationWithSpecifiedKeyStore()
+    void testDestinationWithSpecifiedKeyStore()
         throws GeneralSecurityException,
             IOException
     {
@@ -94,7 +94,7 @@ public class SSLContextFactoryTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testDestinationWithKeyStoreAndAuthTypeIgnoringKeyStore()
+    void testDestinationWithKeyStoreAndAuthTypeIgnoringKeyStore()
         throws GeneralSecurityException,
             IOException
     {
@@ -135,7 +135,7 @@ public class SSLContextFactoryTest
     }
 
     @Test
-    public void testDestinationsWhichTrustsAllCertificates()
+    void testDestinationsWhichTrustsAllCertificates()
         throws GeneralSecurityException,
             IOException
     {
@@ -150,7 +150,7 @@ public class SSLContextFactoryTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testDestinationsWithSpecifiedTrustStore()
+    void testDestinationsWithSpecifiedTrustStore()
         throws GeneralSecurityException,
             IOException
     {
@@ -173,7 +173,7 @@ public class SSLContextFactoryTest
     }
 
     @Test
-    public void testGetSecuritySettingsFromCloudPlatformSucceeds()
+    void testGetSecuritySettingsFromCloudPlatformSucceeds()
         throws GeneralSecurityException,
             IOException
     {
@@ -192,7 +192,7 @@ public class SSLContextFactoryTest
     }
 
     @Test
-    public void testGetSecuritySettingsFromCloudPlatformFailing()
+    void testGetSecuritySettingsFromCloudPlatformFailing()
     {
         final PlatformSslContextProvider provider = mockAndGetSSLContextSFailing();
 

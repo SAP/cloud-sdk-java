@@ -11,63 +11,70 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.SneakyThrows;
 
-@RunWith( Parameterized.class )
-@AllArgsConstructor
-public class ODataResponseExceptionTest
+class ODataResponseExceptionTest
 {
     private static final ODataRequestGeneric REQUEST = new ODataRequestRead("path", "collection", null, V2);
     private static final Throwable CAUSE = new Exception();
     private static final String MESSAGE = "message";
     private static final String INPUT = "Hêllö WØrld";
 
-    private Charset charset;
-    private String text;
-    private String textMissingCharset;
+    @Data
+    private static class TestParameters
+    {
+        @Nonnull
+        Charset charset;
+        @Nonnull
+        String text;
+        @Nonnull
+        String textMissingCharset;
+    }
 
-    @Parameterized.Parameters( name = "{0}" )
-    public static List<Object[]> getCharsets()
+    static List<TestParameters> getTestParameters()
     {
         return Arrays
             .asList(
-                new Object[] { StandardCharsets.ISO_8859_1, INPUT, "H�ll� W�rld" },
-                new Object[] { StandardCharsets.UTF_8, INPUT, INPUT });
+                new TestParameters(StandardCharsets.ISO_8859_1, INPUT, "H�ll� W�rld"),
+                new TestParameters(StandardCharsets.UTF_8, INPUT, INPUT));
     }
 
     @SneakyThrows
-    @Test
-    public void testEncodingGiven()
+    @ParameterizedTest
+    @MethodSource( "getTestParameters" )
+    void testEncodingGiven( @Nonnull final TestParameters parameters )
     {
-        final byte[] encodedString = text.getBytes(charset);
+        final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
         final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
-        response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain", charset)));
+        response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain", parameters.charset)));
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);
         assertThat(message).hasMessage(MESSAGE).hasCause(CAUSE);
         assertThat(message.getHttpCode()).isEqualTo(200);
         assertThat(message.getHttpHeaders()).isEmpty();
-        assertThat(message.getHttpBody()).containsExactly(text);
+        assertThat(message.getHttpBody()).containsExactly(parameters.text);
     }
 
     @SneakyThrows
-    @Test
-    public void testEncodingUnknown()
+    @ParameterizedTest
+    @MethodSource( "getTestParameters" )
+    void testEncodingUnknown( @Nonnull final TestParameters parameters )
     {
-        final byte[] encodedString = text.getBytes(charset);
+        final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
         final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain"))); // no charset
@@ -76,6 +83,6 @@ public class ODataResponseExceptionTest
         assertThat(message).hasMessage(MESSAGE).hasCause(CAUSE);
         assertThat(message.getHttpCode()).isEqualTo(200);
         assertThat(message.getHttpHeaders()).isEmpty();
-        assertThat(message.getHttpBody()).containsExactly(textMissingCharset);
+        assertThat(message.getHttpBody()).containsExactly(parameters.textMissingCharset);
     }
 }

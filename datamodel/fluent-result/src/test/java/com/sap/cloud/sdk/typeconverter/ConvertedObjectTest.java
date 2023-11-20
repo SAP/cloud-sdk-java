@@ -5,50 +5,51 @@
 package com.sap.cloud.sdk.typeconverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.typeconverter.exception.ObjectNotConvertibleException;
 
-public class ConvertedObjectTest
+class ConvertedObjectTest
 {
     @Test
-    public void get()
+    void get()
     {
         final ConvertedObject<String> convertedObject = ConvertedObject.of("test");
         assertThat(convertedObject.get()).isEqualTo("test");
     }
 
-    @Test( expected = ObjectNotConvertibleException.class )
-    public void getNonConvertable()
+    @Test
+    void getNonConvertable()
     {
         final ConvertedObject<?> notConvertable = ConvertedObject.ofNotConvertible();
-        notConvertable.get();
+        assertThatThrownBy(notConvertable::get).isInstanceOf(ObjectNotConvertibleException.class);
     }
 
     @Test
-    public void orNull()
+    void orNull()
     {
         assertThat(ConvertedObject.of("test").orNull()).isEqualTo("test");
         assertThat(ConvertedObject.ofNotConvertible().orNull()).isNull();
     }
 
     @Test
-    public void or()
+    void or()
     {
         assertThat(ConvertedObject.of("test").orElse("something")).isEqualTo("test");
         assertThat(ConvertedObject.ofNotConvertible().orElse("something")).isEqualTo("something");
     }
 
     @Test
-    public void fromConverted()
+    void fromConverted()
     {
         assertThat(ConvertedObject.of(123).get()).isEqualTo(123);
         assertThat(ConvertedObject.of(null).get()).isNull();
     }
 
     @Test
-    public void fromNull()
+    void fromNull()
     {
         assertThat(ConvertedObject.ofNull().get()).isNull();
     }

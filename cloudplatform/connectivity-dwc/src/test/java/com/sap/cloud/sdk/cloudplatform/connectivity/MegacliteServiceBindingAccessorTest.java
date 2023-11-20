@@ -9,38 +9,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 
-public class MegacliteServiceBindingAccessorTest
+class MegacliteServiceBindingAccessorTest
 {
-    @Before
-    @After
-    public void resetStaticServiceBindings()
+    @BeforeEach
+    @AfterEach
+    void resetStaticServiceBindings()
     {
         MegacliteServiceBindingAccessor.clearServiceBindings();
     }
 
     @Test
-    public void testClassIsPickedUpAsServiceBindingAccessor()
+    void testClassIsPickedUpAsServiceBindingAccessor()
     {
         final List<ServiceBindingAccessor> accessors = ServiceBindingAccessor.getInstancesViaServiceLoader();
         assertThat(accessors.stream().filter(MegacliteServiceBindingAccessor.class::isInstance).count()).isEqualTo(1);
     }
 
     @Test
-    public void testGetServiceBindingsIsNotEmptyByDefault()
+    void testGetServiceBindingsIsNotEmptyByDefault()
     {
         final MegacliteServiceBindingAccessor sut = new MegacliteServiceBindingAccessor();
         assertThat(sut.getServiceBindings()).hasSize(1).containsExactly(CONNECTIVITY_BINDING);
     }
 
     @Test
-    public void testGetServiceBindingsReturnsStaticServiceBindings()
+    void testGetServiceBindingsReturnsStaticServiceBindings()
     {
         final MegacliteServiceBindingAccessor sut = new MegacliteServiceBindingAccessor();
         assertThat(sut.getServiceBindings()).containsExactlyInAnyOrder(CONNECTIVITY_BINDING);

@@ -70,6 +70,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -124,6 +131,8 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- Runtime dependency testing the plugin -->
 						<ignoredUnusedDeclaredDependency>org.apache.maven:maven-compat</ignoredUnusedDeclaredDependency>
+						<!-- junit engine -->
+						<ignoredUnusedDeclaredDependency>org.junit.vintage:junit-vintage-engine</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<ignoredNonTestScopedDependency>com.google.code.findbugs:jsr305</ignoredNonTestScopedDependency>

@@ -12,12 +12,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ODataDateTimeStringCalendarConverterTest
+class ODataDateTimeStringCalendarConverterTest
 {
     @Test
-    public void testDateZeroToCalendar()
+    void testDateZeroToCalendar()
     {
         final ODataDateTimeStringCalendarConverter sut = new ODataDateTimeStringCalendarConverter();
 
@@ -29,7 +29,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testDatePositiveToCalendar()
+    void testDatePositiveToCalendar()
     {
         final ODataDateTimeStringCalendarConverter sut = new ODataDateTimeStringCalendarConverter();
 
@@ -41,7 +41,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testDateNegativeToCalendar()
+    void testDateNegativeToCalendar()
     {
         final ODataDateTimeStringCalendarConverter sut = new ODataDateTimeStringCalendarConverter();
 
@@ -53,7 +53,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testDateLimitsToCalendar()
+    void testDateLimitsToCalendar()
     {
         final ODataDateTimeStringCalendarConverter sut = new ODataDateTimeStringCalendarConverter();
 
@@ -68,7 +68,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testInvalidStringCannotBeConverted()
+    void testInvalidStringCannotBeConverted()
     {
         final ODataDateTimeStringCalendarConverter sut = new ODataDateTimeStringCalendarConverter();
 
@@ -85,7 +85,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarZeroToString()
+    void testCalendarZeroToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.setTime(Date.from(Instant.parse("1970-01-01T00:00:00Z")));
@@ -98,7 +98,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarZeroWithOffsetToString()
+    void testCalendarZeroWithOffsetToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+01:00"));
         calendar.setTime(Date.from(OffsetDateTime.parse("1970-01-01T00:00:00+01:00").toInstant()));
@@ -111,7 +111,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarPositiveToString()
+    void testCalendarPositiveToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.setTime(Date.from(Instant.parse("2022-02-02T04:20:00Z")));
@@ -124,7 +124,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarPositiveWithOffsetToString()
+    void testCalendarPositiveWithOffsetToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:30"));
         calendar.setTime(Date.from(OffsetDateTime.parse("2022-02-02T04:20:00-00:30").toInstant()));
@@ -137,7 +137,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarNegativeToString()
+    void testCalendarNegativeToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.setTime(Date.from(Instant.parse("1969-10-29T13:37:42Z")));
@@ -150,7 +150,7 @@ public class ODataDateTimeStringCalendarConverterTest
     }
 
     @Test
-    public void testCalendarNegativeWithOffsetToString()
+    void testCalendarNegativeWithOffsetToString()
     {
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+01:45"));
         calendar.setTime(Date.from(OffsetDateTime.parse("1969-10-29T13:37:42+01:45").toInstant()));

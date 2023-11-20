@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -22,16 +22,16 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
 
 import io.vavr.control.Try;
 
-public class DwcPrincipalFacadeTest
+class DwcPrincipalFacadeTest
 {
     @Test
-    public void testFacadeIsPickedUpAutomatically()
+    void testFacadeIsPickedUpAutomatically()
     {
         assertThat(PrincipalAccessor.getPrincipalFacade()).isInstanceOf(DwcPrincipalFacade.class);
     }
 
     @Test
-    public void testSuccessfulPrincipalRetrieval()
+    void testSuccessfulPrincipalRetrieval()
     {
         final String dwcUser =
             "eyJlbWFpbCI6InNhbXBsZS51c2VyQG1haWwuY29tIiwiZ2l2ZW5OYW1lIjoiU2FtcGxlIiwiZmFtaWx5TmFtZSI6IlVzZXIiLCJsb2dvbk5hbWUiOiJzYW1wbGUudXNlckBtYWlsLmNvbSJ9";
@@ -56,7 +56,7 @@ public class DwcPrincipalFacadeTest
     }
 
     @Test
-    public void testUnsuccessfulPrincipalRetrieval()
+    void testUnsuccessfulPrincipalRetrieval()
     {
         RequestHeaderAccessor.executeWithHeaderContainer(RequestHeaderContainer.EMPTY, () -> {
             final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();

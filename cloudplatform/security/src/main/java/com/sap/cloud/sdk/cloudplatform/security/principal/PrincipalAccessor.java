@@ -82,7 +82,7 @@ public final class PrincipalAccessor
     private static PrincipalFacade loadFacadeOrDefault()
     {
         return FacadeLocator.getFacade(PrincipalFacade.class).getOrElseGet(e -> {
-            log.debug("No PrincipalFacade found via FacadeLocator. Falling back to DefaultPrincipalFacade.", e);
+            log.debug("No PrincipalFacade found via FacadeLocator. Falling back to DefaultPrincipalFacade.");
             return new DefaultPrincipalFacade();
         });
     }

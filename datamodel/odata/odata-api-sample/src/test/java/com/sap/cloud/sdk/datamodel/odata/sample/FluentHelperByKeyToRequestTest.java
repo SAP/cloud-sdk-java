@@ -10,8 +10,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.http.client.HttpClient;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -25,7 +25,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Produ
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FluentHelperByKeyToRequestTest
+class FluentHelperByKeyToRequestTest
 {
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
     private static final String ENTITY_COLLECTION = "Products";
@@ -38,7 +38,7 @@ public class FluentHelperByKeyToRequestTest
     private final ProductByKeyFluentHelper fluentHelper = service.getProductByKey(123);
 
     @Test
-    public void testGetByKey()
+    void testGetByKey()
     {
         final ODataRequestReadByKey vdmQuery = fluentHelper.toRequest();
 
@@ -49,7 +49,7 @@ public class FluentHelperByKeyToRequestTest
     }
 
     @Test
-    public void testCustomParameter()
+    void testCustomParameter()
     {
         final String customParameterKey = "customKey";
         final String customParameterValue = "customValue";
@@ -70,8 +70,8 @@ public class FluentHelperByKeyToRequestTest
     }
 
     @Test
-    @Ignore( "Cannot yet override system query parameters." )
-    public void testCustomParameterOverloadingParameters()
+    @Disabled( "Cannot yet override system query parameters." )
+    void testCustomParameterOverloadingParameters()
     {
         final ODataRequestReadByKey vdmQuery =
             fluentHelper
@@ -94,7 +94,7 @@ public class FluentHelperByKeyToRequestTest
     }
 
     @Test
-    public void testCustomHeader()
+    void testCustomHeader()
     {
         final String customHeaderKey = "customKey";
         final String customHeaderValue = "customValue";
@@ -119,7 +119,7 @@ public class FluentHelperByKeyToRequestTest
     }
 
     @Test
-    public void testGetByKeyWithSelect()
+    void testGetByKeyWithSelect()
     {
         final ODataRequestReadByKey vdmQuery = fluentHelper.select(Product.NAME).toRequest();
 

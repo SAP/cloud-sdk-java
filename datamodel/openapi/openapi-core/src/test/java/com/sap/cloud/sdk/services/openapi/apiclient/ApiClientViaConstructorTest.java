@@ -12,7 +12,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,14 +26,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
-public class ApiClientViaConstructorTest
+class ApiClientViaConstructorTest
 {
     private static final String RELATIVE_PATH = "/apiEndpoint";
     private static final String SUCCESS_BODY = "success";
     private static final String BASE_PATH = "http://localhost:8080";
 
     @Test
-    public void testApiClientDoesNotChangeTheGivenRestTemplate()
+    void testApiClientDoesNotChangeTheGivenRestTemplate()
     {
         final MyDto myTestDto = new MyDto();
         myTestDto.setReturn("Hello, World!");
@@ -68,7 +68,7 @@ public class ApiClientViaConstructorTest
     }
 
     @Test
-    public void testApiClientWithoutExplicitRestTemplateDoesNotConsiderGetters()
+    void testApiClientWithoutExplicitRestTemplateDoesNotConsiderGetters()
     {
         final MyDto myTestDto = new MyDto();
         myTestDto.setReturn("Hello, World!");

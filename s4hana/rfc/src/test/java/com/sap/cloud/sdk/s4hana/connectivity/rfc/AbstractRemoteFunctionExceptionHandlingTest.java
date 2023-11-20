@@ -16,8 +16,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -34,8 +34,8 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
 
     private Destination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before()
     {
         destination = DefaultDestination.builder().build();
 
@@ -53,7 +53,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     private TransactionT mockedTransactionLogic;
 
     @Test
-    public void testRequestResultHasErrorsAndExceptionExpected()
+    void testRequestResultHasErrorsAndExceptionExpected()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(true);
@@ -73,7 +73,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     }
 
     @Test
-    public void testRequestResultHasErrorsAndExceptionExpectedWithoutExplicitlyChosenErrorHandler()
+    void testRequestResultHasErrorsAndExceptionExpectedWithoutExplicitlyChosenErrorHandler()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(true);
@@ -91,7 +91,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     }
 
     @Test
-    public void testRequestResultHasErrorsAndExceptionNotThrown()
+    void testRequestResultHasErrorsAndExceptionNotThrown()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(true);
@@ -110,7 +110,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     }
 
     @Test
-    public void testRequestResultHasNoErrors()
+    void testRequestResultHasNoErrors()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(false);
@@ -127,7 +127,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     }
 
     @Test
-    public void testRequestResultHasErrorsAndCustomExceptionExpected()
+    void testRequestResultHasErrorsAndCustomExceptionExpected()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(true);
@@ -143,7 +143,7 @@ public abstract class AbstractRemoteFunctionExceptionHandlingTest<RequestT exten
     }
 
     @Test
-    public void test_RequestWithCommitHasErrors_RollbackIsTriggered_UsingStrictResultHandler()
+    void test_RequestWithCommitHasErrors_RollbackIsTriggered_UsingStrictResultHandler()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final TransactionFactoryT mockedTransactionFactory = getMockedTransactionFactory(true);

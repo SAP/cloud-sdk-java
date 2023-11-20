@@ -5,24 +5,24 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
-public class DwcHeaderProviderTest
+class DwcHeaderProviderTest
 {
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         CacheManager.invalidateAll();
     }
 
     @Test
-    public void testHeadersAreFiltered()
+    void testHeadersAreFiltered()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -46,7 +46,7 @@ public class DwcHeaderProviderTest
     }
 
     @Test
-    public void testCaseInsensitive()
+    void testCaseInsensitive()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer

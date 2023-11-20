@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import lombok.RequiredArgsConstructor;
 
-public class EdmxValidatorTest
+class EdmxValidatorTest
 {
     private static final boolean QUALIFIED = true;
     private static final boolean NOT_QUALIFIED = false;

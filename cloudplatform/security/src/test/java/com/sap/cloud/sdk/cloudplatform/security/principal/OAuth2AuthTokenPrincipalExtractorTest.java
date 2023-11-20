@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -56,8 +56,8 @@ class OAuth2AuthTokenPrincipalExtractorTest
             .map(name -> name.replace(PREFIX + ".", ""))
             .collect(Collectors.toList());
 
-    @After
-    public void cleanupAccessors()
+    @AfterEach
+    void cleanupAccessors()
     {
         AuthTokenAccessor.setAuthTokenFacade(null);
     }

@@ -35,7 +35,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException
 
 import lombok.SneakyThrows;
 
-public class ODataPaginationUnitTest
+class ODataPaginationUnitTest
 {
     // corresponds to https://services.odata.org/V4/Northwind/Northwind.svc/Customers?$select=CustomerID&$count=true
     private static final String page1 =
@@ -50,7 +50,7 @@ public class ODataPaginationUnitTest
         "{\"@odata.context\":\"https://services.odata.org/V4/Northwind/Northwind.svc/$metadata#Customers(CustomerID)\",\"@odata.count\":91,\"value\":[{\"CustomerID\":\"TRADH\"},{\"CustomerID\":\"TRAIH\"},{\"CustomerID\":\"VAFFE\"},{\"CustomerID\":\"VICTE\"},{\"CustomerID\":\"VINET\"},{\"CustomerID\":\"WANDK\"},{\"CustomerID\":\"WARTH\"},{\"CustomerID\":\"WELLI\"},{\"CustomerID\":\"WHITC\"},{\"CustomerID\":\"WILMK\"},{\"CustomerID\":\"WOLZA\"}]}";
 
     @Test
-    public void testCountOverPages()
+    void testCountOverPages()
         throws IOException
     {
         final HttpClient httpClient = mock(HttpClient.class);
@@ -89,7 +89,7 @@ public class ODataPaginationUnitTest
     }
 
     @Test
-    public void testErrorForResponse()
+    void testErrorForResponse()
         throws IOException
     {
         final HttpClient httpClient = mock(HttpClient.class);
@@ -110,7 +110,7 @@ public class ODataPaginationUnitTest
     }
 
     @Test
-    public void testErrorForRequest()
+    void testErrorForRequest()
         throws IOException
     {
         final HttpClient httpClient = mock(HttpClient.class);

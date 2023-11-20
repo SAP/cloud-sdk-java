@@ -12,18 +12,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.s4hana.connectivity.rfc.exception.RemoteFunctionException;
 
 @Deprecated
-public class RemoteFunctionRequestExecutorTest
+class RemoteFunctionRequestExecutorTest
 {
     private static final Destination destination = mock(Destination.class);
 
     @Test
-    public void testRfcWithCommitAndSuccess()
+    void testRfcWithCommitAndSuccess()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final RfmRequest commitRequest = new RfmRequest("SOME_NAME", true);
@@ -47,7 +47,7 @@ public class RemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testRfcWithCommitAndExecuteFailure()
+    void testRfcWithCommitAndExecuteFailure()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final RfmRequest commitRequest = new RfmRequest("SOME_NAME", true);
@@ -74,7 +74,7 @@ public class RemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testRfcWithCommitAndCommitFailure()
+    void testRfcWithCommitAndCommitFailure()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final RfmRequest commitRequest = new RfmRequest("SOME_NAME", true);
@@ -102,7 +102,7 @@ public class RemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testRfcWithoutCommitAndSuccess()
+    void testRfcWithoutCommitAndSuccess()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final RfmRequest commitRequest = new RfmRequest("SOME_NAME", false);
@@ -126,7 +126,7 @@ public class RemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testRfcWithoutCommitAndFailure()
+    void testRfcWithoutCommitAndFailure()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final RfmRequest commitRequest = new RfmRequest("SOME_NAME", false);

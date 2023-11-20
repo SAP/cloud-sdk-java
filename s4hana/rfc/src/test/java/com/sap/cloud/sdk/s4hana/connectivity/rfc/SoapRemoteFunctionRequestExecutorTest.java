@@ -9,33 +9,33 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 @Deprecated
-public class SoapRemoteFunctionRequestExecutorTest
+@WireMockTest
+class SoapRemoteFunctionRequestExecutorTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(WireMockConfiguration.wireMockConfig().dynamicPort());
-
     private Destination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testExceptionWhenNoAuthorizationForSoapService()
+    void testExceptionWhenNoAuthorizationForSoapService()
         throws Exception
     {
         final String responsePayload =
@@ -47,11 +47,10 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "nsaction ID AF0DC6FADCD50210E00598DB19C81681)</faultstring><detail/></soap-env:Fault></soap-env:B"
                 + "ody></soap-env:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*"))
-                    .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*"))
+                .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
 
         String exceptionMesssage = "";
         try {
@@ -66,7 +65,7 @@ public class SoapRemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testExceptionDuringSoapServiceProcessing()
+    void testExceptionDuringSoapServiceProcessing()
     {
         final String responsePayload =
             "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
@@ -89,11 +88,10 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "</soap-env:Body>\n"
                 + "</soap-env:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*"))
-                    .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*"))
+                .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
 
         String exceptionMesssage = "";
 
@@ -110,7 +108,7 @@ public class SoapRemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testExceptionDuringSoapServiceProcessingWithAlternativePrefix()
+    void testExceptionDuringSoapServiceProcessingWithAlternativePrefix()
     {
         // save and change namespace labels
         final String prefixSoapEnv = SoapNamespace.RESPONSE_PREFIX_SOAP_ENV.toString();
@@ -139,11 +137,10 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "</ppp:Body>\n"
                 + "</ppp:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*"))
-                    .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*"))
+                .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
 
         String exceptionMesssage = "";
 
@@ -164,7 +161,7 @@ public class SoapRemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testHeadersInNormalSoapRequest()
+    void testHeadersInNormalSoapRequest()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final String responsePayload =
@@ -176,17 +173,13 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "</soap-env:Body>"
                 + "</soap-env:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*RfcTest$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*TransactionCommit$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*TransactionCommit$"))
+                .willReturn(ok().withBody(responsePayload)));
 
         final RfmRequest rfcRequest = new RfmRequest("RFC_TEST", true);
         final RfmRequestResult rfcResult = rfcRequest.execute(destination);
@@ -195,7 +188,7 @@ public class SoapRemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testHeadersInNormalSoapRequestWithAlternativePrefix()
+    void testHeadersInNormalSoapRequestWithAlternativePrefix()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         // save and change namespace labels
@@ -213,17 +206,13 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "</ppp:Body>"
                 + "</ppp:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*RfcTest$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*TransactionCommit$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*TransactionCommit$"))
+                .willReturn(ok().withBody(responsePayload)));
 
         final RfmRequest rfcRequest = new RfmRequest("RFC_TEST", true);
         final RfmRequestResult rfcResult = rfcRequest.execute(destination);
@@ -236,7 +225,7 @@ public class SoapRemoteFunctionRequestExecutorTest
     }
 
     @Test
-    public void testHeadersInRollbackSoapRequest()
+    void testHeadersInRollbackSoapRequest()
     {
         final String responsePayload =
             "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -247,23 +236,18 @@ public class SoapRemoteFunctionRequestExecutorTest
                 + "</soap-env:Body>"
                 + "</soap-env:Envelope>";
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*RfcTest$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*TransactionCommit$"))
-                    .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*TransactionCommit$"))
+                .willReturn(aResponse().withStatus(500).withBody(responsePayload)));
 
-        erpServer
-            .stubFor(
-                post(anyUrl())
-                    .withHeader("SOAPAction", matching(".*TransactionRollback$"))
-                    .willReturn(ok().withBody(responsePayload)));
+        stubFor(
+            post(anyUrl())
+                .withHeader("SOAPAction", matching(".*TransactionRollback$"))
+                .willReturn(ok().withBody(responsePayload)));
 
         final RfmRequest rfcRequest = new RfmRequest("RFC_TEST", true);
 

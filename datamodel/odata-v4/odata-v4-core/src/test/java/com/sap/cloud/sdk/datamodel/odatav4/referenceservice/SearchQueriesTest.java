@@ -6,38 +6,38 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.core.SearchExpression;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class SearchQueriesTest
+class SearchQueriesTest
 {
     @Test
-    public void testGetSearched()
+    void testGetSearched()
     {
         final GetAllRequestBuilder<Person> search = new DefaultTrippinService().getAllPeople().search("Portland");
         assertThat(search.toRequest().getRelativeUri()).hasParameter("$search", "\"Portland\"");
     }
 
     @Test
-    public void testSpecialCharacters()
+    void testSpecialCharacters()
     {
         final GetAllRequestBuilder<Person> search = new DefaultTrippinService().getAllPeople().search("Hash #");
         assertThat(search.toRequest().getRelativeUri()).hasParameter("$search", "\"Hash #\"");
     }
 
     @Test
-    public void testGetSearchedPhrase()
+    void testGetSearchedPhrase()
     {
         final GetAllRequestBuilder<Person> search = new DefaultTrippinService().getAllPeople().search("United States");
         assertThat(search.toRequest().getRelativeUri()).hasParameter("$search", "\"United States\"");
     }
 
     @Test
-    public void testGetSearchedWithQuotesInString()
+    void testGetSearchedWithQuotesInString()
     {
         final GetAllRequestBuilder<Person> search =
             new DefaultTrippinService().getAllPeople().search("Quoted \"string\"");
@@ -47,7 +47,7 @@ public class SearchQueriesTest
     }
 
     @Test
-    public void testGetSearchedWithBackslashInString()
+    void testGetSearchedWithBackslashInString()
     {
         final GetAllRequestBuilder<Person> search = new DefaultTrippinService().getAllPeople().search("Escaped \\");
 
@@ -56,7 +56,7 @@ public class SearchQueriesTest
     }
 
     @Test
-    public void testSearchBooleanExpression()
+    void testSearchBooleanExpression()
     {
 
         final GetAllRequestBuilder<Person> search =
@@ -69,7 +69,7 @@ public class SearchQueriesTest
     }
 
     @Test
-    public void testSearchBooleanNot()
+    void testSearchBooleanNot()
     {
 
         final GetAllRequestBuilder<Person> search =

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
-public class ODataNextLinkTest
+class ODataNextLinkTest
 {
     private static final String PAYLOAD_NEXT_LINK =
         "{"
@@ -28,7 +28,7 @@ public class ODataNextLinkTest
             + "}";
 
     @Test
-    public void testNotParsedNextLinkV4()
+    void testNotParsedNextLinkV4()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
@@ -41,7 +41,7 @@ public class ODataNextLinkTest
     }
 
     @Test
-    public void testParsedNextLinkV2()
+    void testParsedNextLinkV2()
     {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
@@ -55,7 +55,7 @@ public class ODataNextLinkTest
     }
 
     @Test
-    public void testEmptySkipTokenV2()
+    void testEmptySkipTokenV2()
     {
         final String emptyToken = "{\"d\": {\"__next\": \"/v1/foo/bar/endpoint?$skiptoken=&foo=bar\"}}";
 
@@ -71,7 +71,7 @@ public class ODataNextLinkTest
     }
 
     @Test
-    public void testNoNextLinkV2()
+    void testNoNextLinkV2()
     {
         final String noLink = "{\"d\": {}}";
 

@@ -8,10 +8,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class GenerationConfigurationBuilderTest
+class GenerationConfigurationBuilderTest
 {
     @Test
-    public void testContainsDefaultValues()
+    void testContainsDefaultValues()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -27,7 +27,7 @@ public class GenerationConfigurationBuilderTest
     }
 
     @Test
-    public void testOverrideDefaultValues()
+    void testOverrideDefaultValues()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration

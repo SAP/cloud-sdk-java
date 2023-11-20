@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CacheConfiguration;
@@ -29,27 +29,27 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.resilience4j.Resilience4jCachingDefaultProviderTest.TestCallable;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
-public class Resilience4jDecorationStrategyTest
+class Resilience4jDecorationStrategyTest
 {
     @SuppressWarnings( "deprecation" )
     @Nonnull
     private static final MockUtil mockUtil = new MockUtil();
 
-    @BeforeClass
-    public static void beforeClass()
+    @BeforeAll
+    static void beforeClass()
     {
         ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
     }
 
     @BeforeEach
-    public void beforeEach()
+    void beforeEach()
     {
         mockUtil.clearTenants();
         mockUtil.clearPrincipals();
     }
 
     @Test
-    public void testConfiguration()
+    void testConfiguration()
     {
         final String identifierClassName = Resilience4jDecorationStrategyTest.class.getName();
 
@@ -59,7 +59,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testResilience4j()
+    void testResilience4j()
     {
         final Callable<String> callable = ResilienceDecorator.decorateCallable(() -> {
             Thread.sleep(10000);
@@ -76,7 +76,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testCallableFallback()
+    void testCallableFallback()
         throws Exception
     {
         final Callable<String> callable =
@@ -92,7 +92,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testCallableFallbackNegative()
+    void testCallableFallbackNegative()
         throws Exception
     {
         final Callable<String> callable = ResilienceDecorator.decorateCallable(() -> {
@@ -105,7 +105,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testSupplierFallback()
+    void testSupplierFallback()
     {
         final Supplier<String> callable =
             ResilienceDecorator
@@ -120,7 +120,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testSupplierFallbackNegative()
+    void testSupplierFallbackNegative()
     {
         final Supplier<String> callable = ResilienceDecorator.decorateSupplier(() -> {
             throw new ResilienceRuntimeException("Simulated exception.");
@@ -132,7 +132,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testClearAllCacheEntries()
+    void testClearAllCacheEntries()
         throws Exception
     {
         final String tenant_id_1 = "tenant_1";
@@ -166,7 +166,7 @@ public class Resilience4jDecorationStrategyTest
     }
 
     @Test
-    public void testNamedThreadTimeLimiter()
+    void testNamedThreadTimeLimiter()
         throws Exception
     {
         final Callable<String> threadNameCallable =
