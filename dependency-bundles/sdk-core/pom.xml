@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.sap.cloud.sdk</groupId>
+		<artifactId>sdk-parent</artifactId>
+		<version>5.0.0-alpha-SNAPSHOT</version>
+	</parent>
+	<artifactId>sdk-core</artifactId>
+	<name>Core Features of the SAP Cloud SDK</name>
+	<description>This is a collection of the essential, connectivity and multi tenancy related modules of the SAP Cloud SDK.</description>
+	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+	<organization>
+		<name>SAP SE</name>
+		<url>https://www.sap.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+	<properties>
+		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+	</properties>
+	<dependencies>
+		<!-- Connectivity Modules -->
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>cloudplatform-connectivity</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-destination-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-oauth</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient5</artifactId>
+		</dependency>
+		<!-- Multi-Tenancy Modules -->
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>cloudplatform-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>servlet-jakarta</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>tenant</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>security</artifactId>
+		</dependency>
+		<!-- Resilience Modules -->
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>resilience</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>resilience4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>caching</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-destination-service</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:servlet-jakarta</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:security</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:resilience</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</usedDependency>
+						<usedDependency>com.sap.cloud.sdk.cloudplatform:caching</usedDependency>
+					</usedDependencies>
+				</configuration>
+			</plugin>
+			<!-- create an empty javadoc jar for Maven Central -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>empty-javadoc-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>javadoc</classifier>
+							<classesDirectory>${basedir}/javadoc</classesDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
