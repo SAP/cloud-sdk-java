@@ -34,23 +34,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MegacliteServiceBindingAccessor implements ServiceBindingAccessor
 {
-    // this binding just exists so we can use ServiceIdentifier.CONNECTIVITY in our
-    // service binding -> destination APIs
-    // its content is currently not used -- see https://github.com/SAP/cloud-sdk-java-backlog/issues/209
-    static final MegacliteServiceBinding CONNECTIVITY_BINDING =
+    /**
+     * The {@link MegacliteServiceBinding} for the connectivity service. In case you want to access on-premise systems
+     * via Megaclite, you need to register this service binding manually using
+     * {@link #registerServiceBinding(MegacliteServiceBinding)}.
+     */
+    @Nonnull
+    public static final MegacliteServiceBinding CONNECTIVITY_BINDING =
         MegacliteServiceBinding
             .forService(ServiceIdentifier.CONNECTIVITY)
             .subscriberConfiguration()
-            .name("foo")
-            .version("bar")
+            .name("connectivity")
+            .version("v1")
             .build();
 
     @Nonnull
     private static final Set<MegacliteServiceBinding> serviceBindings = new HashSet<>();
-
-    static {
-        registerServiceBinding(CONNECTIVITY_BINDING);
-    }
 
     /**
      * Adds the provided {@code serviceBinding} to the <b>statically</b> stored list of all tracked
