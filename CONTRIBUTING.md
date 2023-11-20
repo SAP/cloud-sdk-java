@@ -20,6 +20,8 @@ We use GitHub to manage reviews of pull requests.
 
 Should you wish to work on an issue, please claim it first by commenting on the GitHub issue that you want to work on. This is to prevent duplicated efforts from other contributors on the same issue.
 
+When your contribution is ready, please open a pull request using the [provided template](https://github.com/SAP/cloud-sdk-java/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
+
 If you have questions about one of the issues, please comment on them, and one of the maintainers will clarify.
 
 ## Contributing Code or Documentation
