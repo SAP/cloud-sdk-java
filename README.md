@@ -31,10 +31,10 @@ The SAP Cloud SDK for Java makes it easy to build highly connected, resilient, m
 It enables you to perform outbound requests using various protocols while only writing the business logic.
 
 ## Release Notes
-- For an overview of the latest change, please refer to our [release notes](https://sap.github.io/cloud-sdk/docs/java/v5/release-notes)
+- For an overview of the latest change, please refer to our [release notes.](https://sap.github.io/cloud-sdk/docs/java/v5/release-notes).
 
 ## Documentation
-- Our documentation can be found [here](https://sap.github.io/cloud-sdk/docs/java/getting-started), which includes an [overview of available tutorials.](https://sap.github.io/cloud-sdk/docs/java/guides/tutorial-overview-sdk-java)
+- Our documentation can be found [here](https://sap.github.io/cloud-sdk/docs/java/getting-started), which includes an [overview of available tutorials](https://sap.github.io/cloud-sdk/docs/java/guides/tutorial-overview-sdk-java).
 
 ## Requirements and Setup
 
@@ -58,7 +58,7 @@ To skip tests, add `-Dmaven.test.skip`.
 
 ## Migrating to Version 5
 
-- Please refer to our Migration Guide found [here](https://sap.github.io/cloud-sdk/docs/java/v5/guides/5.0-upgrade)
+- Please refer to our Migration Guide found [here](https://sap.github.io/cloud-sdk/docs/java/v5/guides/5.0-upgrade).
 
 ## Features
 
