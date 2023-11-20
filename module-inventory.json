@@ -544,7 +544,7 @@
     "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
-    "pomFile": "sdk-core/pom.xml",
+    "pomFile": "dependency-bundles/sdk-core/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk",
     "parentArtifactId": "sdk-parent",
     "excludeFromBlackDuckScan": false
