@@ -160,14 +160,6 @@
 			<artifactId>jakarta.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.xmlschema</groupId>
-			<artifactId>xmlschema-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -177,8 +169,6 @@
 				<configuration>
 					<ignoredUnusedDeclaredDependencies>
 						<ignoredUnusedDeclaredDependency>org.apache.axis2:axis2-transport-local</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>org.apache.ws.xmlschema:xmlschema-core</ignoredUnusedDeclaredDependency>
-						<ignoredUnusedDeclaredDependency>javax.activation:activation</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredDependencies>
 						<!-- Axi2 brings these three as transitive dependencies and they are only needed for the generated SOAP wrappers
