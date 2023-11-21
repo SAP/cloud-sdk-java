@@ -48,14 +48,6 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-oauth</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-apache-httpclient4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-apache-httpclient5</artifactId>
-		</dependency>
 		<!-- Multi-Tenancy Modules -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
@@ -97,8 +89,6 @@
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-connectivity</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-destination-service</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient4</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-apache-httpclient5</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:servlet-jakarta</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>
