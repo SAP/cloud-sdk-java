@@ -135,6 +135,8 @@
 		<hamcrest-core.version>2.2</hamcrest-core.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
 		<jsr305.optional>true</jsr305.optional>
+		<xmlschema-core.version>2.3.0</xmlschema-core.version>
+		<javax-activation.version>1.1.1</javax-activation.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -485,6 +487,18 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>1.16.0</version>
+			</dependency>
+			<!-- Added to resolve dependency convergence issues in axis2 -->
+			<dependency>
+				<groupId>org.apache.ws.xmlschema</groupId>
+				<artifactId>xmlschema-core</artifactId>
+				<version>${xmlschema-core.version}</version>
+			</dependency>
+			<!-- Added to resolve compilation issues in soap -->
+			<dependency>
+				<groupId>javax.activation</groupId>
+				<artifactId>activation</artifactId>
+				<version>${javax-activation.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
