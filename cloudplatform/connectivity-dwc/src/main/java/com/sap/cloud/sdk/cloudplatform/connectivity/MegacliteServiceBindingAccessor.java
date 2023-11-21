@@ -68,7 +68,6 @@ public class MegacliteServiceBindingAccessor implements ServiceBindingAccessor
     {
         log.warn("Clearing the registered Dwc Service Bindings. This should never happen outside of testing!");
         serviceBindings.clear();
-        registerServiceBinding(CONNECTIVITY_BINDING);
     }
 
     @Nonnull
