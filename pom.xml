@@ -515,7 +515,7 @@
 			<version>${slf4j.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!--  add engine for junit 4+5 here to ensure they are available everywhere in the project  -->
+		<!--  add engine for junit 5 here to ensure it is available everywhere in the project  -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
