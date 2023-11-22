@@ -56,12 +56,9 @@ public class ErpDestinationHeaderProvider implements DestinationHeaderProvider
         final ProxyType maybeProxyType = destination.get(DestinationProperty.PROXY_TYPE).getOrNull();
 
         if( maybeProxyType == ProxyType.ON_PREMISE ) {
-            log
-                .info(
-                    "No {} property defined on HTTP destination pointing to on-premise ERP system with URI {}. It is recommended to specify the {} property to prevent authentication issues.",
-                    DestinationProperty.SAP_CLIENT.getKeyName(),
-                    destination.get(DestinationProperty.URI),
-                    DestinationProperty.SAP_CLIENT.getKeyName());
+            final String msg =
+                "No {} property defined on HTTP destination pointing to on-premise ERP system with URI {}. It is recommended to specify that property to prevent authentication issues.";
+            log.info(msg, DestinationProperty.SAP_CLIENT.getKeyName(), destination.get(DestinationProperty.URI));
         }
     }
 }

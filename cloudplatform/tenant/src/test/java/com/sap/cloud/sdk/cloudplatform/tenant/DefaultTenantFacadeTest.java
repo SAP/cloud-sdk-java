@@ -17,9 +17,9 @@ import java.util.Collections;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -41,7 +41,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextFacade;
 
 import io.vavr.control.Try;
 
-public class DefaultTenantFacadeTest
+class DefaultTenantFacadeTest
 {
     private static final AuthToken JWT_WITHOUT_TENANT = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
 
@@ -50,9 +50,9 @@ public class DefaultTenantFacadeTest
         when(TOKEN_FACADE_WITHOUT_TENANT.tryGetCurrentToken()).thenReturn(Try.success(JWT_WITHOUT_TENANT));
     }
 
-    @Before
-    @After
-    public void resetAccessors()
+    @BeforeEach
+    @AfterEach
+    void resetAccessors()
     {
         AuthTokenAccessor.setAuthTokenFacade(null);
         ThreadContextAccessor.setThreadContextFacade(null);
@@ -60,7 +60,7 @@ public class DefaultTenantFacadeTest
     }
 
     @Test
-    public void testWithoutTenantFallsBackToXsuaaTokenAndFailsDueToMissingVcapServices()
+    void testWithoutTenantFallsBackToXsuaaTokenAndFailsDueToMissingVcapServices()
     {
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
             final Try<Tenant> tenantTry = new DefaultTenantFacade().tryGetCurrentTenant();
@@ -70,7 +70,7 @@ public class DefaultTenantFacadeTest
     }
 
     @Test
-    public void givenATenantThenFacadeShouldProvideThatTenant()
+    void givenATenantThenFacadeShouldProvideThatTenant()
     {
         final Tenant tenant = mock(Tenant.class);
 
@@ -85,7 +85,7 @@ public class DefaultTenantFacadeTest
     }
 
     @Test
-    public void givenATokenWithoutTenantThenFacadeShouldExceptionIsReturned()
+    void givenATokenWithoutTenantThenFacadeShouldExceptionIsReturned()
     {
         AuthTokenAccessor.setAuthTokenFacade(TOKEN_FACADE_WITHOUT_TENANT);
 
@@ -94,7 +94,7 @@ public class DefaultTenantFacadeTest
     }
 
     @Test
-    public void givenAFailurePropertyThenFacadeShouldNotComputeFromToken()
+    void givenAFailurePropertyThenFacadeShouldNotComputeFromToken()
     {
         AuthTokenAccessor.setAuthTokenFacade(spy(AuthTokenAccessor.getAuthTokenFacade()));
         final ThreadContextFacade mockedThreadContextFacade = mock(ThreadContextFacade.class);
@@ -112,7 +112,7 @@ public class DefaultTenantFacadeTest
     }
 
     @Test
-    public void givenAnUnsupportedServiceBindingThenFacadeShouldReturnNoTenant()
+    void givenAnUnsupportedServiceBindingThenFacadeShouldReturnNoTenant()
     {
         final ServiceBinding serviceBinding =
             spy(

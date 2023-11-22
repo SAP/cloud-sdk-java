@@ -12,31 +12,31 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 
-public class CustomResilienceStrategyTest
+class CustomResilienceStrategyTest
 {
     private static final ThreadLocal<String> storage = new ThreadLocal<>();
 
-    @After
-    public void resetDecorationStrategy()
+    @AfterEach
+    void resetDecorationStrategy()
     {
         ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
     }
 
-    @Before
-    public void resetStorage()
+    @BeforeEach
+    void resetStorage()
     {
         storage.set(null);
     }
 
     @Test
-    public void testThreadLocalWithDefaultDecorationStrategy()
+    void testThreadLocalWithDefaultDecorationStrategy()
     {
         storage.set("foo");
 
@@ -46,7 +46,7 @@ public class CustomResilienceStrategyTest
     }
 
     @Test
-    public void testThreadLocalWithCustomDecorationStrategy()
+    void testThreadLocalWithCustomDecorationStrategy()
     {
         // setup custom resilience strategy with changed decorators
         final GenericDecorator customDecorator =

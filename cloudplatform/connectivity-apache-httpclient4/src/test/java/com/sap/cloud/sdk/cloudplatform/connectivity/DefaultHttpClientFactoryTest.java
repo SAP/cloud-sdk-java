@@ -10,7 +10,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.atLeastOnce;
@@ -35,12 +34,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.admin.model.ServeEventQuery;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
@@ -48,13 +47,11 @@ import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
-public class DefaultHttpClientFactoryTest
+@WireMockTest
+class DefaultHttpClientFactoryTest
 {
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     @Test
-    public void testProxy()
+    void testProxy()
         throws KeyStoreException,
             CertificateException,
             NoSuchAlgorithmException,
@@ -91,7 +88,7 @@ public class DefaultHttpClientFactoryTest
     }
 
     @Test
-    public void testFactoryBuilderDefault()
+    void testFactoryBuilderDefault()
     {
         final DefaultHttpClientFactory defaultA = new DefaultHttpClientFactory();
 
@@ -140,7 +137,7 @@ public class DefaultHttpClientFactoryTest
     }
 
     @Test
-    public void testFactoryBuilderCustom()
+    void testFactoryBuilderCustom()
     {
         final DefaultHttpClientFactory customA =
             DefaultHttpClientFactory
@@ -181,7 +178,7 @@ public class DefaultHttpClientFactoryTest
     }
 
     @Test
-    public void testFactoryBuilderProxy()
+    void testFactoryBuilderProxy( @Nonnull final WireMockRuntimeInfo wm )
         throws IOException
     {
         final String path = "/proxy";
@@ -198,7 +195,7 @@ public class DefaultHttpClientFactoryTest
                 @Nullable final HttpDestinationProperties destination )
             {
                 return super.getRequestConfigBuilder(destination)
-                    .setProxy(new HttpHost("127.0.0.1", wireMockServer.port(), "http"));
+                    .setProxy(new HttpHost("127.0.0.1", wm.getHttpPort(), "http"));
             }
         };
 
@@ -208,7 +205,7 @@ public class DefaultHttpClientFactoryTest
     }
 
     @Test
-    public void testFactoryBuilderCustomBuilder()
+    void testFactoryBuilderCustomBuilder( @Nonnull final WireMockRuntimeInfo wm )
         throws IOException
     {
         final String path = "/custom-builder";
@@ -225,13 +222,13 @@ public class DefaultHttpClientFactoryTest
         };
 
         final HttpClient httpClient = customFactory.createHttpClient();
-        final HttpResponse response = httpClient.execute(new HttpGet(wireMockServer.baseUrl() + path));
+        final HttpResponse response = httpClient.execute(new HttpGet(wm.getHttpBaseUrl() + path));
         assertThat(response.getStatusLine().getStatusCode()).isEqualTo(HttpStatus.SC_OK);
     }
 
     @Test
     @SneakyThrows
-    public void testProxyAuthorizationIsNotConsidered()
+    void testProxyAuthorizationIsNotConsidered( @Nonnull final WireMockRuntimeInfo wm )
     {
         final StubMapping stub = stubFor(get(urlEqualTo("/proxy-with-auth")).willReturn(ok()));
 
@@ -240,7 +237,7 @@ public class DefaultHttpClientFactoryTest
 
         final BasicCredentials credentials = new BasicCredentials("user", "pass");
         final BasicCredentials spiedCredentials = spy(credentials);
-        doReturn(Option.of(ProxyConfiguration.of(wireMockServer.baseUrl(), spiedCredentials)))
+        doReturn(Option.of(ProxyConfiguration.of(wm.getHttpBaseUrl(), spiedCredentials)))
             .when(spiedDestination)
             .getProxyConfiguration();
 

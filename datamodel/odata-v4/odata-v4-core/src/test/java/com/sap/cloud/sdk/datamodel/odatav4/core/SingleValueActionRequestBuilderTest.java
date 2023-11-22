@@ -15,10 +15,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
@@ -28,13 +28,15 @@ import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.annotations.JsonAdapter;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -49,21 +51,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class SingleValueActionRequestBuilderTest
+@WireMockTest
+class SingleValueActionRequestBuilderTest
 {
     private static final String DEFAULT_SERVICE_PATH = "/odata/default";
     private static final String ODATA_ACTION = "TestAction";
 
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
-        wireMockServer.stubFor(head(anyUrl()).willReturn(ok()));
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+        stubFor(head(anyUrl()).willReturn(ok()));
     }
 
     private static String readResourceFile( final String resourceFileName )
@@ -125,12 +125,12 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testFunctionQueryWithParametersAndNoResponse()
+    void testFunctionQueryWithParametersAndNoResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
         final String actionRequestBody = readResourceFile("ActionParametersRequestBody.json");
 
-        wireMockServer.stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(noContent()));
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(noContent()));
 
         final Map<String, Object> actionParameters = new LinkedHashMap<>();
         actionParameters.put("stringParameter", "test");
@@ -165,13 +165,12 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithNoParameterAndPrimitiveResponse()
+    void testActionWithNoParameterAndPrimitiveResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
         final String actionRequestBody = readResourceFile("ActionNoParametersRequestBody.json");
 
-        wireMockServer
-            .stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : 3.14" + "}")));
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : 3.14" + "}")));
 
         final SingleValueActionRequestBuilder<Float> sut =
             new SingleValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, Float.class);
@@ -193,13 +192,12 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithNoParameterAndStringResponse()
+    void testActionWithNoParameterAndStringResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
         final String actionRequestBody = readResourceFile("ActionNoParametersRequestBody.json");
 
-        wireMockServer
-            .stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : \"Works\"" + "}")));
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : \"Works\"" + "}")));
 
         final SingleValueActionRequestBuilder<String> sut =
             new SingleValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, String.class);
@@ -222,12 +220,12 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithEntityParameterAndEntityResponse()
+    void testActionWithEntityParameterAndEntityResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
         final String actionRequestBody = readResourceFile("ActionEntityRequestBody.json");
 
-        wireMockServer.stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{ \"Name\" : \"Tester\" }")));
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{ \"Name\" : \"Tester\" }")));
 
         final Map<String, Object> actionParameters = new LinkedHashMap<>();
         final TestEntity testEntity = new TestEntity("Tester");
@@ -257,15 +255,14 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionWithComplexTypeParameterComplexTypeResponse()
+    void testActionWithComplexTypeParameterComplexTypeResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
         final String actionRequestBody = readResourceFile("ActionComplexTypeRequestBody.json");
 
-        wireMockServer
-            .stubFor(
-                post(urlPathEqualTo(actionRequestUrl))
-                    .willReturn(okJson("{\"City\": \"Stockholm\",\"Country\": \"Sweden\"}")));
+        stubFor(
+            post(urlPathEqualTo(actionRequestUrl))
+                .willReturn(okJson("{\"City\": \"Stockholm\",\"Country\": \"Sweden\"}")));
 
         final Map<String, Object> actionParameters = new LinkedHashMap<>();
         final ComplexType testComplexType = new ComplexType("Stockholm", "Sweden");
@@ -296,12 +293,11 @@ public class SingleValueActionRequestBuilderTest
     }
 
     @Test
-    public void testActionRequestWithoutCsrfTokenRetrievalIfSkipped()
+    void testActionRequestWithoutCsrfTokenRetrievalIfSkipped()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
 
-        wireMockServer
-            .stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : 3.14" + "}")));
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{" + "\"value\" : 3.14" + "}")));
 
         final SingleValueActionRequestBuilder<Float> sut =
             new SingleValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, Float.class);

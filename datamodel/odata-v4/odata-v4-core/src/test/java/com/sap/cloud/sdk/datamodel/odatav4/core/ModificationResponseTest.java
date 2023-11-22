@@ -21,7 +21,7 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -40,7 +40,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class ModificationResponseTest
+class ModificationResponseTest
 {
     @Data
     @NoArgsConstructor
@@ -70,7 +70,7 @@ public class ModificationResponseTest
     }
 
     @Test
-    public void testEntityResponse()
+    void testEntityResponse()
     {
         final TestObject inputObject = new TestObject();
 
@@ -97,11 +97,11 @@ public class ModificationResponseTest
         assertThat(modification.getModifiedEntity()).isEqualTo(new TestObject("bar"));
 
         assertThat(modification.getResponseHeaders()).containsOnlyKeys("fizz");
-        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz", "bizz=1");
+        assertThat(modification.getResponseHeaders().get("fizz")).containsExactly("buzz", "fuzz, bizz=1");
     }
 
     @Test
-    public void testEmptyResponse()
+    void testEmptyResponse()
     {
         final TestObject inputObject = new TestObject();
 
@@ -128,7 +128,7 @@ public class ModificationResponseTest
     }
 
     @Test
-    public void testResponseIsOnlyEvaluatedOnce()
+    void testResponseIsOnlyEvaluatedOnce()
     {
         final TestObject inputObject = new TestObject();
 

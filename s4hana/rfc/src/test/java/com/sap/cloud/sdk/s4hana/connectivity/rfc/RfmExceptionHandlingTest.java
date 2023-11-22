@@ -7,7 +7,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 import static org.mockito.Mockito.mock;
 
 @Deprecated
-public class RfmExceptionHandlingTest
+class RfmExceptionHandlingTest
     extends
     AbstractRemoteFunctionExceptionHandlingTest<RfmRequest, RfmRequestResult, RfmTransactionFactory, JCoTransaction<RfmRequest, RfmRequestResult>>
 {

@@ -6,9 +6,9 @@ package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -20,13 +20,13 @@ import com.sap.cloud.security.token.Token;
 
 import io.vavr.control.Try;
 
-public class DefaultTenantFacadeIasTest
+class DefaultTenantFacadeIasTest
 {
     private static final String TENANT_ID = "a89ea924-d9c2-4eab-84fb-3ffcaadf5d24";
     private static final String SUBDOMAIN = "some-subdomain";
 
-    @Before
-    public void prepareInboundAccessToken()
+    @BeforeEach
+    void prepareInboundAccessToken()
     {
         final Token securityLibToken =
             JwtGenerator
@@ -42,21 +42,21 @@ public class DefaultTenantFacadeIasTest
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(token));
     }
 
-    @After
-    public void resetAuthTokenFacade()
+    @AfterEach
+    void resetAuthTokenFacade()
     {
         AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test
-    public void tenantIdShouldBeReadFromIasToken()
+    void tenantIdShouldBeReadFromIasToken()
     {
         final Tenant tenant = TenantAccessor.getCurrentTenant();
         assertThat(tenant.getTenantId()).isEqualTo(TENANT_ID);
     }
 
     @Test
-    public void subdomainShouldBeReadFromIasToken()
+    void subdomainShouldBeReadFromIasToken()
     {
         final DefaultTenant tenant = (DefaultTenant) TenantAccessor.getCurrentTenant();
         assertThat(tenant.getSubdomain()).isEqualTo(SUBDOMAIN);

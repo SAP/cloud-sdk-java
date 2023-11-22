@@ -19,7 +19,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -41,7 +41,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
-public class FieldSerializationTest
+class FieldSerializationTest
 {
     @Data
     @NoArgsConstructor
@@ -160,7 +160,7 @@ public class FieldSerializationTest
     }
 
     @Test
-    public void testBinaryFieldParsingFromResponsePayload()
+    void testBinaryFieldParsingFromResponsePayload()
     {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
@@ -174,7 +174,7 @@ public class FieldSerializationTest
     }
 
     @Test
-    public void testCustomFieldParsingFromResponsePayload()
+    void testCustomFieldParsingFromResponsePayload()
     {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
 

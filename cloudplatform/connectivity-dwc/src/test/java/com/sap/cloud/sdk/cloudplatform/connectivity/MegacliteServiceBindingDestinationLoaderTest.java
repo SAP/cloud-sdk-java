@@ -22,9 +22,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpHeaders;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -43,7 +43,7 @@ import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 
-public class MegacliteServiceBindingDestinationLoaderTest
+class MegacliteServiceBindingDestinationLoaderTest
 {
     @Nonnull
     private static final MegacliteServiceBinding BINDING_PAAS =
@@ -83,8 +83,8 @@ public class MegacliteServiceBindingDestinationLoaderTest
 
     private MegacliteServiceBindingDestinationLoader sut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         final DwcConfiguration dwcConfig = new DwcConfiguration(megacliteUrl, providerTenantId);
         final MegacliteDestinationFactory destinationFactory = new MegacliteDestinationFactory(dwcConfig);
@@ -95,15 +95,15 @@ public class MegacliteServiceBindingDestinationLoaderTest
         sut.setConnectivityResolver(new MegacliteConnectivityProxyInformationResolver(destinationFactory));
     }
 
-    @After
-    public void reset()
+    @AfterEach
+    void reset()
     {
         TenantAccessor.setTenantFacade(null);
         RequestHeaderAccessor.setHeaderFacade(null);
     }
 
     @Test
-    public void testInstanceIsPickedUpByFacadeLocator()
+    void testInstanceIsPickedUpByFacadeLocator()
     {
         final List<ServiceBindingDestinationLoader> loaders =
             FacadeLocator
@@ -115,7 +115,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testSubscriberDestination()
+    void testSubscriberDestination()
     {
         mockTenant();
 
@@ -129,7 +129,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testProviderDestination()
+    void testProviderDestination()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
@@ -144,7 +144,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testNamedUserBehalf()
+    void testNamedUserBehalf()
     {
         mockTenant();
 
@@ -162,7 +162,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testDefaultServiceBindingIsSkipped()
+    void testDefaultServiceBindingIsSkipped()
     {
         final ServiceBinding binding =
             DefaultServiceBinding
@@ -178,7 +178,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testMissingDwcConfig()
+    void testMissingDwcConfig()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
@@ -196,7 +196,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testProviderMandateIsMissing()
+    void testProviderMandateIsMissing()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
@@ -212,7 +212,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testSubscriberMandateIsMissing()
+    void testSubscriberMandateIsMissing()
     {
         // current tenant != provider
         mockTenant();
@@ -229,7 +229,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testSubscriberWithoutCurrentTenant()
+    void testSubscriberWithoutCurrentTenant()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_SAAS).build();
@@ -243,7 +243,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testCurrentTenantIsProvider()
+    void testCurrentTenantIsProvider()
     {
         mockTenant(providerTenantId);
 
@@ -257,7 +257,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testConnectivityInformationIsAdded()
+    void testConnectivityInformationIsAdded()
     {
         final URI baseUrl = URI.create("baseUrl");
         final URI proxyUrl = URI.create("baseUrl");
@@ -271,6 +271,8 @@ public class MegacliteServiceBindingDestinationLoaderTest
         sut.setConnectivityResolver(mock);
 
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(sut);
+        DefaultHttpDestinationBuilderProxyHandler
+            .setServiceBindingConnectivity(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING);
 
         final DefaultHttpDestination result =
             DefaultHttpDestination
@@ -293,20 +295,20 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testMissingDestinationToBeProxied()
+    void testMissingDestinationToBeProxied()
     {
         final ServiceBindingDestinationOptions options =
-            ServiceBindingDestinationOptions.forService(ServiceIdentifier.CONNECTIVITY).build();
+            ServiceBindingDestinationOptions.forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING).build();
 
         assertThatThrownBy(() -> sut.getDestination(options)).isInstanceOf(DestinationAccessException.class);
     }
 
     @Test
-    public void testConnectivityWithProviderTenant()
+    void testConnectivityWithProviderTenant()
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.CONNECTIVITY)
+                .forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING)
                 .onBehalfOf(OnBehalfOf.TECHNICAL_USER_PROVIDER)
                 .withOption(ProxyOptions.destinationToBeProxied(mock(HttpDestination.class)))
                 .build();
@@ -315,7 +317,7 @@ public class MegacliteServiceBindingDestinationLoaderTest
     }
 
     @Test
-    public void testGetMandateConfiguration()
+    void testGetMandateConfiguration()
     {
         // make sure this test covers all OnBehalfOf values
         assertThat(OnBehalfOf.values())

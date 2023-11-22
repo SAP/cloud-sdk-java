@@ -12,13 +12,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.s4hana.connectivity.rfc.exception.RemoteFunctionException;
 
 @Deprecated
-public class RfmRequestCommitHandlingTest
+class RfmRequestCommitHandlingTest
 {
     private static final String FUNCTION_NAME = "A";
     private static final Destination destination = mock(Destination.class);
@@ -51,56 +51,56 @@ public class RfmRequestCommitHandlingTest
     }
 
     @Test
-    public void testSuccessfulSoapCommitHandling()
+    void testSuccessfulSoapCommitHandling()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testSuccessfulCommitHandling(soapTransaction);
     }
 
     @Test
-    public void testFailedSoapCommitHandling()
+    void testFailedSoapCommitHandling()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testFailedCommitHandling(soapTransaction);
     }
 
     @Test
-    public void testSuccessfulSoapNonTransactionalCall()
+    void testSuccessfulSoapNonTransactionalCall()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testSuccessfulNonTransactionalCall(soapTransaction);
     }
 
     @Test
-    public void testFailedSoapNonTransactionalCall()
+    void testFailedSoapNonTransactionalCall()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testFailedNonTransactionalCall(soapTransaction);
     }
 
     @Test
-    public void testSuccessfulJCoCommitHandling()
+    void testSuccessfulJCoCommitHandling()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testSuccessfulCommitHandling(jcoTransaction);
     }
 
     @Test
-    public void testFailedJCoCommitHandling()
+    void testFailedJCoCommitHandling()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testFailedCommitHandling(jcoTransaction);
     }
 
     @Test
-    public void testSuccessfulJCoNonTransactionalCall()
+    void testSuccessfulJCoNonTransactionalCall()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testSuccessfulNonTransactionalCall(jcoTransaction);
     }
 
     @Test
-    public void testFailedJCoNonTransactionalCall()
+    void testFailedJCoNonTransactionalCall()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         testFailedNonTransactionalCall(jcoTransaction);

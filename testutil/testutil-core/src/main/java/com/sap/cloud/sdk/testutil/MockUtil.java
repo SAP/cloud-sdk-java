@@ -4,7 +4,6 @@
 
 package com.sap.cloud.sdk.testutil;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -20,18 +19,12 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.secret.SecretStore;
-import com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreAccessor;
-import com.sap.cloud.sdk.cloudplatform.security.secret.SecretStoreFacade;
-import com.sap.cloud.sdk.cloudplatform.security.secret.exception.KeyStoreAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.secret.exception.SecretStoreAccessException;
 import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
 import com.sap.cloud.sdk.cloudplatform.servlet.LocaleFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
-import com.sap.cloud.sdk.testutil.DefaultSecretStoreMocker.KeyStoreWithPassword;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -47,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  */
 @Slf4j
-public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, SecretStoreMocker
+public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker
 {
     static final List<String> CONFIG_FILE_EXTENSIONS = ImmutableList.of(".yml", ".yaml", ".json");
 
@@ -67,9 +60,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
     @Getter( AccessLevel.PACKAGE )
     private PrincipalFacade principalFacade;
 
-    @Getter( AccessLevel.PACKAGE )
-    private SecretStoreFacade secretStoreFacade;
-
     @Delegate
     private final DefaultLocaleMocker localeMocker = new DefaultLocaleMocker(this::resetLocaleFacade);
 
@@ -78,10 +68,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
 
     @Delegate
     private final DefaultPrincipalMocker principalMocker = new DefaultPrincipalMocker(this::resetPrincipalFacade);
-
-    @Delegate
-    private final DefaultSecretStoreMocker secretStoreMocker =
-        new DefaultSecretStoreMocker(this::resetSecretStoreFacade);
 
     /**
      * Instantiates a new instance of {@link MockUtil}, invalidates caches.
@@ -135,7 +121,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
         resetLocaleFacade();
         resetTenantFacade();
         resetPrincipalFacade();
-        resetSecretStoreFacade();
 
         mockCurrentLocales();
         mockCurrentTenant();
@@ -178,46 +163,5 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker, Se
         }
         PrincipalAccessor.setPrincipalFacade(principalFacade);
         return principalFacade;
-    }
-
-    private SecretStoreFacade resetSecretStoreFacade()
-    {
-        if( secretStoreFacade == null ) {
-            secretStoreFacade = new SecretStoreFacade()
-            {
-
-                @Nonnull
-                @Override
-                public Try<SecretStore> tryGetSecretStore( final @Nonnull String name )
-                {
-                    return Option
-                        .of(secretStoreMocker.getSecretStoresByName().get(name))
-                        .toTry(
-                            () -> new SecretStoreAccessException(
-                                "Failed to find secret store with name '"
-                                    + name
-                                    + "'. Have you mocked this secret store?"));
-                }
-
-                @Nonnull
-                @Override
-                public Try<KeyStore> tryGetKeyStore( final @Nonnull String name, final @Nonnull SecretStore password )
-                {
-                    return Option
-                        .of(secretStoreMocker.getKeyStoresByName().get(name))
-                        .toTry(
-                            () -> new SecretStoreAccessException(
-                                "Failed to find key store with name '" + name + "'. Have you mocked this key store?"))
-                        .filter(
-                            keyStore -> keyStore.getPassword().equals(String.valueOf(password.getSecret())),
-                            () -> new KeyStoreAccessException(
-                                "Failed to access key store with name '" + name + "': mocked password doesn't match."))
-                        .map(KeyStoreWithPassword::getKeyStore);
-                }
-            };
-        }
-
-        SecretStoreAccessor.setSecretStoreFacade(secretStoreFacade);
-        return secretStoreFacade;
     }
 }

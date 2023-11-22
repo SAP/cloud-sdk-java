@@ -12,12 +12,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRequestHeaderContainerTest
+class DefaultRequestHeaderContainerTest
 {
     @Test
-    public void creation()
+    void creation()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key 1", Arrays.asList("Value 1-1", "Value 1-2"));
@@ -33,7 +33,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationTransformsKeysToLowerCase()
+    void creationTransformsKeysToLowerCase()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key 1", Arrays.asList("Value 1-1", "Value 1-2"));
@@ -44,7 +44,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationCombinesValuesForSameKeys()
+    void creationCombinesValuesForSameKeys()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key 1", Arrays.asList("Value 1-1", "Value 1-2"));
@@ -57,7 +57,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationCopiesValues()
+    void creationCopiesValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key 1", Arrays.asList("Value 1-1", "Value 1-2"));
@@ -75,7 +75,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationRemovesNullAndEmptyValues()
+    void creationRemovesNullAndEmptyValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key1", Arrays.asList("Value1", null));
@@ -89,18 +89,18 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void creationSplitsHeaderValues()
+    void creationDoesNotSplitHeaderValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Key", Arrays.asList("Value1", "Value2,Value3"));
 
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
-        assertThat(sut.getHeaderValues("Key")).containsExactlyInAnyOrder("Value1", "Value2", "Value3");
+        assertThat(sut.getHeaderValues("Key")).containsExactlyInAnyOrder("Value1", "Value2,Value3");
     }
 
     @Test
-    public void creationSplitsCookieValues()
+    void creationDoesNotSplitCookieValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Set-Cookie", Arrays.asList("cookie1=value1", "cookie2=value2;cookie3;"));
@@ -108,33 +108,11 @@ public class DefaultRequestHeaderContainerTest
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
         assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder("cookie1=value1", "cookie2=value2", "cookie3");
+            .containsExactlyInAnyOrder("cookie1=value1", "cookie2=value2;cookie3;");
     }
 
     @Test
-    public void creationSplitsCookieValuesCaseInsensitively()
-    {
-        final Map<String, Collection<String>> input = new HashMap<>();
-        input.put("set-cookie", Collections.singletonList("cookie1=value1;cookie2=value2"));
-        input.put("SET-COOKIE", Collections.singletonList("cookie3;cookie4"));
-        input
-            .put("sEt-CoOkIe", Arrays.asList("cookie5=value5", "cookie6=value6;cookie7=value, which contains a comma"));
-
-        final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
-
-        assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder(
-                "cookie1=value1",
-                "cookie2=value2",
-                "cookie3",
-                "cookie4",
-                "cookie5=value5",
-                "cookie6=value6",
-                "cookie7=value, which contains a comma");
-    }
-
-    @Test
-    public void creationTrimsValues()
+    void creationDoesNotTrimValues()
     {
         final Map<String, Collection<String>> input = new HashMap<>();
         input.put("Header1", Collections.singletonList("  Value1-1   "));
@@ -144,14 +122,25 @@ public class DefaultRequestHeaderContainerTest
 
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
-        assertThat(sut.getHeaderValues("Header1")).containsExactlyInAnyOrder("Value1-1");
-        assertThat(sut.getHeaderValues("Header2")).containsExactlyInAnyOrder("Value2-1", "Value2-2");
+        assertThat(sut.getHeaderValues("Header1")).containsExactlyInAnyOrder("  Value1-1   ");
+        assertThat(sut.getHeaderValues("Header2")).containsExactlyInAnyOrder("  Value2-1  ,  Value2-2   ");
         assertThat(sut.getHeaderValues("Set-Cookie"))
-            .containsExactlyInAnyOrder("cookie1  = cookie-value1", "cookie2 = cookie-value2", "cookie3");
+            .containsExactlyInAnyOrder("  cookie1  = cookie-value1  ", "  cookie2 = cookie-value2  ; cookie3  ");
     }
 
     @Test
-    public void getHeaderValuesReturnsEmptyCollectionIfHeaderIsNotPresent()
+    void creationRemovesNullValues()
+    {
+        final Map<String, Collection<String>> input = new HashMap<>();
+        input.put("Header", Arrays.asList("Value1-1", "", null, "   ", null));
+
+        final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
+
+        assertThat(sut.getHeaderValues("Header")).containsExactlyInAnyOrder("Value1-1", "", "   ");
+    }
+
+    @Test
+    void getHeaderValuesReturnsEmptyCollectionIfHeaderIsNotPresent()
     {
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(Collections.emptyMap());
 
@@ -161,7 +150,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void getHeaderValuesIsCaseInsensitive()
+    void getHeaderValuesIsCaseInsensitive()
     {
         final Map<String, String> input = Collections.singletonMap("Key", "Value");
 
@@ -174,7 +163,7 @@ public class DefaultRequestHeaderContainerTest
     }
 
     @Test
-    public void containsHeaderIsCaseInsensitive()
+    void containsHeaderIsCaseInsensitive()
     {
         final Map<String, String> input = Collections.singletonMap("Key", "Value");
 

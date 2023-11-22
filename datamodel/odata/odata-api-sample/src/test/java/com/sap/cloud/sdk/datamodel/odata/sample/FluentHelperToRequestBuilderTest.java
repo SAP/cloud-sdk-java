@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -43,7 +43,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Vendo
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FluentHelperToRequestBuilderTest
+class FluentHelperToRequestBuilderTest
 {
     private static final String ODATA_ENDPOINT_URL = SdkGroceryStoreService.DEFAULT_SERVICE_PATH;
     private static final String ENTITY_COLLECTION = "Products";
@@ -67,7 +67,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllToRequest()
+    void testGetAllToRequest()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -88,7 +88,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetByKeyToRequest()
+    void testGetByKeyToRequest()
     {
         final ODataRequestReadByKey vdmRequest =
             new DefaultSdkGroceryStoreService().getProductByKey(1000001).select(Product.PRICE).toRequest();
@@ -107,7 +107,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithTop()
+    void testGetAllProductWithTop()
     {
         final ODataRequestRead vdmRequest = new DefaultSdkGroceryStoreService().getAllProduct().top(10).toRequest();
 
@@ -118,7 +118,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithSkip()
+    void testGetAllProductWithSkip()
     {
         final ODataRequestRead vdmRequest = new DefaultSdkGroceryStoreService().getAllProduct().skip(10).toRequest();
 
@@ -129,7 +129,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductsWithFilter()
+    void testGetAllProductsWithFilter()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService().getAllProduct().filter(Product.NAME.eq("")).toRequest();
@@ -141,7 +141,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithThreeFilters()
+    void testGetAllProductWithThreeFilters()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -162,7 +162,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithThreeFiltersAlternative()
+    void testGetAllProductWithThreeFiltersAlternative()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -184,7 +184,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithNestedSelect()
+    void testGetAllProductWithNestedSelect()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -204,7 +204,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetProductByKey()
+    void testGetProductByKey()
     {
         final ODataRequestReadByKey vdmRequest =
             new DefaultSdkGroceryStoreService().getProductByKey(1000001).toRequest();
@@ -223,7 +223,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetProductByKeyWithSelect()
+    void testGetProductByKeyWithSelect()
     {
         final ODataRequestReadByKey vdmRequest =
             new DefaultSdkGroceryStoreService().getProductByKey(1000001).select(Product.PRICE).toRequest();
@@ -242,7 +242,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithOrderByAsc()
+    void testGetAllProductWithOrderByAsc()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService().getAllProduct().orderBy(Product.NAME, Order.ASC).toRequest();
@@ -254,7 +254,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithOrderByDesc()
+    void testGetAllProductWithOrderByDesc()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService().getAllProduct().orderBy(Product.NAME, Order.DESC).toRequest();
@@ -266,7 +266,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testGetAllProductWithSelect()
+    void testGetAllProductWithSelect()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -285,7 +285,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testFunctionImport()
+    void testFunctionImport()
     {
         final ODataRequestGeneric vdmRequest =
             new DefaultSdkGroceryStoreService().getProductQuantities(36227, 1).toRequest();
@@ -301,7 +301,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testDeleteProductAddressToRequest()
+    void testDeleteProductAddressToRequest()
     {
         final Address productAddress = Address.builder().id(1234567).build();
 
@@ -323,7 +323,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testCustomRequestParameter()
+    void testCustomRequestParameter()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -346,7 +346,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testCustomRequestParameterOverloadingParameters()
+    void testCustomRequestParameterOverloadingParameters()
     {
         final ODataRequestRead vdmRequest =
             new DefaultSdkGroceryStoreService()
@@ -377,7 +377,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testTemporalFilterExpression()
+    void testTemporalFilterExpression()
     {
         final LocalTime time = LocalTime.of(18, 59, 59);
         final ODataRequestRead vdmRequest =
@@ -391,7 +391,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testFetchOnUnmanagedEntityWithException()
+    void testFetchOnUnmanagedEntityWithException()
     {
         final Product product = Product.builder().price(BigDecimal.valueOf(100)).build();
 
@@ -400,7 +400,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testAddOnUnmanagedEntityWithoutException()
+    void testAddOnUnmanagedEntityWithoutException()
     {
         final Product product = Product.builder().price(BigDecimal.valueOf(100)).build();
 
@@ -408,7 +408,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testSetOnUnmanagedEntityWithoutException()
+    void testSetOnUnmanagedEntityWithoutException()
     {
         final Product product = Product.builder().price(BigDecimal.valueOf(100)).build();
 
@@ -416,7 +416,7 @@ public class FluentHelperToRequestBuilderTest
     }
 
     @Test
-    public void testBatchWithConflictingServicePath()
+    void testBatchWithConflictingServicePath()
     {
         final String customPath1 = "/path1";
         final String customPath2 = "/path2";

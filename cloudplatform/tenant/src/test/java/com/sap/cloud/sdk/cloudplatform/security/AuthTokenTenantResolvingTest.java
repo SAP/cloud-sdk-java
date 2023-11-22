@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.auth0.jwt.JWT;
@@ -32,7 +32,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 
 import lombok.SneakyThrows;
 
-public class AuthTokenTenantResolvingTest
+class AuthTokenTenantResolvingTest
 {
     // Header:
     // {
@@ -121,8 +121,8 @@ public class AuthTokenTenantResolvingTest
 
     private DefaultAuthTokenFacade mockedAuthTokenFacade;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before()
     {
         DefaultServiceBindingAccessor
             .setInstance(
@@ -137,8 +137,8 @@ public class AuthTokenTenantResolvingTest
         AuthTokenAccessor.setAuthTokenFacade(mockedAuthTokenFacade);
     }
 
-    @After
-    public void resetFacades()
+    @AfterEach
+    void resetFacades()
     {
         DefaultServiceBindingAccessor.setInstance(null);
         PrincipalAccessor.setPrincipalFacade(null);
@@ -147,7 +147,7 @@ public class AuthTokenTenantResolvingTest
     }
 
     @Test
-    public void testOfTenantWithIdAndSubdomain()
+    void testOfTenantWithIdAndSubdomain()
     {
         final String tenantId = "my-tenant";
         final String subdomain = "my-subdomain";
@@ -185,7 +185,7 @@ public class AuthTokenTenantResolvingTest
     }
 
     @Test
-    public void testOfTenantWithAllArguments()
+    void testOfTenantWithAllArguments()
     {
         final String tenantId = "my-tenant";
         final String subdomain = "my-subdomain";
@@ -235,7 +235,7 @@ public class AuthTokenTenantResolvingTest
     }
 
     @Test
-    public void testWithoutJwt()
+    void testWithoutJwt()
     {
         assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("XSUAA_Tenant");
         VavrAssertions.assertThat(PrincipalAccessor.tryGetCurrentPrincipal()).isFailure();

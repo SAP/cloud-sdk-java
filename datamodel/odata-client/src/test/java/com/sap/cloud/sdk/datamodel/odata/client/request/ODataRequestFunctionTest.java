@@ -34,7 +34,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.OrderExpression;
 import com.sap.cloud.sdk.datamodel.odata.client.query.Order;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-public class ODataRequestFunctionTest
+class ODataRequestFunctionTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
@@ -65,7 +65,7 @@ public class ODataRequestFunctionTest
     private HttpClient client;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
@@ -74,13 +74,13 @@ public class ODataRequestFunctionTest
     }
 
     @AfterEach
-    public void teardown()
+    void teardown()
     {
         wireMockServer.stop();
     }
 
     @Test
-    public void testFunctionWithoutParameters()
+    void testFunctionWithoutParameters()
     {
         wireMockServer.stubFor(get(anyUrl()).willReturn(okJson("{}")));
 
@@ -101,7 +101,7 @@ public class ODataRequestFunctionTest
     }
 
     @Test
-    public void testFunctionWithParametersV2()
+    void testFunctionWithParametersV2()
     {
         wireMockServer.stubFor(get(anyUrl()).willReturn(okJson("{}")));
 
@@ -127,7 +127,7 @@ public class ODataRequestFunctionTest
     }
 
     @Test
-    public void testFunctionWithParametersV4()
+    void testFunctionWithParametersV4()
     {
         wireMockServer.stubFor(get(anyUrl()).willReturn(okJson("{}")));
 
@@ -153,7 +153,7 @@ public class ODataRequestFunctionTest
     }
 
     @Test
-    public void testAutomaticParameterHandling()
+    void testAutomaticParameterHandling()
     {
         final ODataFunctionParameters parametersV2 =
             new ODataFunctionParameters(ODataProtocol.V2).addParameter("key", "val");
@@ -178,7 +178,7 @@ public class ODataRequestFunctionTest
     }
 
     @Test
-    public void testConstructorWithStructuredQuery()
+    void testConstructorWithStructuredQuery()
     {
         final StructuredQuery structuredQuery =
             StructuredQuery

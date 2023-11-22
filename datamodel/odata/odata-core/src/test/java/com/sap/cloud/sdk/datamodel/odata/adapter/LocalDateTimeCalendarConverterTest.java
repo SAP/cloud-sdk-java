@@ -11,14 +11,14 @@ import java.time.Month;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.LocalDateTimeCalendarConverter;
 
-public class LocalDateTimeCalendarConverterTest
+class LocalDateTimeCalendarConverterTest
 {
     @Test
-    public void testFromDomain()
+    void testFromDomain()
     {
         final int someYear = 2017;
         final int someMonth = Calendar.MAY;
@@ -52,7 +52,7 @@ public class LocalDateTimeCalendarConverterTest
     }
 
     @Test
-    public void testToDomain()
+    void testToDomain()
     {
         final int someYear = 2017;
         final int someMonth = Month.MAY.getValue();

@@ -14,13 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.http.client.HttpClient;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.http.client.HttpClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
@@ -36,7 +37,8 @@ import io.vavr.control.Try;
 import lombok.Data;
 import lombok.SneakyThrows;
 
-public class ODataResponseParsingTest
+@WireMockTest
+class ODataResponseParsingTest
 {
     private static final String servicePathV2 = "/v2/";
     private static final String servicePathV4 = "/v4/";
@@ -61,9 +63,6 @@ public class ODataResponseParsingTest
         return new String(Files.readAllBytes(Paths.get(cl.getResource("ODataResponseParsingTest/" + s).toURI())));
     }
 
-    @Rule
-    public WireMockRule rule = new WireMockRule(WireMockConfiguration.options().dynamicPort());
-
     private HttpClient client;
 
     @Data
@@ -79,15 +78,15 @@ public class ODataResponseParsingTest
         private boolean ticketIsBlocked;
     }
 
-    @Before
-    public void setupHttpClient()
+    @BeforeEach
+    void setupHttpClient( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final Destination destination = DefaultHttpDestination.builder(rule.baseUrl()).build();
+        final Destination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         client = HttpClientAccessor.getHttpClient(destination);
     }
 
     @Test
-    public void testByKeyV2()
+    void testByKeyV2()
     {
         stubFor(get(urlPathEqualTo(servicePathV2 + entityCollection + entityKey)).willReturn(okJson(byKeyResponseV2)));
 
@@ -107,7 +106,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testByKeyV4()
+    void testByKeyV4()
     {
         stubFor(get(urlPathEqualTo(servicePathV4 + entityCollection + entityKey)).willReturn(okJson(byKeyResponseV4)));
 
@@ -127,7 +126,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testGetAllV2()
+    void testGetAllV2()
     {
         stubFor(get(urlPathEqualTo(servicePathV2 + entityCollection)).willReturn(okJson(getAllResponseV2)));
 
@@ -142,7 +141,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testGetAllV4()
+    void testGetAllV4()
     {
         stubFor(get(urlPathEqualTo(servicePathV4 + entityCollection)).willReturn(okJson(getAllResponseV4)));
 
@@ -157,7 +156,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testPrimitiveV2()
+    void testPrimitiveV2()
     {
         stubFor(get(urlPathEqualTo(servicePathV2 + functionEndpoint)).willReturn(okJson(primitiveResponseV2)));
 
@@ -177,7 +176,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testFunctionEntityResponseV2()
+    void testFunctionEntityResponseV2()
     {
         stubFor(get(urlPathEqualTo(servicePathV2 + functionEndpoint)).willReturn(okJson(functionEntityResponseV2)));
 
@@ -197,7 +196,7 @@ public class ODataResponseParsingTest
     }
 
     @Test
-    public void testPrimitiveV4()
+    void testPrimitiveV4()
     {
         stubFor(get(urlPathEqualTo(servicePathV4 + functionEndpoint + "()")).willReturn(okJson(primitiveResponseV4)));
 

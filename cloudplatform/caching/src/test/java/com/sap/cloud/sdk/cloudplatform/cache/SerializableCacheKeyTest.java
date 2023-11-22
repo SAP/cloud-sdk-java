@@ -12,15 +12,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;
 
-public class SerializableCacheKeyTest
+class SerializableCacheKeyTest
 {
 
     @Test
-    public void testSerializableCacheKey()
+    void testSerializableCacheKey()
     {
         final String tenant = "tenantOrZone1";
         final String principal = "principal1";

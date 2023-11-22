@@ -34,7 +34,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Objects;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
@@ -55,7 +55,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ODataClientBatchResponseParsingUnitTest
+class ODataClientBatchResponseParsingUnitTest
 {
     private static final String X_CSRF_TOKEN_HEADER_KEY = "x-csrf-token";
     private static final String X_CSRF_TOKEN_HEADER_FETCH_VALUE = "fetch";
@@ -65,7 +65,7 @@ public class ODataClientBatchResponseParsingUnitTest
     private final Supplier<UUID> uuidProvider = () -> new UUID(0, uuidCounter.incrementAndGet());
 
     @Test
-    public void testEmptyBatch()
+    void testEmptyBatch()
     {
         // Read OData response json
         final String requestBody = readResourceFileCrlf("BatchEmptyRequest.txt");
@@ -87,7 +87,7 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchWithOnlyReads()
+    void testBatchWithOnlyReads()
     {
         // Read OData response json
         final String requestBody = readResourceFileCrlf("BatchOnlyReadsRequest.txt");
@@ -114,7 +114,49 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchWithErrorReads()
+    void testBatchWithReadsOnMissingResponse()
+    {
+        // 2 requests but only 1 response
+        final String requestBody = readResourceFileCrlf("BatchOnlyReadsMissingRequest.txt");
+        final String responseBody = readResourceFileCrlf("BatchOnlyReadsMissingResponse.txt");
+
+        // Prepare test objects
+        final ODataEntityKey entityKey1 = new ODataEntityKey(V4).addKeyProperty("key", "one");
+        final ODataRequestReadByKey readByKey1 = new ODataRequestReadByKey("/", "People", entityKey1, "", V4);
+        final ODataEntityKey entityKey2 = new ODataEntityKey(V4).addKeyProperty("key", "two");
+        final ODataRequestReadByKey readByKey2 = new ODataRequestReadByKey("/", "People", entityKey2, "", V4);
+        final ODataEntityKey entityKey3 = new ODataEntityKey(V4).addKeyProperty("key", "three");
+        final ODataRequestReadByKey readByKey3 = new ODataRequestReadByKey("/", "People", entityKey3, "", V4);
+        final ODataRequestBatch batchRequest =
+            new ODataRequestBatch("/", V4, uuidProvider)
+                .addReadByKey(readByKey1)
+                .addReadByKey(readByKey2)
+                .addReadByKey(readByKey3);
+
+        final HttpClient httpClient = MockedHttpClient.of(requestBody, responseBody);
+        final ODataRequestResultMultipartGeneric batchResponse = batchRequest.execute(httpClient);
+
+        // Test assertion: response object not null and healthy
+        assertThat(batchResponse).isNotNull();
+        assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+
+        // Test assertion:
+        // response payload1 is 200
+        assertThat(batchResponse.getResult(readByKey1)).isNotNull();
+
+        // response payload2 is 404
+        assertThatExceptionOfType(ODataServiceErrorException.class)
+            .isThrownBy(() -> batchResponse.getResult(readByKey2))
+            .satisfies(e -> assertThat(e.getHttpCode()).isEqualTo(404));
+
+        // response payload3 cannot be extracted, response is missing
+        assertThatExceptionOfType(ODataResponseException.class)
+            .isThrownBy(() -> batchResponse.getResult(readByKey3))
+            .withMessage("Unable to extract batch response item at position 3. The response contains only 2 items.");
+    }
+
+    @Test
+    void testBatchWithErrorReads()
     {
         // Read OData response json
         final String requestBody = readResourceFileCrlf("BatchOnlyReadsRequest.txt");
@@ -146,7 +188,7 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchWithReadsAndWrites()
+    void testBatchWithReadsAndWrites()
     {
         // Read OData response json
         final String requestBody = readResourceFileCrlf("BatchReadsAndWritesSuccessRequest.txt");
@@ -191,7 +233,7 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchWithErrorInChangeset()
+    void testBatchWithErrorInChangeset()
         throws IOException
     {
         // Read OData response json
@@ -240,7 +282,7 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchWithErrorInsteadOfChangeset()
+    void testBatchWithErrorInsteadOfChangeset()
         throws IOException
     {
         // Read OData response json
@@ -289,7 +331,7 @@ public class ODataClientBatchResponseParsingUnitTest
     }
 
     @Test
-    public void testBatchResultWithError()
+    void testBatchResultWithError()
     {
         // Prepare test objects
         final ODataRequestRead read = new ODataRequestRead("/", "People", "$top=1", V4);

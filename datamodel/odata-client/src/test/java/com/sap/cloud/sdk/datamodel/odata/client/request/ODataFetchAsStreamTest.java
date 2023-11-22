@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,11 +16,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -29,24 +28,26 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
-public class ODataFetchAsStreamTest
+class ODataFetchAsStreamTest
 {
     private static final String SERVICE_URL = "/service";
     private static final String TEXT_FILE_NAME = "test.txt";
     private static final String IMAGE_FILE_NAME = "SAP_logo.png";
     private static final String PDF_FILE_NAME = "POT01.pdf";
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
+    @RegisterExtension
+    static final WireMockExtension SERVER =
+        WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
     private void testFileAsStream( final String fileName, final ODataProtocol oDataProtocol )
         throws IOException
     {
-        stubFor(
-            get(WireMock.anyUrl())
-                .willReturn(ok().withBody(readResourceFile(ODataFetchAsStreamTest.class, "files/" + fileName))));
+        SERVER
+            .stubFor(
+                get(WireMock.anyUrl())
+                    .willReturn(ok().withBody(readResourceFile(ODataFetchAsStreamTest.class, "files/" + fileName))));
 
-        final Destination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final Destination destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
         final ODataResourcePath resource =
             ODataResourcePath
@@ -70,46 +71,46 @@ public class ODataFetchAsStreamTest
             }
         }
 
-        server.verify(getRequestedFor(urlEqualTo(SERVICE_URL + "/Airports('BER')/$value")));
+        SERVER.verify(getRequestedFor(urlEqualTo(SERVICE_URL + "/Airports('BER')/$value")));
     }
 
     @Test
-    public void testFetchTextFileAsStreamODataV2()
+    void testFetchTextFileAsStreamODataV2()
         throws IOException
     {
         testFileAsStream(TEXT_FILE_NAME, ODataProtocol.V2);
     }
 
     @Test
-    public void testFetchImageFileAsStreamODataV2()
+    void testFetchImageFileAsStreamODataV2()
         throws IOException
     {
         testFileAsStream(IMAGE_FILE_NAME, ODataProtocol.V2);
     }
 
     @Test
-    public void testFetchPdfFileAsStreamODataV2()
+    void testFetchPdfFileAsStreamODataV2()
         throws IOException
     {
         testFileAsStream(PDF_FILE_NAME, ODataProtocol.V2);
     }
 
     @Test
-    public void testFetchTextFileAsStreamODataV4()
+    void testFetchTextFileAsStreamODataV4()
         throws IOException
     {
         testFileAsStream(TEXT_FILE_NAME, ODataProtocol.V4);
     }
 
     @Test
-    public void testFetchImageFileAsStreamODataV4()
+    void testFetchImageFileAsStreamODataV4()
         throws IOException
     {
         testFileAsStream(IMAGE_FILE_NAME, ODataProtocol.V4);
     }
 
     @Test
-    public void testFetchPdfFileAsStreamODataV4()
+    void testFetchPdfFileAsStreamODataV4()
         throws IOException
     {
         testFileAsStream(PDF_FILE_NAME, ODataProtocol.V4);

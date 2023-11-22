@@ -11,32 +11,32 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
 import io.vavr.control.Try;
 
-public class DestinationAccessorTest
+class DestinationAccessorTest
 {
-    @Before
-    @After
-    public void resetLoader()
+    @BeforeEach
+    @AfterEach
+    void resetLoader()
     {
         // reset accessor to the default loader
         DestinationAccessor.setLoader(null);
     }
 
     @Test
-    public void testDefaultDestinationLoader()
+    void testDefaultDestinationLoader()
     {
         assertThat(DestinationAccessor.getLoader()).isInstanceOf(DestinationLoaderChain.class);
     }
 
     @Test
-    public void testLoaderSetterWorks()
+    void testLoaderSetterWorks()
     {
         final DestinationLoader mockedLoader = mock(DestinationLoader.class);
 
@@ -46,7 +46,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testLoaderSetterFallsBackToDefaultOnNullParameter()
+    void testLoaderSetterFallsBackToDefaultOnNullParameter()
     {
         final DestinationLoader mockedLoader = mock(DestinationLoader.class);
         final DestinationLoader defaultLoader = DestinationAccessor.getLoader();
@@ -58,7 +58,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testGetDestination()
+    void testGetDestination()
     {
         final String someDestinationName = "Some Destination Name";
         final Destination someDestination = DefaultDestination.builder().build();
@@ -75,7 +75,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testAppendDestinationLoader()
+    void testAppendDestinationLoader()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("dest1").build();
         final DefaultHttpDestination dest2 = DefaultHttpDestination.builder("").name("dest2").build();
@@ -93,7 +93,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testPrependDestinationLoader()
+    void testPrependDestinationLoader()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("dest1").build();
         final DefaultHttpDestination dest2 = DefaultHttpDestination.builder("").name("dest2").build();
@@ -111,7 +111,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testAppendDestinationLoaderWithRedundantDestinations()
+    void testAppendDestinationLoaderWithRedundantDestinations()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("destination").build();
         final DefaultHttpDestination dest2 =
@@ -128,7 +128,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testPrependDestinationLoaderWithRedundantDestinations()
+    void testPrependDestinationLoaderWithRedundantDestinations()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("destination").build();
         final DefaultHttpDestination dest2 =
@@ -145,7 +145,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testAppendingTheCurrentDestinationLoader()
+    void testAppendingTheCurrentDestinationLoader()
     {
         final DestinationLoader currentLoader = DestinationAccessor.getLoader();
 
@@ -155,7 +155,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testPrependingTheCurrentDestinationLoader()
+    void testPrependingTheCurrentDestinationLoader()
     {
         final DestinationLoader currentLoader = DestinationAccessor.getLoader();
 
@@ -165,7 +165,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void appendDestinationLoaderShouldAddChainToAlreadyExistingChain()
+    void appendDestinationLoaderShouldAddChainToAlreadyExistingChain()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("destination").build();
         final DefaultHttpDestination dest2 =
@@ -185,7 +185,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void prependDestinationLoaderShouldAddChainToAlreadyExistingChain()
+    void prependDestinationLoaderShouldAddChainToAlreadyExistingChain()
     {
         final DefaultHttpDestination dest1 = DefaultHttpDestination.builder("").name("destination").build();
         final DefaultHttpDestination dest2 =
@@ -205,7 +205,7 @@ public class DestinationAccessorTest
     }
 
     @Test
-    public void testDestinationNotFound()
+    void testDestinationNotFound()
     {
         final Try<Destination> shouldThrow = DestinationAccessor.tryGetDestination("Unknown");
 

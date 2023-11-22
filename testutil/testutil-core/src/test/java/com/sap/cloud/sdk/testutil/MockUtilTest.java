@@ -7,7 +7,7 @@ package com.sap.cloud.sdk.testutil;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
@@ -15,10 +15,10 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAcc
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
-public class MockUtilTest
+class MockUtilTest
 {
     @Test
-    public void testRepeatedInstantiation()
+    void testRepeatedInstantiation()
     {
         new MockUtil();
         new MockUtil();
@@ -26,7 +26,7 @@ public class MockUtilTest
     }
 
     @Test
-    public void testMockTenant()
+    void testMockTenant()
     {
         final MockUtil mockUtil = new MockUtil();
 
@@ -47,7 +47,7 @@ public class MockUtilTest
     }
 
     @Test
-    public void testMockPrincipal()
+    void testMockPrincipal()
     {
         final MockUtil mockUtil = new MockUtil();
 

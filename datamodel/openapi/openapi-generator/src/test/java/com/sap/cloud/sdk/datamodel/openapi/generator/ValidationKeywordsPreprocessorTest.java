@@ -17,10 +17,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sap.cloud.sdk.datamodel.openapi.generator.exception.OpenApiGeneratorException;
 
-public class ValidationKeywordsPreprocessorTest
+class ValidationKeywordsPreprocessorTest
 {
     @Test
-    public void testSodastoreApiWithNoValidators()
+    void testSodastoreApiWithNoValidators()
         throws IOException
     {
         final Path inputFilePath =
@@ -41,7 +41,7 @@ public class ValidationKeywordsPreprocessorTest
     }
 
     @Test
-    public void testApiWithValidatorsInSchemasAsDirectChild()
+    void testApiWithValidatorsInSchemasAsDirectChild()
         throws IOException
     {
         final Path inputFilePath =
@@ -62,7 +62,7 @@ public class ValidationKeywordsPreprocessorTest
     }
 
     @Test
-    public void testApiWithValidatorsInSchemasNested()
+    void testApiWithValidatorsInSchemasNested()
         throws IOException
     {
         final Path inputFilePath =
@@ -80,7 +80,7 @@ public class ValidationKeywordsPreprocessorTest
     }
 
     @Test
-    public void testApiWithValidatorsInPaths()
+    void testApiWithValidatorsInPaths()
         throws IOException
     {
         final Path inputFilePath =
@@ -100,7 +100,7 @@ public class ValidationKeywordsPreprocessorTest
     }
 
     @Test
-    public void testSodastoreApiWithAllOf()
+    void testSodastoreApiWithAllOf()
         throws IOException
     {
         final Path inputFilePath =
