@@ -271,6 +271,8 @@ class MegacliteServiceBindingDestinationLoaderTest
         sut.setConnectivityResolver(mock);
 
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(sut);
+        DefaultHttpDestinationBuilderProxyHandler
+            .setServiceBindingConnectivity(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING);
 
         final DefaultHttpDestination result =
             DefaultHttpDestination
@@ -296,7 +298,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     void testMissingDestinationToBeProxied()
     {
         final ServiceBindingDestinationOptions options =
-            ServiceBindingDestinationOptions.forService(ServiceIdentifier.CONNECTIVITY).build();
+            ServiceBindingDestinationOptions.forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING).build();
 
         assertThatThrownBy(() -> sut.getDestination(options)).isInstanceOf(DestinationAccessException.class);
     }
@@ -306,7 +308,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.CONNECTIVITY)
+                .forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING)
                 .onBehalfOf(OnBehalfOf.TECHNICAL_USER_PROVIDER)
                 .withOption(ProxyOptions.destinationToBeProxied(mock(HttpDestination.class)))
                 .build();
