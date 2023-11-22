@@ -55,6 +55,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Cloud Platform - Auditlog - SCP CF: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-cf`
     - Cloud Platform - Auditlog - SCP Neo: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-neo`
     - As part of removing these modules, we also removed the integration of the Auditlog service with the S/4HANA connectivity features. Consumers who relied on this out-of-the-box integration are asked to approach the development team by [creating a GitHub support issue](https://github.com/SAP/cloud-sdk-java/issues/new) for migration guidance.
+  - The module `com.sap.cloud.sdk.cloudplatform:scp-cf` has been deprecated in favor of `com.sap.cloud.sdk:sdk-core`
 - Following public classes have been removed:
   - Related to the `Destination` API:
     - Within the [Business Technology Platform - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity) Module:
@@ -212,6 +213,7 @@ blog: https://blogs.sap.com/?p=xxx
   - The `DefaultDestination.Builder` can now be constructed from an existing `DefaultDestination` instance by using `DefaultDestination.toBuilder()`.
 - The `BasicCredentials` and `BearerCredentials` classes now offer a new method `#getHttpHeaderValue()` which will return the encoded and prefixed value of the credentials, e.g. `"Basic <encodedCredentials>"` or `"Bearer <token>"`.
 - A `DefaultTenant` can now be initialised with an optional `subdomain` in addition to the required `tenantId`
+- The new module `com.sap.cloud.sdk:sdk-core` provides an easy way to import the essential Cloud SDK dependencies.
 
 ## improvements
 
