@@ -42,6 +42,23 @@ public final class DefaultDestinationLoader implements DestinationLoader
         return this;
     }
 
+    /**
+     * Register a {@link HttpDestination} to this destination loader. It must have a non-empty name to be identified by.
+     * If a destination with the same name was registered previously it will be replaced by this one.
+     *
+     * @param destination
+     *            A destination this loader should return when queried.
+     * @return This loader instance.
+     *
+     * @throws IllegalArgumentException
+     *             if the destination name is null or empty.
+     */
+    @Nonnull
+    public DefaultDestinationLoader registerDestination( @Nonnull final HttpDestination destination )
+    {
+        return registerDestination((Destination) destination);
+    }
+
     @Nonnull
     @Override
     public

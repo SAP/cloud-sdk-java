@@ -41,6 +41,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.sap.cloud.sdk</groupId>
+				<artifactId>sdk-core</artifactId>
+				<version>${sdk.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 				<artifactId>scp-cf</artifactId>
 				<version>${sdk.version}</version>
