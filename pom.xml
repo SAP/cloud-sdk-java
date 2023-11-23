@@ -80,7 +80,7 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dfile.encoding=${project.build.sourceEncoding} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
+		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.57.7.1</jco-api.version>
 		<jsonschema2pojo.version>1.1.2</jsonschema2pojo.version>
