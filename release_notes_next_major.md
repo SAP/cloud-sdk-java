@@ -12,7 +12,7 @@ blog: https://blogs.sap.com/?p=xxx
 
 - The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 - The SAP Cloud SDK has switched the minimum required Java version to 17
-- The SAP Cloud SDK version 5 is no longer compatible with Spring version 5, the [XSUAA Client Library](https://github.com/SAP/cloud-security-services-integration-library) version 2, and the SAP Java Buildpack version 1.
+- The SAP Cloud SDK version 5 is no longer compatible with Spring version 5, the [XSUAA Client Library](https://github.com/SAP/cloud-security-services-integration-library) version 2, the SAP Java Buildpack version 1 and TomEE version 8.x or 9.x.
 - Following modules have been removed:
   - SAP Java Buildpack BOM: `com.sap.cloud.sdk:sdk-sjb-bom`
   - (Parent Module) `com.sap.cloud.sdk.plugins:plugins-parent`
