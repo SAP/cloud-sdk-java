@@ -49,7 +49,6 @@
 		<java.version>8</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
 		<java.compilerArgument />
-		<audience />
 		<javadoc.opts />
 		<project.rootdir>${project.basedir}</project.rootdir>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
@@ -79,13 +78,11 @@
                 For more details, visit:
                 https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html
                  -->
-		<argLine>-Xmx${surefire.maxMemorySize} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
+		<argLine>-Xmx${surefire.maxMemorySize} -Dfile.encoding=${project.build.sourceEncoding} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/services/mdi/model/**,**/soap/client/**,**/com/sap/xi/**,**/testclasses/**,**/cds/gen/**</codeAnalysisExclusions>
-		<test.systems>${project.rootdir}/systems</test.systems>
-		<test.credentials>${project.rootdir}/credentials</test.credentials>
+		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<neo-api.version>4.57.7.1</neo-api.version>
+		<jco-api.version>4.57.7.1</jco-api.version>
 		<jsonschema2pojo.version>1.1.2</jsonschema2pojo.version>
 		<jackson.version>2.15.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
@@ -111,13 +108,9 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
 		<caffeine.version>2.9.3</caffeine.version>
-		<javax-javaee.version>8.0.1</javax-javaee.version>
-		<!-- Keep TomEE version in sync with com.sap.cloud.sjb.cf:cf-tomee7-bom -->
-		<arquillian-tomee.version>7.0.7</arquillian-tomee.version>
 		<openapi-generator.version>6.1.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
-		<scp-cf.xs-env.version>1.8.5</scp-cf.xs-env.version>
 		<!--  Dependency convergence dependencies  -->
 		<jetty.version>9.4.53.v20231009</jetty.version>
 		<protobuf-java.version>3.24.3</protobuf-java.version>
@@ -204,7 +197,7 @@
 			<dependency>
 				<groupId>com.sap.cloud</groupId>
 				<artifactId>neo-java-web-api</artifactId>
-				<version>${neo-api.version}</version>
+				<version>${jco-api.version}</version>
 				<!-- we need it at compile time, but NOT at runtime.
 				At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
 				<scope>provided</scope>
@@ -955,9 +948,7 @@
 									<exclude>**/odatav4/namespaces/**</exclude>
 									<exclude>**/odatav4/services/**</exclude>
 									<exclude>**/soap/client/**</exclude>
-									<exclude>**/com/sap/xi/**</exclude>
 									<exclude>**/testclasses/**</exclude>
-									<exclude>**/cds/gen/**</exclude>
 									<!-- namespaces compiled to Java17 -->
 									<exclude>**/servletjakarta/**</exclude>
 								</excludes>
