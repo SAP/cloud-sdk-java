@@ -26,7 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -104,7 +103,6 @@ class MegacliteConnectivityProxyInformationResolverTest
         TenantAccessor.executeWithTenant(new DefaultTenant("foo"), () -> {
             assertThatThrownBy(sut::getAuthorizationToken)
                 .isInstanceOf(IllegalStateException.class)
-                .hasCauseInstanceOf(ResilienceRuntimeException.class)
                 .hasRootCauseInstanceOf(IllegalStateException.class);
         });
 
