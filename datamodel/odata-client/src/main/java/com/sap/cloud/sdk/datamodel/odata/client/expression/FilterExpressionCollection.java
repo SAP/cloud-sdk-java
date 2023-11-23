@@ -210,32 +210,6 @@ public interface FilterExpressionCollection
      *            The condition to be satisfied.
      * @param lambdaFieldPredicate
      *            The predicate for which fields will be given a prefix.
-     * @param lambdaFieldPrefix
-     *            Ignored.
-     * @return A {@link ValueBoolean.Expression}.
-     * @deprecated in favor of {@link #all(Expressions.OperandMultiple, ValueBoolean, Predicate)}.
-     */
-    @Nonnull
-    @Deprecated
-    static ValueBoolean.Expression all(
-        @Nonnull final Expressions.OperandMultiple operand1,
-        @Nonnull final ValueBoolean operand2,
-        @Nonnull final Predicate<FieldReference> lambdaFieldPredicate,
-        @Nonnull final String lambdaFieldPrefix )
-    {
-        return all(operand1, operand2, lambdaFieldPredicate);
-    }
-
-    /**
-     * Returns a {@link ValueBoolean.Expression} that checks whether all elements in {@code operand1} satisfy
-     * {@code operand2}.
-     *
-     * @param operand1
-     *            The collection-like entity to be checked.
-     * @param operand2
-     *            The condition to be satisfied.
-     * @param lambdaFieldPredicate
-     *            The predicate for which fields will be given a prefix.
      * @return A {@link ValueBoolean.Expression}.
      */
     @Nonnull
@@ -247,32 +221,6 @@ public interface FilterExpressionCollection
         final FilterExpression expression =
             Expressions.createFunctionLambda("all", operand1, operand2, lambdaFieldPredicate);
         return new ValueBoolean.Expression(expression);
-    }
-
-    /**
-     * Returns a {@link ValueBoolean.Expression} that checks whether any element in {@code operand1} satisfies
-     * {@code operand2}.
-     *
-     * @param operand1
-     *            The collection-like entity to be checked.
-     * @param operand2
-     *            The condition to be satisfied.
-     * @param lambdaFieldPredicate
-     *            The predicate for which fields will be given a prefix.
-     * @param lambdaFieldPrefix
-     *            Ignored.
-     * @return A {@link ValueBoolean.Expression}.
-     * @deprecated in favor of {@link #any(Expressions.OperandMultiple, ValueBoolean, Predicate)}.
-     */
-    @Nonnull
-    @Deprecated
-    static ValueBoolean.Expression any(
-        @Nonnull final Expressions.OperandMultiple operand1,
-        @Nonnull final ValueBoolean operand2,
-        @Nonnull final Predicate<FieldReference> lambdaFieldPredicate,
-        @Nonnull final String lambdaFieldPrefix )
-    {
-        return any(operand1, operand2, lambdaFieldPredicate);
     }
 
     /**

@@ -87,7 +87,7 @@ public class OAuth2DestinationBuilder
     public static BuilderWithTargetUrl forTargetUrl( @Nonnull final String targetUrl )
     {
         return ( tokenUrl ) -> ( client, behalf ) -> {
-            final OAuth2ServiceImpl oauth2service = new OAuth2ServiceImpl(tokenUrl, client, behalf);
+            final OAuth2Service oauth2service = new OAuth2Service(tokenUrl, client, behalf);
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
             // random uuid to make sure equals and hash code works effectively by reference
@@ -96,11 +96,11 @@ public class OAuth2DestinationBuilder
 
             destinationBuilder
                 .property(
-                    OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
+                    OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                     createTokenRetrievalResilienceConfiguration(destinationName));
 
             return destinationBuilder
-                .headerProviders(new OAuthHeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION));
+                .headerProviders(new OAuth2HeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION));
         };
     }
 

@@ -536,7 +536,6 @@ public final class DefaultHttpDestination implements HttpDestination
          * @since 5.0.0
          */
         @Nonnull
-        @Beta
         public <
             ValueT> Builder property( @Nonnull final DestinationPropertyKey<ValueT> key, @Nonnull final ValueT value )
         {

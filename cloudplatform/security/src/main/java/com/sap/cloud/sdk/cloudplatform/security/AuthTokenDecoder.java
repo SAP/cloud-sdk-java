@@ -36,27 +36,6 @@ interface AuthTokenDecoder
         throws AuthTokenAccessException;
 
     /**
-     * Decode a JWT, optionally update with help of a refresh token.
-     *
-     * @param encodedJwt
-     *            The encoded JWT String.
-     * @param refreshToken
-     *            The optional refresh token.
-     * @return A new instance of {@link AuthToken}.
-     * @throws AuthTokenAccessException
-     *             If decoding was not successful.
-     *
-     * @deprecated AuthToken validation should be done with the Security Library.
-     */
-    @Nonnull
-    @Deprecated
-    default AuthToken decode( @Nonnull final String encodedJwt, @Nullable final String refreshToken )
-        throws AuthTokenAccessException
-    {
-        return decode(encodedJwt);
-    }
-
-    /**
      * Try to decode a JWT from http request headers.
      *
      * @param headers

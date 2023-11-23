@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 @Getter
-@Beta
 public class DestinationPropertyKey<ValueT>
 {
     @Nonnull

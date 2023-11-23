@@ -23,7 +23,6 @@ import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
  *
  * @since 4.3.0
  */
-@Beta
 @SuppressWarnings( "PMD.TooManyStaticImports" )
 public class DestinationProperty
 {

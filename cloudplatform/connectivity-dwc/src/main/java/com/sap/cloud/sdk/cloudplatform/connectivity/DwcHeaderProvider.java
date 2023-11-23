@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Utility class to get all SAP Deploy with Confidence related headers from the current request.
  */
-@Beta
 @Slf4j
 public class DwcHeaderProvider implements DestinationHeaderProvider
 {

@@ -15,7 +15,6 @@ import com.google.common.annotations.Beta;
  * Represents an <b>immutable</b> container for multiple HTTP headers. These headers consist of a {@code name} and
  * multiple {@code value}s.
  */
-@Beta
 public interface RequestHeaderContainer
 {
     /**

@@ -59,7 +59,7 @@
     "artifactId": "cloudplatform-connectivity-scp-cf",
     "packaging": "jar",
     "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
+    "releaseMaturity": "Deprecated",
     "pomFile": "cloudplatform/cloudplatform-connectivity-scp-cf/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
     "parentArtifactId": "cloudplatform-parent",

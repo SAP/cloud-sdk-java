@@ -55,14 +55,14 @@ class OnPremTest
     void tearDown()
     {
         TenantAccessor.setTenantFacade(null);
-        OAuth2ServiceImpl.clearCache();
+        OAuth2Service.clearCache();
     }
 
     @Test
     void singleOAuth2ServiceImpl()
     {
-        final OAuth2ServiceImpl service =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        final OAuth2Service service =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
         final String token1 = service.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service.retrieveAccessToken(NO_RESILIENCE);
@@ -76,10 +76,10 @@ class OnPremTest
     @Test
     void multipleOAuth2ServiceImpl()
     {
-        final OAuth2ServiceImpl service1 =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
-        final OAuth2ServiceImpl service2 =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        final OAuth2Service service1 =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        final OAuth2Service service2 =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
         final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
@@ -93,8 +93,8 @@ class OnPremTest
     @Test
     void singleOAuth2ServiceImplSingleSubscriber()
     {
-        final OAuth2ServiceImpl service =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        final OAuth2Service service =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
@@ -112,8 +112,8 @@ class OnPremTest
     @Test
     void singleOAuth2ServiceImplMultipleSubscriber()
     {
-        final OAuth2ServiceImpl service =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        final OAuth2Service service =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 =
             TenantAccessor
@@ -136,8 +136,8 @@ class OnPremTest
             .stubFor(
                 post("/oauth/token").willReturn(okJson(MOCKED_RESPONSE_BODY).withHeader("Set-Cookie", "myCookie=123")));
 
-        final OAuth2ServiceImpl service =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        final OAuth2Service service =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         TenantAccessor
             .executeWithTenant(new DefaultTenant("tenant1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
@@ -156,10 +156,10 @@ class OnPremTest
     @Test
     void retrieveAccessTokenWithSameIdentityOnDifferentUrisShouldNotReturnCachedResponse()
     {
-        final OAuth2ServiceImpl service1 =
-            new OAuth2ServiceImpl(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        final OAuth2ServiceImpl service2 =
-            new OAuth2ServiceImpl(
+        final OAuth2Service service1 =
+            new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        final OAuth2Service service2 =
+            new OAuth2Service(
                 SECOND_MOCK_SERVER.baseUrl(),
                 SOME_IDENTITY,
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
