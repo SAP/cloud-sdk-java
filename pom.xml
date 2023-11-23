@@ -973,8 +973,6 @@
 						<excludedGroups>${surefire.excludedGroups}</excludedGroups>
 						<systemPropertyVariables>
 							<surefire.forkDir>${project.build.directory}/surefire-fork/${surefire.forkNumber}/</surefire.forkDir>
-							<test.systems>${test.systems}</test.systems>
-							<test.credentials>${test.credentials}</test.credentials>
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
