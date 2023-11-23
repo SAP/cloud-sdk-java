@@ -68,7 +68,7 @@ class OAuth2Service
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
 
-    OAuth2Service(final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
+    OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;

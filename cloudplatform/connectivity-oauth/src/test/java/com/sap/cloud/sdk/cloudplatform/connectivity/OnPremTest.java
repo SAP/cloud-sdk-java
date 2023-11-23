@@ -159,10 +159,7 @@ class OnPremTest
         final OAuth2Service service1 =
             new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         final OAuth2Service service2 =
-            new OAuth2Service(
-                SECOND_MOCK_SERVER.baseUrl(),
-                SOME_IDENTITY,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            new OAuth2Service(SECOND_MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
         final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);

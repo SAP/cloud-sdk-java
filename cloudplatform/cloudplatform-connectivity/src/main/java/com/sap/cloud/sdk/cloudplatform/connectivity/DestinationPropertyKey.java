@@ -12,8 +12,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.Getter;
