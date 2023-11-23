@@ -30,6 +30,7 @@ import com.google.gson.JsonSyntaxException;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +58,7 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     private final Cache<CacheKey, String> proxyUrlCache =
         Caffeine.newBuilder().expireAfterWrite(Duration.ofDays(1L)).build();
     @Nonnull
+    @Getter( AccessLevel.PACKAGE ) // for testing
     private final Cache<CacheKey, Lock> requestLocks =
         Caffeine.newBuilder().expireAfterAccess(Duration.ofHours(1L)).build();
 
@@ -99,7 +101,7 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     @Nonnull
     String getAuthorizationToken()
     {
-        final CacheKey cacheKey = CacheKey.ofTenantOptionalIsolation().append(TOKEN_JSON_KEY);
+        final CacheKey cacheKey = createTokenCacheKey();
         return getProxyInformationFromMegacliteWithCache(TOKEN_JSON_KEY, tokenCache, cacheKey);
     }
 
@@ -116,8 +118,20 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     @Nonnull
     URI getProxyUrl()
     {
-        final CacheKey cacheKey = CacheKey.ofNoIsolation().append(URL_JSON_KEY);
+        final CacheKey cacheKey = createProxyUrlCacheKey();
         return URI.create(getProxyInformationFromMegacliteWithCache(URL_JSON_KEY, proxyUrlCache, cacheKey));
+    }
+
+    @Nonnull
+    CacheKey createTokenCacheKey()
+    {
+        return CacheKey.ofTenantOptionalIsolation().append(TOKEN_JSON_KEY);
+    }
+
+    @Nonnull
+    CacheKey createProxyUrlCacheKey()
+    {
+        return CacheKey.ofNoIsolation().append(URL_JSON_KEY);
     }
 
     @SuppressWarnings( "DataFlowIssue" )
