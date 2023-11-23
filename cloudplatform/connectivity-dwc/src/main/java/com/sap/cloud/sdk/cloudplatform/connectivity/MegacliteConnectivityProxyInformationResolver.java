@@ -15,6 +15,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nonnull;
 
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -55,6 +58,7 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     private final Cache<CacheKey, String> tokenCache =
         Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(15L)).build();
     @Nonnull
+    @Getter( AccessLevel.PACKAGE ) // for testing
     private final Cache<CacheKey, String> proxyUrlCache =
         Caffeine.newBuilder().expireAfterWrite(Duration.ofDays(1L)).build();
     @Nonnull
@@ -141,7 +145,19 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
         @Nonnull final Cache<CacheKey, String> cache,
         @Nonnull final CacheKey cacheKey )
     {
-        String maybeValue = cache.getIfPresent(cacheKey);
+        return ResilienceDecorator.executeSupplier(() -> {
+            String result = cache.getIfPresent(cacheKey);
+                    if( result != null ) {
+                        return result;
+                    }
+            JsonObject json = getProxyInformationFromMegaclite();
+            result = json.get(jsonKey).getAsString();
+            cache.put(cacheKey, result);
+            return result;
+        }, ResilienceConfiguration.empty("foooo")
+                        .isolationMode(ResilienceIsolationMode.NO_ISOLATION)
+                .bulkheadConfiguration(ResilienceConfiguration.BulkheadConfiguration.of().maxConcurrentCalls(1)));
+       /* String maybeValue = cache.getIfPresent(cacheKey);
         if( maybeValue != null ) {
             return maybeValue;
         }
@@ -165,7 +181,7 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
         }
         finally {
             requestLock.unlock();
-        }
+        }*/
     }
 
     @Nonnull

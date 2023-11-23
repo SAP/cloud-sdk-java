@@ -20,6 +20,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -136,48 +138,35 @@ class MegacliteConnectivityProxyInformationResolverTest
     @Timeout( value = 300_000, unit = java.util.concurrent.TimeUnit.MILLISECONDS )
     void testProxyUrlRetrievalIsLockedGlobally()
     {
-        doReturn(successResponse).when(sut).makeHttpRequest(any());
+        doAnswer((i) -> {
+            Thread.sleep(5_000);
+            return successResponse;
+        }).when(sut).makeHttpRequest(any());
 
-        final CountDownLatch firstLockInvocation = new CountDownLatch(1);
-        final CountDownLatch secondLockInvocation = new CountDownLatch(2);
-        final CountDownLatch resumeLockInvocations = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(2);
 
-        final ReentrantLock requestLock = spy(new ReentrantLock());
         doAnswer(invocation -> {
-            firstLockInvocation.countDown();
-            secondLockInvocation.countDown();
+            latch.countDown();
 
-            resumeLockInvocations.await(); // we are blocking all calls until the main thread decides that we may continue
+            latch.await();
             return invocation.callRealMethod();
-        }).when(requestLock).lock();
-
-        sut.getRequestLocks().put(sut.createProxyUrlCacheKey(), requestLock);
+        }).when(sut).getProxyUrl();
 
         final CompletableFuture<URI> firstInvocation =
             CompletableFuture
                 .supplyAsync(
                     () -> TenantAccessor.executeWithTenant(new DefaultTenant("Tenant1"), () -> sut.getProxyUrl()));
 
-        firstLockInvocation.await(); // wait for the first invocation to acquire the lock
-
         final CompletableFuture<URI> secondInvocation =
             CompletableFuture
                 .supplyAsync(
                     () -> TenantAccessor.executeWithTenant(new DefaultTenant("Tenant2"), () -> sut.getProxyUrl()));
 
-        secondLockInvocation.await(); // wait for the second invocation to acquire the lock
-
-        // make sure NONE of the tasks above is already done
-        assertThat(firstInvocation.isDone()).isFalse();
-        assertThat(secondInvocation.isDone()).isFalse();
-
-        resumeLockInvocations.countDown(); // unblock the lock invocations
-
         assertThat(firstInvocation.get()).isEqualTo(URI.create("http://some.proxy"));
         assertThat(secondInvocation.get()).isEqualTo(URI.create("http://some.proxy"));
 
         verify(sut, times(1)).makeHttpRequest(any());
-        verify(requestLock, times(2)).lock();
+        verify(sut, times(2)).getProxyUrl();
     }
 
     @SneakyThrows
