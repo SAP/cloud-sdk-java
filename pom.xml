@@ -553,6 +553,7 @@
 									<bannedDependencies>
 										<message>Do not use deprecated dependencies.</message>
 										<excludes>
+											<exclude>javax.servlet:servlet-api</exclude>
 											<exclude>javax.ws.rs:jsr311-api</exclude>
 											<!--  use javax.ws.rs:javax.ws.rs-api  -->
 											<exclude>commons-httpclient:commons-httpclient</exclude>
