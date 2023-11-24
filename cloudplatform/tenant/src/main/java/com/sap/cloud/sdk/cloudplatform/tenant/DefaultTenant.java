@@ -17,8 +17,8 @@ import lombok.ToString;
 /**
  * Implementation of {@link Tenant} which can be used on SAP Business Technology Platform Cloud Foundry.
  */
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode( doNotUseGetters = true )
+@ToString( doNotUseGetters = true )
 @RequiredArgsConstructor
 public class DefaultTenant implements TenantWithSubdomain
 {

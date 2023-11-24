@@ -96,35 +96,6 @@ public class DwcHeaderUtils
         return logonName;
     }
 
-    /**
-     * This method fetches the value of the {@link #DWC_CLIENT_HEADER} header or throws an
-     * {@link DwcHeaderNotFoundException} if the header was not found.
-     *
-     * @return The value of the {@link #DWC_CLIENT_HEADER} header.
-     * @throws DwcHeaderNotFoundException
-     *             if the header was not found.
-     */
-    @Nonnull
-    public static String getDwcClientOrThrow()
-    {
-        return getNonEmptyDwcHeaderValue(DWC_CLIENT_HEADER);
-    }
-
-    /**
-     * This method fetches the values of the {@link #DWC_SCOPES_HEADER} header throws an
-     * {@link DwcHeaderNotFoundException} if the header was not found.
-     *
-     * @return The values of the {@link #DWC_SCOPES_HEADER} header.
-     * @throws DwcHeaderNotFoundException
-     *             if the header was not found.
-     */
-    @Nonnull
-    public static Set<String> getDwcScopesOrThrow()
-    {
-        final String scopes = getNonEmptyDwcHeaderValue(DWC_SCOPES_HEADER);
-        return Arrays.stream(scopes.split(" ")).collect(Collectors.toSet());
-    }
-
     @Nonnull
     private static String getNonEmptyDwcHeaderValue( @Nonnull final String key )
         throws DwcHeaderNotFoundException
