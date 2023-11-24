@@ -33,7 +33,7 @@
 		<url />
 	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
 	</properties>
 	<dependencies>
