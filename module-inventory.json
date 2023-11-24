@@ -443,7 +443,7 @@
     "groupId": "com.sap.cloud.sdk.s4hana",
     "artifactId": "rfc",
     "packaging": "jar",
-    "releaseAudience": "Public",
+    "releaseAudience": "None",
     "releaseMaturity": "Deprecated",
     "pomFile": "s4hana/rfc/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.s4hana",
