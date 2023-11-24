@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.datamodel.odatav4.generator;
+package com.sap.cloud.sdk.testutil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,6 +59,7 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
     private String goal;
     private File baseDir;
     private Mojo mojo;
+    private Class<?> baseClass;
 
     public MavenPluginExtension withGoal( final String goal )
     {
@@ -72,13 +73,20 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
         return this;
     }
 
+    public MavenPluginExtension withClass( final Class<?> baseClass )
+    {
+        this.baseClass = baseClass;
+        this.baseDir = new File(baseClass.getClassLoader().getResource(baseClass.getSimpleName()).getFile());
+        return this;
+    }
+
     private Map<String, MojoDescriptor> loadGoals()
         throws ComponentLookupException,
             IOException,
             PlexusConfigurationException
     {
         final String pluginDescriptorLocation = "/META-INF/maven/plugin.xml";
-        final URL resource = getClass().getResource(pluginDescriptorLocation);
+        final URL resource = baseClass.getResource(pluginDescriptorLocation);
         final String path = Objects.requireNonNull(resource, "plugin.xml file not found.").getPath();
         final File artifactFile = new File(path.substring(0, path.length() - pluginDescriptorLocation.length()));
 
@@ -116,7 +124,7 @@ public class MavenPluginExtension implements BeforeAllCallback, AfterEachCallbac
         }
     }
 
-    private static ContainerConfiguration getContainerConfiguration()
+    private ContainerConfiguration getContainerConfiguration()
     {
         return new DefaultContainerConfiguration()
             .setClassWorld(new ClassWorld("plexus.core", Thread.currentThread().getContextClassLoader()))

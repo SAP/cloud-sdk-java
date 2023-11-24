@@ -32,6 +32,7 @@
 	</developers>
 	<modules>
 		<module>testutil-core</module>
+		<module>testutil-maven-plugin</module>
 	</modules>
 	<scm>
 		<connection />
