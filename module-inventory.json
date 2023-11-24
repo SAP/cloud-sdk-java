@@ -12,17 +12,6 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
-    "artifactId": "scp-cf-spring",
-    "packaging": "maven-archetype",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "archetypes/scp-cf-spring/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.archetypes",
-    "parentArtifactId": "archetypes-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.archetypes",
     "artifactId": "scp-cf-spring-jakarta",
     "packaging": "maven-archetype",
     "releaseAudience": "Public",
@@ -180,7 +169,7 @@
     "artifactId": "scp-cf",
     "packaging": "jar",
     "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
+    "releaseMaturity": "Deprecated",
     "pomFile": "cloudplatform/scp-cf/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
     "parentArtifactId": "cloudplatform-parent",
@@ -193,17 +182,6 @@
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
     "pomFile": "cloudplatform/security/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
-    "parentArtifactId": "cloudplatform-parent",
-    "excludeFromBlackDuckScan": false
-  },
-  {
-    "groupId": "com.sap.cloud.sdk.cloudplatform",
-    "artifactId": "servlet",
-    "packaging": "jar",
-    "releaseAudience": "Public",
-    "releaseMaturity": "Stable",
-    "pomFile": "cloudplatform/servlet/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
     "parentArtifactId": "cloudplatform-parent",
     "excludeFromBlackDuckScan": false
@@ -536,6 +514,17 @@
     "pomFile": "bom/pom.xml",
     "parentGroupId": "",
     "parentArtifactId": "",
+    "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk",
+    "artifactId": "sdk-core",
+    "packaging": "jar",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Stable",
+    "pomFile": "dependency-bundles/sdk-core/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk",
+    "parentArtifactId": "sdk-parent",
     "excludeFromBlackDuckScan": false
   },
   {

@@ -8,7 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadC
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.exception.RequestHeadersAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
@@ -20,7 +20,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessExcep
 
 import io.vavr.control.Try;
 
-public class RequestHeaderThreadContextListenerTest
+class RequestHeaderThreadContextListenerTest
 {
     private static final RequestHeaderContainer PARENT_HEADERS =
         DefaultRequestHeaderContainer.builder().withHeader("ParentHeader", "ParentValue").build();
@@ -29,7 +29,7 @@ public class RequestHeaderThreadContextListenerTest
         DefaultRequestHeaderContainer.builder().withHeader("ChildHeader", "ChildValue").build();
 
     @Test
-    public void testListenerWithParentThreadContext()
+    void testListenerWithParentThreadContext()
     {
         // sanity check, no parent thread context
         assertThat(ThreadContextAccessor.tryGetCurrentContext()).isEmpty();
@@ -48,7 +48,7 @@ public class RequestHeaderThreadContextListenerTest
     }
 
     @Test
-    public void testListenerWithoutParentThreadContext()
+    void testListenerWithoutParentThreadContext()
     {
         // sanity check, no parent thread context
         assertThat(ThreadContextAccessor.tryGetCurrentContext()).isEmpty();
@@ -65,7 +65,7 @@ public class RequestHeaderThreadContextListenerTest
     }
 
     @Test
-    public void testListenerGetHeadersViaAccessor()
+    void testListenerGetHeadersViaAccessor()
     {
         // prepare accessor
         final Try<RequestHeaderContainer> TRY_HEADERS = Try.success(RequestHeaderContainer.EMPTY);
@@ -82,7 +82,7 @@ public class RequestHeaderThreadContextListenerTest
     }
 
     @Test
-    public void testDuplicateExistingHeaders()
+    void testDuplicateExistingHeaders()
     {
         final ThreadContext rootContext = new DefaultThreadContext();
         rootContext.setPropertyIfAbsent(PROPERTY_REQUEST_HEADERS, Property.of(PARENT_HEADERS));
@@ -101,7 +101,7 @@ public class RequestHeaderThreadContextListenerTest
     }
 
     @Test
-    public void testBeforeInitializesSetsGivenHeaders()
+    void testBeforeInitializesSetsGivenHeaders()
     {
         final ThreadContext childContext = new DefaultThreadContext();
 
@@ -116,7 +116,7 @@ public class RequestHeaderThreadContextListenerTest
     }
 
     @Test
-    public void testOverrideExistingHeaders()
+    void testOverrideExistingHeaders()
     {
         final ThreadContext threadContext = new DefaultThreadContext();
         threadContext.setPropertyIfAbsent(PROPERTY_REQUEST_HEADERS, Property.of(PARENT_HEADERS));

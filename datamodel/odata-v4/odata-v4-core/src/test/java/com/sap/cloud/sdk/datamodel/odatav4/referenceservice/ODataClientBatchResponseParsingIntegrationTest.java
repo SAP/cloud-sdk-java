@@ -13,9 +13,9 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.util.EntityUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
@@ -26,20 +26,20 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 
-@Ignore( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
-public class ODataClientBatchResponseParsingIntegrationTest
+@Disabled( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
+class ODataClientBatchResponseParsingIntegrationTest
 {
     private Destination httpDestination;
 
-    @Before
-    public void configure()
+    @BeforeEach
+    void configure()
         throws IOException
     {
         httpDestination = TripPinUtility.getDestination();
     }
 
     @Test
-    public void testEmptyBatch()
+    void testEmptyBatch()
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
 
@@ -55,7 +55,7 @@ public class ODataClientBatchResponseParsingIntegrationTest
     }
 
     @Test
-    public void testBatchWithReads()
+    void testBatchWithReads()
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
 
@@ -79,7 +79,7 @@ public class ODataClientBatchResponseParsingIntegrationTest
     }
 
     @Test
-    public void testBatchWithReadsAndWrites()
+    void testBatchWithReadsAndWrites()
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
 
@@ -127,7 +127,7 @@ public class ODataClientBatchResponseParsingIntegrationTest
     }
 
     @Test
-    public void testBatchResultWithError()
+    void testBatchResultWithError()
         throws IOException
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);

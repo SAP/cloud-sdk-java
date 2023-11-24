@@ -41,7 +41,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-public class ODataResponseComplexDataParsingTest
+class ODataResponseComplexDataParsingTest
 {
     @Data
     @NoArgsConstructor
@@ -315,7 +315,7 @@ public class ODataResponseComplexDataParsingTest
             Arrays.asList(new AddressInfo("187 Suffolk Ln.", new AddressInfo.City("Boise", "United States", "ID"))));
 
     @Test
-    public void testGetResultElementPerson()
+    void testGetResultElementPerson()
     {
         final ODataRequestResultGeneric result = mockRequestResult(Person.PAYLOAD_SAMPLE_ENTITY);
         final Person person = result.as(Person.class);
@@ -323,7 +323,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultPersonWithExpandedFriends()
+    void testGetResultPersonWithExpandedFriends()
     {
         final ODataRequestResultGeneric result =
             mockRequestResult(Person.PAYLOAD_SAMPLE_ENTITY_WITH_EXPANDED_NAVIGATION_PROPERTY);
@@ -333,7 +333,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultPersonWithExpandedBestFriend()
+    void testGetResultPersonWithExpandedBestFriend()
     {
         final ODataRequestResultGeneric result =
             mockRequestResult(Person.PAYLOAD_ENTITY_WITH_BINARY_NAVIGATION_PROPERTY);
@@ -343,7 +343,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultElements()
+    void testGetResultElements()
     {
         final ODataRequestResultGeneric result = mockRequestResult(Person.PAYLOAD_SAMPLE_SET);
         final Iterable<ResultElement> elements = result.getResultElements();
@@ -351,7 +351,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultAsList()
+    void testGetResultAsList()
     {
         final ODataRequestResultGeneric result = mockRequestResult(Person.PAYLOAD_SAMPLE_SET);
         final List<Person> persons = result.asList(Person.class);
@@ -359,7 +359,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultAsMap()
+    void testGetResultAsMap()
     {
         final ODataRequestResultGeneric result = mockRequestResult(Person.PAYLOAD_SAMPLE_SET);
         final List<Map<String, Object>> maps = result.asListOfMaps();
@@ -408,7 +408,7 @@ public class ODataResponseComplexDataParsingTest
     }
 
     @Test
-    public void testGetResultAsStream()
+    void testGetResultAsStream()
     {
         final ODataRequestResultGeneric result = mockRequestResult(Person.PAYLOAD_SAMPLE_SET);
         final List<String> userNames = Lists.newArrayList();

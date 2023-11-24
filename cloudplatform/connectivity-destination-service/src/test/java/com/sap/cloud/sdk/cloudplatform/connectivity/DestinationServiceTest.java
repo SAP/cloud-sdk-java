@@ -51,11 +51,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.stubbing.Answer;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -78,7 +79,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class DestinationServiceTest
+class DestinationServiceTest
 {
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes
 
@@ -305,8 +306,8 @@ public class DestinationServiceTest
             + "    }\n"
             + "}";
 
-    @Rule
-    public TokenRule token = TokenRule.createXsuaa();
+    @RegisterExtension
+    TokenRule token = TokenRule.createXsuaa();
 
     private DestinationServiceAdapter scpCfDestinationServiceAdapter;
     private DestinationService loader;
@@ -315,8 +316,8 @@ public class DestinationServiceTest
     private DefaultPrincipal principal1;
     private DefaultPrincipal principal2;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         // IMPORTANT: Do not remove or move mock() calls up to the class fields!  Mocks need to be reset for each test
         // to reset execution counters. Remember that all test methods are executed in parallel.
@@ -371,22 +372,22 @@ public class DestinationServiceTest
             .getConfigurationAsJsonWithUserToken(destinationPath, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
-    @Before
-    @After
-    public void resetDestinationCache()
+    @BeforeEach
+    @AfterEach
+    void resetDestinationCache()
     {
         DestinationService.Cache.reset();
     }
 
-    @AfterClass
-    public static void resetFacades()
+    @AfterAll
+    static void resetFacades()
     {
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);
     }
 
     @Test
-    public void testInitialCacheSizeIsZero()
+    void testInitialCacheSizeIsZero()
     {
         // this test ensures that the cache
         // 1. exists by default (i.e. out-of-the-box) and
@@ -396,7 +397,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testLoadingHttpDestination()
+    void testLoadingHttpDestination()
     {
         final HttpDestination destination = loader.tryGetDestination(destinationName).get().asHttp();
 
@@ -426,7 +427,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testLoadAllDestinationsSubscriberOnly()
+    void testLoadAllDestinationsSubscriberOnly()
     {
         doReturn("[]")
             .when(scpCfDestinationServiceAdapter)
@@ -466,7 +467,7 @@ public class DestinationServiceTest
 
     @Test
     // slow test, run manually if needed
-    public void destinationServiceTimeOutWhileGettingDestination()
+    void destinationServiceTimeOutWhileGettingDestination()
         throws IOException
     {
         final HttpDestination serviceDestination = DefaultHttpDestination.builder("").build();
@@ -518,7 +519,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationServiceTimeoutDisabled()
+    void testDestinationServiceTimeoutDisabled()
     {
         DestinationService sut = DestinationService.builder().withProviderTenant(providerTenant).build();
         assertThat(sut.getSingleDestResilience().timeLimiterConfiguration().isEnabled()).isTrue();
@@ -539,7 +540,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testLoadAllDestinationsProviderOnly()
+    void testLoadAllDestinationsProviderOnly()
     {
         doReturn(responseServiceInstanceDestination)
             .when(scpCfDestinationServiceAdapter)
@@ -564,7 +565,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
+    void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
         // mock to return empty list as destinations for subscriber tenant.
         doReturn(responseServiceInstanceDestination)
@@ -591,7 +592,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testGetAllDestinationsOnlySubscriberStrategyDoesNotReadProviderDestinations()
+    void testGetAllDestinationsOnlySubscriberStrategyDoesNotReadProviderDestinations()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
@@ -609,7 +610,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationRetrievalProviderOnly()
+    void testDestinationRetrievalProviderOnly()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
@@ -621,7 +622,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testGetDestinationOnlySubscriberStrategyReadsSubscriberDestinations()
+    void testGetDestinationOnlySubscriberStrategyReadsSubscriberDestinations()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
@@ -633,7 +634,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testGetDestinationOnlySubscriberStrategyDoesNotReadProviderDestinations()
+    void testGetDestinationOnlySubscriberStrategyDoesNotReadProviderDestinations()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
@@ -646,7 +647,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationAugmentationByText()
+    void testDestinationAugmentationByText()
     {
         final String retrievalProvider = ALWAYS_PROVIDER.getIdentifier();
         final String exchangeOnly = EXCHANGE_ONLY.getIdentifier();
@@ -663,7 +664,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationRetrievalSubscriberOnly()
+    void testDestinationRetrievalSubscriberOnly()
     {
         final Try<Destination> loadedDestination = loader.tryGetDestination(destinationName);
         final HttpDestination loadedHttpDestination = loadedDestination.get().asHttp();
@@ -672,7 +673,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testTokenExchangeLookupThenExchange()
+    void testTokenExchangeLookupThenExchange()
     {
         doReturn(responseDestinationWithoutAuthToken)
             .when(scpCfDestinationServiceAdapter)
@@ -696,7 +697,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testTokenExchangeLookupOnly()
+    void testTokenExchangeLookupOnly()
     {
         doReturn(responseDestinationWithoutAuthToken)
             .when(scpCfDestinationServiceAdapter)
@@ -730,7 +731,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testTokenExchangeExchangeOnly()
+    void testTokenExchangeExchangeOnly()
     {
         doReturn(responseDestinationWithAuthToken)
             .when(scpCfDestinationServiceAdapter)
@@ -750,7 +751,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testEmailDestination()
+    void testEmailDestination()
     {
         final String destinationName = "dummy-mail-destination";
 
@@ -794,7 +795,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationIsCachedBasedOnOptions()
+    void testDestinationIsCachedBasedOnOptions()
     {
         final DestinationOptions defaultOptions = DestinationOptions.builder().build();
         final DestinationOptions secondInstanceOfDefaultOptions = DestinationOptions.builder().build();
@@ -831,7 +832,7 @@ public class DestinationServiceTest
     @Test
     @SneakyThrows
     // tests the workaround described in https://jira.tools.sap/browse/CLOUDECOSYSTEM-10077
-    public void testWorkaroundDestinationCacheIssue()
+    void testWorkaroundDestinationCacheIssue()
     {
         {
             // first invocation
@@ -860,7 +861,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testCachingHttpDestination()
+    void testCachingHttpDestination()
     {
         loader.tryGetDestination(destinationName).get();
 
@@ -877,7 +878,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testUnknownDestinationLeadsToDestinationNotFoundException()
+    void testUnknownDestinationLeadsToDestinationNotFoundException()
         throws IOException
     {
         // prepare 404 HttpClient
@@ -911,7 +912,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationFetchedWhenAuthTokenExpired()
+    void testDestinationFetchedWhenAuthTokenExpired()
     {
         // 1st fetch: Put the destination into cache
         // 2nd fetch: Expired destination in cache entry, fetch the destination again
@@ -920,7 +921,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationFetchedWhenAuthTokenIsNotExpired()
+    void testDestinationFetchedWhenAuthTokenIsNotExpired()
     {
         // 1st fetch: Put the destination into cache
         // 2nd fetch: Destination fetched from cache as token is well within expiry time
@@ -929,7 +930,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testExpiresInIsSkippedWithBasicAuthToken()
+    void testExpiresInIsSkippedWithBasicAuthToken()
     {
         // 1st fetch: Put the destination into cache
         // 2nd fetch: authToken doesn't contain expires_in field, fetch destination from cache
@@ -938,7 +939,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testFetchingDestinationWithNoAuth()
+    void testFetchingDestinationWithNoAuth()
     {
         // 1st fetch: Put the destination into cache
         // 2nd fetch: No auth token defined in destination, fetch destination from cache
@@ -947,7 +948,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testFetchingDestinationWithMultipleAuthToken()
+    void testFetchingDestinationWithMultipleAuthToken()
     {
         //1st fetch: Put the destination into cache
         //2nd fetch: One of the auth tokens defines in destination expires soon, fetch the destination again
@@ -956,14 +957,14 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testAlwaysFetchDestinationWhenCacheIsDisabled()
+    void testAlwaysFetchDestinationWhenCacheIsDisabled()
     {
         DestinationService.Cache.disable();
         tryGetDestinationTwice("Subscriber-CCT", responseDestinationWithNoAuthToken, 2);
     }
 
     @Test
-    public void testLookupPerformedTwiceWhenAuthTokenExpiredAndRequiresUserTokenExchange()
+    void testLookupPerformedTwiceWhenAuthTokenExpiredAndRequiresUserTokenExchange()
     {
         doReturn(responseDestinationWithoutAuthToken)
             .when(scpCfDestinationServiceAdapter)
@@ -1049,9 +1050,10 @@ public class DestinationServiceTest
      *         │19. Continue and Finish execution
      *        ─┴───
      */
-    @Test( timeout = TEST_TIMEOUT )
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
-    public void testConcurrentFetchSameDestination()
+    void testConcurrentFetchSameDestination()
     {
         // mock tenant and principal
         TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
@@ -1188,8 +1190,9 @@ public class DestinationServiceTest
      *         │24. Continue and Finish execution
      *        ─┴───
      */
-    @Test( timeout = TEST_TIMEOUT )
-    public void testConcurrentFetchSameDestinationButDifferentTenant()
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
+    void testConcurrentFetchSameDestinationButDifferentTenant()
     {
         final CountDownLatch countDownLatch1 = new CountDownLatch(2);
         final SoftAssertions softly = new SoftAssertions();
@@ -1246,7 +1249,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testPrincipalsShareDestinationWithoutUserPropagation()
+    void testPrincipalsShareDestinationWithoutUserPropagation()
     {
         doReturn(responseDestinationWithBasicAuthToken)
             .when(scpCfDestinationServiceAdapter)
@@ -1272,7 +1275,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategy()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategy()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(EXCHANGE_ONLY)).build();
@@ -1310,7 +1313,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategy()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategy()
     {
         final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
@@ -1355,7 +1358,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testSmartCacheServesAllPrincipalsWithSameDestination()
+    void testSmartCacheServesAllPrincipalsWithSameDestination()
     {
         doReturn("[]")
             .when(scpCfDestinationServiceAdapter)
@@ -1398,7 +1401,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testChangeDetectionWithMisconfiguredDestination()
+    void testChangeDetectionWithMisconfiguredDestination()
     {
         doReturn("[]")
             .when(scpCfDestinationServiceAdapter)
@@ -1442,9 +1445,10 @@ public class DestinationServiceTest
     /**
      * Test case: Trying to fetch same destination concurrently from same tenant but by different principals is blocking
      */
-    @Test( timeout = TEST_TIMEOUT )
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
-    public void testConcurrentFetchSameDestinationSameTenantButDifferentPrincipal()
+    void testConcurrentFetchSameDestinationSameTenantButDifferentPrincipal()
     {
         // mock tenant and principal
         final Principal principalA = new DefaultPrincipal("PrincipalA");
@@ -1530,7 +1534,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testDestinationWithInvalidJsonProperty()
+    void testDestinationWithInvalidJsonProperty()
     {
         doReturn("{ \"destinationConfiguration\" : { \"Name\" : null } }")
             .when(scpCfDestinationServiceAdapter)
@@ -1541,7 +1545,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testSetTimeLimiterTimeout()
+    void testSetTimeLimiterTimeout()
     {
         final DestinationService loader =
             DestinationService
@@ -1556,7 +1560,7 @@ public class DestinationServiceTest
     }
 
     @Test
-    public void testGetAllDestinationsHandlesFailure()
+    void testGetAllDestinationsHandlesFailure()
     {
         doThrow(new DestinationAccessException("Error"))
             .when(scpCfDestinationServiceAdapter)

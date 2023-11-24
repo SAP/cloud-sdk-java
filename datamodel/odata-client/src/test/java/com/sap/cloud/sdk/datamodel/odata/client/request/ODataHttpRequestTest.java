@@ -12,13 +12,13 @@ import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
-public class ODataHttpRequestTest
+class ODataHttpRequestTest
 {
 
     private static final String SERVICE_PATH = "/service/";
@@ -29,7 +29,7 @@ public class ODataHttpRequestTest
     private final HttpClient httpClient = Mockito.mock(HttpClient.class);
 
     @Test
-    public void testAcceptHeaderForRead()
+    void testAcceptHeaderForRead()
         throws IOException
     {
         final ODataRequestRead odataRequest =
@@ -47,7 +47,7 @@ public class ODataHttpRequestTest
     }
 
     @Test
-    public void testAcceptHeaderForReadByKey()
+    void testAcceptHeaderForReadByKey()
         throws IOException
     {
         final ODataRequestReadByKey odataRequest =
@@ -65,7 +65,7 @@ public class ODataHttpRequestTest
     }
 
     @Test
-    public void testCustomAcceptHeaderPrecedesDefaultAcceptHeader()
+    void testCustomAcceptHeaderPrecedesDefaultAcceptHeader()
         throws IOException
     {
         final ODataRequestReadByKey odataRequest =
@@ -85,7 +85,7 @@ public class ODataHttpRequestTest
     }
 
     @Test
-    public void testAddCustomHeaderExtendsExistingHeaders()
+    void testAddCustomHeaderExtendsExistingHeaders()
         throws IOException
     {
         final ODataRequestReadByKey odataRequest =

@@ -6,7 +6,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.Options.ProxyOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,23 +14,22 @@ import static org.assertj.core.api.Assertions.entry;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.http.HttpHeaders;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.http.HttpHeaders;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 
 @SuppressWarnings( "unchecked" )
-public class OAuth2OnPremiseIntegrationTest
+@WireMockTest
+class OAuth2OnPremiseIntegrationTest
 {
-
-    @Rule
-    public WireMockRule csMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     @Test
-    public void destinationGetHeadersShouldRetrieveProxyAuthHeaderJustOnce()
+    void destinationGetHeadersShouldRetrieveProxyAuthHeaderJustOnce( @Nonnull final WireMockRuntimeInfo wm )
     {
         stubFor(
             post("/oauth/token")
@@ -44,7 +42,7 @@ public class OAuth2OnPremiseIntegrationTest
         final ServiceBindingDestinationOptions connectivityOptions =
             createOptionsWithCredentials(
                 destToBeProxied,
-                entry("url", csMockServer.baseUrl()),
+                entry("url", wm.getHttpBaseUrl()),
                 entry("clientid", "clientid"),
                 entry("clientsecret", "clientsecret"),
                 entry("onpremise_proxy_host", "some.host"),

@@ -14,12 +14,12 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.SA
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.SAP_ASSERTION_SSO;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AuthenticationTypeTest
+class AuthenticationTypeTest
 {
     @Test
-    public void getIdentifier()
+    void getIdentifier()
     {
         assertThat(NO_AUTHENTICATION.getIdentifier()).isEqualTo("NoAuthentication");
         assertThat(BASIC_AUTHENTICATION.getIdentifier()).isEqualTo("BasicAuthentication");
@@ -32,7 +32,7 @@ public class AuthenticationTypeTest
     }
 
     @Test
-    public void ofIdentifier()
+    void ofIdentifier()
     {
         assertThat(AuthenticationType.ofIdentifier("NoAuthentication")).isEqualTo(NO_AUTHENTICATION);
         assertThat(AuthenticationType.ofIdentifier("BasicAuthentication")).isEqualTo(BASIC_AUTHENTICATION);
@@ -47,7 +47,7 @@ public class AuthenticationTypeTest
     }
 
     @Test
-    public void ofIdentifierOrDefault()
+    void ofIdentifierOrDefault()
     {
         assertThat(AuthenticationType.ofIdentifierOrDefault("NonExisting", NO_AUTHENTICATION))
             .isEqualTo(NO_AUTHENTICATION);

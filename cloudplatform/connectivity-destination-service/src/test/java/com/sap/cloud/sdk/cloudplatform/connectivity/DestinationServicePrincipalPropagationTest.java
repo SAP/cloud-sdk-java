@@ -6,7 +6,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
@@ -28,15 +27,17 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -58,7 +59,8 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantFacade;
 import io.vavr.control.Try;
 import lombok.Value;
 
-public class DestinationServicePrincipalPropagationTest
+@WireMockTest
+class DestinationServicePrincipalPropagationTest
 {
     private static final Try<AuthToken> NO_AUTH_TOKEN = Try.failure(new IllegalStateException());
     private static final Try<AuthToken> SOME_AUTH_TOKEN =
@@ -85,18 +87,15 @@ public class DestinationServicePrincipalPropagationTest
     private final PrincipalFacade principalFacade = mock(PrincipalFacade.class);
     private final DestinationServiceAdapter destinationServiceAdapter = mock(DestinationServiceAdapter.class);
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-
-    @Before
-    public void setupConnectivity()
+    @BeforeEach
+    void setupConnectivity( @Nonnull final WireMockRuntimeInfo wm )
     {
         final ImmutableMap<String, Object> credentials =
             ImmutableMap
                 .<String, Object> builder()
                 .put("clientid", "CLIENT_ID")
                 .put("clientsecret", "CLIENT_SECRET")
-                .put("url", "http://localhost:" + wireMockRule.port() + "/xsuaa")
+                .put("url", "http://localhost:" + wm.getHttpPort() + "/xsuaa")
                 .put("onpremise_proxy_host", "localhost")
                 .put("onpremise_proxy_port", "8888")
                 .build();
@@ -106,6 +105,8 @@ public class DestinationServicePrincipalPropagationTest
                 .withServiceIdentifier(ServiceIdentifier.CONNECTIVITY)
                 .withCredentials(credentials)
                 .build();
+
+        OAuth2ServiceImpl.clearCache();
 
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
         DestinationService.Cache.reset();
@@ -127,17 +128,18 @@ public class DestinationServicePrincipalPropagationTest
                 .willReturn(okJson("{\"access_token\":\"provider-client-credentials\",\"expires_in\":3600}")));
     }
 
-    @After
-    public void tearDownConnectivity()
+    @AfterEach
+    void tearDownConnectivity()
     {
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
         AuthTokenAccessor.setAuthTokenFacade(null);
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);
+        OAuth2ServiceImpl.clearCache();
     }
 
     @Test
-    public void testFailingHeadersWithNoCurrentToken()
+    void testFailingHeadersWithNoCurrentToken()
     {
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
         final Destination result = sut.tryGetDestination("test").get();
@@ -156,7 +158,7 @@ public class DestinationServicePrincipalPropagationTest
     }
 
     @Test
-    public void testSuccessWithOnlyToken()
+    void testSuccessWithOnlyToken()
     {
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
@@ -195,7 +197,7 @@ public class DestinationServicePrincipalPropagationTest
     }
 
     @Test
-    public void testFailingHeadersWithProviderDestinationAndSubscriberTenant()
+    void testFailingHeadersWithProviderDestinationAndSubscriberTenant()
     {
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 
@@ -221,7 +223,7 @@ public class DestinationServicePrincipalPropagationTest
     }
 
     @Test
-    public void testDestinationOptions()
+    void testDestinationOptions()
     {
         doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
 

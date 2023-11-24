@@ -24,7 +24,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class ODataFilterTest
+class ODataFilterTest
 {
     private static final EntityField<TestEntity, String> STRING_FIELD = new EntityField<>("field");
     private static final EntityField<TestEntity, ZonedDateTime> ZONED_DATE_TIME_FIELD = new EntityField<>("field");

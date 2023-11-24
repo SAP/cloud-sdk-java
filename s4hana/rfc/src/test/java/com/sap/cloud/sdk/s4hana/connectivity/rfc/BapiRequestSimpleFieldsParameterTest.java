@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -26,7 +26,7 @@ import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoRepository;
 
 @Deprecated
-public class BapiRequestSimpleFieldsParameterTest
+class BapiRequestSimpleFieldsParameterTest
 {
     private static final String FUNCTION_NAME = "BAPI_FUNCTION_NAME";
     private static final String FIELD_NAME = "field";
@@ -34,7 +34,7 @@ public class BapiRequestSimpleFieldsParameterTest
     private static final Destination destination = mock(Destination.class);
 
     @Test
-    public void testSupplyByteArrayParameter()
+    void testSupplyByteArrayParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -51,7 +51,7 @@ public class BapiRequestSimpleFieldsParameterTest
     }
 
     @Test
-    public void testSupplyDateParameter()
+    void testSupplyDateParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -72,7 +72,7 @@ public class BapiRequestSimpleFieldsParameterTest
     }
 
     @Test
-    public void testSupplyRecursiveTableParameter()
+    void testSupplyRecursiveTableParameter()
     {
         final LocalDate fieldValueSuppliedFromOutside = LocalDate.now();
 
@@ -143,7 +143,7 @@ public class BapiRequestSimpleFieldsParameterTest
     }
 
     @Test
-    public void testSupplyMultilevelRecursiveTableParameter()
+    void testSupplyMultilevelRecursiveTableParameter()
     {
         final LocalDate fieldValueSuppliedFromOutside = LocalDate.now();
 
@@ -232,7 +232,7 @@ public class BapiRequestSimpleFieldsParameterTest
     }
 
     @Test
-    public void testSupplyStringParameter()
+    void testSupplyStringParameter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -249,7 +249,7 @@ public class BapiRequestSimpleFieldsParameterTest
     }
 
     @Test
-    public void testSupplyBooleanParameter()
+    void testSupplyBooleanParameter()
         throws RemoteFunctionException,
             JCoException
     {

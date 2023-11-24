@@ -25,11 +25,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
@@ -47,13 +45,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 
-@RunWith( MockitoJUnitRunner.class )
-public class OutboundServiceTest
+class OutboundServiceTest
 {
     private MegacliteServiceBindingDestinationLoader sut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         CacheManager.invalidateAll();
         TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("subscriber-tenant-id")));
@@ -67,8 +64,8 @@ public class OutboundServiceTest
         sut.setConnectivityResolver(new MegacliteConnectivityProxyInformationResolver(destinationFactory));
     }
 
-    @After
-    public void reset()
+    @AfterEach
+    void reset()
     {
         TenantAccessor.setTenantFacade(null);
         RequestHeaderAccessor.setHeaderFacade(null);
@@ -76,7 +73,7 @@ public class OutboundServiceTest
     }
 
     @Test
-    public void testGetDestinationForOutboundService()
+    void testGetDestinationForOutboundService()
     {
         final MegacliteServiceBinding destinationServiceBinding =
             MegacliteServiceBinding
@@ -96,7 +93,7 @@ public class OutboundServiceTest
     }
 
     @Test
-    public void testGetDestinationForOutboundServiceWithODataRequest()
+    void testGetDestinationForOutboundServiceWithODataRequest()
         throws IOException
     {
         final MegacliteServiceBinding destinationServiceBinding =
@@ -123,7 +120,7 @@ public class OutboundServiceTest
 
     @SneakyThrows
     @Test
-    public void testGetDestinationForOutboundDestinationWithODataRequest()
+    void testGetDestinationForOutboundDestinationWithODataRequest()
     {
         final MegacliteServiceBinding targetService =
             MegacliteServiceBinding
@@ -157,7 +154,7 @@ public class OutboundServiceTest
 
     @SneakyThrows
     @Test
-    public void testGetDestinationForOutboundDestinationWithoutDestinationName()
+    void testGetDestinationForOutboundDestinationWithoutDestinationName()
     {
         final MegacliteServiceBinding targetService =
             MegacliteServiceBinding

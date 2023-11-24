@@ -10,14 +10,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 
-public class ODataEntitySerializerTest
+class ODataEntitySerializerTest
 {
     @Test
-    public void testSerializeEntityForCreate()
+    void testSerializeEntityForCreate()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().stringValue("string").booleanValue(false).build();
         entity.setIntegerValue(42);
@@ -27,7 +27,7 @@ public class ODataEntitySerializerTest
     }
 
     @Test
-    public void testSerializeEntityForUpdatePut()
+    void testSerializeEntityForUpdatePut()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().stringValue("string").booleanValue(false).build();
         entity.setIntegerValue(42);
@@ -39,7 +39,7 @@ public class ODataEntitySerializerTest
     }
 
     @Test
-    public void testSerializeEntityForUpdatePutWithExcludedFields()
+    void testSerializeEntityForUpdatePutWithExcludedFields()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().stringValue("NewString").booleanValue(true).build();
         entity.setIntegerValue(45);
@@ -53,7 +53,7 @@ public class ODataEntitySerializerTest
     }
 
     @Test
-    public void testSerializeEntityForUpdatePatch()
+    void testSerializeEntityForUpdatePatch()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().stringValue("string").booleanValue(false).build();
         entity.setIntegerValue(42);

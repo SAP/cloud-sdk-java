@@ -10,18 +10,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.client.HttpClient;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCreate;
@@ -32,7 +33,8 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Vendo
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FluentHelperCreateODataClientTest
+@WireMockTest
+class FluentHelperCreateODataClientTest
 {
     private static final String ODATA_ENDPOINT_URL = "/com.sap.cloud.sdk.store.grocery";
     private static final String ODATA_QUERY_URL = ODATA_ENDPOINT_URL + "/Products";
@@ -46,21 +48,18 @@ public class FluentHelperCreateODataClientTest
             .image(new byte[] { 0x01, 0x02, 0x03 })
             .build();
 
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private final SdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
     private HttpClient httpClient;
 
-    @Before
-    public void setupHttpClient()
+    @BeforeEach
+    void setupHttpClient( @Nonnull final WireMockRuntimeInfo wm )
     {
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         httpClient = HttpClientAccessor.getHttpClient(destination);
     }
 
     @Test
-    public void testBasicProperties()
+    void testBasicProperties()
     {
         final ProductCreateFluentHelper createFluentHelper = service.createProduct(productToCreate);
         final ODataRequestCreate createRequest = createFluentHelper.toRequest();
@@ -70,7 +69,7 @@ public class FluentHelperCreateODataClientTest
     }
 
     @Test
-    public void testHeaders()
+    void testHeaders()
     {
         final String httpHeaderKey = "my-header";
         final String httpHeaderValue = "my-value";
@@ -92,7 +91,7 @@ public class FluentHelperCreateODataClientTest
     }
 
     @Test
-    public void testEntitySerialization()
+    void testEntitySerialization()
     {
         final String request =
             "{"

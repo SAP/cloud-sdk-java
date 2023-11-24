@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Iterator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
 @Deprecated
-public class JCoTransactionTest
+class JCoTransactionTest
 {
     private static final String BAPI_NAME = "BAPI_AWESOME_MAGIC";
     private static final String RFM_NAME = "RFM_AWESOME_MAGIC";
@@ -46,7 +46,7 @@ public class JCoTransactionTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testExportingSimpleFieldWithTypeConverter()
+    void testExportingSimpleFieldWithTypeConverter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -84,7 +84,7 @@ public class JCoTransactionTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testExportingSimpleFieldWithoutTypeConverter()
+    void testExportingSimpleFieldWithoutTypeConverter()
         throws RemoteFunctionException,
             JCoException
     {
@@ -120,7 +120,7 @@ public class JCoTransactionTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testImportingSimpleField()
+    void testImportingSimpleField()
         throws RemoteFunctionException,
             JCoException
     {
@@ -165,7 +165,7 @@ public class JCoTransactionTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testImportingAndExportingAndChangingSimpleFields()
+    void testImportingAndExportingAndChangingSimpleFields()
         throws RemoteFunctionException,
             JCoException
     {
@@ -239,7 +239,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testExceptionDuringFunctionProcessing()
+    void testExceptionDuringFunctionProcessing()
         throws JCoException
     {
         final BapiRequest bapiRequest = new BapiRequest(BAPI_NAME);
@@ -263,7 +263,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testSuccessfulCommit()
+    void testSuccessfulCommit()
         throws JCoException,
             com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
@@ -300,7 +300,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testCommitFunctionReturnsError()
+    void testCommitFunctionReturnsError()
         throws JCoException
     {
         final BapiRequest bapiRequest = new BapiRequest(BAPI_NAME);
@@ -334,7 +334,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testCommitFunctionFailsWithJCoException()
+    void testCommitFunctionFailsWithJCoException()
         throws JCoException
     {
         final BapiRequest bapiRequest = new BapiRequest(BAPI_NAME);
@@ -370,7 +370,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testSuccessfulRollback()
+    void testSuccessfulRollback()
         throws JCoException,
             com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
@@ -396,7 +396,7 @@ public class JCoTransactionTest
     }
 
     @Test
-    public void testFailingRollback()
+    void testFailingRollback()
         throws JCoException
     {
         final BapiRequest bapiRequest = new BapiRequest(BAPI_NAME);
@@ -424,7 +424,7 @@ public class JCoTransactionTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testTablesAsReturnParameter()
+    void testTablesAsReturnParameter()
         throws JCoException,
             RemoteFunctionException
     {

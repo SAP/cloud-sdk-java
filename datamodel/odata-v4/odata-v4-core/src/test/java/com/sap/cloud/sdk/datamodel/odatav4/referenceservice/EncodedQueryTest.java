@@ -6,7 +6,7 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
@@ -14,10 +14,10 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class EncodedQueryTest
+class EncodedQueryTest
 {
     @Test
-    public void testEncodingInFilter()
+    void testEncodingInFilter()
     {
         final ODataRequestRead query =
             new DefaultTrippinService()
@@ -38,7 +38,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testSafeCharsInFilter()
+    void testSafeCharsInFilter()
     {
         final ODataRequestRead query =
             new DefaultTrippinService().getAllPeople().filter(Person.USER_NAME.contains("_*-:,/'().")).toRequest();
@@ -49,7 +49,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testSpecialCharsInFilter()
+    void testSpecialCharsInFilter()
     {
         final ODataRequestRead query =
             new DefaultTrippinService().getAllPeople().filter(Person.USER_NAME.contains("!@#$%^&=+|\\\"")).toRequest();
@@ -60,7 +60,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testEncodingForeignCharactersInFilter()
+    void testEncodingForeignCharactersInFilter()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -77,7 +77,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testEncodingInNestedFiltersWithAllSpecialCharacters()
+    void testEncodingInNestedFiltersWithAllSpecialCharacters()
     {
         final ODataRequestRead request =
             new DefaultTrippinService()
@@ -92,7 +92,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testEncodingInSearchQuery()
+    void testEncodingInSearchQuery()
     {
         final ODataRequestRead search =
             new DefaultTrippinService().getAllPeople().search("Hash # Quoted \"string\" Escaped \\").toRequest();
@@ -104,7 +104,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testEncodingInOrderBy()
+    void testEncodingInOrderBy()
     {
         final ODataRequestRead request =
             new DefaultTrippinService()
@@ -118,7 +118,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testEncodingInCustomQueryParametersWithAllSpecialCharacters()
+    void testEncodingInCustomQueryParametersWithAllSpecialCharacters()
     {
         final ODataRequestRead request =
             new DefaultTrippinService()
@@ -132,7 +132,7 @@ public class EncodedQueryTest
     }
 
     @Test
-    public void testSafeCharsInCustomQueryParameters()
+    void testSafeCharsInCustomQueryParameters()
     {
         final ODataRequestRead request =
             new DefaultTrippinService().getAllPeople().withQueryParameter("foo", "_*-:,/'().").toRequest();

@@ -8,17 +8,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class ODataReferenceServiceTest
+class ODataReferenceServiceTest
 {
     @Test
-    public void testSelectAndExpand()
+    void testSelectAndExpand()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -32,7 +32,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testMultipleExpandsWithFilter()
+    void testMultipleExpandsWithFilter()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -45,7 +45,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testAllSelectionVariants()
+    void testAllSelectionVariants()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -61,7 +61,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testFiltersWithSpecialCharacters()
+    void testFiltersWithSpecialCharacters()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService().getAllPeople().filter(Person.FIRST_NAME.contains("' +&#\\"));
@@ -70,7 +70,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testNestedFiltersWithAllSpecialCharacters()
+    void testNestedFiltersWithAllSpecialCharacters()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -84,7 +84,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testNestedFiltersWithSpecialCharacters()
+    void testNestedFiltersWithSpecialCharacters()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -98,7 +98,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testAllDuplicateSelections()
+    void testAllDuplicateSelections()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()
@@ -115,7 +115,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testOrderBy()
+    void testOrderBy()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService().getAllPeople().orderBy(Person.FIRST_NAME.asc(), Person.LAST_NAME.desc());
@@ -124,7 +124,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testBadOrderByUsage()
+    void testBadOrderByUsage()
     {
         final GetAllRequestBuilder<Person> request =
             new DefaultTrippinService()

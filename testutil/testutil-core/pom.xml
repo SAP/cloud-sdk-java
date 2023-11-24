@@ -43,18 +43,6 @@
 		<!-- test dependencies with scope "compile" -->
 		<dependencies>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${junit.jupiter.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
 				<version>${assertj-core.version}</version>
@@ -67,8 +55,8 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8</artifactId>
+				<groupId>org.wiremock</groupId>
+				<artifactId>wiremock</artifactId>
 				<version>${wiremock.version}</version>
 				<scope>compile</scope>
 			</dependency>
@@ -137,8 +125,8 @@
 		</dependency>
 		<!-- scope "test" -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -30,7 +30,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -56,7 +56,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-public class ODataSerializationTest
+class ODataSerializationTest
 {
     private static final String SAMPLE_PAYLOAD =
         "{ "
@@ -104,7 +104,7 @@ public class ODataSerializationTest
             + "}";
 
     @Test
-    public void testBrokenResponse()
+    void testBrokenResponse()
     {
         // setup http response
         final HttpResponse response = mock(HttpResponse.class);
@@ -122,7 +122,7 @@ public class ODataSerializationTest
     }
 
     @Test
-    public void testNoValuesResponse()
+    void testNoValuesResponse()
     {
         // setup http response
         final HttpResponse response = mock(HttpResponse.class);
@@ -153,7 +153,7 @@ public class ODataSerializationTest
     }
 
     @Test
-    public void testCreateResponse()
+    void testCreateResponse()
     {
         // setup http response
         final HttpResponse response = mock(HttpResponse.class);
@@ -197,7 +197,7 @@ public class ODataSerializationTest
     }
 
     @Test
-    public void testSerialisationForDateTimeAttributes()
+    void testSerialisationForDateTimeAttributes()
     {
         final String SERIALIZED_ENTITY =
             "{"

@@ -15,7 +15,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -27,12 +26,12 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -47,11 +46,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.With;
 
-public class CreateViaNavigationPropertyTest
+@WireMockTest
+class CreateViaNavigationPropertyTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String ODATA_SERVICE_PATH = "/service/path";
     private static final String ODATA_ENTITY = "A_TestEntity";
     private static final String ODATA_ENTITY_RELATED = "A_RelatedEntity";
@@ -101,15 +98,15 @@ public class CreateViaNavigationPropertyTest
 
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         stubFor(head(urlEqualTo(ODATA_SERVICE_PATH)).willReturn(ok()));
     }
 
     @Test
-    public void happyPathWorksAsExpected()
+    void happyPathWorksAsExpected()
     {
         stubFor(
             post(urlEqualTo(ODATA_SERVICE_PATH + "/" + ODATA_ENTITY + KEY + "/" + RELATIONS_NAV_PROP))
@@ -129,7 +126,7 @@ public class CreateViaNavigationPropertyTest
     }
 
     @Test
-    public void nullParametersResultInDefaultBehavior()
+    void nullParametersResultInDefaultBehavior()
     {
         stubFor(
             post(urlEqualTo(ODATA_SERVICE_PATH + "/" + ODATA_ENTITY_RELATED))
@@ -147,7 +144,7 @@ public class CreateViaNavigationPropertyTest
     }
 
     @Test
-    public void directCreationFails()
+    void directCreationFails()
     {
         stubFor(
             post(urlEqualTo(ODATA_SERVICE_PATH + "/" + ODATA_ENTITY_RELATED))

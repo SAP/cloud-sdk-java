@@ -10,14 +10,14 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.LocalTimeCalendarConverter;
 
-public class LocalTimeCalendarConverterTest
+class LocalTimeCalendarConverterTest
 {
     @Test
-    public void testFromDomain()
+    void testFromDomain()
     {
         final int someHour = 15;
         final int someMinute = 57;
@@ -42,7 +42,7 @@ public class LocalTimeCalendarConverterTest
     }
 
     @Test
-    public void testToDomain()
+    void testToDomain()
     {
         final int someHour = 15;
         final int someMinute = 57;

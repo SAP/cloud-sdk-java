@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class BigDecimalSerialisationTest
+class BigDecimalSerialisationTest
 {
     private static final String TEST_DEFAULT_SERVICE_PATH = "/odata/default";
 
@@ -54,7 +54,7 @@ public class BigDecimalSerialisationTest
     }
 
     @Test
-    public void testSerialization()
+    void testSerialization()
         throws JsonProcessingException
     {
         final TestEntity testEntity = new TestEntity();

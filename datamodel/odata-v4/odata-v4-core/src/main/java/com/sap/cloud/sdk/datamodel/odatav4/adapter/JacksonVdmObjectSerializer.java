@@ -117,7 +117,7 @@ public class JacksonVdmObjectSerializer extends StdSerializer<VdmObject<?>> impl
                 final AnnotationMap annotations = AnnotationMap.of(JsonSerialize.class, customSerialize);
                 final AnnotatedField annotated = new AnnotatedField(null, propertyField, annotations);
                 final Object rawSerializerType = prov.getAnnotationIntrospector().findSerializer(annotated);
-                final Object rawSerializer = ((Class<?>) rawSerializerType).newInstance();
+                final Object rawSerializer = ((Class<?>) rawSerializerType).getDeclaredConstructor().newInstance();
                 @SuppressWarnings( "unchecked" )
                 final JsonSerializer<Object> serializer = (JsonSerializer<Object>) rawSerializer;
                 serializer.serialize(propertyValue, gen, prov);

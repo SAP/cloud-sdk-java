@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -18,7 +18,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Produ
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Shelf;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Vendor;
 
-public class VdmSerializationTest
+class VdmSerializationTest
 {
     private static final String PRODUCT_JSON =
         "{"
@@ -43,14 +43,14 @@ public class VdmSerializationTest
             .build();
 
     @Test
-    public void testGsonSerialization()
+    void testGsonSerialization()
     {
         final String actualJson = new GsonBuilder().serializeNulls().create().toJson(PRODUCT_OBJECT);
         assertThat(actualJson).isNotNull().isEqualTo(PRODUCT_JSON);
     }
 
     @Test
-    public void testGsonDeserialization()
+    void testGsonDeserialization()
     {
         final Product deserializedFromJson = new Gson().fromJson(PRODUCT_JSON, Product.class);
         assertThat(deserializedFromJson).isNotNull();
@@ -70,7 +70,7 @@ public class VdmSerializationTest
     }
 
     @Test
-    public void testJacksonSerialization()
+    void testJacksonSerialization()
         throws Exception
     {
         final String actualJson = new ObjectMapper().writeValueAsString(PRODUCT_OBJECT);
@@ -78,7 +78,7 @@ public class VdmSerializationTest
     }
 
     @Test
-    public void testJacksonDeserialization()
+    void testJacksonDeserialization()
         throws IOException
     {
         final Product deserializedFromJson = new ObjectMapper().readValue(PRODUCT_JSON, Product.class);

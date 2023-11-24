@@ -21,9 +21,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
@@ -33,7 +33,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import lombok.SneakyThrows;
 
-public class MegacliteConnectivityProxyInformationResolverTest
+class MegacliteConnectivityProxyInformationResolverTest
 {
 
     private static final HttpResponse successResponse;
@@ -56,8 +56,8 @@ public class MegacliteConnectivityProxyInformationResolverTest
 
     private MegacliteConnectivityProxyInformationResolver sut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         final DwcConfiguration dwcConfig = new DwcConfiguration(URI.create("megaclite.com"), "provider-id");
         final MegacliteDestinationFactory destinationFactory = new MegacliteDestinationFactory(dwcConfig);
@@ -66,15 +66,15 @@ public class MegacliteConnectivityProxyInformationResolverTest
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
     }
 
-    @After
-    public void reset()
+    @AfterEach
+    void reset()
     {
         TenantAccessor.setTenantFacade(null);
     }
 
     @SneakyThrows
     @Test
-    public void testProxyUrlIsCachedAcrossTenants()
+    void testProxyUrlIsCachedAcrossTenants()
     {
         doReturn(successResponse).when(sut).makeHttpRequest(any());
 
@@ -92,7 +92,7 @@ public class MegacliteConnectivityProxyInformationResolverTest
 
     @SneakyThrows
     @Test
-    public void testAuthTokenIsCachedPerTenant()
+    void testAuthTokenIsCachedPerTenant()
     {
         doReturn(successResponse).when(sut).makeHttpRequest(any());
 
@@ -116,7 +116,7 @@ public class MegacliteConnectivityProxyInformationResolverTest
 
     @SneakyThrows
     @Test
-    public void testProxyAuthHeader()
+    void testProxyAuthHeader()
     {
         doReturn(successResponse).when(sut).makeHttpRequest(any());
 

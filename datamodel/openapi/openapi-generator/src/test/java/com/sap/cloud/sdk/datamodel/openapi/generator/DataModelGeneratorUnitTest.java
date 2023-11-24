@@ -27,7 +27,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class DataModelGeneratorUnitTest
+class DataModelGeneratorUnitTest
 {
     @TempDir
     Path outputDirectory = null;
@@ -37,7 +37,7 @@ public class DataModelGeneratorUnitTest
     private final String INPUT_FILE_PATH = "src/test/resources/" + INPUT_CLASS_PATH;
 
     @Test
-    public void testSuccessfulGenerationWithInputSpecAsFilePath()
+    void testSuccessfulGenerationWithInputSpecAsFilePath()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -57,7 +57,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testSuccessfulGenerationWithInputSpecAsClassPath()
+    void testSuccessfulGenerationWithInputSpecAsClassPath()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -77,7 +77,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testSuccessfulGenerationWithBetaApi()
+    void testSuccessfulGenerationWithBetaApi()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -97,7 +97,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testExceptionOnMissingOrEmptyInputFile()
+    void testExceptionOnMissingOrEmptyInputFile()
     {
         //assert on missing input file
         GenerationConfiguration configuration =
@@ -143,7 +143,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testExceptionOnMissingOrEmptyApiPackage()
+    void testExceptionOnMissingOrEmptyApiPackage()
     {
         //assert on missing API package
         GenerationConfiguration configuration =
@@ -186,7 +186,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testExceptionOnMissingOrEmptyModelPackage()
+    void testExceptionOnMissingOrEmptyModelPackage()
     {
         //assert on missing model package
         GenerationConfiguration configuration =
@@ -229,7 +229,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testExceptionOnMissingOrEmptyOutputDirectoryValue()
+    void testExceptionOnMissingOrEmptyOutputDirectoryValue()
     {
         //assert on missing output directory value
         GenerationConfiguration configuration =
@@ -272,7 +272,7 @@ public class DataModelGeneratorUnitTest
     }
 
     @Test
-    public void testExceptionIfTemplatesUnavailable()
+    void testExceptionIfTemplatesUnavailable()
     {
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -304,7 +304,7 @@ public class DataModelGeneratorUnitTest
 
     @Test
     @SneakyThrows
-    public void testCleanOutputDirectory()
+    void testCleanOutputDirectory()
     {
         final File existingFile =
             Files
@@ -332,7 +332,7 @@ public class DataModelGeneratorUnitTest
 
     @Test
     @SneakyThrows
-    public void testNoExceptionIfOutputDirectoryDoesNotExist()
+    void testNoExceptionIfOutputDirectoryDoesNotExist()
     {
         FileUtils.deleteDirectory(outputDirectory.toFile());
 
@@ -359,7 +359,7 @@ public class DataModelGeneratorUnitTest
 
     @Test
     @SneakyThrows
-    public void testConfigOptionsArePassedToGenerator()
+    void testConfigOptionsArePassedToGenerator()
     {
         FileUtils.deleteDirectory(outputDirectory.toFile());
 

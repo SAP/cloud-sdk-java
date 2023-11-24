@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -23,14 +23,14 @@ import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import lombok.SneakyThrows;
 
-public class OAuth2ServiceImplTest
+class OAuth2ServiceImplTest
 {
     private static final ResilienceConfiguration NO_RESILIENCE =
         ResilienceConfiguration.empty(OAuth2ServiceImplTest.class.getName() + "_empty");
 
     @Test
     @SneakyThrows
-    public void testRetrieveAccessTokenHandlesNullResponse()
+    void testRetrieveAccessTokenHandlesNullResponse()
     {
         final XsuaaTokenFlows tokenFlows = mock(XsuaaTokenFlows.class);
         final ClientCredentialsTokenFlow clientCredentialsTokenFlows = mock(ClientCredentialsTokenFlow.class);

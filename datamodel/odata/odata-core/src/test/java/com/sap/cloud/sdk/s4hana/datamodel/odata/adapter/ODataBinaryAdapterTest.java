@@ -10,17 +10,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.TypeAdapter;
 
 import lombok.SneakyThrows;
 
-public class ODataBinaryAdapterTest
+class ODataBinaryAdapterTest
 {
     @Test
     @SneakyThrows
-    public void readIntoByteArray()
+    void readIntoByteArray()
     {
         final String testText = "Hello World";
         final String base64encodedString =
@@ -35,7 +35,7 @@ public class ODataBinaryAdapterTest
 
     @Test
     @SneakyThrows
-    public void readInvalidString()
+    void readInvalidString()
     {
         final TypeAdapter<byte[]> binaryAdapter = new ODataBinaryAdapter();
 
@@ -43,7 +43,7 @@ public class ODataBinaryAdapterTest
     }
 
     @Test
-    public void writeFromByteArray()
+    void writeFromByteArray()
     {
         final String testText = "Hello World";
         final String base64encodedString =
@@ -57,7 +57,7 @@ public class ODataBinaryAdapterTest
     }
 
     @Test
-    public void nonStringValueGetsIgnored()
+    void nonStringValueGetsIgnored()
         throws IOException
     {
         final TypeAdapter<byte[]> binaryAdapter = new ODataBinaryAdapter();

@@ -8,7 +8,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okXml;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -16,12 +15,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -30,12 +30,10 @@ import com.sap.cloud.sdk.result.ElementName;
 import lombok.SneakyThrows;
 import lombok.Value;
 
+@WireMockTest
 @Deprecated
-public class DataCollectionProgramTextsRfmTest
+class DataCollectionProgramTextsRfmTest
 {
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     @Value
     public static class ProgramText
     {
@@ -68,7 +66,7 @@ public class DataCollectionProgramTextsRfmTest
     }
 
     @Test
-    public void testLegalFormRfcTest()
+    void testLegalFormRfcTest( @Nonnull final WireMockRuntimeInfo wm )
         throws Exception
     {
         final String responseBody = readResourceFile("response.xml");
@@ -77,7 +75,7 @@ public class DataCollectionProgramTextsRfmTest
 
         stubFor(post(urlEqualTo(relativePath)).willReturn(okXml(responseBody)));
 
-        final Destination destination = DefaultDestination.builder().property("URL", wireMockServer.baseUrl()).build();
+        final Destination destination = DefaultDestination.builder().property("URL", wm.getHttpBaseUrl()).build();
 
         final RfmRequestResult result = new DataCollectionProgramTextsRfm().execute(destination);
 

@@ -5,16 +5,16 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class ComparisonQueriesTest
+class ComparisonQueriesTest
 {
     @Test
-    public void testGetFilteredWithEquals()
+    void testGetFilteredWithEquals()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().equalTo(5));
@@ -24,7 +24,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithNotEquals()
+    void testGetFilteredWithNotEquals()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().notEqualTo(10));
@@ -34,7 +34,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithLessThan()
+    void testGetFilteredWithLessThan()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().lessThan(2));
@@ -44,7 +44,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithGreaterThan()
+    void testGetFilteredWithGreaterThan()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().greaterThan(15));
@@ -54,7 +54,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithLessThanOrEquals()
+    void testGetFilteredWithLessThanOrEquals()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().lessThanEqual(1));
@@ -64,7 +64,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithGreaterThanOrEquals()
+    void testGetFilteredWithGreaterThanOrEquals()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_TRIPS.length().greaterThanEqual(20));
@@ -74,7 +74,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithInLiterals()
+    void testGetFilteredWithInLiterals()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.USER_NAME.in("scottketchum", "javieralfred"));
@@ -84,7 +84,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithInSimpleCollection()
+    void testGetFilteredWithInSimpleCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.USER_NAME.in(Person.EMAILS));
@@ -94,7 +94,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithInNavigationPropertyCollection()
+    void testGetFilteredWithInNavigationPropertyCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.TO_BEST_FRIEND.in(Person.TO_FRIENDS));
@@ -104,7 +104,7 @@ public class ComparisonQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithInEnumCollection()
+    void testGetFilteredWithInEnumCollection()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService().getAllPeople().filter(Person.FAVORITE_FEATURE.in(Person.FEATURES));

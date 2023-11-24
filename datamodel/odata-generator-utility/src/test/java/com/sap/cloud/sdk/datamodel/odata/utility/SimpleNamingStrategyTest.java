@@ -7,18 +7,18 @@ package com.sap.cloud.sdk.datamodel.odata.utility;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SimpleNamingStrategyTest
+class SimpleNamingStrategyTest
 {
     @Test
-    public void testDefaultNameSourceIsLabel()
+    void testDefaultNameSourceIsLabel()
     {
         assertThat(new SimpleNamingStrategy().getNameSource()).isEqualTo(NameSource.LABEL);
     }
 
     @Test
-    public void testGenerateJavaClassNameFromName()
+    void testGenerateJavaClassNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -32,7 +32,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaClassNameFromLabel()
+    void testGenerateJavaClassNameFromLabel()
     {
         final String someEntityName = "SomeEntityName";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);
@@ -45,7 +45,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromName()
+    void testGenerateJavaFieldNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -59,7 +59,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromLabel()
+    void testGenerateJavaFieldNameFromLabel()
     {
         final String someFieldName = "someFieldName";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);
@@ -74,7 +74,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromName()
+    void testGenerateJavaConstantNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -88,7 +88,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromLabel()
+    void testGenerateJavaConstantNameFromLabel()
     {
         final String someConstantName = "SOME_CONSTANT_NAME";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);
@@ -102,7 +102,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyFieldName()
+    void testGenerateJavaNavigationPropertyFieldName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -117,7 +117,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyConstantName()
+    void testGenerateJavaNavigationPropertyConstantName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -133,7 +133,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodName()
+    void testGenerateJavaMethodName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -146,7 +146,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaBuilderMethodName()
+    void testGenerateJavaBuilderMethodName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -159,7 +159,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromName()
+    void testGenerateJavaOperationMethodNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -172,7 +172,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromLabel()
+    void testGenerateJavaOperationMethodNameFromLabel()
     {
         final String someMethodName = "someMethodName";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);
@@ -187,7 +187,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParameterNameFromName()
+    void testGenerateJavaMethodParameterNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -200,7 +200,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParameterNameFromLabel()
+    void testGenerateJavaMethodParameterNameFromLabel()
     {
         final String someParameterName = "someParameterName";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);
@@ -215,7 +215,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromName()
+    void testGenerateJavaFluentHelperClassNameFromName()
     {
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.NAME);
 
@@ -230,7 +230,7 @@ public class SimpleNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromLabel()
+    void testGenerateJavaFluentHelperClassNameFromLabel()
     {
         final String someEntityName = "SomeEntityName";
         final SimpleNamingStrategy sut = new SimpleNamingStrategy(NameSource.LABEL);

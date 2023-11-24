@@ -11,10 +11,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
-public class MessageCollectorTest
+class MessageCollectorTest
 {
     @Test
-    public void testMessageCollector()
+    void testMessageCollector()
     {
         final Logger logger = MessageCollector.getLogger(MessageCollectorTest.class);
         logger.error("err without argument, without throwable");

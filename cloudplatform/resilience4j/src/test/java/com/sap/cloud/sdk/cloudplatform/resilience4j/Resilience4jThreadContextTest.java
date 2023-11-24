@@ -8,9 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -18,16 +18,16 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
-public class Resilience4jThreadContextTest
+class Resilience4jThreadContextTest
 {
     private static final Tenant TENANT_GLOBAL = () -> "global-tenant";
     private static final Tenant TENANT_ALTERED = () -> "altered-tenant";
     private static final ResilienceConfiguration CONFIG =
         ResilienceConfiguration.of(Resilience4jThreadContextTest.class);
 
-    @Before
-    @After
-    public void resetAccessors()
+    @BeforeEach
+    @AfterEach
+    void resetAccessors()
     {
         // reset the facades and make sure that there are no global fallbacks between tests
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
@@ -35,7 +35,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testSyncExecute()
+    void testSyncExecute()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);
@@ -54,7 +54,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testSyncDecorate()
+    void testSyncDecorate()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);
@@ -72,7 +72,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testSyncDecorateInAccessor()
+    void testSyncDecorateInAccessor()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);
@@ -90,7 +90,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testAsyncExecute()
+    void testAsyncExecute()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);
@@ -112,7 +112,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testAsyncDecorate()
+    void testAsyncDecorate()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);
@@ -133,7 +133,7 @@ public class Resilience4jThreadContextTest
     }
 
     @Test
-    public void testAsyncDecorateInAccessor()
+    void testAsyncDecorateInAccessor()
     {
         // set tenant for global thread context
         TenantAccessor.setFallbackTenant(() -> TENANT_GLOBAL);

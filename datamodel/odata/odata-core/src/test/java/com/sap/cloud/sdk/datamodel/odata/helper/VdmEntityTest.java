@@ -8,14 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Nonnull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 
-public class VdmEntityTest
+class VdmEntityTest
 {
     private static final String TEST_DEFAULT_SERVICE_PATH = "/odata/default";
     private static final String TEST_DESTINATION_NAME = "UnitTestDestination";
@@ -44,14 +44,14 @@ public class VdmEntityTest
         }
     }
 
-    @BeforeClass
-    public static void setUp()
+    @BeforeAll
+    static void setUp()
     {
         TEST_DESTINATION = DefaultHttpDestination.builder("").name(TEST_DESTINATION_NAME).build();
     }
 
     @Test
-    public void testAttachToErpWithDefaults()
+    void testAttachToErpWithDefaults()
     {
         final TestEntity sut = new TestEntity();
         sut.attachToService(null, (HttpDestinationProperties) null);
@@ -63,7 +63,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testAttachToErpWithCustomErpConfigContext()
+    void testAttachToErpWithCustomErpConfigContext()
     {
         final TestEntity sut = new TestEntity();
         sut.attachToService(null, TEST_DESTINATION);
@@ -76,7 +76,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testAttachToErpWithCustomServicePath()
+    void testAttachToErpWithCustomServicePath()
     {
         final TestEntity sut = new TestEntity();
         sut.attachToService("/sap/opu/odata", (HttpDestinationProperties) null);
@@ -88,7 +88,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testAttachToErpWithAllCustomParameters()
+    void testAttachToErpWithAllCustomParameters()
     {
         final TestEntity sut = new TestEntity();
         sut.attachToService("/sap/opu/odata", TEST_DESTINATION);
@@ -101,7 +101,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testEntityComparison()
+    void testEntityComparison()
     {
         final TestVdmEntity foo1 = TestVdmEntity.builder().stringValue("foo").build();
         final TestVdmEntity foo2 = TestVdmEntity.builder().stringValue("foo").build();
@@ -133,7 +133,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testChangedNonCustomFields()
+    void testChangedNonCustomFields()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().stringValue("old").build();
 
@@ -147,7 +147,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testChangedCustomFields()
+    void testChangedCustomFields()
     {
         final TestVdmEntity entity = TestVdmEntity.builder().build();
 

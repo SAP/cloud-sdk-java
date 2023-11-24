@@ -14,7 +14,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
@@ -22,12 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -36,18 +37,16 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 
 import io.vavr.control.Try;
 
-public class DestinationServiceWithoutTokenTest
+@WireMockTest
+class DestinationServiceWithoutTokenTest
 {
     private static final String PAYLOAD_AUTH_TOKEN_ERROR =
         "{\"destinationConfiguration\":{\"Name\":\"Foo\",\"Type\":\"HTTP\",\"URL\":\"https://example.com\",\"Authentication\":\"OAuth2UserTokenExchange\",\"ProxyType\":\"Internet\"},\"authTokens\":[{\"error\":\"some-error-message\"}]}";
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private ServiceBinding serviceBinding;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
         // no principal
         PrincipalAccessor.setPrincipalFacade(() -> Try.failure(new IllegalStateException("No principal.")));
@@ -63,20 +62,20 @@ public class DestinationServiceWithoutTokenTest
                 .serviceBinding(
                     "clientId",
                     "clientSecret",
-                    server.baseUrl() + "/service/",
-                    server.baseUrl() + "/token/",
+                    wm.getHttpBaseUrl() + "/service/",
+                    wm.getHttpBaseUrl() + "/token/",
                     "tenantId");
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         PrincipalAccessor.setPrincipalFacade(null);
         AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test
-    public void testForwardUserTokenWithoutPrincipalFails()
+    void testForwardUserTokenWithoutPrincipalFails()
     {
         // prepare http response
         stubFor(get(anyUrl()).willReturn(okJson(PAYLOAD_AUTH_TOKEN_ERROR)));
@@ -100,7 +99,7 @@ public class DestinationServiceWithoutTokenTest
     }
 
     @Test
-    public void testLookupThenExchangeWithoutPrincipalFails()
+    void testLookupThenExchangeWithoutPrincipalFails()
     {
         // prepare http response
         stubFor(get(anyUrl()).willReturn(okJson(PAYLOAD_AUTH_TOKEN_ERROR)));

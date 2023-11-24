@@ -58,7 +58,7 @@ class DestinationRetrievalStrategyResolverTest
     private Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
 
     @RegisterExtension
-    public TokenRule token = TokenRule.createXsuaa();
+    TokenRule token = TokenRule.createXsuaa();
 
     @SuppressWarnings( "unchecked" )
     @BeforeEach

@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -17,16 +17,16 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
 
 import io.vavr.control.Try;
 
-public class DwcTenantFacadeTest
+class DwcTenantFacadeTest
 {
     @Test
-    public void testFacadeIsPickedUpAutomatically()
+    void testFacadeIsPickedUpAutomatically()
     {
         assertThat(TenantAccessor.getTenantFacade()).isInstanceOf(DwcTenantFacade.class);
     }
 
     @Test
-    public void testSuccessfulTenantRetrieval()
+    void testSuccessfulTenantRetrieval()
     {
         final Map<String, String> headers =
             ImmutableMap.of(DWC_TENANT_HEADER, "tenant-value", DWC_SUBDOMAIN_HEADER, "subdomain-value");
@@ -46,7 +46,7 @@ public class DwcTenantFacadeTest
     }
 
     @Test
-    public void testUnsuccessfulTenantRetrieval()
+    void testUnsuccessfulTenantRetrieval()
     {
         RequestHeaderAccessor.executeWithHeaderContainer(Collections.emptyMap(), () -> {
             final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();

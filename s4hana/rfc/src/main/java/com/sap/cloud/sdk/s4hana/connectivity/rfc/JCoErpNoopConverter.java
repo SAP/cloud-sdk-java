@@ -50,10 +50,10 @@ class JCoErpNoopConverter<T extends Number> implements com.sap.cloud.sdk.s4hana.
             .withTypeConverters(
                 new JCoErpNoopConverter<>(BigInteger.class, BigInteger::new, numberFormat::format),
                 new JCoErpNoopConverter<>(BigDecimal.class, BigDecimal::new, numberFormat::format),
-                new JCoErpNoopConverter<>(Float.class, Float::new, numberFormat::format),
-                new JCoErpNoopConverter<>(Integer.class, Integer::new, numberFormat::format),
-                new JCoErpNoopConverter<>(Long.class, Long::new, numberFormat::format),
-                new JCoErpNoopConverter<>(Double.class, Double::new, numberFormat::format));
+                new JCoErpNoopConverter<>(Float.class, Float::parseFloat, numberFormat::format),
+                new JCoErpNoopConverter<>(Integer.class, Integer::parseInt, numberFormat::format),
+                new JCoErpNoopConverter<>(Long.class, Long::parseLong, numberFormat::format),
+                new JCoErpNoopConverter<>(Double.class, Double::parseDouble, numberFormat::format));
     }
 
     /**

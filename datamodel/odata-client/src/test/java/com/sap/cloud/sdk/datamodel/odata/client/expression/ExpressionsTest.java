@@ -53,7 +53,7 @@ class ExpressionsTest
     // the below example covers that we transform the exponential notation to a plain value in case of OData V2
     // don't randomly change this since it doesn't work with all values, e.g. 234.5E-2 doesn't work
     private static final ValueNumeric numberDecimal = ValueNumeric.literal(new BigDecimal("1.1E+2"));
-    private static final ValueNumeric numberDouble = ValueNumeric.literal(new Double("1E+10d"));
+    private static final ValueNumeric numberDouble = ValueNumeric.literal(Double.parseDouble("1E+10d"));
 
     private final ValueCollection multiple1 = ValueCollection.literal(Lists.newArrayList("A", "B"));
     private final ValueCollection multiple2 = ValueCollection.literal(Lists.newArrayList("C", "D"));
@@ -295,7 +295,7 @@ class ExpressionsTest
     }
 
     @Test
-    public void testGlobalFunctions()
+    void testGlobalFunctions()
     {
         assertThat(FilterExpressionTemporal.maxDateTime().getExpression(ODataProtocol.V4)).isEqualTo("maxdatetime()");
         assertThat(FilterExpressionTemporal.minDateTime().getExpression(ODataProtocol.V4)).isEqualTo("mindatetime()");

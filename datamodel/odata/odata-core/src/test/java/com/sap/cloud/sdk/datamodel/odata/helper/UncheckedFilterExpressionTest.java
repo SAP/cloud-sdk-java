@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
@@ -17,10 +17,10 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 
 import lombok.Getter;
 
-public class UncheckedFilterExpressionTest
+class UncheckedFilterExpressionTest
 {
     @Test
-    public void testClientFilterExpressionEmpty()
+    void testClientFilterExpressionEmpty()
     {
         final ValueBoolean filterExpression = ValueBoolean.literal(true);
         final ExpressionFluentHelper<Object> customFilterExpression = new ExpressionFluentHelper<>(filterExpression);
@@ -31,7 +31,7 @@ public class UncheckedFilterExpressionTest
     }
 
     @Test
-    public void testClientFilterExpressionInteger()
+    void testClientFilterExpressionInteger()
     {
         final ValueBoolean filterExpression = FieldReference.of("ShoeSize").equalTo(42);
         final ExpressionFluentHelper<MyEntity> customFilterExpression = new ExpressionFluentHelper<>(filterExpression);
@@ -45,7 +45,7 @@ public class UncheckedFilterExpressionTest
     }
 
     @Test
-    public void testClientFilterExpressionString()
+    void testClientFilterExpressionString()
     {
         final ValueBoolean filterExpression = FieldReference.of("FirstName").equalTo("Alice");
         final ExpressionFluentHelper<MyEntity> customFilterExpression = new ExpressionFluentHelper<>(filterExpression);
