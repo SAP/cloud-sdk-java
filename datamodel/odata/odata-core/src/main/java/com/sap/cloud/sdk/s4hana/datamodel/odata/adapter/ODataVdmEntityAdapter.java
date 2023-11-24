@@ -6,6 +6,7 @@ package com.sap.cloud.sdk.s4hana.datamodel.odata.adapter;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.IdentityHashMap;
@@ -116,9 +117,17 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
     {
         if( entityField.isAnnotationPresent(JsonAdapter.class) ) {
             try {
-                return (TypeAdapter<?>) entityField.getAnnotation(JsonAdapter.class).value().newInstance();
+                return (TypeAdapter<?>) entityField
+                    .getAnnotation(JsonAdapter.class)
+                    .value()
+                    .getDeclaredConstructor()
+                    .newInstance();
             }
-            catch( final InstantiationException | IllegalAccessException e ) {
+            catch( final
+                InstantiationException
+                    | IllegalAccessException
+                    | NoSuchMethodException
+                    | InvocationTargetException e ) {
                 log.warn("Could not instantiate the field '" + entityField.getName() + "'.", e);
             }
         }
@@ -170,7 +179,7 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
     {
         try {
             @SuppressWarnings( "unchecked" )
-            final VdmObject<T> entity = (VdmObject<T>) entityRawType.newInstance();
+            final VdmObject<T> entity = (VdmObject<T>) entityRawType.getDeclaredConstructor().newInstance();
 
             if( jsonReader.peek() == JsonToken.BEGIN_OBJECT ) {
                 jsonReader.beginObject();
@@ -201,7 +210,7 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                             final Object attributeValue = fieldAdapter.read(jsonReader);
 
                             // To be safe/secure, since fields are declared private in the VDM.
-                            final boolean oldAccessibleValue = entityField.isAccessible();
+                            final boolean oldAccessibleValue = entityField.canAccess(entity);
                             entityField.setAccessible(true);
                             entityField.set(entity, attributeValue);
                             entityField.setAccessible(oldAccessibleValue);
@@ -219,7 +228,11 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
 
             return entity;
         }
-        catch( final InstantiationException | IllegalAccessException e ) {
+        catch( final
+            InstantiationException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | InvocationTargetException e ) {
             log.error("Could not instantiate or initialize '{}'. Returning null instead.", entityRawType.getName(), e);
         }
         return null;
@@ -269,7 +282,7 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                     final Field propertyField = entityProperty.getValue();
 
                     // To be safe/secure, since fields are declared private in the VDM.
-                    final boolean oldAccessibleValue = propertyField.isAccessible();
+                    final boolean oldAccessibleValue = propertyField.canAccess(value);
                     propertyField.setAccessible(true);
                     final Object propertyValue = propertyField.get(value);
                     propertyField.setAccessible(oldAccessibleValue);
