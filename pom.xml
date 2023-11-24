@@ -91,7 +91,8 @@
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
-		<!-- Keep Spring version in sync with bom/pom.xml -->
+		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
+		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.0.13</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.9</slf4j.version>

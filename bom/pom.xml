@@ -44,9 +44,9 @@
 		<httpclient5.version>5.2.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
-		<!-- XSUAA & Spring Security -->
-		<!-- Keep these two versions consistent with the one from: com.sap.cloud.security.xsuaa:parent -->
-		<!-- see https://github.com/SAP/cloud-security-xsuaa-integration/blob/master/pom.xml -->
+		<!-- XSUAA -->
+		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
+		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<scp-cf.xsuaa-client.version>3.2.1</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
