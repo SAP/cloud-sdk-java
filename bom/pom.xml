@@ -43,18 +43,14 @@
 		<httpcore5.version>5.2.3</httpcore5.version>
 		<httpclient5.version>5.2.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
-		<javax-servlet.version>4.0.1</javax-servlet.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
-		<!-- XSUAA & Spring Security -->
-		<!-- keep this version consistent with the one used from current SAP buildpack -->
-		<!-- see https://central.sonatype.com/artifact/com.sap.cloud.sjb.cf/sap-java-buildpack-bom/ -->
-		<!-- Keep these two versions consistent with the one from: com.sap.cloud.security.xsuaa:parent -->
-		<!-- see https://github.com/SAP/cloud-security-xsuaa-integration/blob/master/pom.xml -->
-		<scp-cf.xsuaa-client.version>2.14.2</scp-cf.xsuaa-client.version>
-		<spring.version>5.3.29</spring.version>
+		<!-- XSUAA -->
+		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
+		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
+		<scp-cf.xsuaa-client.version>3.2.1</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
-		<slf4j.version>1.7.36</slf4j.version>
+		<slf4j.version>2.0.9</slf4j.version>
 		<lombok.version>1.18.30</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
@@ -68,7 +64,7 @@
 		<commons-lang3.version>3.13.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
-		<caffeine.version>2.9.3</caffeine.version>
+		<caffeine.version>3.1.8</caffeine.version>
 		<jcache.version>1.1.1</jcache.version>
 		<resilience4j.version>1.7.1</resilience4j.version>
 		<!-- JSON & XML stuff -->
@@ -276,11 +272,6 @@
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
 				<version>${javax-inject.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${javax-servlet.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>jakarta.servlet</groupId>

@@ -5,12 +5,12 @@
 package com.sap.cloud.sdk.s4hana.connectivity.soap;
 
 import javax.annotation.Nonnull;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**

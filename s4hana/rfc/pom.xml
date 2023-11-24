@@ -33,7 +33,7 @@
 		<url />
 	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
 	</properties>
 	<dependencies>
@@ -113,8 +113,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- scope "provided" -->

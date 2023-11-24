@@ -13,9 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -32,7 +29,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccesso
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.servlet.RequestAccessorFilter;
+import com.sap.cloud.sdk.cloudplatform.servletjakarta.RequestAccessorFilter;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.SecurityTest;
@@ -41,6 +38,9 @@ import com.sap.cloud.security.token.SecurityContext;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.token.TokenClaims;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +62,7 @@ class XsuaaSecurityTest
         }
     }
 
-    public static final SecurityTest rule =
+    private static final SecurityTest RULE =
         new SecurityTest(Service.XSUAA)
             .useApplicationServer()
             .addApplicationServlet(TestServlet.class, "/app")
@@ -72,13 +72,13 @@ class XsuaaSecurityTest
     void setup()
         throws Exception
     {
-        rule.setup();
+        RULE.setup();
     }
 
     @AfterEach
     void tearDown()
     {
-        rule.tearDown();
+        RULE.tearDown();
         SecurityContext.clearToken();
     }
 
@@ -87,7 +87,7 @@ class XsuaaSecurityTest
         throws IOException
     {
         final Token token =
-            rule
+            RULE
                 .getPreconfiguredJwtGenerator()
                 .withClaimValue("origin", "foo")
                 .withClaimValue("client_id", SecurityTestRule.DEFAULT_CLIENT_ID)
@@ -99,7 +99,7 @@ class XsuaaSecurityTest
                 .withScopes(SecurityTestRule.DEFAULT_APP_ID + ".Read", "uaa.user")
                 .createToken();
 
-        final HttpGet request = new HttpGet(rule.getApplicationServerUri() + "/app");
+        final HttpGet request = new HttpGet(RULE.getApplicationServerUri() + "/app");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue());
 
         try( CloseableHttpResponse response = HttpClients.createDefault().execute(request) ) {
@@ -113,7 +113,7 @@ class XsuaaSecurityTest
     @BeforeEach
     void mockServiceBindingAccessor()
     {
-        final Token templateToken = rule.getPreconfiguredJwtGenerator().createToken();
+        final Token templateToken = RULE.getPreconfiguredJwtGenerator().createToken();
         final String xsuaaUrl = templateToken.getHeaderParameterAsString("jku").replaceAll("token_keys$", "");
 
         final String connectivity =
