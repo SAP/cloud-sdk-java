@@ -19,12 +19,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.http.client.HttpClient;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.gson.GsonBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
@@ -41,22 +41,16 @@ class ODataRequestActionTest
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_ACTION = "TestAction";
 
-    private WireMockServer wireMockServer;
+    @RegisterExtension
+    static final WireMockExtension wireMockServer =
+        WireMockExtension.newInstance().options(WIREMOCK_CONFIGURATION).build();
     private HttpClient client;
 
     @BeforeEach
     void setup()
     {
-        wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
-        wireMockServer.start();
         final Destination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
         client = HttpClientAccessor.getHttpClient(destination);
-    }
-
-    @AfterEach
-    void teardown()
-    {
-        wireMockServer.stop();
     }
 
     @Test

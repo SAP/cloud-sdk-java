@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
@@ -25,9 +27,13 @@ public final class VdmEntityUtil<EntityT extends VdmEntity<?>>
     EntityT newInstance()
     {
         try {
-            return entityClass.newInstance();
+            return entityClass.getDeclaredConstructor().newInstance();
         }
-        catch( final InstantiationException | IllegalAccessException e ) {
+        catch( final
+            InstantiationException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | InvocationTargetException e ) {
             throw new ShouldNotHappenException(
                 "Failed to instantiate object of type " + entityClass.getSimpleName(),
                 e);

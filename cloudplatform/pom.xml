@@ -44,7 +44,6 @@
 		<module>resilience</module>
 		<module>resilience4j</module>
 		<module>security</module>
-		<module>servlet</module>
 		<module>servlet-jakarta</module>
 		<module>tenant</module>
 		<module>dwc-cf</module>
