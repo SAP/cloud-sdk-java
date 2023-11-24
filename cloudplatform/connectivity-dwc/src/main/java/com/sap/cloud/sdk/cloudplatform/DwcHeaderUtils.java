@@ -4,10 +4,7 @@
 package com.sap.cloud.sdk.cloudplatform;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
