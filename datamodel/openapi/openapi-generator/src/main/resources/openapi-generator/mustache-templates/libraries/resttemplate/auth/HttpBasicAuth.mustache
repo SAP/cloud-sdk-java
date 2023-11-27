@@ -4,11 +4,10 @@
 
 package {{invokerPackage}}.auth;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.MultiValueMap;
 import javax.annotation.Nonnull;
 import com.google.common.annotations.Beta;
@@ -63,6 +62,6 @@ public class HttpBasicAuth implements Authentication {
             return;
         }
         final String str = (username == null ? "" : username) + ":" + (password == null ? "" : password);
-        headerParams.add(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils.encodeToString(str.getBytes(StandardCharsets.UTF_8)));
+        headerParams.add(HttpHeaders.AUTHORIZATION, "Basic " + Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8)));
     }
 }
