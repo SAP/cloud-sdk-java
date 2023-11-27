@@ -12,11 +12,11 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
-    "artifactId": "spring-boot3",
+    "artifactId": "spring-boot-3",
     "packaging": "maven-archetype",
     "releaseAudience": "Public",
-    "releaseMaturity": "Beta",
-    "pomFile": "archetypes/spring-boot3/pom.xml",
+    "releaseMaturity": "Stable",
+    "pomFile": "archetypes/spring-boot-3/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.archetypes",
     "parentArtifactId": "archetypes-parent",
     "excludeFromBlackDuckScan": false
@@ -443,7 +443,7 @@
     "groupId": "com.sap.cloud.sdk.s4hana",
     "artifactId": "rfc",
     "packaging": "jar",
-    "releaseAudience": "Public",
+    "releaseAudience": "None",
     "releaseMaturity": "Deprecated",
     "pomFile": "s4hana/rfc/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.s4hana",
