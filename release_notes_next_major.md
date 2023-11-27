@@ -204,6 +204,7 @@ blog: https://blogs.sap.com/?p=xxx
 - The `ODataRequestResult` no longer splits header values.
 - The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
 - The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
+- The `TenantWithSubdomain#getSubdomain` is now nullable.
 
 ## newFunctionality
 
@@ -231,6 +232,11 @@ blog: https://blogs.sap.com/?p=xxx
 - The `Destination#asHttp()` and `Destination#asRfc()` methods no longer always return a new instance of `HttpDestination` and `RfcDestination` if the current objects is already a `HttpDestination` or `RfcDestination` respectively.
 - `Destination#asHttp()` no longer throws an exception in case the `Destination` originates from the Destination service and the attached auth token contains an error.
   Instead, an exception will be thrown upon invoking the `getHeaders()` method, for example, during request execution.
+
+- Dependency Updates:
+  - Other dependency updates:
+    - Major version updates:
+      - Update `com.github.ben-manes.caffeine:caffeine` from `2.9.3` to `3.1.8`
 
 ## fixedIssues
 
