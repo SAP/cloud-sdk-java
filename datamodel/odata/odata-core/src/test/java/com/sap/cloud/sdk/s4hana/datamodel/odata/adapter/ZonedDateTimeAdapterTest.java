@@ -10,17 +10,17 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.TypeAdapter;
 
 import lombok.SneakyThrows;
 
-public class ZonedDateTimeAdapterTest
+class ZonedDateTimeAdapterTest
 {
     @Test
     @SneakyThrows
-    public void standardFormatCases()
+    void standardFormatCases()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -30,7 +30,7 @@ public class ZonedDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void declaredOffsetTooLargeReturnsNull()
+    void declaredOffsetTooLargeReturnsNull()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -39,7 +39,7 @@ public class ZonedDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void invalidPatternReturnsNull()
+    void invalidPatternReturnsNull()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -48,7 +48,7 @@ public class ZonedDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void isoPatternReturnsNull()
+    void isoPatternReturnsNull()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -62,7 +62,7 @@ public class ZonedDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void excessivelyLongNumberReturnsNull()
+    void excessivelyLongNumberReturnsNull()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -71,7 +71,7 @@ public class ZonedDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void nonStringValueReturnsNull()
+    void nonStringValueReturnsNull()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 
@@ -79,7 +79,7 @@ public class ZonedDateTimeAdapterTest
     }
 
     @Test
-    public void writeZonedDateTime()
+    void writeZonedDateTime()
     {
         final TypeAdapter<ZonedDateTime> adapter = new ZonedDateTimeAdapter();
 

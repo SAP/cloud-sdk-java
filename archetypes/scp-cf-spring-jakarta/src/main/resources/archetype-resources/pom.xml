@@ -15,7 +15,7 @@
         <spring-boot.version>3.1.4</spring-boot.version>
 
         <java.version>17</java.version>
-        <security-lib.version>3.0.1</security-lib.version>
+        <security-lib.version>3.2.1</security-lib.version>
         <cloud-sdk.version>5.0.0-alpha-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -52,9 +52,15 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.10.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-commons</artifactId>
+                <version>1.10.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

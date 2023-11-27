@@ -73,11 +73,6 @@
 		</dependency>
 		<!-- scope "test -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
@@ -98,11 +93,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-api</artifactId>
 			<scope>test</scope>
@@ -118,18 +108,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<configuration>
-					<ignoredUnusedDeclaredDependencies>
-						<!-- runtime dependency required for AuthTokenAccessor usage -->
-						<ignoredUnusedDeclaredDependency>javax.servlet:javax.servlet-api</ignoredUnusedDeclaredDependency>
-					</ignoredUnusedDeclaredDependencies>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

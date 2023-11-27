@@ -18,15 +18,15 @@ import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
 import io.vavr.control.Try;
 
-public class DestinationLoaderChainTest
+class DestinationLoaderChainTest
 {
     private static final String DESTINATION_NAME_1 = "some-destination";
     private static final String DESTINATION_NAME_2 = "some-other-destination";
@@ -38,8 +38,8 @@ public class DestinationLoaderChainTest
     private DestinationLoader loaderFull_2;
     private DestinationLoader loaderErr;
 
-    @Before
-    public void initializeMockedLoaders()
+    @BeforeEach
+    void initializeMockedLoaders()
     {
         loaderEmpty = mock(DestinationLoader.class);
         loaderFull_1 = mock(DestinationLoader.class);
@@ -56,7 +56,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testDestinationPresentInAllLoaders()
+    void testDestinationPresentInAllLoaders()
     {
         final DestinationLoader chain =
             DestinationLoaderChain.builder(loaderFull_1).append(loaderFull_2).append(loaderEmpty).build();
@@ -69,7 +69,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testDestinationPresentOnlyInLastLoader()
+    void testDestinationPresentOnlyInLastLoader()
     {
         final DestinationLoader chain =
             DestinationLoaderChain.builder(loaderEmpty).append(loaderEmpty).append(loaderFull_1).build();
@@ -81,7 +81,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testConstructionOnEmptyList()
+    void testConstructionOnEmptyList()
     {
         Assertions
             .assertThatThrownBy(() -> new DestinationLoaderChain(Collections.emptyList()))
@@ -89,7 +89,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testNoDestinationOnAnyLoader()
+    void testNoDestinationOnAnyLoader()
     {
         final DestinationLoader chain = DestinationLoaderChain.builder(loaderEmpty).build();
 
@@ -102,7 +102,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testPropagationOfOtherExceptions()
+    void testPropagationOfOtherExceptions()
     {
         final DestinationLoaderChain chain =
             DestinationLoaderChain.builder(loaderErr).append(loaderFull_1).append(loaderErr).build();
@@ -118,7 +118,7 @@ public class DestinationLoaderChainTest
     }
 
     @Test
-    public void testExceptionInLastLoader()
+    void testExceptionInLastLoader()
     {
         final DestinationLoaderChain chain = DestinationLoaderChain.builder(loaderEmpty).append(loaderErr).build();
         final Try<Destination> shouldBeFailure = chain.tryGetDestination(DESTINATION_NAME_2);

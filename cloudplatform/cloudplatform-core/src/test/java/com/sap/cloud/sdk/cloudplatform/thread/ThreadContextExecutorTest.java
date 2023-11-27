@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 
@@ -30,7 +30,7 @@ import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class ThreadContextExecutorTest
+class ThreadContextExecutorTest
 {
     private static final String PROPERTY_NAME = "MyProperty";
     private static final int TIMEOUT = 300;
@@ -116,7 +116,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testContextNesting()
+    void testContextNesting()
     {
         final SoftAssertions softly = new SoftAssertions();
 
@@ -160,7 +160,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExistingPropertyIsKept()
+    void testExistingPropertyIsKept()
     {
         final SoftAssertions softly = new SoftAssertions();
 
@@ -182,7 +182,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServicePropagatedContext()
+    void testExecutorServicePropagatedContext()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> property = Property.of("value");
@@ -199,7 +199,7 @@ public class ThreadContextExecutorTest
 
     @Test
     @SneakyThrows
-    public void testExecutorServicePropagatedThreadContextExecutor()
+    void testExecutorServicePropagatedThreadContextExecutor()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> property = Property.of("value");
@@ -228,7 +228,7 @@ public class ThreadContextExecutorTest
 
     @Test
     @SneakyThrows
-    public void testExecutorServiceWithoutPropagatedContext()
+    void testExecutorServiceWithoutPropagatedContext()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> property = Property.of("value");
@@ -240,7 +240,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServiceShutdown()
+    void testExecutorServiceShutdown()
     {
         final ExecutorService delegate = Executors.newCachedThreadPool();
         final ExecutorService executor = DefaultThreadContextExecutorService.of(delegate);
@@ -258,7 +258,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServiceMultipleThreadsPropagatedContext()
+    void testExecutorServiceMultipleThreadsPropagatedContext()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> property = Property.of("value");
@@ -287,7 +287,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServiceNotLeakingContext()
+    void testExecutorServiceNotLeakingContext()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> parentProperty = Property.of("parentValue");
@@ -334,7 +334,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorContextCorrectlySwitch()
+    void testExecutorContextCorrectlySwitch()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Property<?> parentProperty = Property.of("parentValue");
@@ -364,7 +364,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServiceCallableException()
+    void testExecutorServiceCallableException()
     {
         final Future<?> result = ThreadContextExecutors.getExecutor().submit((Callable<?>) () -> {
             throw new NullPointerException("test");
@@ -380,7 +380,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testExecutorServiceRunnableException()
+    void testExecutorServiceRunnableException()
     {
         final Future<?> result = ThreadContextExecutors.getExecutor().submit((Runnable) () -> {
             throw new NullPointerException("test");
@@ -414,7 +414,7 @@ public class ThreadContextExecutorTest
     }
 
     @Test
-    public void testSubsequentExecuteCallsWillInvokeListenersWithInitialThreadContext()
+    void testSubsequentExecuteCallsWillInvokeListenersWithInitialThreadContext()
     {
         final SoftAssertions softly = new SoftAssertions();
 

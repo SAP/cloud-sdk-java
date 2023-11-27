@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -21,7 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 
 import io.vavr.control.Try;
 
-public class DefaultServiceBindingDestinationLoaderChainTest
+class DefaultServiceBindingDestinationLoaderChainTest
 {
     private static final ServiceBinding TEST_BINDING;
     private static final ServiceBindingDestinationOptions TEST_OPTIONS;
@@ -35,7 +35,7 @@ public class DefaultServiceBindingDestinationLoaderChainTest
     }
 
     @Test
-    public void testTryGetDestinationWithoutDelegateLoaders()
+    void testTryGetDestinationWithoutDelegateLoaders()
     {
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.emptyList());
@@ -47,7 +47,7 @@ public class DefaultServiceBindingDestinationLoaderChainTest
     }
 
     @Test
-    public void testTryGetDestinationWithNoResultFromDelegateLoader()
+    void testTryGetDestinationWithNoResultFromDelegateLoader()
     {
         final DestinationNotFoundException expectedCause = new DestinationNotFoundException();
 
@@ -63,7 +63,7 @@ public class DefaultServiceBindingDestinationLoaderChainTest
     }
 
     @Test
-    public void testTryGetDestinationWithDestinationAccessExceptionFromLoader()
+    void testTryGetDestinationWithDestinationAccessExceptionFromLoader()
     {
         final DestinationAccessException expectedCause = new DestinationAccessException();
 
@@ -79,7 +79,7 @@ public class DefaultServiceBindingDestinationLoaderChainTest
     }
 
     @Test
-    public void testTryGetDestinationWithIllegalStateExceptionFromLoader()
+    void testTryGetDestinationWithIllegalStateExceptionFromLoader()
     {
         final IllegalStateException expectedCause = new IllegalStateException();
 
@@ -98,7 +98,7 @@ public class DefaultServiceBindingDestinationLoaderChainTest
     }
 
     @Test
-    public void testTryGetDestinationReturnsFirstMatchingResult()
+    void testTryGetDestinationReturnsFirstMatchingResult()
     {
         final ServiceBindingDestinationLoader firstLoader = mock(ServiceBindingDestinationLoader.class);
         final Try<HttpDestination> firstSuccess = Try.success(mock(HttpDestination.class));

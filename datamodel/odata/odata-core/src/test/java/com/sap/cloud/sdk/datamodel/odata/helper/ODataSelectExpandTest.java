@@ -12,7 +12,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.JsonAdapter;
@@ -30,10 +30,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-public class ODataSelectExpandTest
+class ODataSelectExpandTest
 {
     @Test
-    public void testSelectExpand()
+    void testSelectExpand()
     {
         final FluentHelperRead<?, TestEntity, TestEntitySelectable> entityRead =
             FluentHelperFactory.withServicePath("service/path/").read(TestEntity.class, "TestEntity");
@@ -50,7 +50,7 @@ public class ODataSelectExpandTest
     }
 
     @Test
-    public void testSelectSome()
+    void testSelectSome()
     {
         final FluentHelperRead<?, TestEntity, TestEntitySelectable> entityRead =
             FluentHelperFactory.withServicePath("service/path/").read(TestEntity.class, "TestEntity");
@@ -64,7 +64,7 @@ public class ODataSelectExpandTest
     }
 
     @Test
-    public void testSelectAll()
+    void testSelectAll()
     {
         final FluentHelperRead<?, TestEntity, TestEntitySelectable> entityRead =
             FluentHelperFactory.withServicePath("service/path/").read(TestEntity.class, "TestEntity");
@@ -78,7 +78,7 @@ public class ODataSelectExpandTest
     }
 
     @Test
-    public void testExpand()
+    void testExpand()
     {
         final FluentHelperRead<?, TestEntity, TestEntitySelectable> entityRead =
             FluentHelperFactory.withServicePath("service/path/").read(TestEntity.class, "TestEntity");

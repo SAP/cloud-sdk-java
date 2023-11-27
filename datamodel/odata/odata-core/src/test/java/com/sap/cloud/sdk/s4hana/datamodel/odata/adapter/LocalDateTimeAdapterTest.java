@@ -9,17 +9,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.TypeAdapter;
 
 import lombok.SneakyThrows;
 
-public class LocalDateTimeAdapterTest
+class LocalDateTimeAdapterTest
 {
     @Test
     @SneakyThrows
-    public void standardFormatCases()
+    void standardFormatCases()
     {
         final TypeAdapter<LocalDateTime> adapter = new LocalDateTimeAdapter();
 
@@ -28,7 +28,7 @@ public class LocalDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void wrongFormatReturnsNull()
+    void wrongFormatReturnsNull()
     {
         final TypeAdapter<LocalDateTime> adapter = new LocalDateTimeAdapter();
 
@@ -37,7 +37,7 @@ public class LocalDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void excessivelyLongNumberReturnsNull()
+    void excessivelyLongNumberReturnsNull()
     {
         final TypeAdapter<LocalDateTime> adapter = new LocalDateTimeAdapter();
 
@@ -46,7 +46,7 @@ public class LocalDateTimeAdapterTest
 
     @Test
     @SneakyThrows
-    public void nonStringValueReturnsNull()
+    void nonStringValueReturnsNull()
     {
         final TypeAdapter<LocalDateTime> adapter = new LocalDateTimeAdapter();
 
@@ -54,7 +54,7 @@ public class LocalDateTimeAdapterTest
     }
 
     @Test
-    public void writeLocalDateTime()
+    void writeLocalDateTime()
     {
         final TypeAdapter<LocalDateTime> adapter = new LocalDateTimeAdapter();
 

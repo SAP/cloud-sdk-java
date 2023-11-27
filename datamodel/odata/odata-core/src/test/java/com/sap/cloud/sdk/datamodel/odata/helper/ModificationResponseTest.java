@@ -21,7 +21,7 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.gson.annotations.JsonAdapter;
@@ -39,7 +39,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-public class ModificationResponseTest
+class ModificationResponseTest
 {
     private static final String SERVICE_PATH = "/service-path";
 
@@ -71,7 +71,7 @@ public class ModificationResponseTest
     }
 
     @Test
-    public void testEntityResponse()
+    void testEntityResponse()
     {
         final TestObject inputObject = new TestObject();
 
@@ -107,7 +107,7 @@ public class ModificationResponseTest
     }
 
     @Test
-    public void testEmptyResponse()
+    void testEmptyResponse()
     {
         final TestObject inputObject = new TestObject();
 
@@ -138,7 +138,7 @@ public class ModificationResponseTest
     }
 
     @Test
-    public void testResponseIsOnlyEvaluatedOnce()
+    void testResponseIsOnlyEvaluatedOnce()
     {
         final TestObject inputObject = new TestObject();
 

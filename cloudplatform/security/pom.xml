@@ -42,10 +42,6 @@
 			<artifactId>cloudplatform-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sap.cloud.security</groupId>
-			<artifactId>java-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 		</dependency>
@@ -69,6 +65,11 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.security</groupId>
+			<artifactId>java-api</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -76,11 +77,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- scope "test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -107,8 +103,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

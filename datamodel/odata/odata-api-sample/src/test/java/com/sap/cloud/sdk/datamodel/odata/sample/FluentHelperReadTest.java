@@ -8,28 +8,27 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Product;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 
 import io.vavr.control.Option;
 
-public class FluentHelperReadTest
+@WireMockTest
+class FluentHelperReadTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
     private static final String ODATA_QUERY_URL = ODATA_ENDPOINT_URL + "/Products";
     private static final String PRODUCT_RESPONSE_BODY =
@@ -55,14 +54,14 @@ public class FluentHelperReadTest
 
     private DefaultHttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testExecuteReturnsModifiableListWithETags()
+    void testExecuteReturnsModifiableListWithETags()
     {
         stubFor(get(urlEqualTo(ODATA_QUERY_URL)).willReturn(aResponse().withBody(PRODUCT_RESPONSE_BODY)));
 

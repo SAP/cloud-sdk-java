@@ -6,12 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AsciiUtilsTest
+class AsciiUtilsTest
 {
     @Test
-    public void testRemoveNonPrintableCharacters()
+    void testRemoveNonPrintableCharacters()
     {
         final AsciiUtils asciiUtils = new AsciiUtils();
 

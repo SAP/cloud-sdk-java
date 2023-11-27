@@ -25,18 +25,21 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odatav4.TestUtility;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 
-public class CsrfTokenHandlingTest
+@WireMockTest
+class CsrfTokenHandlingTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
@@ -47,15 +50,12 @@ public class CsrfTokenHandlingTest
     private static final String X_CSRF_TOKEN_HEADER_FETCH_VALUE = "fetch";
     private static final String X_CSRF_TOKEN_HEADER_VALUE = "awesome-csrf-token";
 
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     private static String readResourceFile( final String resourceFileName )
@@ -64,7 +64,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testGetAllRequestContainsNoCsrfToken()
+    void testGetAllRequestContainsNoCsrfToken()
     {
         stubFor(get(anyUrl()).willReturn(okJson("{\"value\":[]}")));
 
@@ -76,7 +76,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testGetByKeyRequestContainsNoCsrfToken()
+    void testGetByKeyRequestContainsNoCsrfToken()
     {
         stubFor(get(anyUrl()).willReturn(okJson("{}")));
 
@@ -89,7 +89,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testCountRequestContainsNoCsrfToken()
+    void testCountRequestContainsNoCsrfToken()
     {
         stubFor(get(anyUrl()).willReturn(okJson("{\"value\":42}")));
 
@@ -101,7 +101,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testFunctionRequestContainsNoCsrfToken()
+    void testFunctionRequestContainsNoCsrfToken()
     {
         stubFor(get(anyUrl()).willReturn(okJson("{}")));
 
@@ -120,7 +120,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testGetAllRequestContainsCsrfTokenIfEnabled()
+    void testGetAllRequestContainsCsrfTokenIfEnabled()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(get(anyUrl()).willReturn(okJson("{\"value\":[]}")));
@@ -137,7 +137,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testGetByKeyRequestContainsCsrfTokenIfEnabled()
+    void testGetByKeyRequestContainsCsrfTokenIfEnabled()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(get(anyUrl()).willReturn(okJson("{}")));
@@ -156,7 +156,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testCountRequestContainsCsrfTokenIfEnabled()
+    void testCountRequestContainsCsrfTokenIfEnabled()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(get(anyUrl()).willReturn(okJson("{\"value\":42}")));
@@ -173,7 +173,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testFunctionRequestContainsCsrfTokenIfEnabled()
+    void testFunctionRequestContainsCsrfTokenIfEnabled()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(get(anyUrl()).willReturn(okJson("{}")));
@@ -199,7 +199,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testCreateRequestContainsCsrfToken()
+    void testCreateRequestContainsCsrfToken()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(post(anyUrl()).willReturn(ok().withBody(readResourceFile("CreateResponse.json"))));
@@ -216,7 +216,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testDeleteRequestContainsCsrfToken()
+    void testDeleteRequestContainsCsrfToken()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(delete(anyUrl()).willReturn(ok()));
@@ -235,7 +235,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testActionRequestContainsCsrfToken()
+    void testActionRequestContainsCsrfToken()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(post(anyUrl()).willReturn(okJson("{}")));
@@ -260,7 +260,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testUpdateRequestContainsCsrfToken()
+    void testUpdateRequestContainsCsrfToken()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
         stubFor(patch(anyUrl()).willReturn(ok()));
@@ -279,7 +279,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testUpdateRequestContainsNoCsrfTokenIfDisabled()
+    void testUpdateRequestContainsNoCsrfTokenIfDisabled()
     {
         stubFor(patch(anyUrl()).willReturn(ok()));
 
@@ -293,7 +293,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testDeleteRequestContainsNoCsrfTokenIfDisabled()
+    void testDeleteRequestContainsNoCsrfTokenIfDisabled()
     {
         stubFor(delete(anyUrl()).willReturn(ok()));
 
@@ -307,7 +307,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testActionRequestContainsNoCsrfTokenIfDisabled()
+    void testActionRequestContainsNoCsrfTokenIfDisabled()
     {
         stubFor(post(anyUrl()).willReturn(okJson("{}")));
 
@@ -328,7 +328,7 @@ public class CsrfTokenHandlingTest
     }
 
     @Test
-    public void testCreateRequestContainsNoCsrfTokenIfDisabled()
+    void testCreateRequestContainsNoCsrfTokenIfDisabled()
     {
         stubFor(post(anyUrl()).willReturn(ok().withBody(readResourceFile("CreateResponse.json"))));
 

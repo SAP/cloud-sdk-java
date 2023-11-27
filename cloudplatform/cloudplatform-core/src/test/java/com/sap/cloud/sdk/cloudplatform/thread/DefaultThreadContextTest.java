@@ -14,21 +14,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class DefaultThreadContextTest
+class DefaultThreadContextTest
 {
     @Test
-    public void testEqualityTrivial()
+    void testEqualityTrivial()
     {
         assertThat(new DefaultThreadContext()).isEqualTo(new DefaultThreadContext());
     }
 
     @Test
-    public void testEqualityWithProperties()
+    void testEqualityWithProperties()
     {
         final DefaultThreadContext context1 = new DefaultThreadContext();
         context1.setPropertyIfAbsent("foo", Property.ofTry(Try.success("bar")));
@@ -43,7 +43,7 @@ public class DefaultThreadContextTest
 
     @SneakyThrows
     @Test
-    public void testEqualityOverThreads()
+    void testEqualityOverThreads()
     {
         final DefaultThreadContext contextThisThread = new DefaultThreadContext();
         final DefaultThreadContext contextNewThread = CompletableFuture.supplyAsync(DefaultThreadContext::new).get();
@@ -53,7 +53,7 @@ public class DefaultThreadContextTest
 
     @Test
     @SuppressWarnings( "unchecked" )
-    public void testDuplicateCopiesProperties()
+    void testDuplicateCopiesProperties()
     {
         final Property<String> copiedProperty = Property.of("foo");
 
@@ -72,7 +72,7 @@ public class DefaultThreadContextTest
     }
 
     @Test
-    public void testLazyPropertiesCanHaveDifferentValues()
+    void testLazyPropertiesCanHaveDifferentValues()
     {
         final Supplier<Integer> supplier = new AtomicInteger()::getAndIncrement;
 

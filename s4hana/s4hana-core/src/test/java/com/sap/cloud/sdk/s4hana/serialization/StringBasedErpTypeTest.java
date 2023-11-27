@@ -5,18 +5,19 @@
 package com.sap.cloud.sdk.s4hana.serialization;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.typeconverter.ConvertedObject;
 
 @Deprecated
-public class StringBasedErpTypeTest
+class StringBasedErpTypeTest
 {
     static class DummyType extends StringBasedErpType<DummyType>
     {
@@ -215,7 +216,7 @@ public class StringBasedErpTypeTest
     }
 
     @Test
-    public void testFillChar()
+    void testFillChar()
     {
         {
             final DummyType dummy = new DummyType("bla");
@@ -239,7 +240,7 @@ public class StringBasedErpTypeTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         {
             final DummyType dummy = new DummyType("");
@@ -247,20 +248,20 @@ public class StringBasedErpTypeTest
         }
     }
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testNull()
+    @Test
+    void testNull()
     {
-        new DummyType(null);
-    }
-
-    @Test( expected = IllegalArgumentException.class )
-    public void testTooLong()
-    {
-        new DummyType("123456");
+        assertThatThrownBy(() -> new DummyType(null)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testConverters()
+    void testTooLong()
+    {
+        assertThatThrownBy(() -> new DummyType("123456")).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void testConverters()
     {
         assertThat(new InvertedLocalDateConverter().fromDomain("79839488").get().getDate())
             .isEqualTo(LocalDate.of(2016, 5, 11));
@@ -271,7 +272,7 @@ public class StringBasedErpTypeTest
     }
 
     @Test
-    public void testCharCasing()
+    void testCharCasing()
     {
         {
             final String stringWithSomeCasing = "sWsC";

@@ -14,16 +14,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class S4HanaNamingStrategyTest
+class S4HanaNamingStrategyTest
 {
     @Test
-    public void testDefaultNameSourceIsLabel()
+    void testDefaultNameSourceIsLabel()
     {
         assertThat(new S4HanaNamingStrategy().getNameSource()).isEqualTo(NameSource.LABEL);
     }
 
     @Test
-    public void testGenerateJavaClassNameFromName()
+    void testGenerateJavaClassNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -36,7 +36,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testSuffixAppendedWhenJavaClassNameIsKeyword()
+    void testSuffixAppendedWhenJavaClassNameIsKeyword()
     {
         final String suffix = "Entity";
 
@@ -48,7 +48,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testSuffixAppendedWhenNavigationPropertyBuilderIsKeyword()
+    void testSuffixAppendedWhenNavigationPropertyBuilderIsKeyword()
     {
         final String suffix = "Property";
 
@@ -57,7 +57,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaClassNameFromLabel()
+    void testGenerateJavaClassNameFromLabel()
     {
         final String someEntityName = "SomeEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -69,7 +69,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntityPrefixData" )
-    public void testRemoveEntityPrefixesInGenerateJavaClassName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -78,9 +78,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
+    void testKeepEntityPrefixesInGenerateJavaClassNameFromLabel( final String label, final String expectedJavaName )
     {
         final String someEntityName = "SomeEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -90,7 +88,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntitySuffixData" )
-    public void testRemoveClassSuffixesInGenerateJavaClassName( final String name, final String expectedJavaName )
+    void testRemoveClassSuffixesInGenerateJavaClassName( final String name, final String expectedJavaName )
     {
         assertThat(new S4HanaNamingStrategy(NameSource.NAME).generateJavaClassName(name, null))
             .isEqualToIgnoringCase(expectedJavaName);
@@ -99,7 +97,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromName()
+    void testGenerateJavaFieldNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -118,7 +116,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFieldNameFromLabel()
+    void testGenerateJavaFieldNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -128,7 +126,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "providePropertyPrefixData" )
-    public void testRemovePropertyPrefixesInGenerateJavaFieldName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaFieldName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -136,7 +134,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromName()
+    void testGenerateJavaConstantNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -152,7 +150,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaConstantNameFromLabel()
+    void testGenerateJavaConstantNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -161,7 +159,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyFieldName()
+    void testGenerateJavaNavigationPropertyFieldName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -173,7 +171,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaNavigationPropertyConstantName()
+    void testGenerateJavaNavigationPropertyConstantName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -185,7 +183,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodName()
+    void testGenerateJavaMethodName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -199,7 +197,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "providePropertyPrefixData" )
-    public void testRemovePropertyPrefixesInGenerateJavaMethodName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -207,7 +205,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaBuilderMethodName()
+    void testGenerateJavaBuilderMethodName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -223,9 +221,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaBuilderMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -233,7 +229,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromName()
+    void testGenerateJavaOperationMethodNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -244,7 +240,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaOperationMethodNameFromLabel()
+    void testGenerateJavaOperationMethodNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -254,9 +250,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaOperationMethodName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -264,7 +258,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParamNameFromName()
+    void testGenerateJavaMethodParamNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -275,7 +269,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaMethodParamNameWithSpacesInLabels()
+    void testGenerateJavaMethodParamNameWithSpacesInLabels()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -285,9 +279,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "providePropertyPrefixData" )
-    public
-        void
-        testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
+    void testRemovePropertyPrefixesInGenerateJavaMethodParameterName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -295,7 +287,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromName()
+    void testGenerateJavaFluentHelperClassNameFromName()
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -306,7 +298,7 @@ public class S4HanaNamingStrategyTest
     }
 
     @Test
-    public void testGenerateJavaFluentHelperClassNameFromLabel()
+    void testGenerateJavaFluentHelperClassNameFromLabel()
     {
         final String someEntityName = "someEntityName";
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.LABEL);
@@ -317,9 +309,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntityPrefixData" )
-    public
-        void
-        testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveEntityPrefixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         final NamingStrategy sut = new S4HanaNamingStrategy(NameSource.NAME);
 
@@ -329,7 +319,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntityPrefixData" )
-    public void testKeepEntityPrefixesInGenerateJavaFluentHelperClassNameFromLabel(
+    void testKeepEntityPrefixesInGenerateJavaFluentHelperClassNameFromLabel(
         final String label,
         final String expectedJavaName )
     {
@@ -342,9 +332,7 @@ public class S4HanaNamingStrategyTest
 
     @ParameterizedTest( name = "{0} -> {1}" )
     @MethodSource( "provideEntitySuffixData" )
-    public
-        void
-        testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
+    void testRemoveClassSuffixesInGenerateJavaFluentHelperClassName( final String name, final String expectedJavaName )
     {
         assertThat(new S4HanaNamingStrategy(NameSource.NAME).generateJavaFluentHelperClassName(name, null))
             .isEqualToIgnoringCase(expectedJavaName + "FluentHelper");

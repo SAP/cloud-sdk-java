@@ -19,14 +19,16 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 import com.sap.cloud.sdk.datamodel.odatav4.core.BatchRequestBuilder;
@@ -38,7 +40,8 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.TrippinService;
 
-public class ODataV4BatchReferenceServiceUnitTest
+@WireMockTest
+class ODataV4BatchReferenceServiceUnitTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
@@ -46,17 +49,14 @@ public class ODataV4BatchReferenceServiceUnitTest
     private static final String X_CSRF_TOKEN_HEADER_FETCH_VALUE = "fetch";
     private static final String X_CSRF_TOKEN_HEADER_VALUE = "awesome-csrf-token";
 
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
-
     private DefaultHttpDestination destination;
     private TrippinService service;
     private BatchRequestBuilder sut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         service = new DefaultTrippinService();
 
         final AtomicInteger uuidCounter = new AtomicInteger();
@@ -79,7 +79,7 @@ public class ODataV4BatchReferenceServiceUnitTest
     }
 
     @Test
-    public void testEmptyBatch()
+    void testEmptyBatch()
     {
         // Read OData response json
         final String requestBody =
@@ -112,7 +112,7 @@ public class ODataV4BatchReferenceServiceUnitTest
     }
 
     @Test
-    public void testBatchWithOnlyReads()
+    void testBatchWithOnlyReads()
     {
         // Read OData response json
         final String requestBody =
@@ -149,7 +149,7 @@ public class ODataV4BatchReferenceServiceUnitTest
     }
 
     @Test
-    public void testBatchWithErrorReads()
+    void testBatchWithErrorReads()
     {
         // Read OData response json
         final String requestBody =
@@ -195,7 +195,7 @@ public class ODataV4BatchReferenceServiceUnitTest
     }
 
     @Test
-    public void testBatchWithReadsAndWrites()
+    void testBatchWithReadsAndWrites()
     {
         // read response json
         final String serverResponse =

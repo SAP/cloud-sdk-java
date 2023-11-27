@@ -17,7 +17,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-public class ODataPrimitiveAdapterTest
+class ODataPrimitiveAdapterTest
 {
     private static final String primitivesEntityInput =
         "{"
@@ -194,7 +194,7 @@ public class ODataPrimitiveAdapterTest
     }
 
     @Test
-    public void testGsonDeserialization()
+    void testGsonDeserialization()
     {
         final PrimitivesEntity primitivesEntity = new Gson().fromJson(primitivesEntityInput, PrimitivesEntity.class);
 
@@ -218,7 +218,7 @@ public class ODataPrimitiveAdapterTest
     }
 
     @Test
-    public void testGsonSerialization()
+    void testGsonSerialization()
         throws Exception
     {
         final LocalDateTime expectedEdmDateTimeProperty =

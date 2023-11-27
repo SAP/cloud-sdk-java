@@ -39,7 +39,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @WireMockTest
-public class FunctionImportSingleDeserializationTest
+class FunctionImportSingleDeserializationTest
 {
     private static final String SERVICE_PATH = "/some/path/service";
     private static final String FUNCTION_NAME = "SomeFunction";

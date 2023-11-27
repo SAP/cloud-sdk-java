@@ -13,9 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -23,27 +20,31 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.SapVcapServicesServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.servlet.RequestAccessorFilter;
+import com.sap.cloud.sdk.cloudplatform.servletjakarta.RequestAccessorFilter;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.Service;
+import com.sap.cloud.security.test.SecurityTest;
 import com.sap.cloud.security.test.SecurityTestRule;
 import com.sap.cloud.security.token.SecurityContext;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.token.TokenClaims;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-public class XsuaaSecurityTest
+class XsuaaSecurityTest
 {
     @Slf4j
     public static class TestServlet extends HttpServlet
@@ -61,26 +62,32 @@ public class XsuaaSecurityTest
         }
     }
 
-    @ClassRule
-    public static final SecurityTestRule rule =
-        SecurityTestRule
-            .getInstance(Service.XSUAA)
+    private static final SecurityTest RULE =
+        new SecurityTest(Service.XSUAA)
             .useApplicationServer()
             .addApplicationServlet(TestServlet.class, "/app")
             .addApplicationServletFilter(RequestAccessorFilter.class);
 
-    @After
-    public void tearDown()
+    @BeforeEach
+    void setup()
+        throws Exception
     {
+        RULE.setup();
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        RULE.tearDown();
         SecurityContext.clearToken();
     }
 
     @Test
-    public void requestWithValidTokenRequest()
+    void requestWithValidTokenRequest()
         throws IOException
     {
         final Token token =
-            rule
+            RULE
                 .getPreconfiguredJwtGenerator()
                 .withClaimValue("origin", "foo")
                 .withClaimValue("client_id", SecurityTestRule.DEFAULT_CLIENT_ID)
@@ -92,7 +99,7 @@ public class XsuaaSecurityTest
                 .withScopes(SecurityTestRule.DEFAULT_APP_ID + ".Read", "uaa.user")
                 .createToken();
 
-        final HttpGet request = new HttpGet(rule.getApplicationServerUri() + "/app");
+        final HttpGet request = new HttpGet(RULE.getApplicationServerUri() + "/app");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue());
 
         try( CloseableHttpResponse response = HttpClients.createDefault().execute(request) ) {
@@ -102,10 +109,11 @@ public class XsuaaSecurityTest
         }
     }
 
-    @Before
-    public void mockServiceBindingAccessor()
+    @SneakyThrows
+    @BeforeEach
+    void mockServiceBindingAccessor()
     {
-        final Token templateToken = rule.getPreconfiguredJwtGenerator().createToken();
+        final Token templateToken = RULE.getPreconfiguredJwtGenerator().createToken();
         final String xsuaaUrl = templateToken.getHeaderParameterAsString("jku").replaceAll("token_keys$", "");
 
         final String connectivity =
@@ -131,8 +139,8 @@ public class XsuaaSecurityTest
                 new SapVcapServicesServiceBindingAccessor(Collections.singletonMap("VCAP_SERVICES", vcap)::get));
     }
 
-    @After
-    public void resetServiceBindingAccessor()
+    @AfterEach
+    void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
     }

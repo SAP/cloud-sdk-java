@@ -15,14 +15,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
-public class DefaultApacheHttpClient5CacheTest
+class DefaultApacheHttpClient5CacheTest
 {
     private static final MockUtil mockUtil = new MockUtil();
 
@@ -41,15 +41,15 @@ public class DefaultApacheHttpClient5CacheTest
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
     private static final Duration FIVE_MINUTES = Duration.ofMinutes(5L);
 
-    @Before
-    @After
-    public void clearAllCaches()
+    @BeforeEach
+    @AfterEach
+    void clearAllCaches()
     {
         CacheManager.invalidateAll();
     }
 
     @Test
-    public void testGetClientExpiresAfterWrite()
+    void testGetClientExpiresAfterWrite()
     {
         mockUtil.mockDefaults();
 
@@ -81,7 +81,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
         mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
@@ -117,7 +117,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
         mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
@@ -155,7 +155,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testGetClientWithDestinationUsesTenantOptionalForIsolation()
+    void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
         mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
@@ -196,7 +196,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
         mockUtil.mockDefaults();
 
@@ -245,7 +245,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testInvalidateTenantCacheEntries()
+    void testInvalidateTenantCacheEntries()
     {
         mockUtil.mockDefaults();
 
@@ -288,7 +288,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testInvalidatePrincipalCacheEntries()
+    void testInvalidatePrincipalCacheEntries()
     {
         mockUtil.mockDefaults();
 
@@ -326,7 +326,7 @@ public class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    public void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
+    void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
     {
         mockUtil.mockDefaults();
 

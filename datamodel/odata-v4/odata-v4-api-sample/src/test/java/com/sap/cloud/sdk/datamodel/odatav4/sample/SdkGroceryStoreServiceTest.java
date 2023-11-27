@@ -14,11 +14,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.datamodel.odatav4.core.ActionResponseCollection;
@@ -32,35 +32,38 @@ import com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore.Pur
 import com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore.Receipt;
 import com.sap.cloud.sdk.datamodel.odatav4.sample.services.DefaultSdkGroceryStoreService;
 
-public class SdkGroceryStoreServiceTest
+class SdkGroceryStoreServiceTest
 {
     // HTTP status codes
     private static final int HTTP_OK = 200;
     private static final int HTTP_NO_CONTENT = 204;
 
-    @Rule
-    public final WireMockRule server =
-        new WireMockRule(options().usingFilesUnderClasspath(getClass().getSimpleName()).dynamicPort());
+    @RegisterExtension
+    static final WireMockExtension SERVER =
+        WireMockExtension
+            .newInstance()
+            .options(options().usingFilesUnderClasspath(SdkGroceryStoreServiceTest.class.getSimpleName()).dynamicPort())
+            .build();
 
     private final DefaultSdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
 
     private HttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
     }
 
     @Test
-    public void testGetAllCustomers()
+    void testGetAllCustomers()
     {
         final List<Customer> customerList = service.getAllCustomers().execute(destination);
         assertThat(customerList).isNotNull().hasSize(3);
     }
 
     @Test
-    public void testGetCustomerByKey()
+    void testGetCustomerByKey()
     {
         final Customer customer = service.getCustomersByKey(9001).execute(destination);
 
@@ -72,14 +75,14 @@ public class SdkGroceryStoreServiceTest
     }
 
     @Test
-    public void testGetAllReceipts()
+    void testGetAllReceipts()
     {
         final List<Receipt> receipts = service.getAllReceipts().top(10).execute(destination);
         assertThat(receipts).isNotNull().hasSize(4);
     }
 
     @Test
-    public void testGetReceiptByKey()
+    void testGetReceiptByKey()
     {
         final Receipt item = service.getReceiptsByKey(123456).execute(destination);
         assertThat(item).isNotNull();
@@ -88,7 +91,7 @@ public class SdkGroceryStoreServiceTest
     }
 
     @Test
-    public void testGetReceiptWithQuery()
+    void testGetReceiptWithQuery()
     {
         final int limit = 1;
         final GetAllRequestBuilder<Receipt> requestBuilder =
@@ -107,7 +110,7 @@ public class SdkGroceryStoreServiceTest
     }
 
     @Test
-    public void testFilterPurchaseHistory()
+    void testFilterPurchaseHistory()
     {
         final DateRange dateRange =
             DateRange
@@ -140,7 +143,7 @@ public class SdkGroceryStoreServiceTest
     }
 
     @Test
-    public void testCudOperations()
+    void testCudOperations()
     {
         final List<ProductCount> products =
             Arrays

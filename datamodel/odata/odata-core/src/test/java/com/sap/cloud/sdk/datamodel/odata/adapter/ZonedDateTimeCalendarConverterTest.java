@@ -13,14 +13,14 @@ import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ZonedDateTimeCalendarConverter;
 
-public class ZonedDateTimeCalendarConverterTest
+class ZonedDateTimeCalendarConverterTest
 {
     @Test
-    public void testFromDomain()
+    void testFromDomain()
     {
         final int someYear = 2017;
         final int someMonth = Calendar.MAY;
@@ -56,7 +56,7 @@ public class ZonedDateTimeCalendarConverterTest
     }
 
     @Test
-    public void testToDomain()
+    void testToDomain()
     {
         final int someYear = 2017;
         final int someMonth = Month.MAY.getValue();

@@ -12,11 +12,11 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationPathsNotMergeableException;
 
-public class UriPathMergerTest
+class UriPathMergerTest
 {
     private
         void
@@ -34,7 +34,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeAbsolutePaths1()
+    void testMergeAbsolutePaths1()
     {
         testMerge(
             "http://foo.bar.example.com:1234/",
@@ -43,7 +43,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeAbsolutePaths2()
+    void testMergeAbsolutePaths2()
     {
         testMerge(
             "http://foo.bar.example.com:1234/foo/bar/",
@@ -52,7 +52,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithRequestAsRelativePathAndDifferentSlashes()
+    void testMergeWithRequestAsRelativePathAndDifferentSlashes()
     {
         testMerge(
             "http://sap.com/foo/bar/",
@@ -73,7 +73,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithRequestAsRelativePath()
+    void testMergeWithRequestAsRelativePath()
     {
         testMerge(
             "http://localhost:60403/b2f9c7b0-a02d-4353-9d6f-70eac243eb78/",
@@ -82,7 +82,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithODataRequestPath()
+    void testMergeWithODataRequestPath()
     {
         testMerge(
             "https://foo.bar.example.com:12345/foo/bar/baz/",
@@ -93,7 +93,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithSpecialCharacters()
+    void testMergeWithSpecialCharacters()
     {
         final String encodedParameter = "%3A%2F%23%3F%26"; // encoded string ":/#?&"
         final String request = "/v01/Entity?$filter=Field%20ne%20'" + encodedParameter + "'";
@@ -103,7 +103,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithoutPath()
+    void testMergeWithoutPath()
     {
         final String request = "https://sap.com";
         final String destinationUrl = "https://sap.com/odata/";
@@ -112,7 +112,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithoutRequest()
+    void testMergeWithoutRequest()
     {
         testMerge(
             "https://user:foo@foo.bar.example.com:12345/foo/bar/baz/?foo=bar",
@@ -121,7 +121,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithEncoding()
+    void testMergeWithEncoding()
     {
         testMerge(
             "https://foo.example.com:1234",
@@ -137,7 +137,7 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithSpecialCharactersInUrl()
+    void testMergeWithSpecialCharactersInUrl()
     {
         final String request = "/v01/Entity?query=request%20whitespace#fragment%20request";
         final String destinationUrl = "https://destuser:dest%20passd@destination.host/destination%20path/";
@@ -147,20 +147,20 @@ public class UriPathMergerTest
     }
 
     @Test
-    public void testMergeWithEmptyDestinationUrl()
+    void testMergeWithEmptyDestinationUrl()
     {
         testMerge("", "https://some.url/with?parameter=foo", URI.create("https://some.url/with?parameter=foo"));
     }
 
     @Test
-    public void testDestinationMayOnlyBeEmptyIfRequestIsAbsolute()
+    void testDestinationMayOnlyBeEmptyIfRequestIsAbsolute()
     {
         assertThatThrownBy(() -> merge("", "/this/is/not/absolute"))
             .isExactlyInstanceOf(DestinationPathsNotMergeableException.class);
     }
 
     @Test
-    public void testDestinationMustBeAbsoluteIfNotEmpty()
+    void testDestinationMustBeAbsoluteIfNotEmpty()
     {
         assertThatThrownBy(() -> merge("/relative/path", "https://some.url/with?parameter=foo"))
             .isExactlyInstanceOf(DestinationPathsNotMergeableException.class);

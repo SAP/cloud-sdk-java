@@ -6,12 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ApacheHttpHeaderTest
+class ApacheHttpHeaderTest
 {
     @Test
-    public void testToString()
+    void testToString()
     {
         final Header header = new Header("key", "value");
 

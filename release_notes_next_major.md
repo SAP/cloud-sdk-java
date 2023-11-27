@@ -10,7 +10,9 @@ blog: https://blogs.sap.com/?p=xxx
 
 ## compatibilityNotes
 
-- The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) 
+- The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+- The SAP Cloud SDK has switched the minimum required Java version to 17
+- The SAP Cloud SDK version 5 is no longer compatible with Spring version 5, the [XSUAA Client Library](https://github.com/SAP/cloud-security-services-integration-library) version 2, the SAP Java Buildpack version 1 and TomEE version 8.x or 9.x.
 - Following modules have been removed:
   - SAP Java Buildpack BOM: `com.sap.cloud.sdk:sdk-sjb-bom`
   - (Parent Module) `com.sap.cloud.sdk.plugins:plugins-parent`
@@ -55,6 +57,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Cloud Platform - Auditlog - SCP CF: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-cf`
     - Cloud Platform - Auditlog - SCP Neo: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-neo`
     - As part of removing these modules, we also removed the integration of the Auditlog service with the S/4HANA connectivity features. Consumers who relied on this out-of-the-box integration are asked to approach the development team by [creating a GitHub support issue](https://github.com/SAP/cloud-sdk-java/issues/new) for migration guidance.
+  - The module `com.sap.cloud.sdk.cloudplatform:scp-cf` has been deprecated in favor of `com.sap.cloud.sdk:sdk-core`
 - Following public classes have been removed:
   - Related to the `Destination` API:
     - Within the [Business Technology Platform - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity) Module:
@@ -212,6 +215,15 @@ blog: https://blogs.sap.com/?p=xxx
   - The `DefaultDestination.Builder` can now be constructed from an existing `DefaultDestination` instance by using `DefaultDestination.toBuilder()`.
 - The `BasicCredentials` and `BearerCredentials` classes now offer a new method `#getHttpHeaderValue()` which will return the encoded and prefixed value of the credentials, e.g. `"Basic <encodedCredentials>"` or `"Bearer <token>"`.
 - A `DefaultTenant` can now be initialised with an optional `subdomain` in addition to the required `tenantId`
+- The new module `com.sap.cloud.sdk:sdk-core` provides an easy way to import the essential Cloud SDK dependencies.
+
+- Dependency Updates:
+  - SAP dependency updates:
+    - Update `com.sap.cloud.security:java-bom` from `2.14.2` to `3.2.1`
+  - Other dependency updates:
+    - Major version updates:
+      - Update `org.springframework:spring-framework-bom` from `5.3.29` to `6.0.13`. **Note** This dependency is used by the SDK **internally only**. In other words: This update **does not** affect consuming projects that use the `sdk-bom` for dependency management.
+      - Update `org.slf4j:slf4j-api` from `1.7.36` to `2.0.9`
 
 ## improvements
 
@@ -219,6 +231,11 @@ blog: https://blogs.sap.com/?p=xxx
 - The `Destination#asHttp()` and `Destination#asRfc()` methods no longer always return a new instance of `HttpDestination` and `RfcDestination` if the current objects is already a `HttpDestination` or `RfcDestination` respectively.
 - `Destination#asHttp()` no longer throws an exception in case the `Destination` originates from the Destination service and the attached auth token contains an error.
   Instead, an exception will be thrown upon invoking the `getHeaders()` method, for example, during request execution.
+
+- Dependency Updates:
+  - Other dependency updates:
+    - Major version updates:
+      - Update `com.github.ben-manes.caffeine:caffeine` from `2.9.3` to `3.1.8`
 
 ## fixedIssues
 

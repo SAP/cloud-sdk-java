@@ -7,27 +7,27 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class ODataChangedFieldsTest
+class ODataChangedFieldsTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         assertThat(testEntity.getChangedFields()).isEmpty();
     }
 
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final TestVdmEntity testEntity = TestVdmEntity.builder().stringValue("Foo").build();
         assertThat(testEntity.getChangedFields()).isEmpty();
     }
 
     @Test
-    public void testAccessor()
+    void testAccessor()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         testEntity.setStringValue("Foo");
@@ -35,7 +35,7 @@ public class ODataChangedFieldsTest
     }
 
     @Test
-    public void testAccessorNull()
+    void testAccessorNull()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         testEntity.setDecimalValue(null);
@@ -43,7 +43,7 @@ public class ODataChangedFieldsTest
     }
 
     @Test
-    public void testCustomFields()
+    void testCustomFields()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         testEntity.setCustomField("BarValue", "Foo");
@@ -51,7 +51,7 @@ public class ODataChangedFieldsTest
     }
 
     @Test
-    public void testCustomFieldsNull()
+    void testCustomFieldsNull()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         testEntity.setCustomField("BarValue", null);
@@ -59,7 +59,7 @@ public class ODataChangedFieldsTest
     }
 
     @Test
-    public void testRevertingValue()
+    void testRevertingValue()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         testEntity.setIntegerValue(9000);
@@ -70,7 +70,7 @@ public class ODataChangedFieldsTest
     }
 
     @Test
-    public void testComplexValue()
+    void testComplexValue()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         final TestVdmComplex complex1 = TestVdmComplex.builder().someValue("Foo").build();
@@ -84,9 +84,9 @@ public class ODataChangedFieldsTest
         assertThat(testEntity.getChangedFields()).containsOnly(entry("ComplexValue", complex2));
     }
 
-    @Ignore( "Not yet implemented. See CLOUDECOSYSTEM-9065" )
+    @Disabled( "Not yet implemented. See CLOUDECOSYSTEM-9065" )
     @Test
-    public void testInnerComplexValue()
+    void testInnerComplexValue()
     {
         final TestVdmComplex complex = TestVdmComplex.builder().someValue("Tic").build();
         final TestVdmEntity testEntity = TestVdmEntity.builder().complexValue(complex).build();
@@ -100,7 +100,7 @@ public class ODataChangedFieldsTest
      * Updating changes on related entities in navigation properties are not supported in OData V2 (aka Deep Update).
      */
     @Test
-    public void testNavigationPropertyToOne()
+    void testNavigationPropertyToOne()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         final TestVdmEntity parent = TestVdmEntity.builder().stringValue("Foo").build();
@@ -112,7 +112,7 @@ public class ODataChangedFieldsTest
      * Updating changes on related entities in navigation properties are not supported in OData V2 (aka Deep Update).
      */
     @Test
-    public void testNavigationPropertyToMany()
+    void testNavigationPropertyToMany()
     {
         final TestVdmEntity testEntity = new TestVdmEntity();
         final TestVdmEntity child1 = TestVdmEntity.builder().stringValue("Foo").build();

@@ -17,27 +17,21 @@ import javax.cache.configuration.Configuration;
 import javax.cache.configuration.Factory;
 import javax.cache.expiry.ExpiryPolicy;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.sap.cloud.sdk.cloudplatform.cache.GenericCacheKey;
 import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
 
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-@RequiredArgsConstructor
-@RunWith( Parameterized.class )
-public class DefaultCachingDecoratorTest
+class DefaultCachingDecoratorTest
 {
-    @Parameterized.Parameters( name = "{index}: {0}" )
-    public static Iterable<TestParameter> data()
+    static Iterable<TestParameter> data()
     {
         return Arrays
             .asList(
-
                 TestParameter
                     .builder()
                     // Given Cloud SDK cache configuration:
@@ -97,22 +91,21 @@ public class DefaultCachingDecoratorTest
 
     @Value
     @Builder
-    public static class TestParameter
+    static class TestParameter
     {
         @Nonnull
-        final CacheConfiguration cacheConfiguration;
+        CacheConfiguration cacheConfiguration;
         @Nullable
-        final javax.cache.expiry.Duration expiryForAccess;
+        javax.cache.expiry.Duration expiryForAccess;
         @Nullable
-        final javax.cache.expiry.Duration expiryForCreation;
+        javax.cache.expiry.Duration expiryForCreation;
         @Nullable
-        final javax.cache.expiry.Duration expiryForUpdate;
+        javax.cache.expiry.Duration expiryForUpdate;
     }
 
-    final TestParameter param;
-
-    @Test
-    public <T> void testCachingWithExpiryStrategy()
+    @ParameterizedTest
+    @MethodSource( "data" )
+    <T> void testCachingWithExpiryStrategy( @Nonnull final TestParameter param )
     {
         final DefaultCachingDecorator decorator = new DefaultCachingDecorator();
 

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CircuitBreakerConfiguration;
@@ -28,11 +28,11 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public class CircuitBreakerTest
+class CircuitBreakerTest
 {
 
     @Test
-    public void testCircuitBreakerStaysClosed()
+    void testCircuitBreakerStaysClosed()
         throws Exception
     {
         final List<Boolean> attempts = Arrays.asList(true, true, false, true);
@@ -56,7 +56,7 @@ public class CircuitBreakerTest
     }
 
     @Test
-    public void testCircuitBreakerOpens()
+    void testCircuitBreakerOpens()
         throws Exception
     {
         final List<Boolean> attempts = Arrays.asList(false, true, false);
@@ -88,7 +88,7 @@ public class CircuitBreakerTest
     }
 
     @Test
-    public void testCircuitBreakerHalfOpens()
+    void testCircuitBreakerHalfOpens()
         throws Exception
     {
         // with closed buffer = 1 the CB must open after the first failure
@@ -125,7 +125,7 @@ public class CircuitBreakerTest
     }
 
     @Test
-    public void testCircuitBreakerClosesAgain()
+    void testCircuitBreakerClosesAgain()
         throws Exception
     {
         final List<Boolean> attempts = Arrays.asList(false, false, true, true, false);

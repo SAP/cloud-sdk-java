@@ -9,12 +9,12 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType.ON_PREMISE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType.PRIVATE_LINK;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ProxyTypeTest
+class ProxyTypeTest
 {
     @Test
-    public void getIdentifier()
+    void getIdentifier()
     {
         assertThat(ON_PREMISE.getIdentifier()).isEqualTo("OnPremise");
         assertThat(INTERNET.getIdentifier()).isEqualTo("Internet");
@@ -22,7 +22,7 @@ public class ProxyTypeTest
     }
 
     @Test
-    public void ofIdentifier()
+    void ofIdentifier()
     {
         assertThat(ProxyType.ofIdentifier("OnPremise")).isEqualTo(ON_PREMISE);
         assertThat(ProxyType.ofIdentifier("Internet")).isEqualTo(INTERNET);
@@ -30,7 +30,7 @@ public class ProxyTypeTest
     }
 
     @Test
-    public void ofIdentifierOrDefault()
+    void ofIdentifierOrDefault()
     {
         assertThat(ProxyType.ofIdentifierOrDefault("NonExisting", INTERNET)).isEqualTo(INTERNET);
     }

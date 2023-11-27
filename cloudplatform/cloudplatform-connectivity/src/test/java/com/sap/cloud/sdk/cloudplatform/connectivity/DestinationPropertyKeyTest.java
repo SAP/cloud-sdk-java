@@ -12,14 +12,14 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-public class DestinationPropertyKeyTest
+class DestinationPropertyKeyTest
 {
     private static final String TEST_VALUE = "testValue";
     private static final String PROPERTY_TEST_KEY = "testKey";
@@ -29,8 +29,8 @@ public class DestinationPropertyKeyTest
     private Map<String, Object> properties;
     private DestinationProperties sut;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before()
     {
         PROPERTY_TEST =
             DestinationPropertyKey.createProperty(PROPERTY_TEST_KEY, TestProperty.class, TestProperty::ofIdentifier);
@@ -38,15 +38,15 @@ public class DestinationPropertyKeyTest
         properties = new HashMap<>();
     }
 
-    @After
-    public void after()
+    @AfterEach
+    void after()
     {
         properties = null;
         sut = null;
     }
 
     @Test
-    public void testClassCast()
+    void testClassCast()
     {
         properties.put(PROPERTY_TEST.getKeyName(), TEST_PROPERTY_INSTANCE);
 
@@ -56,7 +56,7 @@ public class DestinationPropertyKeyTest
     }
 
     @Test
-    public void testStringFallback()
+    void testStringFallback()
     {
         properties.put(PROPERTY_TEST.getKeyName(), TEST_VALUE);
 
@@ -66,7 +66,7 @@ public class DestinationPropertyKeyTest
     }
 
     @Test
-    public void testFailingFallback()
+    void testFailingFallback()
     {
         properties.put(PROPERTY_TEST.getKeyName(), 42);
 
@@ -76,7 +76,7 @@ public class DestinationPropertyKeyTest
     }
 
     @Test
-    public void testNullValue()
+    void testNullValue()
     {
         properties.put(PROPERTY_TEST.getKeyName(), null);
 

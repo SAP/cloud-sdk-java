@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadC
 import static com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalThreadContextListener.PROPERTY_PRINCIPAL;
 import static com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener.PROPERTY_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -20,12 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener;
@@ -37,38 +36,32 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
 import lombok.SneakyThrows;
 
 @SuppressWarnings( "DanglingJavadoc" ) // we are using JavaDoc-style comments (with a different color!) to better indicate lambda/thread beginnings and ends
-@RunWith( MockitoJUnitRunner.class )
-public class ThreadContextTest
+class ThreadContextTest
 {
     private static final int TEST_TIMEOUT = 300_000; // 5 minutes
     private static final String VALUE = "value";
 
-    @Mock
-    private RequestHeaderContainer mockedRequestHeaders;
-
-    @Mock
-    private Tenant mockedTenant;
-
-    @Mock
-    private Principal mockedPrincipal;
+    private final RequestHeaderContainer mockedRequestHeaders = mock(RequestHeaderContainer.class);
+    private final Tenant mockedTenant = mock(Tenant.class);
+    private final Principal mockedPrincipal = mock(Principal.class);
 
     @Nonnull
     private ExecutorService executorService;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         executorService = Executors.newFixedThreadPool(2);
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         executorService.shutdown();
     }
 
     @Test
-    public void testAvailableThreadContextListeners()
+    void testAvailableThreadContextListeners()
     {
         final List<Class<?>> availableListenerTypes =
             DefaultThreadContextListenerChain
@@ -86,7 +79,7 @@ public class ThreadContextTest
     }
 
     @Test
-    public void testThreadContextCanBeSwitchedInSameThread()
+    void testThreadContextCanBeSwitchedInSameThread()
     {
         final ThreadContext rootContext = newThreadContextWithMockedProperties();
 
@@ -157,8 +150,9 @@ public class ThreadContextTest
      * fancy ascii art created with: https://asciiflow.com/#/
      */
     @SneakyThrows
-    @Test( timeout = TEST_TIMEOUT )
-    public void testSharedContextIsNotClearedAfterChildFinished()
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
+    void testSharedContextIsNotClearedAfterChildFinished()
     {
         final SoftAssertions softly = new SoftAssertions();
         final CountDownLatch parentContextLatch = new CountDownLatch(1);
@@ -249,8 +243,9 @@ public class ThreadContextTest
      * fancy ascii art created with: https://asciiflow.com/#/
      */
     @SneakyThrows
-    @Test( timeout = TEST_TIMEOUT )
-    public void testSuperLateExecutionOfExplicitDuplication()
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
+    void testSuperLateExecutionOfExplicitDuplication()
     {
         final SoftAssertions softly = new SoftAssertions();
         final CountDownLatch parentContextLatch = new CountDownLatch(1);
@@ -351,8 +346,9 @@ public class ThreadContextTest
      * fancy ascii art created with: https://asciiflow.com/#/
      */
     @SneakyThrows
-    @Test( timeout = TEST_TIMEOUT )
-    public void testLateExecutionOfExplicitDuplication()
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
+    void testLateExecutionOfExplicitDuplication()
     {
         final SoftAssertions softly = new SoftAssertions();
         final CountDownLatch parentContextLatch = new CountDownLatch(1);
@@ -449,8 +445,9 @@ public class ThreadContextTest
      * fancy ascii art created with: https://asciiflow.com/#/
      */
     @SneakyThrows
-    @Test( timeout = TEST_TIMEOUT )
-    public void testLateExecutionOfExplicitSharing()
+    @Test
+    @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
+    void testLateExecutionOfExplicitSharing()
     {
         final SoftAssertions softly = new SoftAssertions();
         final CountDownLatch parentContextLatch = new CountDownLatch(1);

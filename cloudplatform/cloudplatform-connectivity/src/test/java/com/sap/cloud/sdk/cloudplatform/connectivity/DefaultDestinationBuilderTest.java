@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultDestinationBuilderTest
+class DefaultDestinationBuilderTest
 {
     @Test
-    public void testFromMap()
+    void testFromMap()
     {
         final Map<String, Object> map = new HashMap<>();
         map.put("foo", "bar");
@@ -26,7 +26,7 @@ public class DefaultDestinationBuilderTest
     }
 
     @Test
-    public void testToBuilder()
+    void testToBuilder()
     {
         final DefaultDestination baseProperties =
             DefaultDestination.builder().property("foo", "bar").property("bar", 42).build();

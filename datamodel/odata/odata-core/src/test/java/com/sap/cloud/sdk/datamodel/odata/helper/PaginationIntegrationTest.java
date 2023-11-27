@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 
-@Ignore( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
-public class PaginationIntegrationTest
+@Disabled( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
+class PaginationIntegrationTest
 {
     private static final int PAGE_SIZE = 20;
     private static final ArgumentMatcher<URI> URI_WITHOUT_SKIP_TOKEN = uri -> !uri.getQuery().contains("$skiptoken");
@@ -38,7 +38,7 @@ public class PaginationIntegrationTest
     private final HttpDestination destination = DefaultHttpDestination.builder("https://services.odata.org").build();
 
     @Test
-    public void testGetAll()
+    void testGetAll()
     {
         final HttpDestination destination = spy(this.destination);
 
@@ -55,7 +55,7 @@ public class PaginationIntegrationTest
     }
 
     @Test
-    public void testGetAllIteratingEntities()
+    void testGetAllIteratingEntities()
     {
         final HttpDestination destination = spy(this.destination);
 
@@ -82,7 +82,7 @@ public class PaginationIntegrationTest
     }
 
     @Test
-    public void testGetAllStreamingEntities()
+    void testGetAllStreamingEntities()
     {
         final HttpDestination destination = spy(this.destination);
 
@@ -107,7 +107,7 @@ public class PaginationIntegrationTest
     }
 
     @Test
-    public void testGetAllIteratingPages()
+    void testGetAllIteratingPages()
     {
         final HttpDestination destination = spy(this.destination);
 

@@ -114,7 +114,7 @@ class ODataRequestResultGenericTest
     }
 
     @Test
-    public void getHeaderValuesShouldHandleKeyInsensitivity()
+    void getHeaderValuesShouldHandleKeyInsensitivity()
     {
         final ODataRequestResult result = mock(ODataRequestResult.class);
         final HttpResponse mockedResponse = mock(HttpResponse.class);
@@ -141,7 +141,7 @@ class ODataRequestResultGenericTest
 
     @Test
     @SneakyThrows
-    public void ensureNoRedundantHeadersForPaginatedRequests()
+    void ensureNoRedundantHeadersForPaginatedRequests()
     {
         final ODataRequestGeneric oDataRequest =
             new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);

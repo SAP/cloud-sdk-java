@@ -11,9 +11,6 @@ import javax.annotation.Nullable;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -39,7 +36,7 @@ import lombok.RequiredArgsConstructor;
  * </pre>
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
-public class TokenRule implements TestRule, AfterEachCallback, BeforeEachCallback
+class TokenRule implements AfterEachCallback, BeforeEachCallback
 {
     @Getter
     private final JWTCreator.Builder tokenBuilder;
@@ -58,26 +55,6 @@ public class TokenRule implements TestRule, AfterEachCallback, BeforeEachCallbac
                     DestinationRetrievalStrategyResolver.JWT_ATTR_ENHANCER,
                     DestinationRetrievalStrategyResolver.JWT_ATTR_XSUAA);
         return new TokenRule(JWT.create().withClaim(DestinationRetrievalStrategyResolver.JWT_ATTR_EXT, attrEnhancer));
-    }
-
-    @Override
-    public Statement apply( final Statement statement, final Description description )
-    {
-        return new Statement()
-        {
-            @Override
-            public void evaluate()
-                throws Throwable
-            {
-                beforeEach(null);
-                try {
-                    statement.evaluate();
-                }
-                finally {
-                    afterEach(null);
-                }
-            }
-        };
     }
 
     @Override

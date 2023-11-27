@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.datamodel.odata.generator;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -723,9 +724,13 @@ public class DataModelGenerator implements DataModelGeneratorConfig
     {
         final T strategyInstance;
         try {
-            strategyInstance = (T) Class.forName(fullyQualifiedClassName).newInstance();
+            strategyInstance = (T) Class.forName(fullyQualifiedClassName).getDeclaredConstructor().newInstance();
         }
-        catch( final InstantiationException | IllegalAccessException e ) {
+        catch( final
+            InstantiationException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | InvocationTargetException e ) {
             throw new ODataGeneratorException(
                 "Unable to load specified strategy class. "
                     + "Check the class for errors in its constructor(s) "

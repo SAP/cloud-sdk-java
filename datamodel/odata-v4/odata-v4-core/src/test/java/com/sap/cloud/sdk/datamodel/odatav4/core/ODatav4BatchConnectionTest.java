@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.noContent;
 import static com.github.tomakehurst.wiremock.client.WireMock.okForContentType;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.sap.cloud.sdk.datamodel.odatav4.TestUtility.readResourceFileCrlf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -12,15 +12,19 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 
 import org.apache.http.conn.ConnectionPoolTimeoutException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpClientFactory;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -28,7 +32,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 
-public class ODatav4BatchConnectionTest
+@WireMockTest
+class ODatav4BatchConnectionTest
 {
     private static final String RESPONSE_CONTENT_TYPE =
         "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
@@ -43,16 +48,13 @@ public class ODatav4BatchConnectionTest
     };
     private static final int MAX_PARALLEL_CONNECTIONS = 10;
 
-    private WireMockServer server;
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        server = new WireMockRule(wireMockConfig().dynamicPort());
-        server.start();
-        server.stubFor(head(UrlPattern.ANY).willReturn(noContent()));
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        stubFor(head(UrlPattern.ANY).willReturn(noContent()));
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         HttpClientAccessor
             .setHttpClientFactory(
@@ -63,19 +65,16 @@ public class ODatav4BatchConnectionTest
                     .build());
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
-        server.shutdown();
         HttpClientAccessor.setHttpClientFactory(null);
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsNoChangeset()
+    void testNoConnectionTimeoutWhenBatchResponseContainsNoChangeset()
     {
-        server
-            .stubFor(
-                post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
 
         for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
             final GetAllRequestBuilder<TestEntity> READ_ALL = SERVICE.getTestEntities();
@@ -92,10 +91,9 @@ public class ODatav4BatchConnectionTest
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsChangeset()
+    void testNoConnectionTimeoutWhenBatchResponseContainsChangeset()
     {
-        server
-            .stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_CHANGESET)));
 
         for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
             final GetAllRequestBuilder<TestEntity> READ_ALL = SERVICE.getTestEntities();
@@ -132,9 +130,9 @@ public class ODatav4BatchConnectionTest
     }
 
     @Test
-    public void testNoConnectionTimeoutWhenBatchResponseContainsError()
+    void testNoConnectionTimeoutWhenBatchResponseContainsError()
     {
-        server.stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_ERROR)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITH_ERROR)));
 
         for( int i = 0; i < MAX_PARALLEL_CONNECTIONS * 2; i++ ) {
             final GetAllRequestBuilder<TestEntity> READ_ALL = SERVICE.getTestEntities();
@@ -156,13 +154,12 @@ public class ODatav4BatchConnectionTest
         }
     }
 
-    @Test( timeout = 300_000L )
-    @Ignore( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
-    public void testConnectionTimeoutWhenBatchResponseIsNotConsumedFully()
+    @Test
+    @Timeout( value = 300_000L, unit = TimeUnit.MILLISECONDS )
+    @Disabled( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
+    void testConnectionTimeoutWhenBatchResponseIsNotConsumedFully()
     {
-        server
-            .stubFor(
-                post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
+        stubFor(post(UrlPattern.ANY).willReturn(okForContentType(RESPONSE_CONTENT_TYPE, RESPONSE_WITHOUT_CHANGESET)));
 
         final GetAllRequestBuilder<TestEntity> READ_ALL = SERVICE.getTestEntities();
         final GetByKeyRequestBuilder<TestEntity> READ_BY_KEY = SERVICE.getTestEntitiesByKey("foobar");
