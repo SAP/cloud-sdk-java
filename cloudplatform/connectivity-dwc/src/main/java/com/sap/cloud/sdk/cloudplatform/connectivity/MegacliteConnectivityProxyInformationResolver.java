@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -21,9 +22,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -49,9 +53,14 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     @Nonnull
     private final MegacliteDestinationFactory destinationFactory;
     @Nonnull
-    private final ResilienceConfiguration resilienceConfigToken;
+    private final ResilienceConfiguration responseResilience =
+        ResilienceConfiguration
+            .of(MegacliteConnectivityProxyInformationResolver.class + "-" + UUID.randomUUID()) // use a unique identifier so that different instances of this class don't share the same resilience state
+            .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
+            .bulkheadConfiguration(ResilienceConfiguration.BulkheadConfiguration.of().maxConcurrentCalls(1)); // make sure we don't run parallel requests for the same tenant
     @Nonnull
-    private final ResilienceConfiguration resilienceConfigProxyUrl;
+    private final Cache<CacheKey, JsonObject> responseCache =
+        Caffeine.newBuilder().expireAfterWrite(Duration.ofMinutes(15)).build();
 
     private MegacliteConnectivityProxyInformationResolver()
     {
@@ -62,8 +71,6 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
         @Nonnull final MegacliteDestinationFactory destinationFactory )
     {
         this.destinationFactory = destinationFactory;
-        resilienceConfigToken = createTokenResilience();
-        resilienceConfigProxyUrl = createProxyUrlResilience();
     }
 
     @Nonnull
@@ -94,7 +101,7 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     @Nonnull
     String getAuthorizationToken()
     {
-        return getProxyInformationFromMegacliteWithResilience("proxyAuth", resilienceConfigToken);
+        return getProxyInformationFromMegacliteWithResilience("proxyAuth");
     }
 
     /**
@@ -110,20 +117,26 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     @Nonnull
     URI getProxyUrl()
     {
-        return URI.create(getProxyInformationFromMegacliteWithResilience("proxy", resilienceConfigProxyUrl));
+        return URI.create(getProxyInformationFromMegacliteWithResilience("proxy"));
     }
 
     @SuppressWarnings( "DataFlowIssue" )
     @Nonnull
-    private String getProxyInformationFromMegacliteWithResilience(
-        @Nonnull final String jsonKey,
-        @Nonnull final ResilienceConfiguration resilienceConfig )
+    private String getProxyInformationFromMegacliteWithResilience( @Nonnull final String jsonKey )
     {
+        final CacheKey cacheKey = CacheKey.ofTenantOptionalIsolation();
+        JsonObject cachedValue = responseCache.getIfPresent(cacheKey);
+        if( cachedValue != null ) {
+            return cachedValue.get(jsonKey).getAsString();
+        }
+
         try {
-            return ResilienceDecorator.executeSupplier(() -> {
-                final JsonObject json = getProxyInformationFromMegaclite();
-                return json.get(jsonKey).getAsString();
-            }, resilienceConfig);
+            cachedValue = ResilienceDecorator.executeSupplier(() -> {
+                final JsonObject response = responseCache.getIfPresent(cacheKey);
+                return Objects.requireNonNullElseGet(response, this::getProxyInformationFromMegaclite);
+            }, responseResilience);
+            responseCache.put(cacheKey, cachedValue);
+            return cachedValue.get(jsonKey).getAsString();
         }
         catch( final ResilienceRuntimeException e ) {
             throw new IllegalStateException(e);
@@ -184,22 +197,5 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
         throws IOException
     {
         return client.execute(new HttpGet());
-    }
-
-    private ResilienceConfiguration createTokenResilience()
-    {
-        return ResilienceConfiguration
-            .of(getClass().getSimpleName() + "-" + UUID.randomUUID() + "-token")
-            .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
-            .cacheConfiguration(
-                ResilienceConfiguration.CacheConfiguration.of(Duration.ofMinutes(15)).withoutParameters());
-    }
-
-    private ResilienceConfiguration createProxyUrlResilience()
-    {
-        return ResilienceConfiguration
-            .of(getClass().getSimpleName() + "-" + UUID.randomUUID() + "-proxyUrl")
-            .isolationMode(ResilienceIsolationMode.NO_ISOLATION)
-            .cacheConfiguration(ResilienceConfiguration.CacheConfiguration.of(Duration.ofDays(1)).withoutParameters());
     }
 }
