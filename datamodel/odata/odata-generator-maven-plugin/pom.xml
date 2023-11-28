@@ -36,6 +36,8 @@
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<!-- allow transitive use of Java EE dependencies -->
+		<enforcer.skipEnforceScopeJavaEE>true</enforcer.skipEnforceScopeJavaEE>
 		<!-- allow scope compile for lombok since this module is not included as dependency -->
 		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
 	</properties>
