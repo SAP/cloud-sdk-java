@@ -607,11 +607,14 @@
 										<message>Use Java EE modules with scope provided or test.</message>
 										<excludes>
 											<exclude>javax:javaee-api</exclude>
+											<exclude>javax.inject:javax.inject</exclude>
 											<exclude>javax.ws.rs:javax.ws.rs-api</exclude>
 										</excludes>
 										<includes>
 											<include>javax:javaee-api:*:*:provided</include>
 											<include>javax:javaee-api:*:*:test</include>
+											<include>javax.inject:javax.inject:*:*:provided</include>
+											<include>javax.inject:javax.inject:*:*:test</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:provided</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:test</include>
 										</includes>
