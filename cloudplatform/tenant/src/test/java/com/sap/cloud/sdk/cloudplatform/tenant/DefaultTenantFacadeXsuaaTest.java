@@ -22,7 +22,6 @@ import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
 
-@Deprecated
 class DefaultTenantFacadeXsuaaTest
 {
     @AfterEach
