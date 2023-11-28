@@ -12,11 +12,11 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
-    "artifactId": "spring-boot-3",
+    "artifactId": "spring-boot3",
     "packaging": "maven-archetype",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
-    "pomFile": "archetypes/spring-boot-3/pom.xml",
+    "pomFile": "archetypes/spring-boot3/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.archetypes",
     "parentArtifactId": "archetypes-parent",
     "excludeFromBlackDuckScan": false

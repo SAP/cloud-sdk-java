@@ -140,7 +140,7 @@ jobs:
       matrix:
         task:
           - {
-              "archetype": "spring-boot-3",
+              "archetype": "spring-boot3",
               "javaVersion": 17,
               "startCommand": "mvn spring-boot:run -B",
             }

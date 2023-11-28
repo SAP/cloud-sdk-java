@@ -6,7 +6,7 @@
 		<artifactId>archetypes-parent</artifactId>
 		<version>5.0.0-alpha-SNAPSHOT</version>
 	</parent>
-	<artifactId>spring-boot-3</artifactId>
+	<artifactId>spring-boot3</artifactId>
 	<packaging>maven-archetype</packaging>
 	<name>Archetypes - SAP CP Cloud Foundry + Spring Boot 3</name>
 	<description>Archetype for a Spring-based project on SAP Business Technology Platform (Cloud Foundry).</description>

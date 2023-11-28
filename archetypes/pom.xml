@@ -31,7 +31,7 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>spring-boot-3</module>
+		<module>spring-boot3</module>
 	</modules>
 	<scm>
 		<connection />
