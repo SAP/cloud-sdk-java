@@ -110,7 +110,7 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<restassured.version>5.0.1</restassured.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>6.1.0</openapi-generator.version>
+		<openapi-generator.version>7.0.1</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  Dependency convergence dependencies  -->
@@ -129,7 +129,6 @@
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.8</byte-buddy.version>
 		<hamcrest-core.version>2.2</hamcrest-core.version>
-		<snakeyaml.version>1.33</snakeyaml.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -316,11 +315,6 @@
 				<artifactId>jakarta.xml.bind-api</artifactId>
 				<version>${jakarta-xml-bind.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>${snakeyaml.version}</version>
-			</dependency>
 			<!--Dependencies with test scope-->
 			<dependency>
 				<groupId>com.sap.cloud.sdk.testutil</groupId>
@@ -422,22 +416,6 @@
 				<groupId>org.codehaus.woodstox</groupId>
 				<artifactId>stax2-api</artifactId>
 				<version>${stax2-api.version}</version>
-			</dependency>
-			<!-- Dependency Convergence for OpenAPI Generator 6.0.1 -->
-			<dependency>
-				<groupId>io.swagger.core.v3</groupId>
-				<artifactId>swagger-core</artifactId>
-				<version>${io-swagger-core-v3.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.swagger.core.v3</groupId>
-				<artifactId>swagger-models</artifactId>
-				<version>${io-swagger-core-v3.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.swagger</groupId>
-				<artifactId>swagger-core</artifactId>
-				<version>${io-swagger-core.version}</version>
 			</dependency>
 			<!--Used for dependency convergence in datamodel-metadata-generator-->
 			<dependency>

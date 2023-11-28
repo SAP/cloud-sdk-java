@@ -204,6 +204,7 @@ blog: https://blogs.sap.com/?p=xxx
 - The `ODataRequestResult` no longer splits header values.
 - The `AuthTokenFacade` of the `AuthTokenAccessor` will default to `DefaultAuthTokenFacade`
 - The `TenantFacade` of the `TenantAccessor` will default to `DefaultTenantFacade`
+- The `TenantWithSubdomain#getSubdomain` is now nullable.
 
 ## newFunctionality
 

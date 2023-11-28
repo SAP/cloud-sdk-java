@@ -4,6 +4,7 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.util.Date;
@@ -31,6 +32,7 @@ public class RFC3339DateFormat extends DateFormat
     public RFC3339DateFormat()
     {
         calendar = new GregorianCalendar();
+        numberFormat = new DecimalFormat();
     }
 
     @Override
