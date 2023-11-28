@@ -126,6 +126,10 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         assertThat(result.getUri())
             .isEqualTo(megacliteUrl.resolve("/megaclite-version-saas/destination-saas/version-saas/"));
+        assertThat(result.getSecurityConfigurationStrategy()).isEqualTo(SecurityConfigurationStrategy.FROM_PLATFORM);
+        assertThat(result.getProxyType()).contains(ProxyType.INTERNET);
+        assertThat(DefaultHttpDestination.fromDestination(result).customHeaderProviders)
+            .contains(DwcHeaderProvider.getInstance());
     }
 
     @Test
@@ -141,6 +145,10 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         assertThat(result.getUri())
             .isEqualTo(megacliteUrl.resolve("/megaclite-version-paas/destination-paas/version-paas/"));
+        assertThat(result.getSecurityConfigurationStrategy()).isEqualTo(SecurityConfigurationStrategy.FROM_PLATFORM);
+        assertThat(result.getProxyType()).contains(ProxyType.INTERNET);
+        assertThat(DefaultHttpDestination.fromDestination(result).customHeaderProviders)
+            .contains(DwcHeaderProvider.getInstance());
     }
 
     @Test

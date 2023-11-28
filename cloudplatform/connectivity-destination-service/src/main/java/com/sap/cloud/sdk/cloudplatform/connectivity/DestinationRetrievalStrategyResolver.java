@@ -171,7 +171,7 @@ class DestinationRetrievalStrategyResolver
                 "Preparing request(s) towards the destination service based on the strategies {} and {}",
                 retrievalStrategy,
                 tokenExchangeStrategy);
-        warnOrThrowOnDeprecatedOrUnsupportedCombinations(retrievalStrategy, tokenExchangeStrategy);
+        warnOrThrowOnUnsupportedCombinations(retrievalStrategy, tokenExchangeStrategy);
 
         if( tokenExchangeStrategy == LOOKUP_THEN_EXCHANGE ) {
             final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
@@ -192,7 +192,7 @@ class DestinationRetrievalStrategyResolver
         return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
     }
 
-    private void warnOrThrowOnDeprecatedOrUnsupportedCombinations(
+    private void warnOrThrowOnUnsupportedCombinations(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nullable final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
     {
@@ -241,7 +241,7 @@ class DestinationRetrievalStrategyResolver
         prepareSupplierAllDestinations( @Nonnull final DestinationServiceRetrievalStrategy strategy )
             throws IllegalArgumentException
     {
-        warnOrThrowOnDeprecatedOrUnsupportedCombinations(strategy, null);
+        warnOrThrowOnUnsupportedCombinations(strategy, null);
         switch( strategy ) {
             case ALWAYS_PROVIDER: {
                 return () -> allDestinationRetriever.apply(TECHNICAL_USER_PROVIDER);

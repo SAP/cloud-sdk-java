@@ -106,7 +106,7 @@ class DestinationServicePrincipalPropagationTest
                 .withCredentials(credentials)
                 .build();
 
-        OAuth2ServiceImpl.clearCache();
+        OAuth2Service.clearCache();
 
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
         DestinationService.Cache.reset();
@@ -135,7 +135,7 @@ class DestinationServicePrincipalPropagationTest
         AuthTokenAccessor.setAuthTokenFacade(null);
         TenantAccessor.setTenantFacade(null);
         PrincipalAccessor.setPrincipalFacade(null);
-        OAuth2ServiceImpl.clearCache();
+        OAuth2Service.clearCache();
     }
 
     @Test
@@ -178,7 +178,7 @@ class DestinationServicePrincipalPropagationTest
             .satisfiesExactly(
                 provider -> assertThat(provider).isInstanceOf(SapConnectivityLocationIdHeaderProvider.class),
                 provider -> assertThat(provider).isInstanceOf(SapConnectivityAuthenticationHeaderProvider.class),
-                provider -> assertThat(provider).isInstanceOf(OAuthHeaderProvider.class));
+                provider -> assertThat(provider).isInstanceOf(OAuth2HeaderProvider.class));
 
         // assert headers
         WireMock.verify(0, postRequestedFor(anyUrl()));

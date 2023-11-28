@@ -23,10 +23,10 @@ import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import lombok.SneakyThrows;
 
-class OAuth2ServiceImplTest
+class OAuth2ServiceTest
 {
     private static final ResilienceConfiguration NO_RESILIENCE =
-        ResilienceConfiguration.empty(OAuth2ServiceImplTest.class.getName() + "_empty");
+        ResilienceConfiguration.empty(OAuth2ServiceTest.class.getName() + "_empty");
 
     @Test
     @SneakyThrows
@@ -44,7 +44,7 @@ class OAuth2ServiceImplTest
         // as per API contract, that seems to be a valid outcome.
         doReturn(null).when(clientCredentialsTokenFlows).execute();
 
-        final OAuth2ServiceImpl sut = spy(new OAuth2ServiceImpl("some.uri", identity, TECHNICAL_USER_PROVIDER));
+        final OAuth2Service sut = spy(new OAuth2Service("some.uri", identity, TECHNICAL_USER_PROVIDER));
         doReturn(tokenFlows).when(sut).getTokenFlowFactory(isNull());
 
         assertThatThrownBy(() -> sut.retrieveAccessToken(NO_RESILIENCE))

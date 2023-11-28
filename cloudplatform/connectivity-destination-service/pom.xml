@@ -53,6 +53,7 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
+		<!-- Included by default to serve as the default implementation -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-oauth</artifactId>
@@ -239,10 +240,8 @@
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
-						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
+						<!-- Included by default to serve as the default implementation for service binding connectivity -->
 						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
-						<!-- needed for exception classes (i.e. NoServiceBindingException) -->
-						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>

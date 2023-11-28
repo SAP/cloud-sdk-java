@@ -13,7 +13,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
@@ -26,7 +25,6 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import io.vavr.control.Option;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -38,15 +36,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @WebFilter( filterName = "RequestAccessorFilter", urlPatterns = "/*" )
 @Slf4j
-@Beta
 public class RequestAccessorFilter implements Filter
 {
-    @Override
-    public void init( @Nonnull final FilterConfig filterConfig )
-    {
-
-    }
-
     @Override
     public void doFilter(
         @Nonnull final ServletRequest request,
@@ -100,11 +91,5 @@ public class RequestAccessorFilter implements Filter
                 .peek(values -> headers.put(headerName.get(), Collections.list(values)));
         }
         return DefaultRequestHeaderContainer.fromMultiValueMap(headers);
-    }
-
-    @Override
-    public void destroy()
-    {
-
     }
 }

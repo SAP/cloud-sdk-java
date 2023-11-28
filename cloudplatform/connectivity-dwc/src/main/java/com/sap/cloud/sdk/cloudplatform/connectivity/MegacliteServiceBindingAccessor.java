@@ -38,6 +38,8 @@ public class MegacliteServiceBindingAccessor implements ServiceBindingAccessor
      * The {@link MegacliteServiceBinding} for the connectivity service. In case you want to access on-premise systems
      * via Megaclite, you need to register this service binding manually using
      * {@link #registerServiceBinding(MegacliteServiceBinding)}.
+     *
+     * @since 5.0.0
      */
     @Nonnull
     public static final MegacliteServiceBinding CONNECTIVITY_BINDING =
