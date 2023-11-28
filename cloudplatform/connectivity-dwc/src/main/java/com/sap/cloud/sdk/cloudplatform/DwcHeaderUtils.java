@@ -32,15 +32,7 @@ public class DwcHeaderUtils
      */
     public static final String DWC_TENANT_HEADER = "dwc-tenant";
     /**
-     * The name of the header that contains the Deploy with Confidence client information.
-     */
-    public static final String DWC_CLIENT_HEADER = "dwc-client";
-    /**
      * The name of the header that contains the Deploy with Confidence scopes information.
-     */
-    public static final String DWC_SCOPES_HEADER = "dwc-scopes";
-    /**
-     * The name of the header that contains the Deploy with Confidence subdomain information.
      */
     public static final String DWC_SUBDOMAIN_HEADER = "dwc-subdomain";
 

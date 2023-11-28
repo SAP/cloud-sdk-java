@@ -47,7 +47,7 @@
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<scp-cf.xsuaa-client.version>3.2.1</scp-cf.xsuaa-client.version>
+		<scp-cf.xsuaa-client.version>3.3.0</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.9</slf4j.version>
