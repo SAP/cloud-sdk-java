@@ -32,22 +32,27 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
 {{/withXml}}
 {{/jackson}}
 {{#withXml}}
-import javax.xml.bind.annotation.*;
+import {{javaxPackage}}.xml.bind.annotation.*;
 {{/withXml}}
 {{#parcelableModel}}
 import android.os.Parcelable;
 import android.os.Parcel;
 {{/parcelableModel}}
 {{#useBeanValidation}}
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import {{javaxPackage}}.validation.constraints.*;
+import {{javaxPackage}}.validation.Valid;
 {{/useBeanValidation}}
 {{#performBeanValidation}}
 import org.hibernate.validator.constraints.*;
 {{/performBeanValidation}}
+{{#supportUrlQuery}}
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.StringJoiner;
+{{/supportUrlQuery}}
 {{^isReleased}}import com.google.common.annotations.Beta;{{/isReleased}}
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import {{javaxPackage}}.annotation.Nonnull;
+import {{javaxPackage}}.annotation.Nullable;
 
 {{#models}}
 {{#model}}
