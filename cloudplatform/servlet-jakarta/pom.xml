@@ -34,7 +34,7 @@
 	</scm>
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Beta</x-sap-release-maturity>
+		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 	</properties>
 	<dependencies>
 		<dependency>
