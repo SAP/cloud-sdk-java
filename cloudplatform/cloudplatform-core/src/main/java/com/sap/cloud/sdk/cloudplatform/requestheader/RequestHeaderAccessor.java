@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Accessor for retrieving the {@link RequestHeaderContainer} of the current context.
  */
-@Beta
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
 @Slf4j
 public final class RequestHeaderAccessor
@@ -47,6 +46,7 @@ public final class RequestHeaderAccessor
      *            The {@link RequestHeaderFacade} to use, or {@code null} if the default {@link RequestHeaderFacade}
      *            should be used.
      */
+    @Beta
     public static void setHeaderFacade( @Nullable final RequestHeaderFacade requestHeaderFacade )
     {
         if( requestHeaderFacade == null ) {

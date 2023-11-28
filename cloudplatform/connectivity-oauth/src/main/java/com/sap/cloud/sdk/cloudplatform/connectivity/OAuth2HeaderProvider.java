@@ -18,11 +18,11 @@ import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class OAuthHeaderProvider implements DestinationHeaderProvider
+class OAuth2HeaderProvider implements DestinationHeaderProvider
 {
     static final String PROPERTY_OAUTH2_RESILIENCE_CONFIG = "oauth-resilience-config";
     @Nonnull
-    private final OAuth2ServiceImpl oauth2service;
+    private final OAuth2Service oauth2service;
     @Nonnull
     private final String authHeaderName;
 

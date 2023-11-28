@@ -383,9 +383,9 @@ class OAuth2ServiceBindingDestinationLoaderTest
         HttpDestination result =
             sut.toDestination(baseUrl, tokenUrl, credentials, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, TEST_SERVICE);
 
-        assertThat(result.get(OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
+        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
         ResilienceConfiguration config =
-            (ResilienceConfiguration) result.get(OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
+            (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
         assertThat(config.identifier()).startsWith(TEST_SERVICE.toString());
 
         result =
@@ -397,8 +397,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        assertThat(result.get(OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
-        config = (ResilienceConfiguration) result.get(OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
+        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
+        config = (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
         assertThat(config.identifier()).startsWith(baseDestination.get(DestinationProperty.NAME).get());
     }
 

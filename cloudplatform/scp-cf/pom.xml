@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>scp-cf</artifactId>
 	<name>(Deprecated) Business Technology Platform - SAP BTP Cloud Foundry</name>
-	<description>Deprecated, please use com.sap.cloud.sdk:sdk-core</description>
+	<description>Deprecated, please use 'com.sap.cloud.sdk:sdk-core' instead.</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
 	<organization>
 		<name>SAP SE</name>

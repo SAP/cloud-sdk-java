@@ -110,21 +110,6 @@ public class DestinationService implements DestinationLoader
             createResilienceConfiguration("allDestResilience", DEFAULT_TIME_LIMITER, DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
     }
 
-    /**
-     * Create instance with a specific TimeLimiter timeout {@link Duration}.
-     *
-     * @param timeLimiterTimeout
-     *            The maximum {@link Duration} a request may take before the TimeLimiter interrupts the request.
-     * @deprecated Please use {@link Builder#withTimeLimiterConfiguration} to supply a time limiter configuration.
-     */
-    @Deprecated
-    public DestinationService( @Nonnull final Duration timeLimiterTimeout )
-    {
-        this(new DestinationServiceAdapter());
-        singleDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
-        allDestResilience.timeLimiterConfiguration(TimeLimiterConfiguration.of(timeLimiterTimeout));
-    }
-
     @Nonnull
     static ResilienceConfiguration createResilienceConfiguration(
         @Nonnull final String identifier,

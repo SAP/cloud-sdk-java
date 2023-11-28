@@ -44,12 +44,12 @@ import lombok.extern.slf4j.Slf4j;
  * This interface handles the communication with an OAuth2 service.
  */
 @Slf4j
-class OAuth2ServiceImpl
+class OAuth2Service
 {
     /**
      * Cache to reuse OAuth2TokenService and with that reuse the underlying response cache.
      * <p>
-     * The {@code OAuth2ServiceImpl} is newly instantiated by {@code OAuth2DestinationBuilder} and
+     * The {@code OAuth2Service} is newly instantiated by {@code OAuth2DestinationBuilder} and
      * {@code OAuth2ServiceBindingDestinationLoader} for each destination they build/load. This means, without the
      * cache, also new {@code OAuth2TokenService} would be created for each destination, which in turns defeats the
      * purpose of the response cache used therein.
@@ -68,7 +68,7 @@ class OAuth2ServiceImpl
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
 
-    OAuth2ServiceImpl( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
+    OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
