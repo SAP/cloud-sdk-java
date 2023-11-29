@@ -12,11 +12,11 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.archetypes",
-    "artifactId": "scp-cf-spring-jakarta",
+    "artifactId": "spring-boot3",
     "packaging": "maven-archetype",
     "releaseAudience": "Public",
-    "releaseMaturity": "Beta",
-    "pomFile": "archetypes/scp-cf-spring-jakarta/pom.xml",
+    "releaseMaturity": "Stable",
+    "pomFile": "archetypes/spring-boot3/pom.xml",
     "parentGroupId": "com.sap.cloud.sdk.archetypes",
     "parentArtifactId": "archetypes-parent",
     "excludeFromBlackDuckScan": false
