@@ -31,6 +31,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.sap.cloud.sdk</groupId>
+                <artifactId>sdk-bom</artifactId>
+                <version>${cloud-sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.sap.cloud.security</groupId>
                 <artifactId>java-bom</artifactId>
                 <version>${security-lib.version}</version>
@@ -41,13 +48,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sap.cloud.sdk</groupId>
-                <artifactId>sdk-bom</artifactId>
-                <version>${cloud-sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({"com.sap.cloud.sdk", "${package}"})
-@ServletComponentScan({"com.sap.cloud.sdk.cloudplatform.servletjakarta", "${package}"})
+@ServletComponentScan({"com.sap.cloud.sdk", "${package}"})
 public class Application extends SpringBootServletInitializer
 {
     @Override
