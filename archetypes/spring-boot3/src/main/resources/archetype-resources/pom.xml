@@ -12,10 +12,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring-boot.version>3.1.4</spring-boot.version>
+        <spring-boot.version>3.1.5</spring-boot.version>
 
         <java.version>17</java.version>
-        <security-lib.version>3.2.1</security-lib.version>
         <cloud-sdk.version>5.0.0-alpha-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -36,13 +35,6 @@
                 <version>${cloud-sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sap.cloud.security</groupId>
-                <artifactId>java-bom</artifactId>
-                <version>${security-lib.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
