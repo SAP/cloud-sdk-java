@@ -613,8 +613,6 @@
 										<includes>
 											<include>javax:javaee-api:*:*:provided</include>
 											<include>javax:javaee-api:*:*:test</include>
-											<include>javax.inject:javax.inject:*:*:provided</include>
-											<include>javax.inject:javax.inject:*:*:test</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:provided</include>
 											<include>javax.ws.rs:javax.ws.rs-api:*:*:test</include>
 										</includes>
