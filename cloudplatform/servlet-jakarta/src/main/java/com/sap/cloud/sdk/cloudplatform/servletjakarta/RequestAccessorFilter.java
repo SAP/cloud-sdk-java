@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.servletjakarta;
 
+import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener.PROPERTY_REQUEST_HEADERS;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -16,13 +18,13 @@ import javax.annotation.Nonnull;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
-import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
@@ -38,6 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestAccessorFilter implements Filter
 {
+    static final String PROPERTY_SERVLET_REQUEST_SCHEME = "servlet-scheme";
+    static final String PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS = "servlet-remote-address";
+
     @Override
     public void doFilter(
         @Nonnull final ServletRequest request,
@@ -69,9 +74,13 @@ public class RequestAccessorFilter implements Filter
         storeServletProperties( @Nonnull final HttpServletRequest servlet, @Nonnull final ThreadContext threadContext )
     {
         threadContext
+            .setPropertyIfAbsent(PROPERTY_REQUEST_HEADERS, Property.decorateCallable(() -> extractHeaders(servlet)));
+        threadContext
+            .setPropertyIfAbsent(PROPERTY_SERVLET_REQUEST_SCHEME, Property.decorateCallable(servlet::getScheme));
+        threadContext
             .setPropertyIfAbsent(
-                RequestHeaderThreadContextListener.PROPERTY_REQUEST_HEADERS,
-                Property.decorateCallable(() -> extractHeaders(servlet)));
+                PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS,
+                () -> Property.ofTry(Try.of(servlet::getRemoteAddr)));
     }
 
     @Nonnull
