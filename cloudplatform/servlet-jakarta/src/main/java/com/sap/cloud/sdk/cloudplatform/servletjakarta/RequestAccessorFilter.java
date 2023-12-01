@@ -24,7 +24,6 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 
 import io.vavr.control.Option;
-import io.vavr.control.Try;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;

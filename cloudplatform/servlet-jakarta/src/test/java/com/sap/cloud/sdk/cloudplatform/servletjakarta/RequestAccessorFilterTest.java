@@ -32,7 +32,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 class RequestAccessorFilterTest
 {
-
     @Test
     void testFilterInactive()
         throws ServletException,
