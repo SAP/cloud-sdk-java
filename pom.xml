@@ -118,7 +118,6 @@
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
 		<stax2-api.version>4.2.1</stax2-api.version>
-		<netty.version>4.1.98.Final</netty.version>
 		<bouncycastle.version>1.76</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
@@ -127,7 +126,6 @@
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.8</byte-buddy.version>
-		<hamcrest-core.version>2.2</hamcrest-core.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
