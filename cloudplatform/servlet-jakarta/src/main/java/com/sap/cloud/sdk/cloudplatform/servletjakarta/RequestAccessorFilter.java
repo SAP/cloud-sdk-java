@@ -39,6 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestAccessorFilter implements Filter
 {
+    /**
+     * Properties required for compatibility with SDK v4 to work with the audit log dependencies.
+     */
     static final String PROPERTY_SERVLET_REQUEST_SCHEME = "servlet-scheme";
     static final String PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS = "servlet-remote-address";
 
