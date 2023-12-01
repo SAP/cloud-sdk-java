@@ -99,9 +99,8 @@
 		<slf4j.version>2.0.9</slf4j.version>
 		<assertj-core.version>3.24.2</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.5.0</mockito.version>
+		<mockito.version>5.7.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
-		<arquillian.version>1.5.0.Final</arquillian.version>
 		<junit.jupiter.version>5.10.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>4.10.0</olingo-v4.version>
@@ -138,14 +137,6 @@
 				<groupId>com.sap.cloud.sdk</groupId>
 				<artifactId>sdk-bom</artifactId>
 				<version>${sdk.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- Imported to resolve dependency convergences with org.apache.tomee:arquillian-tomee-embedded -->
-			<dependency>
-				<groupId>org.jboss.arquillian</groupId>
-				<artifactId>arquillian-bom</artifactId>
-				<version>${arquillian.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -417,6 +408,12 @@
 				<artifactId>stax2-api</artifactId>
 				<version>${stax2-api.version}</version>
 			</dependency>
+			<!--Used to override version 1.7.36 coming from openapi-generator -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-ext</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
 			<!--Used for dependency convergence in datamodel-metadata-generator-->
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -433,25 +430,11 @@
 				<artifactId>kotlin-stdlib</artifactId>
 				<version>${kotlin.version}</version>
 			</dependency>
-			<!--For dependency convergence error between wiremock-jre8 and junit-->
-			<dependency>
-				<groupId>org.hamcrest</groupId>
-				<artifactId>hamcrest-core</artifactId>
-				<version>${hamcrest-core.version}</version>
-				<scope>test</scope>
-			</dependency>
 			<!--For dependency convergence error between assertj-core and mockito-core-->
 			<dependency>
 				<groupId>net.bytebuddy</groupId>
 				<artifactId>byte-buddy</artifactId>
 				<version>${byte-buddy.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- Added to resolve dependency convergence between wiremock-jre8 and jetty -->
-			<dependency>
-				<groupId>org.ow2.asm</groupId>
-				<artifactId>asm</artifactId>
-				<version>9.5</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- Added to resolve dependency convergence between httpclient5, httpclient, and olingo-odata2-core -->
