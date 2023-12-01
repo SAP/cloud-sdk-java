@@ -80,7 +80,7 @@ public class RequestAccessorFilter implements Filter
         threadContext
             .setPropertyIfAbsent(
                 PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS,
-                () -> Property.ofTry(Try.of(servlet::getRemoteAddr)));
+                Property.decorateCallable(servlet::getRemoteAddr));
     }
 
     @Nonnull
