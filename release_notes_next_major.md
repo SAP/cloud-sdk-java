@@ -13,6 +13,11 @@ blog: https://blogs.sap.com/?p=xxx
 - The SAP Cloud SDK has switched its license from [SAP DEVELOPER LICENSE AGREEMENT](https://tools.hana.ondemand.com/developer-license-3_1.txt) to [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 - The SAP Cloud SDK has switched the minimum required Java version to 17
 - The SAP Cloud SDK version 5 is no longer compatible with Spring version 5, the [XSUAA Client Library](https://github.com/SAP/cloud-security-services-integration-library) version 2, the SAP Java Buildpack version 1 and TomEE version 8.x or 9.x.
+- Following module is now stable:
+  - Cloud Platform - Servlet Jakarta compatible: `com.sap.cloud.sdk.cloudplatform:servlet-jakarta`
+- Following modules have been deprecated:
+  - `com.sap.cloud.sdk.cloudplatform:scp-cf` has been deprecated in favor of `com.sap.cloud.sdk:sdk-core`
+  - `com.sap.cloud.sdk.cloudplatform:dwc-cf` has been deprecated in favor of both `com.sap.cloud.sdk:sdk-core` and `com.sap.cloud.sdk.cloudplatform:connectivity-dwc`
 - Following modules have been removed:
   - SAP Java Buildpack BOM: `com.sap.cloud.sdk:sdk-sjb-bom`
   - (Parent Module) `com.sap.cloud.sdk.plugins:plugins-parent`
@@ -43,6 +48,7 @@ blog: https://blogs.sap.com/?p=xxx
     - Services - Shared Ledger Client: `com.sap.cloud.sdk.services:btp-shared-ledger-client`
     - Services - BTP Cloud Foundry Workflow API: `com.sap.cloud.sdk.services:scp-workflow-cf`
     - Services - SAP Business Rules (Beta): `com.sap.cloud.sdk.services:btp-business-rules`
+  - Cloud Platform - Servlet: `com.sap.cloud.sdk.cloudplatform:servlet`
   - Cloud Platform - SAP Passport: `com.sap.cloud.sdk.cloudplatform:sap-passport`
   - Cloud Platform - Core SAP Deploy with Confidence (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc`
   - Cloud Platform - Core SAP Deploy with Confidence on Cloud Foundry (Beta): `com.sap.cloud.sdk.cloudplatform:cloudplatform-core-dwc-cf`
@@ -57,7 +63,6 @@ blog: https://blogs.sap.com/?p=xxx
     - Cloud Platform - Auditlog - SCP CF: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-cf`
     - Cloud Platform - Auditlog - SCP Neo: `com.sap.cloud.sdk.cloudplatform:auditlog-scp-neo`
     - As part of removing these modules, we also removed the integration of the Auditlog service with the S/4HANA connectivity features. Consumers who relied on this out-of-the-box integration are asked to approach the development team by [creating a GitHub support issue](https://github.com/SAP/cloud-sdk-java/issues/new) for migration guidance.
-  - The module `com.sap.cloud.sdk.cloudplatform:scp-cf` has been deprecated in favor of `com.sap.cloud.sdk:sdk-core`
 - Following public classes have been removed:
   - Related to the `Destination` API:
     - Within the [Business Technology Platform - Connectivity](https://search.maven.org/search?q=g:com.sap.cloud.sdk.cloudplatform%20AND%20a:cloudplatform-connectivity) Module:
