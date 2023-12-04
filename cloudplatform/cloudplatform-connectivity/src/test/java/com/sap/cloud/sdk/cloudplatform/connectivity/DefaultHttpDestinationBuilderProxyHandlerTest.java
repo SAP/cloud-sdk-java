@@ -188,7 +188,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
                 .builder(uri)
                 .proxyType(ProxyType.ON_PREMISE)
                 .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
-                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.COMPATIBILITY);
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_FORWARDING);
 
         // test
         final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
@@ -216,7 +216,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
                 .builder(uri)
                 .proxyType(ProxyType.ON_PREMISE)
                 .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
-                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.RECOMMENDED);
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_EXCHANGE);
 
         // test
         final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);

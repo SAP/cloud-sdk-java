@@ -121,7 +121,7 @@ class ConnectivityServiceTest
                 .builder("http://buzz/")
                 .proxyType(ProxyType.ON_PREMISE)
                 .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
-                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.COMPATIBILITY)
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_FORWARDING)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
         final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
@@ -204,7 +204,7 @@ class ConnectivityServiceTest
                 .builder("http://buzz/")
                 .proxyType(ProxyType.ON_PREMISE)
                 .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
-                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.RECOMMENDED)
+                .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_EXCHANGE)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
         final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
