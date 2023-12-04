@@ -95,12 +95,12 @@ class DefaultHttpDestinationBuilderProxyHandler
             final PrincipalPropagationMode mode =
                 builder
                     .get(DestinationProperty.PRINCIPAL_PROPAGATION_MODE)
-                    .getOrElse(PrincipalPropagationMode.COMPATIBILITY);
+                    .getOrElse(PrincipalPropagationMode.TOKEN_FORWARDING);
 
             switch( mode ) {
-                case RECOMMENDED:
+                case TOKEN_EXCHANGE:
                     return OnBehalfOf.NAMED_USER_CURRENT_TENANT;
-                case COMPATIBILITY: // default
+                case TOKEN_FORWARDING: // default
                     builder.headerProviders(new SapConnectivityAuthenticationHeaderProvider());
                     return OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
                 case UNKNOWN:
