@@ -31,8 +31,6 @@ public enum PrincipalPropagationMode
      * user.</li>
      * <li>token (principal) with technical credentials of connectivity service binding.</li>
      * </ul>
-     * <p>
-     * <strong>Note:</strong> Despite the name, we're not recommending this mode by default.
      */
     TOKEN_EXCHANGE,
 
