@@ -22,14 +22,14 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
-public class TestApi extends AbstractOpenApiService
+class TestApi extends AbstractOpenApiService
 {
-    public TestApi( @Nonnull final Destination httpDestination )
+    TestApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
 
-    public Object testMethod()
+    Object testMethod()
         throws OpenApiRequestException
     {
         final Object postBody = null;

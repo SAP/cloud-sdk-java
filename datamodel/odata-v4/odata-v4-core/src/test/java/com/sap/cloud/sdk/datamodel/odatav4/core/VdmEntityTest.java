@@ -8,14 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;
 
-public class VdmEntityTest
+class VdmEntityTest
 {
     @Test
-    public void testModifications()
+    void testModifications()
     {
         final TestEntity entity = new TestEntity();
         assertThat(entity).isEqualTo(new TestEntity());
@@ -40,7 +40,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testChangedNonCustomFields()
+    void testChangedNonCustomFields()
     {
         final TestEntity entity = TestEntity.builder().id("old").build();
 
@@ -54,7 +54,7 @@ public class VdmEntityTest
     }
 
     @Test
-    public void testChangedCustomFields()
+    void testChangedCustomFields()
     {
         final TestEntity entity = TestEntity.builder().id("id").build();
 

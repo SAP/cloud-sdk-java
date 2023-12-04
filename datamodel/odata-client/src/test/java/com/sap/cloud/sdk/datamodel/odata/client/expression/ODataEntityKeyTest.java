@@ -9,26 +9,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 
-public class ODataEntityKeyTest
+class ODataEntityKeyTest
 {
     ODataEntityKey keyV2;
     ODataEntityKey keyV4;
 
-    @Before
-    public void setupKey()
+    @BeforeEach
+    void setupKey()
     {
         keyV2 = new ODataEntityKey(ODataProtocol.V2);
         keyV4 = new ODataEntityKey(ODataProtocol.V4);
     }
 
     @Test
-    public void testEncoding()
+    void testEncoding()
     {
         keyV2.addKeyProperty("key", "/? #&value%$");
         keyV4.addKeyProperty("key", "/? #&value%$");
@@ -40,7 +40,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testEncodingForComplexKeys()
+    void testEncodingForComplexKeys()
     {
         keyV2.addKeyProperty("key1#&%$", "/? #&value%$");
         keyV2.addKeyProperty("key2", "value");
@@ -52,7 +52,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testNoEncodingForSafeChars()
+    void testNoEncodingForSafeChars()
     {
         keyV2.addKeyProperty("key1", "-._~!$'(");
         keyV4.addKeyProperty("key1", "-._~!$'(");
@@ -64,7 +64,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testQuoteEscaping()
+    void testQuoteEscaping()
     {
         keyV2.addKeyProperty("key", "valu'e");
         keyV4.addKeyProperty("key", "valu'e");
@@ -74,7 +74,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testEmptyKey()
+    void testEmptyKey()
     {
         assertThat(keyV2).hasToString("()");
         assertThat(keyV2.toEncodedString()).isEqualTo("()");
@@ -84,7 +84,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testNullKey()
+    void testNullKey()
     {
         keyV2.addKeyProperty("key", null);
         assertThat(keyV2.toEncodedString()).isEqualTo("(null)");
@@ -93,7 +93,7 @@ public class ODataEntityKeyTest
     }
 
     @Test
-    public void testDataTypeSerialisationV4()
+    void testDataTypeSerialisationV4()
     {
 
         final String expected =

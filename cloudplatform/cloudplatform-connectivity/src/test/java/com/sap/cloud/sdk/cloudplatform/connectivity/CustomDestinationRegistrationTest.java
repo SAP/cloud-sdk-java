@@ -8,12 +8,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
-public class CustomDestinationRegistrationTest
+class CustomDestinationRegistrationTest
 {
     private static final HttpDestination httpDestination =
         DefaultHttpDestination.builder("foo").name("httpDestination").build();
@@ -21,14 +21,14 @@ public class CustomDestinationRegistrationTest
     private static final RfcDestination rfcDestination =
         DefaultDestination.builder().name("rfcDestination").build().asRfc();
 
-    @Before
-    public void resetDestinationAccessor()
+    @BeforeEach
+    void resetDestinationAccessor()
     {
         DestinationAccessor.setLoader(null);
     }
 
     @Test
-    public void testBasicUseCase()
+    void testBasicUseCase()
     {
         final DefaultDestinationLoader loader =
             new DefaultDestinationLoader().registerDestination(httpDestination).registerDestination(rfcDestination);
@@ -43,14 +43,14 @@ public class CustomDestinationRegistrationTest
     }
 
     @Test
-    public void testGetNonExistingDestination()
+    void testGetNonExistingDestination()
     {
         assertThatThrownBy(() -> DestinationAccessor.getDestination("foo"))
             .isInstanceOf(DestinationNotFoundException.class);
     }
 
     @Test
-    public void testDestinationsWithSameName()
+    void testDestinationsWithSameName()
     {
         final HttpDestination httpDestination1 = httpDestination;
         final HttpDestination httpDestination2 = DefaultHttpDestination.fromProperties(httpDestination1).build();
@@ -64,7 +64,7 @@ public class CustomDestinationRegistrationTest
     }
 
     @Test
-    public void testDestinationsWithoutName()
+    void testDestinationsWithoutName()
     {
         final DefaultDestinationLoader loader = new DefaultDestinationLoader();
         assertThatExceptionOfType(IllegalArgumentException.class)

@@ -6,6 +6,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -18,12 +19,12 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.typeconverter.ConvertedObject;
@@ -36,9 +37,9 @@ import com.sap.conn.jco.JCoTable;
 
 import lombok.SneakyThrows;
 
-@RunWith( MockitoJUnitRunner.class )
+@ExtendWith( MockitoExtension.class )
 @Deprecated
-public class JCoTransactionValueTest
+class JCoTransactionValueTest
 {
     private static final String BAPI_NAME = "BAPI_NAME";
     private static final String FIELD_NAME = "FIELD_NAME";
@@ -74,35 +75,35 @@ public class JCoTransactionValueTest
     JCoTransaction<BapiRequest, BapiRequestResult> jCoTransaction;
     BapiRequest request;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
-    public void setupMockedObjects()
+    void setupMockedObjects()
     {
-        when(jCoDestination.getRepository()).thenReturn(jCoRepository);
-        when(jCoRepository.getFunction(eq(BAPI_NAME))).thenReturn(jCoFunction);
+        lenient().when(jCoDestination.getRepository()).thenReturn(jCoRepository);
+        lenient().when(jCoRepository.getFunction(eq(BAPI_NAME))).thenReturn(jCoFunction);
 
-        when(importParameters.iterator()).thenReturn(Collections.emptyIterator());
-        when(jCoFunction.getImportParameterList()).thenReturn(importParameters);
+        lenient().when(importParameters.iterator()).thenReturn(Collections.emptyIterator());
+        lenient().when(jCoFunction.getImportParameterList()).thenReturn(importParameters);
 
-        when(exportParameters.iterator()).thenReturn(Collections.emptyIterator());
-        when(jCoFunction.getExportParameterList()).thenReturn(exportParameters);
+        lenient().when(exportParameters.iterator()).thenReturn(Collections.emptyIterator());
+        lenient().when(jCoFunction.getExportParameterList()).thenReturn(exportParameters);
 
-        when(changingParameters.iterator()).thenReturn(Collections.emptyIterator());
-        when(jCoFunction.getChangingParameterList()).thenReturn(changingParameters);
+        lenient().when(changingParameters.iterator()).thenReturn(Collections.emptyIterator());
+        lenient().when(jCoFunction.getChangingParameterList()).thenReturn(changingParameters);
 
-        when(tableParameters.iterator()).thenReturn(Collections.emptyIterator());
-        when(jCoFunction.getTableParameterList()).thenReturn(tableParameters);
+        lenient().when(tableParameters.iterator()).thenReturn(Collections.emptyIterator());
+        lenient().when(jCoFunction.getTableParameterList()).thenReturn(tableParameters);
 
         jCoTransaction = new JCoTransaction<>(jCoDestination, BapiRequestResult::new);
         request = new BapiRequest(BAPI_NAME);
 
-        when(exportParameters.getStructure(STRUCTURE_NAME)).thenReturn(structure);
-        when(exportParameters.getTable(TABLE_NAME)).thenReturn(table);
+        lenient().when(exportParameters.getStructure(STRUCTURE_NAME)).thenReturn(structure);
+        lenient().when(exportParameters.getTable(TABLE_NAME)).thenReturn(table);
     }
 
     @SneakyThrows
     @Test
-    public void testRootValueString()
+    void testRootValueString()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, "STRING");
         jCoTransaction.execute(destination, request);
@@ -111,7 +112,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueBoolean()
+    void testRootValueBoolean()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, true);
         jCoTransaction.execute(destination, request);
@@ -120,7 +121,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueByte()
+    void testRootValueByte()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, (byte) 42);
         jCoTransaction.execute(destination, request);
@@ -129,7 +130,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueByteArray()
+    void testRootValueByteArray()
     {
         request.withExporting(FIELD_NAME, FIELD_TYPE, "foo".getBytes());
         jCoTransaction.execute(destination, request);
@@ -138,7 +139,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueCharacter()
+    void testRootValueCharacter()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, 'A');
         jCoTransaction.execute(destination, request);
@@ -147,7 +148,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueShort()
+    void testRootValueShort()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, (short) 1);
         jCoTransaction.execute(destination, request);
@@ -156,7 +157,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueInteger()
+    void testRootValueInteger()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, 1);
         jCoTransaction.execute(destination, request);
@@ -165,7 +166,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueLong()
+    void testRootValueLong()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, 1L);
         jCoTransaction.execute(destination, request);
@@ -174,7 +175,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueFloat()
+    void testRootValueFloat()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, 1F);
         jCoTransaction.execute(destination, request);
@@ -183,7 +184,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueDouble()
+    void testRootValueDouble()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, 1.0);
         jCoTransaction.execute(destination, request);
@@ -192,7 +193,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueBigDecimal()
+    void testRootValueBigDecimal()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, BigDecimal.ONE);
         jCoTransaction.execute(destination, request);
@@ -201,7 +202,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueBigInteger()
+    void testRootValueBigInteger()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, BigInteger.ONE);
         jCoTransaction.execute(destination, request);
@@ -210,7 +211,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueLocale()
+    void testRootValueLocale()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, Locale.ENGLISH);
         jCoTransaction.execute(destination, request);
@@ -219,7 +220,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueYear()
+    void testRootValueYear()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, new com.sap.cloud.sdk.s4hana.types.Year(1996));
         jCoTransaction.execute(destination, request);
@@ -228,7 +229,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueLocalTime()
+    void testRootValueLocalTime()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, LocalTime.of(13, 37));
         jCoTransaction.execute(destination, request);
@@ -237,7 +238,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueLocalDate()
+    void testRootValueLocalDate()
     {
         request.withImporting(FIELD_NAME, FIELD_TYPE, LocalDate.of(2000, 1, 1));
         jCoTransaction.execute(destination, request);
@@ -246,7 +247,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueString()
+    void testInStructureValueString()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, "STRING").end();
         jCoTransaction.execute(destination, request);
@@ -255,7 +256,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueBoolean()
+    void testInStructureValueBoolean()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, true).end();
         jCoTransaction.execute(destination, request);
@@ -264,7 +265,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueByte()
+    void testInStructureValueByte()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, (byte) 42).end();
         jCoTransaction.execute(destination, request);
@@ -273,7 +274,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueCharacter()
+    void testInStructureValueCharacter()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, 'A').end();
         jCoTransaction.execute(destination, request);
@@ -282,7 +283,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueShort()
+    void testInStructureValueShort()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, (short) 1).end();
         jCoTransaction.execute(destination, request);
@@ -291,7 +292,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueInteger()
+    void testInStructureValueInteger()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, 1).end();
         jCoTransaction.execute(destination, request);
@@ -300,7 +301,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueLong()
+    void testInStructureValueLong()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, 1L).end();
         jCoTransaction.execute(destination, request);
@@ -309,7 +310,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueFloat()
+    void testInStructureValueFloat()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, 1F).end();
         jCoTransaction.execute(destination, request);
@@ -318,7 +319,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueDouble()
+    void testInStructureValueDouble()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, 1.0).end();
         jCoTransaction.execute(destination, request);
@@ -327,7 +328,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueBigDecimal()
+    void testInStructureValueBigDecimal()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, BigDecimal.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -336,7 +337,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueBigInteger()
+    void testInStructureValueBigInteger()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, BigInteger.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -345,7 +346,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueLocale()
+    void testInStructureValueLocale()
     {
         request.withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE).field(FIELD_NAME, FIELD_TYPE, Locale.ENGLISH).end();
         jCoTransaction.execute(destination, request);
@@ -354,7 +355,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueYear()
+    void testInStructureValueYear()
     {
         request
             .withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE)
@@ -366,7 +367,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueLocalTime()
+    void testInStructureValueLocalTime()
     {
         request
             .withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE)
@@ -378,7 +379,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueLocalDate()
+    void testInStructureValueLocalDate()
     {
         request
             .withImportingFields(STRUCTURE_NAME, STRUCTURE_TYPE)
@@ -390,7 +391,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueString()
+    void testInTableValueString()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, "STRING").end();
         jCoTransaction.execute(destination, request);
@@ -399,7 +400,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueBoolean()
+    void testInTableValueBoolean()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, true).end();
         jCoTransaction.execute(destination, request);
@@ -408,7 +409,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueByte()
+    void testInTableValueByte()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, (byte) 42).end();
         jCoTransaction.execute(destination, request);
@@ -417,7 +418,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueCharacter()
+    void testInTableValueCharacter()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, 'A').end();
         jCoTransaction.execute(destination, request);
@@ -426,7 +427,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueShort()
+    void testInTableValueShort()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, (short) 1).end();
         jCoTransaction.execute(destination, request);
@@ -435,7 +436,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueInteger()
+    void testInTableValueInteger()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, 1).end();
         jCoTransaction.execute(destination, request);
@@ -444,7 +445,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueLong()
+    void testInTableValueLong()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, 1L).end();
         jCoTransaction.execute(destination, request);
@@ -453,7 +454,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueFloat()
+    void testInTableValueFloat()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, 1F).end();
         jCoTransaction.execute(destination, request);
@@ -462,7 +463,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueDouble()
+    void testInTableValueDouble()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, 1.0).end();
         jCoTransaction.execute(destination, request);
@@ -471,7 +472,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueBigDecimal()
+    void testInTableValueBigDecimal()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, BigDecimal.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -480,7 +481,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueBigInteger()
+    void testInTableValueBigInteger()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, BigInteger.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -489,7 +490,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueLocale()
+    void testInTableValueLocale()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).row().field(FIELD_NAME, FIELD_TYPE, Locale.ENGLISH).end();
         jCoTransaction.execute(destination, request);
@@ -498,7 +499,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueYear()
+    void testInTableValueYear()
     {
         request
             .withImportingTable(TABLE_NAME, TABLE_TYPE)
@@ -511,7 +512,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueLocalTime()
+    void testInTableValueLocalTime()
     {
         request
             .withImportingTable(TABLE_NAME, TABLE_TYPE)
@@ -524,7 +525,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueLocalDate()
+    void testInTableValueLocalDate()
     {
         request
             .withImportingTable(TABLE_NAME, TABLE_TYPE)
@@ -537,7 +538,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueString()
+    void testInVectorTableValueString()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row("STRING").end();
         jCoTransaction.execute(destination, request);
@@ -546,7 +547,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueBoolean()
+    void testInVectorTableValueBoolean()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(true).end();
         jCoTransaction.execute(destination, request);
@@ -555,7 +556,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueByte()
+    void testInVectorTableValueByte()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row((byte) 42).end();
         jCoTransaction.execute(destination, request);
@@ -564,7 +565,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueCharacter()
+    void testInVectorTableValueCharacter()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row('A').end();
         jCoTransaction.execute(destination, request);
@@ -573,7 +574,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueShort()
+    void testInVectorTableValueShort()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row((short) 1).end();
         jCoTransaction.execute(destination, request);
@@ -582,7 +583,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueInteger()
+    void testInVectorTableValueInteger()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(1).end();
         jCoTransaction.execute(destination, request);
@@ -591,7 +592,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueLong()
+    void testInVectorTableValueLong()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(1L).end();
         jCoTransaction.execute(destination, request);
@@ -600,7 +601,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueFloat()
+    void testInVectorTableValueFloat()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(1F).end();
         jCoTransaction.execute(destination, request);
@@ -609,7 +610,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueDouble()
+    void testInVectorTableValueDouble()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(1.0).end();
         jCoTransaction.execute(destination, request);
@@ -618,7 +619,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueBigDecimal()
+    void testInVectorTableValueBigDecimal()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(BigDecimal.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -627,7 +628,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueBigInteger()
+    void testInVectorTableValueBigInteger()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(BigInteger.ONE).end();
         jCoTransaction.execute(destination, request);
@@ -636,7 +637,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueLocale()
+    void testInVectorTableValueLocale()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(Locale.ENGLISH).end();
         jCoTransaction.execute(destination, request);
@@ -645,7 +646,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueYear()
+    void testInVectorTableValueYear()
     {
         request
             .withImportingTable(TABLE_NAME, TABLE_TYPE)
@@ -658,7 +659,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueLocalTime()
+    void testInVectorTableValueLocalTime()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(LocalTime.of(13, 37)).end();
         jCoTransaction.execute(destination, request);
@@ -667,7 +668,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueLocalDate()
+    void testInVectorTableValueLocalDate()
     {
         request.withImportingTable(TABLE_NAME, TABLE_TYPE).asVector().row(LocalDate.of(2000, 1, 1)).end();
         jCoTransaction.execute(destination, request);
@@ -676,7 +677,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testRootValueErpType()
+    void testRootValueErpType()
     {
         final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient =
             spy(com.sap.cloud.sdk.s4hana.serialization.SapClient.of("012"));
@@ -689,7 +690,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInStructureValueErpType()
+    void testInStructureValueErpType()
     {
         final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient =
             spy(com.sap.cloud.sdk.s4hana.serialization.SapClient.of("012"));
@@ -702,7 +703,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInTableValueErpType()
+    void testInTableValueErpType()
     {
         final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient =
             spy(com.sap.cloud.sdk.s4hana.serialization.SapClient.of("012"));
@@ -715,7 +716,7 @@ public class JCoTransactionValueTest
 
     @SneakyThrows
     @Test
-    public void testInVectorTableValueErpType()
+    void testInVectorTableValueErpType()
     {
         final com.sap.cloud.sdk.s4hana.serialization.SapClient sapClient =
             spy(com.sap.cloud.sdk.s4hana.serialization.SapClient.of("012"));
@@ -726,11 +727,11 @@ public class JCoTransactionValueTest
         verify(sapClient).getTypeConverter(); // success
     }
 
-    @Ignore // CLOUDECOSYSTEM-9104
+    @Disabled // CLOUDECOSYSTEM-9104
     @SuppressWarnings( "unchecked" )
     @SneakyThrows
     @Test
-    public void testRootValueCustomType()
+    void testRootValueCustomType()
     {
         final Object valueRaw = new Object();
         final com.sap.cloud.sdk.s4hana.serialization.ErpTypeConverter<Object> valueTypeConverter =
@@ -746,11 +747,11 @@ public class JCoTransactionValueTest
         verify(valueTypeConverter).toDomain(eq(valueRaw)); // fail
     }
 
-    @Ignore // CLOUDECOSYSTEM-9104
+    @Disabled // CLOUDECOSYSTEM-9104
     @SuppressWarnings( "unchecked" )
     @SneakyThrows
     @Test
-    public void testInStructureCustomType()
+    void testInStructureCustomType()
     {
         final Object valueRaw = new Object();
         final com.sap.cloud.sdk.s4hana.serialization.ErpTypeConverter<Object> valueTypeConverter =
@@ -769,11 +770,11 @@ public class JCoTransactionValueTest
         verify(valueTypeConverter).toDomain(eq(valueRaw)); // fail
     }
 
-    @Ignore // CLOUDECOSYSTEM-9104
+    @Disabled // CLOUDECOSYSTEM-9104
     @SuppressWarnings( "unchecked" )
     @SneakyThrows
     @Test
-    public void testInTableCustomType()
+    void testInTableCustomType()
     {
         final Object valueRaw = new Object();
         final com.sap.cloud.sdk.s4hana.serialization.ErpTypeConverter<Object> valueTypeConverter =
@@ -793,11 +794,11 @@ public class JCoTransactionValueTest
         verify(valueTypeConverter).toDomain(eq(valueRaw)); // fail
     }
 
-    @Ignore // CLOUDECOSYSTEM-9104
+    @Disabled // CLOUDECOSYSTEM-9104
     @SuppressWarnings( "unchecked" )
     @SneakyThrows
     @Test
-    public void testInVectorTableCustomType()
+    void testInVectorTableCustomType()
     {
         final Object valueRaw = new Object();
         final com.sap.cloud.sdk.s4hana.serialization.ErpTypeConverter<Object> valueTypeConverter =

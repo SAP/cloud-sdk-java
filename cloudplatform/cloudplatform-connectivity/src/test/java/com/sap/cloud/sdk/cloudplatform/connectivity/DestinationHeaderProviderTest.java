@@ -15,17 +15,17 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;
 
-public class DestinationHeaderProviderTest
+class DestinationHeaderProviderTest
 {
     private static final String DESTINATION_NAME = "TestDestination";
     private static final Header TEST_HEADER = new Header("Expected-Header", "present");
 
     @Test
-    public void testHeaderProvidersAreInvoked()
+    void testHeaderProvidersAreInvoked()
     {
         final String uri = "some-uri";
 
@@ -59,7 +59,7 @@ public class DestinationHeaderProviderTest
     }
 
     @Test
-    public void testProvidersAreLoaded()
+    void testProvidersAreLoaded()
     {
         final DefaultHttpDestination destination = DefaultHttpDestination.builder("bar").name(DESTINATION_NAME).build();
 

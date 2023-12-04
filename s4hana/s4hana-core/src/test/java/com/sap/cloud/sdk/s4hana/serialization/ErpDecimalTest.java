@@ -5,17 +5,18 @@
 package com.sap.cloud.sdk.s4hana.serialization;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 
 import org.assertj.core.data.Offset;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated
-public class ErpDecimalTest
+class ErpDecimalTest
 {
     @Test
-    public void testErpDecimal()
+    void testErpDecimal()
     {
         {
             final ErpDecimal erpDecimal = new ErpDecimal(new BigDecimal(42));
@@ -34,15 +35,15 @@ public class ErpDecimalTest
         }
     }
 
-    @Test( expected = NumberFormatException.class )
-    public void testInvalidNumberFormatWithString()
+    @Test
+    void testInvalidNumberFormatWithString()
     {
-        new ErpDecimal("abc");
+        assertThatThrownBy(() -> new ErpDecimal("abc")).isExactlyInstanceOf(NumberFormatException.class);
     }
 
-    @Test( expected = NumberFormatException.class )
-    public void testInvalidNumberFormatWithAlphanumericString()
+    @Test
+    void testInvalidNumberFormatWithAlphanumericString()
     {
-        new ErpDecimal("10a");
+        assertThatThrownBy(() -> new ErpDecimal("10a")).isExactlyInstanceOf(NumberFormatException.class);
     }
 }

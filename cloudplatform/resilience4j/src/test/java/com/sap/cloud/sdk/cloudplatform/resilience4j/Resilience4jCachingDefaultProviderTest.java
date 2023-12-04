@@ -39,11 +39,11 @@ import javax.annotation.Nullable;
 import javax.cache.Caching;
 
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -57,19 +57,19 @@ import com.sap.cloud.sdk.testutil.MockUtil;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-public class Resilience4jCachingDefaultProviderTest
+class Resilience4jCachingDefaultProviderTest
 {
     private static final MockUtil mockUtil = new MockUtil();
 
-    @BeforeClass
-    public static void beforeClass()
+    @BeforeAll
+    static void beforeClass()
     {
         ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
     }
 
-    @Before
-    @After
-    public void cleanupAroundTests()
+    @BeforeEach
+    @AfterEach
+    void cleanupAroundTests()
     {
         mockUtil.clearTenants();
         mockUtil.clearPrincipals();
@@ -77,7 +77,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithDefaultProvider()
+    void testCachingWithDefaultProvider()
     {
         // resilient configuration with cache
         final ResilienceConfiguration configuration =
@@ -115,7 +115,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithDifferentIsolationModes()
+    void testCachingWithDifferentIsolationModes()
     {
         mockTenantAndPrincipal("TestTenant", "TestUser");
 
@@ -152,7 +152,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithDifferentUsers()
+    void testCachingWithDifferentUsers()
     {
         final String tenantId = "TestTenant";
 
@@ -178,7 +178,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithDifferentKeyComponents()
+    void testCachingWithDifferentKeyComponents()
     {
         final List<String> testWords =
             Lists
@@ -217,7 +217,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithDifferentTenants()
+    void testCachingWithDifferentTenants()
     {
         final String userName = "TestUser";
 
@@ -243,7 +243,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCachingWithoutProvider()
+    void testCachingWithoutProvider()
     {
         // resilient configuration with cache
         final ResilienceConfiguration configuration =
@@ -264,7 +264,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testFallbackResultIsNotCached()
+    void testFallbackResultIsNotCached()
         throws Exception
     {
         mockTenantAndPrincipal("TestTenant", "TestUser");
@@ -306,7 +306,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testAutomaticCacheRecreation()
+    void testAutomaticCacheRecreation()
         throws Exception
     {
         final int testParam = 0;
@@ -322,7 +322,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testCacheIsNotRecreated()
+    void testCacheIsNotRecreated()
         throws Exception
     {
         final int testParam = 0;
@@ -337,7 +337,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testClearCacheWithParameterIsolation()
+    void testClearCacheWithParameterIsolation()
         throws Exception
     {
         final ResilienceConfiguration configurationWithoutParameters =
@@ -364,7 +364,7 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    public void testClearCacheRespectsParameterOrder()
+    void testClearCacheRespectsParameterOrder()
         throws Exception
     {
         final ResilienceConfiguration firstConfiguration =
@@ -395,7 +395,7 @@ public class Resilience4jCachingDefaultProviderTest
     @Test
     @SneakyThrows
     @SuppressWarnings( "unchecked" )
-    public void testCacheLockingOnSameKeyIsLocked()
+    void testCacheLockingOnSameKeyIsLocked()
     {
         final String identifier = "test.check.cache.locked.supplier";
         final ResilienceConfiguration configuration =
@@ -434,7 +434,7 @@ public class Resilience4jCachingDefaultProviderTest
     @Test
     @SneakyThrows
     @SuppressWarnings( "unchecked" )
-    public void testCacheLockingOnDifferentCachesIsNotLocked()
+    void testCacheLockingOnDifferentCachesIsNotLocked()
     {
         final ResilienceConfiguration configuration1 =
             ResilienceConfiguration
@@ -467,8 +467,8 @@ public class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    @Ignore( "Flaky test to provoke race potential conditions. For manual testing only" )
-    public void loadTestConcurrentCaching()
+    @Disabled( "Flaky test to provoke race potential conditions. For manual testing only" )
+    void loadTestConcurrentCaching()
     {
         final ResilienceConfiguration configuration =
             ResilienceConfiguration

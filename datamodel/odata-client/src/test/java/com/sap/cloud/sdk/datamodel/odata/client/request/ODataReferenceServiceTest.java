@@ -25,7 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Disabled( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
-public class ODataReferenceServiceTest
+class ODataReferenceServiceTest
 {
     @Data
     @NoArgsConstructor
@@ -49,7 +49,7 @@ public class ODataReferenceServiceTest
     }
 
     @Test
-    public void testGetFiltered()
+    void testGetFiltered()
     {
         final Destination httpDestination = DefaultHttpDestination.builder("https://services.odata.org").build();
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);

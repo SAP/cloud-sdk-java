@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 
-public class ServiceBindingDestinationOptionsTest
+class ServiceBindingDestinationOptionsTest
 {
     private static final ServiceBinding TEST_BINDING;
 
@@ -35,14 +35,14 @@ public class ServiceBindingDestinationOptionsTest
         when(TEST_BINDING.getServiceIdentifier()).thenReturn(Optional.of(ServiceIdentifier.DESTINATION));
     }
 
-    @After
-    public void cleanup()
+    @AfterEach
+    void cleanup()
     {
         DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
-    public void testCanBeCreatedWithoutServiceIdentifier()
+    void testCanBeCreatedWithoutServiceIdentifier()
     {
         final ServiceBinding mock = mock(ServiceBinding.class);
         when(mock.getServiceIdentifier()).thenReturn(Optional.empty());
@@ -52,7 +52,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testCanBeCreatedWithoutExplicitOnBehalfOf()
+    void testCanBeCreatedWithoutExplicitOnBehalfOf()
     {
         final ServiceBindingDestinationOptions sut = ServiceBindingDestinationOptions.forService(TEST_BINDING).build();
 
@@ -64,7 +64,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testGetModifiedBehalf()
+    void testGetModifiedBehalf()
     {
         final ServiceBindingDestinationOptions sut =
             ServiceBindingDestinationOptions
@@ -77,7 +77,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testGetDestinationWithProxy()
+    void testGetDestinationWithProxy()
     {
         final HttpDestination mock = mock(HttpDestination.class);
 
@@ -92,7 +92,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testServiceBindingIsLoadedIfNotGiven()
+    void testServiceBindingIsLoadedIfNotGiven()
     {
         DefaultServiceBindingAccessor.setInstance(() -> Collections.singletonList(TEST_BINDING));
         final ServiceBindingDestinationOptions sut =
@@ -102,7 +102,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testServiceBindingLoadingFails()
+    void testServiceBindingLoadingFails()
     {
         assertThatThrownBy(() -> ServiceBindingDestinationOptions.forService(ServiceIdentifier.DESTINATION).build())
             .isExactlyInstanceOf(DestinationAccessException.class)
@@ -110,7 +110,7 @@ public class ServiceBindingDestinationOptionsTest
     }
 
     @Test
-    public void testIllegalOptionInputs()
+    void testIllegalOptionInputs()
     {
         assertThatThrownBy(
             () -> ServiceBindingDestinationOptions.forService(mock(ServiceBinding.class)).withOption(() -> "foo"))

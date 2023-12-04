@@ -6,13 +6,13 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated
-public class AbapToSoapNameConverterTest
+class AbapToSoapNameConverterTest
 {
     @Test
-    public void testTransformAbapFieldNameToSoapName()
+    void testTransformAbapFieldNameToSoapName()
     {
         final String abapFieldName1 = "FIELD";
         final String abapFieldName2 = "FIEL_D";
@@ -32,7 +32,7 @@ public class AbapToSoapNameConverterTest
     }
 
     @Test
-    public void testTransformFunctionNameToSoapMessageName()
+    void testTransformFunctionNameToSoapMessageName()
     {
         final String functionName1 = "BAPI_FUNCTION_FIND";
         final String functionName2 = "BAPI_FUN_FUN_FUNCTION_CHECK";
@@ -48,7 +48,7 @@ public class AbapToSoapNameConverterTest
     }
 
     @Test
-    public void testTransformShortAbapFunctionNameToSoapServiceName()
+    void testTransformShortAbapFunctionNameToSoapServiceName()
     {
         final String functionName1 = "UKM_FOO_BAR";
         final String functionName2 = "BAPI_FOO_BAR";
@@ -68,7 +68,7 @@ public class AbapToSoapNameConverterTest
     }
 
     @Test
-    public void testTransformLongAbapFunctionNameToSoapServiceName()
+    void testTransformLongAbapFunctionNameToSoapServiceName()
     {
         final String functionName1 = "BAPI_LOOOOOOOOONG_NAAAAAAAAME";
         final String functionName2 = "FCXL_LOOOOOOOOONG_NAAAAAAAAME";

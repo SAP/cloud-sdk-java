@@ -16,13 +16,15 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.entity.ContentType;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.gson.JsonSyntaxException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
@@ -30,12 +32,10 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.TrippinService;
 
-public class CountEntityUnitTest
+@WireMockTest
+class CountEntityUnitTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
-
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
 
     private DefaultHttpDestination destination;
     private TrippinService service;
@@ -43,15 +43,15 @@ public class CountEntityUnitTest
     private static final String COUNT_REQUEST_URL =
         String.format("%s/%s/$count", TrippinService.DEFAULT_SERVICE_PATH, "People");
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         service = new DefaultTrippinService().withServicePath(TrippinService.DEFAULT_SERVICE_PATH);
     }
 
     @Test
-    public void testSuccessfulCount()
+    void testSuccessfulCount()
     {
         stubFor(
             get(urlPathEqualTo(COUNT_REQUEST_URL))
@@ -68,7 +68,7 @@ public class CountEntityUnitTest
     }
 
     @Test
-    public void testFailCountNull()
+    void testFailCountNull()
     {
         stubFor(
             get(urlPathEqualTo(COUNT_REQUEST_URL))
@@ -80,7 +80,7 @@ public class CountEntityUnitTest
     }
 
     @Test
-    public void testFailCountEmpty()
+    void testFailCountEmpty()
     {
         stubFor(
             get(urlPathEqualTo(COUNT_REQUEST_URL))
@@ -92,7 +92,7 @@ public class CountEntityUnitTest
     }
 
     @Test
-    public void testFailCountJson()
+    void testFailCountJson()
     {
         stubFor(get(urlPathEqualTo(COUNT_REQUEST_URL)).willReturn(okJson("{\"foo\":\"bar\"}")));
         assertThatCode(() -> service.countPeople().execute(destination))
@@ -100,7 +100,7 @@ public class CountEntityUnitTest
     }
 
     @Test
-    public void testFailCountNoInteger()
+    void testFailCountNoInteger()
     {
         stubFor(
             get(urlPathEqualTo(COUNT_REQUEST_URL))

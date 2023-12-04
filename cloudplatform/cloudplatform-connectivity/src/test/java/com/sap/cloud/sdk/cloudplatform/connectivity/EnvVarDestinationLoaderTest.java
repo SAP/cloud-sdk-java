@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.function.Function;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
@@ -20,10 +20,10 @@ import io.vavr.collection.HashMap;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 
-public class EnvVarDestinationLoaderTest
+class EnvVarDestinationLoaderTest
 {
     @Test
-    public void testBasicDestinationAttributes()
+    void testBasicDestinationAttributes()
     {
         final String destinationName = "someDestination";
         final URI destinationUri = URI.create("https://www.sap.de");
@@ -49,7 +49,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testCompleteDestinationAttributes()
+    void testCompleteDestinationAttributes()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -117,7 +117,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testProxyUriSpecified()
+    void testProxyUriSpecified()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -143,7 +143,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testProxyUriAndProxyHostAndPortSpecified()
+    void testProxyUriAndProxyHostAndPortSpecified()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -171,7 +171,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testProxyHostAndPortSpecified()
+    void testProxyHostAndPortSpecified()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -198,7 +198,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testProxyTypeUncommonSpelling()
+    void testProxyTypeUncommonSpelling()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -233,7 +233,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testAdditionalProperty()
+    void testAdditionalProperty()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -266,7 +266,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testDestinationWithoutNameProperty()
+    void testDestinationWithoutNameProperty()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -290,7 +290,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testUpperAndLowerCaseInParameterNames()
+    void testUpperAndLowerCaseInParameterNames()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -316,7 +316,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testFallbackPropertyKeys()
+    void testFallbackPropertyKeys()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -349,7 +349,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testFallbackToBasicAuth()
+    void testFallbackToBasicAuth()
     {
         final String destinationName = "MyDestination";
         final String variableContent =
@@ -378,7 +378,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testEmptyEnvironmentVariable()
+    void testEmptyEnvironmentVariable()
     {
         final String variableContent = "[]";
         final String variableName = "destinations";
@@ -390,7 +390,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testMissingEnvironmentVariable()
+    void testMissingEnvironmentVariable()
     {
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, null);
@@ -400,7 +400,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void tokenForwardingInJsonShouldBeReadAsTokenForwardingAuthenticationType()
+    void tokenForwardingInJsonShouldBeReadAsTokenForwardingAuthenticationType()
     {
         final String variableName = "destinations";
 
@@ -425,7 +425,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void forwardAuthTokenInJsonShouldBeReadAsTokenForwardingAuthenticationType()
+    void forwardAuthTokenInJsonShouldBeReadAsTokenForwardingAuthenticationType()
     {
         final String variableName = "destinations";
 
@@ -450,7 +450,7 @@ public class EnvVarDestinationLoaderTest
     }
 
     @Test
-    public void testGetAllDestinations()
+    void testGetAllDestinations()
     {
         final String variableContent =
             "["

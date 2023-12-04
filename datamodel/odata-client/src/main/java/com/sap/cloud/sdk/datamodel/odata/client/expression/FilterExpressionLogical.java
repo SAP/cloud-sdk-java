@@ -14,6 +14,16 @@ import javax.annotation.Nonnull;
  */
 public interface FilterExpressionLogical
 {
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} and {@code operand2} are equal
+     * ({@code "eq"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -23,6 +33,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} and {@code operand2} are not equal
+     * ({@code "ne"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -32,6 +52,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is greater than {@code operand2}
+     * ({@code "gt"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -41,6 +71,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is greater than or equal to
+     * {@code operand2} ({@code "ge"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -50,6 +90,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is less than {@code operand2}
+     * ({@code "lt"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -59,6 +109,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is less than or equal to
+     * {@code operand2} ({@code "le"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -68,6 +128,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether both {@code operand1} and {@code operand2} are true
+     * ({@code "and"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static ValueBoolean.Expression and( @Nonnull final ValueBoolean operand1, @Nonnull final ValueBoolean operand2 )
     {
@@ -75,6 +145,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} or {@code operand2} is true
+     * ({@code "or"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static ValueBoolean.Expression or( @Nonnull final ValueBoolean operand1, @Nonnull final ValueBoolean operand2 )
     {
@@ -82,6 +162,13 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that negates the {@code operand} ({@code "not"}).
+     *
+     * @param operand
+     *            The operand to negate.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static ValueBoolean.Expression not( @Nonnull final ValueBoolean operand )
     {
@@ -89,6 +176,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} has {@code operand2}
+     * ({@code "has"}).
+     *
+     * @param operand1
+     *            The first operand.
+     * @param operand2
+     *            The second operand.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -98,6 +195,16 @@ public interface FilterExpressionLogical
         return new ValueBoolean.Expression(expression);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is contained in {@code operands2}
+     * ({@code "in"}).
+     *
+     * @param operand1
+     *            The potential member.
+     * @param operands2
+     *            The potential container.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression
@@ -110,6 +217,16 @@ public interface FilterExpressionLogical
         return in(operand1, operand2);
     }
 
+    /**
+     * Returns a {@link ValueBoolean.Expression} that checks whether {@code operand1} is contained in {@code operand2}
+     * ({@code "in"}).
+     *
+     * @param operand1
+     *            The potential member.
+     * @param operand2
+     *            The potential container.
+     * @return A {@link ValueBoolean.Expression}.
+     */
     @Nonnull
     static
         ValueBoolean.Expression

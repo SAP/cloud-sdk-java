@@ -13,10 +13,8 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.exception.RequestHeadersAccessException;
@@ -26,17 +24,16 @@ import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
 import io.vavr.control.Try;
 
-@RunWith( MockitoJUnitRunner.class )
-public class HttpDestinationPropertiesTest
+class HttpDestinationPropertiesTest
 {
-    @After
-    public void resetRequestContext()
+    @AfterEach
+    void resetRequestContext()
     {
         RequestHeaderAccessor.setHeaderFacade(null);
     }
 
     @Test
-    public void tokenForwardingShouldTakeTokenFromCurrentRequestHeaders()
+    void tokenForwardingShouldTakeTokenFromCurrentRequestHeaders()
     {
         final String authHeaderValue = "BeArEr someToken";
         final RequestHeaderContainer headers =
@@ -54,7 +51,7 @@ public class HttpDestinationPropertiesTest
     }
 
     @Test
-    public void tokenForwardingShouldNotForwardOnNonGivenRequestHeader()
+    void tokenForwardingShouldNotForwardOnNonGivenRequestHeader()
     {
         // no headers present
         RequestHeaderAccessor.setHeaderFacade(() -> Try.success(RequestHeaderContainer.EMPTY));
@@ -69,7 +66,7 @@ public class HttpDestinationPropertiesTest
     }
 
     @Test
-    public void tokenForwardingShouldNotForwardOnNonExistingRequestHeaders()
+    void tokenForwardingShouldNotForwardOnNonExistingRequestHeaders()
     {
         RequestHeaderAccessor.setHeaderFacade(() -> Try.failure(new RequestHeadersAccessException()));
 
@@ -83,7 +80,7 @@ public class HttpDestinationPropertiesTest
     }
 
     @Test
-    public void tokenForwardingShouldForwardAllHeadersOnMultipleAuthHeaders()
+    void tokenForwardingShouldForwardAllHeadersOnMultipleAuthHeaders()
     {
         final String[] headerValues = { "some Value", "some other Value" };
         final DefaultRequestHeaderContainer.Builder headerBuilder = DefaultRequestHeaderContainer.builder();
@@ -106,7 +103,7 @@ public class HttpDestinationPropertiesTest
     }
 
     @Test
-    public void tokenForwardingShouldNotForwardOnNullHeaderValues()
+    void tokenForwardingShouldNotForwardOnNullHeaderValues()
     {
         final RequestHeaderContainer headers = mock(RequestHeaderContainer.class);
         when(headers.getHeaderValues(eq(HttpHeaders.AUTHORIZATION))).thenReturn(Collections.singletonList(null));
@@ -123,7 +120,7 @@ public class HttpDestinationPropertiesTest
     }
 
     @Test
-    public void tokenForwardingShouldIgnoreOtherHeadersInCurrentRequest()
+    void tokenForwardingShouldIgnoreOtherHeadersInCurrentRequest()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer.builder().withHeader("SomeOtherKey", "Some other value").build();

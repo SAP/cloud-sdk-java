@@ -14,26 +14,26 @@ import static org.mockito.Mockito.verify;
 
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 @SuppressWarnings( "unchecked" )
-public class DwcConfigurationTest
+class DwcConfigurationTest
 {
     private Function<String, String> envVarMock;
     private DwcConfiguration sut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         envVarMock = mock(Function.class);
         sut = new DwcConfiguration(envVarMock);
     }
 
     @Test
-    public void testConfigIsLazyLoaded()
+    void testConfigIsLazyLoaded()
     {
         final String input =
             "{\"megaclite\": {\"url\": \"my.megaclite.sap\"}, \"orbitProviderTenantId\": \"some tenant id\"}";
@@ -50,7 +50,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testReadMalformedMegacliteUrlFromDwcApplication()
+    void testReadMalformedMegacliteUrlFromDwcApplication()
     {
         final String input = "{\"megaclite\": {\"url\": \"this is not an url\"}}";
         doReturn(input).when(envVarMock).apply(eq("DWC_APPLICATION"));
@@ -60,7 +60,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testMissingMegacliteEntryInDwcApplication()
+    void testMissingMegacliteEntryInDwcApplication()
     {
         final String input = "{}";
         doReturn(input).when(envVarMock).apply(eq("DWC_APPLICATION"));
@@ -70,7 +70,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testMissingUrlEntryInDwcApplication()
+    void testMissingUrlEntryInDwcApplication()
     {
         final String input = "{\"megaclite\": {}}";
         doReturn(input).when(envVarMock).apply(eq("DWC_APPLICATION"));
@@ -80,7 +80,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testLoadMegacliteUrlWithoutDwcApplicationEnvironmentVariable()
+    void testLoadMegacliteUrlWithoutDwcApplicationEnvironmentVariable()
     {
         doReturn(null).when(envVarMock).apply(eq("DWC_APPLICATION"));
 
@@ -89,7 +89,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testLoadProviderTenantIdWithoutDwcApplicationEnvironmentVariable()
+    void testLoadProviderTenantIdWithoutDwcApplicationEnvironmentVariable()
     {
         doReturn(null).when(envVarMock).apply(eq("DWC_APPLICATION"));
 
@@ -98,7 +98,7 @@ public class DwcConfigurationTest
     }
 
     @Test
-    public void testLoadProviderTenantIdWithMalformedDwcApplication()
+    void testLoadProviderTenantIdWithMalformedDwcApplication()
     {
         final String input = "{\"orbitProviderTenantId\": {\"nestedProperty\": \"value\"}}";
         doReturn(input).when(envVarMock).apply(eq("DWC_APPLICATION"));

@@ -102,7 +102,7 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
                 // be sure to use exactly this instance of connectivityResolver since it has a cache attached
                 .headerProviders(connectivityResolver);
 
-        return proxyUrl.map(builder::proxy).map(DefaultHttpDestination.Builder::build);
+        return proxyUrl.map(builder::proxy).map(DefaultHttpDestination.Builder::buildInternal);
     }
 
     @Nonnull

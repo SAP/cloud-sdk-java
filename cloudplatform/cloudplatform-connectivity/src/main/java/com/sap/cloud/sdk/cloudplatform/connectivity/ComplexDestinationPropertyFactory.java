@@ -103,10 +103,9 @@ class ComplexDestinationPropertyFactory
         if( log.isErrorEnabled() ) {
             final String maskedCredentials =
                 proxyAuth.substring(0, Math.max(0, Math.min(4, proxyAuth.length() - 4))) + "****";
-            log
-                .error(
-                    "Unsupported proxy credentials: {}. The only supported credential types are 'Bearer' and 'Basic'.",
-                    maskedCredentials);
+            final String msg =
+                "Unsupported proxy credentials: {}. The only supported credential types are 'Bearer' and 'Basic'.";
+            log.error(msg, maskedCredentials);
         }
 
         return null;
@@ -152,11 +151,8 @@ class ComplexDestinationPropertyFactory
         final Option<ProxyType> proxyType = baseProperties.get(DestinationProperty.PROXY_TYPE);
 
         if( proxyType.isEmpty() ) {
-            log
-                .debug(
-                    "No valid JSON primitive '{}' defined. Falling back to {}.",
-                    DestinationProperty.PROXY_TYPE,
-                    ProxyType.INTERNET);
+            final String msg = "No valid JSON primitive '{}' defined. Falling back to {}.";
+            log.debug(msg, DestinationProperty.PROXY_TYPE, ProxyType.INTERNET);
             return Option.of(ProxyType.INTERNET);
         }
 
@@ -177,14 +173,8 @@ class ComplexDestinationPropertyFactory
         }
 
         if( log.isDebugEnabled() ) {
-            log
-                .debug(
-                    "No valid JSON primitives '"
-                        + DestinationProperty.BASIC_AUTH_USERNAME.getKeyName()
-                        + "' and '"
-                        + DestinationProperty.BASIC_AUTH_PASSWORD.getKeyName()
-                        + "' defined. "
-                        + "Continuing without basic credentials.");
+            final String msg = "No valid JSON primitives '{}' and '{}' defined. Continuing without basic credentials.";
+            log.debug(msg, DestinationProperty.BASIC_AUTH_USERNAME, DestinationProperty.BASIC_AUTH_PASSWORD);
         }
         return Option.none();
     }
@@ -210,12 +200,8 @@ class ComplexDestinationPropertyFactory
                 fallback = AuthenticationType.NO_AUTHENTICATION;
             }
 
-            log
-                .debug(
-                    "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.",
-                    DestinationProperty.AUTH_TYPE,
-                    DestinationProperty.AUTH_TYPE_FALLBACK,
-                    fallback);
+            final String msg = "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.";
+            log.debug(msg, DestinationProperty.AUTH_TYPE, DestinationProperty.AUTH_TYPE_FALLBACK, fallback);
 
             return fallback;
         }
@@ -231,7 +217,7 @@ class ComplexDestinationPropertyFactory
             if( StringUtils.startsWithIgnoreCase(propertyKey, HEADER_PROPERTY) ) {
                 final Option<String> propertyValue = baseProperties.get(propertyKey, String.class);
                 if( propertyValue.isEmpty() ) {
-                    log.debug("Cannot find header value for " + propertyKey + ". Skipping the header.");
+                    log.debug("Cannot find header value for {}. Skipping the header.", propertyKey);
                     continue;
                 }
                 final Header header = new Header(propertyKey.substring(HEADER_PROPERTY.length()), propertyValue.get());

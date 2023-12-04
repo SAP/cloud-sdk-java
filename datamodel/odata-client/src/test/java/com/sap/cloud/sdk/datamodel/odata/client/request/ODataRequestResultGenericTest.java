@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -15,10 +16,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.SocketException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
@@ -108,7 +114,7 @@ class ODataRequestResultGenericTest
     }
 
     @Test
-    public void getHeaderValuesShouldHandleKeyInsensitivity()
+    void getHeaderValuesShouldHandleKeyInsensitivity()
     {
         final ODataRequestResult result = mock(ODataRequestResult.class);
         final HttpResponse mockedResponse = mock(HttpResponse.class);
@@ -131,5 +137,33 @@ class ODataRequestResultGenericTest
 
         assertThat(result.getHeaderValues("someOtherKey")).containsExactly("someOtherValue");
         assertThat(result.getHeaderValues("SOMEotherKEY")).containsExactly("someOtherValue");
+    }
+
+    @Test
+    @SneakyThrows
+    void ensureNoRedundantHeadersForPaginatedRequests()
+    {
+        final ODataRequestGeneric oDataRequest =
+            new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
+
+        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "OK");
+        final String json = "{\"value\":[],\"@odata.nextLink\": \"Foo?$count=true&$select=BarID&$skiptoken='ABCD'\"}";
+        httpResponse.setEntity(new StringEntity(json));
+
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.execute(any())).thenReturn(httpResponse);
+
+        final ODataRequestResultGeneric testResult =
+            new ODataRequestResultGeneric(oDataRequest, httpResponse, httpClient);
+
+        ODataRequestResultGeneric nextResult = testResult.tryGetNextPage().get();
+        nextResult = nextResult.tryGetNextPage().get();
+        nextResult = nextResult.tryGetNextPage().get();
+        nextResult = nextResult.tryGetNextPage().get();
+        nextResult = nextResult.tryGetNextPage().get();
+        nextResult = nextResult.tryGetNextPage().get();
+
+        final Map<String, Collection<String>> lastRequestHeaders = nextResult.getODataRequest().getHeaders();
+        assertThat(lastRequestHeaders).containsExactly(entry("Accept", Collections.singletonList("application/json")));
     }
 }

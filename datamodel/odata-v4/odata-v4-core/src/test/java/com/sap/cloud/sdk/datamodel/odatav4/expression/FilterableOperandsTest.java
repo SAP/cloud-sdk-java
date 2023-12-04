@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FilterExpression;
 import com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty;
@@ -29,7 +29,7 @@ import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEnum;
 
 import lombok.Getter;
 
-public class FilterableOperandsTest
+class FilterableOperandsTest
 {
     private static class TestEntity extends VdmEntity<TestEntity>
     {
@@ -60,7 +60,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableBoolean()
+    void testFilterableBoolean()
     {
         final SimpleProperty.Boolean<TestEntity> f1 = new SimpleProperty.Boolean<>(TestEntity.class, "Field1");
         final String expression = f1.and(true).and(f1).not().or(true).or(f1).getExpression(V4);
@@ -68,7 +68,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableCollection()
+    void testFilterableCollection()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.Collection<TestEntity, Integer> telephone =
@@ -150,7 +150,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableComplex()
+    void testFilterableComplex()
     {
         final ComplexProperty.Single<TestEntity, TestComputer> f1 =
             new ComplexProperty.Single<>(TestEntity.class, "OperatingSystem", TestComputer.class);
@@ -169,7 +169,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableTime()
+    void testFilterableTime()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.Time<TestEntity> time = new SimpleProperty.Time<>(TestEntity.class, "Registration");
@@ -181,7 +181,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableDate()
+    void testFilterableDate()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.Date<TestEntity> date = new SimpleProperty.Date<>(TestEntity.class, "Registration");
@@ -211,7 +211,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableDateTime()
+    void testFilterableDateTime()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.DateTime<TestEntity> dt = new SimpleProperty.DateTime<>(TestEntity.class, "Registration");
@@ -240,7 +240,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableDuration()
+    void testFilterableDuration()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.Duration<TestEntity> duration =
@@ -268,7 +268,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableNumberApiInteger()
+    void testFilterableNumberApiInteger()
     {
         final SimpleProperty.NumericInteger<TestEntity> number =
             new SimpleProperty.NumericInteger<>(TestEntity.class, "Age");
@@ -334,7 +334,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableNumberApiDecimal()
+    void testFilterableNumberApiDecimal()
     {
         final SimpleProperty.NumericDecimal<TestEntity> number =
             new SimpleProperty.NumericDecimal<>(TestEntity.class, "Size");
@@ -410,7 +410,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableNumber()
+    void testFilterableNumber()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.NumericInteger<TestEntity> number =
@@ -498,7 +498,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testGuid()
+    void testGuid()
     {
         final SimpleProperty.Guid<TestEntity> id = new SimpleProperty.Guid<>(TestEntity.class, "Id");
         assertThat(id.equalTo(UUID.fromString("b3e130fe-d72c-4a5b-8dcf-463b497f985c")).getExpression(V4))
@@ -506,7 +506,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableString()
+    void testFilterableString()
     {
         final SoftAssertions softly = new SoftAssertions();
         final SimpleProperty.String<TestEntity> name = new SimpleProperty.String<>(TestEntity.class, "Name");
@@ -547,7 +547,7 @@ public class FilterableOperandsTest
     }
 
     @Test
-    public void testFilterableEnum()
+    void testFilterableEnum()
     {
         final SoftAssertions softly = new SoftAssertions();
         softly

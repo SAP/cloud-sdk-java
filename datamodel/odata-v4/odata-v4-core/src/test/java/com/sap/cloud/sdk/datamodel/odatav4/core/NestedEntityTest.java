@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
@@ -27,12 +26,12 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCount;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestCreate;
@@ -45,25 +44,23 @@ import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.P
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class NestedEntityTest
+@WireMockTest
+class NestedEntityTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
-
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
 
     private DefaultHttpDestination destination;
     private DefaultTrippinService service;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         service = new DefaultTrippinService().withServicePath("/TripPinServiceRW");
     }
 
     @Test
-    public void testGetSingleNestedFriend()
+    void testGetSingleNestedFriend()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -74,7 +71,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testGetSingleNestedNestedNestedFriend()
+    void testGetSingleNestedNestedNestedFriend()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -92,7 +89,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testDeleteSingleNestedFriend()
+    void testDeleteSingleNestedFriend()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -103,7 +100,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testUpdateSingleNestedFriend()
+    void testUpdateSingleNestedFriend()
     {
         final Person friend = new Person();
         friend.setLastName("Jobs");
@@ -117,7 +114,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testCreateNestedTrip()
+    void testCreateNestedTrip()
     {
         final Trip customTrip = new Trip();
         final Person personByKey = Person.builder().userName("russellwhyte").build();
@@ -129,7 +126,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testGetAllNestedTrips()
+    void testGetAllNestedTrips()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -139,7 +136,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testDeleteBestFriend()
+    void testDeleteBestFriend()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -155,7 +152,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testUpdateBestFriend()
+    void testUpdateBestFriend()
     {
         final Person oldPerson = Person.builder().userName("oldMan").build();
         final Person newPerson = Person.builder().userName("youngMan").build();
@@ -172,7 +169,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testCountNestedTrip()
+    void testCountNestedTrip()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -182,7 +179,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testGetByKeyNestedPlanItem()
+    void testGetByKeyNestedPlanItem()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
         final Trip tripByKey = Trip.builder().tripId(1003).build();
@@ -202,7 +199,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testCreateNestedPlanItem()
+    void testCreateNestedPlanItem()
     {
         final PlanItem customPlanItem = new PlanItem();
         final Person personByKey = Person.builder().userName("russellwhyte").build();
@@ -242,7 +239,7 @@ public class NestedEntityTest
     }
 
     @Test
-    public void testDeleteEntityWithEtag()
+    void testDeleteEntityWithEtag()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -260,12 +257,11 @@ public class NestedEntityTest
 
         delete.execute(destination);
 
-        wireMockServer
-            .verify(deleteRequestedFor(urlEqualTo(deletePath)).withHeader(HttpHeaders.IF_MATCH, equalTo("foobar")));
+        verify(deleteRequestedFor(urlEqualTo(deletePath)).withHeader(HttpHeaders.IF_MATCH, equalTo("foobar")));
     }
 
     @Test
-    public void testUpdateEntityWithEtag()
+    void testUpdateEntityWithEtag()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();
 
@@ -283,12 +279,11 @@ public class NestedEntityTest
 
         update.execute(destination);
 
-        wireMockServer
-            .verify(patchRequestedFor(urlEqualTo(updatePath)).withHeader(HttpHeaders.IF_MATCH, equalTo("foobar")));
+        verify(patchRequestedFor(urlEqualTo(updatePath)).withHeader(HttpHeaders.IF_MATCH, equalTo("foobar")));
     }
 
     @Test
-    public void testTypeRestrictionForVdmEntitySet()
+    void testTypeRestrictionForVdmEntitySet()
     {
         final EntityWithoutEntitySet entityWithoutEntitySet = new EntityWithoutEntitySet();
         final EntityWithEntitySet entityWithEntitySet = new EntityWithEntitySet();
@@ -356,9 +351,9 @@ public class NestedEntityTest
     }
 
     /* Commented out since otherwise this leads to a traceability mapping failure
-    @Ignore( "Use this to run and check against the reference OData service." )
+    @Disabled( "Use this to run and check against the reference OData service." )
     @Test
-    public void integrationTestCreateNestedEntity()
+    void integrationTestCreateNestedEntity()
         throws IOException
     {
         final HttpDestination destination = TripPinUtility.getDestinationRW();

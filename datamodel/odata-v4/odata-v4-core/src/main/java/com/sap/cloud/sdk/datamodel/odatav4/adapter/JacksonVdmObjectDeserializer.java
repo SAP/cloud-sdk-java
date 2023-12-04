@@ -157,7 +157,7 @@ public class JacksonVdmObjectDeserializer extends StdDeserializer<VdmObject<?>> 
                 final AnnotationMap annotations = AnnotationMap.of(JsonDeserialize.class, customDeserialize);
                 final AnnotatedField annotated = new AnnotatedField(null, field, annotations);
                 final Object rawDeserializerType = ctxt.getAnnotationIntrospector().findDeserializer(annotated);
-                final Object rawDeserializer = ((Class<?>) rawDeserializerType).newInstance();
+                final Object rawDeserializer = ((Class<?>) rawDeserializerType).getDeclaredConstructor().newInstance();
                 @SuppressWarnings( "unchecked" )
                 final JsonDeserializer<Object> deserializer = (JsonDeserializer<Object>) rawDeserializer;
                 return deserializer.deserialize(parser, ctxt);

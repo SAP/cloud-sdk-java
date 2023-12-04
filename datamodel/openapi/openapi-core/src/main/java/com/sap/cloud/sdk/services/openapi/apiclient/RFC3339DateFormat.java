@@ -4,6 +4,7 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.util.Date;
@@ -15,6 +16,9 @@ import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
+/**
+ * Date format according to the <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC3339</a>.
+ */
 public class RFC3339DateFormat extends DateFormat
 {
     private static final long serialVersionUID = 1L;
@@ -28,6 +32,7 @@ public class RFC3339DateFormat extends DateFormat
     public RFC3339DateFormat()
     {
         calendar = new GregorianCalendar();
+        numberFormat = new DecimalFormat();
     }
 
     @Override

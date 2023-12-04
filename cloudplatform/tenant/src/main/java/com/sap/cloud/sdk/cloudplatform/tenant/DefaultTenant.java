@@ -5,16 +5,42 @@
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
+/**
+ * Implementation of {@link Tenant} which can be used on SAP Business Technology Platform Cloud Foundry.
+ */
+@Getter
+@EqualsAndHashCode
+@ToString
 @RequiredArgsConstructor
-@Data
-public class DefaultTenant implements Tenant
+public class DefaultTenant implements TenantWithSubdomain
 {
-    @Getter
+    /**
+     * The identifier of the tenant.
+     */
     @Nonnull
     private final String tenantId;
+
+    /**
+     * The subdomain of the tenant.
+     */
+    @Nullable
+    private final String subdomain;
+
+    /**
+     * Creates a {@link DefaultTenant} without subdomain.
+     *
+     * @param tenantId
+     *            The identifier of the tenant.
+     */
+    public DefaultTenant( @Nonnull final String tenantId )
+    {
+        this(tenantId, null);
+    }
 }

@@ -25,12 +25,22 @@ public interface ValueNumeric
     @Nonnull
     ValueNumeric NULL = Expressions.OperandSingle.NULL::getExpression;
 
+    /**
+     * Returns a {@link ValueNumeric} from the given {@code v}.
+     *
+     * @param v
+     *            The value to be transformed into a {@link ValueNumeric}.
+     * @return A {@link ValueNumeric} that contains the given {@code v}.
+     */
     @Nonnull
     static ValueNumeric literal( @Nonnull final Number v )
     {
         return ( protocol, prefixes ) -> protocol.getNumberSerializer().apply(v);
     }
 
+    /**
+     * OData expression on numeric values.
+     */
     @RequiredArgsConstructor
     class Expression implements FilterExpression, ValueNumeric
     {

@@ -9,6 +9,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Chain of {@link ThreadContextListener}s.
+ */
 public interface ThreadContextListenerChain
 {
     /**

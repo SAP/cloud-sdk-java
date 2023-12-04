@@ -8,16 +8,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
+import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
-public class MegacliteServiceBindingTest
+class MegacliteServiceBindingTest
 {
     @Test
-    public void testPropertiesOfTheOpenSourceServiceBinding()
+    void testPropertiesOfTheOpenSourceServiceBinding()
     {
         final MegacliteServiceBinding binding =
             MegacliteServiceBinding
@@ -37,7 +37,7 @@ public class MegacliteServiceBindingTest
     }
 
     @Test
-    public void testBuilderThrowsExceptionWhenAddingAnExistingMandate()
+    void testBuilderThrowsExceptionWhenAddingAnExistingMandate()
     {
         final MegacliteServiceBinding.Builder4 builder =
             MegacliteServiceBinding
@@ -51,7 +51,7 @@ public class MegacliteServiceBindingTest
     }
 
     @Test
-    public void testGetCredentialsThrowsExceptionWithoutProviderTenantId()
+    void testGetCredentialsWithoutProviderTenantIdReturnsEmptyMap()
     {
         final MegacliteServiceBinding binding =
             MegacliteServiceBinding
@@ -62,8 +62,6 @@ public class MegacliteServiceBindingTest
                 .build();
         binding.setDwcConfiguration(DwcConfiguration.getInstance());
 
-        assertThatThrownBy(binding::getCredentials)
-            .isExactlyInstanceOf(CloudPlatformException.class)
-            .hasMessage("No DWC_APPLICATION environment variable found. Cannot determine provider account id.");
+        assertThat(binding.getCredentials()).isEqualTo(Collections.emptyMap());
     }
 }

@@ -6,14 +6,14 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestReadByKey;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Trip;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class ODataReferenceServiceByKeyTest
+class ODataReferenceServiceByKeyTest
 {
     private static final String testUserName = "testuser";
     private static final String keyWithSpecialCharacters = "test''user";
@@ -23,7 +23,7 @@ public class ODataReferenceServiceByKeyTest
         DefaultTrippinService.DEFAULT_SERVICE_PATH + "/People('" + keyWithSpecialCharacters + "')";
 
     @Test
-    public void testSelectAndExpand()
+    void testSelectAndExpand()
     {
         final ODataRequestReadByKey request =
             new DefaultTrippinService()
@@ -39,7 +39,7 @@ public class ODataReferenceServiceByKeyTest
     }
 
     @Test
-    public void testMultipleExpandsWithFilter()
+    void testMultipleExpandsWithFilter()
     {
         final ODataRequestReadByKey request =
             new DefaultTrippinService()
@@ -55,7 +55,7 @@ public class ODataReferenceServiceByKeyTest
     }
 
     @Test
-    public void testAllSelectionVariants()
+    void testAllSelectionVariants()
     {
         final ODataRequestReadByKey request =
             new DefaultTrippinService()
@@ -72,14 +72,14 @@ public class ODataReferenceServiceByKeyTest
     }
 
     @Test
-    public void testGetByKeyWithSpecialCharacters()
+    void testGetByKeyWithSpecialCharacters()
     {
         final ODataRequestReadByKey request = new DefaultTrippinService().getPeopleByKey("test'user").toRequest();
         assertThat(request.getRelativeUri()).hasToString(fullQueryWithSpecialCharacters);
     }
 
     @Test
-    public void testAllDuplicateSelections()
+    void testAllDuplicateSelections()
     {
         final ODataRequestReadByKey request =
             new DefaultTrippinService()

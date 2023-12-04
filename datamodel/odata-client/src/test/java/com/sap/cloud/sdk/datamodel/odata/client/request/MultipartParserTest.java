@@ -15,36 +15,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.google.common.io.Resources;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
-@RunWith( Parameterized.class )
-@AllArgsConstructor
-public class MultipartParserTest
+class MultipartParserTest
 {
-    private String newLine;
-
-    @Parameterized.Parameters
-    public static List<String> getNewLineDelimiters()
+    static List<String> getNewLineDelimiters()
     {
         return Arrays.asList("\r\n", "\n");
     }
 
     @SneakyThrows
-    @Test
-    public void testSimpleReadSuccess()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testSimpleReadSuccess( @Nonnull final String newLine )
     {
         final String responseText =
             newLine // sanity check
@@ -86,8 +83,9 @@ public class MultipartParserTest
             .isEqualTo("application/json; odata.metadata=minimal; odata.streaming=true; charset=UTF-8");
     }
 
-    @Test
-    public void testEmptyReadSuccess()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testEmptyReadSuccess( @Nonnull final String newLine )
     {
         final String responseText = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef--" + newLine;
 
@@ -100,7 +98,7 @@ public class MultipartParserTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final String responseText = "";
 
@@ -112,8 +110,9 @@ public class MultipartParserTest
         assertThat(result).isEmpty();
     }
 
-    @Test
-    public void testWrongDelimiterSuccess()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testWrongDelimiterSuccess( @Nonnull final String newLine )
     {
         final String responseText = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef--" + newLine;
 
@@ -125,8 +124,9 @@ public class MultipartParserTest
         assertThat(result).isEmpty();
     }
 
-    @Test
-    public void testNewLineBeforeReadSuccess()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testNewLineBeforeReadSuccess( @Nonnull final String newLine )
     {
         final String responseText = "\n--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef--" + newLine;
 
@@ -139,7 +139,7 @@ public class MultipartParserTest
     }
 
     @Test
-    public void testEmptyHttpResponse()
+    void testEmptyHttpResponse()
     {
         final HttpResponse httpResponse = mock(HttpResponse.class);
         assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
@@ -149,7 +149,7 @@ public class MultipartParserTest
 
     @SneakyThrows
     @Test
-    public void testEmptyInputStream()
+    void testEmptyInputStream()
     {
         final HttpEntity httpEntity = mock(HttpEntity.class);
         when(httpEntity.getContent()).thenThrow(IOException.class);
@@ -163,7 +163,7 @@ public class MultipartParserTest
     }
 
     @Test
-    public void testMissingDelimiter()
+    void testMissingDelimiter()
     {
         final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         httpResponse.setEntity(new StringEntity("", Charset.defaultCharset()));
@@ -174,10 +174,11 @@ public class MultipartParserTest
             .hasMessage("No delimiter found in HTTP header.");
     }
 
-    @Test
-    public void testReadResultUncached()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testReadResultUncached( @Nonnull final String newLine )
     {
-        final String responseText = readResourceFileClrf("BatchReadResponseBody.txt");
+        final String responseText = readResourceFileClrf("BatchReadResponseBody.txt", newLine);
         final ByteArrayInputStream response = new ByteArrayInputStream(responseText.getBytes(UTF_8));
 
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
@@ -194,11 +195,12 @@ public class MultipartParserTest
     }
 
     @SneakyThrows
-    @Test
-    public void testWriteResultUncached()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testWriteResultUncached( @Nonnull final String newLine )
     {
         final BasicHttpResponse resp = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
-        resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt")));
+        resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
         // user code
@@ -213,11 +215,12 @@ public class MultipartParserTest
     }
 
     @SneakyThrows
-    @Test
-    public void testWriteResultCached()
+    @ParameterizedTest
+    @MethodSource( "getNewLineDelimiters" )
+    void testWriteResultCached( @Nonnull final String newLine )
     {
         final BasicHttpResponse resp = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
-        resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt")));
+        resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
         // user code
@@ -244,7 +247,7 @@ public class MultipartParserTest
     }
 
     @SneakyThrows
-    private String readResourceFileClrf( final String resourceFileName )
+    private String readResourceFileClrf( final String resourceFileName, @Nonnull final String newLine )
     {
         final Class<MultipartParserTest> cl = MultipartParserTest.class;
         final URL resourceUrl = cl.getClassLoader().getResource(cl.getSimpleName() + "/" + resourceFileName);

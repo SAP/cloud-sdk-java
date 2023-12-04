@@ -18,18 +18,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 
-public class HeadersHandlingTest
+@WireMockTest
+class HeadersHandlingTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String SERVICE_PATH = "/remoteService";
@@ -39,19 +42,16 @@ public class HeadersHandlingTest
     private static final String X_CSRF_TOKEN_HEADER_VALUE = "awesome-csrf-token";
     private static final String SET_COOKIE_HEADER_KEY = "Set-Cookie";
 
-    @Rule
-    public WireMockRule wireMockServer = new WireMockRule(WIREMOCK_CONFIGURATION);
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testUpdateRequestContainsHeadersWithNonUniqueKeys()
+    void testUpdateRequestContainsHeadersWithNonUniqueKeys()
     {
         stubFor(head(anyUrl()).willReturn(ok().withHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_HEADER_VALUE)));
 
@@ -81,13 +81,11 @@ public class HeadersHandlingTest
                 "SimpleKey=SimpleValue",
                 "KeyWithoutAValue",
                 "KeyWithCommaValue=Value, which contains a comma",
-                "MultiValueKey1=Value 1, with comma",
-                "MultiValueKey2=Value 2",
-                "MultiValueKey3");
+                "MultiValueKey1=Value 1, with comma; MultiValueKey2=Value 2 ; MultiValueKey3;");
     }
 
     @Test
-    public void testMultipleHeadersWithSameKey()
+    void testMultipleHeadersWithSameKey()
     {
         final Person person = new Person();
         person.setUserName("usr");
@@ -102,7 +100,7 @@ public class HeadersHandlingTest
     }
 
     @Test
-    public void testMultipleHeadersWithSameKeyAtOnce()
+    void testMultipleHeadersWithSameKeyAtOnce()
     {
         final Person person = new Person();
         person.setUserName("usr");

@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.PlatformSslContextProvider;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -28,10 +28,10 @@ import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 
-public class AbstractX509SslContextProviderTest
+class AbstractX509SslContextProviderTest
 {
     @Test
-    public void testCertificateParsing()
+    void testCertificateParsing()
         throws IOException,
             CertificateException
     {
@@ -47,7 +47,7 @@ public class AbstractX509SslContextProviderTest
     }
 
     @Test
-    public void testCertificateParsingFailure()
+    void testCertificateParsingFailure()
         throws FileNotFoundException
     {
         final FileReader cert = new FileReader(getTestFile("invalid_cert"));
@@ -56,7 +56,7 @@ public class AbstractX509SslContextProviderTest
     }
 
     @Test
-    public void testKeyParsing()
+    void testKeyParsing()
         throws IOException
     {
         final FileReader key = new FileReader(getTestFile("valid_key.pem"));
@@ -66,7 +66,7 @@ public class AbstractX509SslContextProviderTest
     }
 
     @Test
-    public void testKeyParsingFailure()
+    void testKeyParsingFailure()
         throws FileNotFoundException
     {
         final FileReader key = new FileReader(getTestFile("invalid_key"));
@@ -75,7 +75,7 @@ public class AbstractX509SslContextProviderTest
     }
 
     @Test
-    public void testContextCreation()
+    void testContextCreation()
     {
         final PlatformSslContextProvider cut =
             new TestImplementation(getTestFile("valid_cert.pem"), getTestFile("valid_key.pem"));

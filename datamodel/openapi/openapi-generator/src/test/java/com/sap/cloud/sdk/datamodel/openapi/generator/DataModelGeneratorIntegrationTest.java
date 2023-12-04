@@ -23,7 +23,7 @@ import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-public class DataModelGeneratorIntegrationTest
+class DataModelGeneratorIntegrationTest
 {
     @RequiredArgsConstructor
     private enum TestCase

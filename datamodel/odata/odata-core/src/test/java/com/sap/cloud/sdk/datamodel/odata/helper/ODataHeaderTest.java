@@ -15,20 +15,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 
-public class ODataHeaderTest
+@WireMockTest
+class ODataHeaderTest
 {
     private static final String DEFAULT_SERVICE_PATH = new TestVdmEntity().getDefaultServicePath();
     private static final String ENTITY_COLLECTION_PATH = new TestVdmEntity().getEntityCollection();
@@ -39,142 +41,132 @@ public class ODataHeaderTest
     private static final UrlPathPattern DELETE = UPDATE;
     private static final UrlPathPattern CSRF = urlPathEqualTo(DEFAULT_SERVICE_PATH);
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private DefaultHttpDestination destination;
     private TestVdmEntity entity;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
-        server.stubFor(get(GET_ALL).willReturn(okJson("{\"d\":{\"results\":[]}}")));
-        server.stubFor(patch(UPDATE).willReturn(okJson("{\"d\":{}")));
-        server.stubFor(post(CREATE).willReturn(okJson("{\"d\":{}")));
-        server.stubFor(delete(DELETE).willReturn(ok()));
-        server
-            .stubFor(
-                head(CSRF)
-                    .withHeader("x-csrf-token", equalTo("fetch"))
-                    .willReturn(ok().withHeader("x-csrf-token", "abc")));
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+        stubFor(get(GET_ALL).willReturn(okJson("{\"d\":{\"results\":[]}}")));
+        stubFor(patch(UPDATE).willReturn(okJson("{\"d\":{}")));
+        stubFor(post(CREATE).willReturn(okJson("{\"d\":{}")));
+        stubFor(delete(DELETE).willReturn(ok()));
+        stubFor(
+            head(CSRF).withHeader("x-csrf-token", equalTo("fetch")).willReturn(ok().withHeader("x-csrf-token", "abc")));
 
         entity = TestVdmEntity.builder().integerValue(123).build();
     }
 
     // Test for implicitly missing CSRF header token and ETag header when GETTING an entity
     @Test
-    public void testNonExistingHeadersForGetDefault()
+    void testNonExistingHeadersForGetDefault()
     {
         new TestEntityReadFluentHelper().executeRequest(destination);
-        server.verify(0, headRequestedFor(CSRF));
-        server.verify(getRequestedFor(GET_ALL).withoutHeader("If-Match").withoutHeader("x-csrf-token"));
+        verify(0, headRequestedFor(CSRF));
+        verify(getRequestedFor(GET_ALL).withoutHeader("If-Match").withoutHeader("x-csrf-token"));
     }
 
     // Test for CSRF token header and implicitly without ETag header when UPDATING an entity
     @Test
-    public void testUpdateDefaultHeader()
+    void testUpdateDefaultHeader()
     {
         new TestEntityUpdateFluentHelper(entity).executeRequest(destination);
-        server.verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
-        server.verify(patchRequestedFor(UPDATE).withHeader("x-csrf-token", equalTo("abc")).withoutHeader("If-Match"));
+        verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+        verify(patchRequestedFor(UPDATE).withHeader("x-csrf-token", equalTo("abc")).withoutHeader("If-Match"));
     }
 
     // Test for CSRF token header and explicit ETag header when UPDATING an entity
     @Test
-    public void testUpdateSpecificVersionVersionHeader()
+    void testUpdateSpecificVersionVersionHeader()
     {
         entity.setVersionIdentifier("ver");
         new TestEntityUpdateFluentHelper(entity).executeRequest(destination);
-        server.verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
-        server
-            .verify(
-                patchRequestedFor(UPDATE)
-                    .withHeader("x-csrf-token", equalTo("abc"))
-                    .withHeader("If-Match", equalTo("ver")));
+        verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+
+        verify(
+            patchRequestedFor(UPDATE)
+                .withHeader("x-csrf-token", equalTo("abc"))
+                .withHeader("If-Match", equalTo("ver")));
     }
 
     // Test for CSRF token header and explicit ETag-wildcard header when UPDATING an entity
     @Test
-    public void testUpdateWildcardVersionVersionHeader()
+    void testUpdateWildcardVersionVersionHeader()
     {
         new TestEntityUpdateFluentHelper(entity).matchAnyVersionIdentifier().executeRequest(destination);
-        server.verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
-        server
-            .verify(
-                patchRequestedFor(UPDATE)
-                    .withHeader("x-csrf-token", equalTo("abc"))
-                    .withHeader("If-Match", equalTo("*")));
+        verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+
+        verify(
+            patchRequestedFor(UPDATE).withHeader("x-csrf-token", equalTo("abc")).withHeader("If-Match", equalTo("*")));
     }
 
     // Test for CSRF token header, explicitly without ETag header when UPDATING an entity
     @Test
-    public void testUpdateWithoutVersionHeader()
+    void testUpdateWithoutVersionHeader()
     {
         new TestEntityUpdateFluentHelper(entity).disableVersionIdentifier().executeRequest(destination);
-        server.verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
-        server.verify(patchRequestedFor(UPDATE).withHeader("x-csrf-token", equalTo("abc")).withoutHeader("If-Match"));
+        verify(headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+        verify(patchRequestedFor(UPDATE).withHeader("x-csrf-token", equalTo("abc")).withoutHeader("If-Match"));
     }
 
     // Test for custom header, implicitly without CSRF token header or ETag header when GETTING an entity
     @Test
-    public void testGetCustomHeaderHeader()
+    void testGetCustomHeaderHeader()
     {
         new TestEntityReadFluentHelper()
             .withHeader("Authentication", "yes")
             .withHeader("Cookie", "tasty")
             .executeRequest(destination);
-        server.verify(0, headRequestedFor(CSRF));
-        server
-            .verify(
-                getRequestedFor(GET_ALL)
-                    .withHeader("Authentication", equalTo("yes"))
-                    .withHeader("Cookie", equalTo("tasty"))
-                    .withoutHeader("x-csrf-token")
-                    .withoutHeader("If-Match"));
+        verify(0, headRequestedFor(CSRF));
+
+        verify(
+            getRequestedFor(GET_ALL)
+                .withHeader("Authentication", equalTo("yes"))
+                .withHeader("Cookie", equalTo("tasty"))
+                .withoutHeader("x-csrf-token")
+                .withoutHeader("If-Match"));
     }
 
     // Test for CSRF token header, explicitly with custom headers when UPDATING an entity
     @Test
-    public void testUpdateCustomHeader()
+    void testUpdateCustomHeader()
     {
         new TestEntityUpdateFluentHelper(entity).withHeader("Authentication", "yes").executeRequest(destination);
 
-        server
-            .verify(
-                headRequestedFor(CSRF)
-                    .withHeader("Authentication", equalTo("yes"))
-                    .withHeader("x-csrf-token", equalTo("fetch")));
+        verify(
+            headRequestedFor(CSRF)
+                .withHeader("Authentication", equalTo("yes"))
+                .withHeader("x-csrf-token", equalTo("fetch")));
 
-        server
-            .verify(
-                patchRequestedFor(UPDATE)
-                    .withHeader("Authentication", equalTo("yes"))
-                    .withHeader("x-csrf-token", equalTo("abc")));
+        verify(
+            patchRequestedFor(UPDATE)
+                .withHeader("Authentication", equalTo("yes"))
+                .withHeader("x-csrf-token", equalTo("abc")));
     }
 
     @Test
-    public void testUpdateWithoutCsrfTokenIfSkipped()
+    void testUpdateWithoutCsrfTokenIfSkipped()
     {
         new TestEntityUpdateFluentHelper(entity).withoutCsrfToken().executeRequest(destination);
 
-        server.verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+        verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
     }
 
     @Test
-    public void testCreateWithoutCsrfTokenIfSkipped()
+    void testCreateWithoutCsrfTokenIfSkipped()
     {
         new TestEntityCreateFluentHelper(entity).withoutCsrfToken().executeRequest(destination);
 
-        server.verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+        verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
     }
 
     @Test
-    public void testDeleteWithoutCsrfTokenIfSkipped()
+    void testDeleteWithoutCsrfTokenIfSkipped()
     {
         new TestEntityDeleteFluentHelper(entity).withoutCsrfToken().executeRequest(destination);
 
-        server.verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
+        verify(0, headRequestedFor(CSRF).withHeader("x-csrf-token", equalTo("fetch")));
     }
 
     // fluent helpers

@@ -61,6 +61,15 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.security</groupId>
+			<artifactId>java-api</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -69,8 +78,8 @@
 		</dependency>
 		<!-- scope "test -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -91,6 +100,26 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.security</groupId>
+			<artifactId>java-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding</groupId>
+			<artifactId>java-sap-vcap-services</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-access-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

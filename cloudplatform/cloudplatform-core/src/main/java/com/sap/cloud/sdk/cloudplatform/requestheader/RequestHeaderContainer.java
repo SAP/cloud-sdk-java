@@ -15,7 +15,6 @@ import com.google.common.annotations.Beta;
  * Represents an <b>immutable</b> container for multiple HTTP headers. These headers consist of a {@code name} and
  * multiple {@code value}s.
  */
-@Beta
 public interface RequestHeaderContainer
 {
     /**
@@ -82,10 +81,6 @@ public interface RequestHeaderContainer
     /**
      * Returns a <b>non-unique</b> collection of individual values for an HTTP header with the given {@code headerName}.
      * The {@code headerName} is treated <b>case insensitively</b>.
-     * <p>
-     * <b>Important:</b> All header values will be separated by {@code ,}. <b>Exception:</b> Cookie values (HTTP headers
-     * with name {@code Set-Cookie} (case-insensitive)) will be separated by {@code ;}. Duplicated values will
-     * <b>not</b> be removed.
      *
      * @param headerName
      *            The name of the HTTP header to retrieve the values for.

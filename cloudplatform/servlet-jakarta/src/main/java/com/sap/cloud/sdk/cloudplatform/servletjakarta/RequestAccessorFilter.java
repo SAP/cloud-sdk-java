@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.servletjakarta;
 
+import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener.PROPERTY_REQUEST_HEADERS;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -13,11 +15,9 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
-import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
@@ -26,7 +26,6 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import io.vavr.control.Option;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -38,14 +37,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @WebFilter( filterName = "RequestAccessorFilter", urlPatterns = "/*" )
 @Slf4j
-@Beta
 public class RequestAccessorFilter implements Filter
 {
-    @Override
-    public void init( @Nonnull final FilterConfig filterConfig )
-    {
-
-    }
+    /**
+     * Properties required for compatibility with SDK v4 to work with the audit log dependencies.
+     */
+    static final String PROPERTY_SERVLET_REQUEST_SCHEME = "servlet-scheme";
+    static final String PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS = "servlet-remote-address";
 
     @Override
     public void doFilter(
@@ -67,13 +65,8 @@ public class RequestAccessorFilter implements Filter
             }
         } else {
             if( log.isWarnEnabled() ) {
-                log
-                    .warn(
-                        "Failed to initialize "
-                            + ThreadContext.class.getSimpleName()
-                            + ": request not of type "
-                            + HttpServletRequest.class.getName()
-                            + ".");
+                final String msg = "Failed to initialize {}: request not of type {}.";
+                log.warn(msg, ThreadContext.class, HttpServletRequest.class);
             }
         }
     }
@@ -83,9 +76,13 @@ public class RequestAccessorFilter implements Filter
         storeServletProperties( @Nonnull final HttpServletRequest servlet, @Nonnull final ThreadContext threadContext )
     {
         threadContext
+            .setPropertyIfAbsent(PROPERTY_REQUEST_HEADERS, Property.decorateCallable(() -> extractHeaders(servlet)));
+        threadContext
+            .setPropertyIfAbsent(PROPERTY_SERVLET_REQUEST_SCHEME, Property.decorateCallable(servlet::getScheme));
+        threadContext
             .setPropertyIfAbsent(
-                RequestHeaderThreadContextListener.PROPERTY_REQUEST_HEADERS,
-                Property.decorateCallable(() -> extractHeaders(servlet)));
+                PROPERTY_SERVLET_REQUEST_REMOTE_ADDRESS,
+                Property.decorateCallable(servlet::getRemoteAddr));
     }
 
     @Nonnull
@@ -105,11 +102,5 @@ public class RequestAccessorFilter implements Filter
                 .peek(values -> headers.put(headerName.get(), Collections.list(values)));
         }
         return DefaultRequestHeaderContainer.fromMultiValueMap(headers);
-    }
-
-    @Override
-    public void destroy()
-    {
-
     }
 }

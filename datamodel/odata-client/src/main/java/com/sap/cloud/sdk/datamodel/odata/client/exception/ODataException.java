@@ -28,6 +28,7 @@ import lombok.Getter;
  * When deserialization process failed for the OData response object.</li>
  * <li><strong>{@link ODataServiceErrorException}</strong><br>
  * If the response contains an OData error in the payload.</li>
+ * </ul>
  */
 @EqualsAndHashCode( callSuper = true )
 @Getter

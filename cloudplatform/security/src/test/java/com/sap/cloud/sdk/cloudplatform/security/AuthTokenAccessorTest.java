@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -23,11 +23,11 @@ import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
 
-public class AuthTokenAccessorTest
+class AuthTokenAccessorTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         // reset on FacadeLocator requires concrete instance to be passed
         FacadeLocator.setMockableInstance(new FacadeLocator.MockableInstance());
@@ -43,13 +43,13 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void defaultFacadeShouldBeNullImplementation()
+    void defaultFacadeFallbackIsSuccess()
     {
-        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isSameAs(AuthTokenFacade.NULL);
+        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isInstanceOf(DefaultAuthTokenFacade.class);
     }
 
     @Test
-    public void noImplementationShouldUseNullImplementation()
+    void noImplementationShouldUseDefaultImplementation()
     {
         final FacadeLocator.MockableInstance mockedFacadeLocator = mock(FacadeLocator.MockableInstance.class);
         when(mockedFacadeLocator.getFacades(AuthTokenFacade.class)).thenReturn(Collections.emptyList());
@@ -57,12 +57,12 @@ public class AuthTokenAccessorTest
 
         AuthTokenAccessor.setAuthTokenFacade(null);
 
-        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isSameAs(AuthTokenFacade.NULL);
+        assertThat(AuthTokenAccessor.getAuthTokenFacade()).isInstanceOf(DefaultAuthTokenFacade.class);
 
     }
 
     @Test
-    public void multipleFacadesShouldThrowError()
+    void multipleFacadesShouldThrowError()
     {
         final FacadeLocator.MockableInstance mockedFacadeLocator = mock(FacadeLocator.MockableInstance.class);
         final AuthTokenFacade mockedFacade1 = mock(AuthTokenFacade.class);
@@ -77,7 +77,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void defaultSingleFacadeShouldBeUsed()
+    void defaultSingleFacadeShouldBeUsed()
     {
         final FacadeLocator.MockableInstance mockedFacadeLocator = mock(FacadeLocator.MockableInstance.class);
         final AuthTokenFacade mockedFacade = mock(AuthTokenFacade.class);
@@ -90,7 +90,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void tryGetCurrentTokenSuccessShouldDelegateToFacade()
+    void tryGetCurrentTokenSuccessShouldDelegateToFacade()
     {
         final AuthToken mockedToken = mock(AuthToken.class);
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockedToken));
@@ -99,7 +99,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void tryGetCurrentTokenFailureShouldDelegateToFacade()
+    void tryGetCurrentTokenFailureShouldDelegateToFacade()
     {
         final Exception exception = new RuntimeException("No Token");
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(exception));
@@ -108,7 +108,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void tryGetCurrentTokenFailureShouldUseFallbackToken()
+    void tryGetCurrentTokenFailureShouldUseFallbackToken()
     {
         final Exception exception = new RuntimeException("No Token");
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(exception));
@@ -120,7 +120,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void getCurrentTokenShouldReturnSuccessOfTryGetCurrentToken()
+    void getCurrentTokenShouldReturnSuccessOfTryGetCurrentToken()
     {
         final AuthToken mockedToken = mock(AuthToken.class);
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockedToken));
@@ -129,7 +129,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void getCurrentTokenShouldReturnFallbackOfTryGetCurrentToken()
+    void getCurrentTokenShouldReturnFallbackOfTryGetCurrentToken()
     {
         final Exception exception = new RuntimeException("No Token");
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(exception));
@@ -141,7 +141,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void getCurrentTokenShouldThrowWrappedFailure()
+    void getCurrentTokenShouldThrowWrappedFailure()
     {
         final Exception exception = new RuntimeException("No Token");
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(exception));
@@ -152,7 +152,7 @@ public class AuthTokenAccessorTest
     }
 
     @Test
-    public void getCurrentTokenShouldThrowFailure()
+    void getCurrentTokenShouldThrowFailure()
     {
         final Exception exception = new AuthTokenAccessException("No Token");
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(exception));

@@ -194,34 +194,6 @@ public class Expressions
      *            The second operand of the function.
      * @param lambdaFieldPredicate
      *            The predicate for which fields will be given a prefix.
-     * @param lambdaFieldPrefix
-     *            The prefix to apply within the lambda function.
-     * @return The FilterExpression.
-     * @deprecated The prefix will be derived automatically. Please use
-     *             {@link Expressions#createFunctionLambda(String, OperandMultiple, Operand, Predicate)} instead.
-     */
-    @Deprecated
-    static FilterExpression createFunctionLambda(
-        @Nonnull final String operator,
-        @Nonnull final OperandMultiple operand1,
-        @Nonnull final Operand operand2,
-        @Nonnull final Predicate<FieldReference> lambdaFieldPredicate,
-        @Nonnull final String lambdaFieldPrefix )
-    {
-        return createFunctionLambda(operator, operand1, operand2, lambdaFieldPredicate);
-    }
-
-    /**
-     * Filter function with two parameters. Infix notation.
-     *
-     * @param operator
-     *            The function operator.
-     * @param operand1
-     *            The first operand of the function.
-     * @param operand2
-     *            The second operand of the function.
-     * @param lambdaFieldPredicate
-     *            The predicate for which fields will be given a prefix.
      * @return The FilterExpression.
      */
     static FilterExpression createFunctionLambda(

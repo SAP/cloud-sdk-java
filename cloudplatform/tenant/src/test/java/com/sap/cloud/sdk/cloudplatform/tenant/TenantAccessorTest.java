@@ -13,26 +13,25 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nonnull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
-import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNotFoundException;
 
 import io.vavr.control.Try;
 
-public class TenantAccessorTest
+class TenantAccessorTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         // reset the facade
         TenantAccessor.setTenantFacade(null);
@@ -42,7 +41,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testGetCurrentTenant()
+    void testGetCurrentTenant()
     {
         final String tenantOrZoneId = "tenantOrZoneId";
 
@@ -54,11 +53,11 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
-        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(ThreadContextAccessException.class);
+        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(TenantAccessException.class);
 
         TenantAccessor.executeWithTenant(() -> "custom1", () -> {
             assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("custom1");
@@ -76,11 +75,11 @@ public class TenantAccessorTest
             assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("custom1");
         });
 
-        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(ThreadContextAccessException.class);
+        assertThat(TenantAccessor.tryGetCurrentTenant().getCause()).isInstanceOf(TenantAccessException.class);
     }
 
     @Test
-    public void testExecuteAsync()
+    void testExecuteAsync()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -88,7 +87,7 @@ public class TenantAccessorTest
             // no ThreadContext managed
             final Try<Tenant> tenantTry = CompletableFuture.supplyAsync(TenantAccessor::tryGetCurrentTenant).get();
 
-            assertThat(tenantTry.getCause()).isInstanceOf(ThreadContextAccessException.class);
+            assertThat(tenantTry.getCause()).isInstanceOf(TenantAccessException.class);
         });
 
         final Tenant tenant =
@@ -111,7 +110,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallback()
+    void testExecuteWithFallback()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -135,7 +134,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithException()
+    void testExecuteWithException()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -148,7 +147,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithFallbackWithException()
+    void testExecuteWithFallbackWithException()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
@@ -177,7 +176,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testGlobalFallback()
+    void testGlobalFallback()
     {
         TenantAccessor.setFallbackTenant(() -> () -> "globalFallback");
         assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("globalFallback");
@@ -208,7 +207,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testWrongPropertyType()
+    void testWrongPropertyType()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -222,7 +221,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testMissingThreadContext()
+    void testMissingThreadContext()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -238,19 +237,23 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testMissingThreadContextProperty()
+    void testMissingThreadContextProperty()
     {
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
         ThreadContextExecutor.fromNewContext().withoutDefaultListeners().execute(() -> {
-            assertThat(TenantAccessor.tryGetCurrentTenant().getCause())
-                .isInstanceOf(ThreadContextPropertyNotFoundException.class)
-                .hasMessage("Property '" + TenantThreadContextListener.PROPERTY_TENANT + "' does not exist.");
+            assertThat(TenantAccessor.tryGetCurrentTenant().getCause().getSuppressed())
+                .anyMatch(e -> e instanceof ThreadContextPropertyNotFoundException);
+            assertThat(TenantAccessor.tryGetCurrentTenant().getCause().getSuppressed())
+                .anyMatch(
+                    e -> e
+                        .getMessage()
+                        .equals("Property '" + TenantThreadContextListener.PROPERTY_TENANT + "' does not exist."));
         });
     }
 
     @Test
-    public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
+    void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final TenantFacade customFacade = () -> Try.failure(new IllegalStateException());
         assertThat(customFacade).isNotInstanceOf(DefaultTenantFacade.class);
@@ -263,7 +266,7 @@ public class TenantAccessorTest
     }
 
     @Test
-    public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
+    void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
         final TenantFacade customFacade = spy(DefaultTenantFacade.class);
         assertThat(customFacade).isInstanceOf(DefaultTenantFacade.class);

@@ -15,7 +15,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.google.gson.annotations.JsonAdapter;
@@ -29,7 +29,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class UpdateRequestHelperPutTest
+class UpdateRequestHelperPutTest
 {
     @NoArgsConstructor
     @AllArgsConstructor
@@ -120,7 +120,7 @@ public class UpdateRequestHelperPutTest
     }
 
     @Test
-    public void testPutPayload()
+    void testPutPayload()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").isRetired(true).build();
@@ -135,7 +135,7 @@ public class UpdateRequestHelperPutTest
     }
 
     @Test
-    public void testPutPayloadWithExcludedFields()
+    void testPutPayloadWithExcludedFields()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").isRetired(true).build();
@@ -148,7 +148,7 @@ public class UpdateRequestHelperPutTest
     }
 
     @Test
-    public void testPutPayloadWithNullFields()
+    void testPutPayloadWithNullFields()
         throws Exception
     {
         final TestEntity entity = TestEntity.builder().name("Foo").isRetired(true).build();

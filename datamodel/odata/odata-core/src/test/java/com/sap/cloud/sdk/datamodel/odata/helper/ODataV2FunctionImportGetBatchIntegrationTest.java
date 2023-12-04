@@ -13,25 +13,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.helper.batch.BatchFluentHelperBasic;
 import com.sap.cloud.sdk.datamodel.odata.helper.batch.FluentHelperBatchEndChangeSet;
 
-public class ODataV2FunctionImportGetBatchIntegrationTest
+@WireMockTest
+class ODataV2FunctionImportGetBatchIntegrationTest
 {
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private static final String ODATA_ENDPOINT_URL = "/path/to/service";
     private static final String ODATA_ENDPOINT_BATCH_URL = ODATA_ENDPOINT_URL + "/$batch";
 
@@ -69,12 +66,12 @@ public class ODataV2FunctionImportGetBatchIntegrationTest
     }
 
     @Test
-    public void testFunctionImportWithGetInReadOperation()
+    void testFunctionImportWithGetInReadOperation( @Nonnull final WireMockRuntimeInfo wm )
     {
         stubFor(head(urlEqualTo(ODATA_ENDPOINT_URL)).willReturn(noContent()));
         stubFor(post(urlEqualTo(ODATA_ENDPOINT_BATCH_URL)).willReturn(ok()));
 
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final FluentHelperFunction<?, ?, String> functionImport =
             FluentHelperFactory

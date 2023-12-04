@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Chain of {@link ThreadContextDecorator}s.
+ */
 public interface ThreadContextDecoratorChain
 {
     /**

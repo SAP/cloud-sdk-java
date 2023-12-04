@@ -5,30 +5,31 @@
 package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Header;
 
 @Deprecated
-public class RfmRequestTest
+class RfmRequestTest
 {
     private static final String FUNCTION_NAME = "A";
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testValidFunctionNameWithCommittingConstructor()
+    @Test
+    void testValidFunctionNameWithCommittingConstructor()
     {
-        new RfmRequest("BAPI_A");
-    }
-
-    @Test( expected = IllegalArgumentException.class )
-    public void testValidFunctionName()
-    {
-        new RfmRequest("BAPI_A", false);
+        assertThatThrownBy(() -> new RfmRequest("BAPI_A")).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testHeaderParameters()
+    void testValidFunctionName()
+    {
+        assertThatThrownBy(() -> new RfmRequest("BAPI_A", false)).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void testHeaderParameters()
     {
         final RfmRequest request = new RfmRequest(FUNCTION_NAME, false).withHeader("key", "value");
 
@@ -36,7 +37,7 @@ public class RfmRequestTest
     }
 
     @Test
-    public void testHeaderParametersCopy()
+    void testHeaderParametersCopy()
     {
         final RfmRequest firstRequest = new RfmRequest(FUNCTION_NAME, false).withHeader("someHeader", "someValue");
 

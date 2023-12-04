@@ -6,16 +6,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpStatus;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.hc.core5.http.HttpStatus;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,7 +28,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
@@ -39,13 +38,11 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 import lombok.Builder;
 import lombok.Value;
 
-public class GenericParameterTest
+@WireMockTest
+class GenericParameterTest
 {
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-
     @Test
-    public void testInvocationWithGenericParameter()
+    void testInvocationWithGenericParameter( @Nonnull final WireMockRuntimeInfo wm )
         throws JsonProcessingException
     {
         final String expectedBody =
@@ -60,7 +57,7 @@ public class GenericParameterTest
                     .withRequestBody(equalTo(expectedBody))
                     .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 
-        final DefaultHttpDestination httpDestination = DefaultHttpDestination.builder(wireMockRule.baseUrl()).build();
+        final DefaultHttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
 
         final String jsonString = "{\"foo\": \"bar\"}";
 

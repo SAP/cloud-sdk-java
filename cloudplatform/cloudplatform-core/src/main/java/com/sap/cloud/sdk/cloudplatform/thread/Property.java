@@ -97,6 +97,8 @@ public class Property<T>
      *
      * @param valueTry
      *            A {@link Try} value.
+     * @param <T>
+     *            The generic value type.
      * @return A new property value wrapped in {@link Try}.
      */
     @Nonnull
@@ -110,6 +112,8 @@ public class Property<T>
      *
      * @param confidentialValueTry
      *            A confidential {@link Try} value.
+     * @param <T>
+     *            The generic value type.
      * @return A new confidential property value wrapped in {@link Try}.
      */
     @Nonnull

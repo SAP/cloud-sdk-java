@@ -33,7 +33,7 @@
 		<url />
 	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
 	</properties>
 	<dependencies>
@@ -97,13 +97,24 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- scope "provided" -->

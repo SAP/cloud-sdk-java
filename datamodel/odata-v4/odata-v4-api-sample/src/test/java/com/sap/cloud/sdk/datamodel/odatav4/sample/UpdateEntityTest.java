@@ -12,9 +12,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -23,11 +23,11 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpClientFactory;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
@@ -38,32 +38,30 @@ import com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore.Pro
 import com.sap.cloud.sdk.datamodel.odatav4.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odatav4.sample.services.SdkGroceryStoreService;
 
-public class UpdateEntityTest
+@WireMockTest
+class UpdateEntityTest
 {
     private static final String NEW_NAME = "new name";
     private static final BigDecimal NEW_PRICE = BigDecimal.valueOf(42.42d);
 
     private static final SdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(wireMockConfig().dynamicPort());
-
     private HttpDestination destination;
     private HttpClient client;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(server.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         client = new DefaultHttpClientFactory().createHttpClient(destination);
 
-        server.stubFor(head(anyUrl()).willReturn(ok().withHeader("x-csrf-token", "required")));
-        server.stubFor(put(anyUrl()).willReturn(ok()));
-        server.stubFor(patch(anyUrl()).willReturn(ok()));
+        stubFor(head(anyUrl()).willReturn(ok().withHeader("x-csrf-token", "required")));
+        stubFor(put(anyUrl()).willReturn(ok()));
+        stubFor(patch(anyUrl()).willReturn(ok()));
     }
 
     @Test
-    public void testPatchEntity()
+    void testPatchEntity()
     {
         final Product product = createModifiedProduct();
 
@@ -84,7 +82,7 @@ public class UpdateEntityTest
     }
 
     @Test
-    public void testExcludedFieldsInPatchRequestAreStillSent()
+    void testExcludedFieldsInPatchRequestAreStillSent()
     {
         final Product product = createModifiedProduct();
 
@@ -105,7 +103,7 @@ public class UpdateEntityTest
     }
 
     @Test
-    public void testPatchEntityWithIncludedFields()
+    void testPatchEntityWithIncludedFields()
     {
         final Product product = createModifiedProduct();
 
@@ -128,7 +126,7 @@ public class UpdateEntityTest
     }
 
     @Test
-    public void testPutEntity()
+    void testPutEntity()
     {
         final Product product = createModifiedProduct();
 
@@ -151,7 +149,7 @@ public class UpdateEntityTest
     }
 
     @Test
-    public void testPutEntityWithExcludedFields()
+    void testPutEntityWithExcludedFields()
     {
         final Product product = createModifiedProduct();
 
@@ -177,7 +175,7 @@ public class UpdateEntityTest
     }
 
     @Test
-    public void testIncludedFieldsAreStillExcludedInPutRequest()
+    void testIncludedFieldsAreStillExcludedInPutRequest()
     {
         final Product product = createModifiedProduct();
 
