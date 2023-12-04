@@ -82,6 +82,7 @@ class DefaultHttpDestinationBuilderProxyHandler
     // PrincipalPropagation + ALWAYS_PROVIDER + TENANT_T1 + *        -> (fail, on getHeaders())
     // PrincipalPropagation + CURRENT_TENANT  + *         + *        -> TECHNICAL_USER_CURRENT_TENANT
     @Nonnull
+    @SuppressWarnings( "deprecation" )
     private static OnBehalfOf deriveOnBehalfOf( @Nonnull final DefaultHttpDestination.Builder builder )
     {
         // lookup authentication type
@@ -95,14 +96,16 @@ class DefaultHttpDestinationBuilderProxyHandler
             final PrincipalPropagationMode mode =
                 builder
                     .get(DestinationProperty.PRINCIPAL_PROPAGATION_MODE)
-                    .getOrElse(PrincipalPropagationMode.COMPATIBILITY);
+                    .getOrElse(PrincipalPropagationMode.getDefault());
 
             switch( mode ) {
-                case RECOMMENDED:
-                    return OnBehalfOf.NAMED_USER_CURRENT_TENANT;
-                case COMPATIBILITY: // default
+                case TOKEN_FORWARDING: // default
+                case COMPATIBILITY: // deprecated
                     builder.headerProviders(new SapConnectivityAuthenticationHeaderProvider());
                     return OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
+                case TOKEN_EXCHANGE:
+                case RECOMMENDED: // deprecated
+                    return OnBehalfOf.NAMED_USER_CURRENT_TENANT;
                 case UNKNOWN:
                     throw new IllegalStateException("Principal propagation mode is unknown.");
             }

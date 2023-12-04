@@ -18,7 +18,16 @@ import lombok.RequiredArgsConstructor;
 public enum PrincipalPropagationMode
 {
     /**
-     * Recommended principal propagation strategy.
+     * Same as {@link #TOKEN_EXCHANGE}. <strong>This is NOT the recommended strategy</strong>. Please consider switching
+     * to {@link #TOKEN_FORWARDING} instead.
+     *
+     * @deprecated Please use {@link #TOKEN_EXCHANGE} instead.
+     */
+    @Deprecated
+    RECOMMENDED,
+
+    /**
+     * Principal propagation strategy that will exchange the user token.
      * <p>
      * <strong>Header:</strong> "Proxy-Authorization" Token exchange (JWT Bearer Token Grant) on behalf of current user
      * token (principal) with technical credentials of connectivity service binding. The OAuth2 service of target tenant
@@ -30,19 +39,27 @@ public enum PrincipalPropagationMode
      * additional round-trips, this leads to an increased load on the XSUAA service instance. The platform rate limiter
      * could quickly block further OnPremise calls.
      */
-    RECOMMENDED,
+    TOKEN_EXCHANGE,
 
     /**
-     * Compatibility mode for principal propagation.
+     * Same as {@link #TOKEN_FORWARDING}.
+     *
+     * @deprecated Please use {@link #TOKEN_FORWARDING} instead.
+     */
+    @Deprecated
+    COMPATIBILITY,
+
+    /**
+     * Token forwarding strategy for principal propagation.
      * <p>
-     * <strong>Header:</strong> "Proxy-Authorization" Token lookup (Client Credentials Grant) on behalf of technical
-     * credentials of connectivity service binding.
+     * <strong>Header:</strong> "Proxy-Authorization" Token lookup (Client Credentials Grant) on behalf of a technical
+     * user for the current tenant using the credentials of connectivity service binding.
      * <p>
      * <strong>Header:</strong> "SAP-Connectivity-Authentication" Token forwarding of current user token (principal).
      * <p>
      * <strong>Note:</strong> The OAuth2 service of target tenant will be used.
      */
-    COMPATIBILITY,
+    TOKEN_FORWARDING,
 
     /**
      * Unknown principal propagation mode.
@@ -50,6 +67,16 @@ public enum PrincipalPropagationMode
      * This will likely lead to an error.
      */
     UNKNOWN;
+
+    /**
+     * The default strategy for principal propagation.
+     *
+     * @return {@link #TOKEN_FORWARDING}
+     */
+    public static PrincipalPropagationMode getDefault()
+    {
+        return TOKEN_FORWARDING;
+    }
 
     static PrincipalPropagationMode ofIdentifier( final String identifier )
     {
