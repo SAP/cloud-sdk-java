@@ -7,8 +7,7 @@ steps:
     mavenExcludedScopes: ["provided", "test"]
     failOn: ['BLOCKER', 'CRITICAL', 'MAJOR']
     versioningModel: "major"
-    # detectTools: ['DETECTOR', 'BINARY_SCAN']
-    scanProperties: ['--detect.maven.excluded.modules=com.sap.cloud.sdk.*']
+    detectTools: ['DETECTOR', 'BINARY_SCAN']
 
 stages:
   test:
