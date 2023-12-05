@@ -6,6 +6,11 @@ on:
       release_version:
         description: "Release version, leave empty for default value based on current snapshot"
         required: false
+      skip_blackduck_scan:
+        description: "Skip Blackduck Scan"
+        type: boolean
+        default: false
+        required: false
 
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
@@ -302,6 +307,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare-release
     timeout-minutes: 15
+    if: ${{ !github.event.inputs.skip_blackduck_scan }}
     steps:
       - uses: actions/checkout@v3
         with:
