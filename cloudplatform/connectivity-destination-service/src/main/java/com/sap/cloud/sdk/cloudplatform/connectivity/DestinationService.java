@@ -168,6 +168,10 @@ public class DestinationService implements DestinationLoader
     /**
      * Fetches all destinations on behalf of the subscriber. Convenience for
      * {@code tryGetAllDestinations(DestinationOptions.builder().build())}.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration.
+     * </p>
      *
      * @return A Try list of destinations.
      * @see #tryGetAllDestinations(DestinationOptions)
@@ -182,6 +186,10 @@ public class DestinationService implements DestinationLoader
      * Retrieves destinations for the provided configuration options. In case there exist a destination with the same
      * name on service instance and on sub account level, then the method prioritizes the destination at service
      * instance level.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration.
+     * </p>
      *
      * @param options
      *            Destination configuration object
