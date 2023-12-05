@@ -17,7 +17,7 @@ import io.vavr.control.Try;
 
 /**
  * Represents a class that is capable of transforming a {@link ServiceBinding} and
- * {@link ServiceBindingDestinationOptions} into an {@link HttpDestination}.
+ * {@link ServiceBindingDestinationOptions} into a {@link Destination}.
  *
  * @since 4.16.0
  */
@@ -29,7 +29,7 @@ public interface ServiceBindingDestinationLoader
      * Returns the default <i>loader chain</i> instance. This instance will locate all available
      * {@link ServiceBindingDestinationLoader} implementations (using the <i>service loader pattern</i>) on the
      * classpath. Those instances will be queried <b>in no particular order</b> to try to transform the provided
-     * {@link ServiceBindingDestinationOptions} into an {@link HttpDestination}.
+     * {@link ServiceBindingDestinationOptions} into a {@link Destination}.
      *
      * @return The default <i>loader chain</i> instance.
      */
@@ -41,8 +41,8 @@ public interface ServiceBindingDestinationLoader
 
     /**
      * Returns a new <i>loader chain</i> instance that will query the provided {@code delegateLoaders} <b>in the
-     * provided order</b> to try to transform the provided {@link ServiceBindingDestinationOptions} into an
-     * {@link HttpDestination}.
+     * provided order</b> to try to transform the provided {@link ServiceBindingDestinationOptions} into a
+     * {@link Destination}.
      *
      * @param delegateLoaders
      *            The {@link ServiceBindingDestinationLoader} instances that should be used.
@@ -56,7 +56,7 @@ public interface ServiceBindingDestinationLoader
     }
 
     /**
-     * Tries to transform the given {@code serviceBinding} and {@code options} into an {@link HttpDestination}.
+     * Tries to transform the given {@code serviceBinding} and {@code options} into a {@link Destination}.
      *
      * @param options
      *            The {@link ServiceBindingDestinationOptions} that contain further context information about how the
@@ -70,10 +70,10 @@ public interface ServiceBindingDestinationLoader
      *         </p>
      */
     @Nonnull
-    Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options );
+    Try<Destination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options );
 
     /**
-     * Tries to transform the given {@code options} into an {@link HttpDestination}.
+     * Tries to transform the given {@code options} into a {@link Destination}.
      * <p>
      * This method is equivalent to {@code tryGetDestination(options).get();}.
      * </p>
@@ -81,14 +81,14 @@ public interface ServiceBindingDestinationLoader
      * @param options
      *            The {@link ServiceBindingDestinationOptions} that contain further context information (such as the
      *            {@link ServiceBinding} that should be transformed) for the transformation process.
-     * @return An {@link HttpDestination} that can be used to connect to be bound service.
+     * @return A {@link Destination} that can be used to connect to be bound service.
      * @throws DestinationAccessException
-     *             Thrown if the provided {@code options} couldn't be transformed into an {@link HttpDestination}.
+     *             Thrown if the provided {@code options} couldn't be transformed into a {@link Destination}.
      * @throws DestinationNotFoundException
-     *             Thrown if no {@link HttpDestination} could be found for the provided {@code options}.
+     *             Thrown if no {@link Destination} could be found for the provided {@code options}.
      */
     @Nonnull
-    default HttpDestination getDestination( @Nonnull final ServiceBindingDestinationOptions options )
+    default Destination getDestination( @Nonnull final ServiceBindingDestinationOptions options )
         throws DestinationAccessException,
             DestinationNotFoundException
     {

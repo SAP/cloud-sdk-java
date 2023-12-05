@@ -144,7 +144,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     @Test
     void testUnknownService()
     {
-        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+        final Try<Destination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationNotFoundException.class);
     }
@@ -156,7 +156,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         sut = mockLoader(mock);
 
-        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+        final Try<Destination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationNotFoundException.class);
@@ -170,7 +170,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         sut = mockLoader(mock);
 
-        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+        final Try<Destination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationAccessException.class);
@@ -189,10 +189,10 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         sut = mockLoader(mock);
 
-        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+        final Try<Destination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
 
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.get().getUri()).isEqualTo(baseUrl);
+        assertThat(result.get().get(DestinationProperty.URI).get()).isEqualTo(baseUrl.toString());
 
         verify(sut, times(1))
             .toDestination(
@@ -217,7 +217,10 @@ class OAuth2ServiceBindingDestinationLoaderTest
         sut = mockLoader(mock);
 
         final Try<Collection<Header>> result =
-            sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
+            sut
+                .tryGetDestination(OPTIONS_WITH_EMPTY_BINDING)
+                .map(Destination::asHttp)
+                .map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isInstanceOf(IllegalArgumentException.class);
@@ -355,7 +358,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     URI.create("proxyUrl"),
                     tokenUrl,
                     credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT)
+                .asHttp();
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
         assertThat(result.getHeaders(baseUrl))
@@ -380,7 +384,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         sut = new OAuth2ServiceBindingDestinationLoader();
 
-        HttpDestination result =
+        Destination result =
             sut.toDestination(baseUrl, tokenUrl, credentials, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, TEST_SERVICE);
 
         assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();

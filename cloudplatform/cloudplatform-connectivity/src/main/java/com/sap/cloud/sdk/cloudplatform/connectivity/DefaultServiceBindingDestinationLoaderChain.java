@@ -24,13 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * This implementation is a utility class that is capable of transforming a given
- * {@link ServiceBindingDestinationOptions} into a {@link HttpDestination}. Internally, this is done by leveraging the
+ * {@link ServiceBindingDestinationOptions} into a {@link Destination}. Internally, this is done by leveraging the
  * {@link ServiceBindingDestinationLoader} API.
  * <p>
  * <u>Usage Example:</u>
  *
  * <pre>
- * private Try<HttpDestination> tryGetDestinationServiceBinding( ServiceBinding serviceBinding )
+ * private Try<Destination> tryGetDestinationServiceBinding( ServiceBinding serviceBinding )
  * {
  *     ServiceBindingDestinationOptions options =
  *         ServiceBindingDestinationOptions.builder(BindableService.DESTINATION, serviceBinding).build();
@@ -75,7 +75,7 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
 
     @Override
     @Nonnull
-    public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
+    public Try<Destination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         if( delegateLoaders.isEmpty() ) {
             log.warn("No delegate loaders. As a consequence, the transformation will not be attempted.");
@@ -85,11 +85,11 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
         final ServiceBinding serviceBinding = options.getServiceBinding();
         final List<Throwable> suppressedExceptions = new ArrayList<>();
         for( final ServiceBindingDestinationLoader loader : delegateLoaders ) {
-            final Try<HttpDestination> result = loader.tryGetDestination(options);
+            final Try<Destination> result = loader.tryGetDestination(options);
             if( log.isDebugEnabled() ) {
                 final String msg = "Transformation of service binding ({}) to an {} using an instance of {} {}.";
                 final String state = result.isSuccess() ? "succeeded" : "failed";
-                log.debug(msg, serviceBindingToString(serviceBinding), HttpDestination.class, loader.getClass(), state);
+                log.debug(msg, serviceBindingToString(serviceBinding), Destination.class, loader.getClass(), state);
             }
 
             if( result.isSuccess() ) {
@@ -150,7 +150,7 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
     static final class NoDelegateLoadersExceptionHolder
     {
         @Nonnull
-        static final Try<HttpDestination> NO_DELEGATE_LOADERS =
+        static final Try<Destination> NO_DELEGATE_LOADERS =
             Try
                 .failure(
                     new DestinationAccessException(
@@ -158,6 +158,6 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
                             .format(
                                 "There are no delegate loaders that could perform the %s to %s transformation. Make sure at least one loader is available on the classpath by, for example, having the 'connectivity-oauth' dependency in your project.",
                                 ServiceBinding.class.getSimpleName(),
-                                HttpDestination.class.getSimpleName())));
+                                Destination.class.getSimpleName())));
     }
 }

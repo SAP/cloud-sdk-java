@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Representation of the <i>Megaclite</i> service as provided in <i>Deploy with Confidence</i> landscapes. This class
- * can be used to convert {@link MegacliteServiceBinding} instances into {@link HttpDestination} that use Megaclite as
- * an egress proxy.
+ * can be used to convert {@link MegacliteServiceBinding} instances into {@link Destination} that use Megaclite as an
+ * egress proxy.
  *
  * @see MegacliteServiceBinding
  * @see MegacliteServiceBindingAccessor
@@ -43,7 +43,7 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
 
     @Nonnull
     @Override
-    public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
+    public Try<Destination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final MegacliteServiceBinding megacliteServiceBinding;
 
@@ -68,7 +68,7 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
     }
 
     @Nonnull
-    private Try<HttpDestination> tryGetConnectivityDestination(
+    private Try<Destination> tryGetConnectivityDestination(
         @Nonnull final OnBehalfOf onBehalfOf,
         @Nonnull final ServiceBindingDestinationOptions options )
     {

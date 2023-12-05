@@ -50,8 +50,8 @@ class OAuth2OnPremiseIntegrationTest
 
         final OAuth2ServiceBindingDestinationLoader loader = new OAuth2ServiceBindingDestinationLoader();
 
-        final HttpDestination destination1 = loader.getDestination(connectivityOptions);
-        final HttpDestination destination2 = loader.getDestination(connectivityOptions);
+        final HttpDestination destination1 = loader.getDestination(connectivityOptions).asHttp();
+        final HttpDestination destination2 = loader.getDestination(connectivityOptions).asHttp();
 
         // No caching of destinations
         assertThat(destination1).isNotSameAs(destination2);

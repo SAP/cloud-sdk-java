@@ -122,7 +122,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_PAAS_AND_SAAS).build();
 
-        final HttpDestination result = sut.getDestination(options);
+        final HttpDestination result = sut.getDestination(options).asHttp();
 
         assertThat(result.getUri())
             .isEqualTo(megacliteUrl.resolve("/megaclite-version-saas/destination-saas/version-saas/"));
@@ -141,7 +141,7 @@ class MegacliteServiceBindingDestinationLoaderTest
                 .onBehalfOf(OnBehalfOf.TECHNICAL_USER_PROVIDER)
                 .build();
 
-        final HttpDestination result = sut.getDestination(options);
+        final HttpDestination result = sut.getDestination(options).asHttp();
 
         assertThat(result.getUri())
             .isEqualTo(megacliteUrl.resolve("/megaclite-version-paas/destination-paas/version-paas/"));
@@ -162,7 +162,7 @@ class MegacliteServiceBindingDestinationLoaderTest
                 .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
                 .build();
 
-        final HttpDestination result = sut.getDestination(options);
+        final HttpDestination result = sut.getDestination(options).asHttp();
 
         assertThat(result.getUri())
             .describedAs("Named user should behave the same as current tenant")
@@ -180,7 +180,7 @@ class MegacliteServiceBindingDestinationLoaderTest
                 .build();
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
+        final Try<Destination> result = sut.tryGetDestination(options);
 
         assertThatThrownBy(result::get).isExactlyInstanceOf(DestinationNotFoundException.class);
     }
@@ -196,7 +196,7 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         // create a loader without mocked DwC config
         sut = new MegacliteServiceBindingDestinationLoader();
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
+        final Try<Destination> result = sut.tryGetDestination(options);
 
         assertThatThrownBy(result::get)
             .isExactlyInstanceOf(DestinationAccessException.class)
@@ -212,7 +212,7 @@ class MegacliteServiceBindingDestinationLoaderTest
                 .onBehalfOf(OnBehalfOf.TECHNICAL_USER_PROVIDER)
                 .build();
 
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
+        final Try<Destination> result = sut.tryGetDestination(options);
 
         assertThatThrownBy(result::get)
             .describedAs("A SaaS binding should not be accessible on behalf of the provider.")
@@ -229,7 +229,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_PAAS).build();
 
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
+        final Try<Destination> result = sut.tryGetDestination(options);
 
         assertThatThrownBy(result::get)
             .describedAs("A PaaS binding should not be accessible on behalf of a subscriber tenant.")
@@ -242,7 +242,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_SAAS).build();
 
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
+        final Try<Destination> result = sut.tryGetDestination(options);
 
         assertThatThrownBy(result::get)
             .describedAs("A SaaS binding needs the current tenant to be present.")
@@ -258,7 +258,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_PAAS_AND_SAAS).build();
 
-        final HttpDestination result = sut.getDestination(options);
+        final HttpDestination result = sut.getDestination(options).asHttp();
 
         assertThat(result.getUri())
             .isEqualTo(megacliteUrl.resolve("/megaclite-version-paas/destination-paas/version-paas/"));

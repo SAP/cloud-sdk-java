@@ -51,7 +51,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     {
         @Nonnull
         @Override
-        public Try<HttpDestination> tryGetDestination( @Nonnull ServiceBindingDestinationOptions options )
+        public Try<Destination> tryGetDestination( @Nonnull ServiceBindingDestinationOptions options )
         {
             return Try.success(mock(DefaultHttpDestination.class));
         }

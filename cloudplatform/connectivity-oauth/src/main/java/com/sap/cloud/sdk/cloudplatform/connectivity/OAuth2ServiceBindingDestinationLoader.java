@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * An implementation of the {@link ServiceBindingDestinationLoader} interface that is capable of producing OAuth2 based
- * {@link HttpDestination} instances.
+ * {@link Destination} instances.
  * <p>
  * This class will automatically be picked up by the <i>service loader pattern</i>.
  *
@@ -125,7 +125,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
 
     @Nonnull
     @Override
-    public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
+    public Try<Destination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceIdentifier identifier = options.getServiceBinding().getServiceIdentifier().orElse(null);
         log.debug("Creating an OAuth2 destination for service {}.", identifier);

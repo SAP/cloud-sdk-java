@@ -40,7 +40,7 @@ class DefaultServiceBindingDestinationLoaderChainTest
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.emptyList());
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        final Try<Destination> result = sut.tryGetDestination(TEST_OPTIONS);
         assertThat(result.isFailure()).isTrue();
         assertThat(result)
             .isSameAs(DefaultServiceBindingDestinationLoaderChain.NoDelegateLoadersExceptionHolder.NO_DELEGATE_LOADERS);
@@ -57,7 +57,7 @@ class DefaultServiceBindingDestinationLoaderChainTest
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        final Try<Destination> result = sut.tryGetDestination(TEST_OPTIONS);
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationNotFoundException.class);
     }
@@ -73,7 +73,7 @@ class DefaultServiceBindingDestinationLoaderChainTest
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        final Try<Destination> result = sut.tryGetDestination(TEST_OPTIONS);
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isSameAs(expectedCause);
     }
@@ -89,7 +89,7 @@ class DefaultServiceBindingDestinationLoaderChainTest
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        final Try<Destination> result = sut.tryGetDestination(TEST_OPTIONS);
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause())
             .isExactlyInstanceOf(DestinationAccessException.class)
@@ -101,17 +101,17 @@ class DefaultServiceBindingDestinationLoaderChainTest
     void testTryGetDestinationReturnsFirstMatchingResult()
     {
         final ServiceBindingDestinationLoader firstLoader = mock(ServiceBindingDestinationLoader.class);
-        final Try<HttpDestination> firstSuccess = Try.success(mock(HttpDestination.class));
+        final Try<Destination> firstSuccess = Try.success(mock(Destination.class));
         when(firstLoader.tryGetDestination(any())).thenReturn(firstSuccess);
 
         final ServiceBindingDestinationLoader secondLoader = mock(ServiceBindingDestinationLoader.class);
-        final Try<HttpDestination> secondSuccess = Try.success(mock(HttpDestination.class));
+        final Try<Destination> secondSuccess = Try.success(mock(Destination.class));
         when(secondLoader.tryGetDestination(any())).thenReturn(secondSuccess);
 
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Arrays.asList(firstLoader, secondLoader));
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        final Try<Destination> result = sut.tryGetDestination(TEST_OPTIONS);
         assertThat(result.isSuccess()).isTrue();
         assertThat(result).isSameAs(firstSuccess);
         assertThat(result).isNotSameAs(secondSuccess);
