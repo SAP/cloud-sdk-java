@@ -23,7 +23,7 @@ public class HelloWorldController
     private static final Logger logger = LoggerFactory.getLogger(HelloWorldController.class);
 
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity<HelloWorldResponse> getHello( @RequestParam( defaultValue = "world" ) final String name )
+    public ResponseEntity<HelloWorldResponse> getHello( @RequestParam( name = "name", defaultValue = "world" ) final String name )
     {
         logger.info("I am running!");
         return ResponseEntity.ok(new HelloWorldResponse(name));
