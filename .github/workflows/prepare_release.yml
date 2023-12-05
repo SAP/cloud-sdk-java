@@ -268,6 +268,12 @@ jobs:
         with:
           ref: ${{ needs.prepare-release.outputs.release_commit_id }}
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2

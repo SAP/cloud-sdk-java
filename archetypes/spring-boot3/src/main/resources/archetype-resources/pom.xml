@@ -12,10 +12,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring-boot.version>3.1.5</spring-boot.version>
+        <spring-boot.version>3.2.0</spring-boot.version>
 
         <java.version>17</java.version>
-        <cloud-sdk.version>5.0.0-alpha-SNAPSHOT</cloud-sdk.version>
+        <cloud-sdk.version>5.1.0-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
