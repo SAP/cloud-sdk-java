@@ -402,6 +402,36 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(config.identifier()).startsWith(baseDestination.get(DestinationProperty.NAME).get());
     }
 
+    @Test
+    void testExceptionInOAuth2PropertySupplierIsHandledCorrectly()
+    {
+        final ImmutableMap<String, Object> bindingCredentials =
+            ImmutableMap
+                .of("clientid", "CLIENT_ID", "url", "URL", "tokenurl", "TOKEN_URL", "clientsecret", "CLIENT_SECRET");
+        final ServiceBinding binding =
+            DefaultServiceBinding
+                .builder()
+                .copy(Collections.emptyMap())
+                .withServiceIdentifier(TEST_SERVICE)
+                .withCredentials(bindingCredentials)
+                .build();
+
+        final ServiceBindingDestinationOptions opts = ServiceBindingDestinationOptions.forService(binding).build();
+
+        final OAuth2PropertySupplier supplier = mock(OAuth2PropertySupplier.class);
+        when(supplier.isOAuth2Binding()).thenReturn(true);
+        when(supplier.getServiceUri()).thenThrow(new IllegalStateException());
+
+        final OAuth2PropertySupplierResolver resolver = mock(OAuth2PropertySupplierResolver.class);
+        when(resolver.matches(opts)).thenReturn(true);
+        when(resolver.resolve(opts)).thenReturn(supplier);
+
+        final List<OAuth2PropertySupplierResolver> resolvers = Collections.singletonList(resolver);
+        final OAuth2ServiceBindingDestinationLoader sut = new OAuth2ServiceBindingDestinationLoader(resolvers);
+
+        assertThat(sut.tryGetDestination(opts).getCause()).isInstanceOf(DestinationAccessException.class);
+    }
+
     private static OAuth2ServiceBindingDestinationLoader mockLoader( final OAuth2PropertySupplier s )
     {
         final OAuth2PropertySupplierResolver resolver =
