@@ -3,22 +3,22 @@
 release-date: January XX, 2024
 docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
-## Known Issues
+## 🚧 Known Issues
 
 -
 
 
-## Compatibility Notes
+## 🔧 Compatibility Notes
 
 - 
 
 
-## New Functionality
+## ✨ New Functionality
 
 -
 
 
-## Improvements
+## 📈 Improvements
 
 - ---For Dependency updates use the below template---
 - Dependency Updates:
@@ -33,7 +33,7 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
         - ---Other dependency Minor version updates here---
         - Update stuff from `a.b.c` to `x.z.y`
 
-## Fixed Issues
+## 🐛 Fixed Issues
 
 - ---Fix an issue where XYZ went wrong or did not work. ABC can be done much better now.---
 
