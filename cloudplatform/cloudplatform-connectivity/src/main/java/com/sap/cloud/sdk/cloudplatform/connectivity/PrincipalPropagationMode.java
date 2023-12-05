@@ -18,31 +18,34 @@ import lombok.RequiredArgsConstructor;
 public enum PrincipalPropagationMode
 {
     /**
-     * Recommended principal propagation strategy.
+     * Principal propagation strategy based on exchanging the user token. <strong>This strategy is generally NOT
+     * recommended</strong>. Please consider switching to {@link #TOKEN_FORWARDING} instead.
      * <p>
-     * <strong>Header:</strong> "Proxy-Authorization" Token exchange (JWT Bearer Token Grant) on behalf of current user
-     * token (principal) with technical credentials of connectivity service binding. The OAuth2 service of target tenant
-     * will be used.
+     * Using the {@code TOKEN_EXCHANGE} strategy produces additional round-trips and increases the load on the XSUAA
+     * service. The XSUAA service is rate limited, so this strategy can lead to on-premise calls being blocked by that
+     * rate limit.
      * <p>
-     * <strong>Note:</strong> The OAuth2 service of target tenant will be used.
-     * <p>
-     * <strong>Note:</strong> Despite the name, we're not recommending this mode by default. Due to token exchanges and
-     * additional round-trips, this leads to an increased load on the XSUAA service instance. The platform rate limiter
-     * could quickly block further OnPremise calls.
+     * Using this strategy the following headers will be populated:
+     * <ul>
+     * <li><strong>Header:</strong> "Proxy-Authorization" Token exchange (JWT Bearer Token Grant) on behalf of current
+     * user.</li>
+     * <li>token (principal) with technical credentials of connectivity service binding.</li>
+     * </ul>
      */
-    RECOMMENDED,
+    TOKEN_EXCHANGE,
 
     /**
-     * Compatibility mode for principal propagation.
+     * Principal propagation strategy based on forwarding the user token.
      * <p>
-     * <strong>Header:</strong> "Proxy-Authorization" Token lookup (Client Credentials Grant) on behalf of technical
-     * credentials of connectivity service binding.
-     * <p>
-     * <strong>Header:</strong> "SAP-Connectivity-Authentication" Token forwarding of current user token (principal).
-     * <p>
-     * <strong>Note:</strong> The OAuth2 service of target tenant will be used.
+     * Using this strategy the following headers will be populated:
+     * <ul>
+     * <li><strong>Header:</strong> "Proxy-Authorization" Token lookup (Client Credentials Grant) on behalf of a
+     * technical user for the current tenant using the credentials of connectivity service binding.</li>
+     * <li><strong>Header:</strong> "SAP-Connectivity-Authentication" Token forwarding of current user token
+     * (principal).</li>
+     * </ul>
      */
-    COMPATIBILITY,
+    TOKEN_FORWARDING,
 
     /**
      * Unknown principal propagation mode.

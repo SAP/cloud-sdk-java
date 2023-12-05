@@ -172,6 +172,10 @@ blog: https://blogs.sap.com/?p=xxx
     - The `user(String)` and `password(String)` methods have been replaced with `basicCredentials(String, String)`.
     - Using any overload of `basicCredentials` will now automatically set the `AuthenticationType` to `BASIC_AUTHENTICATION`.
     - Using `proxyConfiguration(ProxyConfiguration)` will now throw an `IllegalArgumentException` in case the contained `Credentials` are not supported. Supported types are `BearerCredentials` and `NoCredentials`.
+  - `PrincipalPropagationStrategy` has been replaced by `PrincipalPropagationMode`.
+    - `PrincipalPropagationStrategy.RECOMMENDED` is now `PrincipalPropagationMode.TOKEN_EXCHANGE`
+    - `PrincipalPropagationStrategy.COMPATIBILITY` is now `PrincipalPropagationMode.TOKEN_FORWARDING`
+    - `PrincipalPropagationStrategy.setDefaultStrategy` has been removed. The strategy can now be configured by setting the `DestinationProperty.PRINCIPAL_PROPAGATION_MODE`.
   - The `BearerCredentials` behavior has been adjusted slightly: The `getToken()` method no longer just returns the value passed in via the constructor but instead is now guaranteed to **NOT** contain the prefix `"Bearer "`. To compensate this change, the `#getHttpHeaderValue()` method has been added, which is guaranteed to contain the `"Bearer "` prefix.
   - Invoking `HttpDestination#getHeaders(...)` may throw a `ResilienceRuntimeException` in case On-Premise Connectivity proxy headers cannot be resolved.
     As usual, the specific error cause is attached to the exception.
