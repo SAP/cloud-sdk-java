@@ -110,7 +110,7 @@ class DestinationServiceAdapter
                 final ServiceBinding binding = serviceBindingSupplier.get();
                 final ServiceBindingDestinationOptions options =
                     ServiceBindingDestinationOptions.forService(binding).onBehalfOf(b).build();
-                return ServiceBindingDestinationLoader.defaultLoaderChain().getDestination(options);
+                return ServiceBindingDestinationLoader.defaultLoaderChain().getDestination(options).asHttp();
             }
             catch( final Exception e ) {
                 throw new DestinationAccessException(
