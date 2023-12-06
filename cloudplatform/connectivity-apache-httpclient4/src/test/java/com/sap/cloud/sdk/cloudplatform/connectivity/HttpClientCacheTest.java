@@ -9,12 +9,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HttpClientCacheTest
+class HttpClientCacheTest
 {
     @Test
-    public void testDisabledCache()
+    void testDisabledCache()
     {
         final HttpClientFactory factory = spy(new DefaultHttpClientFactory());
         final HttpDestination destination = mock(HttpDestination.class);

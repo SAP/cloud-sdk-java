@@ -6,12 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DestinationOptionsTest
+class DestinationOptionsTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final DestinationOptions options = DestinationOptions.builder().build();
         assertThat(options).isNotNull();
@@ -19,7 +19,7 @@ public class DestinationOptionsTest
     }
 
     @Test
-    public void testEquality()
+    void testEquality()
     {
         final DestinationOptions options1 = DestinationOptions.builder().parameterIfAbsent("foo", "bar").build();
         final DestinationOptions options2 = DestinationOptions.builder(options1).parameterIfAbsent("foo", 42).build();
