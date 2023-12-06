@@ -148,6 +148,10 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         catch( final DestinationAccessException e ) {
             return Try.failure(e);
         }
+        catch( final Exception e ) {
+            final String msg = "Failed to retrieve OAuth2 properties for service binding of service '%s'.";
+            return Try.failure(new DestinationAccessException(String.format(msg, identifier), e));
+        }
 
         final Option<HttpDestination> destinationToBeProxied = options.getOption(Options.ProxyOptions.class);
 
