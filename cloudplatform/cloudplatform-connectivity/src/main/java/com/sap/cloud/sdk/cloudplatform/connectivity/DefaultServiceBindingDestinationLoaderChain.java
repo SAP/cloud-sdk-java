@@ -4,8 +4,9 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -45,14 +46,18 @@ import lombok.extern.slf4j.Slf4j;
 class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDestinationLoader
 {
     @Nonnull
-    private static final Collection<ServiceBindingDestinationLoader> DEFAULT_DELEGATE_LOADERS =
-        FacadeLocator.getFacades(ServiceBindingDestinationLoader.class);
+    private static final List<ServiceBindingDestinationLoader> DEFAULT_DELEGATE_LOADERS;
     @Nonnull
-    static final DefaultServiceBindingDestinationLoaderChain DEFAULT_INSTANCE =
-        new DefaultServiceBindingDestinationLoaderChain(DEFAULT_DELEGATE_LOADERS);
+    static final DefaultServiceBindingDestinationLoaderChain DEFAULT_INSTANCE;
+
+    static {
+        DEFAULT_DELEGATE_LOADERS =
+            FacadeLocator.getFacades(ServiceBindingDestinationLoader.class).stream().collect(toList());
+        DEFAULT_INSTANCE = new DefaultServiceBindingDestinationLoaderChain(DEFAULT_DELEGATE_LOADERS);
+    }
 
     @Nonnull
-    private final Collection<ServiceBindingDestinationLoader> delegateLoaders;
+    private final List<ServiceBindingDestinationLoader> delegateLoaders;
 
     /**
      * Creates a new {@link DefaultServiceBindingDestinationLoaderChain} instance.
@@ -63,7 +68,7 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
      *            {@link #tryGetDestination(ServiceBindingDestinationOptions)}.
      */
     public DefaultServiceBindingDestinationLoaderChain(
-        @Nonnull final Collection<ServiceBindingDestinationLoader> delegateLoaders )
+        @Nonnull final List<ServiceBindingDestinationLoader> delegateLoaders )
     {
         this.delegateLoaders = delegateLoaders;
     }
