@@ -13,7 +13,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
@@ -44,7 +43,6 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
-import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
 @WireMockTest
@@ -228,25 +226,23 @@ class DefaultHttpClientFactoryTest
 
     @Test
     @SneakyThrows
-    void testProxyAuthorizationIsNotConsidered( @Nonnull final WireMockRuntimeInfo wm )
+    void testProxyConfigurationIsConsidered( @Nonnull final WireMockRuntimeInfo wm )
     {
         final StubMapping stub = stubFor(get(urlEqualTo("/proxy-with-auth")).willReturn(ok()));
 
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder("http://www.sap.com").build();
-        final DefaultHttpDestination spiedDestination = spy(destination);
-
         final BasicCredentials credentials = new BasicCredentials("user", "pass");
-        final BasicCredentials spiedCredentials = spy(credentials);
-        doReturn(Option.of(ProxyConfiguration.of(wm.getHttpBaseUrl(), spiedCredentials)))
-            .when(spiedDestination)
-            .getProxyConfiguration();
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("http://www.sap.com")
+                .proxyConfiguration(ProxyConfiguration.of(wm.getHttpBaseUrl(), credentials))
+                .build();
+        final DefaultHttpDestination spiedDestination = spy(destination);
 
         final DefaultHttpClientFactory sut = new DefaultHttpClientFactory();
 
         final HttpClient httpClient = sut.createHttpClient(spiedDestination);
         Mockito.verify(spiedDestination, atLeastOnce()).getProxyConfiguration();
-        Mockito.verify(spiedCredentials, atLeastOnce()).getUsername();
-        Mockito.verify(spiedCredentials, atLeastOnce()).getPassword();
 
         final HttpResponse response = httpClient.execute(new HttpGet("/proxy-with-auth"));
         final List<ServeEvent> events = getAllServeEvents(ServeEventQuery.forStubMapping(stub));
@@ -258,8 +254,10 @@ class DefaultHttpClientFactoryTest
                     HttpHeaders.HOST,
                     "Proxy-Connection",
                     HttpHeaders.USER_AGENT,
-                    HttpHeaders.ACCEPT_ENCODING);
-            assertThat(event.getRequest().getHeader(HttpHeaders.PROXY_AUTHORIZATION)).isNull();
+                    HttpHeaders.ACCEPT_ENCODING,
+                    HttpHeaders.PROXY_AUTHORIZATION);
+            assertThat(event.getRequest().getHeader(HttpHeaders.PROXY_AUTHORIZATION))
+                .contains(credentials.getHttpHeaderValue());
         });
     }
 }
