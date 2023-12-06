@@ -332,15 +332,10 @@ jobs:
             --version=$PROJECT_VERSION \
         env:
           PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
-          DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }},openapi-generator-cli
-          DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }},!:openapi-generator-cli
+          DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }}
+          DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }}
           DETECT_TIMEOUT: 7200
-          # Fixme: Use real project version
           PROJECT_VERSION: "5"
-      - name: Fill summary with TODO
-        run: |
-          echo "# TODO" >> $GITHUB_STEP_SUMMARY
-          echo "Fix the project version of the Blackduck scan once it is version 5.x in the pom!" >> $GITHUB_STEP_SUMMARY
 
   create_fosstars_report:
     name: "Security rating"
@@ -440,6 +435,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Delete Release Branch
+        run: |
+          git push origin --delete ${{ needs.prepare-release.outputs.branch_name }}
       - name: Notify
         run: python .pipeline/scripts/notify.py
         env:
