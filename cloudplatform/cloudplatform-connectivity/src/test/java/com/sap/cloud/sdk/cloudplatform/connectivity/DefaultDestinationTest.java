@@ -43,6 +43,13 @@ class DefaultDestinationTest
     }
 
     @Test
+    void testToString()
+    {
+        final Destination dest = DefaultDestination.builder().name("foo").property("some_password", "bar").build();
+        assertThat(dest).hasToString("DefaultDestination(properties={some_password=(hidden), Name=foo})");
+    }
+
+    @Test
     void testGetPropertyNames()
     {
         final String someKey = "someKey";
