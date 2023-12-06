@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.0.0-alpha-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-destination-service</artifactId>
 	<name>Cloud Platform - Connectivity SAP BTP Cloud Foundry</name>
@@ -53,6 +53,7 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
+		<!-- Included by default to serve as the default implementation -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>connectivity-oauth</artifactId>
@@ -156,14 +157,14 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<!-- scope "test" -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>servlet</artifactId>
+			<artifactId>servlet-jakarta</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -180,6 +181,12 @@
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-security-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>wiremock</artifactId>
+					<groupId>com.github.tomakehurst</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.security.xsuaa</groupId>
@@ -187,18 +194,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -233,10 +240,8 @@
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
-						<!-- implementation for parsing OAuth2 service bindings (e.g. destination service binding) -->
+						<!-- Included by default to serve as the default implementation for service binding connectivity -->
 						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-oauth</ignoredNonTestScopedDependency>
-						<!-- needed for exception classes (i.e. NoServiceBindingException) -->
-						<ignoredNonTestScopedDependency>com.sap.cloud.sdk.cloudplatform:cloudplatform-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
 				</configuration>
 			</plugin>

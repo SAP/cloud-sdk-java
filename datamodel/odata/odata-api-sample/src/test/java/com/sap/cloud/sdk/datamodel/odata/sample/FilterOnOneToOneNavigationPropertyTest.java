@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.helper.ExpressionFluentHelper;
 import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Address;
@@ -18,13 +18,13 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Recei
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FilterOnOneToOneNavigationPropertyTest
+class FilterOnOneToOneNavigationPropertyTest
 {
 
     private static final SdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
 
     @Test
-    public void testSimpleFilter()
+    void testSimpleFilter()
     {
         final ExpressionFluentHelper<Receipt> helper = Receipt.TO_CUSTOMER.filter(Customer.NAME.eq("Chuck Norris"));
 
@@ -34,7 +34,7 @@ public class FilterOnOneToOneNavigationPropertyTest
     }
 
     @Test
-    public void testFilterWithJunction()
+    void testFilterWithJunction()
     {
         final ExpressionFluentHelper<Receipt> helper =
             Receipt.TO_CUSTOMER
@@ -52,7 +52,7 @@ public class FilterOnOneToOneNavigationPropertyTest
     }
 
     @Test
-    public void testFilterWithBrokenJunction()
+    void testFilterWithBrokenJunction()
     {
         final ExpressionFluentHelper<Receipt> helper =
             Receipt.TO_CUSTOMER
@@ -67,7 +67,7 @@ public class FilterOnOneToOneNavigationPropertyTest
     }
 
     @Test
-    public void testMultipleNestedFilter()
+    void testMultipleNestedFilter()
     {
         final ExpressionFluentHelper<Receipt> helper =
             Receipt.TO_CUSTOMER.filter(Customer.TO_ADDRESS.filter(Address.CITY.eq("Potsdam")));

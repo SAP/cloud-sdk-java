@@ -12,17 +12,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.matching.RequestPatternBuilder.allRequests;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 
@@ -30,19 +31,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-public class SpecialCharactersTest
+@WireMockTest
+class SpecialCharactersTest
 {
     private static final String SERVICE_URL = "/service/path";
 
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private DefaultHttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Data
@@ -69,7 +68,7 @@ public class SpecialCharactersTest
     }
 
     @Test
-    public void testGetByKey()
+    void testGetByKey()
     {
         final String keyVal1 = "F?oo";
         final String keyVal2 = "A/ #";
@@ -89,7 +88,7 @@ public class SpecialCharactersTest
     }
 
     @Test
-    public void testGetNavigationPropertyByKey()
+    void testGetNavigationPropertyByKey()
     {
         final String ticketsUrl = SERVICE_URL + "/Tickets(Key1='s4L3s%2F%200rd3%3Fr',Key2='1t3%23m')/to_NextTicket";
 
@@ -110,7 +109,7 @@ public class SpecialCharactersTest
     }
 
     @Test
-    public void testFilterExpression()
+    void testFilterExpression()
     {
         final String field1Val = "&?:/";
         final String field2Val = "#/\\";
@@ -136,7 +135,7 @@ public class SpecialCharactersTest
     }
 
     @Test
-    public void testEscapedNestedSingleQuote()
+    void testEscapedNestedSingleQuote()
     {
         // test escaping for get by filter
         {
@@ -193,7 +192,7 @@ public class SpecialCharactersTest
     }
 
     @Test
-    public void testEscapedOnlySingleQuote()
+    void testEscapedOnlySingleQuote()
     {
         final String oderKey = "'";
         final String itemKey = "'";

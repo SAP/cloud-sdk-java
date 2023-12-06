@@ -148,6 +148,10 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         catch( final DestinationAccessException e ) {
             return Try.failure(e);
         }
+        catch( final Exception e ) {
+            final String msg = "Failed to retrieve OAuth2 properties for service binding of service '%s'.";
+            return Try.failure(new DestinationAccessException(String.format(msg, identifier), e));
+        }
 
         final Option<HttpDestination> destinationToBeProxied = options.getOption(Options.ProxyOptions.class);
 
@@ -224,7 +228,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             .proxy(proxyUrl)
             .headerProviders(headerProvider)
             .property(
-                OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
+                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                 createTokenRetrievalResilienceConfiguration(name))
             .buildInternal();
     }
@@ -247,7 +251,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             .headerProviders(headerProvider)
             .name(name)
             .property(
-                OAuthHeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
+                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
                 createTokenRetrievalResilienceConfiguration(name))
             .build();
     }
@@ -260,8 +264,8 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     {
         log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
 
-        final OAuth2ServiceImpl oAuth2Service = new OAuth2ServiceImpl(tokenUrl.toString(), clientIdentity, behalf);
-        return new OAuthHeaderProvider(oAuth2Service, authHeader);
+        final OAuth2Service oAuth2Service = new OAuth2Service(tokenUrl.toString(), clientIdentity, behalf);
+        return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }
 
     @Nonnull

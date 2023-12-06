@@ -82,12 +82,7 @@ jobs:
       matrix:
         task:
           - {
-              "archetype": "scp-cf-spring",
-              "javaVersion": 8,
-              "startCommand": "mvn spring-boot:run -B",
-            }
-          - {
-              "archetype": "scp-cf-spring-jakarta",
+              "archetype": "spring-boot3",
               "javaVersion": 17,
               "startCommand": "mvn spring-boot:run -B",
             }

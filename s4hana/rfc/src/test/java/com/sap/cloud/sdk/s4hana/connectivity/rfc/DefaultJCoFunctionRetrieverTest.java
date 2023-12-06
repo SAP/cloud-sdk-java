@@ -7,7 +7,7 @@ package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -17,10 +17,10 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoRepository;
 
 @Deprecated
-public class DefaultJCoFunctionRetrieverTest
+class DefaultJCoFunctionRetrieverTest
 {
     @Test
-    public void testSuccessfulFunctionRetrieval()
+    void testSuccessfulFunctionRetrieval()
         throws JCoException
     {
         final JCoDestination jCoDestination = Mockito.mock(JCoDestination.class);
@@ -38,7 +38,7 @@ public class DefaultJCoFunctionRetrieverTest
     }
 
     @Test
-    public void testRetrieveFunctionWhichDoesNotExist()
+    void testRetrieveFunctionWhichDoesNotExist()
         throws JCoException
     {
         final JCoDestination jCoDestination = Mockito.mock(JCoDestination.class);

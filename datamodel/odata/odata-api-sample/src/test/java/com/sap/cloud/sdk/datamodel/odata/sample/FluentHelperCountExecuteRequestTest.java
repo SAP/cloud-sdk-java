@@ -12,16 +12,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.helper.ExpressionFluentHelper;
@@ -34,11 +35,9 @@ import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 /**
  * Tests the method {@link FluentHelperCount#executeRequest(Destination)}
  */
-public class FluentHelperCountExecuteRequestTest
+@WireMockTest
+class FluentHelperCountExecuteRequestTest
 {
-    @Rule
-    public final WireMockRule erpServer = new WireMockRule(wireMockConfig().dynamicPort());
-
     private final ExpressionFluentHelper<Product> FIRST_NAME_FILTER_EXPRESSION = Product.NAME.eq("Cloud SDK");
 
     private static final String FIRST_NAME_FILTER = "$filter=Name eq 'Cloud SDK'";
@@ -57,14 +56,14 @@ public class FluentHelperCountExecuteRequestTest
         new DefaultSdkGroceryStoreService().withServicePath(ODATA_ENDPOINT_URL);
     private DefaultHttpDestination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultHttpDestination.builder(erpServer.baseUrl()).build();
+        destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testCountRemovesEverythingExceptCustomParameters()
+    void testCountRemovesEverythingExceptCustomParameters()
     {
         final String odataRequestUrl = ODATA_ENTITY + COUNT + "?custom=param";
 
@@ -89,7 +88,7 @@ public class FluentHelperCountExecuteRequestTest
     }
 
     @Test
-    public void testCountWithWorkingFilter()
+    void testCountWithWorkingFilter()
     {
         final String odataRequestUrl = ODATA_ENTITY + COUNT_WITH_FIRST_NAME_FILTER;
 
@@ -102,7 +101,7 @@ public class FluentHelperCountExecuteRequestTest
     }
 
     @Test
-    public void testCountWithEmptyFilter()
+    void testCountWithEmptyFilter()
     {
         final String odataRequestUrl = ODATA_ENTITY + COUNT_WITH_FIRST_NAME_FILTER;
 

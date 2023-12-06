@@ -9,8 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -22,17 +22,16 @@ import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
 
-@Deprecated
-public class DefaultTenantFacadeXsuaaTest
+class DefaultTenantFacadeXsuaaTest
 {
-    @After
-    public void resetAuthTokenAccessor()
+    @AfterEach
+    void resetAuthTokenAccessor()
     {
         AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test
-    public void givenATokenThenXsuaaServiceIsNotCalled()
+    void givenATokenThenXsuaaServiceIsNotCalled()
     {
         final String userTenant = "someUserTenant";
         mockCurrentTenant(userTenant);
@@ -44,7 +43,7 @@ public class DefaultTenantFacadeXsuaaTest
     }
 
     @Test
-    public void givenNoUserTokenAndXsuaaTenantThenExceptionIsReturned()
+    void givenNoUserTokenAndXsuaaTenantThenExceptionIsReturned()
     {
         final Try<Tenant> tenantTry = new DefaultTenantFacade().tryGetCurrentTenant();
         VavrAssertions.assertThat(tenantTry).isFailure().failBecauseOf(TenantAccessException.class);

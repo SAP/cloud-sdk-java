@@ -4,12 +4,13 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.0.0-alpha-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>dwc-cf</artifactId>
-	<name>Cloud Platform - SAP Deploy with Confidence on Cloud Foundry (Beta)</name>
+	<name>(Deprecated) Cloud Platform - SAP Deploy with Confidence on Cloud Foundry</name>
 	<description>Collection of all Cloud platform abstractions for SAP Deploy with Confidence stack hosted on Cloud
-        Foundry (Beta).</description>
+		Foundry (Deprecated, please replace with com.sap.cloud.sdk:sdk-core and
+		com.sap.cloud.sdk.cloudplatform:connectivity-dwc).</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
 	<organization>
 		<name>SAP SE</name>
@@ -35,16 +36,16 @@
 	</scm>
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Beta</x-sap-release-maturity>
+		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-dwc</artifactId>
+			<groupId>com.sap.cloud.sdk</groupId>
+			<artifactId>sdk-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>scp-cf</artifactId>
+			<artifactId>connectivity-dwc</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -54,13 +55,9 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
 					<usedDependencies>
+						<usedDependency>com.sap.cloud.sdk:sdk-core</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:connectivity-dwc</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:scp-cf</usedDependency>
 					</usedDependencies>
-					<ignoredUsedUndeclaredDependencies>
-						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:security</ignoredUsedUndeclaredDependency>
-						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:tenant</ignoredUsedUndeclaredDependency>
-					</ignoredUsedUndeclaredDependencies>
 				</configuration>
 			</plugin>
 			<!-- create an empty javadoc jar for Maven Central -->

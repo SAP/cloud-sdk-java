@@ -5,17 +5,17 @@ package com.sap.cloud.sdk.datamodel.odatav4.referenceservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.GetAllRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.PersonGender;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService;
 
-public class CollectionQueriesTest
+class CollectionQueriesTest
 {
     @Test
-    public void testGetFilteredWithAny()
+    void testGetFilteredWithAny()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -27,7 +27,7 @@ public class CollectionQueriesTest
     }
 
     @Test
-    public void testGetFilteredWithAll()
+    void testGetFilteredWithAll()
     {
         final GetAllRequestBuilder<Person> query =
             new DefaultTrippinService()
@@ -39,7 +39,7 @@ public class CollectionQueriesTest
     }
 
     @Test
-    public void testEnumFilter()
+    void testEnumFilter()
     {
 
         final GetAllRequestBuilder<Person> query =

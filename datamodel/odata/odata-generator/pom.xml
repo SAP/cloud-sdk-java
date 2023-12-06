@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>odata-parent</artifactId>
-		<version>5.0.0-alpha-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-generator</artifactId>
 	<packaging>jar</packaging>
@@ -148,11 +148,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<!-- scope "test" -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>

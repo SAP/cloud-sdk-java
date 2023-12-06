@@ -19,12 +19,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.http.client.HttpClient;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.gson.GsonBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
@@ -34,33 +34,27 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
-public class ODataRequestActionTest
+class ODataRequestActionTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
 
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_ACTION = "TestAction";
 
-    private WireMockServer wireMockServer;
+    @RegisterExtension
+    static final WireMockExtension wireMockServer =
+        WireMockExtension.newInstance().options(WIREMOCK_CONFIGURATION).build();
     private HttpClient client;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
-        wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
-        wireMockServer.start();
         final Destination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
         client = HttpClientAccessor.getHttpClient(destination);
     }
 
-    @AfterEach
-    public void teardown()
-    {
-        wireMockServer.stop();
-    }
-
     @Test
-    public void testActionWithoutParameters()
+    void testActionWithoutParameters()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 
@@ -83,7 +77,7 @@ public class ODataRequestActionTest
     }
 
     @Test
-    public void testActionWithParameters()
+    void testActionWithParameters()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 
@@ -126,7 +120,7 @@ public class ODataRequestActionTest
     }
 
     @Test
-    public void testActionWithoutCsrfTokenIfSkipped()
+    void testActionWithoutCsrfTokenIfSkipped()
     {
         wireMockServer.stubFor(post(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)).willReturn(noContent()));
 

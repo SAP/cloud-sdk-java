@@ -23,9 +23,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.annotations.JsonAdapter;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpClientCache;
@@ -36,7 +36,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-public class FluentHelperEtagParsingTest
+class FluentHelperEtagParsingTest
 {
     private static final String SERVICE_PATH = "/service";
     private static final String ENTITY_COLLECTION = "/EntityCollection";
@@ -50,8 +50,8 @@ public class FluentHelperEtagParsingTest
 
     private HttpClient httpClient;
 
-    @Before
-    public void setupConnectivity()
+    @BeforeEach
+    void setupConnectivity()
     {
         httpClient = mock(HttpClient.class);
         HttpClientAccessor.setHttpClientCache(new DefaultHttpClientCache(0, TimeUnit.MICROSECONDS));
@@ -61,8 +61,8 @@ public class FluentHelperEtagParsingTest
         });
     }
 
-    @After
-    public void teardownConnectivity()
+    @AfterEach
+    void teardownConnectivity()
     {
         HttpClientAccessor.setHttpClientCache(new DefaultHttpClientCache(5, TimeUnit.MINUTES));
         HttpClientAccessor.setHttpClientFactory(null);
@@ -73,7 +73,7 @@ public class FluentHelperEtagParsingTest
      */
     @SneakyThrows
     @Test
-    public void testParseNoEtagGetByKey()
+    void testParseNoEtagGetByKey()
     {
         when(httpClient.execute(any())).thenReturn(response("{d:{}}", HEADERS_NONE));
 
@@ -88,7 +88,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseNoEtagFunctionImport()
+    void testParseNoEtagFunctionImport()
     {
         when(httpClient.execute(any())).thenReturn(response(String.format("{d:{%s:{}}}", FUNCTION_NAME), HEADERS_NONE));
 
@@ -113,7 +113,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseNoEtagUpdate()
+    void testParseNoEtagUpdate()
     {
         when(httpClient.execute(any())).thenReturn(response("{d:{}}", HEADERS_NONE));
 
@@ -134,7 +134,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseHeaderEtagGetByKey()
+    void testParseHeaderEtagGetByKey()
     {
         when(httpClient.execute(any())).thenReturn(response("{d:{}}", HEADERS_WITH_ETAG));
 
@@ -149,7 +149,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseHeaderEtagFunctionImport()
+    void testParseHeaderEtagFunctionImport()
     {
         when(httpClient.execute(any()))
             .thenReturn(response(String.format("{d:{%s:{}}}", FUNCTION_NAME), HEADERS_WITH_ETAG));
@@ -175,7 +175,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseHeaderEtagUpdate()
+    void testParseHeaderEtagUpdate()
     {
         when(httpClient.execute(any())).thenReturn(response("{d:{}}", HEADERS_WITH_ETAG));
 
@@ -199,7 +199,7 @@ public class FluentHelperEtagParsingTest
      */
     @SneakyThrows
     @Test
-    public void testParsePayloadEtagGetAll()
+    void testParsePayloadEtagGetAll()
     {
         final String payload = String.format("{d:{results:[{__metadata:{etag:\"%s\"}}]}}", ETAG_BODY);
         when(httpClient.execute(any())).thenReturn(response(payload, HEADERS_NONE));
@@ -212,7 +212,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParsePayloadEtagGetByKey()
+    void testParsePayloadEtagGetByKey()
     {
         when(httpClient.execute(any()))
             .thenReturn(response(String.format("{d:{__metadata:{etag:\"%s\"}}}", ETAG_BODY), HEADERS_NONE));
@@ -228,7 +228,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParsePayloadEtagFunctionImport()
+    void testParsePayloadEtagFunctionImport()
     {
         when(httpClient.execute(any()))
             .thenReturn(
@@ -255,7 +255,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParsePayloadEtagUpdate()
+    void testParsePayloadEtagUpdate()
     {
         when(httpClient.execute(any()))
             .thenReturn(response(String.format("{d:{__metadata:{etag:\"%s\"}}}", ETAG_BODY), HEADERS_NONE));
@@ -280,7 +280,7 @@ public class FluentHelperEtagParsingTest
      */
     @SneakyThrows
     @Test
-    public void testParseHeaderAndPayloadEtagGetByKey()
+    void testParseHeaderAndPayloadEtagGetByKey()
     {
         when(httpClient.execute(any()))
             .thenReturn(response(String.format("{d:{__metadata:{etag:\"%s\"}}}", ETAG_BODY), HEADERS_WITH_ETAG));
@@ -296,7 +296,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseHeaderAndPayloadEtagFunctionImport()
+    void testParseHeaderAndPayloadEtagFunctionImport()
     {
         when(httpClient.execute(any()))
             .thenReturn(
@@ -325,7 +325,7 @@ public class FluentHelperEtagParsingTest
 
     @SneakyThrows
     @Test
-    public void testParseHeaderAndPayloadEtagUpdate()
+    void testParseHeaderAndPayloadEtagUpdate()
     {
         when(httpClient.execute(any()))
             .thenReturn(response(String.format("{d:{__metadata:{etag:\"%s\"}}}", ETAG_BODY), HEADERS_WITH_ETAG));

@@ -27,14 +27,14 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;
 
-public class DestinationUtilityTest
+class DestinationUtilityTest
 {
     @Test
-    public void testAuthenticationTypeIsExtractedFromAuthTypeProperty()
+    void testAuthenticationTypeIsExtractedFromAuthTypeProperty()
     {
         final DestinationProperties destination = mockDestination();
         mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
@@ -45,7 +45,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testAuthenticationTypeIsExtractedFromAuthTypeFallbackProperty()
+    void testAuthenticationTypeIsExtractedFromAuthTypeFallbackProperty()
     {
         final DestinationProperties destination = mockDestination();
         mockDestinationProperty(destination, AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
@@ -57,7 +57,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testAuthenticationTypeIsExtractedFromAuthTypePropertyEvenIfFallbackExists()
+    void testAuthenticationTypeIsExtractedFromAuthTypePropertyEvenIfFallbackExists()
     {
         final DestinationProperties destination = mockDestination();
         mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
@@ -70,7 +70,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testNoUserTokenExchangeRequiredWithoutAuthenticationType()
+    void testNoUserTokenExchangeRequiredWithoutAuthenticationType()
     {
         final DestinationProperties destination = mockDestination();
 
@@ -81,7 +81,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testSystemUserIsExtracted()
+    void testSystemUserIsExtracted()
     {
         final DestinationProperties destination = mockDestination();
         mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
@@ -93,7 +93,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testDetectPropertyExtractionRegressions()
+    void testDetectPropertyExtractionRegressions()
     {
         // if this test ever fails, chances are we updated our implementation without also updating this test class
 
@@ -110,7 +110,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testRequiresUserTokenExchangeWithoutSystemUser()
+    void testRequiresUserTokenExchangeWithoutSystemUser()
     {
         final List<AuthenticationType> exchangeNeeded =
             Arrays
@@ -136,7 +136,7 @@ public class DestinationUtilityTest
     }
 
     @Test
-    public void testRequiresUserTokenExchangeWithSystemUser()
+    void testRequiresUserTokenExchangeWithSystemUser()
     {
         final List<AuthenticationType> exchangeNeeded =
             Arrays.asList(OAUTH2_JWT_BEARER, OAUTH2_USER_TOKEN_EXCHANGE, SAML_ASSERTION);

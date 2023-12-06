@@ -8,13 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.result.ElementName;
@@ -22,21 +23,19 @@ import com.sap.cloud.sdk.result.ElementName;
 import lombok.Data;
 
 @Deprecated
-public class SoapRemoteFunctionResultTableSerializationTest
+@WireMockTest
+class SoapRemoteFunctionResultTableSerializationTest
 {
-    @Rule
-    public final WireMockRule wireMockServer = new WireMockRule(WireMockConfiguration.wireMockConfig().dynamicPort());
-
     private Destination destination;
 
-    @Before
-    public void before()
+    @BeforeEach
+    void before( @Nonnull final WireMockRuntimeInfo wm )
     {
-        destination = DefaultDestination.builder().property("URL", wireMockServer.baseUrl()).build();
+        destination = DefaultDestination.builder().property("URL", wm.getHttpBaseUrl()).build();
     }
 
     @Test
-    public void testDeserializeEmptyTable()
+    void testDeserializeEmptyTable()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final String responsePayload =
@@ -80,7 +79,7 @@ public class SoapRemoteFunctionResultTableSerializationTest
     }
 
     @Test
-    public void testDeserializeFilledTable()
+    void testDeserializeFilledTable()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final String responsePayload =

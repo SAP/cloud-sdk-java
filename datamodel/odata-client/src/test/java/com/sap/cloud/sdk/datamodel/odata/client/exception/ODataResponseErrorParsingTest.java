@@ -9,9 +9,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.forbidden;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_FORBIDDEN;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
@@ -27,17 +27,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -47,32 +48,29 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 
 import lombok.SneakyThrows;
 
-public class ODataResponseErrorParsingTest
+@WireMockTest
+class ODataResponseErrorParsingTest
 {
-    private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_ENTITY_COLLECTION = "Entity";
 
-    @Rule
-    public final WireMockRule server = new WireMockRule(WIREMOCK_CONFIGURATION);
-
     private HttpClient httpClient;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
         httpClient =
-            HttpClientAccessor.getHttpClient((Destination) DefaultHttpDestination.builder(server.baseUrl()).build());
+            HttpClientAccessor.getHttpClient((Destination) DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build());
     }
 
     @Test
-    public void testHttpErrorCodes()
+    void testHttpErrorCodes()
     {
-        server.stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "forbidden")).willReturn(forbidden()));
-        server.stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "badRequest")).willReturn(badRequest()));
-        server.stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "unauthorized")).willReturn(unauthorized()));
-        server.stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "notFound")).willReturn(notFound()));
-        server.stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "error")).willReturn(serverError()));
+        stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "forbidden")).willReturn(forbidden()));
+        stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "badRequest")).willReturn(badRequest()));
+        stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "unauthorized")).willReturn(unauthorized()));
+        stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "notFound")).willReturn(notFound()));
+        stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + "error")).willReturn(serverError()));
 
         final ImmutableMap<ODataRequestRead, Integer> expectedRequestsAndErrors =
             ImmutableMap
@@ -102,7 +100,7 @@ public class ODataResponseErrorParsingTest
 
     @SneakyThrows
     @Test
-    public void testWithoutHttpEntity()
+    void testWithoutHttpEntity()
     {
         final HttpClient mockedClient = mock(HttpClient.class);
         final BasicStatusLine statusLine = new BasicStatusLine(HttpVersion.HTTP_1_1, 500, "oh");
@@ -118,7 +116,7 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testParsingODataV2Error()
+    void testParsingODataV2Error()
     {
         final String json =
             "{\n"
@@ -149,10 +147,10 @@ public class ODataResponseErrorParsingTest
 
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V2);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
+                .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
 
         assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> request.execute(httpClient))
@@ -173,7 +171,7 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testParsingODataV4Error()
+    void testParsingODataV4Error()
     {
         final String json =
             "{"
@@ -197,10 +195,10 @@ public class ODataResponseErrorParsingTest
 
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V4);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
+                .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
 
         assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> request.execute(httpClient))
@@ -224,15 +222,15 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testParsingBrokenODataErrorV2()
+    void testParsingBrokenODataErrorV2()
     {
         final String json = "{\"error\": {\"a\"}}";
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V2);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
+                .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> request.execute(httpClient))
@@ -244,15 +242,15 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testParsingBrokenODataErrorV4()
+    void testParsingBrokenODataErrorV4()
     {
         final String json = "{\"error\": {\"a\"}}";
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V4);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
+                .willReturn(badRequest().withHeader("Content-Type", "application/json").withBody(json)));
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> request.execute(httpClient))
@@ -264,14 +262,13 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testEmptyODataErrorV2()
+    void testEmptyODataErrorV2()
     {
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V2);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withBody("foo")));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION)).willReturn(badRequest().withBody("foo")));
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> request.execute(httpClient))
@@ -283,14 +280,13 @@ public class ODataResponseErrorParsingTest
     }
 
     @Test
-    public void testEmptyODataErrorV4()
+    void testEmptyODataErrorV4()
     {
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V4);
-        server
-            .stubFor(
-                get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION))
-                    .willReturn(badRequest().withBody("foo")));
+
+        stubFor(
+            get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION)).willReturn(badRequest().withBody("foo")));
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> request.execute(httpClient))

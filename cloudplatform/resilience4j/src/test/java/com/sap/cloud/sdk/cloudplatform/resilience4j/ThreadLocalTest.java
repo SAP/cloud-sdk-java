@@ -13,9 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorationStrategy;
@@ -23,17 +23,17 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContextExecutorService;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
-public class ThreadLocalTest
+class ThreadLocalTest
 {
-    @After
-    public void resetExecutor()
+    @AfterEach
+    void resetExecutor()
     {
         ThreadContextExecutors.setExecutor(null);
     }
 
-    @Ignore( "Testing the JRE." )
+    @Disabled( "Testing the JRE." )
     @Test
-    public void testThreadLocalIsNotInherited()
+    void testThreadLocalIsNotInherited()
         throws InterruptedException
     {
         final ThreadLocal<String> local = new ThreadLocal<>();
@@ -47,9 +47,9 @@ public class ThreadLocalTest
         softly.assertAll();
     }
 
-    @Ignore( "Testing the JRE." )
+    @Disabled( "Testing the JRE." )
     @Test
-    public void testInheritableThreadLocal()
+    void testInheritableThreadLocal()
         throws InterruptedException
     {
         final ThreadLocal<String> local = new InheritableThreadLocal<>();
@@ -64,7 +64,7 @@ public class ThreadLocalTest
     }
 
     @Test
-    public void testThreadLocalWithThreadedResilienceDecorator()
+    void testThreadLocalWithThreadedResilienceDecorator()
     {
         final ResilienceConfiguration resilienceConfiguration = ResilienceConfiguration.of("ThreadLocalTest-0");
         final ThreadLocal<String> storage = new ThreadLocal<>();
@@ -75,7 +75,7 @@ public class ThreadLocalTest
     }
 
     @Test
-    public void testThreadLocalWithEmptyResilienceDecorator()
+    void testThreadLocalWithEmptyResilienceDecorator()
     {
         final ResilienceConfiguration resilienceConfiguration = ResilienceConfiguration.empty("ThreadLocalTest-1");
         final ThreadLocal<String> storage = new ThreadLocal<>();
@@ -85,9 +85,9 @@ public class ThreadLocalTest
         assertThat(foo).isEqualTo("foo");
     }
 
-    @Ignore( "Does not work in a repeated test runs or on Jenkins due to default ExecutorService. " )
+    @Disabled( "Does not work in a repeated test runs or on Jenkins due to default ExecutorService. " )
     @Test
-    public void testInheritableThreadLocalWithDefaultExecutor()
+    void testInheritableThreadLocalWithDefaultExecutor()
         throws Exception
     {
         final InheritableThreadLocal<String> local = new InheritableThreadLocal<>();
@@ -101,7 +101,7 @@ public class ThreadLocalTest
     }
 
     @Test
-    public void testInheritableThreadLocalWithFixedThreadPoolExecutor()
+    void testInheritableThreadLocalWithFixedThreadPoolExecutor()
         throws ExecutionException,
             InterruptedException
     {

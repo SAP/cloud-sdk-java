@@ -4,13 +4,21 @@
 
 package com.sap.cloud.sdk.cloudplatform.tenant;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class DefaultTenantTest
+import org.junit.jupiter.api.Test;
+
+class DefaultTenantTest
 {
-    @Test( expected = NullPointerException.class )
-    public void testNullParameters()
+    @Test
+    void testNullParameters()
     {
-        new DefaultTenant(null, null);
+        assertThatThrownBy(() -> new DefaultTenant(null, null)).isExactlyInstanceOf(NullPointerException.class);
+
+        DefaultTenant tenant = new DefaultTenant("foo", null);
+        assertDoesNotThrow(tenant::toString);
+        assertDoesNotThrow(tenant::hashCode);
+        assertDoesNotThrow(() -> tenant.equals(tenant));
     }
 }

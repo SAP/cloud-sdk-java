@@ -22,12 +22,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -39,11 +40,8 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
  * Read the readme.md in the resources folder on how to generate keys, certificates and key stores. Certificates expire
  * after 50 years in around 2070.
  */
-public class HttpClientAndServerTrustTest
+class HttpClientAndServerTrustTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
     private static final String RELATIVE_PATH = "some/path";
 
     private static final String KEY_AND_TRUST_STORE_PASSWORD = "password";
@@ -54,7 +52,7 @@ public class HttpClientAndServerTrustTest
     private static final String CLIENT_KEYSTORE_FILE_NAME = "client_keystore.jks";
 
     @Test
-    public void testClientTrustsAllAndServerTrustsClient()
+    void testClientTrustsAllAndServerTrustsClient( @Nonnull @TempDir final File temporaryFolder )
         throws IOException,
             KeyStoreException,
             CertificateException,
@@ -71,7 +69,7 @@ public class HttpClientAndServerTrustTest
     }
 
     @Test
-    public void testMutualTrustBetweenClientAndServer()
+    void testMutualTrustBetweenClientAndServer( @Nonnull @TempDir final File temporaryFolder )
         throws IOException,
             CertificateException,
             NoSuchAlgorithmException,
@@ -99,7 +97,7 @@ public class HttpClientAndServerTrustTest
     }
 
     @Test
-    public void testClientTrustsServerAndServerTrustsAll()
+    void testClientTrustsServerAndServerTrustsAll( @Nonnull @TempDir final File temporaryFolder )
         throws IOException,
             CertificateException,
             NoSuchAlgorithmException,
@@ -154,14 +152,14 @@ public class HttpClientAndServerTrustTest
             CertificateException,
             NoSuchAlgorithmException
     {
-        final KeyStore ks = KeyStore.getInstance("JKS");
-
-        ks.load(new FileInputStream(location), password.toCharArray());
-
-        return ks;
+        try( final FileInputStream is = new FileInputStream(location) ) {
+            final KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(is, password.toCharArray());
+            return ks;
+        }
     }
 
-    private File copyResourceToTemporaryFolder( final String resourceName, final TemporaryFolder temporaryFolder )
+    private File copyResourceToTemporaryFolder( final String resourceName, final File temporaryFolder )
         throws IOException
     {
         try(
@@ -171,7 +169,7 @@ public class HttpClientAndServerTrustTest
                 throw new IllegalArgumentException("Resource " + resourceName + " not found.");
             }
 
-            final File newFile = temporaryFolder.newFile(resourceName);
+            final File newFile = File.createTempFile(resourceName, null, temporaryFolder);
 
             Files.copy(stream, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 

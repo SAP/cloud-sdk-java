@@ -10,12 +10,12 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DefaultDestinationTest
+class DefaultDestinationTest
 {
     @Test
-    public void testSimpleConstruction()
+    void testSimpleConstruction()
     {
         final String someKey = "someKey";
         final String someValue = "someValue";
@@ -26,7 +26,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testIdentity()
+    void testIdentity()
     {
         final Destination destination =
             DefaultDestination.builder().property("Name", "foo").property("URL", "http://bar.com").build();
@@ -43,14 +43,14 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final Destination dest = DefaultDestination.builder().name("foo").property("some_password", "bar").build();
         assertThat(dest).hasToString("DefaultDestination(properties={some_password=(hidden), Name=foo})");
     }
 
     @Test
-    public void testGetPropertyNames()
+    void testGetPropertyNames()
     {
         final String someKey = "someKey";
         final String someValue = "someValue";
@@ -61,7 +61,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testMissingKeyReturnsEmptyOptional()
+    void testMissingKeyReturnsEmptyOptional()
     {
         final DestinationProperties destination = DefaultDestination.builder().build();
 
@@ -69,7 +69,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testCaseInsensitiveKey()
+    void testCaseInsensitiveKey()
     {
         final DestinationProperties destination = DefaultDestination.builder().property("foo", "bar").build();
 
@@ -77,7 +77,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testModifiedMapDoesntInfluenceDestination()
+    void testModifiedMapDoesntInfluenceDestination()
     {
         final String someKey = "someKey";
         final String originalValue = "someValue";
@@ -94,7 +94,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testEqualsIsImplemented()
+    void testEqualsIsImplemented()
     {
         final DefaultDestination firstDestination = DefaultDestination.builder().build();
         final DefaultDestination secondDestination = DefaultDestination.builder().build();
@@ -103,7 +103,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testHashCodeIsImplemented()
+    void testHashCodeIsImplemented()
     {
         final DefaultDestination firstDestination = DefaultDestination.builder().build();
         final DefaultDestination secondDestination = DefaultDestination.builder().build();
@@ -112,7 +112,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testHttpConverter()
+    void testHttpConverter()
     {
         final Destination destination =
             DefaultDestination
@@ -126,7 +126,7 @@ public class DefaultDestinationTest
     }
 
     @Test
-    public void testRfcConverter()
+    void testRfcConverter()
     {
         final Destination destination = DefaultDestination.builder().property("Name", "someName").build();
 

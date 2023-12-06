@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.util.EntityUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -30,20 +30,20 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 import com.sap.cloud.sdk.datamodel.odatav4.referenceservice.namespaces.trippin.Person;
 
-@Ignore( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
-public class ODataClientBatchReferenceServiceIntegrationTest
+@Disabled( "Test runs against a v4 reference service on odata.org. Use it only to manually verify behaviour." )
+class ODataClientBatchReferenceServiceIntegrationTest
 {
     private Destination httpDestination;
 
-    @Before
-    public void configure()
+    @BeforeEach
+    void configure()
         throws IOException
     {
         httpDestination = TripPinUtility.getDestination();
     }
 
     @Test
-    public void testEmptyBatch()
+    void testEmptyBatch()
         throws IOException
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
@@ -64,7 +64,7 @@ public class ODataClientBatchReferenceServiceIntegrationTest
     }
 
     @Test
-    public void testBatchWithSingleRead()
+    void testBatchWithSingleRead()
         throws IOException
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
@@ -95,7 +95,7 @@ public class ODataClientBatchReferenceServiceIntegrationTest
     }
 
     @Test
-    public void testBatchWithReadWrite()
+    void testBatchWithReadWrite()
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
 
@@ -116,7 +116,7 @@ public class ODataClientBatchReferenceServiceIntegrationTest
     }
 
     @Test
-    public void testBatchErrorWithDifferentServicePath()
+    void testBatchErrorWithDifferentServicePath()
     {
         final HttpClient httpClient = mock(HttpClient.class);
 

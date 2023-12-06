@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>odata-v4-parent</artifactId>
-		<version>5.0.0-alpha-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-v4-api-sample</artifactId>
 	<name>OData V4 VDM - Sample API</name>
@@ -94,13 +94,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

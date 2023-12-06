@@ -8,6 +8,7 @@ on:
 
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
+  MVN_CLI_ARGS_SINGLE_THREAD: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1C"
   MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
@@ -189,7 +190,7 @@ jobs:
           unzip -D target.zip
       - name: Test
         run: |
-          mvn $MVN_CLI_ARGS org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
+          mvn $MVN_CLI_ARGS_SINGLE_THREAD org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
       - name: Test Report
         if: success() || failure()
         uses: scacap/action-surefire-report@v1
@@ -383,12 +384,7 @@ jobs:
       matrix:
         task:
           - {
-              "archetype": "scp-cf-spring",
-              "javaVersion": 8,
-              "startCommand": "mvn spring-boot:run -B",
-            }
-          - {
-              "archetype": "scp-cf-spring-jakarta",
+              "archetype": "spring-boot3",
               "javaVersion": 17,
               "startCommand": "mvn spring-boot:run -B",
             }

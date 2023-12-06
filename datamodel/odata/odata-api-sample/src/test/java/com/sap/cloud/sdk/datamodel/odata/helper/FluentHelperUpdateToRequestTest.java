@@ -19,8 +19,8 @@ import java.util.List;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
@@ -39,7 +39,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
 import lombok.SneakyThrows;
 
-public class FluentHelperUpdateToRequestTest
+class FluentHelperUpdateToRequestTest
 {
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
     private static final String ENTITY_COLLECTION = "Products";
@@ -62,7 +62,7 @@ public class FluentHelperUpdateToRequestTest
 
     @SneakyThrows
     @Test
-    public void testDefaultUpdateMethod()
+    void testDefaultUpdateMethod()
     {
         final ProductUpdateFluentHelper updateDefault = service.updateProduct(product);
         final ProductUpdateFluentHelper updatePatch = service.updateProduct(product).modifyingEntity();
@@ -89,7 +89,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdatePut()
+    void testUpdatePut()
     {
         product.setVersionIdentifier(versionIdentifier);
         final ODataRequestUpdate updateQuery = fluentHelper.replacingEntity().toRequest();
@@ -114,7 +114,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdatePutWithExcludedFields()
+    void testUpdatePutWithExcludedFields()
     {
         product.setVersionIdentifier(versionIdentifier);
         final ODataRequestUpdate updateQuery =
@@ -145,7 +145,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdatePatch()
+    void testUpdatePatch()
     {
         product.setVersionIdentifier(versionIdentifier);
         final String updatedName = "ChangedName";
@@ -172,7 +172,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdateContainsUpdatedAndIncludedFields()
+    void testUpdateContainsUpdatedAndIncludedFields()
     {
         final String updatedName = "ChangedName";
         product.setName(updatedName);
@@ -186,7 +186,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdateIncludeFieldWhichWasAlsoUpdated()
+    void testUpdateIncludeFieldWhichWasAlsoUpdated()
     {
         final String updatedName = "ChangedName";
         product.setName(updatedName);
@@ -198,7 +198,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testUpdateBPatchUpdateNull()
+    void testUpdateBPatchUpdateNull()
     {
         final String updatedName = "ChangedName";
         product.setPrice(null);
@@ -211,8 +211,8 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    @Ignore( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
-    public void testUpdatePatchComplexProperty()
+    @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
+    void testUpdatePatchComplexProperty()
     {
         final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
         final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
@@ -233,7 +233,7 @@ public class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    public void testIgnoreVersionIdentifier()
+    void testIgnoreVersionIdentifier()
     {
         product.setVersionIdentifier(versionIdentifier);
         final ODataRequestUpdate updateQuery = fluentHelper.matchAnyVersionIdentifier().toRequest();

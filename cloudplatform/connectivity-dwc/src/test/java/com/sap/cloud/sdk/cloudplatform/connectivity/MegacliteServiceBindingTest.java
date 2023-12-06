@@ -10,14 +10,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.net.URI;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 
-public class MegacliteServiceBindingTest
+class MegacliteServiceBindingTest
 {
     @Test
-    public void testPropertiesOfTheOpenSourceServiceBinding()
+    void testPropertiesOfTheOpenSourceServiceBinding()
     {
         final MegacliteServiceBinding binding =
             MegacliteServiceBinding
@@ -37,7 +37,7 @@ public class MegacliteServiceBindingTest
     }
 
     @Test
-    public void testBuilderThrowsExceptionWhenAddingAnExistingMandate()
+    void testBuilderThrowsExceptionWhenAddingAnExistingMandate()
     {
         final MegacliteServiceBinding.Builder4 builder =
             MegacliteServiceBinding
@@ -51,7 +51,7 @@ public class MegacliteServiceBindingTest
     }
 
     @Test
-    public void testGetCredentialsWithoutProviderTenantIdReturnsEmptyMap()
+    void testGetCredentialsWithoutProviderTenantIdReturnsEmptyMap()
     {
         final MegacliteServiceBinding binding =
             MegacliteServiceBinding

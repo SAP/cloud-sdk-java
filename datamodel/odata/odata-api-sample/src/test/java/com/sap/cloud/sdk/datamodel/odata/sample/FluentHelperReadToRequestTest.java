@@ -11,7 +11,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 import org.apache.http.client.HttpClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Produ
 import com.sap.cloud.sdk.datamodel.odata.sample.services.DefaultSdkGroceryStoreService;
 import com.sap.cloud.sdk.datamodel.odata.sample.services.SdkGroceryStoreService;
 
-public class FluentHelperReadToRequestTest
+class FluentHelperReadToRequestTest
 {
     private static final String ODATA_ENDPOINT_URL = "/endpoint/url";
     private static final String ENTITY_COLLECTION = "Products";
@@ -36,7 +36,7 @@ public class FluentHelperReadToRequestTest
     private final ProductFluentHelper fluentHelper = service.getAllProduct();
 
     @Test
-    public void testOrderBy()
+    void testOrderBy()
     {
         final ODataRequestRead vdmRequest = fluentHelper.orderBy(Product.NAME, Order.ASC).toRequest();
 
@@ -47,7 +47,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testSkip()
+    void testSkip()
     {
         final ODataRequestRead vdmRequest = fluentHelper.skip(0).toRequest();
 
@@ -58,7 +58,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testTop()
+    void testTop()
     {
         final ODataRequestRead vdmRequest = fluentHelper.top(10).toRequest();
 
@@ -69,7 +69,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testCustomParameter()
+    void testCustomParameter()
     {
         final String customParameterKey = "customKey";
         final String customParameterValue = "customValue";
@@ -85,7 +85,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testCustomParameterOverloadingParameters()
+    void testCustomParameterOverloadingParameters()
     {
         final ODataRequestRead vdmRequest =
             fluentHelper
@@ -105,7 +105,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testCustomHeader()
+    void testCustomHeader()
     {
         final String customHeaderKey = "customKey";
         final String customHeaderValue = "customValue";
@@ -131,7 +131,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testSelect()
+    void testSelect()
     {
         final ODataRequestRead vdmRequest = fluentHelper.select(Product.NAME).toRequest();
 
@@ -142,7 +142,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testFilters()
+    void testFilters()
     {
         final ODataRequestRead vdmRequest =
             fluentHelper
@@ -160,7 +160,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testFilterEncoding()
+    void testFilterEncoding()
     {
         final ODataRequestRead vdmRequest = fluentHelper.filter(Product.NAME.eq("Cl#ou''d' S&*&$*d|\\/K")).toRequest();
 
@@ -175,7 +175,7 @@ public class FluentHelperReadToRequestTest
     }
 
     @Test
-    public void testTemporalFilterExpression()
+    void testTemporalFilterExpression()
     {
         final LocalTime time = LocalTime.of(18, 59, 59);
         final int day = DayOfWeek.WEDNESDAY.getValue();

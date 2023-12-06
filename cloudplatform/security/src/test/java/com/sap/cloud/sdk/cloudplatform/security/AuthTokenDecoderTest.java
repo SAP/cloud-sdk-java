@@ -9,9 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collections;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.net.HttpHeaders;
@@ -23,7 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.security.exception.AuthTokenAccessExcepti
 
 import io.vavr.control.Try;
 
-public class AuthTokenDecoderTest
+class AuthTokenDecoderTest
 {
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -61,15 +61,15 @@ public class AuthTokenDecoderTest
                     Collections.singletonMap("VCAP_SERVICES", VCAP_SERVICES)::get));
     }
 
-    @Before
-    @After
-    public void resetServiceBindingAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test
-    public void testGetToken()
+    void testGetToken()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -91,7 +91,7 @@ public class AuthTokenDecoderTest
     }
 
     @Test
-    public void testMissingAuthorizationHeader()
+    void testMissingAuthorizationHeader()
     {
         final RequestHeaderContainer headers = DefaultRequestHeaderContainer.fromSingleValueMap(Collections.emptyMap());
 
@@ -100,7 +100,7 @@ public class AuthTokenDecoderTest
     }
 
     @Test
-    public void testMultipleAuthorizationHeaders()
+    void testMultipleAuthorizationHeaders()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -113,7 +113,7 @@ public class AuthTokenDecoderTest
     }
 
     @Test
-    public void testInvalidJwt()
+    void testInvalidJwt()
     {
         final String invalidBearer = BEARER_PREFIX + "INVALID";
         final RequestHeaderContainer headers =
@@ -125,7 +125,7 @@ public class AuthTokenDecoderTest
     }
 
     @Test
-    public void testCaseInsensitiveBearer()
+    void testCaseInsensitiveBearer()
     {
         final String Bearer_prefix = "bEaRer ";
         final String AuthenticationToken = Bearer_prefix + AUTHORIZATION_TOKEN;
@@ -143,7 +143,7 @@ public class AuthTokenDecoderTest
     }
 
     @Test
-    public void testCaseInsensitiveHeaderName()
+    void testCaseInsensitiveHeaderName()
     {
         final RequestHeaderContainer authorizationHeader =
             DefaultRequestHeaderContainer.builder().withHeader("aUtHoRiZaTiOn", AUTHORIZATION_BEARER_TOKEN).build();

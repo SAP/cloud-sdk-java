@@ -4,11 +4,9 @@
 
 package {{invokerPackage}}.auth;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
+import java.util.Optional;
+import java.util.function.Supplier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.MultiValueMap;
 import com.google.common.annotations.Beta;
 
@@ -16,22 +14,27 @@ import com.google.common.annotations.Beta;
 @Beta
 public class HttpBearerAuth implements Authentication {
     private final String scheme;
-    private String bearerToken;
+    private Supplier<String> tokenSupplier;
 
     public HttpBearerAuth(String scheme) {
         this.scheme = scheme;
     }
 
     public String getBearerToken() {
-        return bearerToken;
+        return tokenSupplier.get();
     }
 
     public void setBearerToken(String bearerToken) {
-        this.bearerToken = bearerToken;
+        this.tokenSupplier = () -> bearerToken;
+    }
+
+    public void setBearerToken(Supplier<String> tokenSupplier) {
+        this.tokenSupplier = tokenSupplier;
     }
 
     @Override
     public void applyToParams(MultiValueMap<String, String> queryParams, HttpHeaders headerParams) {
+        String bearerToken = Optional.ofNullable(tokenSupplier).map(Supplier::get).orElse(null);
         if (bearerToken == null) {
             return;
         }

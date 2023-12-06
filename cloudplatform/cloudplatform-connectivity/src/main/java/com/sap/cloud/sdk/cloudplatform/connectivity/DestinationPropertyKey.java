@@ -12,8 +12,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,7 +27,6 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 @Getter
-@Beta
 public class DestinationPropertyKey<ValueT>
 {
     @Nonnull

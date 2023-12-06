@@ -30,9 +30,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -52,8 +52,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-@RunWith( Parameterized.class )
-public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
+class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 {
     @Nullable
     private static final Tenant NO_TENANT = null;
@@ -86,8 +85,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         }
     }
 
-    @Parameterized.Parameters( name = "{0}" )
-    public static Collection<TestParameters> createTestParameters()
+    static Collection<TestParameters> createTestParameters()
     {
         final Collection<TestParameters> result = new ArrayList<>();
 
@@ -217,11 +215,9 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         return result;
     }
 
-    @Parameterized.Parameter
-    public TestParameters testParameters;
-
-    @Test
-    public void testCorrectIsolationAndCaching()
+    @ParameterizedTest
+    @MethodSource( "createTestParameters" )
+    void testCorrectIsolationAndCaching( @Nonnull final TestParameters testParameters )
     {
         final String destinationName = UUID.randomUUID().toString();
         final DefaultDestination destination =
@@ -386,7 +382,7 @@ public class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     }
 
     @Test
-    public void testAssertAllCasesAreCovered()
+    void testAssertAllCasesAreCovered()
     {
         final SoftAssertions softly = new SoftAssertions();
         final Collection<TestParameters> remainingTestParameters = createTestParameters();

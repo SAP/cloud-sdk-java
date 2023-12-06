@@ -19,9 +19,9 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
 
 import org.assertj.vavr.api.VavrAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
@@ -40,11 +40,11 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
-public class DefaultAuthTokenFacadeTest
+class DefaultAuthTokenFacadeTest
 {
-    @Before
-    @After
-    public void resetAccessor()
+    @BeforeEach
+    @AfterEach
+    void resetAccessor()
     {
         // reset the facade
         AuthTokenAccessor.setAuthTokenFacade(null);
@@ -59,7 +59,7 @@ public class DefaultAuthTokenFacadeTest
     private final DefaultAuthTokenFacade facade = new DefaultAuthTokenFacade();
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         VavrAssertions
             .assertThat(facade.tryGetCurrentToken())
@@ -97,7 +97,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testExecuteWithFallback()
+    void testExecuteWithFallback()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
@@ -124,7 +124,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testExecuteWithException()
+    void testExecuteWithException()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
@@ -137,7 +137,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testExecuteWithFallbackWithException()
+    void testExecuteWithFallbackWithException()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
         VavrAssertions.assertThat(AuthTokenAccessor.tryGetCurrentToken()).isFailure();
@@ -168,7 +168,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testGlobalFallback()
+    void testGlobalFallback()
     {
         final AuthToken globalFallback = mock(AuthToken.class);
         final AuthToken request = mock(AuthToken.class);
@@ -201,7 +201,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testWrongPropertyType()
+    void testWrongPropertyType()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
@@ -215,7 +215,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testMissingRequest()
+    void testMissingRequest()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
@@ -230,7 +230,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testMissingRequestHeader()
+    void testMissingRequestHeader()
     {
         AuthTokenAccessor.setAuthTokenFacade(new DefaultAuthTokenFacade());
 
@@ -248,7 +248,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testFromRequestHeaders()
+    void testFromRequestHeaders()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer
@@ -280,7 +280,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
+    void testExecuteWithThrowsExceptionIfCustomFacadeIsUsed()
     {
         final AuthTokenFacade customFacade = mock(AuthTokenFacade.class);
         assertThat(customFacade).isNotInstanceOf(DefaultAuthTokenFacade.class);
@@ -293,7 +293,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
+    void testExecuteWithSucceedsIfSubTypeOfDefaultFacadeIsUsed()
     {
         final AuthTokenFacade customFacade = spy(DefaultAuthTokenFacade.class);
         assertThat(customFacade).isInstanceOf(ExecutableAuthTokenFacade.class);
@@ -304,7 +304,7 @@ public class DefaultAuthTokenFacadeTest
     }
 
     @Test
-    public void testMissingPropertiesAreComputedFromRequestHeaderOnlyOnce()
+    void testMissingPropertiesAreComputedFromRequestHeaderOnlyOnce()
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer

@@ -9,14 +9,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 
-public class ResilienceConfigurationTest
+class ResilienceConfigurationTest
 {
     @Test
-    public void testCacheConfigurationSerializable()
+    void testCacheConfigurationSerializable()
     {
         final CacheConfiguration.CacheConfigurationBuilder builder = CacheConfiguration.of(Duration.ofDays(1));
 

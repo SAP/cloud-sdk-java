@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.inject.Named;
 
 import com.sap.cloud.sdk.datamodel.odatav4.core.BatchRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.core.CountRequestBuilder;
@@ -41,7 +40,6 @@ import lombok.Getter;
  * </table>
  *
  */
-@Named( "com.sap.cloud.sdk.datamodel.odatav4.referenceservice.services.DefaultTrippinService" )
 public class DefaultTrippinService implements ServiceWithNavigableEntities, TrippinService
 {
 

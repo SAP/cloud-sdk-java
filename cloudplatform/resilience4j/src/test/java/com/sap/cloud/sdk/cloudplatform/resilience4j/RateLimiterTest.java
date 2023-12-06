@@ -17,9 +17,9 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -30,21 +30,21 @@ import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
-public class RateLimiterTest
+class RateLimiterTest
 {
     @SuppressWarnings( "deprecation" )
     private final MockUtil mockUtil = new MockUtil();
 
     @SuppressWarnings( "deprecation" )
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         mockUtil.mockDefaults();
     }
 
     @Test
-    @Ignore( "Test is unreliable on Jenkins. Use this to verify the timeout behavior locally." )
-    public void testRateLimiterWithRepeatingCalls()
+    @Disabled( "Test is unreliable on Jenkins. Use this to verify the timeout behavior locally." )
+    void testRateLimiterWithRepeatingCalls()
     {
         final Duration timeoutDuration = Duration.ofSeconds(5);
         final Duration limitRefreshPeriod = Duration.ofSeconds(2);
@@ -70,7 +70,7 @@ public class RateLimiterTest
     }
 
     @Test
-    public void testProvokeTimeout()
+    void testProvokeTimeout()
     {
         final Duration timeoutDuration = Duration.ofDays(1);
         final Duration limitRefreshPeriod = Duration.ofDays(1);
@@ -103,7 +103,7 @@ public class RateLimiterTest
     }
 
     @Test
-    public void testDisabledRateLimiter()
+    void testDisabledRateLimiter()
         throws Exception
     {
         // Test that the callable runs in the main thread
@@ -121,7 +121,7 @@ public class RateLimiterTest
     }
 
     @Test
-    public void testRateLimiterWorksWithExecuteSupplier()
+    void testRateLimiterWorksWithExecuteSupplier()
     {
         final Duration timeoutDuration = Duration.ofSeconds(5);
         final Duration limitRefreshDuration = Duration.ofMinutes(5);
@@ -147,7 +147,7 @@ public class RateLimiterTest
     }
 
     @Test
-    public void testRateLimitIsSharedByConfiguration()
+    void testRateLimitIsSharedByConfiguration()
     {
         final Duration timeoutDuration = Duration.ofSeconds(5);
         final Duration limitRefreshDuration = Duration.ofMinutes(5);
@@ -194,7 +194,7 @@ public class RateLimiterTest
     }
 
     @Test
-    public void testRateLimiterIsTenantIsolated()
+    void testRateLimiterIsTenantIsolated()
     {
         final Duration timeoutDuration = Duration.ofSeconds(5);
         final Duration limitRefreshDuration = Duration.ofMinutes(5);

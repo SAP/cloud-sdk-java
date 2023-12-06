@@ -8,15 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MegacliteDestinationFactoryTest
+class MegacliteDestinationFactoryTest
 {
     private static final URI megacliteUrl = URI.create("https://megaclite.com");
     private static final DwcConfiguration dwcConfig = new DwcConfiguration(megacliteUrl, "id");
 
     @Test
-    public void testMegacliteDestination()
+    void testMegacliteDestination()
     {
         final MegacliteDestinationFactory sut = new MegacliteDestinationFactory(dwcConfig);
 
