@@ -204,6 +204,7 @@ public final class ServiceBindingDestinationOptions
      *            The type of content that this option will represent.
      * @since 4.20.0
      */
+    @SuppressWarnings( "InterfaceMayBeAnnotatedFunctional" )
     public interface OptionsEnhancer<T>
     {
         /**

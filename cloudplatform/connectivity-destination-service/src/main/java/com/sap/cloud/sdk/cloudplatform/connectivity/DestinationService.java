@@ -25,7 +25,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
@@ -72,9 +71,6 @@ public class DestinationService implements DestinationLoader
         CircuitBreakerConfiguration.of().waitDuration(Duration.ofMinutes(1));
 
     private static final Gson GSON = new Gson();
-    private static final TypeToken<List<Map<String, String>>> TYPE_TOKEN = new TypeToken<List<Map<String, String>>>()
-    {
-    };
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
