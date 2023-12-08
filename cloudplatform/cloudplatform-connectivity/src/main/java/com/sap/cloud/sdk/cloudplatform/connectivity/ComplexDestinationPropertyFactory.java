@@ -128,11 +128,11 @@ class ComplexDestinationPropertyFactory
             return Collections.emptyList();
         }
 
-        // below case is currently handled in our `AbstractHttpClientFactory`, but we could move it. Should we?
-
-        //        if (credentials instanceof BasicCredentials) {
-        //            return Collections.singletonList(new Header(HttpHeaders.PROXY_AUTHORIZATION, ((BasicCredentials) credentials).getHttpHeaderValue()));
-        //        }
+        if( credentials instanceof BasicCredentials ) {
+            return Collections
+                .singletonList(
+                    new Header(HttpHeaders.PROXY_AUTHORIZATION, ((BasicCredentials) credentials).getHttpHeaderValue()));
+        }
 
         if( credentials instanceof BearerCredentials ) {
             return Collections

@@ -15,7 +15,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
@@ -54,7 +53,6 @@ import org.mockito.Mockito;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
-import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
 class DefaultApacheHttpClient5FactoryTest
@@ -176,11 +174,14 @@ class DefaultApacheHttpClient5FactoryTest
     {
         WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/proxy")).willReturn(ok()));
 
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder("http://www.sap.com").build();
+        final BasicCredentials credentials = new BasicCredentials("user", "pass");
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("http://www.sap.com")
+                .proxyConfiguration(ProxyConfiguration.of(WIRE_MOCK_SERVER.baseUrl(), credentials))
+                .build();
         final DefaultHttpDestination spiedDestination = spy(destination);
-        doReturn(Option.of(ProxyConfiguration.of(WIRE_MOCK_SERVER.baseUrl(), new BasicCredentials("user", "pass"))))
-            .when(spiedDestination)
-            .getProxyConfiguration();
 
         final HttpClient httpClient = sut.createHttpClient(spiedDestination);
         Mockito.verify(spiedDestination, atLeastOnce()).getProxyConfiguration();
@@ -190,9 +191,10 @@ class DefaultApacheHttpClient5FactoryTest
             final HttpClientContext context = invocation.getArgument(2);
 
             assertThat(request.getUri()).isEqualTo(URI.create("http://www.sap.com/proxy"));
-            // NOTE: The passed basic credentials for the proxy authorization are NOT considered
             assertThat(Arrays.stream(request.getHeaders()).map(NameValuePair::getName).collect(Collectors.toSet()))
-                .containsExactlyInAnyOrder(HttpHeaders.ACCEPT_ENCODING);
+                .containsExactlyInAnyOrder(HttpHeaders.ACCEPT_ENCODING, HttpHeaders.PROXY_AUTHORIZATION);
+            assertThat(Arrays.toString(request.getHeaders(HttpHeaders.PROXY_AUTHORIZATION)))
+                .contains(credentials.getHttpHeaderValue());
 
             final RouteInfo httpRoute = context.getHttpRoute();
             assertThat(httpRoute).isNotNull();

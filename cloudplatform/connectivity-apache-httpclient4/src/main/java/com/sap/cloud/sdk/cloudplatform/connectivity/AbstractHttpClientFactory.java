@@ -13,9 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -24,13 +21,10 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
-import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
-import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
@@ -113,7 +107,6 @@ public abstract class AbstractHttpClientFactory implements HttpClientFactory
             final HttpClientBuilder clientBuilder = createHttpClientBuilder();
             clientBuilder.setDefaultRequestConfig(getRequestConfigBuilder(destination).build());
             clientBuilder.setDefaultSocketConfig(getSocketConfigBuilder(destination).build());
-            clientBuilder.setDefaultCredentialsProvider(getCredentialsProvider(destination));
 
             // Note: Applying a ConnectionManager to HttpClientBuilder overrides previously set properties:
             //       DnsResolver, HostnameVerifier, SSLHostnameVerifier, SSLContext, SSLSocketFactory, MaxConnTotal,
@@ -170,44 +163,6 @@ public abstract class AbstractHttpClientFactory implements HttpClientFactory
         log.debug("Building a new custom HttpClient.");
 
         return HttpClients.custom();
-    }
-
-    /**
-     * Get the default credentials provider for the HTTP client builder.
-     *
-     * @param destination
-     *            The optional destination reference.
-     * @return An optional credentials provider instance.
-     */
-    @Nullable
-    private CredentialsProvider getCredentialsProvider( @Nullable final HttpDestinationProperties destination )
-    {
-        if( !isValidProxyConfigurationUriInDestination(destination) ) {
-            log.debug("Skip setting credentials provider.");
-            return null;
-        }
-
-        final ProxyConfiguration proxyConfiguration = Objects.requireNonNull(destination).getProxyConfiguration().get();
-        final Option<Credentials> credentials = proxyConfiguration.getCredentials();
-        if( credentials.isEmpty() ) {
-            log.debug("No credentials defined for proxy configuration in destination {}.", destination);
-            return null;
-        }
-
-        if( credentials.get() instanceof BasicCredentials ) {
-            final BasicCredentials basicCredentials = (BasicCredentials) credentials.get();
-
-            final CredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
-            credentialsProvider
-                .setCredentials(
-                    new AuthScope(proxyConfiguration.getUri().getHost(), proxyConfiguration.getUri().getPort()),
-                    new UsernamePasswordCredentials(basicCredentials.getUsername(), basicCredentials.getPassword()));
-
-            return credentialsProvider;
-        }
-
-        log.warn("Unsupported credentials defined for proxy configuration in destination {}.", destination);
-        return null;
     }
 
     private boolean isValidProxyConfigurationUriInDestination( @Nullable final HttpDestinationProperties destination )
