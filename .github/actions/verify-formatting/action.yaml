@@ -1,0 +1,51 @@
+name: Verify Formatting
+description: Verifies that the code is formatted correctly
+
+inputs:
+  maven-cli-args:
+    description: The arguments to pass to the Maven CLI
+    required: false
+    default: "--batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1C"
+  maven-repository-cache-key:
+    description: The key to use for caching the Maven repository
+    required: false
+    default: "maven"
+  java-distribution:
+    description: The Java distribution to use
+    required: false
+    default: "temurin"
+  java-version:
+      description: The Java version to use
+      required: false
+      default: "17"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
+    - name: Load Maven Repository
+      uses: actions/cache/restore@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ inputs.maven-repository-cache-key }}
+
+    - name: Code Formatting
+      run: |
+        mvn ${{ inputs.maven-cli-args }} net.revelc.code.formatter:formatter-maven-plugin:validate
+      shell: bash
+
+    - name: Import Sorting
+      run: |
+        mvn ${{ inputs.maven-cli-args }} net.revelc.code:impsort-maven-plugin:check
+      shell: bash
+
+    - name: POM File Sorting
+      run: |
+          mvn ${{ inputs.maven-cli-args }} com.github.ekryd.sortpom:sortpom-maven-plugin:verify
+      shell: bash
