@@ -15,6 +15,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +31,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import lombok.ToString;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -151,15 +154,14 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKeyBecauseDestinationRetrievalFails())
+                                .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
                             .expectDestinationCacheKey(NO_TENANT, PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKeyBecauseDestinationRetrievalFails())
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
@@ -194,16 +196,17 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     .forTokenExchangeStrategies(LOOKUP_THEN_EXCHANGE)
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKeyBecauseDestinationRetrievalFails())
+                                .expectCommandExecutionToFail()
+                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, PRINCIPAL)
+                                .expectCommandExecutionToFail()
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
                             .expectDestinationCacheKey(NO_TENANT, PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKeyBecauseDestinationRetrievalFails())
+                                .expectCommandExecutionToFail()
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL))
                     .withUserParameters(
                         expectCommandCreationToSucceed(TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
@@ -240,12 +243,15 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             for( final Principal principal : PRINCIPALS ) {
                 final UserSpecificTestParameters userParameters = testParameters.getUserParameters(tenant, principal);
 
-                if( !userParameters.commandCreationIsExpectedToSucceed() ) {
-                    assertCommandCreationFails(destination, options);
-                    continue;
+                try {
+                    if( !userParameters.commandCreationIsExpectedToSucceed() ) {
+                        assertCommandCreationFails(destination, options);
+                        continue;
+                    }
+                    runCorrectIsolationAndCaching(userParameters, destination, options, tenant, principal);
+                } catch (final Exception e) {
+                    throw new AssertionError("Test case for parameters[ " + testParameters + " + " + userParameters + "] failed.", e);
                 }
-
-                runCorrectIsolationAndCaching(userParameters, destination, options, tenant, principal);
             }
         }
     }
@@ -283,13 +289,17 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     {
         final BiFunction<String, DestinationOptions, Destination> destinationRetriever =
             (BiFunction<String, DestinationOptions, Destination>) mock(BiFunction.class);
-        if( userParameters.destinationRetrievalShouldFail() ) {
-            when(destinationRetriever.apply(any(), any()))
-                .thenThrow(new CloudPlatformException("The destination retrieval is expected to fail."));
+        final DestinationServiceV1Response.DestinationAuthToken token = new DestinationServiceV1Response.DestinationAuthToken();
+        if ( principal == null && DestinationUtility.requiresUserTokenExchange(destination) ) {
+            token.setError("This is an error in the destination auth token");
         } else {
-            when(destinationRetriever.apply(destination.get(DestinationProperty.NAME).get(), destinationOptions))
-                .thenReturn(destination);
+            token.setValue("success");
+            token.setHttpHeaderSuggestion(new Header("destination-auth-token", "success"));
+            token.setExpiryTimestamp(LocalDateTime.now().plus(Duration.ofHours(12)));
         }
+        final DefaultDestination finalDestination = destination.toBuilder().property(DestinationProperty.AUTH_TOKENS, List.of(token)).build();
+        when(destinationRetriever.apply(destination.get(DestinationProperty.NAME).get(), destinationOptions))
+                .thenReturn(finalDestination);
 
         final Cache<CacheKey, Destination> destinationCache = Caffeine.newBuilder().build();
         final Cache<CacheKey, ReentrantLock> isolationLocks = Caffeine.newBuilder().build();
@@ -325,11 +335,12 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                 .isEqualTo(expectedIsolationCacheKey);
 
             final Try<Destination> maybeResult = sut.execute();
-            assertThat(maybeResult.isFailure()).isEqualTo(userParameters.destinationRetrievalShouldFail());
-            if( userParameters.destinationRetrievalShouldFail() ) {
-                assertThat(maybeResult.getCause()).isExactlyInstanceOf(CloudPlatformException.class);
+            if( userParameters.commandExecutionIsExpectedToSucceed() ) {
+                assertThat(maybeResult).containsExactly(finalDestination);
             } else {
-                assertThat(maybeResult).containsExactly(destination);
+                assertThat(maybeResult.getCause())
+                    .withFailMessage("Expected command execution to fail with a CloudPlatformException.")
+                    .isExactlyInstanceOf(CloudPlatformException.class);
             }
 
             if( expectedIsolationCacheKey != null ) {
@@ -341,7 +352,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                 assertThat(isolationLocks.estimatedSize()).isEqualTo(0L);
             }
 
-            if( expectedDestinationCacheKey != null ) {
+            if( expectedDestinationCacheKey != null && token.getError() == null ) {
                 assertThat(destinationCache.estimatedSize()).isEqualTo(1L);
                 assertThat(destinationCache.getIfPresent(expectedDestinationCacheKey))
                     .withFailMessage("Expected destination to be cached using key %s", expectedDestinationCacheKey)
@@ -585,11 +596,11 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nullable
         private final Principal principal;
         private final boolean commandCreationIsExpectedToSucceed;
+        private final boolean commandExecutionIsExpectedToSucceed;
         @Nonnull
         private final Supplier<CacheKey> expectedIsolationCacheKeySupplier;
         @Nonnull
         private final Supplier<CacheKey> expectedDestinationCacheKeySupplier;
-        private final boolean destinationRetrievalShouldFail;
 
         public boolean commandCreationIsExpectedToSucceed()
         {
@@ -608,9 +619,39 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             return expectedDestinationCacheKeySupplier.get();
         }
 
-        public boolean destinationRetrievalShouldFail()
+        public boolean commandExecutionIsExpectedToSucceed()
         {
-            return destinationRetrievalShouldFail;
+            return commandExecutionIsExpectedToSucceed;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Tenant:");
+            if (tenant != null) {
+                sb.append(tenant.getTenantId());
+            } else {
+                sb.append("null");
+            }
+            sb.append(" + Principal:");
+            if (principal != null) {
+                sb.append(principal.getPrincipalId());
+            } else {
+                sb.append("null");
+            }
+            sb.append(" + CommandCreation:");
+            if (commandCreationIsExpectedToSucceed) {
+                sb.append("succeeds");
+            } else {
+                sb.append("fails");
+            }
+            sb.append(" + CommandExecution:");
+            if (commandExecutionIsExpectedToSucceed) {
+                sb.append("succeeds");
+            } else {
+                sb.append("fails");
+            }
+            return sb.toString();
         }
     }
 
@@ -638,11 +679,11 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nullable
         private final Principal principal;
         private final boolean commandCreationIsExpectedToSucceed;
+        private boolean commandExecutionIsExpectedToSucceed = true;
         @Nonnull
         private Supplier<CacheKey> expectedIsolationCacheKeySupplier = failingCacheKeySupplier();
         @Nonnull
         private Supplier<CacheKey> expectedDestinationCacheKeySupplier = failingCacheKeySupplier();
-        private boolean destinationRetrievalShouldFail = false;
 
         @Nonnull
         private static Supplier<CacheKey> failingCacheKeySupplier()
@@ -701,10 +742,9 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         }
 
         @Nonnull
-        public UserSpecificTestParametersBuilder expectNoDestinationCacheKeyBecauseDestinationRetrievalFails()
+        public UserSpecificTestParametersBuilder expectCommandExecutionToFail()
         {
-            destinationRetrievalShouldFail = true;
-            expectedDestinationCacheKeySupplier = () -> null;
+            commandExecutionIsExpectedToSucceed = true;
             return this;
         }
 
@@ -715,9 +755,10 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                 tenant,
                 principal,
                 commandCreationIsExpectedToSucceed,
-                expectedIsolationCacheKeySupplier,
-                expectedDestinationCacheKeySupplier,
-                destinationRetrievalShouldFail);
+                    commandExecutionIsExpectedToSucceed,
+                    expectedIsolationCacheKeySupplier,
+                expectedDestinationCacheKeySupplier
+                    );
         }
     }
 }

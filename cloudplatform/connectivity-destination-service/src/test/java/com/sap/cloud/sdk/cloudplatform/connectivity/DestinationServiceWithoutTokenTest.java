@@ -15,7 +15,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,30 +71,6 @@ class DestinationServiceWithoutTokenTest
     {
         PrincipalAccessor.setPrincipalFacade(null);
         AuthTokenAccessor.setAuthTokenFacade(null);
-    }
-
-    @Test
-    void testForwardUserTokenWithoutPrincipalFails()
-    {
-        // prepare http response
-        stubFor(get(anyUrl()).willReturn(okJson(PAYLOAD_AUTH_TOKEN_ERROR)));
-
-        // prepare test
-        final DestinationServiceAdapter adapter = new DestinationServiceAdapter(null, () -> serviceBinding, null);
-
-        final DestinationServiceOptionsAugmenter augment = augmenter().tokenExchangeStrategy(FORWARD_USER_TOKEN);
-        final DestinationOptions options = DestinationOptions.builder().augmentBuilder(augment).build();
-
-        // run test
-        final Try<Destination> maybeDestination = new DestinationService(adapter).tryGetDestination("Foo", options);
-        assertThat(maybeDestination).isEmpty();
-        assertThat(maybeDestination.getCause())
-            .isInstanceOf(DestinationAccessException.class)
-            .rootCause()
-            .hasMessageContaining("some-error-message");
-
-        verify(1, postRequestedFor(anyUrl()));
-        verify(1, getRequestedFor(anyUrl()));
     }
 
     @Test

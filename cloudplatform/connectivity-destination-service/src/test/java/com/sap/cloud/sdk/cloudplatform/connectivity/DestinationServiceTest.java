@@ -1575,6 +1575,42 @@ class DestinationServiceTest
             .failBecauseOf(DestinationAccessException.class);
     }
 
+    @Test
+    void testAuthTokenFailureIsNotCached()
+    {
+        doReturn(responseDestinationWithoutAuthToken)
+            .when(scpCfDestinationServiceAdapter)
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        final DestinationOptions options = DestinationOptions.builder().build();
+
+        final Destination destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options).get();
+
+        // sanity check
+        final List<?> authTokens =
+            destination
+                .get(DestinationProperty.AUTH_TOKENS)
+                .get()
+                .stream()
+                .map(DestinationServiceV1Response.DestinationAuthToken.class::cast)
+                .filter(t -> t.getError() != null)
+                .collect(Collectors.toList());
+        assertThat(authTokens).isNotEmpty();
+        final HttpDestination destinationHttp = destination.asHttp();
+        assertThatThrownBy(destinationHttp::getHeaders).isExactlyInstanceOf(DestinationAccessException.class);
+
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options).get();
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options).get();
+
+        // verify the result is not cached
+        verify(scpCfDestinationServiceAdapter, times(3))
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+    }
+
     // @Test
     // Performance test is unreliable on Jenkins
     void runLoadTest()
