@@ -180,6 +180,6 @@ class UriPathMergerTest
     void testInvalidDestinationDomainThrows()
     {
         assertThatThrownBy(() -> merge("https://test_1.com/", "https://some.url/with?parameter=foo"))
-                .isExactlyInstanceOf(DestinationAccessException.class);
+            .isExactlyInstanceOf(DestinationAccessException.class);
     }
 }
