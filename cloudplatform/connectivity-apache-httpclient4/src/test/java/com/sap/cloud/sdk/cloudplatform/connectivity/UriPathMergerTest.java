@@ -174,4 +174,13 @@ class UriPathMergerTest
         assertThatThrownBy(() -> merge("/relative/path", "https://some.url/with?parameter=foo"))
             .isExactlyInstanceOf(DestinationPathsNotMergeableException.class);
     }
+
+    @Test
+    void testInvalidDestinationDomain()
+    {
+        testMerge(
+            "https://test_1.com/",
+            "https://test_1.com/with?parameter=foo",
+            URI.create("https://test_1.com/with?parameter=foo"));
+    }
 }
