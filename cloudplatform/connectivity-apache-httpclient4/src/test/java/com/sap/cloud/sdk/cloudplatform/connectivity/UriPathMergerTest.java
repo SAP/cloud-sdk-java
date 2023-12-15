@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.Test;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationPathsNotMergeableException;
 
 class UriPathMergerTest
@@ -173,5 +174,12 @@ class UriPathMergerTest
     {
         assertThatThrownBy(() -> merge("/relative/path", "https://some.url/with?parameter=foo"))
             .isExactlyInstanceOf(DestinationPathsNotMergeableException.class);
+    }
+
+    @Test
+    void testInvalidDestinationDomainThrows()
+    {
+        assertThatThrownBy(() -> merge("https://test_1.com/", "https://some.url/with?parameter=foo"))
+                .isExactlyInstanceOf(DestinationAccessException.class);
     }
 }
