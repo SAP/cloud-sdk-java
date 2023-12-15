@@ -25,6 +25,6 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🐛 Fixed Issues
 
-- Fix an issue where an invalid URL in a destination would lead to an empty hostname.
+- Fix an issue where an invalid hostname in a destination would lead to an empty hostname. The hostname is now accepted.
 
 
