@@ -25,6 +25,6 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🐛 Fixed Issues
 
-- 
+- Invalid destination domain names now throw a DestinationAccessException when executing a request.
 
 
