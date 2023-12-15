@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationPathsNotMergeableException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
@@ -60,11 +59,6 @@ public class UriPathMerger
             throw new DestinationPathsNotMergeableException("The destination URI must be absolute OR empty.");
         }
 
-        if( primaryUri.getHost() == null ) {
-            throw new DestinationAccessException(
-                "Invalid destination domain name. Please follow the format https://www.ietf.org/rfc/rfc2396.txt Page 14.");
-        }
-
         if( secondaryUri == null ) {
             return primaryUri.getRawPath().isEmpty() ? primaryUri.resolve("/") : primaryUri;
         }
@@ -84,9 +78,7 @@ public class UriPathMerger
                 new UriBuilder()
                     .build(
                         primaryUri.getScheme(),
-                        primaryUri.getRawUserInfo(),
-                        primaryUri.getHost(),
-                        primaryUri.getPort(),
+                        primaryUri.getRawAuthority(),
                         mergeRootPath,
                         StringUtils.trimToNull(mergeQuery),
                         Option.of(secondaryUri.getRawFragment()).getOrElse(primaryUri::getRawFragment));
@@ -102,12 +94,8 @@ public class UriPathMerger
     private void assertSecondaryHostMatchesPrimaryHost( @Nonnull final URI primaryUri, @Nonnull final URI secondaryUri )
         throws DestinationPathsNotMergeableException
     {
-        if( secondaryUri.getHost() != null ) {
-            final boolean isSchemeEqual = primaryUri.getScheme().equalsIgnoreCase(secondaryUri.getScheme());
-            final boolean isHostEqual = primaryUri.getHost().equalsIgnoreCase(secondaryUri.getHost());
-            final boolean isPortEqual = primaryUri.getPort() == secondaryUri.getPort();
-
-            if( !(isSchemeEqual && isHostEqual && isPortEqual) ) {
+        if( secondaryUri.getRawAuthority() != null ) {
+            if( !primaryUri.getRawAuthority().equals(secondaryUri.getRawAuthority()) ) {
                 throw new DestinationPathsNotMergeableException(
                     String
                         .format(

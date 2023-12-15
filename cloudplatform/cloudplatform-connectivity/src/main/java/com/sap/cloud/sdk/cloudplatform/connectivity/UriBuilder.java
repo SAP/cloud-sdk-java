@@ -20,12 +20,8 @@ public class UriBuilder
      *
      * @param scheme
      *            The connection scheme of the URI.
-     * @param userInfo
-     *            The user information for the URI.
-     * @param host
-     *            The connection host of the URI.
-     * @param port
-     *            The port to connect on. Use -1 to ignore the port.
+     * @param authority
+     *            The authority of the URI.
      * @param path
      *            The path to the resource on the host (if the host is given).
      * @param query
@@ -41,9 +37,7 @@ public class UriBuilder
     @Nonnull
     public URI build(
         @Nullable final String scheme,
-        @Nullable final String userInfo,
-        @Nullable final String host,
-        final int port,
+        @Nullable final String authority,
         @Nullable final String path,
         @Nullable final String query,
         @Nullable final String fragment )
@@ -56,24 +50,9 @@ public class UriBuilder
             sb.append(':');
         }
 
-        if( host != null ) {
+        if( authority != null ) {
             sb.append("//");
-            if( userInfo != null ) {
-                sb.append(userInfo);
-                sb.append('@');
-            }
-            final boolean needBrackets = host.indexOf(':') >= 0 && !host.startsWith("[") && !host.endsWith("]");
-            if( needBrackets ) {
-                sb.append('[');
-            }
-            sb.append(host);
-            if( needBrackets ) {
-                sb.append(']');
-            }
-            if( port != -1 ) {
-                sb.append(':');
-                sb.append(port);
-            }
+            sb.append(authority);
         }
 
         if( path != null ) {
