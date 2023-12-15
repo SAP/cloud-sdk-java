@@ -25,6 +25,7 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🐛 Fixed Issues
 
-- Invalid destination domain names now throw a DestinationAccessException when executing a request.
+- Fix an issue where an invalid URL in a destination would lead to an empty hostname.
+  Now a `DestinationAccessException` will be thrown upon executing a request, if the URL domain contains a hostname that violates [RFC 2396](https://www.ietf.org/rfc/rfc2396.txt).
 
 
