@@ -583,8 +583,9 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         @Nonnull
         TestCaseBatchBuilder forAuthenticationTypes( @Nonnull final Collection<AuthenticationType> authenticationTypes )
         {
-            if ( !testCases.isEmpty() ){
-                throw new IllegalStateException("Incorrect test setup: Attempting to add further authentication types after test cases have been created via withExpectation().");
+            if( !testCases.isEmpty() ) {
+                throw new IllegalStateException(
+                    "Incorrect test setup: Attempting to add further authentication types after test cases have been created via withExpectation().");
             }
             this.authenticationTypes.addAll(authenticationTypes);
             return this;
@@ -595,8 +596,9 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             @Nonnull final DestinationServiceTokenExchangeStrategy firstTokenExchangeStrategy,
             @Nonnull final DestinationServiceTokenExchangeStrategy... furtherTokenExchangeStrategies )
         {
-            if ( !testCases.isEmpty() ){
-                throw new IllegalStateException("Incorrect test setup: Attempting to add further token strategies after test cases have been created via withExpectation().");
+            if( !testCases.isEmpty() ) {
+                throw new IllegalStateException(
+                    "Incorrect test setup: Attempting to add further token strategies after test cases have been created via withExpectation().");
             }
             tokenExchangeStrategies.add(firstTokenExchangeStrategy);
             tokenExchangeStrategies.addAll(Arrays.asList(furtherTokenExchangeStrategies));
