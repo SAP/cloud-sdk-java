@@ -162,7 +162,7 @@ class GetOrComputeSingleDestinationCommand
             final boolean resultContainsTokenErrors =
                 result
                     .get(DestinationProperty.AUTH_TOKENS)
-                    .getOrElse(List.of())
+                    .getOrElse(List::of)
                     .stream()
                     .map(t -> ((DestinationServiceV1Response.DestinationAuthToken) t).getError())
                     .anyMatch(Objects::nonNull);
