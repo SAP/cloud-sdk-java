@@ -26,5 +26,8 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 ## 🐛 Fixed Issues
 
 - Fix an issue where an invalid hostname in a destination would lead to an empty hostname. The hostname is now accepted.
+- Fix an issue where errors from token flows of destinations retrieved from the BTP destination service were not handled consistently.
+  For the default strategy `FORWARD_USER_TOKEN` errors were handled too eagerly, while for some custom strategies erroneous results would get cached unintentionally.
+  This is now resolved, error handling and caching now behaves as documented.
 
 
