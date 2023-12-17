@@ -546,13 +546,13 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             private static Destination prepareDestination( AuthenticationType authType, Principal principal )
             {
                 final DefaultDestination.Builder builder =
-                        DefaultDestination
-                                .builder()
-                                .name(UUID.randomUUID().toString())
-                                .property(DestinationProperty.AUTH_TYPE, authType);
+                    DefaultDestination
+                        .builder()
+                        .name(UUID.randomUUID().toString())
+                        .property(DestinationProperty.AUTH_TYPE, authType);
 
                 final DestinationServiceV1Response.DestinationAuthToken token =
-                        new DestinationServiceV1Response.DestinationAuthToken();
+                    new DestinationServiceV1Response.DestinationAuthToken();
                 if( DestinationUtility.requiresUserTokenExchange(authType, null) && principal == null ) {
                     token.setError("This is an error in the destination auth token");
                 } else {
@@ -589,8 +589,8 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         @Nonnull
         TestCaseBatchBuilder forTokenExchangeStrategies(
-                @Nonnull final DestinationServiceTokenExchangeStrategy firstTokenExchangeStrategy,
-                @Nonnull final DestinationServiceTokenExchangeStrategy... furtherTokenExchangeStrategies )
+            @Nonnull final DestinationServiceTokenExchangeStrategy firstTokenExchangeStrategy,
+            @Nonnull final DestinationServiceTokenExchangeStrategy... furtherTokenExchangeStrategies )
         {
             tokenExchangeStrategies.add(firstTokenExchangeStrategy);
             tokenExchangeStrategies.addAll(Arrays.asList(furtherTokenExchangeStrategies));
@@ -603,7 +603,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             for( final AuthenticationType authenticationType : authenticationTypes ) {
                 for( final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy : tokenExchangeStrategies ) {
                     final TestCase testCase =
-                            builder.forAuthenticationTypeAndOptions(authenticationType, tokenExchangeStrategy);
+                        builder.forAuthenticationTypeAndOptions(authenticationType, tokenExchangeStrategy);
                     testCases.add(testCase);
                 }
             }
