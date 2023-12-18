@@ -67,16 +67,15 @@ jobs:
           -Dmaven.install.skip=true
           -Dgpg.passphrase="$PASSPHRASE"
           -Dgpg.keyname="$MAVEN_CENTRAL_USER"
+          -Prelease
           deploy
 
           mvn
           $MVN_CLI_ARGS
-          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
-          -DserverId=ossrh
-          -DnexusUrl=https://oss.sonatype.org
           -DrepositoryDirectory=./temp_local_repo
           -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
-          -DautoReleaseAfterClose=true
+          -Prelease
+          deploy
 
         env:
           MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
