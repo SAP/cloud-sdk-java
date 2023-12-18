@@ -1235,7 +1235,7 @@ class DestinationServiceTest
         final CacheKey secondTenantCacheKey = CacheKey.fromIds("TenantB", null).append(destinationName, options);
 
         assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(4L); //when changeDetectionEnabled
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(4L);
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstTenantCacheKey)).isNotNull();
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondTenantCacheKey)).isNotNull();
 
@@ -1301,7 +1301,7 @@ class DestinationServiceTest
         final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
 
         assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(3L); //when changeDetectionEnabled, principalId=None tracked
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(3L);
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstCacheKey)).isNotNull();
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondCacheKey)).isNotNull();
 
@@ -1345,7 +1345,7 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
         //If exchange strategy is LOOKUP_THEN_EXCHANGE, then isolation locks are obtained per tenant
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L); //when changeDetectionEnabled
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(isolationLockKey)).isNotNull();
 
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
