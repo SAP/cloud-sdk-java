@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -338,17 +339,18 @@ class DestinationServiceTest
                     behalf -> DefaultHttpDestination.builder("").build(),
                     () -> mock(ServiceBinding.class),
                     providerTenant.getTenantId()));
+        // identifier UUID added to isolate resilience states
         loader =
             new DestinationService(
                 scpCfDestinationServiceAdapter,
                 DestinationService
                     .createResilienceConfiguration(
-                        "singleDestResilience",
+                        "singleDestResilience" + UUID.randomUUID(),
                         TimeLimiterConfiguration.disabled(),
                         DestinationService.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
                 DestinationService
                     .createResilienceConfiguration(
-                        "allDestResilience",
+                        "allDestResilience" + UUID.randomUUID(),
                         TimeLimiterConfiguration.disabled(),
                         DestinationService.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
 

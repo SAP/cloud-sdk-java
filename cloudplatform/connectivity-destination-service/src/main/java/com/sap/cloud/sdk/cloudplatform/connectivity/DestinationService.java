@@ -629,31 +629,50 @@ public class DestinationService implements DestinationLoader
 
         private static void recreateSingleCache()
         {
-            if( changeDetectionEnabled ) {
-                if( !expirationDuration.isDefined() ) {
-                    loadDefaultExpirationDuration();
-                }
-                destinationsCache =
-                    prepareCache(
-                        prepareCacheBuilder(sizeLimit, Option.some(Duration.ofDays(1L)), expirationStrategy).build(),
-                        destinationsCache);
-            } else {
+            if( !changeDetectionEnabled ) {
                 destinationsCache = prepareCache(prepareCacheBuilder().build(), destinationsCache);
+                return;
             }
+            if( !expirationDuration.isDefined() ) {
+                log
+                    .warn(
+                        String
+                            .format(
+                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                                    + "Therefore, the default expiration strategy (%s) will be restored.",
+                                DEFAULT_EXPIRATION_STRATEGY));
+                expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
+            }
+            destinationsCache =
+                prepareCache(
+                    prepareCacheBuilder(sizeLimit, Option.some(Duration.ofDays(1L)), expirationStrategy).build(),
+                    destinationsCache);
         }
 
         private static void recreateGetAllCache()
         {
-            CacheExpirationStrategy getAllExpirationStratgey = expirationStrategy;
-            if( changeDetectionEnabled ) {
-                if( !expirationDuration.isDefined() ) {
-                    loadDefaultExpirationDuration();
-                }
-                getAllExpirationStratgey = CacheExpirationStrategy.WHEN_CREATED;
+            if( !changeDetectionEnabled ) {
+                allDestinationsCache =
+                    prepareCache(
+                        prepareCacheBuilder(Option.none(), expirationDuration, expirationStrategy).build(),
+                        allDestinationsCache);
+                return;
+            }
+            if( !expirationDuration.isDefined() ) {
+                log
+                    .warn(
+                        String
+                            .format(
+                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                                    + "Therefore, the default expiration duration (%s) will be restored.",
+                                DEFAULT_EXPIRATION_DURATION));
+
+                expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
             }
             allDestinationsCache =
                 prepareCache(
-                    prepareCacheBuilder(Option.none(), expirationDuration, getAllExpirationStratgey).build(),
+                    prepareCacheBuilder(Option.none(), expirationDuration, CacheExpirationStrategy.WHEN_CREATED)
+                        .build(),
                     allDestinationsCache);
         }
 
@@ -661,21 +680,6 @@ public class DestinationService implements DestinationLoader
         {
             isolationLocks =
                 prepareCache(Caffeine.newBuilder().expireAfterAccess(Duration.ofMinutes(30)).build(), isolationLocks);
-        }
-
-        private static void loadDefaultExpirationDuration()
-        {
-            log
-                .warn(
-                    String
-                        .format(
-                            "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                                + "Therefore, the default expiration (%s %s) will be restored.",
-                            DEFAULT_EXPIRATION_DURATION,
-                            DEFAULT_EXPIRATION_STRATEGY));
-
-            expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
-            expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
         }
 
         private static <V> Option<com.github.benmanes.caffeine.cache.Cache<CacheKey, V>> prepareCache(
