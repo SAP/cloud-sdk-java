@@ -78,9 +78,7 @@ public class UriPathMerger
                 new UriBuilder()
                     .build(
                         primaryUri.getScheme(),
-                        primaryUri.getRawUserInfo(),
-                        primaryUri.getHost(),
-                        primaryUri.getPort(),
+                        primaryUri.getRawAuthority(),
                         mergeRootPath,
                         StringUtils.trimToNull(mergeQuery),
                         Option.of(secondaryUri.getRawFragment()).getOrElse(primaryUri::getRawFragment));
@@ -96,12 +94,8 @@ public class UriPathMerger
     private void assertSecondaryHostMatchesPrimaryHost( @Nonnull final URI primaryUri, @Nonnull final URI secondaryUri )
         throws DestinationPathsNotMergeableException
     {
-        if( secondaryUri.getHost() != null ) {
-            final boolean isSchemeEqual = primaryUri.getScheme().equalsIgnoreCase(secondaryUri.getScheme());
-            final boolean isHostEqual = primaryUri.getHost().equalsIgnoreCase(secondaryUri.getHost());
-            final boolean isPortEqual = primaryUri.getPort() == secondaryUri.getPort();
-
-            if( !(isSchemeEqual && isHostEqual && isPortEqual) ) {
+        if( secondaryUri.getRawAuthority() != null ) {
+            if( !primaryUri.getRawAuthority().equals(secondaryUri.getRawAuthority()) ) {
                 throw new DestinationPathsNotMergeableException(
                     String
                         .format(
