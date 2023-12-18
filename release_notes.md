@@ -10,7 +10,8 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🔧 Compatibility Notes
 
-- 
+- `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of
+ `UriBuilder.build(scheme, authority, path, query, fragment)`.
 
 
 ## ✨ New Functionality
