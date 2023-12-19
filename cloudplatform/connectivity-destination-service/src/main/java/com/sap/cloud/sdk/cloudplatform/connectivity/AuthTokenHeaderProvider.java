@@ -5,9 +5,11 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -54,6 +56,18 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
         } else if( isAuthTokenExpected(authenticationType) ) {
             log.warn("The destination service did not include an auth token in the response.");
         }
+
+        tokens
+            .stream()
+            .map(DestinationAuthToken::getExpiryTimestamp)
+            .filter(Objects::nonNull)
+            .filter(expiry -> expiry.isBefore(LocalDateTime.now()))
+            .forEach(
+                expiry -> log
+                    .warn(
+                        "An authorization token of destination {} has expired. "
+                            + "Please ensure that you don't reuse destination objects in your code for longer periods of time.",
+                        destination.get(DestinationProperty.NAME).getOrElse(destination::toString)));
 
         return result;
     }
