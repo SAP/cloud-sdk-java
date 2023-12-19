@@ -12,7 +12,9 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 - `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of
  `UriBuilder.build(scheme, authority, path, query, fragment)`.
-
+- An earlier version of the [V5 Upgrade Guide](https://sap.github.io/cloud-sdk/docs/java/guides/5.0-upgrade-steps) contained an instruction to move handling of `DestinationAccessExceptions` from `DestinationAccessor.getDestination()` to `destination.getHeaders()`.
+  This instruction was incorrect and has been removed.
+  In case you have followed this instruction, please revert the change.
 
 ## ✨ New Functionality
 
@@ -32,7 +34,7 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 - Fix an issue where an invalid hostname in a destination would lead to an empty hostname. The hostname is now accepted.
 - Fix an issue where errors from token flows of destinations retrieved from the BTP destination service were not handled consistently.
-  For the default strategy `FORWARD_USER_TOKEN` errors were handled too eagerly, while for some custom strategies erroneous results would get cached unintentionally.
-  This is now resolved, error handling and caching now behaves as documented.
+  For the non-default strategy `LOOKUP_ONLY` errors were handled too late and results would get cached unintentionally.
+  
 
 
