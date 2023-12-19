@@ -21,6 +21,7 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 📈 Improvements
 
+- A warning is now logged when destinations with expired authentication tokens are used for requests.
 - SAP dependency updates:
   - Update the [SAP Security Library](https://github.com/SAP/cloud-security-services-integration-library) from `3.3.0` to `3.3.1`
 - Other dependency updates:
