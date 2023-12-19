@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 
@@ -167,38 +166,6 @@ class GetOrComputeDestinationCommandTest
         assertThat(sut.getCacheKey()).isEqualTo(expectedCacheKey);
         assertThat(sut.getAdditionalKeyWithTenantAndPrincipal()).isEqualTo(expectedAdditionalCacheKey);
         assertThat(isolationLocks.getIfPresent(expectedCacheKey)).isNotNull();
-    }
-
-    @Test
-    void testAuthTokenFailure()
-    {
-        final DestinationServiceV1Response.DestinationAuthToken token =
-            new DestinationServiceV1Response.DestinationAuthToken();
-        token.setError("Some error");
-
-        final Destination destination =
-            DefaultHttpDestination
-                .builder("")
-                .name(DESTINATION_NAME)
-                .property(DestinationProperty.AUTH_TOKENS, List.of(token))
-                .build();
-
-        @SuppressWarnings( "unchecked" )
-        final BiFunction<String, DestinationOptions, Destination> function = mock(BiFunction.class);
-        when(function.apply(any(), any())).thenReturn(destination);
-
-        final DestinationOptions options = DestinationOptions.builder().build();
-        final GetOrComputeSingleDestinationCommand sut =
-            GetOrComputeSingleDestinationCommand
-                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
-                .get();
-
-        sut.execute();
-
-        assertThat(sut.execute()).contains(destination);
-
-        assertThat(destinationCache.estimatedSize()).isZero();
-        verify(function, times(2)).apply(any(), any());
     }
 
     /**

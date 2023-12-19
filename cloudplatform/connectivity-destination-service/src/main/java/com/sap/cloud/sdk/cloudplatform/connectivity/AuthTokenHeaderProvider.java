@@ -62,10 +62,8 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
     private static List<Header> getDestinationHeaders( @Nonnull final List<DestinationAuthToken> authTokens )
         throws DestinationAccessException
     {
-
         final List<Header> result = new ArrayList<>();
         for( final DestinationAuthToken authToken : authTokens ) {
-            throwOnHeaderError(authToken);
             final Header header = authToken.getHttpHeaderSuggestion();
             if( header != null ) {
                 result.add(header);
@@ -85,14 +83,6 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
                 "Failed to read authentication token. The destination service responded with an auth token that could not be interpreted.");
         }
         return result;
-    }
-
-    static void throwOnHeaderError( @Nonnull final DestinationAuthToken token )
-    {
-        if( token.getError() != null ) {
-            final String msg = "Failed to read authentication token. The destination service responded with an error: ";
-            throw new DestinationAccessException(msg + token.getError());
-        }
     }
 
     private static boolean isAuthTokenExpected( @Nonnull final AuthenticationType authType )

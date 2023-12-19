@@ -102,7 +102,7 @@ class AuthTokenHeaderProviderTest
     }
 
     @Test
-    void testThrowsOnHeaderError()
+    void testHeaderErrorIsUnexpected()
     {
         token.setError("error");
 

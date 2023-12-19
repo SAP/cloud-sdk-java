@@ -96,69 +96,42 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     {
         final Collection<TestCase> result = new ArrayList<>();
 
-        //region ( AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE )
+        //region ( AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE, LOOKUP_ONLY )
         {
             final Collection<TestCase> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE)
+                    .forTokenExchangeStrategies(FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE, LOOKUP_ONLY)
+                    .withExpectation(
+                        forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
+                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
+                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
+                    .withExpectation(
+                        forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
+                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
+                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
+                    .withExpectation(
+                        forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
+                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
+                    .withExpectation(
+                        forTenantAndPrincipal(TENANT, PRINCIPAL)
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
+                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
+                    .build();
+            result.addAll(testCases);
+        }
+        //endregion
+        //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE )
+        {
+            final Collection<TestCase> testCases =
+                createBatchTestCases()
+                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
                     .forTokenExchangeStrategies(FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE)
                     .withExpectation(
                         forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
-                    .build();
-            result.addAll(testCases);
-        }
-        //endregion
-        //region ( ALL_AUTHENTICATION_TYPES ) X ( LOOKUP_ONLY )
-        {
-            final Collection<TestCase> testCases =
-                createBatchTestCases()
-                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE)
-                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(LOOKUP_ONLY)
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(NO_TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(TENANT, NO_PRINCIPAL))
-                    .build();
-            result.addAll(testCases);
-        }
-        //endregion
-        //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN )
-        {
-            final Collection<TestCase> testCases =
-                createBatchTestCases()
-                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(FORWARD_USER_TOKEN)
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKey())
+                            .expectCommandExecutionToFail())
                     .withExpectation(
                         forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -166,7 +139,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     .withExpectation(
                         forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectNoDestinationCacheKey())
+                            .expectCommandExecutionToFail())
                     .withExpectation(
                         forTenantAndPrincipal(TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
@@ -174,6 +147,33 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     .build();
             result.addAll(testCases);
         }
+        //endregion
+        //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( LOOKUP_ONLY )
+        {
+            final Collection<TestCase> testCases =
+                createBatchTestCases()
+                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
+                    .forTokenExchangeStrategies(LOOKUP_ONLY)
+                    .withExpectation(
+                        forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
+                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
+                            .expectCommandExecutionToFail())
+                    .withExpectation(
+                        forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
+                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
+                            .expectCommandExecutionToFail())
+                    .withExpectation(
+                        forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
+                            .expectCommandExecutionToFail())
+                    .withExpectation(
+                        forTenantAndPrincipal(TENANT, PRINCIPAL)
+                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
+                            .expectCommandExecutionToFail())
+                    .build();
+            result.addAll(testCases);
+        }
+        //endregion
         //endregion
         //region ( ALL_AUTHENTICATION_TYPES ) x ( EXCHANGE_ONLY )
         {
@@ -188,32 +188,6 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     .withExpectation(
                         forTenantAndPrincipal(TENANT, PRINCIPAL)
                             .expectIsolationCacheKey(TENANT, PRINCIPAL)
-                            .expectDestinationCacheKey(TENANT, PRINCIPAL))
-                    .build();
-            result.addAll(testCases);
-        }
-        //endregion
-        //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) x ( LOOKUP_THEN_EXCHANGE )
-        {
-            final Collection<TestCase> testCases =
-                createBatchTestCases()
-                    .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(LOOKUP_THEN_EXCHANGE)
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectCommandExecutionToFail())
-                    .withExpectation(
-                        forTenantAndPrincipal(NO_TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
-                            .expectDestinationCacheKey(NO_TENANT, PRINCIPAL))
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, NO_PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
-                            .expectCommandExecutionToFail())
-                    .withExpectation(
-                        forTenantAndPrincipal(TENANT, PRINCIPAL)
-                            .expectIsolationCacheKey(TENANT, NO_PRINCIPAL)
                             .expectDestinationCacheKey(TENANT, PRINCIPAL))
                     .build();
             result.addAll(testCases);
@@ -430,13 +404,11 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         void stubDestinationRetriever( BiFunction<String, DestinationOptions, Destination> destinationRetriever )
         {
-            if( DestinationUtility.requiresUserTokenExchange(getAuthenticationType(), null)
-                && principal == null
-                && getTokenExchangeStrategy() == LOOKUP_THEN_EXCHANGE ) {
+            if( DestinationUtility.requiresUserTokenExchange(getDestination())
+                && (principal == null || getTokenExchangeStrategy() == LOOKUP_ONLY) ) {
                 doThrow(
                     new DestinationAccessException(
-                        LOOKUP_THEN_EXCHANGE
-                            + " throws on authentication types that require user token exchange and no principal is given."))
+                        "Destination retrieval fails on authentication types that require user token exchange and no principal is given."))
                     .when(destinationRetriever)
                     .apply(any(), any());
             } else {

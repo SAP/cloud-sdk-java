@@ -159,24 +159,6 @@ class GetOrComputeSingleDestinationCommand
 
             result = maybeResult.get();
 
-            final boolean resultContainsTokenErrors =
-                result
-                    .get(DestinationProperty.AUTH_TOKENS)
-                    .getOrElse(List::of)
-                    .stream()
-                    .map(t -> ((DestinationServiceV1Response.DestinationAuthToken) t).getError())
-                    .anyMatch(Objects::nonNull);
-
-            if( resultContainsTokenErrors && exchangeStrategy != LOOKUP_ONLY ) {
-                log
-                    .warn(
-                        "The destination {} contains token errors. "
-                            + "Caching for this destination is skipped and usage of the destination may result in exceptions. "
-                            + "To only access properties of a destination, without performing authentication flows, please use DestinationService.tryGetAllDestinations() instead.",
-                        destinationName);
-                return Try.success(result);
-            }
-
             switch( exchangeStrategy ) {
                 case LOOKUP_ONLY:
                 case EXCHANGE_ONLY:
