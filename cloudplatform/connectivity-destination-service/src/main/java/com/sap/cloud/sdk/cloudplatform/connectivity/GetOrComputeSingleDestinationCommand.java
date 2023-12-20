@@ -119,14 +119,14 @@ class GetOrComputeSingleDestinationCommand
      *  The table illustrates how the exchange key affects the isolation and cache keys in the implementation below
      * | #   | Lookup Strategy      | Destination Type   | Isolation Key      | Cache Key          | Comment                    |
      * |-----|----------------------|--------------------|--------------------|--------------------|----------------------------|
-     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | warning logged             |
+     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | execution fails            |
      * | 2   | Lookup then exchange
      *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
      *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 3   | Exchange only        | User Propagation   | Tenant + Principal | Tenant + Principal |                            |
      * | 4   | Forward user token
      *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
-     *         - (No JWT available) | User Propagation   | Tenant             | -                  | warning logged             |
+     *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 6   | Lookup only          | Client Credentials | Tenant             | Tenant             |                            |
      * | 7   | Lookup then exchange | Client Credentials | Tenant             | Tenant             |                            |
      * | 8   | Exchange only        | Client Credentials | Tenant + Principal | Tenant + Principal | warning logged             |
