@@ -68,6 +68,7 @@ class GetOrComputeDestinationCommandTest
     }
 
     @Test
+    @SuppressWarnings( "deprecation" )
     void testDefaultTokenExchangeStrategy()
     {
         final DestinationOptions options = DestinationOptions.builder().build();
@@ -83,6 +84,7 @@ class GetOrComputeDestinationCommandTest
     }
 
     @Test
+    @SuppressWarnings( "deprecation" )
     void testPrepareCommandWithLookupOnlyExchangeStrategy()
     {
         TenantAccessor.executeWithTenant(t1, () -> {
@@ -93,6 +95,7 @@ class GetOrComputeDestinationCommandTest
     }
 
     @Test
+    @SuppressWarnings( "deprecation" )
     void testPrepareCommandWithLookupThenExchangeStrategy()
     {
         PrincipalAccessor.executeWithPrincipal(p1, () -> TenantAccessor.executeWithTenant(t1, () -> {
@@ -183,6 +186,7 @@ class GetOrComputeDestinationCommandTest
                 .build();
 
         final CacheKey expectedCacheKey = CacheKey.ofTenantOptionalIsolation();
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
             DestinationOptions
                 .builder()
@@ -220,6 +224,7 @@ class GetOrComputeDestinationCommandTest
                 .build();
 
         final CacheKey expectedCacheKey = CacheKey.ofTenantOptionalIsolation();
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
             DestinationOptions
                 .builder()
@@ -258,6 +263,7 @@ class GetOrComputeDestinationCommandTest
 
         final CacheKey expectedCacheKey = CacheKey.of(t1, p1);
         final CacheKey tenantCacheKey = CacheKey.of(t1, null);
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
             DestinationOptions
                 .builder()

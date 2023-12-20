@@ -16,7 +16,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
@@ -107,7 +106,9 @@ class DestinationServiceWithoutTokenTest
         // prepare test
         final DestinationServiceAdapter adapter = new DestinationServiceAdapter(null, () -> serviceBinding, null);
 
-        final DestinationServiceOptionsAugmenter augment = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationServiceOptionsAugmenter augment =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(augment).build();
 
         // run test

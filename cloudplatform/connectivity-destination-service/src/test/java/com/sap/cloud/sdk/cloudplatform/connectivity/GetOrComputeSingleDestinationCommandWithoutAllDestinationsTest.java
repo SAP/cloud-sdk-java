@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -91,10 +89,13 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         //region ( AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestParameters> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE)
+                    .forTokenExchangeStrategies(
+                        FORWARD_USER_TOKEN,
+                        DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE)
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -117,11 +118,12 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         //endregion
         //region ( ALL_AUTHENTICATION_TYPES ) X ( LOOKUP_ONLY )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestParameters> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE)
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(LOOKUP_ONLY)
+                    .forTokenExchangeStrategies(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY)
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -188,10 +190,11 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         //endregion
         //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) x ( LOOKUP_THEN_EXCHANGE )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestParameters> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(LOOKUP_THEN_EXCHANGE)
+                    .forTokenExchangeStrategies(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE)
                     .withUserParameters(
                         expectCommandCreationToSucceed(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)

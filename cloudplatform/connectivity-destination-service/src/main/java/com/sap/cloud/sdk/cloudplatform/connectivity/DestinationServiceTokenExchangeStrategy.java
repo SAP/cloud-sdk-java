@@ -26,13 +26,16 @@ public enum DestinationServiceTokenExchangeStrategy
     FORWARD_USER_TOKEN("ForwardUserToken"),
 
     /**
-     * Classic strategy of performing the user token exchange actively when necessary.
+     * Legacy strategy of performing the user token exchange actively when necessary.
      * <p>
      * When this strategy is used, the {@link DestinationService} first performs a "look up" of the destination by
      * issuing a client credentials request to the destination service. The response then contains the destination,
-     * which is needed to determine the actual authentication type. Afterwards, depending that authentication type, a
+     * which is needed to determine the actual authentication type. Afterwards, depending on the authentication type, a
      * user token exchange might be performed automatically.
+     *
+     * @deprecated since 5.0.1. Use {@link #FORWARD_USER_TOKEN} instead.
      */
+    @Deprecated
     LOOKUP_THEN_EXCHANGE("LookupThenExchange"),
 
     /**
@@ -41,16 +44,18 @@ public enum DestinationServiceTokenExchangeStrategy
      * <b>Caution</b>: The retrieved destination might not be suitable to actually connect to the target system because
      * the token exchange request is skipped when using this strategy, even if the destination demands an authentication
      * type that is based on the user token exchange (such as {@link AuthenticationType#OAUTH2_JWT_BEARER}).
+     *
+     * @deprecated since 5.0.1. Use {@link #FORWARD_USER_TOKEN} instead.
      */
+    @Deprecated
     LOOKUP_ONLY("LookupOnly"),
 
     /**
-     * Use this strategy if you <b>know for sure</b> that the requested destination requires a user token exchange for
-     * the authentication.
+     * Legacy strategy that can be used for destinations which require a user token for the authentication flow.
      * <p>
-     * <b>Caution</b>: The {@link DestinationService} skips the initial "look up" request against the destination
-     * service, which is usually needed to determine whether a user token exchange is needed. Instead, the user token
-     * exchange is performed immediately, which might cause errors if the destination is not suited for that flow.
+     * <b>Caution</b>: This strategy is a performance loss and is subject to stricter rate-limits compared to
+     * {@link #FORWARD_USER_TOKEN}. It should only be used in case the destination service responds with an error when
+     * {@link #FORWARD_USER_TOKEN} is used.
      */
     EXCHANGE_ONLY("ExchangeOnly");
 
