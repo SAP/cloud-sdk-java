@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -50,7 +51,6 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -442,12 +442,7 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations();
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties();
 
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
@@ -539,6 +534,7 @@ class DestinationServiceTest
         assertThat(sut.getAllDestResilience().timeLimiterConfiguration().isEnabled()).isFalse();
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testLoadAllDestinationsProviderOnly()
     {
@@ -564,6 +560,7 @@ class DestinationServiceTest
             .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
@@ -591,6 +588,7 @@ class DestinationServiceTest
 
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testGetAllDestinationsOnlySubscriberStrategyDoesNotReadProviderDestinations()
     {
@@ -1569,10 +1567,7 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        VavrAssertions
-            .assertThat(loader.tryGetAllDestinations(DestinationOptions.builder().build()))
-            .isFailure()
-            .failBecauseOf(DestinationAccessException.class);
+        assertThatThrownBy(loader::getAllDestinationProperties).isExactlyInstanceOf(DestinationAccessException.class);
     }
 
     // @Test

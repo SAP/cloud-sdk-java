@@ -5,6 +5,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,20 +163,63 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
-     * Fetches all destinations on behalf of the subscriber. Convenience for
-     * {@code tryGetAllDestinations(DestinationOptions.builder().build())}.
+     * Fetches all destinations properties
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration.
      * </p>
      *
      * @return A Try list of destinations.
-     * @see #tryGetAllDestinations(DestinationOptions)
+     * @deprecated since 5.0.1. Use {@link #getAllDestinationProperties()} instead.
      */
+    @Deprecated
     @Nonnull
     public Try<Iterable<Destination>> tryGetAllDestinations()
     {
         return tryGetAllDestinations(DestinationOptions.builder().build());
+    }
+
+    /**
+     * Fetches all destination properties from the BTP Destination Service.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration. For
+     * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
+     * </p>
+     *
+     * @return A list of destination properties.
+     * @since 5.0.1
+     */
+    @Nonnull
+    public Collection<DestinationProperties> getAllDestinationProperties()
+    {
+        return new ArrayList<>(
+            Cache
+                .getOrComputeAllDestinations(
+                    DestinationOptions.builder().build(),
+                    this::getAllDestinationsByRetrievalStrategy)
+                .get());
+    }
+
+    /**
+     * Fetches the properties of a specific destination from the BTP Destination Service.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destination.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration. For
+     * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
+     * </p>
+     *
+     * @return A list of destination properties.
+     * @since 5.0.1
+     */
+    @Nonnull
+    public DestinationProperties getDestinationProperties( @Nonnull final String destinationName )
+    {
+        return getAllDestinationProperties()
+            .stream()
+            .filter(dest -> dest.get(DestinationProperty.NAME).contains(destinationName))
+            .findAny()
+            .orElseThrow(() -> new DestinationNotFoundException("Destination " + destinationName + " not found."));
     }
 
     /**
@@ -190,15 +234,30 @@ public class DestinationService implements DestinationLoader
      * @param options
      *            Destination configuration object
      * @return A Try iterable of CF destinations.
+     * @deprecated since 5.0.1. Use {@link #getAllDestinationProperties()} instead.
      */
     @Nonnull
+    @Deprecated
     public Try<Iterable<Destination>> tryGetAllDestinations( @Nonnull final DestinationOptions options )
     {
-        return Cache.getOrComputeAllDestinations(options, this::getAllDestinationsByRetrievalStrategy).map(l -> l);
+        final Try<List<DestinationProperties>> maybeDestinationList =
+            Cache.getOrComputeAllDestinations(options, this::getAllDestinationsByRetrievalStrategy);
+        if( maybeDestinationList.isFailure() ) {
+            return Try.failure(maybeDestinationList.getCause());
+        }
+        final List<DestinationProperties> destinationList = maybeDestinationList.get();
+        final Collection<Destination> result = new ArrayList<>();
+        for( final DestinationProperties destination : destinationList ) {
+            final DefaultDestination.Builder builder = DefaultDestination.builder();
+            destination.getPropertyNames().forEach(key -> builder.property(key, destination.get(key).get()));
+            result.add(builder.build());
+        }
+        return Try.success(result);
     }
 
     @Nonnull
-    private Try<List<Destination>> getAllDestinationsByRetrievalStrategy( @Nonnull final DestinationOptions options )
+    private Try<List<DestinationProperties>> getAllDestinationsByRetrievalStrategy(
+        @Nonnull final DestinationOptions options )
     {
         final DestinationRetrievalStrategyResolver resolver =
             DestinationRetrievalStrategyResolver
@@ -209,21 +268,21 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    private List<Destination> loadAndParseAllDestinations( @Nonnull final OnBehalfOf behalf )
+    private List<DestinationProperties> loadAndParseAllDestinations( @Nonnull final OnBehalfOf behalf )
     {
         // Priority list:
         // * Service Instance Destinations of same name > Subaccount Destinations of same name
 
-        final List<Destination> serviceInstanceDestinations =
+        final List<? extends DestinationProperties> serviceInstanceDestinations =
             resilientCall(() -> getAndDeserializeDestinations(PATH_SERVICE_INSTANCE, behalf), allDestResilience);
-        final List<Destination> subAccountDestinations =
+        final List<? extends DestinationProperties> subAccountDestinations =
             resilientCall(() -> getAndDeserializeDestinations(PATH_SUBACCOUNT, behalf), allDestResilience);
 
-        final Map<String, Destination> result = new LinkedHashMap<>();
-        for( final Destination destination : serviceInstanceDestinations ) {
+        final Map<String, DestinationProperties> result = new LinkedHashMap<>();
+        for( final DestinationProperties destination : serviceInstanceDestinations ) {
             result.putIfAbsent(destination.get(DestinationProperty.NAME).get(), destination);
         }
-        for( final Destination destination : subAccountDestinations ) {
+        for( final DestinationProperties destination : subAccountDestinations ) {
             result.putIfAbsent(destination.get(DestinationProperty.NAME).get(), destination);
         }
         log.debug("Loaded {} destinations: {}", result.size(), result.keySet());
@@ -331,7 +390,7 @@ public class DestinationService implements DestinationLoader
         private static Option<com.github.benmanes.caffeine.cache.Cache<CacheKey, Destination>> destinationsCache =
             Option.none();
         @Nonnull
-        private static Option<com.github.benmanes.caffeine.cache.Cache<CacheKey, List<Destination>>> allDestinationsCache =
+        private static Option<com.github.benmanes.caffeine.cache.Cache<CacheKey, List<DestinationProperties>>> allDestinationsCache =
             Option.none();
         @Nonnull
         private static Option<com.github.benmanes.caffeine.cache.Cache<CacheKey, ReentrantLock>> isolationLocks =
@@ -364,7 +423,7 @@ public class DestinationService implements DestinationLoader
         }
 
         @Nonnull
-        static com.github.benmanes.caffeine.cache.Cache<CacheKey, List<Destination>> instanceAll()
+        static com.github.benmanes.caffeine.cache.Cache<CacheKey, List<DestinationProperties>> instanceAll()
         {
             throwIfDisabled();
             return allDestinationsCache.get();
@@ -745,9 +804,9 @@ public class DestinationService implements DestinationLoader
             return command.flatMap(GetOrComputeSingleDestinationCommand::execute);
         }
 
-        private static Try<List<Destination>> getOrComputeAllDestinations(
+        private static Try<List<DestinationProperties>> getOrComputeAllDestinations(
             @Nonnull final DestinationOptions options,
-            @Nonnull final Function<DestinationOptions, Try<List<Destination>>> destinationDownloader )
+            @Nonnull final Function<DestinationOptions, Try<List<DestinationProperties>>> destinationDownloader )
         {
             if( !cacheEnabled ) {
                 return destinationDownloader.apply(options);
