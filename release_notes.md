@@ -10,11 +10,10 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🔧 Compatibility Notes
 
-- `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of
- `UriBuilder.build(scheme, authority, path, query, fragment)`.
 - An earlier version of the [V5 Upgrade Guide](https://sap.github.io/cloud-sdk/docs/java/guides/5.0-upgrade-steps) contained an instruction to move handling of `DestinationAccessExceptions` from `DestinationAccessor.getDestination()` to `destination.getHeaders()`.
   This instruction was incorrect and has been removed.
   In case you have followed this instruction, please revert the change.
+- `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of `UriBuilder.build(scheme, authority, path, query, fragment)`.
 
 ## ✨ New Functionality
 
