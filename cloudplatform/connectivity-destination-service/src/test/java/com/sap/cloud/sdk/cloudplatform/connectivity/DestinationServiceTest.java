@@ -584,7 +584,6 @@ class DestinationServiceTest
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining(
                 "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
-        ;
     }
 
     @Test
