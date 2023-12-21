@@ -170,7 +170,7 @@ public class DestinationService implements DestinationLoader
      * </p>
      *
      * @return A Try list of destinations.
-     * @deprecated since 5.0.1. Use {@link #getAllDestinationProperties()} instead.
+     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
      */
     @Deprecated
     @Nonnull
@@ -188,7 +188,7 @@ public class DestinationService implements DestinationLoader
      * </p>
      *
      * @return A list of destination properties.
-     * @since 5.0.1
+     * @since 5.1.0
      */
     @Nonnull
     public Collection<DestinationProperties> getAllDestinationProperties()
@@ -209,8 +209,10 @@ public class DestinationService implements DestinationLoader
      * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
      * </p>
      *
+     * @param destinationName
+     *            The name of the destination.
      * @return A list of destination properties.
-     * @since 5.0.1
+     * @since 5.1.0
      */
     @Nonnull
     public DestinationProperties getDestinationProperties( @Nonnull final String destinationName )
@@ -234,7 +236,7 @@ public class DestinationService implements DestinationLoader
      * @param options
      *            Destination configuration object
      * @return A Try iterable of CF destinations.
-     * @deprecated since 5.0.1. Use {@link #getAllDestinationProperties()} instead.
+     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
      */
     @Nonnull
     @Deprecated
