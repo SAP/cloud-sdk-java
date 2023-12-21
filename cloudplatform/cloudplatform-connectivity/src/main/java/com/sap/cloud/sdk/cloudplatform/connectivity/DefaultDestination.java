@@ -77,7 +77,15 @@ public final class DefaultDestination implements Destination
         return getClass().getSimpleName() + "(properties=" + nonSensitiveProperties + ")";
     }
 
-    private DefaultDestination( @Nonnull final Map<String, ?> properties )
+    /**
+     * Creates a new {@code DefaultDestination} with the given properties.
+     *
+     * @deprecated Please use static {@link #fromMap()} instead.
+     * @param properties
+     *            the properties to be used for the destination builder.
+     */
+    @Deprecated
+    public DefaultDestination( @Nonnull final Map<String, ?> properties )
     {
         this.properties.putAll(properties);
     }
