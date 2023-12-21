@@ -163,11 +163,13 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
-     * Fetches all destinations properties
+     * Fetches all destination properties from the BTP Destination Service.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration.
      * </p>
+     * In case there exists a destination with the same name on service instance and on sub-account level, the
+     * destination at service instance level takes precedence.
      *
      * @return A Try list of destinations.
      * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
@@ -186,6 +188,8 @@ public class DestinationService implements DestinationLoader
      * obtained this way should only be used for accessing the properties of the destination configuration. For
      * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
      * </p>
+     * In case there exists a destination with the same name on service instance and on sub-account level, the
+     * destination at service instance level takes precedence.
      *
      * @return A list of destination properties.
      * @since 5.1.0
@@ -208,6 +212,8 @@ public class DestinationService implements DestinationLoader
      * obtained this way should only be used for accessing the properties of the destination configuration. For
      * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
      * </p>
+     * In case there exists a destination with the same name on service instance and on sub-account level, the
+     * destination at service instance level takes precedence.
      *
      * @param destinationName
      *            The name of the destination.
@@ -225,16 +231,17 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
-     * Retrieves destinations for the provided configuration options. In case there exist a destination with the same
-     * name on service instance and on sub account level, then the method prioritizes the destination at service
-     * instance level.
+     * Fetches all destination properties from the BTP Destination Service.
+     * <p>
+     * Uses the provided configuration options. In case there exist a destination with the same name on service instance
+     * and on sub account level, then the method prioritizes the destination at service instance level.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration.
      * </p>
      *
      * @param options
-     *            Destination configuration object
+     *            Destination configuration object.
      * @return A Try iterable of CF destinations.
      * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
      */

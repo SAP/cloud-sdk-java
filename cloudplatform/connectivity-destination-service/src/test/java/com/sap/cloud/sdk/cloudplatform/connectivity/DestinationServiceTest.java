@@ -54,6 +54,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -82,11 +83,10 @@ import lombok.SneakyThrows;
 class DestinationServiceTest
 {
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes
-
+    // region (TEST_DATA)
     private static final String destinationName = "SomeDestinationName";
     private static final String providerUrl = "https://service.provider.com";
     private static final String subscriberUrl = "https://service.subscriber.com";
-    private static final String oauthTokenServiceUrl = "https://a.s4hana.ondemand.com/sap/bc/sec/oauth2/token";
 
     private static final String responseSubaccountDestination =
         "[{\n"
@@ -305,6 +305,7 @@ class DestinationServiceTest
             + "        \"Description\": \"Dummy destination that should be overwritten by a subscriber.\"\n"
             + "    }\n"
             + "}";
+    // endregion
 
     @RegisterExtension
     TokenRule token = TokenRule.createXsuaa();
@@ -349,7 +350,7 @@ class DestinationServiceTest
                     .createResilienceConfiguration(
                         "allDestResilience",
                         TimeLimiterConfiguration.disabled(),
-                        DestinationService.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
+                        ResilienceConfiguration.CircuitBreakerConfiguration.disabled()));
 
         final String httResponseProvider = createHttpDestinationServiceResponse(destinationName, providerUrl);
         final String httpResponseSubscriber = createHttpDestinationServiceResponse(destinationName, subscriberUrl);
@@ -427,17 +428,11 @@ class DestinationServiceTest
     }
 
     @Test
-    void testLoadAllDestinationsSubscriberOnly()
+    void testGettingDestinationProperties()
     {
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
         doReturn(responseServiceInstanceDestination)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
         doReturn(responseSubaccountDestination)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -448,16 +443,25 @@ class DestinationServiceTest
             .extracting(d -> d.get(DestinationProperty.NAME).get())
             .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
 
-        //Assert additionally that of a subaccount destination and an instance destination of same name, the instance one was picked
-        assertThat(
+        final DestinationProperties destination =
             destinationList
                 .stream()
                 .filter(d -> d.get(DestinationProperty.NAME).get().equalsIgnoreCase("CC8-HTTP-BASIC"))
                 .findFirst()
-                .get()
-                .get("User", String.class)
-                .get())
-            .isEqualTo("USER1");
+                .get();
+        //Assert additionally that of a subaccount destination and an instance destination of same name, the instance one was picked
+        assertThat(destination.get("User", String.class)).contains("USER1");
+
+        // test single destination properties convenience
+        assertThat(loader.getDestinationProperties("CC8-HTTP-BASIC")).isSameAs(destination);
+        assertThatThrownBy(() -> loader.getDestinationProperties("doesnt exist"))
+            .isInstanceOf(DestinationNotFoundException.class);
+
+        // verify all results are cached
+        verify(scpCfDestinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(scpCfDestinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
     @Test
@@ -536,7 +540,8 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
-    void testLoadAllDestinationsProviderOnly()
+    @DisplayName( "Test getting Destination Properties for the provider" )
+    void testDestinationPropertiesForProvider()
     {
         doReturn(responseServiceInstanceDestination)
             .when(scpCfDestinationServiceAdapter)
@@ -562,49 +567,24 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
+    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
     void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
-        // mock to return empty list as destinations for subscriber tenant.
-        doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
-
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations(options);
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
-
-        assertThat(destinationList)
-            .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
-
-    }
-
-    @SuppressWarnings( "deprecation" )
-    @Test
-    void testGetAllDestinationsOnlySubscriberStrategyDoesNotReadProviderDestinations()
-    {
-        final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
+        // set current tenant to be the provider tenant
+        TenantAccessor.setTenantFacade(null);
 
         // set current tenant to be the provider tenant
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         final Try<Iterable<Destination>> result =
             TenantAccessor.executeWithTenant(providerTenant, () -> loader.tryGetAllDestinations(options));
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause())
+
+        assertThatThrownBy(result::get)
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining(
                 "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
-
+        ;
     }
 
     @Test
@@ -1417,10 +1397,22 @@ class DestinationServiceTest
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         DestinationService.Cache.enableChangeDetection();
+        final ResilienceConfiguration resilienceSingle =
+            ResilienceConfiguration
+                .of("testChangeDetectionWithMisconfiguredDestination_SINGLE")
+                .timeLimiterConfiguration(TimeLimiterConfiguration.disabled());
+        final ResilienceConfiguration resilienceAll =
+            ResilienceConfiguration
+                .of("testChangeDetectionWithMisconfiguredDestination_ALL")
+                .circuitBreakerConfiguration(
+                    ResilienceConfiguration.CircuitBreakerConfiguration.of().closedBufferSize(50))
+                .timeLimiterConfiguration(TimeLimiterConfiguration.disabled());
         final int circuitBreakerBuffer =
-            ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE
-                * Math.round(ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_FAILURE_RATE_THRESHOLD)
+            resilienceAll.circuitBreakerConfiguration().closedBufferSize()
+                * Math.round(resilienceAll.circuitBreakerConfiguration().failureRateThreshold())
                 / 100;
+
+        loader = new DestinationService(scpCfDestinationServiceAdapter, resilienceSingle, resilienceAll);
 
         // the smart cache circuit breaker will try 5 times (default closed buffer size) then open and not call again
         for( int i = 0; i < 2 * circuitBreakerBuffer; ++i ) {
