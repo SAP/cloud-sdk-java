@@ -10,8 +10,10 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 
 ## 🔧 Compatibility Notes
 
-- `com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache` now enables change detection by default, but can be disabled via `DestinationService.Cache#disableChangeDetection`. 
-  - `DestinationService.Cache#enableChangeDetection` has been deprecated.
+- `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of
+ `UriBuilder.build(scheme, authority, path, query, fragment)`.
+- `com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache` now enables change detection by default, but can be disabled via `DestinationService.Cache.disableChangeDetection()`. 
+  - `DestinationService.Cache.enableChangeDetection()` has been deprecated.
 
 
 ## ✨ New Functionality
