@@ -120,8 +120,7 @@ def generate_execution(path_prefix, phase, goal, module, sdk_version):
         file = pom_path
     elif module["packaging"] == "maven-archetype" or module["packaging"] == "maven-plugin":
         file = artifact_path + ".jar"
-        if phase == "install":
-            packaging = "jar"
+        packaging = "jar"
     return f"""
                   <execution>
                       <id>{phase}-{module["artifactId"]}</id>
