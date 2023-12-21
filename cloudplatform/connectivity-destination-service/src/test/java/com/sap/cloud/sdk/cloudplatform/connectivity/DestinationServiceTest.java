@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -343,14 +344,14 @@ class DestinationServiceTest
                 scpCfDestinationServiceAdapter,
                 DestinationService
                     .createResilienceConfiguration(
-                        "singleDestResilience",
+                        "singleDestResilience" + UUID.randomUUID(),
                         TimeLimiterConfiguration.disabled(),
                         DestinationService.DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
                 DestinationService
                     .createResilienceConfiguration(
-                        "allDestResilience",
+                        "allDestResilience" + UUID.randomUUID(),
                         TimeLimiterConfiguration.disabled(),
-                        ResilienceConfiguration.CircuitBreakerConfiguration.disabled()));
+                        DestinationService.DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
 
         final String httResponseProvider = createHttpDestinationServiceResponse(destinationName, providerUrl);
         final String httpResponseSubscriber = createHttpDestinationServiceResponse(destinationName, subscriberUrl);
@@ -1396,24 +1397,12 @@ class DestinationServiceTest
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         DestinationService.Cache.enableChangeDetection();
-        final ResilienceConfiguration resilienceSingle =
-            ResilienceConfiguration
-                .of("testChangeDetectionWithMisconfiguredDestination_SINGLE")
-                .timeLimiterConfiguration(TimeLimiterConfiguration.disabled());
-        final ResilienceConfiguration resilienceAll =
-            ResilienceConfiguration
-                .of("testChangeDetectionWithMisconfiguredDestination_ALL")
-                .circuitBreakerConfiguration(
-                    ResilienceConfiguration.CircuitBreakerConfiguration.of().closedBufferSize(50))
-                .timeLimiterConfiguration(TimeLimiterConfiguration.disabled());
         final int circuitBreakerBuffer =
-            resilienceAll.circuitBreakerConfiguration().closedBufferSize()
-                * Math.round(resilienceAll.circuitBreakerConfiguration().failureRateThreshold())
+            ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE
+                * Math.round(ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_FAILURE_RATE_THRESHOLD)
                 / 100;
 
-        loader = new DestinationService(scpCfDestinationServiceAdapter, resilienceSingle, resilienceAll);
-
-        // the smart cache circuit breaker will try 5 times (default closed buffer size) then open and not call again
+        // the smart cache circuit breaker will try 5 times, then open and not call again
         for( int i = 0; i < 2 * circuitBreakerBuffer; ++i ) {
             final Try<Destination> tryDestination = loader.tryGetDestination("CC8-HTTP-BASIC");
             tryDestination.get();
