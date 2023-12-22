@@ -171,13 +171,10 @@ class GetOrComputeSingleDestinationCommand
                         destinationCache.put(cacheKey, result);
                     } else {
                         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
-                            return Try
-                                .failure(
-                                    new DestinationAccessException(
-                                        "No principal is available in the current ThreadContext, but a principal is required for fetching the destination "
-                                            + destinationName
-                                            + " which requires a user token with strategy "
-                                            + exchangeStrategy));
+                            final String message =
+                                "No principal is available in the current ThreadContext, but a principal is required for fetching the destination %s. "
+                                    + "This typically means that the current context is malformed, containing inconsistent information about the authentication token, tenant and principal.";
+                            return Try.failure(new DestinationAccessException(message.formatted(destinationName)));
                         }
                         destinationCache.put(additionalKeyWithTenantAndPrincipal, result);
                     }
