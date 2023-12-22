@@ -54,7 +54,7 @@ class DestinationRetrievalStrategyResolverTest
     private DestinationRetrievalStrategyResolver sut;
 
     private Function<Strategy, DestinationServiceV1Response> destinationRetriever;
-    private Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
+    private Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
 
     @RegisterExtension
     TokenRule token = TokenRule.createXsuaa();
@@ -64,7 +64,7 @@ class DestinationRetrievalStrategyResolverTest
     void prepareResolver()
     {
         destinationRetriever = (Function<Strategy, DestinationServiceV1Response>) mock(Function.class);
-        allDestinationRetriever = (Function<OnBehalfOf, List<Destination>>) mock(Function.class);
+        allDestinationRetriever = (Function<OnBehalfOf, List<DestinationProperties>>) mock(Function.class);
         sut =
             spy(
                 new DestinationRetrievalStrategyResolver(

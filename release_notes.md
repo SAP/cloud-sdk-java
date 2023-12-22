@@ -17,10 +17,12 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
 - Deprecate the strategies `LOOKUP_ONLY` and `LOOKUP_THEN_EXCHANGE` of `DestinationServiceTokenExchangeStrategy`.
   They are replaced by the `FORWARD_USER_TOKEN` strategy.
   If there are any issues when using `FORWARD_USER_TOKEN` for destinations that require user tokens, please report them and use `EXCHANGE_ONLY` for such cases.
+- `DestinationService.getAllDestinationProperties()` and `DestinationService.getAllDestinationProperties(DestinationOptions opts)` have been deprecated in favor of `DestinationService.getAllDestinationProperties()`.
 
 ## ✨ New Functionality
 
--
+- Added new API to retrieve destination properties only from the BTP Destination Service. 
+  `DestinationService` now offers `getDestinationProperties(String destinationName)` and `getAllDestinationProperties()`.
 
 
 ## 📈 Improvements

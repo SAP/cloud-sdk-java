@@ -244,7 +244,7 @@ class GetOrComputeSingleDestinationCommand
             return maybeDestination;
         }
 
-        final Try<List<Destination>> allDestinations = getAllCommand.execute();
+        final Try<List<DestinationProperties>> allDestinations = getAllCommand.execute();
         if( allDestinations.isFailure() ) {
             final String message =
                 "Failed to resolve all destinations of the current tenant from the destination service."
@@ -293,11 +293,11 @@ class GetOrComputeSingleDestinationCommand
     }
 
     private static boolean destinationIsChanged(
-        @Nonnull final List<Destination> allDestinations,
+        @Nonnull final List<DestinationProperties> allDestinations,
         @Nonnull final Destination cachedDestination )
     {
         final String destinationName = cachedDestination.get(DestinationProperty.NAME).get();
-        final Destination matchingDestination =
+        final DestinationProperties matchingDestination =
             allDestinations
                 .stream()
                 .filter(destination -> destination.get(DestinationProperty.NAME).contains(destinationName))
@@ -317,7 +317,8 @@ class GetOrComputeSingleDestinationCommand
      * <strong>Caution:</strong> This operation is <strong>not</strong> symmetric!
      *
      * @param destinationFromGetAllEndPoint
-     *            The {@link DestinationProperties} as retrieved via {@link DestinationService#tryGetAllDestinations()}.
+     *            The {@link DestinationProperties} as retrieved via
+     *            {@link DestinationService#getAllDestinationProperties()}.
      * @param individuallyRetrievedDestination
      *            The {@link DestinationProperties} as retrieved via
      *            {@link DestinationService#tryGetDestination(String)}.
@@ -326,7 +327,7 @@ class GetOrComputeSingleDestinationCommand
      */
     // internal for testing
     static boolean destinationIsEqualTo(
-        @Nonnull final Destination destinationFromGetAllEndPoint,
+        @Nonnull final DestinationProperties destinationFromGetAllEndPoint,
         @Nonnull final Destination individuallyRetrievedDestination )
     {
         for( final String propertyName : destinationFromGetAllEndPoint.getPropertyNames() ) {
