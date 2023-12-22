@@ -171,8 +171,10 @@ class GetOrComputeSingleDestinationCommand
                         destinationCache.put(cacheKey, result);
                     } else {
                         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
-                            return Try.failure(new IllegalStateException(
-                                    "No principal is available in the current ThreadContext, but a principal is required for fetching the destination "
+                            return Try
+                                .failure(
+                                    new DestinationAccessException(
+                                        "No principal is available in the current ThreadContext, but a principal is required for fetching the destination "
                                             + destinationName
                                             + " which requires a user token with strategy "
                                             + exchangeStrategy));
