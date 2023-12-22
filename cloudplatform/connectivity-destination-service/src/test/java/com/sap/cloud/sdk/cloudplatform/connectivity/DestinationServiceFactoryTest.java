@@ -1,15 +1,18 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -100,5 +103,23 @@ class DestinationServiceFactoryTest
         assertThat(result.get(DestinationProperty.AUTH_TOKENS).get()).asList().containsExactly(token);
         assertThat(result.get(DestinationProperty.CERTIFICATES).isDefined()).isTrue();
         assertThat(result.get(DestinationProperty.CERTIFICATES).get()).asList().containsExactly(certificate);
+    }
+
+    @Test
+    void testTokenErrorsAreThrown()
+    {
+        response.getDestinationConfiguration().put("Type", "HTTP");
+        response.getDestinationConfiguration().put("Name", "httpDestination");
+        response.getDestinationConfiguration().put("URL", "https://example.com");
+
+        final DestinationAuthToken tokenSuccess = new DestinationAuthToken();
+        final DestinationAuthToken tokenFailure = new DestinationAuthToken();
+        tokenSuccess.setValue("success");
+        tokenFailure.setError("some-error-message");
+        response.setAuthTokens(List.of(tokenSuccess, tokenFailure));
+
+        assertThatThrownBy(() -> DestinationServiceFactory.fromDestinationServiceV1Response(response))
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("some-error-message");
     }
 }
