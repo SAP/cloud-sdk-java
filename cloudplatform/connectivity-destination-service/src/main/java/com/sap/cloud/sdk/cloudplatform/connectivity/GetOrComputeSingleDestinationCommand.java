@@ -116,16 +116,17 @@ class GetOrComputeSingleDestinationCommand
 
     /**
      * <pre>
-     *  The table illustrates how the Exchange key affects the isolation and cache keys in the implementation below
+     *  The table illustrates how the exchange key affects the isolation and cache keys in the implementation below
      * | #   | Lookup Strategy      | Destination Type   | Isolation Key      | Cache Key          | Comment                    |
      * |-----|----------------------|--------------------|--------------------|--------------------|----------------------------|
-     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | warning logged             |
-     * | 2   | Lookup then exchange | User Propagation   | Tenant             | Tenant + Principal |                            |
+     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | execution fails            |
+     * | 2   | Lookup then exchange
+     *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
+     *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 3   | Exchange only        | User Propagation   | Tenant + Principal | Tenant + Principal |                            |
      * | 4   | Forward user token
-     *        (JWT is available)    | User Propagation   | Tenant             | Tenant + Principal |                            |
-     * | 5   | Forward user token
-     *         (JWT is unavailable) | User Propagation   | Tenant             |   -                |Retrieving destination fails|
+     *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
+     *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 6   | Lookup only          | Client Credentials | Tenant             | Tenant             |                            |
      * | 7   | Lookup then exchange | Client Credentials | Tenant             | Tenant             |                            |
      * | 8   | Exchange only        | Client Credentials | Tenant + Principal | Tenant + Principal | warning logged             |
@@ -169,7 +170,6 @@ class GetOrComputeSingleDestinationCommand
                     if( !DestinationUtility.requiresUserTokenExchange(result) ) {
                         destinationCache.put(cacheKey, result);
                     } else {
-                        //At this point principal ID is always available, otherwise maybeResult would be a failure
                         throwIfPrincipalIsUnavailable(destinationName, exchangeStrategy);
                         destinationCache.put(additionalKeyWithTenantAndPrincipal, result);
                     }
@@ -190,7 +190,7 @@ class GetOrComputeSingleDestinationCommand
             throw new IllegalStateException(
                 "Principal ID is not available in the incoming request, but is required for fetching destination "
                     + destinationName
-                    + "that requires user token exchange with strategy"
+                    + " that requires user token exchange with strategy "
                     + exchangeStrategy);
         }
     }

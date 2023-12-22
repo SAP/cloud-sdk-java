@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -709,19 +708,9 @@ class DestinationServiceTest
                 .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
-        final HttpDestination destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options).get().asHttp();
+        final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
 
-        final List<DestinationServiceV1Response.DestinationAuthToken> authTokens =
-            destination
-                .get(DestinationProperty.AUTH_TOKENS)
-                .get()
-                .stream()
-                .map(DestinationServiceV1Response.DestinationAuthToken.class::cast)
-                .filter(t -> t.getHttpHeaderSuggestion() != null)
-                .collect(Collectors.toList());
-
-        assertThat(authTokens).isEmpty();
-        assertThatThrownBy(destination::getHeaders).isExactlyInstanceOf(DestinationAccessException.class);
+        assertThatThrownBy(destination::get).isExactlyInstanceOf(DestinationAccessException.class);
 
         verify(scpCfDestinationServiceAdapter, times(1))
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -1597,6 +1586,31 @@ class DestinationServiceTest
             .assertThat(loader.tryGetAllDestinations(DestinationOptions.builder().build()))
             .isFailure()
             .failBecauseOf(DestinationAccessException.class);
+    }
+
+    @Test
+    void testAuthTokenFailureIsNotCached()
+    {
+        doReturn(responseDestinationWithoutAuthToken)
+            .when(scpCfDestinationServiceAdapter)
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        final DestinationOptions options = DestinationOptions.builder().build();
+
+        final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+
+        assertThatThrownBy(destination::get).isExactlyInstanceOf(DestinationAccessException.class);
+
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+
+        // verify the result is not cached
+        verify(scpCfDestinationServiceAdapter, times(3))
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
     // @Test

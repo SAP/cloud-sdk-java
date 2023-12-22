@@ -14,6 +14,7 @@ import java.util.Collection;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -102,7 +103,17 @@ class AuthTokenHeaderProviderTest
     }
 
     @Test
-    void testThrowsOnHeaderError()
+    @DisplayName( "An empty token should cause a failure" )
+    void testEmptyToken()
+    {
+        prepareDestination(token);
+
+        assertThatThrownBy(() -> sut.getHeaders(context)).isInstanceOf(DestinationAccessException.class);
+    }
+
+    @Test
+    @DisplayName( "A token with only an error should cause a failure" )
+    void testTokenError()
     {
         token.setError("error");
 
