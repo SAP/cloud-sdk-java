@@ -219,11 +219,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-vavr</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.sap.cloud.environment.servicebinding</groupId>
 			<artifactId>java-sap-vcap-services</artifactId>
 			<scope>test</scope>

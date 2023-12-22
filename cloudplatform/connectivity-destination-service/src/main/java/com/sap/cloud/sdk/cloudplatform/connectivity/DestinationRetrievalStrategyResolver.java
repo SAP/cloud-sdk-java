@@ -45,7 +45,7 @@ class DestinationRetrievalStrategyResolver
     private static final Strategy tokenExchangeOnlyStrategy = new Strategy(NAMED_USER_CURRENT_TENANT, false);
     private final Supplier<String> providerTenantIdSupplier;
     private final Function<Strategy, DestinationServiceV1Response> destinationRetriever;
-    private final Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
+    private final Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
 
     static final String JWT_ATTR_EXT = "ext_attr";
     static final String JWT_ATTR_ENHANCER = "enhancer";
@@ -70,7 +70,7 @@ class DestinationRetrievalStrategyResolver
 
     static DestinationRetrievalStrategyResolver forAllDestinations(
         final Supplier<String> providerTenantIdSupplier,
-        final Function<OnBehalfOf, List<Destination>> allDestinationRetriever )
+        final Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever )
     {
         return new DestinationRetrievalStrategyResolver(
             providerTenantIdSupplier,
@@ -220,7 +220,7 @@ class DestinationRetrievalStrategyResolver
         }
     }
 
-    Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
+    Supplier<List<DestinationProperties>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
     {
         final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy =
             DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options).getOrElse(LOOKUP_ONLY);
@@ -237,7 +237,7 @@ class DestinationRetrievalStrategyResolver
         return prepareSupplierAllDestinations(retrievalStrategy);
     }
 
-    Supplier<List<Destination>>
+    Supplier<List<DestinationProperties>>
         prepareSupplierAllDestinations( @Nonnull final DestinationServiceRetrievalStrategy strategy )
             throws IllegalArgumentException
     {

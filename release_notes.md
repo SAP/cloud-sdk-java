@@ -14,10 +14,12 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
   This instruction was incorrect and has been removed.
   In case you have followed this instruction, please revert the change.
 - `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of `UriBuilder.build(scheme, authority, path, query, fragment)`.
+- `DestinationService.getAllDestinationProperties()` and `DestinationService.getAllDestinationProperties(DestinationOptions opts)` have been deprecated in favor of `DestinationService.getAllDestinationProperties()`.
 
 ## ✨ New Functionality
 
--
+- Added new API to retrieve destination properties only from the BTP Destination Service. 
+  `DestinationService` now offers `getDestinationProperties(String destinationName)` and `getAllDestinationProperties()`.
 
 
 ## 📈 Improvements
