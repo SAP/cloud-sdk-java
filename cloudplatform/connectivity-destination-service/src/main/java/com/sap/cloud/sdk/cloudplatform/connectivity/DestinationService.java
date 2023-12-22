@@ -149,17 +149,11 @@ public class DestinationService implements DestinationLoader
     @Nonnull
     private DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
     {
-        final DestinationServiceV1Response response =
-            deserializeDestinationResponse(
-                strategy.isForwardToken()
-                    ? adapter.getConfigurationAsJsonWithUserToken(servicePath, strategy.getBehalf())
-                    : adapter.getConfigurationAsJson(servicePath, strategy.getBehalf()));
-
-        // special handling for forward-token strategy: throw on header errors
-        if( strategy.isForwardToken() && response.getAuthTokens() != null ) {
-            response.getAuthTokens().forEach(AuthTokenHeaderProvider::throwOnHeaderError);
-        }
-        return response;
+        final String response =
+            strategy.isForwardToken()
+                ? adapter.getConfigurationAsJsonWithUserToken(servicePath, strategy.getBehalf())
+                : adapter.getConfigurationAsJson(servicePath, strategy.getBehalf());
+        return deserializeDestinationResponse(response);
     }
 
     /**
@@ -273,7 +267,6 @@ public class DestinationService implements DestinationLoader
                 .forAllDestinations(adapter::getProviderTenantId, this::loadAndParseAllDestinations);
 
         return Try.success(options).map(resolver::prepareSupplierAllDestinations).map(Supplier::get);
-
     }
 
     @Nonnull
