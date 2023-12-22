@@ -155,6 +155,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         //endregion
         //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( LOOKUP_ONLY )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestCase> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
