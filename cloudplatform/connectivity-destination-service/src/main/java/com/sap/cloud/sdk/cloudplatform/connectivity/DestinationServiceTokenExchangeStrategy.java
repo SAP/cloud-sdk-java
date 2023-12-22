@@ -39,13 +39,17 @@ public enum DestinationServiceTokenExchangeStrategy
     LOOKUP_THEN_EXCHANGE("LookupThenExchange"),
 
     /**
-     * Use this strategy if you are interested in reading only the destination's properties.
+     * Legacy strategy to explicitly <b>not</b> perform a user token exchange.
+     * <p>
+     * In the past, this approach was recommended for use cases where only the destination properties were required.
+     * Now, this has been superseded by {@link DestinationService#getDestinationProperties(String)}.
      * <p>
      * <b>Caution</b>: The retrieved destination might not be suitable to actually connect to the target system because
      * the token exchange request is skipped when using this strategy, even if the destination demands an authentication
      * type that is based on the user token exchange (such as {@link AuthenticationType#OAUTH2_JWT_BEARER}).
      *
-     * @deprecated since 5.0.1. Use {@link #FORWARD_USER_TOKEN} instead.
+     * @deprecated since 5.0.1. Use {@link #FORWARD_USER_TOKEN} instead. If you just need the destination properties,
+     *             use {@link DestinationService#getDestinationProperties(String)} instead.
      */
     @Deprecated
     LOOKUP_ONLY("LookupOnly"),
