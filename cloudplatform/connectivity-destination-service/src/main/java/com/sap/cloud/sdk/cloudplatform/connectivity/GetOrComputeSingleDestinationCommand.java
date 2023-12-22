@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +57,7 @@ class GetOrComputeSingleDestinationCommand
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
 
+    @SuppressWarnings( "deprecation" )
     static Try<GetOrComputeSingleDestinationCommand> prepareCommand(
         @Nonnull final String destinationName,
         @Nonnull final DestinationOptions destinationOptions,
@@ -73,7 +72,7 @@ class GetOrComputeSingleDestinationCommand
         final DestinationServiceTokenExchangeStrategy exchangeStrategy =
             DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(destinationOptions)
-                .getOrElse(LOOKUP_THEN_EXCHANGE);
+                .getOrElse(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
 
         final CacheKey cacheKey;
         CacheKey additionalKeyWithTenantAndPrincipal = null;
@@ -91,7 +90,8 @@ class GetOrComputeSingleDestinationCommand
             }
         } else {
             cacheKey = CacheKey.ofTenantOptionalIsolation();
-            if( exchangeStrategy == LOOKUP_THEN_EXCHANGE || exchangeStrategy == FORWARD_USER_TOKEN ) {
+            if( exchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE
+                || exchangeStrategy == FORWARD_USER_TOKEN ) {
                 additionalKeyWithTenantAndPrincipal =
                     CacheKey.ofTenantAndPrincipalOptionalIsolation().append(destinationName, destinationOptions);
             }
@@ -195,20 +195,21 @@ class GetOrComputeSingleDestinationCommand
         }
     }
 
+    @SuppressWarnings( "deprecation" )
     private void logErroneousCombinations(
         @Nonnull final DestinationProperties result,
         @Nonnull final String destinationName,
         @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
     {
-
-        if( DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == LOOKUP_ONLY ) {
+        if( DestinationUtility.requiresUserTokenExchange(result)
+            && exchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
             log
                 .debug(
                     "The destination {} was retrieved with strategy {}, but it requires user token exchange."
                         + " Hence, the destination cannot be used to connect to the target system successfully, please refer to the documentation of {} to find the recommended strategy."
                         + " Caching the destination for all users of the current tenant since it was obtained without user token exchange. ",
                     destinationName,
-                    exchangeStrategy,
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
 
@@ -219,7 +220,7 @@ class GetOrComputeSingleDestinationCommand
                         + " This is not recommended, please refer to the documentation of {}."
                         + " Caching the destination for the current user of the current tenant since it was obtained with a user token.",
                     destinationName,
-                    exchangeStrategy,
+                    EXCHANGE_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
     }

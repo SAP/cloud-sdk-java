@@ -11,8 +11,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRet
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -659,7 +657,9 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
@@ -680,8 +680,12 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
 
@@ -740,8 +744,11 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson(eq("/destinations/" + destinationName), any(OnBehalfOf.class));
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
-            augmenter().tokenExchangeStrategy(LOOKUP_ONLY).retrievalStrategy(ALWAYS_PROVIDER);
+            augmenter()
+                .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY)
+                .retrievalStrategy(ALWAYS_PROVIDER);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final Destination dest = loader.tryGetDestination(destinationName, options).get();
@@ -867,8 +874,12 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         loader.tryGetDestination(destinationName, options);
         loader.tryGetDestination(destinationName, options);
@@ -942,7 +953,9 @@ class DestinationServiceTest
                 "/destinations/CC8-HTTP-OAUTH",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         loader.tryGetDestination("CC8-HTTP-OAUTH", options);
@@ -1028,8 +1041,12 @@ class DestinationServiceTest
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         final CountDownLatch destinationRetrievalLatch = new CountDownLatch(1);
         final CountDownLatch mainThreadLatch = new CountDownLatch(1);
@@ -1176,8 +1193,12 @@ class DestinationServiceTest
         })
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         final DefaultTenantFacade mockedTenantFacade = spy(DefaultTenantFacade.class);
         TenantAccessor.setTenantFacade(mockedTenantFacade);
@@ -1282,7 +1303,9 @@ class DestinationServiceTest
     @Test
     void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategy()
     {
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         doReturn(responseDestinationWithoutAuthToken)
@@ -1425,7 +1448,9 @@ class DestinationServiceTest
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final CountDownLatch destinationRetrievalLatch = new CountDownLatch(1);

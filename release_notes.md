@@ -14,6 +14,9 @@ docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
   This instruction was incorrect and has been removed.
   In case you have followed this instruction, please revert the change.
 - `UriBuilder.build(scheme, userInfo, host, port, path, query, fragment)` has been deprecated in favor of `UriBuilder.build(scheme, authority, path, query, fragment)`.
+- Deprecate the strategies `LOOKUP_ONLY` and `LOOKUP_THEN_EXCHANGE` of `DestinationServiceTokenExchangeStrategy`.
+  They are replaced by the `FORWARD_USER_TOKEN` strategy.
+  If there are any issues when using `FORWARD_USER_TOKEN` for destinations that require user tokens, please report them and use `EXCHANGE_ONLY` for such cases.
 - `DestinationService.getAllDestinationProperties()` and `DestinationService.getAllDestinationProperties(DestinationOptions opts)` have been deprecated in favor of `DestinationService.getAllDestinationProperties()`.
 
 ## ✨ New Functionality

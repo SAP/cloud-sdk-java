@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
@@ -98,10 +96,14 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
 
         //region ( AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE, LOOKUP_ONLY )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestCase> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_DO_NOT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE, LOOKUP_ONLY)
+                    .forTokenExchangeStrategies(
+                        FORWARD_USER_TOKEN,
+                        DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
+                        DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY)
                     .withExpectation(
                         forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -124,10 +126,13 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         //endregion
         //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestCase> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(FORWARD_USER_TOKEN, LOOKUP_THEN_EXCHANGE)
+                    .forTokenExchangeStrategies(
+                        DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN,
+                        DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE)
                     .withExpectation(
                         forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -150,10 +155,11 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         //endregion
         //region ( AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE ) X ( LOOKUP_ONLY )
         {
+            @SuppressWarnings( "deprecation" )
             final Collection<TestCase> testCases =
                 createBatchTestCases()
                     .forAuthenticationTypes(AUTHENTICATION_TYPES_THAT_REQUIRE_TOKEN_EXCHANGE)
-                    .forTokenExchangeStrategies(LOOKUP_ONLY)
+                    .forTokenExchangeStrategies(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY)
                     .withExpectation(
                         forTenantAndPrincipal(NO_TENANT, NO_PRINCIPAL)
                             .expectIsolationCacheKey(NO_TENANT, NO_PRINCIPAL)
@@ -402,10 +408,12 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
             return DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options).get();
         }
 
+        @SuppressWarnings( "deprecation" )
         void stubDestinationRetriever( BiFunction<String, DestinationOptions, Destination> destinationRetriever )
         {
             if( DestinationUtility.requiresUserTokenExchange(getDestination())
-                && (principal == null || getTokenExchangeStrategy() == LOOKUP_ONLY) ) {
+                && (principal == null
+                    || getTokenExchangeStrategy() == DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY) ) {
                 doThrow(
                     new DestinationAccessException(
                         "Destination retrieval fails on authentication types that require user token exchange and no principal is given."))
