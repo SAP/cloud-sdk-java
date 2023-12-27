@@ -1,7 +1,6 @@
-## 5.2.0-SNAPSHOT
+## 5.2.0-SNAPSHOT - January XX, 2024
 
-release-date: January XX, 2024
-docs: https://sap.github.io/cloud-sdk/docs/java/release-notes
+[All Release Changes](https://github.com/SAP/cloud-sdk-java/releases/tag/rel%2F5.X.0)
 
 ### 🚧 Known Issues
 
