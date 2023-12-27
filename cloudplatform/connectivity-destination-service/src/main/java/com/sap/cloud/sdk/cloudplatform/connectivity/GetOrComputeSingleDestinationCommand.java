@@ -170,7 +170,12 @@ class GetOrComputeSingleDestinationCommand
                     if( !DestinationUtility.requiresUserTokenExchange(result) ) {
                         destinationCache.put(cacheKey, result);
                     } else {
-                        throwIfPrincipalIsUnavailable(destinationName, exchangeStrategy);
+                        if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
+                            final String message =
+                                "No principal is available in the current ThreadContext, but a principal is required for fetching the destination %s. "
+                                    + "This typically means that the current context is malformed, containing inconsistent information about the authentication token, tenant and principal.";
+                            return Try.failure(new DestinationAccessException(message.formatted(destinationName)));
+                        }
                         destinationCache.put(additionalKeyWithTenantAndPrincipal, result);
                     }
                     break;
@@ -179,19 +184,6 @@ class GetOrComputeSingleDestinationCommand
         }
         finally {
             isolationLock.unlock();
-        }
-    }
-
-    private void throwIfPrincipalIsUnavailable(
-        @Nonnull final String destinationName,
-        @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
-    {
-        if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
-            throw new IllegalStateException(
-                "Principal ID is not available in the incoming request, but is required for fetching destination "
-                    + destinationName
-                    + " that requires user token exchange with strategy "
-                    + exchangeStrategy);
         }
     }
 

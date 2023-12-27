@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_CLIENT_CREDENTIALS;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_JWT_BEARER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -413,7 +412,6 @@ class GetOrComputeDestinationCommandTest
         assertThat(fetchedDestination.getCause())
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining("principal-is-missing");
-
     }
 
     @Test
@@ -446,10 +444,10 @@ class GetOrComputeDestinationCommandTest
                         .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
                         .get());
 
-        assertThatThrownBy(() -> TenantAccessor.executeWithTenant(t1, () -> sut.execute()))
-            .hasRootCauseInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("Principal ID is not available in the incoming request");
-
+        final Try<Destination> shouldBeFailure = TenantAccessor.executeWithTenant(t1, sut::execute);
+        assertThat(shouldBeFailure.getCause())
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("No principal is available in the current ThreadContext");
     }
 
     @Test
