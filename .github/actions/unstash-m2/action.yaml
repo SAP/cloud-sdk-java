@@ -1,0 +1,60 @@
+name: Unstash Maven M2 Directory
+description: Unstashes the specified Maven M2 directories
+
+inputs:
+  m2-root:
+    description: "The root directory of the M2 Maven directory to unstash to"
+    required: false
+    default: "${{ github.workspace }}/.m2/repository"
+  unstash-sdk:
+    description: "Determines whether the SDK M2 directory should be unstashed"
+    required: false
+    default: "true"
+  stash-sdk-key:
+    description: "The key that was used when the SDK M2 directory was stashed"
+    required: false
+    default: "sdk-m2"
+  unstash-all-other:
+    description: "Determines whether all other (i.e. everything EXCEPT the SDK) M2 directories should be unstashed"
+    required: false
+    default: "true"
+  stash-all-other-key:
+    description: "The key that was used when all other M2 directories were stashed"
+    required: false
+    default: "all-other-m2"
+
+outputs:
+  sdk-unstashed:
+    value: ${{ steps.unstash-sdk.outputs.cache-hit }}
+    description: "Indicates whether the SDK M2 directory was unstashed"
+  all-other-unstashed:
+    value: ${{ steps.unstash-all-other.outputs.cache-hit }}
+    description: "Indicates whether all other M2 directories were unstashed"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Unstash Maven M2 Directory Action; inputs = ${{ inputs }}"
+      shell: bash
+
+    - name: Unstash SDK M2 Directory
+      id: unstash-sdk
+      if: ${{ inputs.unstash-sdk == 'true' }}
+      uses: actions/cache/restore@v3
+      with:
+          path: ${{ inputs.m2-root }}/com/sap/cloud/sdk
+          key: ${{ inputs.stash-sdk-key }}
+
+    - name: Unstash All Other M2 Directories
+      id: unstash-all-other
+      if: ${{ inputs.unstash-all-other == 'true' }}
+      uses: actions/cache/restore@v3
+      with:
+          path: ${{ inputs.m2-root }}
+          key: ${{ inputs.stash-all-other-key }}
+
+    - name: Print Action End
+      if: always()
+      run: echo ">>>>> Ending Unstash Maven M2 Directory Action"
+      shell: bash

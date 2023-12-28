@@ -1,0 +1,72 @@
+name: Stash Maven M2 Directory
+description: Stashes the specified Maven M2 directories
+
+inputs:
+  m2-root:
+    description: "The root directory of the M2 Maven directory to stash"
+    required: false
+    default: "${{ github.workspace }}/.m2/repository"
+  stash-sdk:
+    description: "Determines whether the SDK M2 directory should be stashed"
+    required: false
+    default: "true"
+  stash-sdk-key:
+    description: "The key to use when stashing the SDK M2 directory"
+    required: false
+    default: "sdk-m2"
+  stash-all-other:
+    description: "Determines whether all other (i.e. everything EXCEPT the SDK) M2 directories should be stashed"
+    required: false
+    default: "true"
+  stash-all-other-key:
+    description: "The key to use when stashing all other M2 directories"
+    required: false
+    default: "all-other-m2"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Stash Maven M2 Directory Action; inputs = ${{ inputs }}"
+      shell: bash
+
+    - name: Prepare SDK M2 Directory
+      id: prepare-sdk-m2-dir
+      if: ${{ inputs.stash-sdk == 'true' }}
+      run: |
+        TEMP_DIR = ${{ github.workspace }}/.stash-m2/sdk-m2
+        echo "TEMP_DIR=$TEMP_DIR" >> $GITHUB_OUTPUT
+        mkdir -p $TEMP_DIR
+        cp -r ${{ inputs.m2-root }}/com/sap/cloud/sdk $TEMP_DIR
+      shell: bash
+
+    - name: Stash SDK M2 Directory
+      if: ${{ inputs.stash-sdk == 'true' }}
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ steps.prepare-sdk-m2-dir.outputs.TEMP_DIR }}
+        key: ${{ inputs.stash-sdk-key }}
+        
+    - name: Prepare All Other M2 Directories
+      id: prepare-all-other-m2-dirs
+      if: ${{ inputs.stash-all-other == 'true' }}
+      run: |
+          TEMP_DIR = ${{ github.workspace }}/.stash-m2/all-other-m2
+          echo "TEMP_DIR=$TEMP_DIR" >> $GITHUB_OUTPUT
+          mkdir -p $TEMP_DIR
+          cp -r ${{ inputs.m2-root }} $TEMP_DIR
+          rm -rf $TEMP_DIR/com/sap/cloud/sdk
+      shell: bash
+
+    - name: Stash All Other M2 Directories
+      if: ${{ inputs.stash-all-other == 'true' }}
+      uses: actions/cache/save@v3
+      with:
+          path: ${{ steps.prepare-all-other-m2-dirs.outputs.TEMP_DIR }}
+          key: ${{ inputs.stash-all-other-key }}
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Stash Maven M2 Directory Action"
+      shell: bash
+

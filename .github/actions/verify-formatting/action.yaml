@@ -1,0 +1,38 @@
+# assumptions:
+#   - The current action runner has a JDK setup (i.e. `actions/setup-java` has been run)
+
+name: Verify Formatting
+description: Verifies that the code is formatted correctly
+
+inputs:
+  maven-cli-args:
+    description: Arguments to pass to the Maven command
+    required: false
+    default: "--batch-mode --no-transfer-progress"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Verify Formatting Action; inputs = ${{ inputs }}"
+      shell: bash
+
+    - name: Code Formatter Plugin
+      run: |
+        mvn ${{ inputs.maven-cli-args }} net.revelc.code.formatter:formatter-maven-plugin:validate
+      shell: bash
+
+    - name: Import Sort Plugin
+      run: |
+        mvn ${{ inputs.maven-cli-args }} net.revelc.code:impsort-maven-plugin:check
+      shell: bash
+
+    - name: POM Sort Plugin
+      run: |
+          mvn ${{ inputs.maven-cli-args }} com.github.ekryd.sortpom:sortpom-maven-plugin:verify
+      shell: bash
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Verify Formatting Action"
+      shell: bash
