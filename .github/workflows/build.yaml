@@ -28,7 +28,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Verify Formatting
-        uses: .github/actions/verify-formatting
+        uses: ./.github/actions/verify-formatting
 
   build:
     runs-on: ubuntu-latest
