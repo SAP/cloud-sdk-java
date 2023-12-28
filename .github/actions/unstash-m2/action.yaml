@@ -5,7 +5,7 @@ inputs:
   m2-root:
     description: "The root directory of the M2 Maven directory to unstash to"
     required: false
-    default: "${{ github.workspace }}/.m2/repository"
+    default: "$HOME/.m2/repository"
   unstash-sdk:
     description: "Determines whether the SDK M2 directory should be unstashed"
     required: false
