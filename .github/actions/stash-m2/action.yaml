@@ -34,7 +34,7 @@ runs:
       id: prepare-sdk-m2-dir
       if: ${{ inputs.stash-sdk == 'true' }}
       run: |
-        export TEMP_DIR = ${{ github.workspace }}/.stash-m2/sdk-m2
+        export TEMP_DIR="${{ github.workspace }}/.stash-m2/sdk-m2"
         echo "TEMP_DIR=$TEMP_DIR" >> $GITHUB_OUTPUT
         mkdir -p $TEMP_DIR
         cp -r ${{ inputs.m2-root }}/com/sap/cloud/sdk $TEMP_DIR
@@ -51,7 +51,7 @@ runs:
       id: prepare-all-other-m2-dirs
       if: ${{ inputs.stash-all-other == 'true' }}
       run: |
-          export TEMP_DIR = ${{ github.workspace }}/.stash-m2/all-other-m2
+          export TEMP_DIR="${{ github.workspace }}/.stash-m2/all-other-m2"
           echo "TEMP_DIR=$TEMP_DIR" >> $GITHUB_OUTPUT
           mkdir -p $TEMP_DIR
           cp -r ${{ inputs.m2-root }} $TEMP_DIR
