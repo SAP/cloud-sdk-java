@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: Print Action Start
-      run: echo ">>>>> Starting Verify Formatting Action; inputs = ${{ inputs }}"
+      run: echo ">>>>> Starting Verify Formatting Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: Code Formatter Plugin
