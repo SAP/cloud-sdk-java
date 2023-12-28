@@ -27,7 +27,7 @@ runs:
   using: composite
   steps:
     - name: Print Action Start
-      run: echo ">>>>> Starting Stash Maven M2 Directory Action; inputs = ${{ inputs }}"
+      run: echo ">>>>> Starting Stash Maven M2 Directory Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: Prepare SDK M2 Directory

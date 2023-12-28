@@ -35,7 +35,7 @@ runs:
   using: composite
   steps:
     - name: Print Action Start
-      run: echo ">>>>> Starting Unstash Maven M2 Directory Action; inputs = ${{ inputs }}"
+      run: echo ">>>>> Starting Unstash Maven M2 Directory Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: Unstash SDK M2 Directory
