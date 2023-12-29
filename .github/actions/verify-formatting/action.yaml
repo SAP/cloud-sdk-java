@@ -29,7 +29,7 @@ runs:
 
     - name: POM Sort Plugin
       run: |
-          mvn ${{ inputs.maven-cli-args }} com.github.ekryd.sortpom:sortpom-maven-plugin:verify
+        mvn ${{ inputs.maven-cli-args }} com.github.ekryd.sortpom:sortpom-maven-plugin:verify
       shell: bash
 
     - name: Print Action End

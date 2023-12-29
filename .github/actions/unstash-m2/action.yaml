@@ -43,16 +43,20 @@ runs:
       if: ${{ inputs.unstash-sdk == 'true' }}
       uses: actions/cache/restore@v3
       with:
-          path: ${{ inputs.m2-root }}/com/sap/cloud/sdk
-          key: ${{ inputs.stash-sdk-key }}
+        # NOTE: the provided path must EXACTLY match the path that was used when stashing
+        path: ${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+        key: ${{ inputs.stash-sdk-key }}
 
     - name: Unstash All Other M2 Directories
       id: unstash-all-other
       if: ${{ inputs.unstash-all-other == 'true' }}
       uses: actions/cache/restore@v3
       with:
-          path: ${{ inputs.m2-root }}
-          key: ${{ inputs.stash-all-other-key }}
+        # NOTE: the provided path must EXACTLY match the path that was used when stashing
+        path: |
+          !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+          ${{ inputs.m2-root }}/**
+        key: ${{ inputs.stash-all-other-key }}
 
     - name: Print Action End
       if: always()

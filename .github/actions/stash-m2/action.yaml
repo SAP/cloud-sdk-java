@@ -41,10 +41,10 @@ runs:
       if: ${{ inputs.stash-all-other == 'true' }}
       uses: actions/cache/save@v3
       with:
-          path: |
-            !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
-            ${{ inputs.m2-root }}/**
-          key: ${{ inputs.stash-all-other-key }}
+        path: |
+          !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+          ${{ inputs.m2-root }}/**
+        key: ${{ inputs.stash-all-other-key }}
 
     - name: Print Action End
       if: always()
