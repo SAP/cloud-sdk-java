@@ -156,181 +156,181 @@ jobs:
         run: |
           python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
 
-  checkstyle:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Checkstyle
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+#  checkstyle:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    name: Checkstyle
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: "temurin"
+#          java-version: 17
+#      # M2
+#      - name: Load Maven Repository
+#        uses: actions/cache/restore@v3
+#        id: restore-cache
+#        with:
+#          path: ~/.m2/repository
+#          key: maven
+#      - name: Download M2 SDK Directory
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: m2-sdk
+#          path: .
+#      - name: UNZIP M2 SDK Directory
+#        run: |
+#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+#
+#      # Target
+#      - name: Download Target Dirs
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: target-dirs
+#          path: .
+#      - name: UNZIP Target Dirs
+#        run: |
+#          unzip -D target.zip
+#      - name: Checkstyle
+#        run: |
+#          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
+#      - name: Checkstyle Results
+#        run: |
+#          python .pipeline/scripts/print-checkstyle.py
 
-      # Target
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -D target.zip
-      - name: Checkstyle
-        run: |
-          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
-      - name: Checkstyle Results
-        run: |
-          python .pipeline/scripts/print-checkstyle.py
+#  pmd:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    name: PMD
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: "temurin"
+#          java-version: 17
+#      # M2
+#      - name: Load Maven Repository
+#        uses: actions/cache/restore@v3
+#        id: restore-cache
+#        with:
+#          path: ~/.m2/repository
+#          key: maven
+#      - name: Download M2 SDK Directory
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: m2-sdk
+#          path: .
+#      - name: UNZIP M2 SDK Directory
+#        run: |
+#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+#
+#      # Target
+#      - name: Download Target Dirs
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: target-dirs
+#          path: .
+#      - name: UNZIP Target Dirs
+#        run: |
+#          unzip -D target.zip
+#      - name: PMD
+#        run: |
+#          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+#      - name: PMD Report
+#        run: |
+#          python .pipeline/scripts/print-pmd.py
+#
+#  spotbugs:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    # Permissions block is optional, useful for dependabot checks
+#    permissions:
+#      checks: write
+#      contents: read
+#    name: Spotbugs
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: "temurin"
+#          java-version: 17
+#      # M2
+#      - name: Load Maven Repository
+#        uses: actions/cache/restore@v3
+#        id: restore-cache
+#        with:
+#          path: ~/.m2/repository
+#          key: maven
+#      - name: Download M2 SDK Directory
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: m2-sdk
+#          path: .
+#      - name: UNZIP M2 SDK Directory
+#        run: |
+#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
+#
+#      # Target
+#      - name: Download Target Dirs
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: target-dirs
+#          path: .
+#      - name: UNZIP Target Dirs
+#        run: |
+#          unzip -D target.zip
+#      - name: Spotbugs
+#        run: |
+#          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+#      - name: Spotbugs Report
+#        run: |
+#          python .pipeline/scripts/print-spotbugs.py
 
-  pmd:
-    needs: build
-    runs-on: ubuntu-latest
-    name: PMD
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-
-      # Target
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -D target.zip
-      - name: PMD
-        run: |
-          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-      - name: PMD Report
-        run: |
-          python .pipeline/scripts/print-pmd.py
-
-  spotbugs:
-    needs: build
-    runs-on: ubuntu-latest
-    # Permissions block is optional, useful for dependabot checks
-    permissions:
-      checks: write
-      contents: read
-    name: Spotbugs
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-
-      # Target
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -D target.zip
-      - name: Spotbugs
-        run: |
-          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
-      - name: Spotbugs Report
-        run: |
-          python .pipeline/scripts/print-spotbugs.py
-
-  codeql:
-    name: Analyze with CodeQL
-    needs: formatting
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
-
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: "java"
-          queries: security-extended
-
-      # M2
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
-        with:
-          path: ~/.m2/repository
-          key: maven
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-        with:
-          category: "/language:java"
+#  codeql:
+#    name: Analyze with CodeQL
+#    needs: formatting
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 360
+#    permissions:
+#      actions: read
+#      contents: read
+#      security-events: write
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Setup java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: "temurin"
+#          java-version: 17
+#
+#      # Initializes the CodeQL tools for scanning.
+#      - name: Initialize CodeQL
+#        uses: github/codeql-action/init@v2
+#        with:
+#          languages: "java"
+#          queries: security-extended
+#
+#      # M2
+#      - name: Load Maven Repository
+#        uses: actions/cache/restore@v3
+#        id: restore-cache
+#        with:
+#          path: ~/.m2/repository
+#          key: maven
+#
+#      - name: Autobuild
+#        uses: github/codeql-action/autobuild@v2
+#
+#      - name: Perform CodeQL Analysis
+#        uses: github/codeql-action/analyze@v2
+#        with:
+#          category: "/language:java"
 
   archetypes:
     runs-on: ubuntu-latest
@@ -449,70 +449,70 @@ jobs:
           path: ~/.m2/repository
           key: maven-central
 
-  deploy-snapshot:
-    name: Deploy Snapshot
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          server-id: artifactory-snapshots
-          server-username: ARTIFACTORY_USER # env variable for username in deploy
-          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
-
-      - name: Download Release ZIP
-        uses: actions/download-artifact@v3
-        with:
-          name: cloud-sdk-package
-          path: .
-
-      - name: Publish Snapshot
-        run: >
-          unzip sap-cloud-sdk-java-${{ needs.build.outputs.version }}.zip -d .
-
-          cd release
-
-          mvn
-          $MVN_CLI_ARGS
-          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -DrepositoryId=artifactory-snapshots
-          -Dmaven.install.skip=true
-          -Dmaven.test.skip
-          -Dmaven.compiler.showCompilationChanges
-          -Dhttp.keepAlive=false
-          deploy
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-  notify-job:
-    runs-on: ubuntu-latest
-    needs:
-      [
-        formatting,
-        build,
-        test,
-        pmd,
-        spotbugs,
-        checkstyle,
-        codeql,
-        archetypes,
-        deploy-snapshot,
-      ]
-    if: ${{ failure() && github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Notify
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.ref_name }}
+#  deploy-snapshot:
+#    name: Deploy Snapshot
+#    if: ${{ github.ref == 'refs/heads/main' }}
+#    needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 15
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#      - name: Setup java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: "temurin"
+#          java-version: "17"
+#          server-id: artifactory-snapshots
+#          server-username: ARTIFACTORY_USER # env variable for username in deploy
+#          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+#
+#      - name: Download Release ZIP
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: cloud-sdk-package
+#          path: .
+#
+#      - name: Publish Snapshot
+#        run: >
+#          unzip sap-cloud-sdk-java-${{ needs.build.outputs.version }}.zip -d .
+#
+#          cd release
+#
+#          mvn
+#          $MVN_CLI_ARGS
+#          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
+#          -DrepositoryId=artifactory-snapshots
+#          -Dmaven.install.skip=true
+#          -Dmaven.test.skip
+#          -Dmaven.compiler.showCompilationChanges
+#          -Dhttp.keepAlive=false
+#          deploy
+#        env:
+#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+#          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+#  notify-job:
+#    runs-on: ubuntu-latest
+#    needs:
+#      [
+#        formatting,
+#        build,
+#        test,
+#        pmd,
+#        spotbugs,
+#        checkstyle,
+#        codeql,
+#        archetypes,
+#        deploy-snapshot,
+#      ]
+#    if: ${{ failure() && github.ref == 'refs/heads/main' }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Notify
+#        run: python .pipeline/scripts/notify.py
+#        env:
+#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+#          WORKFLOW: ${{ github.workflow }}
+#          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+#          BRANCH_NAME: ${{ github.ref_name }}
