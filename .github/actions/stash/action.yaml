@@ -27,6 +27,8 @@ runs:
     - name: Fetch Existing Caches
       id: fetch-caches
       if: ${{ inputs.force-update == 'true' || inputs.update-after-days != '' }}
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         CACHES=$(gh cache list --json id,key,ref,createdAt)
         EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == ${{ inputs.key }} and .ref == ${{ github.ref }})'
@@ -35,6 +37,8 @@ runs:
 
     - name: Force Delete Cache
       if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.cache != '' }}
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         echo "Force deleting cache with key ${{ inputs.key }}."
         CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.cache }} | jq -r '.id')
@@ -43,6 +47,8 @@ runs:
 
     - name: Delete Cache If Too Old
       if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' && steps.fetch-caches.outputs.cache != '' }}
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.cache }} | jq -r '.createdAt')
         CREATED_AT_DATE=$(date -d $CREATED_AT +%s)
