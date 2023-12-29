@@ -31,7 +31,7 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         CACHES=$(gh cache list --json id,key,ref,createdAt)
-        EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == ${{ inputs.key }} and .ref == ${{ github.ref }})'
+        EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == ${{ inputs.key }} and .ref == ${{ github.ref }})')
         echo "cache=$EXISTING_CACHE" >> $GITHUB_OUTPUT
       shell: bash
 
