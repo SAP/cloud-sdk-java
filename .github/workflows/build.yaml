@@ -8,8 +8,8 @@ on:
 
 env:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false"
-  MVN_CLI_ARGS_SINGLE_THREAD: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
-  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1C"
+  MVN_CLI_ARGS_SINGLE_THREAD: "--batch-mode --fail-at-end --show-version"
+  MVN_CLI_ARGS: "--batch-mode --fail-at-end --show-version --threads 1C"
   MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
 jobs:
