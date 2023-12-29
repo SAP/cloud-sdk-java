@@ -13,6 +13,13 @@ env:
   MVN_SKIP_ARGS: "-DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
 
 jobs:
+  debug-info:
+    runs-on: ubuntu-latest
+    name: Print GitHub Context
+    steps:
+      - name: Print GitHub Context
+        run: echo "${{ toJson(github) }}"
+
   ### Verify formatting ###
   # this is done first because it is fast and we don't want to waste time on the other, more expensive steps
   formatting:
