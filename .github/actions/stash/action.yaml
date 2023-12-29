@@ -34,6 +34,7 @@ runs:
         EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == ${{ inputs.key }} and .ref == ${{ github.ref }})')
         echo "cache=$EXISTING_CACHE" >> $GITHUB_OUTPUT
       shell: bash
+      continue-on-error: true
 
     - name: Force Delete Cache
       if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.cache != '' }}
