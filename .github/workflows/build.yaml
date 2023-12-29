@@ -53,9 +53,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Load Maven Repository
-        uses: ./.github/actions/unstash-m2
-        with:
-          unstash-sdk: "false"
+        uses: ./.github/actions/unstash-non-sdk-m2
       - name: Compile
         # we need to use install here because otherwise the code checks below don't work
         # they require the JARs of all modules to work, so those need to be installed
@@ -97,10 +95,16 @@ jobs:
         run: |
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
         continue-on-error: true
-      - name: Save Maven Repository
-        uses: ./.github/actions/stash-m2
+      - name: Save Non-SDK Maven Repository
+        uses: ./.github/actions/stash-non-sdk-m2
+      - name: Save SDK Maven Repository
+        uses: ./.github/actions/stash-sdk-m2
+      - name: Save Target Dirs
+        uses: ./.github/actions/stash
         with:
-          stash-sdk: "false"
+          path: "./**/target/*"
+          key: sdk-target-dirs
+          force-update: true
       # Target
       - name: ZIP Target Dirs
         run: |
@@ -127,32 +131,16 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
-      - name: Load Maven Repository
-        uses: actions/cache/restore@v3
-        id: restore-cache
+      - name: Load Non-SDK Maven Repository
+        uses: ./.github/actions/unstash-non-sdk-m2
+      - name: Load SDK Maven Repository
+        uses: ./.github/actions/unstash-sdk-m2
+      - name: Load SDK Target Dirs
+        uses: ./.github/actions/unstash
         with:
-          path: ~/.m2/repository
-          key: maven
+          path: "./**/target/*"
+          key: sdk-target-dirs
 
-      # M2
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
-        with:
-          name: m2-sdk
-          path: .
-      - name: UNZIP M2 SDK Directory
-        run: |
-          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-
-      # Target
-      - name: Download Target Dirs
-        uses: actions/download-artifact@v3
-        with:
-          name: target-dirs
-          path: .
-      - name: UNZIP Target Dirs
-        run: |
-          unzip -D target.zip
       - name: Test
         run: |
           mvn $MVN_CLI_ARGS_SINGLE_THREAD org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report

@@ -1,0 +1,68 @@
+name: "Stash"
+description: "Stashes the specified directories. This action uses the GitHub Cache API internally."
+
+inputs:
+  path:
+    description: "The path(s) (supports GLOB pattern) to stash"
+    required: true
+  key:
+    description: "The stash key to use"
+    required: true
+  force-update:
+    description: "Overrides any existing stashes"
+    required: false
+    default: "false"
+  update-after-days:
+    description: "Overrides any existing stash IF the existing stash is older than the specified amount of days"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Stash Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Fetch Existing Caches
+      id: fetch-caches
+      if: ${{ inputs.force-update == 'true' || inputs.update-after-days != '' }}
+      run: |
+        CACHES=$(gh cache list --json id,key,ref,createdAt)
+        EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == ${{ inputs.key }} and .ref == ${{ github.ref }})'
+        echo "cache=$EXISTING_CACHE" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Force Delete Cache
+      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.cache != '' }}
+      run: |
+        echo "Force deleting cache with key ${{ inputs.key }}."
+        CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.cache }} | jq -r '.id')
+        gh cache delete $CACHE_ID
+      shell: bash
+
+    - name: Delete Cache If Too Old
+      if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' && steps.fetch-caches.outputs.cache != '' }}
+      run: |
+        CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.cache }} | jq -r '.createdAt')
+        CREATED_AT_DATE=$(date -d $CREATED_AT +%s)
+        NOW_DATE=$(date +%s)
+        DAYS_IN_SECONDS=$((60*60*24) * ${{ inputs.update-after-days }})
+        
+        if [ $DAYS_SINCE_CREATED -gt $DAYS_IN_SECONDS ]; then
+          echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
+          CACHE_ID=$(echo $EXISTING_CACHE | jq -r '.id')
+          gh cache delete $CACHE_ID
+        fi
+      shell: bash
+
+    - name: Save Cache
+      uses: actions/cache/save@v3
+      with:
+          path: ${{ inputs.path }}
+          key: ${{ inputs.key }}
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Stash Action"
+      shell: bash

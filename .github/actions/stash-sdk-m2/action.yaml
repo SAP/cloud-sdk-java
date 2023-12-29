@@ -1,0 +1,41 @@
+name: "Stash SDK M2"
+description: "Stashes the SDK's portion of the Maven .m2 directory"
+
+inputs:
+  m2-root:
+    description: "The root directory of the M2 Maven directory to stash"
+    required: false
+    default: "~/.m2/repository"
+  key:
+    description: "The key to use when stashing the SDK M2 directory"
+    required: false
+    default: "sdk-m2"
+  force-update:
+    description: "Overrides any existing stashes"
+    required: false
+    default: "true"
+  update-after-days:
+    description: "Overrides any existing stash IF the existing stash is older than the specified amount of days"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Stash SDK M2 Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Stash
+      uses: ./.github/actions/stash
+      with:
+        # NOTE: These paths must match the ones of the unstash action EXACTLY
+        path: ${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+        key: ${{ inputs.key }}
+        force-update: ${{ inputs.force-update }}
+        update-after-days: ${{ inputs.update-after-days }}
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Stash SDK M2 Action"
+      shell: bash

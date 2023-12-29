@@ -1,0 +1,39 @@
+name: "Unstash Non-SDK M2"
+description: "Unstashes Maven .m2 directory EXCEPT for the SDK's portion"
+
+inputs:
+  m2-root:
+    description: "The root directory of the M2 Maven directory to unstash"
+    required: false
+    default: "~/.m2/repository"
+  key:
+    description: "The key to use when unstashing the SDK M2 directory"
+    required: false
+    default: "non-sdk-m2"
+
+outputs:
+  unstashed:
+    description: "Whether the specified stash was unstashed"
+    value: ${{ steps.unstash.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Unstash SDK M2 Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Unstash
+      id: unstash
+      uses: ./.github/actions/unstash
+      with:
+        # NOTE: These paths must match the ones of the stash action EXACTLY
+        path: |
+          !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+          ${{ inputs.m2-root }}/**
+        key: ${{ inputs.key }}
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Unstash SDK M2 Action"
+      shell: bash
