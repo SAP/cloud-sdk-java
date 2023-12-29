@@ -36,7 +36,6 @@ runs:
       with:
         path: ${{ inputs.m2-root }}/com/sap/cloud/sdk/**
         key: ${{ inputs.stash-sdk-key }}
-        restore-keys: ${{ inputs.stash-sdk-key }}
 
     - name: Stash All Other M2 Directories
       if: ${{ inputs.stash-all-other == 'true' }}
@@ -46,7 +45,6 @@ runs:
             !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
             ${{ inputs.m2-root }}/**
           key: ${{ inputs.stash-all-other-key }}
-          restore-keys: ${{ inputs.stash-all-other-key }}
 
     - name: Print Action End
       if: always()

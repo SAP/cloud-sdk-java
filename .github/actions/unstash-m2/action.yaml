@@ -45,7 +45,6 @@ runs:
       with:
           path: ${{ inputs.m2-root }}/com/sap/cloud/sdk
           key: ${{ inputs.stash-sdk-key }}
-          restore-keys: ${{ inputs.stash-sdk-key }}
 
     - name: Unstash All Other M2 Directories
       id: unstash-all-other
@@ -54,7 +53,6 @@ runs:
       with:
           path: ${{ inputs.m2-root }}
           key: ${{ inputs.stash-all-other-key }}
-          restore-keys: ${{ inputs.stash-all-other-key }}
 
     - name: Print Action End
       if: always()
