@@ -31,14 +31,14 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         CACHES=$(gh cache list --json id,key,ref,createdAt)
-        EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
+        EXISTING_CACHE=$(echo $CACHES | jq -c '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
         if [[ -z $EXISTING_CACHE ]]; then
           echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
           exit 1
         fi
         
         echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
-        echo "CACHE=$EXISTING_CACHE" >> $GITHUB_OUTPUT
+        echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
       shell: bash
       continue-on-error: true
 
