@@ -59,11 +59,12 @@ runs:
       run: |
         echo "Checking whether existing Cache is older than ${{ inputs.update-after-days }} days: ${{ steps.fetch-caches.outputs.CACHE }}"
         CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.createdAt')
-        CREATED_AT_DATE=$(date -d $CREATED_AT +%s)
-        NOW_DATE=$(date +%s)
-        DAYS_IN_SECONDS=$(60*60*24*${{ inputs.update-after-days }})
+        CREATED_AT_TIMESTAMP=$(date -d $CREATED_AT +%s)
+        NOW_TIMESTAMP=$(date +%s)
+        SECONDS_SINCE_CREATED=$((NOW_TIMESTAMP - CREATED_AT_TIMESTAMP))
+        THRESHOLD=$(60*60*24*${{ inputs.update-after-days }})
         
-        if [ $DAYS_SINCE_CREATED -gt $DAYS_IN_SECONDS ]; then
+        if [ $SECONDS_SINCE_CREATED -gt $THRESHOLD ]; then
           echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
           CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
           gh cache delete $CACHE_ID
