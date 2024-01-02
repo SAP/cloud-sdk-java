@@ -59,12 +59,9 @@ runs:
       run: |
         echo "Checking whether existing Cache is older than ${{ inputs.update-after-days }} days: ${{ steps.fetch-caches.outputs.CACHE }}"
         CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.createdAt')
-        
-        echo "Existing cache was created at $CREATED_AT."
         CREATED_AT_DATE=$(date -d $CREATED_AT +%s)
-      
         NOW_DATE=$(date +%s)
-        DAYS_IN_SECONDS=$((60*60*24) * ${{ inputs.update-after-days }})
+        DAYS_IN_SECONDS=$(60*60*24*${{ inputs.update-after-days }})
         
         if [ $DAYS_SINCE_CREATED -gt $DAYS_IN_SECONDS ]; then
           echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
