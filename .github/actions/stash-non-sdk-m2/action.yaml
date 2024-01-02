@@ -17,7 +17,7 @@ inputs:
   update-after-days:
     description: "Overrides any existing stash IF the existing stash is older than the specified amount of days"
     required: false
-    default: "1"
+    default: "0"
 
 runs:
   using: composite
