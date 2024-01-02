@@ -32,7 +32,13 @@ runs:
       run: |
         CACHES=$(gh cache list --json id,key,ref,createdAt)
         EXISTING_CACHE=$(echo $CACHES | jq -r '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
-        echo "CACHE=$EXISTING_CACHE" >> $GITHUB_ENV
+        if [[ -z $EXISTING_CACHE ]]; then
+          echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
+          exit 1
+        fi
+        
+        echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
+        echo "CACHE=$EXISTING_CACHE" >> $GITHUB_OUTPUT
       shell: bash
       continue-on-error: true
 
@@ -42,7 +48,7 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         echo "Force deleting cache with key ${{ inputs.key }}."
-        CACHE_ID=$(echo $CACHE | jq -r '.id')
+        CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
         gh cache delete $CACHE_ID
       shell: bash
 
@@ -51,14 +57,14 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        CREATED_AT=$(echo $CACHE | jq -r '.createdAt')
+        CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.createdAt')
         CREATED_AT_DATE=$(date -d $CREATED_AT +%s)
         NOW_DATE=$(date +%s)
         DAYS_IN_SECONDS=$((60*60*24) * ${{ inputs.update-after-days }})
         
         if [ $DAYS_SINCE_CREATED -gt $DAYS_IN_SECONDS ]; then
           echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
-          CACHE_ID=$(echo $CACHE | jq -r '.id')
+          CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
           gh cache delete $CACHE_ID
         else
             echo "Cache with key ${{ inputs.key }} is not older than ${{ inputs.update-after-days }} days; not deleting."
@@ -68,8 +74,8 @@ runs:
     - name: Save Cache
       uses: actions/cache/save@v3
       with:
-          path: ${{ inputs.path }}
-          key: ${{ inputs.key }}
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
 
     - name: Print Action End
       if: always()
