@@ -19,6 +19,11 @@ inputs:
     required: false
     default: ""
 
+outputs:
+  stashed:
+    description: "Whether the SDK M2 directories were stashed"
+    value: ${{ steps.stash.outputs.stashed }}
+
 runs:
   using: composite
   steps:
@@ -27,6 +32,7 @@ runs:
       shell: bash
 
     - name: Stash
+      id: stash
       uses: ./.github/actions/stash
       with:
         # NOTE: These paths must match the ones of the unstash action EXACTLY

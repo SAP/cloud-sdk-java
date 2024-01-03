@@ -1,12 +1,12 @@
 # assumptions:
 #   - The current action runner has a JDK setup (i.e. `actions/setup-java` has been run)
 
-name: Verify Formatting
-description: Verifies that the code is formatted correctly
+name: "Verify Formatting"
+description: "Verifies that the code is formatted correctly"
 
 inputs:
   maven-cli-args:
-    description: Arguments to pass to the Maven command
+    description: "Arguments to pass to the Maven command"
     required: false
     default: "--batch-mode"
 
