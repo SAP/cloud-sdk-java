@@ -72,13 +72,13 @@ class DefaultHttpDestinationBuilderProxyHandler
     }
 
     // Auth type            | destination tenant | PP mode           | result
-    // *                    + NO_TENANT          + *                -> TECHNICAL_USER_PROVIDER
-    // *                    + TENANT_T1          + *                -> TECHNICAL_USER_CURRENT_TENANT
-    // *                    + TENANT_T1          + *                -> TECHNICAL_USER_CURRENT_TENANT
-    // PrincipalPropagation + NO_TENANT          + TOKEN_FORWARDING -> TECHNICAL_USER_PROVIDER
-    // PrincipalPropagation + NO_TENANT          + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
-    // PrincipalPropagation + TENANT_T1          + TOKEN_FORWARDING -> TECHNICAL_USER_CURRENT_TENANT
-    // PrincipalPropagation + TENANT_T1          + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
+    // *                    + TENANT_PROVIDER    + *                -> TECHNICAL_USER_PROVIDER
+    // *                    + *                  + *                -> TECHNICAL_USER_CURRENT_TENANT
+    // PrincipalPropagation + TENANT_PROVIDER    + TOKEN_FORWARDING -> TECHNICAL_USER_PROVIDER
+    // PrincipalPropagation + *                  + TOKEN_FORWARDING -> TECHNICAL_USER_CURRENT_TENANT
+    // PrincipalPropagation + *                  + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
+    //
+    // note: destination tenant is one of: [undefined, empty, non-empty]. empty is listed here as TENANT_PROVIDER.
     @Nonnull
     private static OnBehalfOf deriveOnBehalfOf( @Nonnull final DefaultHttpDestination.Builder builder )
     {
