@@ -318,6 +318,7 @@ jobs:
             }
     name: Test Archetype ${{ matrix.task.archetype }}
     steps:
+      - uses: actions/checkout@v3
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
