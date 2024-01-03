@@ -644,12 +644,10 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        String
-                            .format(
-                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                                    + "Therefore, the default expiration (%s %s) will be restored.",
-                                DEFAULT_EXPIRATION_DURATION,
-                                DEFAULT_EXPIRATION_STRATEGY));
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration ({}{}) will be restored.",
+                        DEFAULT_EXPIRATION_DURATION,
+                        DEFAULT_EXPIRATION_STRATEGY);
 
                 expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
                 expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
@@ -696,11 +694,9 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        String
-                            .format(
-                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                                    + "Therefore, the default expiration strategy (%s) will be restored.",
-                                DEFAULT_EXPIRATION_STRATEGY));
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration strategy ({}) will be restored.",
+                        DEFAULT_EXPIRATION_STRATEGY);
                 expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
             }
             destinationsCache =
@@ -721,11 +717,9 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        String
-                            .format(
-                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                                    + "Therefore, the default expiration duration (%s) will be restored.",
-                                DEFAULT_EXPIRATION_DURATION));
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration duration ({}) will be restored.",
+                        DEFAULT_EXPIRATION_DURATION);
 
                 expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
             }
