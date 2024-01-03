@@ -1,3 +1,7 @@
+# assumptions:
+#   - The current action runner has the SDK repo checked out (i.e. our custom stash and unstash actions are available)
+#   - The current action runner has a JDK setup (i.e. `actions/setup-java` has been run)
+
 name: "Unstash SDK M2"
 description: "Unstashes the SDK's portion of the Maven .m2 directory"
 
