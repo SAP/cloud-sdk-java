@@ -209,7 +209,6 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
     {
         destinationCache = Caffeine.newBuilder().build();
         isolationLocks = Caffeine.newBuilder().build();
-        final DestinationServiceAdapter adapter = mock(DestinationServiceAdapter.class);
         destinationService = spy(new DestinationService(mock(DestinationServiceAdapter.class)));
         softly = new SoftAssertions();
     }
@@ -265,7 +264,8 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
         } else if( maybeDestination.isSuccess() && !testCase.isCommandExecutionExpectedToSucceed() ) {
             softly.fail("Expected command execution to fail, but it succeeded.");
         }
-        // softly.assertThat(maybeDestination.get()).isEqualTo(testCase.getExpectedDestination());
+
+        softly.assertThat(maybeDestination.get()).isEqualTo(testCase.getExpectedDestination());
         // sanity checks no cache was hit
         if( testCase.getTokenExchangeStrategy() == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE
             && DestinationUtility.requiresUserTokenExchange(testCase.getExpectedDestination()) ) {
@@ -545,7 +545,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                 response.setAuthTokens(List.of(token));
 
                 final Destination expectedDestination =
-                    DefaultDestination
+                    DefaultHttpDestination
                         .fromMap(properties)
                         .property(DestinationProperty.TENANT_ID, tenant == null ? "" : tenant.getTenantId())
                         .property(DestinationProperty.AUTH_TOKENS, List.of(token))
