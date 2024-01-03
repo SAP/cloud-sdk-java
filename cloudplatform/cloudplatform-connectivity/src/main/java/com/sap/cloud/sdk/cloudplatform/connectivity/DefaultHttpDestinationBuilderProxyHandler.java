@@ -77,7 +77,7 @@ class DefaultHttpDestinationBuilderProxyHandler
     // *                    + TENANT_T1          + *                -> TECHNICAL_USER_CURRENT_TENANT
     // PrincipalPropagation + NO_TENANT          + TOKEN_FORWARDING -> TECHNICAL_USER_PROVIDER
     // PrincipalPropagation + NO_TENANT          + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
-    // PrincipalPropagation + TENANT_T1          + TOKEN_FORWARDING -> TECHNICAL_USER_PROVIDER
+    // PrincipalPropagation + TENANT_T1          + TOKEN_FORWARDING -> TECHNICAL_USER_CURRENT_TENANT
     // PrincipalPropagation + TENANT_T1          + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
     @Nonnull
     private static OnBehalfOf deriveOnBehalfOf( @Nonnull final DefaultHttpDestination.Builder builder )
