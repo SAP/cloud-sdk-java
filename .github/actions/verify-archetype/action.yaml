@@ -33,7 +33,7 @@ runs:
 
     - name: Generate ${{ inputs.archetype }}
       working-directory: ${{ steps.create-temp-dir.outputs.DIR }}
-      run: |
+      run: >
         mvn archetype:generate -B
         -DarchetypeCatalog=local
         -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
@@ -48,7 +48,7 @@ runs:
 
     - name: Verify ${{ inputs.archetype }}
       working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ inputs.archetype }}
-      run: |
+      run: >
         mvn clean verify -B
         -Dhttp.keepAlive=false
         -Dmaven.test.skip=true
@@ -61,7 +61,7 @@ runs:
 
     - name: Spotbugs ${{ inputs.archetype }}
       working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ inputs.archetype }}
-      run: |
+      run: >
         mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
         -pl !integration-tests
         -Dhttp.keepAlive=false
