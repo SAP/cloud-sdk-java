@@ -9,10 +9,8 @@ import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -346,24 +344,6 @@ public final class DefaultHttpDestination implements HttpDestination
     public Option<ProxyType> getProxyType()
     {
         return cachedProxyType;
-    }
-
-    @Nonnull
-    @Override
-    public String toString()
-    {
-        final Map<String, Object> nonSensitiveProperties = new HashMap<>();
-
-        for( final String key : baseProperties.getPropertyNames() ) {
-            Object value = baseProperties.get(key).getOrNull();
-            if( key.toLowerCase(Locale.ENGLISH).contains("password")
-                || key.toLowerCase(Locale.ENGLISH).contains("key") ) {
-                value = "(hidden)";
-            }
-            nonSensitiveProperties.put(key, value);
-        }
-
-        return getClass().getSimpleName() + "(properties=" + nonSensitiveProperties + ")";
     }
 
     /**
