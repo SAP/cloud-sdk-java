@@ -346,6 +346,7 @@ public final class DefaultHttpDestination implements HttpDestination
         return cachedProxyType;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {
