@@ -564,8 +564,7 @@ public class DestinationService implements DestinationLoader
          * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache. As a
          * consequence, all existing cache entries will be lost.
          *
-         * This method is now @deprecated and will be removed at a later date. Please refrain from its use. As of 5.1.0,
-         * the change detection mode is enabled by default.
+         * @deprecated since 5.1.0. Change detection mode is enabled by default
          *
          * @since 4.7.0
          */

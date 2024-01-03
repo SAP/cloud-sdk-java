@@ -1278,7 +1278,7 @@ class DestinationServiceTest
     }
 
     @Test
-    void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategy()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategyWithoutChangeDetection()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(EXCHANGE_ONLY)).build();
@@ -1286,6 +1286,8 @@ class DestinationServiceTest
         doReturn(responseDestinationWithAuthToken)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+
+        DestinationService.Cache.disableChangeDetection();
 
         final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
@@ -1303,7 +1305,7 @@ class DestinationServiceTest
         final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
 
         assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(3L);
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstCacheKey)).isNotNull();
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondCacheKey)).isNotNull();
 
@@ -1316,7 +1318,7 @@ class DestinationServiceTest
     }
 
     @Test
-    void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategy()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategyWithoutChangeDetection()
     {
         final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
@@ -1328,6 +1330,8 @@ class DestinationServiceTest
         doReturn(responseDestinationWithAuthToken)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+
+        DestinationService.Cache.disableChangeDetection();
 
         final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
@@ -1347,7 +1351,7 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
         //If exchange strategy is LOOKUP_THEN_EXCHANGE, then isolation locks are obtained per tenant
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
+        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(1L);
         assertThat(DestinationService.Cache.isolationLocks().getIfPresent(isolationLockKey)).isNotNull();
 
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
