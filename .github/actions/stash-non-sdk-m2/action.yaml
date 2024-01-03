@@ -32,6 +32,7 @@ runs:
         # NOTE: These paths must match the ones of the unstash action EXACTLY
         path: |
           !${{ inputs.m2-root }}/com/sap/cloud/sdk/**
+          !${{ inputs.m2-root }}/archetype-catalog.xml
           ${{ inputs.m2-root }}/**
         key: ${{ inputs.key }}
         force-update: ${{ inputs.force-update }}

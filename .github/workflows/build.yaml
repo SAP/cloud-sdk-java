@@ -74,12 +74,7 @@ jobs:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
           retention-days: 1
-      - name: Upload Archetype Catalog
-        uses: actions/upload-artifact@v3
-        with:
-          name: archetype-catalog
-          path: ~/.m2/repository/archetype-catalog.xml
-          retention-days: 1
+
       - name: Save Non-SDK Maven Repository
         uses: ./.github/actions/stash-non-sdk-m2
       - name: Save SDK Maven Repository
@@ -328,14 +323,7 @@ jobs:
         uses: ./.github/actions/unstash-non-sdk-m2
       - name: Load SDK Maven Repository
         uses: ./.github/actions/unstash-sdk-m2
-      - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
 
-      - name: Download Archetype Catalog
-        uses: actions/download-artifact@v3
-        with:
-          name: archetype-catalog
-          path: ~/.m2/repository/archetype-catalog.xml
       - name: Generate ${{ matrix.task.archetype }}
         run: >
           mvn archetype:generate -B
