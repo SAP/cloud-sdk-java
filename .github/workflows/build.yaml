@@ -324,7 +324,14 @@ jobs:
       - name: Load SDK Maven Repository
         uses: ./.github/actions/unstash-sdk-m2
 
+      - name: Create Temp Director
+        id: create-temp-dir
+        run: |
+          DIR=~/.temp/${{ matrix.task.archetype }}
+          mkdir -p $DIR
+          echo "DIR=$DIR" >> $GITHUB_OUTPUT
       - name: Generate ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}
         run: >
           mvn archetype:generate -B
           -DarchetypeCatalog=local
@@ -338,16 +345,16 @@ jobs:
           -Dhttp.keepAlive=false
 
       - name: Verify ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
         run: >
           mvn clean verify -B
           -Dhttp.keepAlive=false
           -Dmaven.test.skip=true
       - name: Test ${{ matrix.task.name }}
-        working-directory: ./example-${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
         run: mvn test -B -Dsurefire.logLevel='error'
       - name: Spotbugs ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
         run: >
           mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
           -pl !integration-tests
@@ -355,7 +362,7 @@ jobs:
           -Dmaven.wagon.http.pool=false
 
       - name: Start ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}/application
+        working-directory: .${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}/application
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
@@ -379,7 +386,7 @@ jobs:
           fi
 
       - name: Verify .gitignore ${{ matrix.task.archetype }}
-        working-directory: ./example-${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
         run: |
           if [ ! -f .gitignore ]; then
               ls -lah
