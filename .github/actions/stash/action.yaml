@@ -84,21 +84,25 @@ runs:
     - name: Should Save Cache
       id: should-save-cache
       run: |
-        if [[ ${{ inputs.force-update }} -eq 'true' ]]; then
+        if [[ '${{ inputs.force-update }}' -eq 'true' ]]; then
+          echo "Cache will be re-created as the force-update flag is set."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
         
-        if [[ ${{ steps.fetch-caches.outcome }} -ne 'success' ]]; then
+        if [[ '${{ steps.fetch-caches.outcome }}' -ne 'success' ]]; then
+          echo "Cache will be created as no existing cache was found."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
         
-        if [[ ${{ steps.delete-cache-if-too-old.outcome }} -eq 'success' ]]; then
+        if [[ '${{ steps.delete-cache-if-too-old.outcome }}' -eq 'success' ]]; then
+          echo "Cache will be re-created as the existing cache is older than ${{ inputs.update-after-days }} days."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
         
+        echo "Cache will not be (re-)created."
         echo "RESULT='false'" >> $GITHUB_OUTPUT
       shell: bash
 
