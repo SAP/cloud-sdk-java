@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +57,7 @@ class GetOrComputeSingleDestinationCommand
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
 
+    @SuppressWarnings( "deprecation" )
     static Try<GetOrComputeSingleDestinationCommand> prepareCommand(
         @Nonnull final String destinationName,
         @Nonnull final DestinationOptions destinationOptions,
@@ -73,7 +72,7 @@ class GetOrComputeSingleDestinationCommand
         final DestinationServiceTokenExchangeStrategy exchangeStrategy =
             DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(destinationOptions)
-                .getOrElse(LOOKUP_THEN_EXCHANGE);
+                .getOrElse(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
 
         final CacheKey cacheKey;
         CacheKey additionalKeyWithTenantAndPrincipal = null;
@@ -91,7 +90,8 @@ class GetOrComputeSingleDestinationCommand
             }
         } else {
             cacheKey = CacheKey.ofTenantOptionalIsolation();
-            if( exchangeStrategy == LOOKUP_THEN_EXCHANGE || exchangeStrategy == FORWARD_USER_TOKEN ) {
+            if( exchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE
+                || exchangeStrategy == FORWARD_USER_TOKEN ) {
                 additionalKeyWithTenantAndPrincipal =
                     CacheKey.ofTenantAndPrincipalOptionalIsolation().append(destinationName, destinationOptions);
             }
@@ -116,16 +116,17 @@ class GetOrComputeSingleDestinationCommand
 
     /**
      * <pre>
-     *  The table illustrates how the Exchange key affects the isolation and cache keys in the implementation below
+     *  The table illustrates how the exchange key affects the isolation and cache keys in the implementation below
      * | #   | Lookup Strategy      | Destination Type   | Isolation Key      | Cache Key          | Comment                    |
      * |-----|----------------------|--------------------|--------------------|--------------------|----------------------------|
-     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | warning logged             |
-     * | 2   | Lookup then exchange | User Propagation   | Tenant             | Tenant + Principal |                            |
+     * | 1   | Lookup only          | User Propagation   | Tenant             | Tenant             | execution fails            |
+     * | 2   | Lookup then exchange
+     *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
+     *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 3   | Exchange only        | User Propagation   | Tenant + Principal | Tenant + Principal |                            |
      * | 4   | Forward user token
-     *        (JWT is available)    | User Propagation   | Tenant             | Tenant + Principal |                            |
-     * | 5   | Forward user token
-     *         (JWT is unavailable) | User Propagation   | Tenant             |   -                |Retrieving destination fails|
+     *         - (JWT is available) | User Propagation   | Tenant             | Tenant + Principal |                            |
+     *         - (No JWT available) | User Propagation   | Tenant             | -                  | execution fails            |
      * | 6   | Lookup only          | Client Credentials | Tenant             | Tenant             |                            |
      * | 7   | Lookup then exchange | Client Credentials | Tenant             | Tenant             |                            |
      * | 8   | Exchange only        | Client Credentials | Tenant + Principal | Tenant + Principal | warning logged             |
@@ -169,8 +170,12 @@ class GetOrComputeSingleDestinationCommand
                     if( !DestinationUtility.requiresUserTokenExchange(result) ) {
                         destinationCache.put(cacheKey, result);
                     } else {
-                        //At this point principal ID is always available, otherwise maybeResult would be a failure
-                        throwIfPrincipalIsUnavailable(destinationName, exchangeStrategy);
+                        if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
+                            final String message =
+                                "No principal is available in the current ThreadContext, but a principal is required for fetching the destination %s. "
+                                    + "This typically means that the current context is malformed, containing inconsistent information about the authentication token, tenant and principal.";
+                            return Try.failure(new DestinationAccessException(message.formatted(destinationName)));
+                        }
                         destinationCache.put(additionalKeyWithTenantAndPrincipal, result);
                     }
                     break;
@@ -182,33 +187,21 @@ class GetOrComputeSingleDestinationCommand
         }
     }
 
-    private void throwIfPrincipalIsUnavailable(
-        @Nonnull final String destinationName,
-        @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
-    {
-        if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
-            throw new IllegalStateException(
-                "Principal ID is not available in the incoming request, but is required for fetching destination "
-                    + destinationName
-                    + "that requires user token exchange with strategy"
-                    + exchangeStrategy);
-        }
-    }
-
+    @SuppressWarnings( "deprecation" )
     private void logErroneousCombinations(
         @Nonnull final DestinationProperties result,
         @Nonnull final String destinationName,
         @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
     {
-
-        if( DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == LOOKUP_ONLY ) {
+        if( DestinationUtility.requiresUserTokenExchange(result)
+            && exchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
             log
                 .debug(
                     "The destination {} was retrieved with strategy {}, but it requires user token exchange."
                         + " Hence, the destination cannot be used to connect to the target system successfully, please refer to the documentation of {} to find the recommended strategy."
                         + " Caching the destination for all users of the current tenant since it was obtained without user token exchange. ",
                     destinationName,
-                    exchangeStrategy,
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
 
@@ -219,7 +212,7 @@ class GetOrComputeSingleDestinationCommand
                         + " This is not recommended, please refer to the documentation of {}."
                         + " Caching the destination for the current user of the current tenant since it was obtained with a user token.",
                     destinationName,
-                    exchangeStrategy,
+                    EXCHANGE_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
     }
@@ -243,7 +236,7 @@ class GetOrComputeSingleDestinationCommand
             return maybeDestination;
         }
 
-        final Try<List<Destination>> allDestinations = getAllCommand.execute();
+        final Try<List<DestinationProperties>> allDestinations = getAllCommand.execute();
         if( allDestinations.isFailure() ) {
             final String message =
                 "Failed to resolve all destinations of the current tenant from the destination service."
@@ -292,11 +285,11 @@ class GetOrComputeSingleDestinationCommand
     }
 
     private static boolean destinationIsChanged(
-        @Nonnull final List<Destination> allDestinations,
+        @Nonnull final List<DestinationProperties> allDestinations,
         @Nonnull final Destination cachedDestination )
     {
         final String destinationName = cachedDestination.get(DestinationProperty.NAME).get();
-        final Destination matchingDestination =
+        final DestinationProperties matchingDestination =
             allDestinations
                 .stream()
                 .filter(destination -> destination.get(DestinationProperty.NAME).contains(destinationName))
@@ -316,7 +309,8 @@ class GetOrComputeSingleDestinationCommand
      * <strong>Caution:</strong> This operation is <strong>not</strong> symmetric!
      *
      * @param destinationFromGetAllEndPoint
-     *            The {@link DestinationProperties} as retrieved via {@link DestinationService#tryGetAllDestinations()}.
+     *            The {@link DestinationProperties} as retrieved via
+     *            {@link DestinationService#getAllDestinationProperties()}.
      * @param individuallyRetrievedDestination
      *            The {@link DestinationProperties} as retrieved via
      *            {@link DestinationService#tryGetDestination(String)}.
@@ -325,7 +319,7 @@ class GetOrComputeSingleDestinationCommand
      */
     // internal for testing
     static boolean destinationIsEqualTo(
-        @Nonnull final Destination destinationFromGetAllEndPoint,
+        @Nonnull final DestinationProperties destinationFromGetAllEndPoint,
         @Nonnull final Destination individuallyRetrievedDestination )
     {
         for( final String propertyName : destinationFromGetAllEndPoint.getPropertyNames() ) {

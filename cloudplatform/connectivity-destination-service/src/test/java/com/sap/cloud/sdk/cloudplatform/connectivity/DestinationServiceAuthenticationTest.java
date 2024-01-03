@@ -25,12 +25,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.MockUtil;
-
-import io.vavr.control.Try;
 
 class DestinationServiceAuthenticationTest
 {
@@ -41,6 +38,7 @@ class DestinationServiceAuthenticationTest
 
     private static final String SERVICE_PATH_DESTINATION = "/destinations/" + DESTINATION_NAME;
 
+    @SuppressWarnings( "deprecation" )
     private static final DestinationOptions DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE =
         DestinationOptions
             .builder()
@@ -726,44 +724,5 @@ class DestinationServiceAuthenticationTest
         verify(destinationService, times(1))
             .getConfigurationAsJson(anyString(), eq(OnBehalfOf.NAMED_USER_CURRENT_TENANT));
         verify(destinationService, never()).getConfigurationAsJsonWithUserToken(anyString(), any(OnBehalfOf.class));
-    }
-
-    @Test
-    void testSAPAssertionSSOFailure()
-    {
-        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
-
-        final Object payloadFailure =
-            ImmutableMap
-                .<String, Object> builder()
-                .put("owner", ImmutableMap.of("SubaccountId", "a89ea924-d9c2-4eab", "InstanceId", "foobar"))
-                .put(
-                    "destinationConfiguration",
-                    ImmutableMap
-                        .<String, String> builder()
-                        .put("Name", DESTINATION_NAME)
-                        .put("Type", "HTTP")
-                        .put("URL", "https://a.s4hana.ondemand.com/some/path/SOME_API")
-                        .put("Authentication", "SAPAssertionSSO")
-                        .put("SystemUser", "SomeUser")
-                        .build())
-                .put(
-                    "authTokens",
-                    Collections
-                        .singletonList(
-                            ImmutableMap.<String, Object> builder().put("error", "someErrorMessage").build()))
-                .build();
-
-        doReturn(new Gson().toJson(payloadFailure))
-            .when(destinationService)
-            .getConfigurationAsJsonWithUserToken(SERVICE_PATH_DESTINATION, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        final Try<Destination> des = new DestinationService(destinationService).tryGetDestination(DESTINATION_NAME);
-        assertThat(des).isNotNull();
-        assertThat(des.getCause())
-            .isExactlyInstanceOf(DestinationAccessException.class)
-            .hasMessage("Failed to get destination.")
-            .rootCause()
-            .hasMessageContaining("The destination service responded with an error: someErrorMessage");
     }
 }

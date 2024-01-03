@@ -11,8 +11,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRet
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +31,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -45,16 +44,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -84,11 +82,10 @@ import lombok.SneakyThrows;
 class DestinationServiceTest
 {
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes
-
+    // region (TEST_DATA)
     private static final String destinationName = "SomeDestinationName";
     private static final String providerUrl = "https://service.provider.com";
     private static final String subscriberUrl = "https://service.subscriber.com";
-    private static final String oauthTokenServiceUrl = "https://a.s4hana.ondemand.com/sap/bc/sec/oauth2/token";
 
     private static final String responseSubaccountDestination =
         "[{\n"
@@ -307,6 +304,7 @@ class DestinationServiceTest
             + "        \"Description\": \"Dummy destination that should be overwritten by a subscriber.\"\n"
             + "    }\n"
             + "}";
+    // endregion
 
     @RegisterExtension
     TokenRule token = TokenRule.createXsuaa();
@@ -430,42 +428,40 @@ class DestinationServiceTest
     }
 
     @Test
-    void testLoadAllDestinationsSubscriberOnly()
+    void testGettingDestinationProperties()
     {
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
         doReturn(responseServiceInstanceDestination)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
         doReturn(responseSubaccountDestination)
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations();
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties();
 
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
             .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
 
-        //Assert additionally that of a subaccount destination and an instance destination of same name, the instance one was picked
-        assertThat(
+        final DestinationProperties destination =
             destinationList
                 .stream()
                 .filter(d -> d.get(DestinationProperty.NAME).get().equalsIgnoreCase("CC8-HTTP-BASIC"))
                 .findFirst()
-                .get()
-                .get("User", String.class)
-                .get())
-            .isEqualTo("USER1");
+                .get();
+        //Assert additionally that of a subaccount destination and an instance destination of same name, the instance one was picked
+        assertThat(destination.get("User", String.class)).contains("USER1");
+
+        // test single destination properties convenience
+        assertThat(loader.getDestinationProperties("CC8-HTTP-BASIC")).isSameAs(destination);
+        assertThatThrownBy(() -> loader.getDestinationProperties("doesnt exist"))
+            .isInstanceOf(DestinationNotFoundException.class);
+
+        // verify all results are cached
+        verify(scpCfDestinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(scpCfDestinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
     @Test
@@ -542,8 +538,10 @@ class DestinationServiceTest
         assertThat(sut.getAllDestResilience().timeLimiterConfiguration().isEnabled()).isFalse();
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
-    void testLoadAllDestinationsProviderOnly()
+    @DisplayName( "Test getting Destination Properties for the provider" )
+    void testDestinationPropertiesForProvider()
     {
         doReturn(responseServiceInstanceDestination)
             .when(scpCfDestinationServiceAdapter)
@@ -567,49 +565,25 @@ class DestinationServiceTest
             .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
+    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
     void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
-        // mock to return empty list as destinations for subscriber tenant.
-        doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
-
-        final Try<Iterable<Destination>> destinations = loader.tryGetAllDestinations(options);
-
-        assertThat(destinations.get().iterator()).isNotNull();
-
-        final List<Destination> destinationList = new ArrayList<>();
-        destinations.get().forEach(destinationList::add);
-
-        assertThat(destinationList)
-            .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
-
-    }
-
-    @Test
-    void testGetAllDestinationsOnlySubscriberStrategyDoesNotReadProviderDestinations()
-    {
-        final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
+        // set current tenant to be the provider tenant
+        TenantAccessor.setTenantFacade(null);
 
         // set current tenant to be the provider tenant
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         final Try<Iterable<Destination>> result =
             TenantAccessor.executeWithTenant(providerTenant, () -> loader.tryGetAllDestinations(options));
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause())
+
+        assertThatThrownBy(result::get)
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining(
                 "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
-
     }
 
     @Test
@@ -685,7 +659,9 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
@@ -706,22 +682,16 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
-        final HttpDestination destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options).get().asHttp();
+        final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
 
-        final List<DestinationServiceV1Response.DestinationAuthToken> authTokens =
-            destination
-                .get(DestinationProperty.AUTH_TOKENS)
-                .get()
-                .stream()
-                .map(DestinationServiceV1Response.DestinationAuthToken.class::cast)
-                .filter(t -> t.getHttpHeaderSuggestion() != null)
-                .collect(Collectors.toList());
-
-        assertThat(authTokens).isEmpty();
-        assertThatThrownBy(destination::getHeaders).isExactlyInstanceOf(DestinationAccessException.class);
+        assertThatThrownBy(destination::get).isExactlyInstanceOf(DestinationAccessException.class);
 
         verify(scpCfDestinationServiceAdapter, times(1))
             .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
@@ -776,8 +746,11 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson(eq("/destinations/" + destinationName), any(OnBehalfOf.class));
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
-            augmenter().tokenExchangeStrategy(LOOKUP_ONLY).retrievalStrategy(ALWAYS_PROVIDER);
+            augmenter()
+                .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY)
+                .retrievalStrategy(ALWAYS_PROVIDER);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final Destination dest = loader.tryGetDestination(destinationName, options).get();
@@ -903,8 +876,12 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         loader.tryGetDestination(destinationName, options);
         loader.tryGetDestination(destinationName, options);
@@ -978,7 +955,9 @@ class DestinationServiceTest
                 "/destinations/CC8-HTTP-OAUTH",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         loader.tryGetDestination("CC8-HTTP-OAUTH", options);
@@ -1064,8 +1043,12 @@ class DestinationServiceTest
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         final CountDownLatch destinationRetrievalLatch = new CountDownLatch(1);
         final CountDownLatch mainThreadLatch = new CountDownLatch(1);
@@ -1212,8 +1195,12 @@ class DestinationServiceTest
         })
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(LOOKUP_ONLY)).build();
+            DestinationOptions
+                .builder()
+                .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
+                .build();
 
         final DefaultTenantFacade mockedTenantFacade = spy(DefaultTenantFacade.class);
         TenantAccessor.setTenantFacade(mockedTenantFacade);
@@ -1320,7 +1307,9 @@ class DestinationServiceTest
     @Test
     void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategyWithoutChangeDetection()
     {
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         doReturn(responseDestinationWithoutAuthToken)
@@ -1429,7 +1418,7 @@ class DestinationServiceTest
                 * Math.round(ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_FAILURE_RATE_THRESHOLD)
                 / 100;
 
-        // the smart cache circuit breaker will try 5 times (default closed buffer size) then open and not call again
+        // the smart cache circuit breaker will try 5 times, then open and not call again
         for( int i = 0; i < 2 * circuitBreakerBuffer; ++i ) {
             final Try<Destination> tryDestination = loader.tryGetDestination("CC8-HTTP-BASIC");
             tryDestination.get();
@@ -1463,7 +1452,9 @@ class DestinationServiceTest
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
-        final DestinationOptionsAugmenter optionsStrategy = augmenter().tokenExchangeStrategy(LOOKUP_THEN_EXCHANGE);
+        @SuppressWarnings( "deprecation" )
+        final DestinationOptionsAugmenter optionsStrategy =
+            augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         final CountDownLatch destinationRetrievalLatch = new CountDownLatch(1);
@@ -1574,10 +1565,32 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        VavrAssertions
-            .assertThat(loader.tryGetAllDestinations(DestinationOptions.builder().build()))
-            .isFailure()
-            .failBecauseOf(DestinationAccessException.class);
+        assertThatThrownBy(loader::getAllDestinationProperties).isExactlyInstanceOf(DestinationAccessException.class);
+    }
+
+    @Test
+    void testAuthTokenFailureIsNotCached()
+    {
+        doReturn(responseDestinationWithoutAuthToken)
+            .when(scpCfDestinationServiceAdapter)
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        final DestinationOptions options = DestinationOptions.builder().build();
+
+        final Try<Destination> destination = loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+
+        assertThatThrownBy(destination::get).isExactlyInstanceOf(DestinationAccessException.class);
+
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+        loader.tryGetDestination("CC8-HTTP-OAUTH", options);
+
+        // verify the result is not cached
+        verify(scpCfDestinationServiceAdapter, times(3))
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/CC8-HTTP-OAUTH",
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
     // @Test

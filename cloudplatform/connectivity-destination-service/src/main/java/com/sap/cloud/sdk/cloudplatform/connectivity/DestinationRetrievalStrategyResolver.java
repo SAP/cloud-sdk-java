@@ -10,8 +10,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRet
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
@@ -45,7 +43,7 @@ class DestinationRetrievalStrategyResolver
     private static final Strategy tokenExchangeOnlyStrategy = new Strategy(NAMED_USER_CURRENT_TENANT, false);
     private final Supplier<String> providerTenantIdSupplier;
     private final Function<Strategy, DestinationServiceV1Response> destinationRetriever;
-    private final Function<OnBehalfOf, List<Destination>> allDestinationRetriever;
+    private final Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
 
     static final String JWT_ATTR_EXT = "ext_attr";
     static final String JWT_ATTR_ENHANCER = "enhancer";
@@ -70,7 +68,7 @@ class DestinationRetrievalStrategyResolver
 
     static DestinationRetrievalStrategyResolver forAllDestinations(
         final Supplier<String> providerTenantIdSupplier,
-        final Function<OnBehalfOf, List<Destination>> allDestinationRetriever )
+        final Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever )
     {
         return new DestinationRetrievalStrategyResolver(
             providerTenantIdSupplier,
@@ -78,6 +76,7 @@ class DestinationRetrievalStrategyResolver
             allDestinationRetriever);
     }
 
+    @SuppressWarnings( "deprecation" )
     Strategy resolveSingleRequestStrategy(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
@@ -146,6 +145,7 @@ class DestinationRetrievalStrategyResolver
      * @return The current default token exchange strategy.
      */
     @Nonnull
+    @SuppressWarnings( "deprecation" )
     private DestinationServiceTokenExchangeStrategy getDefaultTokenExchangeStrategy()
     {
         // extract extended attributes from current token, or null<br>
@@ -154,13 +154,17 @@ class DestinationRetrievalStrategyResolver
 
         // consider scenario where "forward user token" will not work out-of-the-box, e.g. for IAS identity service
         if( attributes == null || !JWT_ATTR_XSUAA.equalsIgnoreCase(attributes.get(JWT_ATTR_ENHANCER) + "") ) {
-            log.debug("Falling back to {}. Current user token may not originate from XSUAA.", LOOKUP_THEN_EXCHANGE);
-            return LOOKUP_THEN_EXCHANGE;
+            log
+                .debug(
+                    "Falling back to {}. Current user token may not originate from XSUAA.",
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
+            return DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE;
         }
 
         return FORWARD_USER_TOKEN;
     }
 
+    @SuppressWarnings( "deprecation" )
     DestinationRetrieval prepareSupplier(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
@@ -173,8 +177,9 @@ class DestinationRetrievalStrategyResolver
                 tokenExchangeStrategy);
         warnOrThrowOnUnsupportedCombinations(retrievalStrategy, tokenExchangeStrategy);
 
-        if( tokenExchangeStrategy == LOOKUP_THEN_EXCHANGE ) {
-            final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, LOOKUP_ONLY);
+        if( tokenExchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE ) {
+            final Strategy strategy =
+                resolveSingleRequestStrategy(retrievalStrategy, DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
             return new DestinationRetrieval(() -> {
                 final DestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
@@ -192,6 +197,7 @@ class DestinationRetrievalStrategyResolver
         return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
     }
 
+    @SuppressWarnings( "deprecation" )
     private void warnOrThrowOnUnsupportedCombinations(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nullable final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
@@ -210,26 +216,29 @@ class DestinationRetrievalStrategyResolver
                         + " and "
                         + EXCHANGE_ONLY
                         + ". Cannot retrieve destination.");
-            } else if( tokenExchangeStrategy != LOOKUP_ONLY ) {
+            } else if( tokenExchangeStrategy != DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
                 log
                     .warn(
                         "The current tenant is not the provider tenant. Only destinations which don't require a user token will be supported."
                             + " Use retrieval strategy {} to avoid this warning.",
-                        LOOKUP_ONLY);
+                        DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
             }
         }
     }
 
-    Supplier<List<Destination>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
+    @SuppressWarnings( "deprecation" )
+    Supplier<List<DestinationProperties>> prepareSupplierAllDestinations( @Nonnull final DestinationOptions options )
     {
         final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy =
-            DestinationServiceOptionsAugmenter.getTokenExchangeStrategy(options).getOrElse(LOOKUP_ONLY);
-        if( tokenExchangeStrategy != LOOKUP_ONLY ) {
+            DestinationServiceOptionsAugmenter
+                .getTokenExchangeStrategy(options)
+                .getOrElse(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
+        if( tokenExchangeStrategy != DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
             log
                 .warn(
                     "The provided token exchange strategy {} is not applicable while retrieving all destinations, hence switching to {} ",
                     tokenExchangeStrategy,
-                    LOOKUP_ONLY);
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
         }
         final DestinationServiceRetrievalStrategy retrievalStrategy =
             DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
@@ -237,7 +246,7 @@ class DestinationRetrievalStrategyResolver
         return prepareSupplierAllDestinations(retrievalStrategy);
     }
 
-    Supplier<List<Destination>>
+    Supplier<List<DestinationProperties>>
         prepareSupplierAllDestinations( @Nonnull final DestinationServiceRetrievalStrategy strategy )
             throws IllegalArgumentException
     {

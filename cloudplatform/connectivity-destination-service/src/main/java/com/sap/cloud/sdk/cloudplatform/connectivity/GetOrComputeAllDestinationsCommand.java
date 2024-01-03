@@ -30,17 +30,17 @@ class GetOrComputeAllDestinationsCommand
     @Nonnull
     private final ReentrantLock isolationLock;
     @Nonnull
-    private final Cache<CacheKey, List<Destination>> cache;
+    private final Cache<CacheKey, List<DestinationProperties>> cache;
     @Nonnull
-    private final Supplier<Try<List<Destination>>> destinationSupplier;
+    private final Supplier<Try<List<DestinationProperties>>> destinationSupplier;
 
     static GetOrComputeAllDestinationsCommand prepareCommand(
         @Nonnull final DestinationOptions destinationOptions,
-        @Nonnull final Cache<CacheKey, List<Destination>> destinationCache,
+        @Nonnull final Cache<CacheKey, List<DestinationProperties>> destinationCache,
         @Nonnull final Cache<CacheKey, ReentrantLock> isolationLocks,
-        @Nonnull final Function<DestinationOptions, Try<List<Destination>>> destinationRetriever )
+        @Nonnull final Function<DestinationOptions, Try<List<DestinationProperties>>> destinationRetriever )
     {
-        final Supplier<Try<List<Destination>>> destinationSupplier =
+        final Supplier<Try<List<DestinationProperties>>> destinationSupplier =
             () -> destinationRetriever.apply(destinationOptions);
 
         final CacheKey cacheKey = CacheKey.ofTenantOptionalIsolation();
@@ -54,10 +54,10 @@ class GetOrComputeAllDestinationsCommand
     }
 
     @Nonnull
-    Try<List<Destination>> execute()
+    Try<List<DestinationProperties>> execute()
     {
         @Nullable
-        List<Destination> destinations = cache.getIfPresent(cacheKey);
+        List<DestinationProperties> destinations = cache.getIfPresent(cacheKey);
 
         if( destinations != null ) {
             return Try.success(destinations);
@@ -72,7 +72,7 @@ class GetOrComputeAllDestinationsCommand
                 return Try.success(destinations);
             }
 
-            final Try<List<Destination>> result = destinationSupplier.get();
+            final Try<List<DestinationProperties>> result = destinationSupplier.get();
             if( result.isFailure() ) {
                 return result;
             }

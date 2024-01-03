@@ -48,7 +48,7 @@ class GetOrComputeAllDestinationsCommandTest
     private static final Tenant t1 = new DefaultTenant("tenant-1");
     private static final Tenant t2 = new DefaultTenant("tenant-2");
 
-    private Cache<CacheKey, List<Destination>> allDestinationsCache;
+    private Cache<CacheKey, List<DestinationProperties>> allDestinationsCache;
     private Cache<CacheKey, ReentrantLock> isolationLocks;
 
     @BeforeEach
@@ -70,8 +70,8 @@ class GetOrComputeAllDestinationsCommandTest
     void testCommandIsIdempotent()
     {
         final Destination destination = DefaultDestination.builder().name(DESTINATION_NAME).build();
-        final Supplier<Try<List<Destination>>> tryGetAllDestinations =
-            (Supplier<Try<List<Destination>>>) spy(Supplier.class);
+        final Supplier<Try<List<DestinationProperties>>> tryGetAllDestinations =
+            (Supplier<Try<List<DestinationProperties>>>) spy(Supplier.class);
         when(tryGetAllDestinations.get()).thenReturn(Try.success(Collections.singletonList(destination)));
 
         final Supplier<GetOrComputeAllDestinationsCommand> commandSupplier =
@@ -88,7 +88,7 @@ class GetOrComputeAllDestinationsCommandTest
         final GetOrComputeAllDestinationsCommand command = commandSupplier.get();
         command.execute();
         command.execute();
-        final Try<List<Destination>> result = command.execute();
+        final Try<List<DestinationProperties>> result = command.execute();
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.get()).containsExactly(destination);
@@ -121,19 +121,19 @@ class GetOrComputeAllDestinationsCommandTest
         }).when(tenantIsolationLock).lock();
         isolationLocks.put(t1Key, tenantIsolationLock);
 
-        final Supplier<Try<List<Destination>>> tryGetAllDestinationsT1 =
-            (Supplier<Try<List<Destination>>>) mock(Supplier.class);
+        final Supplier<Try<List<DestinationProperties>>> tryGetAllDestinationsT1 =
+            (Supplier<Try<List<DestinationProperties>>>) mock(Supplier.class);
         when(tryGetAllDestinationsT1.get()).then(invocation -> {
             mainThreadLatch.countDown();
             getAllLatch.await();
 
             return Try.success(Collections.emptyList());
         });
-        final Supplier<Try<List<Destination>>> tryGetAllDestinationsT2 =
-            (Supplier<Try<List<Destination>>>) mock(Supplier.class);
+        final Supplier<Try<List<DestinationProperties>>> tryGetAllDestinationsT2 =
+            (Supplier<Try<List<DestinationProperties>>>) mock(Supplier.class);
         when(tryGetAllDestinationsT2.get()).thenReturn(Try.success(Collections.emptyList()));
 
-        final Callable<Try<List<Destination>>> callableT1 =
+        final Callable<Try<List<DestinationProperties>>> callableT1 =
             () -> TenantAccessor
                 .executeWithTenant(
                     t1,
@@ -144,7 +144,7 @@ class GetOrComputeAllDestinationsCommandTest
                             isolationLocks,
                             any -> tryGetAllDestinationsT1.get())
                         .execute());
-        final Callable<Try<List<Destination>>> callableT2 =
+        final Callable<Try<List<DestinationProperties>>> callableT2 =
             () -> TenantAccessor
                 .executeWithTenant(
                     t2,
@@ -156,10 +156,10 @@ class GetOrComputeAllDestinationsCommandTest
                             any -> tryGetAllDestinationsT2.get())
                         .execute());
 
-        final Future<Try<List<Destination>>> firstInvocation = ThreadContextExecutors.submit(callableT1);
+        final Future<Try<List<DestinationProperties>>> firstInvocation = ThreadContextExecutors.submit(callableT1);
         mainThreadLatch.await();
-        final Future<Try<List<Destination>>> secondInvocation = ThreadContextExecutors.submit(callableT2);
-        final Future<Try<List<Destination>>> thirdInvocation = ThreadContextExecutors.submit(callableT1);
+        final Future<Try<List<DestinationProperties>>> secondInvocation = ThreadContextExecutors.submit(callableT2);
+        final Future<Try<List<DestinationProperties>>> thirdInvocation = ThreadContextExecutors.submit(callableT1);
 
         assertThat(firstInvocation.get()).isNotNull();
         assertThat(secondInvocation.get()).isNotNull();

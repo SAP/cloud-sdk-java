@@ -109,6 +109,7 @@ class DestinationServiceFactory
         if( authTokens != null && !authTokens.isEmpty() ) {
             final AuthenticationType authType =
                 builder.get(DestinationProperty.AUTH_TYPE).getOrElse(AuthenticationType.NO_AUTHENTICATION);
+            authTokens.forEach(t -> throwOnTokenError(builder.get(DestinationProperty.NAME).getOrNull(), t));
             authTokens.forEach(t -> setExpirationTimestamp(t, authType));
 
             // Note: it is important that the auth tokens are added as property here
@@ -122,6 +123,18 @@ class DestinationServiceFactory
         }
 
         return builder.build();
+    }
+
+    private static void throwOnTokenError(
+        final String destinationName,
+        final DestinationServiceV1Response.DestinationAuthToken destinationAuthToken )
+    {
+        if( destinationAuthToken.getError() != null ) {
+            final String msg =
+                "Failed to read authentication token of destination '%s'. The destination service responded with an error: '%s'.\n"
+                    + "In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.";
+            throw new DestinationAccessException(msg.formatted(destinationName, destinationAuthToken.getError()));
+        }
     }
 
     private static void setExpirationTimestamp(
