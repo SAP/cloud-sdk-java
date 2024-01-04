@@ -54,7 +54,7 @@ jobs:
         uses: ./.github/actions/build-sdk
         with:
           force-update-non-sdk-m2-stash: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
-          prepare-release: ${{ contains($PRODUCTION_BRANCHES, github.ref) }}
+          prepare-release: ${{ contains(env.PRODUCTION_BRANCHES, github.ref) }}
 
   test:
     needs: build
@@ -161,7 +161,7 @@ jobs:
 
   deploy-snapshot:
     name: Deploy Snapshot
-    if: ${{ contains($PRODUCTION_BRANCHES, github.ref) }}
+    if: ${{ contains(env.PRODUCTION_BRANCHES, github.ref) }}
     needs: [build, codeql, test, checkstyle, pmd, spotbugs, archetypes]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -216,7 +216,7 @@ jobs:
         archetypes,
         deploy-snapshot,
       ]
-    if: ${{ failure() && contains($PRODUCTION_BRANCHES, github.ref) }}
+    if: ${{ failure() && contains(env.PRODUCTION_BRANCHES, github.ref) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
