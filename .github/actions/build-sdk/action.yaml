@@ -62,10 +62,10 @@ runs:
           echo "[DEBUG] Assembling release artifacts for version '$VERSION' because prepare-release is true."
         
           python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix release
-          zip -q -r sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip release
+          zip -q -r sap-cloud-sdk-java-$VERSION.zip release
           rm -rf release
       
-          echo "RELEASE_NAME='sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}'" >> $GITHUB_OUTPUT
+          echo "RELEASE_NAME='sap-cloud-sdk-java-$VERSION'" >> $GITHUB_OUTPUT
         else
           echo "[DEBUG] Not assembling release artifacts because prepare-release is false."
           echo "RELEASE_NAME=" >> $GITHUB_OUTPUT
@@ -86,7 +86,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.run-maven.outputs.RELEASE_NAME }}
-        path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
+        path: ${{ steps.run-maven.outputs.RELEASE_NAME }}.zip
         retention-days: 1
 
     - name: Save Non-SDK Maven Repository
