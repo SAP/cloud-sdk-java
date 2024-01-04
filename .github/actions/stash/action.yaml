@@ -37,18 +37,17 @@ runs:
       run: |
         CACHES=$(gh cache list --json id,key,ref,createdAt)
         EXISTING_CACHE=$(echo $CACHES | jq -c '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
-        if [[ -z $EXISTING_CACHE ]]; then
+        if [[ $EXISTING_CACHE -eq '' ]]; then
           echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
-          exit 1
+        else
+          echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
         fi
         
-        echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
         echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
       shell: bash
-      continue-on-error: true
 
     - name: Force Delete Cache
-      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outcome == 'success' }}
+      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.CACHE != '' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
@@ -59,7 +58,7 @@ runs:
 
     - name: Delete Cache If Too Old
       id: delete-cache-if-too-old
-      if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' && steps.fetch-caches.outcome == 'success' }}
+      if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' && steps.fetch-caches.outputs.CACHE != '' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
@@ -74,12 +73,12 @@ runs:
           echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
           CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
           gh cache delete $CACHE_ID
+          echo "CACHE_DELETED='true'" >> $GITHUB_OUTPUT
         else
           echo "Cache with key ${{ inputs.key }} is not older than ${{ inputs.update-after-days }} days; not deleting."
-          exit 1  
+          echo "CACHE_DELETED='false'" >> $GITHUB_OUTPUT
         fi
       shell: bash
-      continue-on-error: true
 
     - name: Should Save Cache
       id: should-save-cache
@@ -90,13 +89,13 @@ runs:
           exit 0
         fi
         
-        if [[ ${{ steps.fetch-caches.outcome }} -ne 'success' ]]; then
+        if [[ ${{ steps.fetch-caches.outputs.CACHE }} -eq '' ]]; then
           echo "Cache will be created as no existing cache was found."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
         
-        if [[ ${{ steps.delete-cache-if-too-old.outcome }} -eq 'success' ]]; then
+        if [[ ${{ steps.delete-cache-if-too-old.outputs.CACHE_DELETED }} -eq 'true' ]]; then
           echo "Cache will be re-created as the existing cache is older than ${{ inputs.update-after-days }} days."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
