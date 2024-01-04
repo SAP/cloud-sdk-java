@@ -62,12 +62,8 @@ runs:
       shell: bash
 
     - name: Create module-inventory
-      run: >
-        python 
-          ./scripts/create_module_inventory_file.py 
-          --sdk-root-directory ./ 
-          --output-file ./module-inventory.json 
-          --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
+      run: |
+        python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
       shell: bash
 
     - name: Local Changes Check
