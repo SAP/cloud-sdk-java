@@ -31,6 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: formatting
     name: Build
+    permissions:
+      checks: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
