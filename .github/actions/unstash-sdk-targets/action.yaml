@@ -1,18 +1,19 @@
 # assumptions:
 #   - The current action runner has the SDK repo checked out (i.e. our custom stash and unstash actions are available)
+#   - The current action runner has a JDK setup (i.e. `actions/setup-java` has been run)
 
-name: "Unstash SDK M2"
-description: "Unstashes the SDK's portion of the Maven .m2 directory"
+name: "Unstash SDK targets"
+description: "Unstashes the SDK target directories"
 
 inputs:
-  m2-root:
-    description: "The root directory of the M2 Maven directory to unstash"
+  sdk-root:
+    description: "The root directory of the SDK"
     required: false
-    default: "~/.m2/repository"
+    default: "."
   key:
     description: "The key to use when unstashing the SDK M2 directory"
     required: false
-    default: "sdk-m2-${{ github.ref }}"
+    default: "sdk-m2"
 
 outputs:
   unstashed:
@@ -23,7 +24,7 @@ runs:
   using: composite
   steps:
     - name: Print Action Start
-      run: echo ">>>>> Starting Unstash SDK M2 Action; inputs = ${{ toJson(inputs) }}"
+      run: echo ">>>>> Starting Unstash SDK Targets Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: Unstash
@@ -31,12 +32,10 @@ runs:
       uses: ./.github/actions/unstash
       with:
         # NOTE: These paths must match the ones of the stash action EXACTLY
-        path: |
-          ${{ inputs.m2-root }}/com/sap/cloud/sdk/**
-          ${{ inputs.m2-root }}/archetype-catalog.xml
+        path: ${{ inputs.sdk-root }}/**/target/*
         key: ${{ inputs.key }}
 
     - name: Print Action End
       if: always()
-      run: echo "<<<<< Finished Unstash SDK M2 Action"
+      run: echo "<<<<< Finished Unstash SDK Targets Action"
       shell: bash

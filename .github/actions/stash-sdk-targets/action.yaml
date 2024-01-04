@@ -1,15 +1,15 @@
-name: "Stash SDK M2"
-description: "Stashes the SDK's portion of the Maven .m2 directory"
+name: "Stash SDK Targets"
+description: "Stashes the SDK target directories"
 
 inputs:
-  m2-root:
-    description: "The root directory of the M2 Maven directory to stash"
+  sdk-root:
+    description: "The root directory of the SDK"
     required: false
-    default: "~/.m2/repository"
+    default: "."
   key:
-    description: "The key to use when stashing the SDK M2 directory"
+    description: "The key to use when stashing the SDK target directories"
     required: false
-    default: "sdk-m2-${{ github.ref }}"
+    default: "sdk-targets-${{ github.ref }}"
   force-update:
     description: "Overrides any existing stashes"
     required: false
@@ -21,14 +21,14 @@ inputs:
 
 outputs:
   stashed:
-    description: "Whether the SDK M2 directories were stashed"
+    description: "Whether the SDK target directories were stashed"
     value: ${{ steps.stash.outputs.stashed }}
 
 runs:
   using: composite
   steps:
     - name: Print Action Start
-      run: echo ">>>>> Starting Stash SDK M2 Action; inputs = ${{ toJson(inputs) }}"
+      run: echo ">>>>> Starting Stash SDK Targets Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: Stash
@@ -36,14 +36,12 @@ runs:
       uses: ./.github/actions/stash
       with:
         # NOTE: These paths must match the ones of the unstash action EXACTLY
-        path: |
-          ${{ inputs.m2-root }}/com/sap/cloud/sdk/**
-          ${{ inputs.m2-root }}/archetype-catalog.xml
+        path: ${{ inputs.sdk-root }}/**/target/*
         key: ${{ inputs.key }}
         force-update: ${{ inputs.force-update }}
         update-after-days: ${{ inputs.update-after-days }}
 
     - name: Print Action End
       if: always()
-      run: echo "<<<<< Finished Stash SDK M2 Action"
+      run: echo "<<<<< Finished Stash SDK Targets Action"
       shell: bash
