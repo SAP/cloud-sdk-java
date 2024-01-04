@@ -13,7 +13,7 @@ inputs:
   key:
     description: "The key to use when unstashing the SDK M2 directory"
     required: false
-    default: "sdk-m2"
+    default: "sdk-targets-${{ github.ref }}"
 
 outputs:
   unstashed:
