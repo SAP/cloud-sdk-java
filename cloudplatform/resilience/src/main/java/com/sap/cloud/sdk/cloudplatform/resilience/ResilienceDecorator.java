@@ -19,8 +19,6 @@ import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
-import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,9 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ResilienceDecorator
 {
-    @Setter( AccessLevel.PACKAGE )
-    private static String LEGACY_DECORATION_STRATEGY =
-        "com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy";
+    static String LEGACY_DECORATION_STRATEGY;
+
+    static {
+        LEGACY_DECORATION_STRATEGY = "com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy";
+    }
+
     /**
      * The current instance of {@link ResilienceDecorationStrategy} to be used to guarantee resilient function
      * properties.
