@@ -39,7 +39,7 @@ runs:
         EXISTING_CACHE=$(echo $CACHES | jq -c '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
         if [[ -z "$EXISTING_CACHE" ]]; then
           echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
-          echo "CACHE=''" >> $GITHUB_OUTPUT
+          echo "CACHE=" >> $GITHUB_OUTPUT
         else
           echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
           echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
@@ -49,7 +49,7 @@ runs:
       shell: bash
 
     - name: Force Delete Cache
-      if: ${{ inputs.force-update == 'true' }}
+      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.CACHE != '' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
@@ -66,7 +66,7 @@ runs:
 
     - name: Delete Cache If Too Old
       id: delete-cache-if-too-old
-      if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' }}
+      if: ${{ inputs.force-update != 'true' && inputs.update-after-days != '' && steps.fetch-caches.outputs.CACHE != '' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
