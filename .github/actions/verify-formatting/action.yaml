@@ -8,7 +8,12 @@ inputs:
   maven-cli-args:
     description: "Arguments to pass to the Maven command"
     required: false
-    default: "--batch-mode"
+    default: "--batch-mode --fail-at-end --show-version --threads 1C"
+
+outputs:
+  non-sdk-m2-stash-created:
+    description: "Whether or not the non-SDK M2 stash was created"
+    value: ${{ steps.stash-non-sdk-m2.outputs.stashed }}
 
 runs:
   using: composite
@@ -16,6 +21,9 @@ runs:
     - name: Print Action Start
       run: echo ">>>>> Starting Verify Formatting Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
+
+    - name: Load Non-SDK M2
+      uses: ./.github/actions/unstash-non-sdk-m2
 
     - name: Code Formatter Plugin
       run: |
@@ -31,6 +39,10 @@ runs:
       run: |
         mvn ${{ inputs.maven-cli-args }} com.github.ekryd.sortpom:sortpom-maven-plugin:verify
       shell: bash
+
+    - name: Stash Non-SDK M2
+      id: stash-non-sdk-m2
+      uses: ./.github/actions/stash-non-sdk-m2
 
     - name: Print Action End
       if: always()
