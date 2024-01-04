@@ -49,7 +49,7 @@ runs:
       shell: bash
 
     - name: Force Delete Cache
-      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.CACHE != '' }}
+      if: ${{ inputs.force-update == 'true' && steps.fetch-caches.outputs.CACHE }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
