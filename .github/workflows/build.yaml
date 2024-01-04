@@ -40,8 +40,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: formatting
     name: Build
-    outputs:
-      non-sdk-m2-stash-created: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
     permissions:
       actions: write # Required to eventually delete stashes
     steps:
@@ -60,9 +58,22 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      actions: write # Required to eventually delete stashes
     name: Test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Test SDK
+        uses: ./.github/actions/test-sdk
+
+  checkstyle:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Checkstyle
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -77,224 +88,125 @@ jobs:
       - name: Load SDK Target Dirs
         uses: ./.github/actions/unstash-sdk-targets
 
-      - name: Test
+      - name: Checkstyle
         run: |
-          mvn $MVN_CLI_ARGS_SINGLE_THREAD org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
-      - name: Test Report
-        if: success() || failure()
-        uses: scacap/action-surefire-report@v1
-      - name: Coverage Report
+          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
+      - name: Checkstyle Results
         run: |
-          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
-      - name: Save Non-SDK Maven Repository
-        if: ${{ needs.build.outputs.non-sdk-m2-stash-created }}
-        uses: ./.github/actions/stash-non-sdk-m2
+          python .pipeline/scripts/print-checkstyle.py
+
+  pmd:
+    needs: build
+    runs-on: ubuntu-latest
+    name: PMD
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
         with:
-          force-update: ${{ needs.build.outputs.non-sdk-m2-stash-created }}
+          distribution: "temurin"
+          java-version: 17
+      - name: Load Non-SDK M2
+        uses: ./.github/actions/unstash-non-sdk-m2
+      - name: Load SDK M2
+        uses: ./.github/actions/unstash-sdk-m2
+      - name: Load SDK Target Dirs
+        uses: ./.github/actions/unstash-sdk-targets
 
-#  checkstyle:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    name: Checkstyle
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup java
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: 17
-#      # M2
-#      - name: Load Maven Repository
-#        uses: actions/cache/restore@v3
-#        id: restore-cache
-#        with:
-#          path: ~/.m2/repository
-#          key: maven
-#      - name: Download M2 SDK Directory
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: m2-sdk
-#          path: .
-#      - name: UNZIP M2 SDK Directory
-#        run: |
-#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-#
-#      # Target
-#      - name: Download Target Dirs
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: target-dirs
-#          path: .
-#      - name: UNZIP Target Dirs
-#        run: |
-#          unzip -D target.zip
-#      - name: Checkstyle
-#        run: |
-#          mvn $MVN_CLI_ARGS $MVN_SKIP_ARGS -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle
-#      - name: Checkstyle Results
-#        run: |
-#          python .pipeline/scripts/print-checkstyle.py
+      - name: PMD
+        run: |
+          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
+      - name: PMD Report
+        run: |
+          python .pipeline/scripts/print-pmd.py
 
-#  pmd:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    name: PMD
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup java
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: 17
-#      # M2
-#      - name: Load Maven Repository
-#        uses: actions/cache/restore@v3
-#        id: restore-cache
-#        with:
-#          path: ~/.m2/repository
-#          key: maven
-#      - name: Download M2 SDK Directory
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: m2-sdk
-#          path: .
-#      - name: UNZIP M2 SDK Directory
-#        run: |
-#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-#
-#      # Target
-#      - name: Download Target Dirs
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: target-dirs
-#          path: .
-#      - name: UNZIP Target Dirs
-#        run: |
-#          unzip -D target.zip
-#      - name: PMD
-#        run: |
-#          mvn $MVN_CLI_ARGS org.apache.maven.plugins:maven-pmd-plugin:pmd
-#      - name: PMD Report
-#        run: |
-#          python .pipeline/scripts/print-pmd.py
-#
-#  spotbugs:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    # Permissions block is optional, useful for dependabot checks
-#    permissions:
-#      checks: write
-#      contents: read
-#    name: Spotbugs
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup java
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: 17
-#      # M2
-#      - name: Load Maven Repository
-#        uses: actions/cache/restore@v3
-#        id: restore-cache
-#        with:
-#          path: ~/.m2/repository
-#          key: maven
-#      - name: Download M2 SDK Directory
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: m2-sdk
-#          path: .
-#      - name: UNZIP M2 SDK Directory
-#        run: |
-#          unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
-#
-#      # Target
-#      - name: Download Target Dirs
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: target-dirs
-#          path: .
-#      - name: UNZIP Target Dirs
-#        run: |
-#          unzip -D target.zip
-#      - name: Spotbugs
-#        run: |
-#          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
-#      - name: Spotbugs Report
-#        run: |
-#          python .pipeline/scripts/print-spotbugs.py
+  spotbugs:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Spotbugs
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: Load Non-SDK M2
+        uses: ./.github/actions/unstash-non-sdk-m2
+      - name: Load SDK M2
+        uses: ./.github/actions/unstash-sdk-m2
+      - name: Load SDK Target Dirs
+        uses: ./.github/actions/unstash-sdk-targets
 
-#  codeql:
-#    name: Analyze with CodeQL
-#    needs: formatting
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 360
-#    permissions:
-#      actions: read
-#      contents: read
-#      security-events: write
-#
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v3
-#
-#      - name: Setup java
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: 17
-#
-#      # Initializes the CodeQL tools for scanning.
-#      - name: Initialize CodeQL
-#        uses: github/codeql-action/init@v2
-#        with:
-#          languages: "java"
-#          queries: security-extended
-#
-#      # M2
-#      - name: Load Maven Repository
-#        uses: actions/cache/restore@v3
-#        id: restore-cache
-#        with:
-#          path: ~/.m2/repository
-#          key: maven
-#
-#      - name: Autobuild
-#        uses: github/codeql-action/autobuild@v2
-#
-#      - name: Perform CodeQL Analysis
-#        uses: github/codeql-action/analyze@v2
-#        with:
-#          category: "/language:java"
+      - name: Spotbugs
+        run: |
+          mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
+      - name: Spotbugs Report
+        run: |
+          python .pipeline/scripts/print-spotbugs.py
 
-#  archetypes:
-#    runs-on: ubuntu-latest
-#    needs: build
-#    permissions:
-#      checks: write
-#      contents: read
-#    strategy:
-#      matrix:
-#        task:
-#          - {
-#              "archetype": "spring-boot3",
-#              "javaVersion": 17,
-#              "startCommand": "mvn spring-boot:run -B",
-#            }
-#    name: Test Archetype ${{ matrix.task.archetype }}
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup Java
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: "temurin"
-#          java-version: ${{ matrix.task.javaVersion }}
-#
-#      - name: Verify Archetype
-#        uses: ./.github/actions/verify-archetype
-#        with:
-#          archetype: ${{ matrix.task.archetype }}
+  codeql:
+    name: Analyze with CodeQL
+    needs: formatting
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "java"
+          queries: security-extended
+
+      - name: Load Non-SDK M2
+        uses: ./.github/actions/unstash-non-sdk-m2
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
+
+  archetypes:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        task:
+          - {
+              "archetype": "spring-boot3",
+              "javaVersion": 17,
+              "startCommand": "mvn spring-boot:run -B",
+            }
+    name: Test Archetype ${{ matrix.task.archetype }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+
+      - name: Verify Archetype
+        uses: ./.github/actions/verify-archetype
+        with:
+          archetype: ${{ matrix.task.archetype }}
 
 #  deploy-snapshot:
 #    name: Deploy Snapshot

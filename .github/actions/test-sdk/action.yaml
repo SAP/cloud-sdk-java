@@ -1,0 +1,42 @@
+name: "Test SDK"
+description: "Tests the SDK"
+
+inputs:
+  maven-args:
+    description: "The arguments to pass to Maven"
+    required: false
+    default: "--batch-mode --fail-at-end --show-version"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Test SDK Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Load Non-SDK M2
+      uses: ./.github/actions/unstash-non-sdk-m2
+    - name: Load SDK M2
+      uses: ./.github/actions/unstash-sdk-m2
+    - name: Load SDK Target Dirs
+      uses: ./.github/actions/unstash-sdk-targets
+
+    - name: Test
+      run: |
+        MVN_ARGS="${{ inputs.maven-args }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report"
+        echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+        
+        mvn $MVN_ARGS
+      shell: bash
+    - name: Test Report
+      if: success() || failure()
+      uses: scacap/action-surefire-report@v1
+    - name: Coverage Report
+      run: |
+        python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
+      shell: bash
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Test SDK Action"
+      shell: bash
