@@ -38,7 +38,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: formatting
+#    needs: formatting
     name: Build
     outputs:
       version: ${{ steps.get-version.outputs.VERSION }}
