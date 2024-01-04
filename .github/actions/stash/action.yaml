@@ -38,14 +38,12 @@ runs:
         CACHES=$(gh cache list --json id,key,ref,createdAt)
         EXISTING_CACHE=$(echo $CACHES | jq -c '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
         if [[ -z "$EXISTING_CACHE" ]]; then
-          echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
+          echo "[DEBUG] No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
           echo "CACHE=" >> $GITHUB_OUTPUT
         else
-          echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
+          echo "[DEBUG] Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
           echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
         fi
-        
-        echo "[DEBUG] $(cat $GITHUB_OUTPUT)"
       shell: bash
 
     - name: Force Delete Cache
@@ -53,13 +51,7 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        echo "[DEBUG] existing cache in force delete action: ${{ steps.fetch-caches.outputs.CACHE }}" 
-        if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
-          echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}; nothing to delete."
-          exit 0
-        fi
-        
-        echo "Force deleting cache with key ${{ inputs.key }}."
+        echo "[DEBUG] Force deleting cache with key ${{ inputs.key }}."
         CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
         gh cache delete $CACHE_ID
       shell: bash
@@ -70,12 +62,7 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
-          echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}; nothing to delete."
-          exit 0
-        fi
-        
-        echo "Checking whether existing Cache is older than ${{ inputs.update-after-days }} days: ${{ steps.fetch-caches.outputs.CACHE }}"
+        echo "[DEBUG] Checking whether existing Cache is older than ${{ inputs.update-after-days }} days: ${{ steps.fetch-caches.outputs.CACHE }}"
         CREATED_AT=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.createdAt')
         CREATED_AT_TIMESTAMP=$(date -d $CREATED_AT +%s)
         NOW_TIMESTAMP=$(date +%s)
@@ -83,12 +70,12 @@ runs:
         THRESHOLD=$((60*60*24*${{ inputs.update-after-days }}))
         
         if [ $SECONDS_SINCE_CREATED -gt $THRESHOLD ]; then
-          echo "Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
+          echo "[DEBUG] Cache with key ${{ inputs.key }} is older than ${{ inputs.update-after-days }} days; deleting."
           CACHE_ID=$(echo ${{ steps.fetch-caches.outputs.CACHE }} | jq -r '.id')
           gh cache delete $CACHE_ID
           echo "CACHE_DELETED='true'" >> $GITHUB_OUTPUT
         else
-          echo "Cache with key ${{ inputs.key }} is not older than ${{ inputs.update-after-days }} days; not deleting."
+          echo "[DEBUG] Cache with key ${{ inputs.key }} is not older than ${{ inputs.update-after-days }} days; not deleting."
           echo "CACHE_DELETED='false'" >> $GITHUB_OUTPUT
         fi
       shell: bash
@@ -96,14 +83,14 @@ runs:
     - name: Should Save Cache
       id: should-save-cache
       run: |
-        if [[ "${{ inputs.force-update }}" == "true" ]]; then
-          echo "Cache will be re-created as the force-update flag is set."
+        if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
+          echo "Cache will be created as no existing cache was found."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
         
-        if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
-          echo "Cache will be created as no existing cache was found."
+        if [[ "${{ inputs.force-update }}" == "true" ]]; then
+          echo "Cache will be re-created as the force-update flag is set."
           echo "RESULT='true'" >> $GITHUB_OUTPUT
           exit 0
         fi
