@@ -84,24 +84,24 @@ runs:
       run: |
         if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
           echo "[DEBUG] Cache will be created as no existing cache was found."
-          echo "RESULT='true'" >> $GITHUB_OUTPUT
+          echo "RESULT=true" >> $GITHUB_OUTPUT
           exit 0
         fi
         
         if [[ "${{ inputs.force-update }}" == "true" ]]; then
           echo "[DEBUG] Cache will be re-created as the force-update flag is set."
-          echo "RESULT='true'" >> $GITHUB_OUTPUT
+          echo "RESULT=true" >> $GITHUB_OUTPUT
           exit 0
         fi
         
         if [[ "${{ steps.delete-cache-if-too-old.outputs.CACHE_DELETED }}" == "true" ]]; then
           echo "[DEBUG] Cache will be re-created as the existing cache is older than ${{ inputs.update-after-days }} days."
-          echo "RESULT='true'" >> $GITHUB_OUTPUT
+          echo "RESULT=true" >> $GITHUB_OUTPUT
           exit 0
         fi
         
         echo "[DEBUG] Cache will not be (re-)created."
-        echo "RESULT='false'" >> $GITHUB_OUTPUT
+        echo "RESULT=false" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Save Cache
