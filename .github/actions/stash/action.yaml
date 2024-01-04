@@ -39,11 +39,11 @@ runs:
         EXISTING_CACHE=$(echo $CACHES | jq -c '.[] | select(.key == "${{ inputs.key }}" and .ref == "${{ github.ref }}")')
         if [[ $EXISTING_CACHE -eq '' ]]; then
           echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}."
+          echo "CACHE=''" >> $GITHUB_OUTPUT
         else
           echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
+          echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
         fi
-        
-        echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Force Delete Cache
