@@ -65,7 +65,7 @@ runs:
           zip -q -r sap-cloud-sdk-java-$VERSION.zip release
           rm -rf release
       
-          echo "RELEASE_NAME='sap-cloud-sdk-java-$VERSION'" >> $GITHUB_OUTPUT
+          echo "RELEASE_NAME=sap-cloud-sdk-java-$VERSION" >> $GITHUB_OUTPUT
         else
           echo "[DEBUG] Not assembling release artifacts because prepare-release is false."
           echo "RELEASE_NAME=" >> $GITHUB_OUTPUT
