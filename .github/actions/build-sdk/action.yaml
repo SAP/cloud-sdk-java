@@ -27,7 +27,7 @@ runs:
       run: echo ">>>>> Starting Build SDK Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
-    - name: Save Maven Repository
+    - name: Load Non-SDK M2
       uses: ./.github/actions/unstash-non-sdk-m2
 
     - name: Run Maven
@@ -63,8 +63,6 @@ runs:
 
     - name: Create module-inventory
       run: |
-        python --version
-        ls -lisa ./scripts/
         python ./scripts/create_module_inventory_file.py --sdk-root-directory ./ --output-file ./module-inventory.json --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
       shell: bash
 

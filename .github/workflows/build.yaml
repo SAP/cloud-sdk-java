@@ -16,6 +16,8 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     name: Verify Formatting
+    outputs:
+      non-sdk-m2-stash-created: ${{ steps.load-non-sdk-m2.outputs.stashed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,6 +26,9 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
+      - name: Load Non-SDK M2
+        id: load-non-sdk-m2
+        uses: ./.github/actions/unstash-non-sdk-m2
       - name: Verify Formatting
         uses: ./.github/actions/verify-formatting
 
@@ -43,6 +48,8 @@ jobs:
           java-version: 17
       - name: Build SDK
         uses: ./.github/actions/build-sdk
+        with:
+          force-update-non-sdk-m2-stash: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
 
 #  test:
 #    needs: build
