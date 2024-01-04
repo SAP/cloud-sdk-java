@@ -31,7 +31,6 @@ runs:
 
     - name: Fetch Existing Caches
       id: fetch-caches
-      if: ${{ inputs.force-update == 'true' || inputs.update-after-days != '' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
