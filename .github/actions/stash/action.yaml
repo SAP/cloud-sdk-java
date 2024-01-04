@@ -44,6 +44,8 @@ runs:
           echo "Existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}: $EXISTING_CACHE"
           echo "CACHE='$EXISTING_CACHE'" >> $GITHUB_OUTPUT
         fi
+        
+        echo "[DEBUG] $(cat $GITHUB_OUTPUT)"
       shell: bash
 
     - name: Force Delete Cache
