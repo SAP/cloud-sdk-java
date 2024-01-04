@@ -40,6 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: formatting
     name: Build
+    outputs:
+      release-artifact-name: ${{ steps.build-sdk.outputs.release-name }}
     permissions:
       actions: write # Required to eventually delete stashes
     steps:
@@ -50,7 +52,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Build SDK
-        if: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
+        id: build-sdk
         uses: ./.github/actions/build-sdk
         with:
           force-update-non-sdk-m2-stash: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
@@ -147,7 +149,7 @@ jobs:
 
   codeql:
     name: Analyze with CodeQL
-    needs: formatting
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 360
     permissions:
@@ -165,18 +167,19 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
+      - name: Load Non-SDK M2
+        uses: ./.github/actions/unstash-non-sdk-m2
+      - name: Load SDK M2
+        uses: ./.github/actions/unstash-sdk-m2
+      - name: Load SDK Target Dirs
+        uses: ./.github/actions/unstash-sdk-targets
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: "java"
           queries: security-extended
-
-      - name: Load Non-SDK M2
-        uses: ./.github/actions/unstash-non-sdk-m2
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
