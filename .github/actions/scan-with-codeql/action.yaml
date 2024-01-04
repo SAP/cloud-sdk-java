@@ -1,0 +1,31 @@
+name: "Scan With CodeQL"
+description: "Scan with CodeQL"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Scan With CodeQL Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: "java"
+        queries: security-extended
+    - name: Build SDK
+      uses: ./.github/actions/build-sdk
+      with:
+        prepare-release: "false"
+        stash-non-sdk-m2: "false"
+        stash-sdk-m2: "false"
+        stash-sdk-targets: "false"
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:java"
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Scan With CodeQL Action"
+      shell: bash

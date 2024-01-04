@@ -1,0 +1,37 @@
+name: "Scan With PMD"
+description: "Scans the SDK with PMD"
+
+inputs:
+  maven-args:
+    description: "The arguments to pass to Maven"
+    required: false
+    default: "--batch-mode --fail-at-end --show-version --threads 1C -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Scan With PMD Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Load Non-SDK M2
+      uses: ./.github/actions/unstash-non-sdk-m2
+    - name: Load SDK M2
+      uses: ./.github/actions/unstash-sdk-m2
+    - name: Load SDK Target Dirs
+      uses: ./.github/actions/unstash-sdk-targets
+
+    - name: PMD
+      run: |
+        MVN_ARGS="${{ inputs.maven-args }} org.apache.maven.plugins:maven-pmd-plugin:pmd"
+        echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+        mvn $MVN_ARGS
+      shell: bash
+    - name: PMD Report
+      run: python .pipeline/scripts/print-pmd.py
+      shell: bash
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Scan With PMD Action"
+      shell: bash

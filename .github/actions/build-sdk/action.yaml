@@ -2,10 +2,6 @@ name: "Build SDK"
 description: "Builds the SDK"
 
 inputs:
-  force-update-non-sdk-m2-stash:
-    description: "Whether to force update the non-sdk m2 stash"
-    required: false
-    default: "false"
   maven-args:
     description: "The arguments to pass to Maven"
     required: false
@@ -14,6 +10,22 @@ inputs:
     description: "Whether to prepare a release"
     required: true
     default: "false"
+  stash-non-sdk-m2:
+    description: "Whether to stash the non-sdk m2 repository"
+    required: false
+    default: "true"
+  force-update-non-sdk-m2-stash:
+    description: "Whether to force update the non-sdk m2 stash"
+    required: false
+    default: "false"
+  stash-sdk-m2:
+    description: "Whether to stash the SDK m2 repository"
+    required: false
+    default: "true"
+  stash-sdk-targets:
+    description: "Whether to stash the SDK target directories"
+    required: false
+    default: "true"
 
 outputs:
   release-name:
@@ -78,12 +90,15 @@ runs:
         retention-days: 1
 
     - name: Save Non-SDK Maven Repository
+      if: ${{ inputs.stash-non-sdk-m2 == 'true' || inputs.force-update-non-sdk-m2-stash == 'true' }}
       uses: ./.github/actions/stash-non-sdk-m2
       with:
         force-update: ${{ inputs.force-update-non-sdk-m2-stash }}
     - name: Save SDK Maven Repository
+      if: ${{ inputs.stash-sdk-m2 == 'true' }}
       uses: ./.github/actions/stash-sdk-m2
     - name: Save SDK Target Dirs
+      if: ${{ inputs.stash-sdk-targets == 'true' }}
       uses: ./.github/actions/stash-sdk-targets
 
     - name: Print Action End
