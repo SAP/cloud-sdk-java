@@ -53,6 +53,7 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
+        echo "[DEBUG] existing cache in force delete action: ${{ steps.fetch-caches.outputs.CACHE }}" 
         if [[ -z "${{ steps.fetch-caches.outputs.CACHE }}" ]]; then
           echo "No existing cache found with key ${{ inputs.key }} and ref ${{ github.ref }}; nothing to delete."
           exit 0
