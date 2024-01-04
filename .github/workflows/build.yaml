@@ -52,6 +52,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
       - name: Build SDK
+        if: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
         uses: ./.github/actions/build-sdk
         with:
           force-update-non-sdk-m2-stash: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
@@ -74,7 +75,7 @@ jobs:
       - name: Load SDK M2
         uses: ./.github/actions/unstash-sdk-m2
       - name: Load SDK Target Dirs
-        uses: ./.github/actions/unstash-sdk-target-dirs
+        uses: ./.github/actions/unstash-sdk-targets
 
       - name: Test
         run: |
@@ -86,6 +87,7 @@ jobs:
         run: |
           python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
       - name: Save Non-SDK Maven Repository
+        if: ${{ needs.build.outputs.non-sdk-m2-stash-created }}
         uses: ./.github/actions/stash-non-sdk-m2
         with:
           force-update: ${{ needs.build.outputs.non-sdk-m2-stash-created }}
