@@ -245,14 +245,13 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         final DestinationHeaderProvider headerProvider =
             createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
         final String idString = Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown");
-        final String name = idString + "-" + UUID.randomUUID();
         return DefaultHttpDestination
             .builder(serviceUri)
             .headerProviders(headerProvider)
-            .name(name)
+            .name(idString)
             .property(
                 OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                createTokenRetrievalResilienceConfiguration(name))
+                createTokenRetrievalResilienceConfiguration(idString))
             .build();
     }
 

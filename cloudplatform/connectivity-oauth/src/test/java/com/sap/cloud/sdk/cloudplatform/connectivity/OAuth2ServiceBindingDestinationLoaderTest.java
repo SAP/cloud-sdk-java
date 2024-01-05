@@ -203,7 +203,14 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.get().getUri()).isEqualTo(baseUrl);
 
-        verify(sut, times(1))
+        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
+            .as("The destination should not be cached.")
+            .isNotSameAs(result.get());
+        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
+            .as("The destination objects should be equal so that they use the same HTTP client.")
+            .isEqualTo(result.get());
+
+        verify(sut, times(3))
             .toDestination(
                 eq(baseUrl),
                 eq(tokenUrl),
