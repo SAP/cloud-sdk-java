@@ -625,7 +625,7 @@ public class DestinationService implements DestinationLoader
          * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache. As a
          * consequence, all existing cache entries will be lost.
          *
-         * @deprecated since 5.1.0. Change detection mode is enabled by default
+         * @deprecated since 5.2.0. Change detection mode is enabled by default
          *
          * @since 4.7.0
          */
@@ -668,7 +668,7 @@ public class DestinationService implements DestinationLoader
          * <p>
          * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache.
          *
-         * @since 5.1.0
+         * @since 5.2.0
          */
         @Beta
         public static void disableChangeDetection()

@@ -58,7 +58,6 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.stubbing.Answer;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
@@ -1265,7 +1264,7 @@ class DestinationServiceTest
     }
 
     @Test
-    void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategyWithoutChangeDetection()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithExchangeOnlyStrategy()
     {
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(EXCHANGE_ONLY)).build();
@@ -1303,7 +1302,7 @@ class DestinationServiceTest
     }
 
     @Test
-    void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategyWithoutChangeDetection()
+    void testPrincipalIsolationForDestinationWithUserPropagationWithDefaultExchangeStrategy()
     {
         @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
