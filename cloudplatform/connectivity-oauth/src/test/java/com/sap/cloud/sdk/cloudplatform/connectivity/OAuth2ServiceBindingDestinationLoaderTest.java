@@ -390,35 +390,6 @@ class OAuth2ServiceBindingDestinationLoaderTest
     }
 
     @Test
-    void testResilienceIsAdded()
-    {
-        final DefaultHttpDestination baseDestination = DefaultHttpDestination.builder(baseUrl).name("foo").build();
-
-        sut = new OAuth2ServiceBindingDestinationLoader();
-
-        HttpDestination result =
-            sut.toDestination(baseUrl, tokenUrl, credentials, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, TEST_SERVICE);
-
-        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
-        ResilienceConfiguration config =
-            (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
-        assertThat(config.identifier()).startsWith(TEST_SERVICE.toString());
-
-        result =
-            sut
-                .toProxiedDestination(
-                    baseDestination,
-                    baseUrl,
-                    tokenUrl,
-                    credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
-        config = (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
-        assertThat(config.identifier()).startsWith(baseDestination.get(DestinationProperty.NAME).get());
-    }
-
-    @Test
     void testExceptionInOAuth2PropertySupplierIsHandledCorrectly()
     {
         final ImmutableMap<String, Object> bindingCredentials =

@@ -227,9 +227,6 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             .fromDestination(destinationToBeProxied)
             .proxy(proxyUrl)
             .headerProviders(headerProvider)
-            .property(
-                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                createTokenRetrievalResilienceConfiguration(name))
             .buildInternal();
     }
 
@@ -244,14 +241,12 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
             createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
-        final String idString = Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown");
+        final String idString = Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
+                + "-" + clientIdentity.getId();
         return DefaultHttpDestination
             .builder(serviceUri)
             .headerProviders(headerProvider)
             .name(idString)
-            .property(
-                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                createTokenRetrievalResilienceConfiguration(idString))
             .build();
     }
 

@@ -62,8 +62,8 @@ class OnPremTest
         final OAuth2Service service =
             new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        final String token1 = service.retrieveAccessToken(NO_RESILIENCE);
-        final String token2 = service.retrieveAccessToken(NO_RESILIENCE);
+        final String token1 = service.retrieveAccessToken();
+        final String token2 = service.retrieveAccessToken();
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -79,8 +79,8 @@ class OnPremTest
         final OAuth2Service service2 =
             new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_PROVIDER);
 
-        final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
-        final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
+        final String token1 = service1.retrieveAccessToken();
+        final String token2 = service2.retrieveAccessToken();
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -96,10 +96,10 @@ class OnPremTest
 
         final String token1 =
             TenantAccessor
-                .executeWithTenant(new DefaultTenant("abcd"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
         final String token2 =
             TenantAccessor
-                .executeWithTenant(new DefaultTenant("abcd"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -115,10 +115,10 @@ class OnPremTest
 
         final String token1 =
             TenantAccessor
-                .executeWithTenant(new DefaultTenant("tenant 1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("tenant 1"), service::retrieveAccessToken);
         final String token2 =
             TenantAccessor
-                .executeWithTenant(new DefaultTenant("tenant 2"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+                .executeWithTenant(new DefaultTenant("tenant 2"), service::retrieveAccessToken);
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token");
@@ -138,9 +138,9 @@ class OnPremTest
             new OAuth2Service(MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         TenantAccessor
-            .executeWithTenant(new DefaultTenant("tenant1"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+            .executeWithTenant(new DefaultTenant("tenant1"), service::retrieveAccessToken);
         TenantAccessor
-            .executeWithTenant(new DefaultTenant("tenant2"), () -> service.retrieveAccessToken(NO_RESILIENCE));
+            .executeWithTenant(new DefaultTenant("tenant2"), service::retrieveAccessToken);
 
         final List<ServeEvent> events = MOCK_SERVER.getAllServeEvents();
 
@@ -159,8 +159,8 @@ class OnPremTest
         final OAuth2Service service2 =
             new OAuth2Service(SECOND_MOCK_SERVER.baseUrl(), SOME_IDENTITY, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final String token1 = service1.retrieveAccessToken(NO_RESILIENCE);
-        final String token2 = service2.retrieveAccessToken(NO_RESILIENCE);
+        final String token1 = service1.retrieveAccessToken();
+        final String token2 = service2.retrieveAccessToken();
 
         assertThat(token1).isEqualTo("token");
         assertThat(token2).isEqualTo("token2");

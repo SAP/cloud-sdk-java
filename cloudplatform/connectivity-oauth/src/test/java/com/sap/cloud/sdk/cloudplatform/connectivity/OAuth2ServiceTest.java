@@ -13,6 +13,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
@@ -25,9 +27,6 @@ import lombok.SneakyThrows;
 
 class OAuth2ServiceTest
 {
-    private static final ResilienceConfiguration NO_RESILIENCE =
-        ResilienceConfiguration.empty(OAuth2ServiceTest.class.getName() + "_empty");
-
     @Test
     @SneakyThrows
     void testRetrieveAccessTokenHandlesNullResponse()
@@ -47,7 +46,7 @@ class OAuth2ServiceTest
         final OAuth2Service sut = spy(new OAuth2Service("some.uri", identity, TECHNICAL_USER_PROVIDER));
         doReturn(tokenFlows).when(sut).getTokenFlowFactory(isNull());
 
-        assertThatThrownBy(() -> sut.retrieveAccessToken(NO_RESILIENCE))
+        assertThatThrownBy(sut::retrieveAccessToken)
             .isExactlyInstanceOf(DestinationOAuthTokenException.class)
             .hasMessageContaining("OAuth2 token request failed");
     }

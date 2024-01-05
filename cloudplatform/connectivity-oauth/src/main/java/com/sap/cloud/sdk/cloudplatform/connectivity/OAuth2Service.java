@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTo
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedException;
@@ -37,6 +39,8 @@ import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +50,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OAuth2Service
 {
+    private static final Duration DEFAULT_TOKEN_RETRIEVAL_TIMEOUT = Duration.ofSeconds(10);
+
     /**
      * Cache to reuse OAuth2TokenService and with that reuse the underlying response cache.
      * <p>
@@ -68,11 +74,17 @@ class OAuth2Service
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
 
+    private final ResilienceConfiguration resilienceConfig;
+
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
+        resilienceConfig = ResilienceConfiguration
+                .of(identity.getId())
+                .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
+                .timeLimiterConfiguration(ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
     }
 
     static void clearCache()
@@ -90,7 +102,7 @@ class OAuth2Service
     }
 
     @Nonnull
-    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
+    String retrieveAccessToken()
     {
         log.debug("Retrieving Access Token from XSUAA on behalf of {}.", onBehalfOf);
 
@@ -147,7 +159,6 @@ class OAuth2Service
     @Nullable
     private OAuth2TokenResponse executeUserExchangeFlow()
     {
-
         final Try<DecodedJWT> maybeToken = AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt);
         final Try<String> maybeTenant = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId);
 
@@ -159,8 +170,8 @@ class OAuth2Service
         if( maybeTenant.isFailure() ) {
             log
                 .warn(
-                    "Unexpected state: An Auth Token was found in the current context, but the current tenant is undefined."
-                        + "This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results."
+                    "Unexpected state: An Auth Token was found in the current context, but the current tenant is undefined. "
+                        + "This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results. "
                         + "Proceeding with tenant {} defined in the current token.",
                     token.getAppTid());
             log.debug("The following token is used for the JwtBearerTokenFlow: {}", token);

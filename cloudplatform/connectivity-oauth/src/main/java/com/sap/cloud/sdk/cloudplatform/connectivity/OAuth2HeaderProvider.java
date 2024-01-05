@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class OAuth2HeaderProvider implements DestinationHeaderProvider
 {
-    static final String PROPERTY_OAUTH2_RESILIENCE_CONFIG = "oauth-resilience-config";
     @Nonnull
     private final OAuth2Service oauth2service;
     @Nonnull
@@ -32,11 +31,9 @@ class OAuth2HeaderProvider implements DestinationHeaderProvider
     {
         final DestinationProperties destination = requestContext.getDestination();
         assertTenantRemainedConsistent(destination);
-        final Option<ResilienceConfiguration> resilienceConfig =
-            destination.get(PROPERTY_OAUTH2_RESILIENCE_CONFIG, ResilienceConfiguration.class);
 
         final String accessToken =
-            oauth2service.retrieveAccessToken(resilienceConfig.getOrElseThrow(IllegalStateException::new));
+            oauth2service.retrieveAccessToken();
 
         return singletonList(new Header(authHeaderName, "Bearer " + accessToken));
     }
