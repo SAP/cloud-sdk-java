@@ -26,6 +26,7 @@ class DestinationServiceCacheTest
         DestinationService.Cache.reset();
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testDisable()
     {
@@ -34,7 +35,6 @@ class DestinationServiceCacheTest
         // sut
         DestinationService.Cache.disable();
         assertThat(DestinationService.Cache.isEnabled()).isFalse();
-        //noinspection deprecation
         assertThatCode(DestinationService.Cache::enableChangeDetection).isInstanceOf(IllegalStateException.class);
         assertThatCode(DestinationService.Cache::disableChangeDetection).isInstanceOf(IllegalStateException.class);
         assertThatCode(DestinationService.Cache::instanceSingle).isInstanceOf(IllegalStateException.class);
