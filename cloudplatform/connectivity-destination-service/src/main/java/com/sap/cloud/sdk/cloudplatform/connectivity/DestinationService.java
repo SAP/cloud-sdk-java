@@ -129,7 +129,7 @@ public class DestinationService implements DestinationLoader
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
-    private Destination loadAndParseDestination( final String destName, final DestinationOptions options )
+    Destination loadAndParseDestination( final String destName, final DestinationOptions options )
         throws DestinationAccessException,
             DestinationNotFoundException
     {
@@ -147,7 +147,7 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    private DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
+    DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
     {
         final String response =
             strategy.isForwardToken()

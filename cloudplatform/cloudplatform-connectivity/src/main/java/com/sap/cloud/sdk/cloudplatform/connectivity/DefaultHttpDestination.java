@@ -346,6 +346,26 @@ public final class DefaultHttpDestination implements HttpDestination
         return cachedProxyType;
     }
 
+    @Nonnull
+    @Override
+    public String toString()
+    {
+        // we don't know which properties exactly may contain sensitive information,
+        // so we are only printing some essential properties known to be safe
+        final StringBuilder sb = new StringBuilder();
+        sb.append("DefaultHttpDestination(");
+        baseProperties.get(DestinationProperty.NAME).peek(name -> sb.append("name=").append(name).append(", "));
+        baseProperties.get(DestinationProperty.URI).peek(uri -> sb.append("uri=").append(uri).append(", "));
+        baseProperties
+            .get(DestinationProperty.PROXY_TYPE)
+            .peek(proxyType -> sb.append("proxyType=").append(proxyType).append(", "));
+        baseProperties
+            .get(DestinationProperty.AUTH_TYPE)
+            .peek(authType -> sb.append("authType=").append(authType).append(", "));
+        sb.append("...)");
+        return sb.toString();
+    }
+
     /**
      * Returns a new {@link Builder} instance that is initialized with this {@code DefaultHttpDestination}.
      * <p>
