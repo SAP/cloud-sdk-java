@@ -51,7 +51,7 @@ class OAuth2DestinationBuilderTest
             post(urlEqualTo("/oauth/token"))
                 .withHeader("Authorization", absent())
                 .withRequestBody(notContaining("&assertion="))
-                .willReturn(okJson("{\"access_token\":\"TECHNICAL\",\"expires_in\":4200}")));
+                .willReturn(okJson("{\"access_token\":\"TECHNICAL\",\"expires_in\":130}")));
         stubFor(
             post(urlEqualTo("/oauth/token"))
                 .withRequestBody(containing("&assertion="))
@@ -75,7 +75,7 @@ class OAuth2DestinationBuilderTest
 
         // indirect header validation
         final HttpResponse response =
-            HttpClientAccessor.getHttpClient((Destination) destination).execute(new HttpGet("/"));
+            HttpClientAccessor.getHttpClient((Destination) destination).execute(new HttpGet("/technical"));
         assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
 
         // assert tokens are cached
@@ -83,7 +83,7 @@ class OAuth2DestinationBuilderTest
         destination.getHeaders();
 
         verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
-        verify(1, getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer TECHNICAL")));
+        verify(1, getRequestedFor(urlEqualTo("/technical")).withHeader("Authorization", equalTo("Bearer TECHNICAL")));
     }
 
     @SneakyThrows
@@ -105,7 +105,7 @@ class OAuth2DestinationBuilderTest
 
         // indirect header validation
         final HttpResponse response =
-            HttpClientAccessor.getHttpClient((Destination) destination).execute(new HttpGet("/"));
+            HttpClientAccessor.getHttpClient(destination).execute(new HttpGet("/personal"));
         assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
 
         // assert tokens are cached
@@ -113,7 +113,7 @@ class OAuth2DestinationBuilderTest
         destination.getHeaders();
 
         verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing(token)));
-        verify(1, getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer PERSONAL")));
+        verify(1, getRequestedFor(urlEqualTo("/personal")).withHeader("Authorization", equalTo("Bearer PERSONAL")));
         AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
