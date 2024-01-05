@@ -23,6 +23,9 @@ import org.apache.http.protocol.HttpContext;
 import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 class HttpClientWrapper extends CloseableHttpClient
 {
     private final CloseableHttpClient httpClient;
+    @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
 
     @Override
@@ -42,6 +46,7 @@ class HttpClientWrapper extends CloseableHttpClient
         getConnectionManager().shutdown();
     }
 
+    @EqualsAndHashCode
     @RequiredArgsConstructor
     static class ApacheHttpHeader implements org.apache.http.Header
     {
@@ -88,7 +93,7 @@ class HttpClientWrapper extends CloseableHttpClient
         this.destination = destination;
     }
 
-    private HttpUriRequest wrapRequest( final HttpUriRequest request )
+    HttpUriRequest wrapRequest( final HttpUriRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
         URI requestUri = merger.merge(destination.getUri(), request.getURI());
