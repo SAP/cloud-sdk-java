@@ -92,7 +92,7 @@ jobs:
     if: ${{ github.event.inputs.check-tests == 'true' }}
     needs: build
     runs-on: ubuntu-latest
-    name: Test
+    name: Unit Tests
     steps:
       - uses: actions/checkout@v4
       - name: Setup java
@@ -156,7 +156,7 @@ jobs:
     if: ${{ github.event.inputs.check-codeql == 'true' }}
     needs: build # We depend on the Build job here to avoid downloading dependencies twice
     runs-on: ubuntu-latest
-    name: Analyze with CodeQL
+    name: CodeQL
     timeout-minutes: 360
     permissions:
       actions: read
