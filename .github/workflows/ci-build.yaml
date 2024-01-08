@@ -3,12 +3,6 @@ name: "Continuous Integration"
 on:
   workflow_dispatch:
     inputs:
-
-      check-formatting:
-        description: "Check Formatting"
-        required: false
-        type: boolean
-        default: true
       check-tests:
         description: "Run Unit Tests"
         required: false
@@ -52,7 +46,6 @@ on:
 
 jobs:
   check-formatting:
-    if: ${{ github.event.inputs.check-formatting == 'true' }}
     runs-on: ubuntu-latest
     name: Check Formatting
     outputs:
