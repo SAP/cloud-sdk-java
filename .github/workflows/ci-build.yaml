@@ -5,47 +5,47 @@ on:
     inputs:
 
       check-formatting:
-        description: "Whether to check code formatting"
+        description: "Check Formatting"
         required: false
         type: boolean
         default: true
       check-tests:
-        description: "Whether to execute unit tests"
+        description: "Run Unit Tests"
         required: false
         type: boolean
         default: true
       check-checkstyle:
-        description: "Whether to run the checkstyle code quality checks"
+        description: "Run Checkstyle"
         required: false
         type: boolean
         default: true
       check-pmd:
-        description: "Whether to run the pmd code quality checks"
+        description: "Run PMD"
         required: false
         type: boolean
         default: true
       check-spotbugs:
-        description: "Whether to run the spotbugs code quality checks"
+        description: "Run Spotbugs"
         required: false
         type: boolean
         default: true
       check-codeql:
-        description: "Whether to run the CodeQL code quality checks"
+        description: "Run CodeQL"
         required: false
         type: boolean
         default: true
       check-archetypes:
-        description: "Whether to run the archetype tests"
+        description: "Run Archetype Tests"
         required: false
         type: boolean
         default: true
       check-blackduck:
-        description: "Whether to run the Black Duck"
+        description: "Run Black Duck"
         required: false
         type: boolean
         default: false
       create-release-artifacts:
-        description: "Whether to create release artifacts"
+        description: "Create Release Artifacts"
         required: false
         type: boolean
         default: false
