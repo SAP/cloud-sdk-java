@@ -1,0 +1,218 @@
+name: "Continuous Integration"
+
+on:
+  workflow_dispatch:
+    inputs:
+
+      check-formatting:
+        description: "Whether to check code formatting"
+        required: false
+        type: boolean
+        default: true
+      check-tests:
+        description: "Whether to execute unit tests"
+        required: false
+        type: boolean
+        default: true
+      check-checkstyle:
+        description: "Whether to run the checkstyle code quality checks"
+        required: false
+        type: boolean
+        default: true
+      check-pmd:
+        description: "Whether to run the pmd code quality checks"
+        required: false
+        type: boolean
+        default: true
+      check-spotbugs:
+        description: "Whether to run the spotbugs code quality checks"
+        required: false
+        type: boolean
+        default: true
+      check-codeql:
+        description: "Whether to run the CodeQL code quality checks"
+        required: false
+        type: boolean
+        default: true
+      check-archetypes:
+        description: "Whether to run the archetype tests"
+        required: false
+        type: boolean
+        default: true
+      check-blackduck:
+        description: "Whether to run the Black Duck"
+        required: false
+        type: boolean
+        default: false
+      create-release-artifacts:
+        description: "Whether to create release artifacts"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  check-formatting:
+    if: ${{ github.event.inputs.check-formatting == 'true' }}
+    runs-on: ubuntu-latest
+    name: Check Formatting
+    outputs:
+      non-sdk-m2-stash-created: ${{ steps.verify-formatting.outputs.non-sdk-m2-stash-created }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Verify Formatting
+        id: verify-formatting
+        uses: ./.github/actions/verify-formatting
+
+  build:
+    needs: check-formatting
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Build SDK
+        id: build-sdk
+        uses: ./.github/actions/build-sdk
+        with:
+          force-update-non-sdk-m2-stash: ${{ needs.formatting.outputs.non-sdk-m2-stash-created }}
+          prepare-release: ${{ github.event.inputs.create-release-artifacts == 'true' }}
+
+  test:
+    if: ${{ github.event.inputs.check-tests == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Test SDK
+        uses: ./.github/actions/test-sdk
+
+  check-checkstyle:
+    if: ${{ github.event.inputs.check-checkstyle == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Checkstyle
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Scan With CheckStyle
+        uses: ./.github/actions/scan-with-checkstyle
+
+  check-pmd:
+    if: ${{ github.event.inputs.check-pmd == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: PMD
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Scan With PMD
+        uses: ./.github/actions/scan-with-pmd
+
+  check-spotbugs:
+    if: ${{ github.event.inputs.check-spotbugs == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Spotbugs
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Scan With SpotBugs
+        uses: ./.github/actions/scan-with-spotbugs
+
+  check-codeql:
+    if: ${{ github.event.inputs.check-codeql == 'true' }}
+    needs: build # We depend on the Build job here to avoid downloading dependencies twice
+    runs-on: ubuntu-latest
+    name: Analyze with CodeQL
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Scan With CodeQL
+        uses: ./.github/actions/scan-with-codeql
+
+  check-archetypes:
+    if: ${{ github.event.inputs.check-archetypes == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task:
+          - {
+            "archetype": "spring-boot3",
+            "javaVersion": 17,
+            "startCommand": "mvn spring-boot:run -B",
+          }
+    name: Test Archetype ${{ matrix.task.archetype }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+
+      - name: Verify Archetype
+        uses: ./.github/actions/verify-archetype
+        with:
+          archetype: ${{ matrix.task.archetype }}
+
+  check-blackduck:
+    if: ${{ github.event.inputs.check-blackduck == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Black Duck
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Scan With Black Duck
+        uses: ./.github/actions/scan-with-blackduck
