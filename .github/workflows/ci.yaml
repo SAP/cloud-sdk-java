@@ -48,7 +48,7 @@ jobs:
         uses: ./.github/actions/run-workflow
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
-          parameters-json: |
+          parameters: |
             -f repository-version='${{ github.ref }}'
             -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}'
             -f check-blackduck='${{ needs.context.outputs.is-production-branch }}'
