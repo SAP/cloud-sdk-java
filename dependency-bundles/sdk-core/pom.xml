@@ -72,10 +72,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>resilience4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>caching</artifactId>
 		</dependency>
 	</dependencies>
