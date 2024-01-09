@@ -61,7 +61,7 @@ runs:
           fi
         done
         
-        echo "[DEBUG] Unable to detect new run of workflow '${{ inputs.workflow }}' within 1 minute."
+        echo "[DEBUG] Unable to detect new run of workflow '${{ inputs.workflow }}'."
         exit 1
       shell: bash
 
