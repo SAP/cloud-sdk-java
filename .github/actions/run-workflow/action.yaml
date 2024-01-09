@@ -5,6 +5,10 @@ inputs:
   workflow:
     description: "The workflow file name"
     required: true
+  workflow-ref:
+    description: "The ref (i.e. branch name, or tag name) where the workflow is located."
+    required: false
+    default: ${{ github.branch }}
   parameters:
     description: "The workflow parameters"
     required: false
@@ -38,7 +42,7 @@ runs:
         PREVIOUS_RUN_ID=$(gh run list --workflow=${{ inputs.workflow}} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
         echo "[DEBUG] Previous run id = '$PREVIOUS_RUN_ID'"
         
-        gh workflow run "${{ inputs.workflow }}" ${{ inputs.parameters }}
+        gh workflow run "${{ inputs.workflow }}" --ref "${{ inputs.workflow-ref }}" ${{ inputs.parameters }}
         
         for i in {0..12}; do
           LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
