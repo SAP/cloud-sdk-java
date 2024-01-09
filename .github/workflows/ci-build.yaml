@@ -7,6 +7,11 @@ on:
         description: "Repository Version (e.g. branch, tag, sha). Use 'refs/heads/<BRANCH>', 'refs/tags/<TAG>', or 'refs/pull/<PR>'."
         required: false
         default: refs/heads/main
+      fail-fast:
+        description: "Fail eagerly if any of the jobs fail"
+        required: false
+        type: boolean
+        default: true
       check-tests:
         description: "Run Unit Tests"
         required: false
@@ -71,6 +76,10 @@ jobs:
     name: Check Formatting
     outputs:
       update-non-sdk-m2-stash: ${{ steps.stash-non-sdk-m2.outputs.stashed }}
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -109,10 +118,19 @@ jobs:
           key: ${{ env.NON_SDK_M2_CACHE_KEY }}
           update-after-days: "1"
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   build:
     needs: check-formatting
     runs-on: ubuntu-latest
     name: Build
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -134,10 +152,10 @@ jobs:
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
           install -DskipTests -DskipFormatting"
-        
+          
           if [[ "${{ github.event.inputs.create-release-artifacts }}" == "true" ]]; then
             echo "[DEBUG] Enabling JavaDoc generation to assemble release artifacts."
-            
+          
             python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
             MVN_ARGS="$MVN_ARGS -Pdocs"
           fi
@@ -148,12 +166,12 @@ jobs:
           if [[ "${{ github.event.inputs.create-release-artifacts }}" == "true" ]]; then
             VERSION=$(cat latest.json | jq -r .version)
             echo "[DEBUG] Assembling release artifacts for version '$VERSION'."
-            
+          
             python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix release
             ARTIFACT_NAME=sap-cloud-sdk-java.zip
             zip -q -r "$ARTIFACT_NAME" release
             rm -rf release
-            
+          
             echo "RELEASE_ARTIFACTS_NAME=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           else
             echo "[DEBUG] Not assembling release artifacts."
@@ -205,11 +223,19 @@ jobs:
           path: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}
           retention-days: 1
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
   test:
     if: ${{ github.event.inputs.check-tests == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     name: Unit Tests
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -252,11 +278,20 @@ jobs:
           python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
         shell: bash
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   check-checkstyle:
     if: ${{ github.event.inputs.check-checkstyle == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     name: Checkstyle
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -292,11 +327,20 @@ jobs:
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
           mvn $MVN_ARGS
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   check-pmd:
     if: ${{ github.event.inputs.check-pmd == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     name: PMD
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -332,11 +376,20 @@ jobs:
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
           mvn $MVN_ARGS
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   check-spotbugs:
     if: ${{ github.event.inputs.check-spotbugs == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     name: Spotbugs
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -371,6 +424,11 @@ jobs:
           
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
           mvn $MVN_ARGS
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
 
   check-codeql:
     if: ${{ github.event.inputs.check-codeql == 'true' }}
@@ -419,6 +477,11 @@ jobs:
         with:
           category: "/language:java"
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   check-archetypes:
     if: ${{ github.event.inputs.check-archetypes == 'true' }}
     needs: build
@@ -432,6 +495,10 @@ jobs:
             "startCommand": "mvn spring-boot:run -B",
           }
     name: Test Archetype ${{ matrix.task.archetype }}
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -530,10 +597,19 @@ jobs:
               exit 1
           fi
 
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
   check-blackduck:
     if: ${{ github.event.inputs.check-blackduck == 'true' }}
     runs-on: ubuntu-latest
     name: Black Duck
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -541,3 +617,8 @@ jobs:
 
       - name: Scan With Black Duck
         uses: ./.github/actions/scan-with-blackduck
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
