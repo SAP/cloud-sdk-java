@@ -1,0 +1,76 @@
+name: "Run Workflow"
+description: "Triggers a workflow run and waits until it completed."
+
+inputs:
+  workflow:
+    description: "The workflow file name"
+    required: true
+  parameters:
+    description: "The workflow parameters"
+    required: false
+  commit-sha:
+    description: "The commit SHA to trigger the workflow on"
+    required: false
+    default: ${{ github.sha }}
+
+outputs:
+  run-id:
+    description: "The id of the workflow run that was triggered."
+    value: ${{ steps.trigger-workflow.outputs.RUN_ID }}
+  succeeded:
+    description: "Whether the triggered run succeeded."
+    value: ${{ steps.wait-for-workflow.outputs.RUN_SUCCEEDED }}
+  conclusion:
+    description: "The conclusion of the triggered workflow run."
+    value: ${{ steps.wait-for-workflow.outputs.CONCLUSION }}
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Input
+      run: |
+        echo "[DEBUG] Starting 'Run Workflow' Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Trigger Workflow
+      id: trigger-workflow
+      run: |
+        PREVIOUS_RUN_ID=$(gh run list --workflow=${{ inputs.workflow}} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
+        echo "[DEBUG] Previous run id = '$PREVIOUS_RUN_ID'"
+        
+        gh workflow run "${{ inputs.workflow }}" ${{ inputs.parameters }}
+        
+        for i in {0..12}; do
+          LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
+        
+          if [[ -z "$LAST_RUN_ID" || "$LAST_RUN_ID" == "$PREVIOUS_RUN_ID" ]]; then
+            echo "[DEBUG] No new run detected. Waiting for 5 seconds."
+            sleep 5
+          else
+            echo "[DEBUG] New workflow run detected: '$LATEST_RUN_ID'."
+            echo "RUN_ID=$LATEST_RUN_ID" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+        done
+        
+        echo "[DEBUG] Unable to detect new run of workflow '${{ inputs.workflow }}' within 1 minute."
+        exit 1
+      shell: bash
+
+    - name: Wait for Workflow to Complete
+      id: wait-for-workflow
+      run: |
+        echo "[DEBUG] Waiting for run '${{ steps.trigger-workflow.outputs.RUN_ID }}' to complete..."
+        gh run watch ${{ steps.trigger-workflow.outputs.RUN_ID }} > /dev/null
+        
+        CONCLUSION=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json conclusion | jq -c '.conclusion')
+        echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
+        echo "[DEBUG] Run '${{ steps.trigger-workflow.outputs.RUN_ID }}' finished with conclusion '$CONCLUSION'."
+        
+        if [[ "$CONCLUSION" != "success" ]]; then
+          echo "RUN_SUCCEEDED=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        echo "RUN_SUCCEEDED=true" >> $GITHUB_OUTPUT
+      shell: bash

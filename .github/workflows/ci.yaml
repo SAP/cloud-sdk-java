@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Run CI Build
     outputs:
-      ci-build-run-id: ${{ steps.trigger-ci-build.outputs.RUN_ID }}
+      ci-build-run-id: ${{ steps.run-ci-build.outputs.run-id }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
     env:
@@ -43,31 +43,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Trigger CI Build
-        id: trigger-ci-build
-        run: |
-          gh workflow run "${{ env.CI_BUILD_WORKFLOW }}" \
-          -f repository-version="${{ github.ref }}" \
-          -f create-release-artifacts="${{ needs.context.outputs.is-production-branch }}" \
-          -f check-blackduck="${{ needs.context.outputs.is-production-branch }}"
-          
-          RUN_ID=$(gh run list \
-          --workflow=${{ env.CI_BUILD_WORKFLOW }} \
-          --status=in_progress \
-          --commit=${{ github.sha }} \
-          --json databaseId | jq -c '.[0].databaseId')
-          
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_OUTPUT
-          
-          echo "[DEBUG] Waiting for CI Build (id=${RUN_ID}) to finish..."
-          gh run watch ${RUN_ID} > /dev/null
-          
-          CONCLUSION=$(gh run view ${RUN_ID} --json conclusion | jq -r '.conclusion')
-          echo "[DEBUG] CI Build (id=${RUN_ID}) finished with conclusion '${CONCLUSION}'"
-          
-          if [[ "$CONCLUSION" != "success" ]]; then
-            exit 1
-          fi
+      - name: Run CI Build Workflow
+        id: run-ci-build
+        uses: ./.github/actions/run-workflow
+        with:
+          workflow: ${{ env.CI_BUILD_WORKFLOW }}
+          parameters: |
+            "-f repository-version='${{ github.ref }}' "
+            "-f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' "
+            "-f check-blackduck='${{ needs.context.outputs.is-production-branch }}'"
 
   deploy-snapshot:
     name: Deploy Snapshot
