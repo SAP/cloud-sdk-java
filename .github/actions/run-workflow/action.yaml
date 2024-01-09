@@ -44,7 +44,7 @@ runs:
           LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
           echo "[DEBUG] Latest run id = '$LATEST_RUN_ID'."
         
-          if [[ -z "$LAST_RUN_ID" || "$LAST_RUN_ID" == "$PREVIOUS_RUN_ID" ]]; then
+          if [[ -z "$LATEST_RUN_ID" || "$LATEST_RUN_ID" == "$PREVIOUS_RUN_ID" ]]; then
             echo "[DEBUG] No new run detected. Waiting for 5 seconds."
             sleep 5
           else
