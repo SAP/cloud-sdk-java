@@ -73,6 +73,8 @@ runs:
         while :
         do
           STATUS=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json status | jq -c '.status')
+          echo "[DEBUG] Run '${{ steps.trigger-workflow.outputs.RUN_ID }}' has status '$STATUS'"
+        
           if [[ "$STATUS" == "in_progress" ]]; then
             echo "[DEBUG] Workflow run '${{ steps.trigger-workflow.outputs.RUN_ID }}' is still in progress..."
             sleep 5
