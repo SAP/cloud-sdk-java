@@ -18,6 +18,8 @@ jobs:
     outputs:
       is-production-branch: ${{ steps.check-production-branch.outputs.IS_PRODUCTION_BRANCH }}
     steps:
+      - name: Print Github Context
+        run: echo "${{ toJson(github) }}"
       - name: Check Production Branch
         id: check-production-branch
         run: |
