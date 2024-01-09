@@ -17,6 +17,7 @@ jobs:
     name: Collect Context Information
     outputs:
       is-production-branch: ${{ steps.check-production-branch.outputs.IS_PRODUCTION_BRANCH }}
+      head-branch-name: ${{ steps.get-head-branch-name.outputs.HEAD_BRANCH_NAME }}
     steps:
       - name: Print Github Context
         run: echo "${{ toJson(github) }}"
@@ -29,6 +30,14 @@ jobs:
           else
             echo "[Debug] '${{ github.ref }}' is not a production branch"
             echo "IS_PRODUCTION_BRANCH=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Get Head Branch Name
+        id: get-head-branch-name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "HEAD_BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          else
+              echo "HEAD_BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
 
   run-ci:
@@ -50,6 +59,7 @@ jobs:
         uses: ./.github/actions/run-workflow
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
+          workflow-ref: ${{ needs.context.outputs.head-branch-name }}
           parameters: >
             -f repository-version='${{ github.ref }}' 
             -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' 
