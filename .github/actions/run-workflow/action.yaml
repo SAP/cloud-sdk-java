@@ -42,13 +42,15 @@ runs:
         
         for i in {0..12}; do
           LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -c '.[0].databaseId')
-          echo "[DEBUG] Latest run id = '$LATEST_RUN_ID'."
         
           if [[ -z "$LATEST_RUN_ID" || "$LATEST_RUN_ID" == "$PREVIOUS_RUN_ID" ]]; then
             echo "[DEBUG] No new run detected. Waiting for 5 seconds."
             sleep 5
           else
             echo "[DEBUG] New workflow run detected: '$LATEST_RUN_ID'."
+            
+            RUN_URL=$(gh run view $LATEST_RUN_ID --json url | jq -c '.url')
+            echo "[${{ inputs.workflow }} run (#$LATEST_RUN_ID))]($RUN_URL)" >> $GITHUB_STEP_SUMMARY        
             echo "RUN_ID=$LATEST_RUN_ID" >> $GITHUB_OUTPUT
             exit 0
           fi
