@@ -77,7 +77,7 @@ jobs:
         id: await-ci-build
         uses: ./.github/actions/await-workflow
         with:
-          run-id: ${{ needs.run-ci.outputs.ci-build-run-id }}
+          run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
 
   deploy-snapshot:
     name: Deploy Snapshot
