@@ -5,8 +5,7 @@ on:
     inputs:
       repository-version:
         description: "Repository Version (e.g. branch, tag, sha)"
-        required: false
-        default: ${{ github.ref }}
+        required: true
       check-tests:
         description: "Run Unit Tests"
         required: false
@@ -531,18 +530,12 @@ jobs:
 
   check-blackduck:
     if: ${{ github.event.inputs.check-blackduck == 'true' }}
-    needs: build
     runs-on: ubuntu-latest
     name: Black Duck
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.repository-version }}
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: 17
 
       - name: Scan With Black Duck
         uses: ./.github/actions/scan-with-blackduck
