@@ -85,7 +85,7 @@ jobs:
               repo: context.repo.repo,
               name: 'CI Build',
               head_sha: '${{ needs.context.outputs.head-commit-sha }}',
-              details_url: '${{ steps.trigger-ci-build.outputs.run-url }}'
+              details_url: '${{ steps.trigger-ci-build.outputs.run-url }}',
               status: 'in_progress'
             })
 
