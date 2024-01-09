@@ -55,6 +55,7 @@ jobs:
       ci-build-run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
+      checks: write # needed to create a check in a PR (if applicable)
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -79,14 +80,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            github.repos.createCommitStatus({
+            github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: ${{ needs.context.outputs.head-commit-sha }},
-              state: 'pending',
-              context: 'ci-build',
-              description: 'CI Build Workflow is running',
-              target_url: '${{ steps.trigger-ci-build.outputs.run-url }}'
+              name: 'CI Build',
+              head_sha: ${{ needs.context.outputs.head-commit-sha }},
+              details_url: '${{ steps.trigger-ci-build.outputs.run-url }}'
+              state: 'in_progress',
             })
 
       - name: Await CI Build Workflow
@@ -94,10 +94,11 @@ jobs:
         uses: ./.github/actions/await-workflow
         with:
           run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
-#
-#      - name: Update Status in PR
-#        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
-#        uses: actions/github-script@v7
+
+      - name: Update Status in PR
+        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
+        run: |
+          echo ${{ toJson(steps.report-status-in-pr.outputs) }}
 
   deploy-snapshot:
     name: Deploy Snapshot
