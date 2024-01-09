@@ -73,11 +73,32 @@ jobs:
             -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' 
             -f check-blackduck='${{ needs.context.outputs.is-production-branch }}'
 
+      - name: Report Status in PR
+        id: report-status-in-pr
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: ${{ needs.context.outputs.head-commit-sha }},
+              state: 'pending',
+              context: 'ci-build',
+              description: 'CI Build Workflow is running',
+              target_url: '${{ steps.trigger-ci-build.outputs.run-url }}'
+            })
+
       - name: Await CI Build Workflow
         id: await-ci-build
         uses: ./.github/actions/await-workflow
         with:
           run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
+#
+#      - name: Update Status in PR
+#        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
+#        uses: actions/github-script@v7
 
   deploy-snapshot:
     name: Deploy Snapshot

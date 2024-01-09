@@ -20,6 +20,9 @@ outputs:
   run-id:
     description: "The id of the workflow run that was triggered."
     value: ${{ steps.trigger-workflow.outputs.RUN_ID }}
+  run-url:
+    description: "The url of the workflow run that was triggered."
+    value: ${{ steps.trigger-workflow.outputs.RUN_URL }}
 
 runs:
   using: composite
@@ -50,6 +53,7 @@ runs:
             echo "[DEBUG] ${{ inputs.workflow }} run #$LATEST_RUN_ID successfully triggered: $RUN_URL"
             echo "[${{ inputs.workflow }} run (#$LATEST_RUN_ID)]($RUN_URL)" >> $GITHUB_STEP_SUMMARY        
             echo "RUN_ID=$LATEST_RUN_ID" >> $GITHUB_OUTPUT
+            echo "RUN_URL=$RUN_URL" >> $GITHUB_OUTPUT
             exit 0
           fi
         done
