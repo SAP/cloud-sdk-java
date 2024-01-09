@@ -38,13 +38,13 @@ runs:
     - name: Trigger Workflow
       id: trigger-workflow
       run: |
-        PREVIOUS_RUN_ID=$(gh run list --workflow=${{ inputs.workflow}} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
+        PREVIOUS_RUN_ID=$(gh run list --workflow=${{ inputs.workflow}} --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
         echo "[DEBUG] Previous run id = '$PREVIOUS_RUN_ID'"
         
         gh workflow run "${{ inputs.workflow }}" --ref "${{ inputs.workflow-ref }}" ${{ inputs.parameters }}
         
         for i in {0..12}; do
-          LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --status=in_progress --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
+          LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
         
           if [[ -z "$LATEST_RUN_ID" || "$LATEST_RUN_ID" == "$PREVIOUS_RUN_ID" ]]; then
             echo "[DEBUG] No new run detected. Waiting for 5 seconds."
