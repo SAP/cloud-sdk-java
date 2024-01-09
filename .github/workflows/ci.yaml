@@ -37,6 +37,8 @@ jobs:
       ci-build-run-id: ${{ steps.trigger-ci-build.outputs.RUN_ID }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Trigger CI Build
         id: trigger-ci-build
@@ -72,6 +74,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       actions: read # needed to download the artifacts from the ci-build workflow
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
