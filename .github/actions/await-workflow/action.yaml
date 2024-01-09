@@ -1,0 +1,51 @@
+name: "Await Workflow"
+description: "Waits until a workflow run completes."
+
+inputs:
+  run-id:
+    description: "The id of the workflow run to wait for."
+    required: true
+
+outputs:
+  succeeded:
+    description: "Whether the triggered run succeeded."
+    value: ${{ steps.wait-for-workflow.outputs.RUN_SUCCEEDED }}
+  conclusion:
+    description: "The conclusion of the triggered workflow run."
+    value: ${{ steps.wait-for-workflow.outputs.CONCLUSION }}
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Input
+      run: |
+        echo "[DEBUG] Starting 'Await Workflow' Action; inputs = ${{ toJson(inputs) }}"
+      shell: bash
+
+    - name: Wait for Workflow to Complete
+      id: wait-for-workflow
+      run: |
+        echo "[DEBUG] Waiting for run '${{ inputs.run-id }}' to complete..."
+        
+        # we tried using 'gh run watch' instead of doing the polling ourselves, but that failed with an HTTP 500 after a while
+        while :
+        do
+          CONCLUSION=$(gh run view ${{ inputs.run-id }} --json conclusion | jq -r '.conclusion')
+        
+          if [[ -z "$CONCLUSION" ]]; then
+            sleep 5
+          else
+            break
+          fi
+        done
+        
+        echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
+        echo "[DEBUG] Run '${{ inputs.run-id }}' finished with conclusion '$CONCLUSION'."
+        
+        if [[ "$CONCLUSION" != "success" ]]; then
+          echo "RUN_SUCCEEDED=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        echo "RUN_SUCCEEDED=true" >> $GITHUB_OUTPUT
+      shell: bash

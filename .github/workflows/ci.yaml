@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Run CI Build
     outputs:
-      ci-build-run-id: ${{ steps.run-ci-build.outputs.run-id }}
+      ci-build-run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
     env:
@@ -61,9 +61,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run CI Build Workflow
-        id: run-ci-build
-        uses: ./.github/actions/run-workflow
+      - name: Trigger CI Build Workflow
+        id: trigger-ci-build
+        uses: ./.github/actions/trigger-workflow
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.context.outputs.head-branch-name }}
@@ -72,6 +72,12 @@ jobs:
             -f repository-version='${{ github.ref }}' 
             -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' 
             -f check-blackduck='${{ needs.context.outputs.is-production-branch }}'
+
+      - name: Await CI Build Workflow
+        id: await-ci-build
+        uses: ./.github/actions/await-workflow
+        with:
+          run-id: ${{ needs.run-ci.outputs.ci-build-run-id }}
 
   deploy-snapshot:
     name: Deploy Snapshot
