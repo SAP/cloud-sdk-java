@@ -72,8 +72,8 @@ class ResilienceDecoratorTest
     void testGetDecorationStrategyIgnoresLegacyStrategy()
     {
         final ResilienceDecorationStrategy firstStrategy = new NoResilienceDecorationStrategy();
-        final String originalLegacyStrategy = ResilienceDecorator.LEGACY_DECORATION_STRATEGY;
-        ResilienceDecorator.LEGACY_DECORATION_STRATEGY = firstStrategy.getClass().getName();
+        final String originalLegacyStrategy = ResilienceDecorator.legacyDecorationStrategy;
+        ResilienceDecorator.legacyDecorationStrategy = firstStrategy.getClass().getName();
 
         mockDecorationStrategies(firstStrategy);
         ResilienceDecorator.resetDecorationStrategy();
@@ -99,7 +99,7 @@ class ResilienceDecoratorTest
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
             .hasCauseExactlyInstanceOf(ObjectLookupFailedException.class);
 
-        ResilienceDecorator.LEGACY_DECORATION_STRATEGY = originalLegacyStrategy;
+        ResilienceDecorator.legacyDecorationStrategy = originalLegacyStrategy;
     }
 
     private static void mockDecorationStrategies( @Nonnull final ResilienceDecorationStrategy... strategies )

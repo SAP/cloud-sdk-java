@@ -27,11 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ResilienceDecorator
 {
-    static String LEGACY_DECORATION_STRATEGY;
-
-    static {
-        LEGACY_DECORATION_STRATEGY = "com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy";
-    }
+    // non-final for testing
+    static String legacyDecorationStrategy = "com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy";
 
     /**
      * The current instance of {@link ResilienceDecorationStrategy} to be used to guarantee resilient function
@@ -95,13 +92,13 @@ public final class ResilienceDecorator
         final ResilienceDecorationStrategy maybeLegacyFacade =
             facades
                 .stream()
-                .filter(f -> f.getClass().getName().equals(LEGACY_DECORATION_STRATEGY))
+                .filter(f -> f.getClass().getName().equals(legacyDecorationStrategy))
                 .findAny()
                 .orElse(null);
 
         if( maybeLegacyFacade != null ) {
             final List<ResilienceDecorationStrategy> facadesWithoutLegacyImplementation =
-                facades.stream().filter(f -> !f.getClass().getName().equals(LEGACY_DECORATION_STRATEGY)).toList();
+                facades.stream().filter(f -> !f.getClass().getName().equals(legacyDecorationStrategy)).toList();
             if( facadesWithoutLegacyImplementation.size() == 1 ) {
                 return facadesWithoutLegacyImplementation
                     .stream()
