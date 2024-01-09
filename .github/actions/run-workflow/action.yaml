@@ -69,18 +69,19 @@ runs:
       id: wait-for-workflow
       run: |
         echo "[DEBUG] Waiting for run '${{ steps.trigger-workflow.outputs.RUN_ID }}' to complete..."
+        gh run watch ${{ steps.trigger-workflow.outputs.RUN_ID }} > /dev/null
         
-        # we tried using 'gh run watch' instead of doing the polling ourselves, but that failed with an HTTP 500 after a while
-        while :
-        do
-          STATUS=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json status | jq -c '.status')
-          if [[ "$STATUS" == "in_progress" ]]; then
-            echo "[DEBUG] Workflow run '${{ steps.trigger-workflow.outputs.RUN_ID }}' is still in progress..."
-            sleep 5
-          else
-            break
-          fi
-        done
+#         we tried using 'gh run watch' instead of doing the polling ourselves, but that failed with an HTTP 500 after a while
+#        while :
+#        do
+#          STATUS=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json status | jq -c '.status')
+#          if [[ "$STATUS" == "in_progress" ]]; then
+#            echo "[DEBUG] Workflow run '${{ steps.trigger-workflow.outputs.RUN_ID }}' is still in progress..."
+#            sleep 5
+#          else
+#            break
+#          fi
+#        done
         
         CONCLUSION=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json conclusion | jq -c '.conclusion')
         echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
