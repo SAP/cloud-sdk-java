@@ -92,27 +92,16 @@ public final class ResilienceDecorator
             return facades.iterator().next();
         }
 
-        final ResilienceDecorationStrategy maybeLegacyFacade =
-            facades
-                .stream()
-                .filter(f -> f.getClass().getName().equals(LEGACY_DECORATION_STRATEGY))
-                .findAny()
-                .orElse(null);
-
-        if( maybeLegacyFacade != null ) {
-            final List<ResilienceDecorationStrategy> facadesWithoutLegacyImplementation =
-                facades.stream().filter(f -> !f.getClass().getName().equals(LEGACY_DECORATION_STRATEGY)).toList();
-            if( facadesWithoutLegacyImplementation.size() == 1 ) {
-                return facadesWithoutLegacyImplementation
-                    .stream()
-                    .peek(
-                        it -> log
-                            .info(
-                                "Ignoring legacy implementation 'com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy' from Cloud SDK version 4.X in favor of: {}",
-                                it))
-                    .findAny()
-                    .get();
-            }
+        final List<ResilienceDecorationStrategy> facadesWithoutLegacyImplementation =
+            facades.stream().filter(f -> !f.getClass().getName().equals(LEGACY_DECORATION_STRATEGY)).toList();
+        if( facadesWithoutLegacyImplementation.size() == 1 ) {
+            final ResilienceDecorationStrategy strategy = facadesWithoutLegacyImplementation.get(0);
+            log
+                .info(
+                    "Ignoring legacy implementation '{}' from Cloud SDK version 4.X in favor of: {}",
+                    LEGACY_DECORATION_STRATEGY,
+                    strategy);
+            return strategy;
         }
 
         final String classes = facades.stream().map(f -> f.getClass().getName()).collect(Collectors.joining(", "));
