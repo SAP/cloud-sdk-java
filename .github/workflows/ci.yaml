@@ -32,7 +32,7 @@ jobs:
   run-ci:
     needs: [ context ]
     runs-on: ubuntu-latest
-    name: Run CI
+    name: Run CI Build
     outputs:
       ci-build-run-id: ${{ steps.trigger-ci-build.outputs.RUN_ID }}
     permissions:
@@ -40,6 +40,9 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Trigger CI Build
         id: trigger-ci-build
         run: |
