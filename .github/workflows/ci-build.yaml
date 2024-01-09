@@ -8,7 +8,7 @@ on:
         required: false
         default: refs/heads/main
       fail-fast:
-        description: "Fail eagerly if any of the jobs fail"
+        description: "Abort Workflow on Error"
         required: false
         type: boolean
         default: true

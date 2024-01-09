@@ -75,7 +75,6 @@ runs:
           CONCLUSION=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json conclusion | jq -r '.conclusion')
         
           if [[ -z "$CONCLUSION" ]]; then
-            echo "[DEBUG] Workflow run '${{ steps.trigger-workflow.outputs.RUN_ID }}' is still in progress..."
             sleep 5
           else
             break
