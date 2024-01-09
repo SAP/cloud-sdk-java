@@ -46,10 +46,10 @@ jobs:
       - name: Trigger CI Build
         id: trigger-ci-build
         run: |
-          gh workflow run ci-build.yaml \
-          -f repository-version=${{ github.ref }} \
-          -f create-release-artifacts=${{ needs.context.outputs.IS_PRODUCTION_BRANCH }} \
-          -f check-blackduck=${{ needs.context.outputs.IS_PRODUCTION_BRANCH }}
+          gh workflow run "${{ env.CI_BUILD_WORKFLOW }}" \
+          -f repository-version="${{ github.ref }}" \
+          -f create-release-artifacts="${{ needs.context.outputs.is-production-branch }}" \
+          -f check-blackduck="${{ needs.context.outputs.is-production-branch }}"
           
           RUN_ID=$(gh run list \
           --workflow=${{ env.CI_BUILD_WORKFLOW }} \
