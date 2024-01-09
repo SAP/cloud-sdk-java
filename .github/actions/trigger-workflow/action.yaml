@@ -57,31 +57,3 @@ runs:
         echo "[DEBUG] Unable to detect new run of workflow '${{ inputs.workflow }}'."
         exit 1
       shell: bash
-
-    - name: Wait for Workflow to Complete
-      id: wait-for-workflow
-      run: |
-        echo "[DEBUG] Waiting for run '${{ steps.trigger-workflow.outputs.RUN_ID }}' to complete..."
-        
-        # we tried using 'gh run watch' instead of doing the polling ourselves, but that failed with an HTTP 500 after a while
-        while :
-        do
-          CONCLUSION=$(gh run view ${{ steps.trigger-workflow.outputs.RUN_ID }} --json conclusion | jq -r '.conclusion')
-        
-          if [[ -z "$CONCLUSION" ]]; then
-            sleep 5
-          else
-            break
-          fi
-        done
-        
-        echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
-        echo "[DEBUG] Run '${{ steps.trigger-workflow.outputs.RUN_ID }}' finished with conclusion '$CONCLUSION'."
-        
-        if [[ "$CONCLUSION" != "success" ]]; then
-          echo "RUN_SUCCEEDED=false" >> $GITHUB_OUTPUT
-          exit 1
-        fi
-        
-        echo "RUN_SUCCEEDED=true" >> $GITHUB_OUTPUT
-      shell: bash
