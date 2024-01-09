@@ -18,6 +18,7 @@ jobs:
     outputs:
       is-production-branch: ${{ steps.check-production-branch.outputs.IS_PRODUCTION_BRANCH }}
       head-branch-name: ${{ steps.get-head-branch-name.outputs.HEAD_BRANCH_NAME }}
+      head-commit-sha: ${{ steps.get-head-commit-sha.outputs.HEAD_COMMIT_SHA }}
     steps:
       - name: Check Production Branch
         id: check-production-branch
@@ -36,6 +37,14 @@ jobs:
               echo "HEAD_BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
           else
               echo "HEAD_BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Get Head Commit SHA
+        id: get-head-commit-sha
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "HEAD_COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+              echo "HEAD_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
 
   run-ci:
@@ -58,6 +67,7 @@ jobs:
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.context.outputs.head-branch-name }}
+          commit-sha: ${{ needs.context.outputs.head-commit-sha }}
           parameters: >
             -f repository-version='${{ github.ref }}' 
             -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' 
