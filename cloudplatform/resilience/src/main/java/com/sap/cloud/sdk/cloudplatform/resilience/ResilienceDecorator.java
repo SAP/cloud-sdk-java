@@ -96,7 +96,7 @@ public final class ResilienceDecorator
             log
                 .info(
                     "Ignoring legacy implementation '{}' from Cloud SDK version 4.X in favor of: {}",
-                        legacyDecorationStrategy,
+                    legacyDecorationStrategy,
                     strategy);
             return strategy;
         }
