@@ -1,10 +1,10 @@
-name: "Continuous Integration"
+name: "CI - Build"
 
 on:
   workflow_dispatch:
     inputs:
       repository-version:
-        description: "Repository Version (e.g. branch, tag, sha). Use 'refs/heads/<BRANCH>' or 'refs/tags/<TAG>' or 'refs/pull/<PR>'."
+        description: "Repository Version (e.g. branch, tag, sha). Use 'refs/heads/<BRANCH>', 'refs/tags/<TAG>', or 'refs/pull/<PR>'."
         required: false
         default: refs/heads/main
       check-tests:
@@ -150,10 +150,11 @@ jobs:
             echo "[DEBUG] Assembling release artifacts for version '$VERSION'."
             
             python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix release
-            zip -q -r sap-cloud-sdk-java.zip release
+            ARTIFACT_NAME=sap-cloud-sdk-java.zip
+            zip -q -r "$ARTIFACT_NAME" release
             rm -rf release
             
-            echo "RELEASE_ARTIFACTS_NAME=sap-cloud-sdk-java" >> $GITHUB_OUTPUT
+            echo "RELEASE_ARTIFACTS_NAME=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           else
             echo "[DEBUG] Not assembling release artifacts."
             echo "RELEASE_ARTIFACTS_NAME=" >> $GITHUB_OUTPUT
@@ -201,7 +202,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}
-          path: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}.zip
+          path: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}
           retention-days: 1
 
   test:
