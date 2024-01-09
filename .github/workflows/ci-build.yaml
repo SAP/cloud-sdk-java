@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       repository-version:
-        description: "Repository Version (e.g. branch, tag, sha)"
-        required: true
+        description: "Repository Version (e.g. branch, tag, sha). Use 'refs/heads/<BRANCH>' or 'refs/tags/<TAG>' or 'refs/pull/<PR>'."
+        required: false
+        default: refs/heads/main
       check-tests:
         description: "Run Unit Tests"
         required: false
