@@ -90,7 +90,6 @@
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:tenant</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:security</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:resilience</usedDependency>
-						<usedDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</usedDependency>
 						<usedDependency>com.sap.cloud.sdk.cloudplatform:caching</usedDependency>
 					</usedDependencies>
 				</configuration>
