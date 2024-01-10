@@ -2,11 +2,12 @@
  * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.datamodel.odata.helper;
+package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.jetty11.Jetty11Utils.createHttpConfig;
@@ -18,27 +19,28 @@ import static org.mockito.Mockito.spy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLParameters;
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -53,42 +55,19 @@ import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty11.Jetty11HttpServer;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType;
-import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
-import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
-import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Value;
 
-@SuppressWarnings( "deprecation" )
 abstract class ClientCertificateAuthenticationLocalTest
 {
-    private static final String ODATA_ENDPOINT_URL = "/sap/opu/odata/sap/API_ENTITIES";
-    private static final String ODATA_FUNCTION_IMPORT_URL = ODATA_ENDPOINT_URL + "/MyEntityCollection.*";
-
-    private static final FluentHelperFactory REQUEST_FACTORY = FluentHelperFactory.withServicePath(ODATA_ENDPOINT_URL);
-    private static String responseJson;
-
-    @BeforeAll
-    static void beforeClass()
-    {
-        responseJson = readResourceFile("odataResponse.json");
-    }
-
     @BeforeEach
     void before()
     {
         CacheManager.invalidateAll();
-        // remove?
-        stubFor(WireMock.get(urlMatching(ODATA_FUNCTION_IMPORT_URL)).willReturn(WireMock.okJson(responseJson)));
+        stubFor(WireMock.get(anyUrl()).willReturn(ok()));
     }
 
     @Value
@@ -99,14 +78,6 @@ abstract class ClientCertificateAuthenticationLocalTest
         String hostKeyStorePassword;
         String clientKeyStoreFile;
         String clientKeyStorePassword;
-    }
-
-    @Getter
-    static class MyEntity extends VdmEntity<MyEntity>
-    {
-        private static final String ENTITY_COLLECTION = "MyEntityCollection";
-        private final String entityCollection = ENTITY_COLLECTION;
-        private final Class<MyEntity> type = MyEntity.class;
     }
 
     static class HostCorrectlyConfiguredTest extends ClientCertificateAuthenticationLocalTest
@@ -121,7 +92,7 @@ abstract class ClientCertificateAuthenticationLocalTest
                 .build();
 
         @RegisterExtension
-        static final WireMockExtension ERP_SERVER =
+        static final WireMockExtension server =
             WireMockExtension
                 .newInstance()
                 .options(getWireMockConfiguration(TEST_CONFIG))
@@ -129,13 +100,13 @@ abstract class ClientCertificateAuthenticationLocalTest
                 .build();
 
         @Test
+        @SneakyThrows
         void testClientCorrectlyConfigured()
-            throws Exception
         {
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(ERP_SERVER.baseUrl())
+                        .builder(server.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .keyStore(getClientKeyStore(TEST_CONFIG))
@@ -143,43 +114,48 @@ abstract class ClientCertificateAuthenticationLocalTest
                         .trustAllCertificates()
                         .build());
 
-            final List<MyEntity> result =
-                REQUEST_FACTORY.read(MyEntity.class, MyEntity.ENTITY_COLLECTION).top(1).executeRequest(destination);
-            assertThat(result).isNotNull().isNotEmpty();
+            final HttpClientContext context = HttpClientContext.create();
+            final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
-            // keystore methods have been used
+            final HttpResponse result = httpClient.execute(new HttpGet(), context);
+            assertThat(result.getStatusLine().getStatusCode()).isEqualTo(200);
+
+            assertThat(context.getUserToken()).isNotNull();
+            assertThat(context.getUserToken()).isInstanceOf(X500Principal.class);
+            assertThat(context.getUserToken(X500Principal.class).getName()).contains("CN=cca-client");
+
+            // assert keystore methods have been used
             Mockito.verify(destination).getKeyStorePassword();
             Mockito.verify(destination).getKeyStore();
 
             // request had no authorization header
-            verify(getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)).withoutHeader(HttpHeaders.AUTHORIZATION));
+            verify(getRequestedFor(anyUrl()).withoutHeader(HttpHeaders.AUTHORIZATION));
         }
 
         @Test
+        @SneakyThrows
         void testClientNotConfigured()
         {
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(ERP_SERVER.baseUrl())
+                        .builder(server.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .trustAllCertificates()
                         .build());
 
-            final Callable<?> brokenCall =
-                () -> REQUEST_FACTORY.read(MyEntity.class, MyEntity.ENTITY_COLLECTION).executeRequest(destination);
+            final HttpClientContext context = HttpClientContext.create();
+            final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
-            // expect an exception from broken call
-            assertThatThrownBy(() -> ThreadContextExecutor.fromNewContext().execute(brokenCall))
-                .isInstanceOf(ThreadContextExecutionException.class)
-                .hasCauseExactlyInstanceOf(ODataConnectionException.class);
+            assertThatThrownBy(() -> httpClient.execute(new HttpGet(), context))
+                .isInstanceOf(SSLHandshakeException.class);
 
             // keystore methods have been used
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            verify(0, getRequestedFor(anyUrl()));
         }
     }
 
@@ -189,7 +165,7 @@ abstract class ClientCertificateAuthenticationLocalTest
             CcaTestConfig.builder().clientKeyStoreFile("cca-client.p12").clientKeyStorePassword("cca-password").build();
 
         @RegisterExtension
-        static final WireMockExtension ERP_SERVER =
+        static final WireMockExtension server =
             WireMockExtension
                 .newInstance()
                 .options(getWireMockConfiguration(TEST_CONFIG))
@@ -203,7 +179,7 @@ abstract class ClientCertificateAuthenticationLocalTest
             final HttpDestination destination =
                 spy(
                     DefaultHttpDestination
-                        .builder(ERP_SERVER.baseUrl())
+                        .builder(server.baseUrl())
                         .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
                         .proxyType(ProxyType.INTERNET)
                         .keyStore(getClientKeyStore(TEST_CONFIG))
@@ -211,20 +187,18 @@ abstract class ClientCertificateAuthenticationLocalTest
                         .trustAllCertificates()
                         .build());
 
-            final Callable<?> brokenCall =
-                () -> REQUEST_FACTORY.read(MyEntity.class, MyEntity.ENTITY_COLLECTION).executeRequest(destination);
+            final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+            final HttpClientContext context = HttpClientContext.create();
 
-            // expect an exception from broken call
-            assertThatThrownBy(() -> ThreadContextExecutor.fromNewContext().execute(brokenCall))
-                .isInstanceOf(ThreadContextExecutionException.class)
-                .hasCauseExactlyInstanceOf(ODataConnectionException.class);
+            assertThatThrownBy(() -> httpClient.execute(new HttpGet(), context))
+                .isInstanceOf(SSLHandshakeException.class);
 
             // keystore methods have been used
             Mockito.verify(destination).getKeyStorePassword();
             Mockito.verify(destination).getKeyStore();
 
             // no request successful
-            verify(0, getRequestedFor(urlMatching(ODATA_FUNCTION_IMPORT_URL)));
+            verify(0, getRequestedFor(anyUrl()));
         }
     }
 
@@ -260,14 +234,6 @@ abstract class ClientCertificateAuthenticationLocalTest
                         : new char[0]);
         }
         return keyStore;
-    }
-
-    @SneakyThrows
-    private static String readResourceFile( final String resourceFileName )
-    {
-        final String resource = ClientCertificateAuthenticationLocalTest.class.getSimpleName() + "/" + resourceFileName;
-        final URL resourceUrl = ClientCertificateAuthenticationLocalTest.class.getClassLoader().getResource(resource);
-        return Resources.toString(resourceUrl, StandardCharsets.UTF_8);
     }
 
     @SneakyThrows
