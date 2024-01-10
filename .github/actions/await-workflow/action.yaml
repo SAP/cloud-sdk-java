@@ -24,6 +24,8 @@ runs:
 
     - name: Wait for Workflow to Complete
       id: wait-for-workflow
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         echo "[DEBUG] Waiting for run '${{ inputs.run-id }}' to complete..."
         gh run watch ${{ inputs.run-id }} --interval 10 > /dev/null

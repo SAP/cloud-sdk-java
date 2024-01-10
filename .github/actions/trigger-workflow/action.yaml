@@ -34,6 +34,8 @@ runs:
 
     - name: Trigger Workflow
       id: trigger-workflow
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         PREVIOUS_RUN_ID=$(gh run list --workflow=${{ inputs.workflow}} --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
         echo "[DEBUG] Previous run id = '$PREVIOUS_RUN_ID'"

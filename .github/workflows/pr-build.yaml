@@ -1,0 +1,78 @@
+name: "Pull Request Build"
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CI_BUILD_WORKFLOW: "ci.yaml" # Name of the workflow that should be triggered for CI builds
+  COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+  BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+
+jobs:
+  run-ci:
+    runs-on: ubuntu-latest
+    name: Continuous Integration
+    permissions:
+      actions: write # needed to trigger the ci workflow
+      statuses: write # needed to update the commit status in the PR
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger CI Workflow
+        id: trigger-ci
+        uses: ./.github/actions/trigger-workflow
+        with:
+          workflow: ${{ env.CI_BUILD_WORKFLOW }}
+          workflow-ref: ${{ env.BRANCH_NAME }}
+          commit-sha: ${{ env.COMMIT_SHA }}
+          parameters: >
+            -f repository-version='${{ github.ref }}' 
+            -f create-release-artifacts='false' 
+            -f check-blackduck='false'
+
+      - name: Report Status in PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ env.COMMIT_SHA }}',
+              state: 'pending',
+              target_url: '${{ steps.trigger-ci.outputs.run-url }}',
+              description: 'CI Build Workflow',
+              context: 'CI Build Pipeline'
+            })
+
+      - name: Await CI Workflow
+        id: await-ci
+        uses: ./.github/actions/await-workflow
+        with:
+          run-id: ${{ steps.trigger-ci.outputs.run-id }}
+
+      - name: Determine Final Commit Status
+        id: determine-final-commit-status
+        if: ${{ always() }}
+        run: |
+          if [[ "${{ steps.await-ci.outputs.conclusion }}" == "success" ]]; then
+            echo "FINAL_COMMIT_STATUS=success" >> $GITHUB_OUTPUT
+          else
+            echo "FINAL_COMMIT_STATUS=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report Final Commit Status
+        if: ${{ always() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ env.COMMIT_SHA }}',
+              state: '${{ steps.determine-final-commit-status.outputs.FINAL_COMMIT_STATUS }}',
+              target_url: '${{ steps.trigger-ci.outputs.run-url }}',
+              description: 'CI Build Workflow',
+              context: 'CI Build Pipeline'
+            })
