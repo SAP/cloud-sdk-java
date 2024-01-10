@@ -15,16 +15,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -1238,8 +1237,10 @@ class DestinationServiceTest
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, never()) // get-all command not executed due to token exchange strategy
-            .getConfigurationAsJson(argThat(path -> !path.startsWith("/destinations/")), any());
+
+        // get-all command not executed due to token exchange strategy
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+
         softly.assertAll();
     }
 
@@ -1306,8 +1307,9 @@ class DestinationServiceTest
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, never()) // get-all command not executed due to token exchange strategy
-            .getConfigurationAsJson(argThat(path -> !path.startsWith("/destinations/")), any());
+
+        // get-all command not executed due to token exchange strategy
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     @Test
@@ -1354,8 +1356,7 @@ class DestinationServiceTest
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, never()) // get-all command not executed due to token exchange strategy
-            .getConfigurationAsJson(argThat(path -> !path.startsWith("/destinations/")), any());
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter); // get-all command not executed due to token exchange strategy
     }
 
     @Test
@@ -1465,8 +1466,7 @@ class DestinationServiceTest
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         // verify getAll destinations are not called
-        verify(scpCfDestinationServiceAdapter, never())
-            .getConfigurationAsJson(argThat(path -> !path.startsWith("/destinations/")), any());
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     /**
