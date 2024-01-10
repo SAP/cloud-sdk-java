@@ -71,16 +71,14 @@ class DefaultHttpDestinationBuilderProxyHandler
         return (DefaultHttpDestination) getServiceBindingDestinationLoader().getDestination(options);
     }
 
-    // Auth type            | retrieval option | tenant   | user      | result
-    // *                    + SUB_ONLY        + NO_TENANT + *        -> (should never happen as it should fail on destination loading)
-    // *                    + SUB_ONLY        + TENANT_PR + *        -> (should never happen as it should fail on destination loading)
-    // BasicAuth            + ALWAYS_PROVIDER + *         + NO_USER  -> TECHNICAL_USER_PROVIDER
-    // BasicAuth            + CURRENT_TENANT  + *         + NO_USER  -> TECHNICAL_USER_CURRENT_TENANT
-    // BasicAuth            + SUB_ONLY        + TENANT_T1 + NO_USER  -> TECHNICAL_USER_CURRENT_TENANT
-    // PrincipalPropagation + *               + *         + NO_USER  -> (fail, on getHeaders())
-    // PrincipalPropagation + ALWAYS_PROVIDER + TENANT_PR + USER_PR  -> TECHNICAL_USER_CURRENT_TENANT (compatibility strategy) or NAME_USER_CURRENT_TENANT (recommended strategy)
-    // PrincipalPropagation + ALWAYS_PROVIDER + TENANT_T1 + *        -> (fail, on getHeaders())
-    // PrincipalPropagation + CURRENT_TENANT  + *         + *        -> TECHNICAL_USER_CURRENT_TENANT
+    // Auth type            | destination tenant | PP mode           | result
+    // *                    + TENANT_PROVIDER    + *                -> TECHNICAL_USER_PROVIDER
+    // *                    + *                  + *                -> TECHNICAL_USER_CURRENT_TENANT
+    // PrincipalPropagation + TENANT_PROVIDER    + TOKEN_FORWARDING -> TECHNICAL_USER_PROVIDER
+    // PrincipalPropagation + *                  + TOKEN_FORWARDING -> TECHNICAL_USER_CURRENT_TENANT
+    // PrincipalPropagation + *                  + TOKEN_EXCHANGE   -> NAMED_USER_CURRENT_TENANT
+    //
+    // note: destination tenant is one of: [undefined, empty, non-empty]. empty is listed here as TENANT_PROVIDER.
     @Nonnull
     private static OnBehalfOf deriveOnBehalfOf( @Nonnull final DefaultHttpDestination.Builder builder )
     {
