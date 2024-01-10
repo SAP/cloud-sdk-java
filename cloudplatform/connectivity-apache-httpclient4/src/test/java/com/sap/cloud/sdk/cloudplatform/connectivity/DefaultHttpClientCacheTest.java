@@ -220,6 +220,7 @@ class DefaultHttpClientCacheTest
         final HttpUriRequest request1 = client1.wrapRequest(new HttpGet());
         final HttpUriRequest request2 = client2.wrapRequest(new HttpGet());
 
+        // This behavior is to be improved by https://github.com/SAP/cloud-sdk-java-backlog/issues/396
         assertThat(request1.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
         assertThat(request2.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
     }
