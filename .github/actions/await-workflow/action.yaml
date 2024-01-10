@@ -26,6 +26,7 @@ runs:
       id: wait-for-workflow
       run: |
         echo "[DEBUG] Waiting for run '${{ inputs.run-id }}' to complete..."
+        gh run watch ${{ inputs.run-id }}
         CONCLUSION=$(gh run view ${{ inputs.run-id }} --json conclusion | jq -r '.conclusion')
         
         echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
