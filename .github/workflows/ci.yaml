@@ -55,7 +55,7 @@ jobs:
       ci-build-run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
-      checks: write # needed to create a check in a PR (if applicable)
+      statuses: write # needed to update the commit status in the PR
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
