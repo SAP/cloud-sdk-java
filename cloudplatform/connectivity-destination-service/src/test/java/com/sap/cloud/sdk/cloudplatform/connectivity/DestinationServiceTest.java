@@ -1238,7 +1238,7 @@ class DestinationServiceTest
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        // get-all command not executed due to token exchange strategy
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
         verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
 
         softly.assertAll();
@@ -1308,7 +1308,7 @@ class DestinationServiceTest
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        // get-all command not executed due to token exchange strategy
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
         verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
@@ -1356,7 +1356,9 @@ class DestinationServiceTest
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter); // get-all command not executed due to token exchange strategy
+
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     @Test
@@ -1440,6 +1442,9 @@ class DestinationServiceTest
             .getConfigurationAsJsonWithUserToken(
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        // we are not performing further requests
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     @Test
@@ -1459,13 +1464,12 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
-        // Verify destination is re-fetched after cache expiration
         verify(scpCfDestinationServiceAdapter, times(1))
             .getConfigurationAsJsonWithUserToken(
                 "/destinations/" + destinationName,
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        // verify getAll destinations are not called
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
         verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
@@ -1547,6 +1551,7 @@ class DestinationServiceTest
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
 
         softly
             .assertThat(DestinationService.Cache.instanceSingle().asMap())
