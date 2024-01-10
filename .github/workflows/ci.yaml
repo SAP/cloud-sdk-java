@@ -1,158 +1,624 @@
-name: CI
+name: "Continuous Integration"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      repository-version:
+        description: "Repository Version (e.g. branch, tag, sha). Use 'refs/heads/<BRANCH>', 'refs/tags/<TAG>', or 'refs/pull/<PR>'."
+        required: false
+        default: refs/heads/main
+      fail-fast:
+        description: "Abort Workflow on Error"
+        required: false
+        type: boolean
+        default: true
+      check-tests:
+        description: "Run Unit Tests"
+        required: false
+        type: boolean
+        default: true
+      check-checkstyle:
+        description: "Run Checkstyle"
+        required: false
+        type: boolean
+        default: true
+      check-pmd:
+        description: "Run PMD"
+        required: false
+        type: boolean
+        default: true
+      check-spotbugs:
+        description: "Run Spotbugs"
+        required: false
+        type: boolean
+        default: true
+      check-codeql:
+        description: "Run CodeQL"
+        required: false
+        type: boolean
+        default: true
+      check-archetypes:
+        description: "Run Archetype Tests"
+        required: false
+        type: boolean
+        default: true
+      check-blackduck:
+        description: "Run Black Duck"
+        required: false
+        type: boolean
+        default: false
+      create-release-artifacts:
+        description: "Create Release Artifacts"
+        required: false
+        type: boolean
+        default: false
 
 env:
-  PRODUCTION_BRANCHES: "refs/heads/main" # Space-separated list of branches that are considered production branches
-  CI_BUILD_WORKFLOW: "ci-build.yaml" # Name of the workflow that should be triggered for CI builds
-  RELEASE_ARTIFACT_NAME: "sap-cloud-sdk.zip" # Name of the artifact that should be downloaded from the CI build workflow
+  NON_SDK_M2_CACHE_KEY: non-sdk-m2-${{ github.event.inputs.repository-version }}
+  NON_SDK_M2_PATHS: |
+    ~/.m2/repository/**
+    !~/.m2/archetype-catalog.xml
+    !~/.m2/repository/com/sap/cloud/sdk/**
+  SDK_M2_CACHE_KEY: sdk-m2-${{ github.event.inputs.repository-version }}
+  SDK_M2_PATHS: |
+    ~/.m2/repository/com/sap/cloud/sdk/**
+    ~/.m2/archetype-catalog.xml
+  SDK_TARGETS_CACHE_KEY: sdk-targets-${{ github.event.inputs.repository-version }}
+  SDK_TARGETS_PATHS: |
+    ./**/target/**
+
+  MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
+  MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
 
 jobs:
-  context:
+  check-formatting:
     runs-on: ubuntu-latest
-    name: Collect Context Information
+    name: Check Formatting
     outputs:
-      is-production-branch: ${{ steps.check-production-branch.outputs.IS_PRODUCTION_BRANCH }}
-      head-branch-name: ${{ steps.get-head-branch-name.outputs.HEAD_BRANCH_NAME }}
-      head-commit-sha: ${{ steps.get-head-commit-sha.outputs.HEAD_COMMIT_SHA }}
-    steps:
-      - name: Check Production Branch
-        id: check-production-branch
-        run: |
-          if [[ "$PRODUCTION_BRANCHES" =~ ( |^)${{ github.ref }}( |$) ]]; then
-            echo "[Debug] '${{ github.ref }}' is a production branch"
-            echo "IS_PRODUCTION_BRANCH=true" >> $GITHUB_OUTPUT
-          else
-            echo "[Debug] '${{ github.ref }}' is not a production branch"
-            echo "IS_PRODUCTION_BRANCH=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Get Head Branch Name
-        id: get-head-branch-name
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "HEAD_BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
-          else
-              echo "HEAD_BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-      - name: Get Head Commit SHA
-        id: get-head-commit-sha
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "HEAD_COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
-          else
-              echo "HEAD_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_OUTPUT
-          fi
-
-  run-ci:
-    needs: [ context ]
-    runs-on: ubuntu-latest
-    name: Run CI Build
-    outputs:
-      ci-build-run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
+      update-non-sdk-m2-stash: ${{ steps.stash-non-sdk-m2.outputs.stashed }}
     permissions:
-      actions: write # needed to trigger the ci-build workflow
+      actions: write # needed to cancel the workflow eagerly is needed
     env:
-      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Trigger CI Build Workflow
-        id: trigger-ci-build
-        uses: ./.github/actions/trigger-workflow
+      - uses: actions/checkout@v4
         with:
-          workflow: ${{ env.CI_BUILD_WORKFLOW }}
-          workflow-ref: ${{ needs.context.outputs.head-branch-name }}
-          commit-sha: ${{ needs.context.outputs.head-commit-sha }}
-          parameters: >
-            -f repository-version='${{ github.ref }}' 
-            -f create-release-artifacts='${{ needs.context.outputs.is-production-branch }}' 
-            -f check-blackduck='${{ needs.context.outputs.is-production-branch }}'
-
-      - name: Report Status in PR
-        id: report-status-in-pr
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: ${{ needs.context.outputs.head-commit-sha }},
-              state: 'pending',
-              context: 'ci-build',
-              description: 'CI Build Workflow is running',
-              target_url: '${{ steps.trigger-ci-build.outputs.run-url }}'
-            })
-
-      - name: Await CI Build Workflow
-        id: await-ci-build
-        uses: ./.github/actions/await-workflow
-        with:
-          run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
-#
-#      - name: Update Status in PR
-#        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
-#        uses: actions/github-script@v7
-
-  deploy-snapshot:
-    name: Deploy Snapshot
-    if: ${{ needs.context.outputs.is-production-branch == 'true' }}
-    needs: [context, run-ci]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      actions: read # needed to download the artifacts from the ci-build workflow
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          ref: ${{ github.event.inputs.repository-version }}
       - name: Setup java
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "17"
-          server-id: artifactory-snapshots
-          server-username: ARTIFACTORY_USER # env variable for username in deploy
-          server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
+          java-version: 17
 
-      - name: Publish Snapshot
-        run: >
-          gh run download ${{ needs.run-ci.outputs.ci-build-run-id }} --name "${{ env.RELEASE_ARTIFACT_NAME }}" -d .
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+          restore-keys: |
+            non-sdk-m2-${{ github.ref }}
+            non-sdk-m2
+
+      - name: Verify Formatting
+        run: |
+          MVN_GOALS="\
+          net.revelc.code.formatter:formatter-maven-plugin:validate \
+          net.revelc.code:impsort-maven-plugin:check \
+          com.github.ekryd.sortpom:sortpom-maven-plugin:verify"
           
-          unzip "${{ env.RELEASE_ARTIFACT_NAME }}" -d .
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} $MVN_GOALS"
+          echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
 
-          cd release
+      - name: Stash Non SDK M2
+        id: stash-non-sdk-m2
+        uses: ./.github/actions/stash
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+          update-after-days: "1"
 
-          mvn
-          $MVN_CLI_ARGS
-          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -DrepositoryId=artifactory-snapshots
-          -Dmaven.install.skip=true
-          -Dmaven.test.skip
-          -Dmaven.compiler.showCompilationChanges
-          -Dhttp.keepAlive=false
-          deploy
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
 
-  notify-job:
+  build:
+    needs: check-formatting
     runs-on: ubuntu-latest
-    needs: [ context, run-ci, deploy-snapshot ]
-    if: ${{ failure() && needs.context.outputs.is-production-branch == 'true' }}
+    name: Build
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+
+      - name: Build SDK
+        id: build-sdk
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
+          install -DskipTests -DskipFormatting"
+          
+          if [[ "${{ github.event.inputs.create-release-artifacts }}" == "true" ]]; then
+            echo "[DEBUG] Enabling JavaDoc generation to assemble release artifacts."
+          
+            python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
+            MVN_ARGS="$MVN_ARGS -Pdocs"
+          fi
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+          
+          if [[ "${{ github.event.inputs.create-release-artifacts }}" == "true" ]]; then
+            VERSION=$(cat latest.json | jq -r .version)
+            echo "[DEBUG] Assembling release artifacts for version '$VERSION'."
+          
+            python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix release
+            ARTIFACT_NAME=sap-cloud-sdk-java.zip
+            zip -q -r "$ARTIFACT_NAME" release
+            rm -rf release
+          
+            echo "RELEASE_ARTIFACTS_NAME=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          else
+            echo "[DEBUG] Not assembling release artifacts."
+            echo "RELEASE_ARTIFACTS_NAME=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create module-inventory
+        run: |
+          python ./scripts/create_module_inventory_file.py \
+          --sdk-root-directory ./ \
+          --output-file ./module-inventory.json \
+          --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
+
+      - name: Verify Local Changes
+        run: |
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [[ ! -z "$CHANGED_FILES" ]]; then
+              echo "There are local changes in the following files:"
+              echo "$CHANGED_FILES"
+              echo "Printing the git diff:"
+              git --no-pager diff
+              exit 1
+          fi
+
+      - name: Stash Non SDK M2
+        if: ${{ needs.check-formatting.outputs.update-non-sdk-m2-stash == 'true' }}
+        uses: ./.github/actions/stash
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+          force-update: true
+      - name: Stash SDK M2
+        uses: ./.github/actions/stash
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+          force-update: true
+      - name: Stash SDK Target Directories
+        uses: ./.github/actions/stash
+        with:
+          path: ${{ env.SDK_TARGETS_PATHS }}
+          key: ${{ env.SDK_TARGETS_CACHE_KEY }}
+          force-update: true
+      - name: Upload Release Package
+        if: ${{  github.event.inputs.create-release-artifacts == 'true' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}
+          path: ${{ steps.build-sdk.outputs.RELEASE_ARTIFACTS_NAME }}
+          retention-days: 1
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+  test:
+    if: ${{ github.event.inputs.check-tests == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Unit Tests
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+      - name: Restore SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+      - name: Restore SDK Target Directories
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_TARGETS_PATHS }}
+          key: ${{ env.SDK_TARGETS_CACHE_KEY }}
+
+      - name: Run Unit Tests
+        run: |
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} \
+          org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report"
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
+          mvn $MVN_ARGS
+
+      - name: Test Report
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
+      - name: Coverage Report
+        run: |
+          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern '**/target/site/jacoco/jacoco.csv'
+        shell: bash
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-checkstyle:
+    if: ${{ github.event.inputs.check-checkstyle == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Checkstyle
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+      - name: Restore SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+      - name: Restore SDK Target Directories
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_TARGETS_PATHS }}
+          key: ${{ env.SDK_TARGETS_CACHE_KEY }}
+
+      - name: Run Checkstyle
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
+          -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip \
+          -P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle"
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
+          mvn $MVN_ARGS
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-pmd:
+    if: ${{ github.event.inputs.check-pmd == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: PMD
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+      - name: Restore SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+      - name: Restore SDK Target Directories
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_TARGETS_PATHS }}
+          key: ${{ env.SDK_TARGETS_CACHE_KEY }}
+
+      - name: Run PMD
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
+          -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip \
+          org.apache.maven.plugins:maven-pmd-plugin:pmd"
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
+          mvn $MVN_ARGS
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-spotbugs:
+    if: ${{ github.event.inputs.check-spotbugs == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Spotbugs
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+      - name: Restore SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+      - name: Restore SDK Target Directories
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_TARGETS_PATHS }}
+          key: ${{ env.SDK_TARGETS_CACHE_KEY }}
+
+      - name: Run Spotbugs
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
+          -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip \
+          com.github.spotbugs:spotbugs-maven-plugin:spotbugs"
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"          
+          mvn $MVN_ARGS
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-codeql:
+    if: ${{ github.event.inputs.check-codeql == 'true' }}
+    needs: build # We depend on the Build job here to avoid downloading dependencies twice
+    runs-on: ubuntu-latest
+    name: CodeQL
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Notify
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.ref_name }}
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "java"
+          queries: security-extended
+
+      - name: Build SDK
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} \
+          install -Dmaven.test.skip=true -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
+          
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-archetypes:
+    if: ${{ github.event.inputs.check-archetypes == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task:
+          - {
+            "archetype": "spring-boot3",
+            "javaVersion": 17,
+            "startCommand": "mvn spring-boot:run -B",
+          }
+    name: Test Archetype ${{ matrix.task.archetype }}
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.task.javaVersion }}
+
+      - name: Restore Non SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.NON_SDK_M2_PATHS }}
+          key: ${{ env.NON_SDK_M2_CACHE_KEY }}
+      - name: Restore SDK M2
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ env.SDK_M2_PATHS }}
+          key: ${{ env.SDK_M2_CACHE_KEY }}
+
+      - name: Create Temp Director
+        id: create-temp-dir
+        run: |
+          DIR=~/.temp/${{ matrix.task.archetype }}
+          mkdir -p $DIR
+          echo "DIR=$DIR" >> $GITHUB_OUTPUT
+
+      - name: Determine Version
+        id: get-version
+        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
+
+      - name: Generate ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}
+        run: >
+          mvn archetype:generate -B
+          -DarchetypeCatalog=local
+          -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
+          -DarchetypeArtifactId=${{ matrix.task.archetype }}
+          -DarchetypeVersion=${{ steps.get-version.outputs.VERSION }}
+          -DgroupId=com.sap.test
+          -DartifactId=example-${{ matrix.task.archetype }}
+          -Dversion=1.0-SNAPSHOT
+          -Dpackage=com.sap.test
+          -Dhttp.keepAlive=false
+
+      - name: Verify ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
+        run: >
+          mvn clean verify -B
+          -Dhttp.keepAlive=false
+          -Dmaven.test.skip=true
+
+      - name: Test ${{ matrix.task.name }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
+        run: mvn test -B -Dsurefire.logLevel='error'
+
+      - name: Spotbugs ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
+        run: >
+          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
+          -pl !integration-tests
+          -Dhttp.keepAlive=false
+          -Dmaven.wagon.http.pool=false
+
+      - name: Start ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}/application
+        run: |
+          logFilePath=log.txt
+          ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
+          
+          if ! curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' failed to start locally."
+            cat $logFilePath
+            exit 1
+          fi
+          
+          if ! grep -q "I am running!" $logFilePath; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but did not contain the expected log output."
+            cat $logFilePath
+            exit 1
+          fi
+          
+          if grep -iq "caused by" $logFilePath; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but an unexpected error occurred."
+            cat $logFilePath
+            exit 1
+          fi
+
+      - name: Verify .gitignore ${{ matrix.task.archetype }}
+        working-directory: ${{ steps.create-temp-dir.outputs.DIR }}/example-${{ matrix.task.archetype }}
+        run: |
+          if [[ ! -f .gitignore ]]; then
+              ls -lah
+              echo "Project generated from archetype '${{ matrix.task.archetype }}' does not contain a .gitignore file."
+              exit 1
+          fi
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+
+  check-blackduck:
+    if: ${{ github.event.inputs.check-blackduck == 'true' }}
+    runs-on: ubuntu-latest
+    name: Black Duck
+    permissions:
+      actions: write # needed to cancel the workflow eagerly is needed
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.repository-version }}
+
+      - name: Scan With Black Duck
+        uses: ./.github/actions/scan-with-blackduck
+
+      - name: Cancel Workflow on Error
+        if: ${{ failure() && github.event.inputs.fail-fast == 'true' }}
+        run: |
+          gh run cancel ${{ github.run_id }}

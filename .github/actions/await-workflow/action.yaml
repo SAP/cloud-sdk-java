@@ -24,20 +24,12 @@ runs:
 
     - name: Wait for Workflow to Complete
       id: wait-for-workflow
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         echo "[DEBUG] Waiting for run '${{ inputs.run-id }}' to complete..."
-        
-        # we tried using 'gh run watch' instead of doing the polling ourselves, but that failed with an HTTP 500 after a while
-        while :
-        do
-          CONCLUSION=$(gh run view ${{ inputs.run-id }} --json conclusion | jq -r '.conclusion')
-        
-          if [[ -z "$CONCLUSION" ]]; then
-            sleep 5
-          else
-            break
-          fi
-        done
+        gh run watch ${{ inputs.run-id }} --interval 10 > /dev/null
+        CONCLUSION=$(gh run view ${{ inputs.run-id }} --json conclusion | jq -r '.conclusion')
         
         echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT
         echo "[DEBUG] Run '${{ inputs.run-id }}' finished with conclusion '$CONCLUSION'."
