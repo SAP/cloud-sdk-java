@@ -87,19 +87,40 @@ jobs:
               state: 'pending',
               target_url: '${{ steps.trigger-ci-build.outputs.run-url }}',
               description: 'CI Build Workflow',
-              context: '${{ steps.trigger-ci-build.outputs.run-url }}'
+              context: 'CI Build Pipeline'
             })
-
-      - name: Update Status in PR
-        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
-        run: |
-          echo "${{ toJson(steps.report-status-in-pr.outputs) }}"
 
       - name: Await CI Build Workflow
         id: await-ci-build
         uses: ./.github/actions/await-workflow
         with:
           run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
+
+      - name: Determine Final Commit Status
+        id: determine-final-commit-status
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          if [[ "${{ steps.await-ci-build.outputs.conclusion }}" == "success" ]]; then
+            echo "FINAL_COMMIT_STATUS=success" >> $GITHUB_OUTPUT
+          else
+            echo "FINAL_COMMIT_STATUS=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report Final Commit Status
+        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ needs.context.outputs.head-commit-sha }}',
+              state: '${{ steps.determine-final-commit-status.outputs.final-commit-status }}',
+              target_url: '${{ steps.trigger-ci-build.outputs.run-url }}',
+              description: 'CI Build Workflow',
+              context: 'CI Build Pipeline'
+            })
+
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ needs.context.outputs.is-production-branch == 'true' }}
