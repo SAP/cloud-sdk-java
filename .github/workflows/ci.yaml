@@ -115,7 +115,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha: '${{ needs.context.outputs.head-commit-sha }}',
-              state: '${{ steps.determine-final-commit-status.outputs.final-commit-status }}',
+              state: '${{ steps.determine-final-commit-status.outputs.FINAL_COMMIT_STATUS }}',
               target_url: '${{ steps.trigger-ci-build.outputs.run-url }}',
               description: 'CI Build Workflow',
               context: 'CI Build Pipeline'
