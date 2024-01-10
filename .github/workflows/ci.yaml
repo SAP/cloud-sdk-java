@@ -80,7 +80,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.repo.createCommitStatus({
+            github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha: '${{ needs.context.outputs.head-commit-sha }}',
