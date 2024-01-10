@@ -155,7 +155,7 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
-    "artifactId": "resilience",
+    "artifactId": "resilience-api",
     "packaging": "jar",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
