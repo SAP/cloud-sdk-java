@@ -98,7 +98,7 @@ jobs:
 
       - name: Determine Final Commit Status
         id: determine-final-commit-status
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
         run: |
           if [[ "${{ steps.await-ci-build.outputs.conclusion }}" == "success" ]]; then
             echo "FINAL_COMMIT_STATUS=success" >> $GITHUB_OUTPUT
