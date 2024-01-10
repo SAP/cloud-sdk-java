@@ -92,7 +92,7 @@ jobs:
       - name: Update Status in PR
         if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
         run: |
-          echo ${{ toJson(steps.report-status-in-pr.outputs) }}
+          echo "${{ toJson(steps.report-status-in-pr.outputs) }}"
 
       - name: Await CI Build Workflow
         id: await-ci-build
