@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -199,7 +201,7 @@ class DefaultHttpClientCacheTest
 
         final DefaultHttpDestination firstDestination =
             DefaultHttpDestination
-                .builder("some-uri")
+                .builder("http://some-uri")
                 .headerProviders(( any ) -> Collections.singletonList(header1))
                 .build();
 
@@ -209,10 +211,18 @@ class DefaultHttpClientCacheTest
                 .headerProviders(( any ) -> Collections.singletonList(header2))
                 .build();
 
-        final HttpClient clientWithFirstDestination = sut.tryGetHttpClient(firstDestination, FACTORY).get();
-        final HttpClient clientWithSecondDestination = sut.tryGetHttpClient(secondDestination, FACTORY).get();
+        final HttpClientWrapper client1 = (HttpClientWrapper) sut.tryGetHttpClient(firstDestination, FACTORY).get();
+        final HttpClientWrapper client2 = (HttpClientWrapper) sut.tryGetHttpClient(secondDestination, FACTORY).get();
 
-        assertThat(clientWithFirstDestination).isSameAs(clientWithSecondDestination);
+        assertThat(client1.getDestination()).isSameAs(firstDestination);
+        assertThat(client2.getDestination()).isSameAs(firstDestination);
+
+        final HttpUriRequest request1 = client1.wrapRequest(new HttpGet());
+        final HttpUriRequest request2 = client2.wrapRequest(new HttpGet());
+
+        // This behavior is to be improved by https://github.com/SAP/cloud-sdk-java-backlog/issues/396
+        assertThat(request1.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
+        assertThat(request2.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
     }
 
     @Test
