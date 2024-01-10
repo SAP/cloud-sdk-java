@@ -89,17 +89,16 @@ jobs:
               status: 'in_progress'
             })
 
-      - name: Await CI Build Workflow
-        id: await-ci-build
-        uses: ./.github/actions/await-workflow
-        with:
-          run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
-
       - name: Update Status in PR
         if: ${{ (success() || failure()) && github.event_name == 'pull_request' }}
         run: |
           echo ${{ toJson(steps.report-status-in-pr.outputs) }}
 
+      - name: Await CI Build Workflow
+        id: await-ci-build
+        uses: ./.github/actions/await-workflow
+        with:
+          run-id: ${{ steps.trigger-ci-build.outputs.run-id }}
   deploy-snapshot:
     name: Deploy Snapshot
     if: ${{ needs.context.outputs.is-production-branch == 'true' }}
