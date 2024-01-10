@@ -42,8 +42,7 @@ jobs:
               sha: '${{ env.COMMIT_SHA }}',
               state: 'pending',
               target_url: '${{ steps.trigger-ci.outputs.run-url }}',
-              description: 'CI Build Workflow',
-              context: 'CI Build Pipeline'
+              context: 'Continuous Integration Workflow'
             })
 
       - name: Await CI Workflow
@@ -73,6 +72,5 @@ jobs:
               sha: '${{ env.COMMIT_SHA }}',
               state: '${{ steps.determine-final-commit-status.outputs.FINAL_COMMIT_STATUS }}',
               target_url: '${{ steps.trigger-ci.outputs.run-url }}',
-              description: 'CI Build Workflow',
-              context: 'CI Build Pipeline'
+              context: 'Continuous Integration Workflow'
             })

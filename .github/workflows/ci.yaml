@@ -101,12 +101,12 @@ jobs:
 
       - name: Verify Formatting
         run: |
-          MAVEN_GOALS="\
+          MVN_GOALS="\
           net.revelc.code.formatter:formatter-maven-plugin:validate \
           net.revelc.code:impsort-maven-plugin:check \
           com.github.ekryd.sortpom:sortpom-maven-plugin:verify"
           
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} $MAVEN_GOALS"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} $MVN_GOALS"
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
