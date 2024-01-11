@@ -19,6 +19,7 @@ jobs:
       ci-run-id: ${{ steps.trigger-ci.outputs.run-id }}
     permissions:
       actions: write # needed to trigger the ci-build workflow
+      statuses: write # needed to update the commit status in the PR
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
