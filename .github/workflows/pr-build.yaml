@@ -15,7 +15,7 @@ jobs:
     name: Continuous Integration
     permissions:
       actions: write # needed to trigger the ci workflow
-      statuses: write # needed to update the commit status in the PR
+      statuses: write # needed to update the commit status
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
