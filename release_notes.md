@@ -8,7 +8,8 @@
 
 ### 🔧 Compatibility Notes
 
--
+- `com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache` now enables change detection by default, but can be disabled via `DestinationService.Cache.disableChangeDetection()`. 
+  - `DestinationService.Cache.enableChangeDetection()` has been deprecated.
 
 ### ✨ New Functionality
 

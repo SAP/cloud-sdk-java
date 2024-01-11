@@ -26,6 +26,7 @@ class DestinationServiceCacheTest
         DestinationService.Cache.reset();
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testDisable()
     {
@@ -35,6 +36,7 @@ class DestinationServiceCacheTest
         DestinationService.Cache.disable();
         assertThat(DestinationService.Cache.isEnabled()).isFalse();
         assertThatCode(DestinationService.Cache::enableChangeDetection).isInstanceOf(IllegalStateException.class);
+        assertThatCode(DestinationService.Cache::disableChangeDetection).isInstanceOf(IllegalStateException.class);
         assertThatCode(DestinationService.Cache::instanceSingle).isInstanceOf(IllegalStateException.class);
         assertThatCode(DestinationService.Cache::instanceAll).isInstanceOf(IllegalStateException.class);
     }
@@ -56,11 +58,11 @@ class DestinationServiceCacheTest
     {
         final Cache<CacheKey, ?> cacheSingle = DestinationService.Cache.instanceSingle();
         final Cache<CacheKey, ?> cacheAll = DestinationService.Cache.instanceAll();
-        assertThat(DestinationService.Cache.isChangeDetectionEnabled()).isFalse();
+        assertThat(DestinationService.Cache.isChangeDetectionEnabled()).isTrue();
 
         // sut
-        DestinationService.Cache.enableChangeDetection();
-        assertThat(DestinationService.Cache.isChangeDetectionEnabled()).isTrue();
+        DestinationService.Cache.disableChangeDetection();
+        assertThat(DestinationService.Cache.isChangeDetectionEnabled()).isFalse();
         assertThat(cacheSingle).isNotSameAs(DestinationService.Cache.instanceSingle());
         assertThat(cacheAll).isNotSameAs(DestinationService.Cache.instanceAll());
     }
