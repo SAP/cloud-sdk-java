@@ -8,6 +8,7 @@ env:
   CI_BUILD_WORKFLOW: "ci.yaml" # Name of the workflow that should be triggered for CI builds
   COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
   BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+  BRANCH_REF: refs/heads/${{ github.event.pull_request.head.ref }}
 
 jobs:
   run-ci:
@@ -28,7 +29,7 @@ jobs:
           workflow-ref: ${{ env.BRANCH_NAME }}
           commit-sha: ${{ env.COMMIT_SHA }}
           parameters: >
-            -f repository-version='${{ github.ref }}' 
+            -f repository-version='${{ env.BRANCH_REF }}' 
             -f create-release-artifacts='false' 
             -f check-blackduck='false'
 

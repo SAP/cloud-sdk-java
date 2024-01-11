@@ -9,6 +9,7 @@ env:
   RELEASE_ARTIFACT_NAME: "sap-cloud-sdk.zip" # Name of the artifact that should be downloaded from the CI build workflow
   COMMIT_SHA: ${{ github.sha }}
   BRANCH_NAME: ${{ github.ref_name }}
+  BRANCH_REF: ${{ github.ref }}
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1C"
 
 jobs:
@@ -32,7 +33,7 @@ jobs:
           workflow-ref: ${{ env.BRANCH_NAME }}
           commit-sha: ${{ env.COMMIT_SHA }}
           parameters: >
-            -f repository-version='${{ github.ref }}' 
+            -f repository-version='${{ env.BRANCH_REF }}' 
             -f create-release-artifacts='true' 
 
       - name: Await CI Workflow
