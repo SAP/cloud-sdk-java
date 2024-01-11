@@ -2,8 +2,10 @@ name: "Delete Stale Caches"
 
 on:
   delete:
-    branches: *
-    tags: *
+    branches:
+      - "**"
+    tags:
+      - "**"
 
 jobs:
   delete-branch-caches:
