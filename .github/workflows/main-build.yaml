@@ -38,6 +38,7 @@ jobs:
         uses: ./.github/actions/await-workflow
         with:
           run-id: ${{ steps.trigger-ci.outputs.run-id }}
+          commit-status: "Continuous Integration Workflow"
 
   deploy-snapshot:
     name: Deploy Snapshot

@@ -5,6 +5,9 @@ inputs:
   run-id:
     description: "The id of the workflow run to wait for."
     required: true
+  commit-status:
+    description: "The commit status message. Leave empty to not create a commit status."
+    required: false
 
 outputs:
   succeeded:
@@ -21,6 +24,31 @@ runs:
       run: |
         echo "[DEBUG] Starting 'Await Workflow' Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
+
+    - name: View Run
+      if: ${{ inputs.commit-status != '' }}
+      id: view-run
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        JSON=$(gh run view ${{ inputs.run-id }} --json url,headSha)
+        echo "URL=$(echo $JSON | jq -r '.url')" >> $GITHUB_OUTPUT
+        echo "HEAD_SHA=$(echo $JSON | jq -r '.headSha')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Create Commit Status
+      if: ${{ inputs.commit-status != '' }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.repos.createCommitStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            sha: '${{ steps.view-run.outputs.HEAD_SHA }}',
+            state: 'pending',
+            target_url: '${{ steps.view-run.outputs.URL }}',
+            context: '${{ inputs.commit-status }}'
+          })
 
     - name: Wait for Workflow to Complete
       id: wait-for-workflow
@@ -41,3 +69,28 @@ runs:
         
         echo "RUN_SUCCEEDED=true" >> $GITHUB_OUTPUT
       shell: bash
+
+    - name: Determine Final Commit Status
+      id: determine-final-commit-status
+      if: ${{ always() && inputs.commit-status != '' }}
+      run: |
+        if [[ "${{ steps.wait-for-workflow.outputs.CONCLUSION }}" == "success" ]]; then
+          echo "FINAL_COMMIT_STATUS=success" >> $GITHUB_OUTPUT
+        else
+          echo "FINAL_COMMIT_STATUS=failure" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
+    - name: Update Commit Status
+      if: ${{ always() && inputs.commit-status != '' }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ steps.view-run.outputs.HEAD_SHA }}',
+              state: '${{ steps.determine-final-commit-status.outputs.FINAL_COMMIT_STATUS }}',
+              target_url: '${{ steps.view-run.outputs.URL }}',
+              context: '${{ inputs.commit-status }}'
+          })
