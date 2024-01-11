@@ -129,7 +129,7 @@ public class DestinationService implements DestinationLoader
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
-    private Destination loadAndParseDestination( final String destName, final DestinationOptions options )
+    Destination loadAndParseDestination( final String destName, final DestinationOptions options )
         throws DestinationAccessException,
             DestinationNotFoundException
     {
@@ -147,7 +147,7 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    private DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
+    DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
     {
         final String response =
             strategy.isForwardToken()
@@ -399,7 +399,7 @@ public class DestinationService implements DestinationLoader
             Option.none();
 
         private static boolean cacheEnabled = true;
-        private static boolean changeDetectionEnabled = false;
+        private static boolean changeDetectionEnabled = true;
 
         static {
             recreateSingleCache();
@@ -469,7 +469,7 @@ public class DestinationService implements DestinationLoader
             if( !isEnabled() ) {
                 cacheEnabled = true;
             }
-            changeDetectionEnabled = false;
+            changeDetectionEnabled = true;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
@@ -548,7 +548,6 @@ public class DestinationService implements DestinationLoader
          *            manually through {@link CacheManager#invalidateAll()}.
          * @param strategy
          *            The {@link CacheExpirationStrategy}.
-         * @see #enableChangeDetection()
          */
         public static
             void
@@ -560,20 +559,8 @@ public class DestinationService implements DestinationLoader
             expirationDuration = Option.some(duration);
             expirationStrategy = strategy;
 
-            if( changeDetectionEnabled ) {
-                destinationsCache =
-                    prepareCache(
-                        prepareCacheBuilder(sizeLimit, Option.some(Duration.ofDays(1L)), expirationStrategy).build(),
-                        destinationsCache);
-                allDestinationsCache =
-                    prepareCache(
-                        prepareCacheBuilder(Option.none(), expirationDuration, CacheExpirationStrategy.WHEN_CREATED)
-                            .build(),
-                        allDestinationsCache);
-            } else {
-                recreateSingleCache();
-                recreateGetAllCache();
-            }
+            recreateSingleCache();
+            recreateGetAllCache();
         }
 
         /**
@@ -602,7 +589,8 @@ public class DestinationService implements DestinationLoader
                     .warn(
                         "Using the 'change detection' mode is not supported when disabling the Destination cache expiration. "
                             + "Therefore, change detection mode will be disabled from now on.");
-                changeDetectionEnabled = false;
+                disableChangeDetection();
+                return;
             }
 
             recreateSingleCache();
@@ -637,9 +625,12 @@ public class DestinationService implements DestinationLoader
          * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache. As a
          * consequence, all existing cache entries will be lost.
          *
+         * @deprecated since 5.2.0. Change detection mode is enabled by default
+         *
          * @since 4.7.0
          */
         @Beta
+        @Deprecated
         public static void enableChangeDetection()
         {
             throwIfDisabled();
@@ -653,12 +644,10 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        String
-                            .format(
-                                "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                                    + "Therefore, the default expiration (%s %s) will be restored.",
-                                DEFAULT_EXPIRATION_DURATION,
-                                DEFAULT_EXPIRATION_STRATEGY));
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration ({}{}) will be restored.",
+                        DEFAULT_EXPIRATION_DURATION,
+                        DEFAULT_EXPIRATION_STRATEGY);
 
                 expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
                 expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
@@ -674,16 +663,70 @@ public class DestinationService implements DestinationLoader
                     destinationsCache);
         }
 
+        /**
+         * Disables the <em>"change detection"</em> mode.
+         * <p>
+         * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache.
+         *
+         * @since 5.2.0
+         */
+        @Beta
+        public static void disableChangeDetection()
+        {
+            throwIfDisabled();
+            if( !changeDetectionEnabled ) {
+                return;
+            }
+
+            changeDetectionEnabled = false;
+            log.debug("Destination change detection has been disabled.");
+
+            recreateSingleCache();
+            recreateGetAllCache();
+        }
+
         private static void recreateSingleCache()
         {
-            destinationsCache = prepareCache(prepareCacheBuilder().build(), destinationsCache);
+            if( !changeDetectionEnabled ) {
+                destinationsCache = prepareCache(prepareCacheBuilder().build(), destinationsCache);
+                return;
+            }
+            if( !expirationDuration.isDefined() ) {
+                log
+                    .warn(
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration strategy ({}) will be restored.",
+                        DEFAULT_EXPIRATION_STRATEGY);
+                expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
+            }
+            destinationsCache =
+                prepareCache(
+                    prepareCacheBuilder(sizeLimit, Option.some(Duration.ofDays(1L)), expirationStrategy).build(),
+                    destinationsCache);
         }
 
         private static void recreateGetAllCache()
         {
+            if( !changeDetectionEnabled ) {
+                allDestinationsCache =
+                    prepareCache(
+                        prepareCacheBuilder(Option.none(), expirationDuration, expirationStrategy).build(),
+                        allDestinationsCache);
+                return;
+            }
+            if( !expirationDuration.isDefined() ) {
+                log
+                    .warn(
+                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
+                            + "Therefore, the default expiration duration ({}) will be restored.",
+                        DEFAULT_EXPIRATION_DURATION);
+
+                expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
+            }
             allDestinationsCache =
                 prepareCache(
-                    prepareCacheBuilder(Option.none(), expirationDuration, expirationStrategy).build(),
+                    prepareCacheBuilder(Option.none(), expirationDuration, CacheExpirationStrategy.WHEN_CREATED)
+                        .build(),
                     allDestinationsCache);
         }
 
