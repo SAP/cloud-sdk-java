@@ -83,7 +83,7 @@
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.57.7.1</jco-api.version>
-		<jackson.version>2.15.2</jackson.version>
+		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20231013</json.version>
@@ -93,35 +93,35 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.1</spring.version>
+		<spring.version>6.1.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.9</slf4j.version>
-		<assertj-core.version>3.24.2</assertj-core.version>
+		<slf4j.version>2.0.11</slf4j.version>
+		<assertj-core.version>3.25.1</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.7.0</mockito.version>
+		<mockito.version>5.8.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
-		<junit.jupiter.version>5.10.0</junit.jupiter.version>
+		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>4.10.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.8.1</maven-plugin.version>
+		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.0.1</openapi-generator.version>
+		<openapi-generator.version>7.2.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  Dependency convergence dependencies  -->
 		<jetty.version>11.0.18</jetty.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
-		<stax2-api.version>4.2.1</stax2-api.version>
-		<bouncycastle.version>1.76</bouncycastle.version>
+		<stax2-api.version>4.2.2</stax2-api.version>
+		<bouncycastle.version>1.77</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
 		<wiremock.version>3.3.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.10</kotlin.version>
-		<byte-buddy.version>1.14.8</byte-buddy.version>
+		<byte-buddy.version>1.14.11</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
