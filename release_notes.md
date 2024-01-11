@@ -11,6 +11,8 @@
 - The de-facto standard `resilience4j` implementation for the resilience API now included by default.
   In case you are loading a different implementation of the `Resilience4jDecorationStrategy` via the Java Service Provider Interface (SPI), you should use `resilience-api` and ensure `resilience4j` is not loaded transitively.
   Alternatively, you can invoke `ResilienceDecorator.setDecorationStrategy` explicitly in your code.
+- `com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache` now enables change detection by default, but can be disabled via `DestinationService.Cache.disableChangeDetection()`. 
+  - `DestinationService.Cache.enableChangeDetection()` has been deprecated.
 
 ### ✨ New Functionality
 
