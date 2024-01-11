@@ -183,4 +183,10 @@ class UriPathMergerTest
             "https://test_1.com/with?parameter=foo",
             URI.create("https://test_1.com/with?parameter=foo"));
     }
+
+    @Test
+    void testSpecialCharacterDomain()
+    {
+        testMerge("ftp://öko.spaß/", "/with?parameter=foo", URI.create("ftp://öko.spaß/with?parameter=foo"));
+    }
 }
