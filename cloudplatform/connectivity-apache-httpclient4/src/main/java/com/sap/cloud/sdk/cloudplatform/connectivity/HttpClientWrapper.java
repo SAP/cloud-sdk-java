@@ -88,6 +88,14 @@ class HttpClientWrapper extends CloseableHttpClient
         this.destination = destination;
     }
 
+    HttpClientWrapper withDestination( final HttpDestinationProperties destination )
+    {
+        if( destination.equals(this.destination) ) {
+            return this;
+        }
+        return new HttpClientWrapper(httpClient, destination);
+    }
+
     private HttpUriRequest wrapRequest( final HttpUriRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
