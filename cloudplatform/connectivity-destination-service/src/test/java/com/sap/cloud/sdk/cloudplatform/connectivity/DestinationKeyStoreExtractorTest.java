@@ -73,7 +73,6 @@ class DestinationKeyStoreExtractorTest
     {
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final DestinationService loader = new DestinationService(destinationService);
-        DestinationService.Cache.enableChangeDetection();
 
         final Map<String, String> destinationConfiguration =
             ImmutableMap
