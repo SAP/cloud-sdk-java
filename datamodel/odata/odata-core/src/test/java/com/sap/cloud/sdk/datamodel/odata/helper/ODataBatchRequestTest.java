@@ -88,7 +88,7 @@ class ODataBatchRequestTest
             Content-Type: application/http
             Content-Length: 71
             content-transfer-encoding: binary
-            
+
             HTTP/1.1 204 No Content
             Content-Length: 0
             dataserviceversion: 2.0

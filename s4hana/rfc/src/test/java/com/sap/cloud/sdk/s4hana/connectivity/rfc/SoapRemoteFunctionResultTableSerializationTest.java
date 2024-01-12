@@ -39,8 +39,7 @@ class SoapRemoteFunctionResultTableSerializationTest
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         // Contains empty inner table is named "Messages"
-        final String responsePayload =
-            """
+        final String responsePayload = """
             <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
                <soap-env:Header/>
                <soap-env:Body>
@@ -83,8 +82,7 @@ class SoapRemoteFunctionResultTableSerializationTest
     void testDeserializeFilledTable()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
-        final String responsePayload =
-            """
+        final String responsePayload = """
             <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
                <soap-env:Header/>
                <soap-env:Body>

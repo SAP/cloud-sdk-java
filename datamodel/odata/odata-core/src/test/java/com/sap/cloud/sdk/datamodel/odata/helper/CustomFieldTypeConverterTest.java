@@ -42,8 +42,7 @@ class CustomFieldTypeConverterTest
     private static final String ODATA_ENDPOINT_URL = "/service/path";
     private static final String ENTITY_SET = "A_TestEntity";
     private static final String MY_CUSTOM_FIELD = "MyCustomField";
-    private static final String RESPONSE =
-        """
+    private static final String RESPONSE = """
         {
           "d": {
             "results": [

@@ -57,40 +57,36 @@ class ApiClientExtensionsDeserializationTest
         server
             .expect(ExpectedCount.once(), requestTo(BASE_PATH + RELATIVE_PATH))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(
-                MockRestResponseCreators
-                    .withSuccess(
-                        """
-                        {
-                          "message": "Hello from the outer level.",
-                          "code": 1337,
-                          "inner": {
-                            "message": "Hello from the inner level.",
-                            "code": 7331,
-                            "innerComplexExtension": {
-                              "innerString": "inner",
-                              "innerInteger": 24
-                            },
-                            "innerListExtension": [
-                              "oof",
-                              "rab",
-                              "zab"
-                            ],
-                            "innerPrimitiveExtension": "additionalInnerValue"
-                          },
-                          "outerComplexExtension": {
-                            "outerString": "outer",
-                            "outerInteger": 42
-                          },
-                          "outerListExtension": [
-                            "foo",
-                            "bar",
-                            "baz"
-                          ],
-                          "outerPrimitiveExtension": "additionalOuterValue"
-                        }
-                        """,
-                        MediaType.APPLICATION_JSON));
+            .andRespond(MockRestResponseCreators.withSuccess("""
+                {
+                  "message": "Hello from the outer level.",
+                  "code": 1337,
+                  "inner": {
+                    "message": "Hello from the inner level.",
+                    "code": 7331,
+                    "innerComplexExtension": {
+                      "innerString": "inner",
+                      "innerInteger": 24
+                    },
+                    "innerListExtension": [
+                      "oof",
+                      "rab",
+                      "zab"
+                    ],
+                    "innerPrimitiveExtension": "additionalInnerValue"
+                  },
+                  "outerComplexExtension": {
+                    "outerString": "outer",
+                    "outerInteger": 42
+                  },
+                  "outerListExtension": [
+                    "foo",
+                    "bar",
+                    "baz"
+                  ],
+                  "outerPrimitiveExtension": "additionalOuterValue"
+                }
+                """, MediaType.APPLICATION_JSON));
 
         final TestApi api = new TestApi(apiClient);
         final Outer result = api.getOuter();

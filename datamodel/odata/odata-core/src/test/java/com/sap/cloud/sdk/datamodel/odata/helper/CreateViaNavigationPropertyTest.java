@@ -56,8 +56,7 @@ class CreateViaNavigationPropertyTest
     private static final String RELATIONS_NAV_PROP = "to_Relations";
 
     private static final String JSON_MOCK_REQUEST = "{\"Description\" :\"DE\"}";
-    private static final String JSON_CREATED_RESPONSE =
-        """
+    private static final String JSON_CREATED_RESPONSE = """
         {
           "d": {
             "__metadata": {
@@ -68,8 +67,7 @@ class CreateViaNavigationPropertyTest
           }
         }
         """;
-    private static final String JSON_NOT_IMPLEMENTED_RESPONSE =
-        """
+    private static final String JSON_NOT_IMPLEMENTED_RESPONSE = """
         {
           "error": {
             "code": "AB/100",

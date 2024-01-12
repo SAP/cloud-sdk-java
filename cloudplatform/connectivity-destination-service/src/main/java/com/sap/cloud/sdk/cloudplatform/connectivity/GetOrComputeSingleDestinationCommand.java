@@ -173,9 +173,9 @@ class GetOrComputeSingleDestinationCommand
                         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
                             final String message =
                                 """
-                                No principal is available in the current ThreadContext, but a principal is required for fetching the destination %s. \
-                                This typically means that the current context is malformed, containing inconsistent information about the authentication token, tenant and principal.\
-                                """;
+                                    No principal is available in the current ThreadContext, but a principal is required for fetching the destination %s. \
+                                    This typically means that the current context is malformed, containing inconsistent information about the authentication token, tenant and principal.\
+                                    """;
                             return Try.failure(new DestinationAccessException(message.formatted(destinationName)));
                         }
                         destinationCache.put(additionalKeyWithTenantAndPrincipal, result);
@@ -200,10 +200,10 @@ class GetOrComputeSingleDestinationCommand
             log
                 .debug(
                     """
-                    The destination {} was retrieved with strategy {}, but it requires user token exchange.\
-                     Hence, the destination cannot be used to connect to the target system successfully, please refer to the documentation of {} to find the recommended strategy.\
-                     Caching the destination for all users of the current tenant since it was obtained without user token exchange. \
-                    """,
+                        The destination {} was retrieved with strategy {}, but it requires user token exchange.\
+                         Hence, the destination cannot be used to connect to the target system successfully, please refer to the documentation of {} to find the recommended strategy.\
+                         Caching the destination for all users of the current tenant since it was obtained without user token exchange. \
+                        """,
                     destinationName,
                     DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
@@ -213,10 +213,10 @@ class GetOrComputeSingleDestinationCommand
             log
                 .warn(
                     """
-                    The destination {} was retrieved with strategy {}, but doesn't require user token exchange.\
-                     This is not recommended, please refer to the documentation of {}.\
-                     Caching the destination for the current user of the current tenant since it was obtained with a user token.\
-                    """,
+                        The destination {} was retrieved with strategy {}, but doesn't require user token exchange.\
+                         This is not recommended, please refer to the documentation of {}.\
+                         Caching the destination for the current user of the current tenant since it was obtained with a user token.\
+                        """,
                     destinationName,
                     EXCHANGE_ONLY,
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
@@ -244,8 +244,7 @@ class GetOrComputeSingleDestinationCommand
 
         final Try<List<DestinationProperties>> allDestinations = getAllCommand.execute();
         if( allDestinations.isFailure() ) {
-            final String message =
-                """
+            final String message = """
                 Failed to resolve all destinations of the current tenant from the destination service.\
                  Cannot perform change detection. {} will therefore be assumed to remain unchanged.\
                 """;

@@ -16,16 +16,14 @@ import com.sun.codemodel.JFieldVar;
 
 class JavadocUtils
 {
-    static final String ILLEGAL_STATE_JAVADOC_STRING =
-        """
+    static final String ILLEGAL_STATE_JAVADOC_STRING = """
         If the entity is unmanaged, i.e. it has not been retrieved using the OData VDM's services and therefore has no \
         ERP configuration context assigned. An entity is managed if it has been either retrieved using the VDM's \
         services or returned from the VDM's services as the result of a CREATE or UPDATE call. \
         """;
 
-    private static final String lazyWarningTemplate =
-        """
-        
+    private static final String lazyWarningTemplate = """
+
         <p>
         If the navigation property <b>%s</b> of a queried <b>%s</b> is operated lazily, \
         an <b>ODataException</b> can be thrown in case of an OData query error.

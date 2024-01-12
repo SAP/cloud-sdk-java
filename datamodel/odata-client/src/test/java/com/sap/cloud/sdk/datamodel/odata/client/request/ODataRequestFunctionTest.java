@@ -40,8 +40,7 @@ class ODataRequestFunctionTest
 
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_FUNCTION = "TestFunction";
-    private static final String ODATA_FUNCTION_PARAMETERS_V2 =
-        """
+    private static final String ODATA_FUNCTION_PARAMETERS_V2 = """
         ?\
         stringParameter='foo/bar'&\
         booleanParameter=true&\
@@ -52,8 +51,7 @@ class ODataRequestFunctionTest
         dateTimeParameter=datetime'2019-12-25T08:00:00'\
         """;
 
-    private static final String ODATA_FUNCTION_PARAMETERS_V4 =
-        """
+    private static final String ODATA_FUNCTION_PARAMETERS_V4 = """
         (\
         stringParameter='foo%2Fbar',\
         booleanParameter=true,\

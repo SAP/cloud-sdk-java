@@ -173,8 +173,7 @@ class ODataResponseErrorParsingTest
     @Test
     void testParsingODataV4Error()
     {
-        final String json =
-            """
+        final String json = """
             {\
             "error": {\
               "code": "err123",\

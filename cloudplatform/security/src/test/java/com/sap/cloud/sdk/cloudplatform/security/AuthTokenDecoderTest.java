@@ -30,8 +30,7 @@ class AuthTokenDecoderTest
     private static final String AUTHORIZATION_TOKEN =
         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJKb2huIERvZSIsInppZCI6IlRlbmFudCIsImNsaWVudF9pZCI6ImR1bW15IXQxMjMifQ.cOPkmQ7Fg7BTCG_VPgjPE7q6XKtMyJ7nvMryxVHWofocvJMGMAxVFNX1HFzfKotAl-2F_lQBoIU4Ot-qvxaaEE4q_g0I7TxR2Yku8JwFCTKI37kbA30NO6B5d9uWhZ9oTeTqsTI9bKvG4PWEhFW8-ESIDx4-mjwXp9mbbO8IF_1OoHFkXZ9aya1zvOst5vGtbliwMXldSJqIzvINWfBi9qVhHf9qqf7WcFeFJjAoq0U3eN5ANEwdP-q9gcNdcWInnXJkPW1zkIfdoxjfW8ZAxLxqHo5fIg6J32WvzGqVWvSsraJPgywcpwWAFQnZHIXKeFsoxQHM8HLIyho21e4G3XK4rO0D-cQSXY7_Q7bWDnVLQxsqOcsaXLak03HczQz2gR8RQenRh9P3vk5bMnz8rmg9bKa7pd4itKEyZWjnHaXJjLT3ThKEtYs-J5_6Pxf1kf5pAs3wb_wFkxCARnBGey-f_i_JD3iEgudy_HRLLKWKpN0xn9Qb0AQ5YXl6lx7KEwXljb1ObstFqUpm6HqYWTzc5uGJBQP6HcKzz4LfPcSfAnjwGK0Q9ecd_0ct7VnFfoAeQ2fdQPLPDUXJ8p-uHd8d16i_9lkktAcgimB3hNF7QvmqY--4udeg8uaev7eImX_QNA8s27ANv6HsqSGz3OkV1C4CDW0Xpwwb3BgBR7g";
 
-    private static final String VCAP_SERVICES =
-        """
+    private static final String VCAP_SERVICES = """
         {"xsuaa":[{"credentials": {\
         "xsappname": "dummy",\
         "clientid": "dummy!t123",\

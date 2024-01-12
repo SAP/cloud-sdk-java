@@ -72,8 +72,7 @@ class DestinationServicePrincipalPropagationTest
 
     private static final Try<Principal> SOME_PRINCIPAL = Try.success(new DefaultPrincipal("p"));
 
-    private static final String DESTINATION =
-        """
+    private static final String DESTINATION = """
         {"destinationConfiguration": {
         "URL": "https://example.com",
         "Name": "test",

@@ -92,10 +92,10 @@ class EntityLinkGenerator
                 String
                     .format(
                         """
-                        Template class to represent entity navigation links of {@link %s %s} to other entities, where\
-                         the cardinality of the related entity is at most 1. This class extends {@link %s %s} and \
-                        provides an additional filter function.
-                        """,
+                            Template class to represent entity navigation links of {@link %s %s} to other entities, where\
+                             the cardinality of the related entity is at most 1. This class extends {@link %s %s} and \
+                            provides an additional filter function.
+                            """,
                         generatedEntityClass.fullName(),
                         generatedEntityClass.name(),
                         generatedSpecificEntityLinkClass.fullName(),
@@ -123,14 +123,11 @@ class EntityLinkGenerator
         filterFunction.body()._return(JExpr._super().invoke("filterOnOneToOneLink").arg(filterExpression));
 
         // javadoc
-        filterFunction
-            .javadoc()
-            .add(
-                """
-                Query modifier to restrict the result set to entities for which this expression (formulated over a \
-                property of a <b>related</b> entity) evaluates to true. Note that filtering on a related entity \
-                does not expand the selection of the respective query to that entity.\
-                """);
+        filterFunction.javadoc().add("""
+            Query modifier to restrict the result set to entities for which this expression (formulated over a \
+            property of a <b>related</b> entity) evaluates to true. Note that filtering on a related entity \
+            does not expand the selection of the respective query to that entity.\
+            """);
         filterFunction.javadoc().addParam(filterExpression).add("A filter expression on the related entity.");
         filterFunction
             .javadoc()
@@ -157,13 +154,13 @@ class EntityLinkGenerator
                 String
                     .format(
                         """
-                        Template class to represent entity navigation links of {@link %s %s} to other entities. Instances of this object are used in query modifier methods of the entity
-                        fluent helpers. Contains methods to compare a field's value with a provided value.
-                        
-                        Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying OData
-                        field names, so use the constructor with caution.
-                        
-                        """,
+                            Template class to represent entity navigation links of {@link %s %s} to other entities. Instances of this object are used in query modifier methods of the entity
+                            fluent helpers. Contains methods to compare a field's value with a provided value.
+
+                            Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying OData
+                            field names, so use the constructor with caution.
+
+                            """,
                         entityClass.fullName(),
                         entityClass.name()));
 

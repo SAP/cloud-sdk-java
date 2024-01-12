@@ -61,8 +61,7 @@ class ODataHealthyResponseValidatorTest
     @Test
     void testODataError()
     {
-        final String odata_error_json =
-            """
+        final String odata_error_json = """
             {\
             "error": {\
               "code": "err123",\

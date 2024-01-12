@@ -73,8 +73,7 @@ class VdmEntityVersionIdentifierTest
                 key2val,
                 key3val);
 
-    private static final String getDocumentItemResponseBody =
-        """
+    private static final String getDocumentItemResponseBody = """
         {
           "d": {
             "__metadata": {

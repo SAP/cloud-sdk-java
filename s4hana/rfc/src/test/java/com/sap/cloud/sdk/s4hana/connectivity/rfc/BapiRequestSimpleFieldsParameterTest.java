@@ -111,36 +111,36 @@ class BapiRequestSimpleFieldsParameterTest
                 String
                     .format(
                         """
-                        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
-                           <soapenv:Header />
-                           <soapenv:Body>
-                              <urn:FunctionName>
-                                 <Exname>somevalue</Exname>
-                                 <ItRequest>
-                                    <item>
-                                       <RowUuid>aez62992bh</RowUuid>
-                                       <LimitType>limitType</LimitType>
-                                       <TCustomEntity>
-                                          <item>
-                                             <Myname>AVT</Myname>
-                                             <Mycountry>IN</Mycountry>
-                                          </item>
-                                          <item>
-                                             <Myname>ECCO</Myname>
-                                             <Mycountry>FR</Mycountry>
-                                          </item>
-                                       </TCustomEntity>
-                                       <SomeStructure>
-                                          <Latitude>52</Latitude>
-                                          <Longitude>13</Longitude>
-                                       </SomeStructure>
-                                    </item>
-                                 </ItRequest>
-                                 <Field>%s</Field>
-                              </urn:FunctionName>
-                           </soapenv:Body>
-                        </soapenv:Envelope>
-                        """,
+                            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
+                               <soapenv:Header />
+                               <soapenv:Body>
+                                  <urn:FunctionName>
+                                     <Exname>somevalue</Exname>
+                                     <ItRequest>
+                                        <item>
+                                           <RowUuid>aez62992bh</RowUuid>
+                                           <LimitType>limitType</LimitType>
+                                           <TCustomEntity>
+                                              <item>
+                                                 <Myname>AVT</Myname>
+                                                 <Mycountry>IN</Mycountry>
+                                              </item>
+                                              <item>
+                                                 <Myname>ECCO</Myname>
+                                                 <Mycountry>FR</Mycountry>
+                                              </item>
+                                           </TCustomEntity>
+                                           <SomeStructure>
+                                              <Latitude>52</Latitude>
+                                              <Longitude>13</Longitude>
+                                           </SomeStructure>
+                                        </item>
+                                     </ItRequest>
+                                     <Field>%s</Field>
+                                  </urn:FunctionName>
+                               </soapenv:Body>
+                            </soapenv:Envelope>
+                            """,
                         fieldValueSuppliedFromOutside));
     }
 
@@ -192,46 +192,46 @@ class BapiRequestSimpleFieldsParameterTest
                 String
                     .format(
                         """
-                        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
-                           <soapenv:Header />
-                           <soapenv:Body>
-                              <urn:FunctionName>
-                                 <Exname>somevalue</Exname>
-                                 <ItRequest>
-                                    <item>
-                                       <RowUuid>aez62992bh</RowUuid>
-                                       <LimitType>limitType</LimitType>
-                                       <TCustomEntity>
-                                          <item>
-                                             <Myname>AVT</Myname>
-                                             <Mycountry>IN</Mycountry>
-                                       <InternalTable>
-                                          <item>
-                                             <Field1>value1</Field1>
-                                             <Field2>value2</Field2>
-                                          </item>
-                                          <item>
-                                             <Field1>value3</Field1>
-                                             <Field2>value4</Field2>
-                                          </item>
-                                       </InternalTable>
-                                          </item>
-                                          <item>
-                                             <Myname>ECCO</Myname>
-                                             <Mycountry>FR</Mycountry>
-                                          </item>
-                                       </TCustomEntity>
-                                       <SomeStructure>
-                                          <Latitude>52</Latitude>
-                                          <Longitude>13</Longitude>
-                                       </SomeStructure>
-                                    </item>
-                                 </ItRequest>
-                                 <Field>%s</Field>
-                              </urn:FunctionName>
-                           </soapenv:Body>
-                        </soapenv:Envelope>
-                        """,
+                            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
+                               <soapenv:Header />
+                               <soapenv:Body>
+                                  <urn:FunctionName>
+                                     <Exname>somevalue</Exname>
+                                     <ItRequest>
+                                        <item>
+                                           <RowUuid>aez62992bh</RowUuid>
+                                           <LimitType>limitType</LimitType>
+                                           <TCustomEntity>
+                                              <item>
+                                                 <Myname>AVT</Myname>
+                                                 <Mycountry>IN</Mycountry>
+                                           <InternalTable>
+                                              <item>
+                                                 <Field1>value1</Field1>
+                                                 <Field2>value2</Field2>
+                                              </item>
+                                              <item>
+                                                 <Field1>value3</Field1>
+                                                 <Field2>value4</Field2>
+                                              </item>
+                                           </InternalTable>
+                                              </item>
+                                              <item>
+                                                 <Myname>ECCO</Myname>
+                                                 <Mycountry>FR</Mycountry>
+                                              </item>
+                                           </TCustomEntity>
+                                           <SomeStructure>
+                                              <Latitude>52</Latitude>
+                                              <Longitude>13</Longitude>
+                                           </SomeStructure>
+                                        </item>
+                                     </ItRequest>
+                                     <Field>%s</Field>
+                                  </urn:FunctionName>
+                               </soapenv:Body>
+                            </soapenv:Envelope>
+                            """,
                         fieldValueSuppliedFromOutside));
     }
 

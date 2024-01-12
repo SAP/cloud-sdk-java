@@ -130,16 +130,11 @@ public class DefaultCachingDecorator implements GenericDecorator
             // in case the cache was destroyed (not to confuse with invalidation) we just directly execute the given callable, without caching
             // this is done to stay behavior compatible with the formerly used resilience4j API that was used here
             if( cache.isClosed() ) {
-                log
-                    .warn(
-                        String
-                            .format(
-                                """
-                                Cache with configuration identifier '%s' was closed. Therefore methods decorated \
-                                using that identifier will not be cached anymore, but instead will be executed \
-                                directly.\
-                                """,
-                                configuration.identifier()));
+                log.warn(String.format("""
+                    Cache with configuration identifier '%s' was closed. Therefore methods decorated \
+                    using that identifier will not be cached anymore, but instead will be executed \
+                    directly.\
+                    """, configuration.identifier()));
                 return callable.call();
             }
 

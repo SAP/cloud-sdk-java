@@ -75,9 +75,9 @@ public class DestinationLoaderChain implements DestinationLoader
                 .failure(
                     new DestinationAccessException(
                         """
-                        No destination loaders were registered. \
-                        Make sure at least one loader is available on the classpath or is programmatically registered, e.g. by having the 'scp-cf'  dependency on the classpath.\
-                        """));
+                            No destination loaders were registered. \
+                            Make sure at least one loader is available on the classpath or is programmatically registered, e.g. by having the 'scp-cf'  dependency on the classpath.\
+                            """));
         }
 
         final ArrayList<Throwable> suppressedList = new ArrayList<>();

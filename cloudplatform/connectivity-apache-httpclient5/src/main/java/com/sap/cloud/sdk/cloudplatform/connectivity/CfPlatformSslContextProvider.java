@@ -97,9 +97,9 @@ class CfPlatformSslContextProvider extends AbstractX509SslContextProvider
             log
                 .warn(
                     """
-                    Unable to create SSL context from environment: Environment variables {} and/or {} are not defined.
-                    Proceeding without platform provided identity certificate. mTLS connections to other systems may not be possible.\
-                    """,
+                        Unable to create SSL context from environment: Environment variables {} and/or {} are not defined.
+                        Proceeding without platform provided identity certificate. mTLS connections to other systems may not be possible.\
+                        """,
                     CERT_ENVIRONMENT_VARIABLE,
                     KEY_ENVIRONMENT_VARIABLE);
             return Try.of(SSLContext::getDefault);

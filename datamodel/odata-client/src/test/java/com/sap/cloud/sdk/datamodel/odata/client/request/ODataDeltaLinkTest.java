@@ -19,8 +19,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 class ODataDeltaLinkTest
 {
-    private static final String PAYLOAD_DELTA_LINK =
-        """
+    private static final String PAYLOAD_DELTA_LINK = """
         {\
           "@odata.context": "$metadata#FooBar",\
           "value": [],\

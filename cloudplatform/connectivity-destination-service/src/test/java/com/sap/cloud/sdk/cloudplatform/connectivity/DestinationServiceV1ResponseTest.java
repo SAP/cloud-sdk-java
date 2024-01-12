@@ -17,8 +17,7 @@ class DestinationServiceV1ResponseTest
     @Test
     void testParsing()
     {
-        final String payload =
-            """
+        final String payload = """
             {
               "owner": {
                 "SubaccountId": "1234",

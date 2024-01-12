@@ -54,8 +54,7 @@ class ODataV2FunctionImportIntegrationTest
 
     private static final String XML_ERROR_STRING = "<error>an exception was raised </error>";;
     private static final String JSON_ERROR_STRING = "{\"error\": \"an exception was raised\"}";
-    private static final String RESPONSE =
-        """
+    private static final String RESPONSE = """
         {"d": {
           "CancelItem": {
             "__metadata": { "type": "API_TEST_SRV/CancelItem" },

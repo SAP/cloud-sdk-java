@@ -87,8 +87,7 @@ class DestinationServiceTest
     private static final String providerUrl = "https://service.provider.com";
     private static final String subscriberUrl = "https://service.subscriber.com";
 
-    private static final String responseSubaccountDestination =
-        """
+    private static final String responseSubaccountDestination = """
         [{
             "Name": "CC8-HTTP-BASIC",
             "Type": "HTTP",
@@ -110,8 +109,7 @@ class DestinationServiceTest
           }]
         """;
 
-    private static final String brokenResponseSubaccountDestination =
-        """
+    private static final String brokenResponseSubaccountDestination = """
         [{
             "Name": "CC8-HTTP-BASIC",
             "Type": "HTTP",
@@ -128,8 +126,7 @@ class DestinationServiceTest
           }]
         """;
 
-    private static final String responseServiceInstanceDestination =
-        """
+    private static final String responseServiceInstanceDestination = """
         [{
             "Name": "CC8-HTTP-BASIC",
             "Type": "HTTP",
@@ -153,31 +150,30 @@ class DestinationServiceTest
 
     private static final String responseDestinationWithoutAuthToken =
         """
-        {
-            "owner": {
-                "SubaccountId": "00000000-0000-0000-0000-000000000000",
-                "InstanceId": null
-            },
-            "destinationConfiguration": {
-                "Name": "CC8-HTTP-OAUTH",
-                "Type": "HTTP",
-                "URL": "https://a.s4hana.ondemand.com/",
-                "Authentication": "OAuth2SAMLBearerAssertion",
-                "ProxyType": "Internet"
-            },
-            "authTokens": [
-                {
-                    "type": "",
-                    "value": "",
-                    "error": "org.apache.http.HttpException: Request to the /userinfo endpoint ended with status code 403",
-                    "expires_in": ""
-                }
-            ]
-        }
-        """;
+            {
+                "owner": {
+                    "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                    "InstanceId": null
+                },
+                "destinationConfiguration": {
+                    "Name": "CC8-HTTP-OAUTH",
+                    "Type": "HTTP",
+                    "URL": "https://a.s4hana.ondemand.com/",
+                    "Authentication": "OAuth2SAMLBearerAssertion",
+                    "ProxyType": "Internet"
+                },
+                "authTokens": [
+                    {
+                        "type": "",
+                        "value": "",
+                        "error": "org.apache.http.HttpException: Request to the /userinfo endpoint ended with status code 403",
+                        "expires_in": ""
+                    }
+                ]
+            }
+            """;
 
-    private static final String responseDestinationWithAuthToken =
-        """
+    private static final String responseDestinationWithAuthToken = """
         {
             "owner": {
                 "SubaccountId": "00000000-0000-0000-0000-000000000000",
@@ -205,8 +201,7 @@ class DestinationServiceTest
         }
         """;
 
-    private static final String responseDestinationWithExpiredAuthToken =
-        """
+    private static final String responseDestinationWithExpiredAuthToken = """
         {
             "owner": {
                 "SubaccountId": "00000000-0000-0000-0000-000000000000",
@@ -235,8 +230,7 @@ class DestinationServiceTest
         """;
 
     //Fictional use-case where the destination service responds with multiple auth tokens
-    private static final String responseDestinationWithMultipleAuthTokens =
-        """
+    private static final String responseDestinationWithMultipleAuthTokens = """
         {
             "owner": {
                 "SubaccountId": "00000000-0000-0000-0000-000000000000",
@@ -274,8 +268,7 @@ class DestinationServiceTest
         }
         """;
 
-    private static final String responseDestinationWithBasicAuthToken =
-        """
+    private static final String responseDestinationWithBasicAuthToken = """
         {
             "owner": {
                 "SubaccountId": "00000000-0000-0000-0000-000000000000",
@@ -304,8 +297,7 @@ class DestinationServiceTest
         }
         """;
 
-    private static final String responseDestinationWithNoAuthToken =
-        """
+    private static final String responseDestinationWithNoAuthToken = """
         {
             "owner": {
                 "SubaccountId": "00000000-0000-0000-0000-000000000000",
@@ -1721,25 +1713,21 @@ class DestinationServiceTest
 
     private String createHttpDestinationServiceResponse( final String name, final String url )
     {
-        return String
-            .format(
-                """
-                {
-                    "owner": {
-                        "SubaccountId": "someId",
-                        "InstanceId": null
-                    },
-                    "destinationConfiguration": {
-                        "Name": "%s",
-                        "Type": "HTTP",
-                        "URL": "%s",
-                        "Authentication": "NoAuthentication",
-                        "ProxyType": "Internet",
-                        "Description": "Test destination"
-                    }
+        return String.format("""
+            {
+                "owner": {
+                    "SubaccountId": "someId",
+                    "InstanceId": null
+                },
+                "destinationConfiguration": {
+                    "Name": "%s",
+                    "Type": "HTTP",
+                    "URL": "%s",
+                    "Authentication": "NoAuthentication",
+                    "ProxyType": "Internet",
+                    "Description": "Test destination"
                 }
-                """,
-                name,
-                url);
+            }
+            """, name, url);
     }
 }

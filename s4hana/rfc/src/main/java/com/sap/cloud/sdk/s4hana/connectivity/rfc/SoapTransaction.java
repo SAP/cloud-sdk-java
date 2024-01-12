@@ -136,22 +136,18 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
             com.sap.cloud.sdk.s4hana.serialization.ErpBoolean
                 .of(request.getCommitStrategy().isWaitingForCommitToFinish());
 
-        final String requestBody =
-            String
-                .format(
-                    """
-                    <soapenv:Envelope
-                            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                            xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
-                        <soapenv:Header/>
-                        <soapenv:Body>
-                            <urn:TransactionCommit>
-                                <Wait>%s</Wait>
-                            </urn:TransactionCommit>
-                        </soapenv:Body>
-                    </soapenv:Envelope>
-                    """,
-                    waitValue);
+        final String requestBody = String.format("""
+            <soapenv:Envelope
+                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                    xmlns:urn="urn:sap-com:document:sap:soap:functions:mc-style">
+                <soapenv:Header/>
+                <soapenv:Body>
+                    <urn:TransactionCommit>
+                        <Wait>%s</Wait>
+                    </urn:TransactionCommit>
+                </soapenv:Body>
+            </soapenv:Envelope>
+            """, waitValue);
 
         final BapiRequest commitRequest = new BapiRequest("BAPI_TRANSACTION_COMMIT", false);
         final com.sap.cloud.sdk.s4hana.connectivity.SerializedRequest<BapiRequest> serializedRequest =
@@ -160,8 +156,7 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
         final String commitResultBody = bapiRequestExecutorLogic.execute(destination.asHttp(), serializedRequest);
 
         if( commitResultBody.contains("150") ) {
-            throw new RemoteFunctionCommitFailedException(
-                """
+            throw new RemoteFunctionCommitFailedException("""
                 Failed to commit BAPI transaction \
                 due to an unknown error on ERP side. Please investigate the respective ABAP logs.\
                 """);
@@ -181,16 +176,15 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
             new SoapSerializedRequestBuilder<>(
                 new BapiRequest("BAPI_TRANSACTION_ROLLBACK", false).withSameCustomHttpHeadersAs(request),
                 """
-                <x:Envelope
-                        xmlns:x="http://schemas.xmlsoap.org/soap/envelope/"
-                        xmlns:urn1="urn:sap-com:document:sap:soap:functions:mc-style">
-                    <x:Header/>
-                    <x:Body>
-                        <urn1:TransactionRollback/>
-                    </x:Body>
-                </x:Envelope>
-                """)
-                .build();
+                    <x:Envelope
+                            xmlns:x="http://schemas.xmlsoap.org/soap/envelope/"
+                            xmlns:urn1="urn:sap-com:document:sap:soap:functions:mc-style">
+                        <x:Header/>
+                        <x:Body>
+                            <urn1:TransactionRollback/>
+                        </x:Body>
+                    </x:Envelope>
+                    """).build();
 
         bapiRequestExecutorLogic.execute(destination.asHttp(), serializedRequest);
 

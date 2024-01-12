@@ -31,8 +31,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 @WireMockTest
 class VdmComplexTest
 {
-    private static final String RESPONSE_CREATE_ENTITY =
-        """
+    private static final String RESPONSE_CREATE_ENTITY = """
         {"d":{
           "__metadata": {
             "id": "https://127.0.0.1/path/to/service(100)",
@@ -51,8 +50,7 @@ class VdmComplexTest
         }}
         """;
 
-    private static final String REQUEST_CREATE_ENTITY =
-        """
+    private static final String REQUEST_CREATE_ENTITY = """
         {
           "StringValue" : "Foo",
           "ComplexValue" : {

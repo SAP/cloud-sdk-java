@@ -40,8 +40,7 @@ import lombok.ToString;
 
 class ODataPrimitiveAdapterTest
 {
-    private static final String primitivesEntityInput =
-        """
+    private static final String primitivesEntityInput = """
         {
           "EdmBinaryProperty" : "Rk9PIEJBUg==",
           "EdmBooleanProperty" : true,
@@ -61,8 +60,7 @@ class ODataPrimitiveAdapterTest
         }
         """;
 
-    private static final String expectedSerializedEntity =
-        """
+    private static final String expectedSerializedEntity = """
         {
         "versionIdentifier":null,
         "EdmBinaryProperty":"Rk9PIEJBUg==",

@@ -95,8 +95,7 @@ class AuthTokenTenantResolvingTest
     //  FvuAsHb0RfpQdrkKXKScaD4xehczD4bkG7Nke6WV8HvDkuYhazck0Q==
     //  -----END RSA PRIVATE KEY-----
 
-    private static final String VCAP_SERVICES =
-        """
+    private static final String VCAP_SERVICES = """
         {
           "xsuaa":[
             {

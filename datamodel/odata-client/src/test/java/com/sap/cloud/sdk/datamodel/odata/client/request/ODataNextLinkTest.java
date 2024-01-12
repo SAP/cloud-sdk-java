@@ -19,8 +19,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 class ODataNextLinkTest
 {
-    private static final String PAYLOAD_NEXT_LINK =
-        """
+    private static final String PAYLOAD_NEXT_LINK = """
         {\
           "d": {\
             "results": [],\

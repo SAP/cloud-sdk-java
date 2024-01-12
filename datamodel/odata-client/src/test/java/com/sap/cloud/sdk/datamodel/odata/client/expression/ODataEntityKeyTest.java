@@ -96,8 +96,7 @@ class ODataEntityKeyTest
     void testDataTypeSerialisationV4()
     {
 
-        final String expected =
-            """
+        final String expected = """
             (\
             stringParameter='test',\
             booleanParameter=true,\

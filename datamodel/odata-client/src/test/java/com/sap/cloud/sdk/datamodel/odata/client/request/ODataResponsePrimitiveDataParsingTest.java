@@ -132,8 +132,7 @@ class ODataResponsePrimitiveDataParsingTest
         ColorEnum colorEnumValue;
 
         // https://docs.oasis-open.org/odata/odata-json-format/v4.01/csprd06/odata-json-format-v4.01-csprd06.html#sec_PrimitiveValue
-        private static final String PAYLOAD_ODATA_REFERENCE =
-            """
+        private static final String PAYLOAD_ODATA_REFERENCE = """
             {
               "BooleanValue": false,
               "BinaryValue": "T0RhdGE",

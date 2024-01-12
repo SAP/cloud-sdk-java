@@ -58,43 +58,42 @@ import lombok.ToString;
 
 class ODataSerializationTest
 {
-    private static final String SAMPLE_PAYLOAD =
-        """
-{
-  "d" : {
-      "__metadata": {
-        "uri": "https://services.odata.org/OData/OData.svc/Categories(42)",
-        "etag": "W/\\"some-version-id\\"",
-        "type": "DataServiceProviderDemo.Category"
-      },
-      "SByteValue": -127,
-      "Int16Value": 1337,
-      "IntegerValue": 42,
-      "Int64Value": 123456789000,
-      "DecimalValue": "123456.789",
-      "DoubleValue": 42.1,
-      "BooleanValue": true,
-      "StringValue": "Food",
-      "LocalDateTimeValue": "/Date(694224000000)/",
-      "OffsetDateTimeValue": "/Date(694224000000-0240)/",
-      "LocalTimeValue": "PT13H20M",
-      "GuidValue": "123e4567-e89b-12d3-a456-426614174000",
-      "to_Parent": {
-        "__deferred": {
-          "uri": "https://services.odata.org/OData/OData.svc/Categories(42)/to_Parent"
+    private static final String SAMPLE_PAYLOAD = """
+        {
+          "d" : {
+              "__metadata": {
+                "uri": "https://services.odata.org/OData/OData.svc/Categories(42)",
+                "etag": "W/\\"some-version-id\\"",
+                "type": "DataServiceProviderDemo.Category"
+              },
+              "SByteValue": -127,
+              "Int16Value": 1337,
+              "IntegerValue": 42,
+              "Int64Value": 123456789000,
+              "DecimalValue": "123456.789",
+              "DoubleValue": 42.1,
+              "BooleanValue": true,
+              "StringValue": "Food",
+              "LocalDateTimeValue": "/Date(694224000000)/",
+              "OffsetDateTimeValue": "/Date(694224000000-0240)/",
+              "LocalTimeValue": "PT13H20M",
+              "GuidValue": "123e4567-e89b-12d3-a456-426614174000",
+              "to_Parent": {
+                "__deferred": {
+                  "uri": "https://services.odata.org/OData/OData.svc/Categories(42)/to_Parent"
+                }
+              },
+              "to_Children": {
+                "__deferred": {
+                  "uri": "https://services.odata.org/OData/OData.svc/Categories(42)/to_Children"
+                }
+              },
+              "UnmappedStringValue": "foo",
+              "UnmappedArrayValue": ["fizz","buzz"],
+              "UnmappedComplexValue": {"bar":"fizzbuzz"}
+          }
         }
-      },
-      "to_Children": {
-        "__deferred": {
-          "uri": "https://services.odata.org/OData/OData.svc/Categories(42)/to_Children"
-        }
-      },
-      "UnmappedStringValue": "foo",
-      "UnmappedArrayValue": ["fizz","buzz"],
-      "UnmappedComplexValue": {"bar":"fizzbuzz"}
-  }
-}
-""";
+        """;
 
     @Test
     void testBrokenResponse()
@@ -192,8 +191,7 @@ class ODataSerializationTest
     @Test
     void testSerialisationForDateTimeAttributes()
     {
-        final String SERIALIZED_ENTITY =
-            """
+        final String SERIALIZED_ENTITY = """
             {
               "IntegerValue":1,
               "OffsetDateTimeValue":"/Date(694224000000-0240)/",

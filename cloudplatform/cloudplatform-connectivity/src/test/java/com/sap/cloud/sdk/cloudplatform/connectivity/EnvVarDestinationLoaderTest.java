@@ -269,8 +269,7 @@ class EnvVarDestinationLoaderTest
     void testDestinationWithoutNameProperty()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            """
+        final String variableContent = """
             [
             {
             "type": "HTTP",
@@ -454,8 +453,7 @@ class EnvVarDestinationLoaderTest
     @Test
     void testGetAllDestinations()
     {
-        final String variableContent =
-            """
+        final String variableContent = """
             [
             {"type":"HTTP","name":"foo","URL":"https://foo"},
             {"type":"HTTP","name":"bar","URL":"https://bar"},

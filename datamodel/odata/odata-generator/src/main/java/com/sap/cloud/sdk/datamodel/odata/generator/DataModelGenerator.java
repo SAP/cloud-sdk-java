@@ -731,36 +731,27 @@ public class DataModelGenerator implements DataModelGeneratorConfig
                 | IllegalAccessException
                 | NoSuchMethodException
                 | InvocationTargetException e ) {
-            throw new ODataGeneratorException(
-                """
+            throw new ODataGeneratorException("""
                 Unable to load specified strategy class. \
                 Check the class for errors in its constructor(s) \
                 and ensure that security permissions are configured to allow access to the class\
-                """,
-                e);
+                """, e);
         }
         catch( final ClassNotFoundException e ) {
-            throw new ODataGeneratorException(
-                """
+            throw new ODataGeneratorException("""
                 Unable to find specified strategy class. \
                 Check that the class is included (directly or via a JAR file) \
                 in your classpath list when running Java. \
                 Also make sure to enter the fully-qualified class name \
                 (e.g. com.myorg.mypath.MyStrategy)\
-                """,
-                e);
+                """, e);
         }
         catch( final ClassCastException e ) {
-            throw new ODataGeneratorException(
-                String
-                    .format(
-                        """
-                        Unable to load specified strategy class. \
-                        Check that the class either implements the %s interface, \
-                        or extends a class which implements this interface.\
-                        """,
-                        expectedInterface.getName()),
-                e);
+            throw new ODataGeneratorException(String.format("""
+                Unable to load specified strategy class. \
+                Check that the class either implements the %s interface, \
+                or extends a class which implements this interface.\
+                """, expectedInterface.getName()), e);
         }
         return strategyInstance;
     }

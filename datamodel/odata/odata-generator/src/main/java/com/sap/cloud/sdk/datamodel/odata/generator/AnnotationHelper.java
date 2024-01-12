@@ -53,15 +53,10 @@ class AnnotationHelper
             } else if( parameterValue instanceof Short ) {
                 appliedAnnotation.param(parameter.getName(), (Short) parameterValue);
             } else {
-                throw new ODataGeneratorException(
-                    String
-                        .format(
-                            """
-                            Annotation parameter value for %s has an unsupported type of %s.\
-                            Please make sure to only use the exposed constructors of the AnnotationParameter class.\
-                            """,
-                            parameter.getName(),
-                            parameterValue.getClass().getName()));
+                throw new ODataGeneratorException(String.format("""
+                    Annotation parameter value for %s has an unsupported type of %s.\
+                    Please make sure to only use the exposed constructors of the AnnotationParameter class.\
+                    """, parameter.getName(), parameterValue.getClass().getName()));
             }
         }
     }

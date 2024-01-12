@@ -665,16 +665,10 @@ class NamespaceClassGenerator
                 case ENTITY: {
                     javaReturnType = generatedEntities.get(edmReturnType.getName());
                     if( javaReturnType == null ) {
-                        logger
-                            .warn(
-                                String
-                                    .format(
-                                        """
-                                        Unable to generate code for function import '%s': Return type is an entity (%s), \
-                                        but it is either not found or its entity set has been filtered out.\
-                                        """,
-                                        functionImport.getName(),
-                                        edmReturnType.getName()));
+                        logger.warn(String.format("""
+                            Unable to generate code for function import '%s': Return type is an entity (%s), \
+                            but it is either not found or its entity set has been filtered out.\
+                            """, functionImport.getName(), edmReturnType.getName()));
                         return;
                     }
                     break;
@@ -892,16 +886,10 @@ class NamespaceClassGenerator
                     propertyConstraintsDescription);
 
             default:
-                logger
-                    .error(
-                        String
-                            .format(
-                                """
-                                    Unsupported type detected:
-                                      property name: %s, type: %s\
-                                """,
-                                propertyName,
-                                propertyType.getKind().toString()));
+                logger.error(String.format("""
+                        Unsupported type detected:
+                          property name: %s, type: %s\
+                    """, propertyName, propertyType.getKind().toString()));
                 return null;
         }
     }

@@ -418,8 +418,7 @@ class UpdateRequestHelperPatchTest
         entityBar.setNeighbor(entityFoo);
 
         final String json = new UpdateRequestHelperPatch().toJson(entityFoo, Collections.emptySet());
-        assertEquals(
-            """
+        assertEquals("""
             {\
             "Neighbor":{\
               "Neighbor":{"@id":"EntityParentCollection('Foo')"},\
@@ -428,9 +427,7 @@ class UpdateRequestHelperPatchTest
             "Name":"Foo",\
             "@odata.type":"#TestEntity"\
             }\
-            """,
-            json,
-            JSONCompareMode.LENIENT);
+            """, json, JSONCompareMode.LENIENT);
     }
 
     @Test
