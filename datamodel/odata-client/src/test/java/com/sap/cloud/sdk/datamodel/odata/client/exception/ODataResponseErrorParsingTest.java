@@ -119,31 +119,31 @@ class ODataResponseErrorParsingTest
     void testParsingODataV2Error()
     {
         final String json =
-            "{\n"
-                + "   \"error\":{\n"
-                + "      \"code\":\"005056A509B11EE1B9A8FEC11C23378E\",\n"
-                + "      \"message\":{\n"
-                + "         \"lang\":\"en\",\n"
-                + "         \"value\":\"System query options '$orderby,$skip,$top,$skiptoken,$inlinecount' are not allowed in the requested URI\"\n"
-                + "      },\n"
-                + "      \"innererror\":{\n"
-                + "         \"transactionid\":\"25669476CF9401E0E005F2FA0752F574\",\n"
-                + "         \"timestamp\":\"20200813143348.4420100\",\n"
-                + "         \"Error_Resolution\":{\n"
-                + "            \"SAP_Transaction\":\"For backend administrators: use ADT feed reader \\\"SAP Gateway Error Log\\\" or run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details\",\n"
-                + "            \"SAP_Note\":\"See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)\"\n"
-                + "         },\n"
-                + "         \"errordetails\": [\n"
-                + "          { \n"
-                + "            \"code\": \"UF1\",\n"
-                + "            \"message\": \"$search query option not supported\",\n"
-                + "            \"target\": \"t1\",\n"
-                + "            \"additionalTargets\": [\"t2\",\"t3\"],\n"
-                + "            \"severity\": \"error\"\n"
-                + "          }]"
-                + "      }\n"
-                + "   }\n"
-                + "}";
+            """
+                {
+                   "error":{
+                      "code":"005056A509B11EE1B9A8FEC11C23378E",
+                      "message":{
+                         "lang":"en",
+                         "value":"System query options '$orderby,$skip,$top,$skiptoken,$inlinecount' are not allowed in the requested URI"
+                      },
+                      "innererror":{
+                         "transactionid":"25669476CF9401E0E005F2FA0752F574",
+                         "timestamp":"20200813143348.4420100",
+                         "Error_Resolution":{
+                            "SAP_Transaction":"For backend administrators: use ADT feed reader \\"SAP Gateway Error Log\\" or run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
+                            "SAP_Note":"See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+                         },
+                         "errordetails": [{
+                            "code": "UF1",
+                            "message": "$search query option not supported",
+                            "target": "t1",
+                            "additionalTargets": ["t2","t3"],
+                            "severity": "error"
+                          }]
+                        }
+                   }
+                }""";
 
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V2);

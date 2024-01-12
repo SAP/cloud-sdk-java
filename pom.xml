@@ -664,6 +664,7 @@
 						<staticGroups>java,*</staticGroups>
 						<staticAfter>false</staticAfter>
 						<removeUnused>true</removeUnused>
+						<compliance>17</compliance>
 						<excludes>
 							<exclude>**/test/resources/**</exclude>
 						</excludes>
