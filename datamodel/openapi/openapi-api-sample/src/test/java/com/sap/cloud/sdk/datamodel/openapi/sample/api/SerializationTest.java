@@ -35,13 +35,15 @@ class SerializationTest
     {
         // @formatter:off
         expected =
-               "{\n" +
-               "  \"name\": \"Cola\",\n" +
-               "  \"brand\": \"Coca-Cola\",\n" +
-               "  \"quantity\": 100,\n" +
-               "  \"price\": 1.5,\n" +
-               "  \"id\": 0\n" +
-               "}";
+               """
+               {
+                 "name": "Cola",
+                 "brand": "Coca-Cola",
+                 "quantity": 100,
+                 "price": 1.5,
+                 "id": 0
+               }
+               """;
         // @formatter:on
 
         final SodaWithId obj = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
@@ -57,13 +59,15 @@ class SerializationTest
     {
         // @formatter:off
         expected =
-               "{\n" +
-               "  \"name\": \"Cola\",\n" +
-               "  \"brand\": \"Coca-Cola\",\n" +
-               "  \"quantity\": 100,\n" +
-               "  \"price\": 1.5,\n" +
-               "  \"id\": 0\n" +
-               "}";
+               """
+               {
+                 "name": "Cola",
+                 "brand": "Coca-Cola",
+                 "quantity": 100,
+                 "price": 1.5,
+                 "id": 0
+               }
+               """;
         // @formatter:on
 
         final SodaWithId obj = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);

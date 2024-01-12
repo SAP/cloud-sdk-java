@@ -1151,7 +1151,10 @@ class NamespaceClassGenerator
                     .error(
                         String
                             .format(
-                                "    Unsupported type detected:\n" + "      property name: %s, type: %s",
+                                """
+                                    Unsupported type detected:
+                                      property name: %s, type: %s\
+                                """,
                                 propertyName,
                                 propertyType.getKind()));
                 return null;

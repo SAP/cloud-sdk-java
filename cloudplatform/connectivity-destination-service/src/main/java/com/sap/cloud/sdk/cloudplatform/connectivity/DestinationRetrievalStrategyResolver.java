@@ -219,8 +219,10 @@ class DestinationRetrievalStrategyResolver
             } else if( tokenExchangeStrategy != DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
                 log
                     .warn(
-                        "The current tenant is not the provider tenant. Only destinations which don't require a user token will be supported."
-                            + " Use retrieval strategy {} to avoid this warning.",
+                        """
+                        The current tenant is not the provider tenant. Only destinations which don't require a user token will be supported.\
+                         Use retrieval strategy {} to avoid this warning.\
+                        """,
                         DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
             }
         }

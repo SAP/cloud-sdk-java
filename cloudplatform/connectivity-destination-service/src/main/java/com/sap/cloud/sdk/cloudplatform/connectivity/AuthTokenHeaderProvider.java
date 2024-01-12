@@ -65,8 +65,10 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
             .forEach(
                 expiry -> log
                     .warn(
-                        "An authorization token of destination {} has expired. "
-                            + "Please ensure that you don't reuse destination objects in your code for longer periods of time.",
+                        """
+                        An authorization token of destination {} has expired. \
+                        Please ensure that you don't reuse destination objects in your code for longer periods of time.\
+                        """,
                         destination.get(DestinationProperty.NAME).getOrElse(destination::toString)));
 
         return result;
@@ -87,9 +89,11 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
             if( !Strings.isNullOrEmpty(authToken.getType()) && !Strings.isNullOrEmpty(authToken.getValue()) ) {
                 log
                     .warn(
-                        "Header suggestion is missing from destination service response. "
-                            + "Falling back to constructing an authorization header from type and value. "
-                            + "This is unexpected, please report this at https://github.com/SAP/cloud-sdk-java/issues.");
+                        """
+                        Header suggestion is missing from destination service response. \
+                        Falling back to constructing an authorization header from type and value. \
+                        This is unexpected, please report this at https://github.com/SAP/cloud-sdk-java/issues.\
+                        """);
                 result.add(new Header(HttpHeaders.AUTHORIZATION, authToken.getType() + " " + authToken.getValue()));
                 continue;
             }

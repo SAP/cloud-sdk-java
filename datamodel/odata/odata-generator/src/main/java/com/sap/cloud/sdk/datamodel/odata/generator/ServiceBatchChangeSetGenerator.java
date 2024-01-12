@@ -77,8 +77,10 @@ class ServiceBatchChangeSetGenerator
             .javadoc()
             .addReturn()
             .add(
-                "This fluent helper to continue adding operations to the change set. "
-                    + "To finalize the current change set call {@link #endChangeSet endChangeSet} on the returned fluent helper object.");
+                """
+                This fluent helper to continue adding operations to the change set. \
+                To finalize the current change set call {@link #endChangeSet endChangeSet} on the returned fluent helper object.\
+                """);
 
         return methodAdded;
     }

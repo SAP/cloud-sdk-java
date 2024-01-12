@@ -82,9 +82,11 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
             .getOption(Options.ProxyOptions.class)
             .toTry(
                 () -> new DestinationAccessException(
-                    "Using the connectivity proxy requires a base destination to add the proxy behaviour to. "
-                        + "Please provide a base destination using the ServiceBindingDestinationOptions like so: "
-                        + "ServiceBindingDestinationOptions.forService(BindableService.CONNECTIVITY).withOption(ServiceBindingDestinationOptions.Options.ProxyOptions.destinationToBeProxied(myDestination)).build();"))
+                    """
+                    Using the connectivity proxy requires a base destination to add the proxy behaviour to. \
+                    Please provide a base destination using the ServiceBindingDestinationOptions like so: \
+                    ServiceBindingDestinationOptions.forService(BindableService.CONNECTIVITY).withOption(ServiceBindingDestinationOptions.Options.ProxyOptions.destinationToBeProxied(myDestination)).build();\
+                    """))
             .flatMap(this::toProxiedDestination);
     }
 
@@ -125,9 +127,11 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
             return mandateConfiguration;
         }
         final String msg =
-            "Unable to transform the service binding for service '%s' into a Megaclite based destination. "
-                + "The service binding has not been configured to be accessible from the %s account. "
-                + "Please make sure your %s configuration is correct.";
+            """
+            Unable to transform the service binding for service '%s' into a Megaclite based destination. \
+            The service binding has not been configured to be accessible from the %s account. \
+            Please make sure your %s configuration is correct.\
+            """;
         final String formattedMsg =
             String
                 .format(

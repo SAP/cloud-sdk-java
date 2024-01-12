@@ -98,8 +98,10 @@ class DestinationServiceAdapter
         }
 
         throw new DestinationAccessException(
-            "The provider tenant id is not defined in the service binding."
-                + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
+            """
+            The provider tenant id is not defined in the service binding.\
+             Please verify that the service binding contains the field 'tenantid' in the credentials list.\
+            """);
     }
 
     private Function<OnBehalfOf, HttpDestination> prepareServiceDestinationComputation()

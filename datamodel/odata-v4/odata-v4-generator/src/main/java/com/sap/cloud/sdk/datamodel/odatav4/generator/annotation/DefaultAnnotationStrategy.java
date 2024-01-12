@@ -84,8 +84,10 @@ public class DefaultAnnotationStrategy implements AnnotationStrategy
                 .info(
                     String
                         .format(
-                            "  VdmObject class %s has %d properties, which exceeds the Java limit of constructor arguments (%d). "
-                                + "Builder will not be available for this entity.",
+                            """
+                              VdmObject class %s has %d properties, which exceeds the Java limit of constructor arguments (%d). \
+                            Builder will not be available for this entity.\
+                            """,
                             context.getJavaClassName(),
                             context.getNumberOfProperties(),
                             JAVA_MAXIMUM_ARGUMENTS));

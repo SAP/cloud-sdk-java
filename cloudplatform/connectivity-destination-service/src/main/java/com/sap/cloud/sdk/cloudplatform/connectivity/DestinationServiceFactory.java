@@ -131,8 +131,10 @@ class DestinationServiceFactory
     {
         if( destinationAuthToken.getError() != null ) {
             final String msg =
-                "Failed to read authentication token of destination '%s'. The destination service responded with an error: '%s'.\n"
-                    + "In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.";
+                """
+                Failed to read authentication token of destination '%s'. The destination service responded with an error: '%s'.
+                In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.\
+                """;
             throw new DestinationAccessException(msg.formatted(destinationName, destinationAuthToken.getError()));
         }
     }

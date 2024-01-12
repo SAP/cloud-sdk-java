@@ -338,8 +338,11 @@ class NavigationPropertyMethodsGenerator
             .add(
                 String
                     .format(
-                        "Retrieval of associated <b>%s</b> %s. This corresponds to the OData navigation property <b>%s</b>.\n<p>\n"
-                            + "If the navigation property for an entity <b>%s</b> has not been resolved yet, this method will <b>not query</b> further information. Instead its <code>Option</code> result state will be <code>empty</code>.",
+                        """
+                        Retrieval of associated <b>%s</b> %s. This corresponds to the OData navigation property <b>%s</b>.
+                        <p>
+                        If the navigation property for an entity <b>%s</b> has not been resolved yet, this method will <b>not query</b> further information. Instead its <code>Option</code> result state will be <code>empty</code>.\
+                        """,
                         associatedEntity.name(),
                         isOneToMany ? "entities (one to many)" : "entity (one to one)",
                         navigationProperty.getEdmName(),

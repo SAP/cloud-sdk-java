@@ -587,8 +587,10 @@ public class DestinationService implements DestinationLoader
             if( changeDetectionEnabled ) {
                 log
                     .warn(
-                        "Using the 'change detection' mode is not supported when disabling the Destination cache expiration. "
-                            + "Therefore, change detection mode will be disabled from now on.");
+                        """
+                        Using the 'change detection' mode is not supported when disabling the Destination cache expiration. \
+                        Therefore, change detection mode will be disabled from now on.\
+                        """);
                 disableChangeDetection();
                 return;
             }
@@ -644,8 +646,10 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                            + "Therefore, the default expiration ({}{}) will be restored.",
+                        """
+                        Using the 'change detection' mode is not supported with disabled Destination cache expiration. \
+                        Therefore, the default expiration ({}{}) will be restored.\
+                        """,
                         DEFAULT_EXPIRATION_DURATION,
                         DEFAULT_EXPIRATION_STRATEGY);
 
@@ -694,8 +698,10 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                            + "Therefore, the default expiration strategy ({}) will be restored.",
+                        """
+                        Using the 'change detection' mode is not supported with disabled Destination cache expiration. \
+                        Therefore, the default expiration strategy ({}) will be restored.\
+                        """,
                         DEFAULT_EXPIRATION_STRATEGY);
                 expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
             }
@@ -717,8 +723,10 @@ public class DestinationService implements DestinationLoader
             if( !expirationDuration.isDefined() ) {
                 log
                     .warn(
-                        "Using the 'change detection' mode is not supported with disabled Destination cache expiration. "
-                            + "Therefore, the default expiration duration ({}) will be restored.",
+                        """
+                        Using the 'change detection' mode is not supported with disabled Destination cache expiration. \
+                        Therefore, the default expiration duration ({}) will be restored.\
+                        """,
                         DEFAULT_EXPIRATION_DURATION);
 
                 expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
@@ -765,9 +773,11 @@ public class DestinationService implements DestinationLoader
             if( cache.estimatedSize() > 0L ) {
                 log
                     .warn(
-                        "The destination cache is changed even though there are already entries within the cache. "
-                            + "Those entries will be deleted, which might result in performance degradation. "
-                            + "Consider configuring the cache only once at application startup to avoid this issue.");
+                        """
+                        The destination cache is changed even though there are already entries within the cache. \
+                        Those entries will be deleted, which might result in performance degradation. \
+                        Consider configuring the cache only once at application startup to avoid this issue.\
+                        """);
             }
         }
 

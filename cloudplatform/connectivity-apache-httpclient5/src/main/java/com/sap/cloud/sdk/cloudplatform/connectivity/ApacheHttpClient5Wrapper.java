@@ -52,9 +52,11 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         if( destination.getProxyType().contains(ProxyType.ON_PREMISE)
             && destination.getProxyConfiguration().isEmpty() ) {
             throw new DestinationAccessException(
-                "Unable to create an HttpClient from the provided destination. "
-                    + "The destination is supposed to target an on-premise system but lacks the correct proxy configuration. "
-                    + "Please check the application logs for further details.");
+                """
+                Unable to create an HttpClient from the provided destination. \
+                The destination is supposed to target an on-premise system but lacks the correct proxy configuration. \
+                Please check the application logs for further details.\
+                """);
         }
         this.destination = destination;
     }

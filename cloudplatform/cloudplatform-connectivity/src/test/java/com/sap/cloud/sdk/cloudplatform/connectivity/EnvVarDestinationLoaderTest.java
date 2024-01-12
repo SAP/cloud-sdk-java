@@ -270,13 +270,15 @@ class EnvVarDestinationLoaderTest
     {
         final String destinationName = "MyDestination";
         final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"URL\": \"https://URL\","
-                + "\"proxy\": \"https://proxy:1234\","
-                + "}"
-                + "]";
+            """
+            [
+            {
+            "type": "HTTP",
+            "URL": "https://URL",
+            "proxy": "https://proxy:1234",
+            }
+            ]
+            """;
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -453,11 +455,13 @@ class EnvVarDestinationLoaderTest
     void testGetAllDestinations()
     {
         final String variableContent =
-            "["
-                + "{\"type\":\"HTTP\",\"name\":\"foo\",\"URL\":\"https://foo\"},"
-                + "{\"type\":\"HTTP\",\"name\":\"bar\",\"URL\":\"https://bar\"},"
-                + "{\"type\":\"HTTP\",\"name\":\"baz\",\"URL\":\"https://baz\"}"
-                + "]";
+            """
+            [
+            {"type":"HTTP","name":"foo","URL":"https://foo"},
+            {"type":"HTTP","name":"bar","URL":"https://bar"},
+            {"type":"HTTP","name":"baz","URL":"https://baz"}
+            ]
+            """;
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);

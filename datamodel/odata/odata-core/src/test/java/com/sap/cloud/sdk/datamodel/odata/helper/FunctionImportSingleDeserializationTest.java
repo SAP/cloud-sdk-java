@@ -67,11 +67,13 @@ class FunctionImportSingleDeserializationTest
             .of(
                 new TestInput<>(
                     String.class,
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                        + "<!DOCTYPE user-permission PUBLIC \"-//SuccessFactors, Inc.//DTD Permission Config//EN\" \"users-permissions.dtd\">\n"
-                        + "<user-permission>\n"
-                        + "<user id=\"sfadmin@SAPPHIRE17\"/>\n"
-                        + "</user-permission>\n",
+                    """
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <!DOCTYPE user-permission PUBLIC "-//SuccessFactors, Inc.//DTD Permission Config//EN" "users-permissions.dtd">
+                    <user-permission>
+                    <user id="sfadmin@SAPPHIRE17"/>
+                    </user-permission>
+                    """,
                     "{\"d\":{\""
                         + FUNCTION_NAME
                         + "\":\""

@@ -88,222 +88,239 @@ class DestinationServiceTest
     private static final String subscriberUrl = "https://service.subscriber.com";
 
     private static final String responseSubaccountDestination =
-        "[{\n"
-            + "    \"Name\": \"CC8-HTTP-BASIC\",\n"
-            + "    \"Type\": \"HTTP\",\n"
-            + "    \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "    \"Authentication\": \"BasicAuthentication\",\n"
-            + "    \"ProxyType\": \"Internet\",\n"
-            + "    \"TrustAll\": \"TRUE\",\n"
-            + "    \"User\": \"USER\",\n"
-            + "    \"Password\": \"pass\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"Name\": \"CC8-HTTP-CERT\",\n"
-            + "    \"Type\": \"HTTP\",\n"
-            + "    \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "    \"Authentication\": \"ClientCertificateAuthentication\",\n"
-            + "    \"ProxyType\": \"Internet\",\n"
-            + "    \"KeyStorePassword\": \"password\",\n"
-            + "    \"KeyStoreLocation\": \"aaa\"\n"
-            + "  }]";
+        """
+        [{
+            "Name": "CC8-HTTP-BASIC",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "BasicAuthentication",
+            "ProxyType": "Internet",
+            "TrustAll": "TRUE",
+            "User": "USER",
+            "Password": "pass"
+          },
+          {
+            "Name": "CC8-HTTP-CERT",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "ClientCertificateAuthentication",
+            "ProxyType": "Internet",
+            "KeyStorePassword": "password",
+            "KeyStoreLocation": "aaa"
+          }]
+        """;
 
     private static final String brokenResponseSubaccountDestination =
-        "[{\n"
-            + "    \"Name\": \"CC8-HTTP-BASIC\",\n"
-            + "    \"Type\": \"HTTP\",\n"
-            + "    \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "    \"Authentication\": \"BasicAuthentication\",\n"
-            + "    \"ProxyType\": \"Internet\",\n"
-            + "    \"TrustAll\": \"TRUE\",\n"
-            + "    \"User\": \"USER\",\n"
-            + "    \"Password\": \"pass\"\n"
-            + "  },\n"
-            + "  {\n"
-            // name is missing which is not allowed
-            + "    \"Type\": \"BROKEN_TYPE\",\n"
-            + "    \"URL\": \"https:/brok en URL!\"\n"
-            + "  }]";
+        """
+        [{
+            "Name": "CC8-HTTP-BASIC",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "BasicAuthentication",
+            "ProxyType": "Internet",
+            "TrustAll": "TRUE",
+            "User": "USER",
+            "Password": "pass"
+          },
+          {
+            "Type": "BROKEN_TYPE",
+            "URL": "https:/brok en URL!"
+          }]
+        """;
 
     private static final String responseServiceInstanceDestination =
-        "[{\n"
-            + "    \"Name\": \"CC8-HTTP-BASIC\",\n"
-            + "    \"Type\": \"HTTP\",\n"
-            + "    \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "    \"Authentication\": \"BasicAuthentication\",\n"
-            + "    \"ProxyType\": \"Internet\",\n"
-            + "    \"TrustAll\": \"TRUE\",\n"
-            + "    \"User\": \"USER1\",\n"
-            + "    \"Password\": \"pass\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"Name\": \"CC8-HTTP-CERT1\",\n"
-            + "    \"Type\": \"HTTP\",\n"
-            + "    \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "    \"Authentication\": \"ClientCertificateAuthentication\",\n"
-            + "    \"ProxyType\": \"Internet\",\n"
-            + "    \"KeyStorePassword\": \"password\",\n"
-            + "    \"KeyStoreLocation\": \"aaa\"\n"
-            + "  }]";
+        """
+        [{
+            "Name": "CC8-HTTP-BASIC",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "BasicAuthentication",
+            "ProxyType": "Internet",
+            "TrustAll": "TRUE",
+            "User": "USER1",
+            "Password": "pass"
+          },
+          {
+            "Name": "CC8-HTTP-CERT1",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "ClientCertificateAuthentication",
+            "ProxyType": "Internet",
+            "KeyStorePassword": "password",
+            "KeyStoreLocation": "aaa"
+          }]
+        """;
 
     private static final String responseDestinationWithoutAuthToken =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"CC8-HTTP-OAUTH\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://a.s4hana.ondemand.com/\",\n"
-            + "        \"Authentication\": \"OAuth2SAMLBearerAssertion\",\n"
-            + "        \"ProxyType\": \"Internet\"\n"
-            + "    },\n"
-            + "    \"authTokens\": [\n"
-            + "        {\n"
-            + "            \"type\": \"\",\n"
-            + "            \"value\": \"\",\n"
-            + "            \"error\": \"org.apache.http.HttpException: Request to the /userinfo endpoint ended with status code 403\",\n"
-            + "            \"expires_in\": \"\"\n"
-            + "        }\n"
-            + "    ]\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "CC8-HTTP-OAUTH",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com/",
+                "Authentication": "OAuth2SAMLBearerAssertion",
+                "ProxyType": "Internet"
+            },
+            "authTokens": [
+                {
+                    "type": "",
+                    "value": "",
+                    "error": "org.apache.http.HttpException: Request to the /userinfo endpoint ended with status code 403",
+                    "expires_in": ""
+                }
+            ]
+        }
+        """;
 
     private static final String responseDestinationWithAuthToken =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"CC8-HTTP-OAUTH\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://a.s4hana.ondemand.com/\",\n"
-            + "        \"Authentication\": \"OAuth2SAMLBearerAssertion\",\n"
-            + "        \"ProxyType\": \"Internet\"\n"
-            + "    },\n"
-            + "    \"authTokens\": [\n"
-            + "        {\n"
-            + "            \"type\": \"Bearer\",\n"
-            + "            \"value\": \"bearer_token\",\n"
-            + "            \"http_header\": {\n"
-            + "                \"key\": \"Authorization\",\n"
-            + "                \"value\": \"Bearer bearer_token\"\n"
-            + "            },\n"
-            + "            \"expires_in\": \"3600\",\n"
-            + "            \"scope\": \"API_BUSINESS_PARTNER_0001\"\n"
-            + "        }\n"
-            + "    ]\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "CC8-HTTP-OAUTH",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com/",
+                "Authentication": "OAuth2SAMLBearerAssertion",
+                "ProxyType": "Internet"
+            },
+            "authTokens": [
+                {
+                    "type": "Bearer",
+                    "value": "bearer_token",
+                    "http_header": {
+                        "key": "Authorization",
+                        "value": "Bearer bearer_token"
+                    },
+                    "expires_in": "3600",
+                    "scope": "API_BUSINESS_PARTNER_0001"
+                }
+            ]
+        }
+        """;
 
     private static final String responseDestinationWithExpiredAuthToken =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"CC8-HTTP-OAUTH\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://a.s4hana.ondemand.com/\",\n"
-            + "        \"Authentication\": \"OAuth2SAMLBearerAssertion\",\n"
-            + "        \"ProxyType\": \"Internet\"\n"
-            + "    },\n"
-            + "    \"authTokens\": [\n"
-            + "        {\n"
-            + "            \"type\": \"Bearer\",\n"
-            + "            \"value\": \"bearer_token\",\n"
-            + "            \"http_header\": {\n"
-            + "                \"key\": \"Authorization\",\n"
-            + "                \"value\": \"Bearer bearer_token\"\n"
-            + "            },\n"
-            + "            \"expires_in\": \"5\",\n"
-            + "            \"scope\": \"API_BUSINESS_PARTNER_0001\"\n"
-            + "        }\n"
-            + "    ]\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "CC8-HTTP-OAUTH",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com/",
+                "Authentication": "OAuth2SAMLBearerAssertion",
+                "ProxyType": "Internet"
+            },
+            "authTokens": [
+                {
+                    "type": "Bearer",
+                    "value": "bearer_token",
+                    "http_header": {
+                        "key": "Authorization",
+                        "value": "Bearer bearer_token"
+                    },
+                    "expires_in": "5",
+                    "scope": "API_BUSINESS_PARTNER_0001"
+                }
+            ]
+        }
+        """;
 
     //Fictional use-case where the destination service responds with multiple auth tokens
     private static final String responseDestinationWithMultipleAuthTokens =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"CC8-HTTP-OAUTH\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://a.s4hana.ondemand.com/\",\n"
-            + "        \"Authentication\": \"OAuth2SAMLBearerAssertion\",\n"
-            + "        \"ProxyType\": \"Internet\"\n"
-            + "    },\n"
-            + "    \"authTokens\": [\n"
-            + "        {\n"
-            + "            \"type\": \"Bearer\",\n"
-            + "            \"value\": \"bearer_token\",\n"
-            + "            \"http_header\": {\n"
-            + "                \"key\": \"Authorization\",\n"
-            + "                \"value\": \"Bearer bearer_token\"\n"
-            + "            },\n"
-            + "            \"expires_in\": \"5\",\n"
-            + "            \"scope\": \"API_BUSINESS_PARTNER_0001\"\n"
-            + "        },\n"
-            + "        {\n"
-            + "            \"type\": \"Bearer\",\n"
-            + "            \"value\": \"bearer_token\",\n"
-            + "            \"http_header\": {\n"
-            + "                \"key\": \"Authorization\",\n"
-            + "                \"value\": \"Bearer bearer_token\"\n"
-            + "            },\n"
-            + "            \"expires_in\": \"50\",\n"
-            + "            \"scope\": \"API_BUSINESS_PARTNER_0001\"\n"
-            + "        }\n"
-            + "    ]\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "CC8-HTTP-OAUTH",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com/",
+                "Authentication": "OAuth2SAMLBearerAssertion",
+                "ProxyType": "Internet"
+            },
+            "authTokens": [
+                {
+                    "type": "Bearer",
+                    "value": "bearer_token",
+                    "http_header": {
+                        "key": "Authorization",
+                        "value": "Bearer bearer_token"
+                    },
+                    "expires_in": "5",
+                    "scope": "API_BUSINESS_PARTNER_0001"
+                },
+                {
+                    "type": "Bearer",
+                    "value": "bearer_token",
+                    "http_header": {
+                        "key": "Authorization",
+                        "value": "Bearer bearer_token"
+                    },
+                    "expires_in": "50",
+                    "scope": "API_BUSINESS_PARTNER_0001"
+                }
+            ]
+        }
+        """;
 
     private static final String responseDestinationWithBasicAuthToken =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"CC8-HTTP-BASIC\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://a.s4hana.ondemand.com\",\n"
-            + "        \"Authentication\": \"BasicAuthentication\",\n"
-            + "        \"ProxyType\": \"Internet\",\n"
-            + "        \"TrustAll\": \"TRUE\",\n"
-            + "        \"User\": \"USER\",\n"
-            + "        \"Password\": \"pass\"\n"
-            + "    },\n"
-            + "    \"authTokens\": [\n"
-            + "        {\n"
-            + "            \"type\": \"Basic\",\n"
-            + "            \"value\": \"dGVzdDpwYgXNzMTIzNDU=\",\n"
-            + "            \"http_header\": {\n"
-            + "                \"key\": \"Authorization\",\n"
-            + "                \"value\": \"Basic dGVzdDpwYgXNzMTIzNDU=\"\n"
-            + "            }\n"
-            + "        }\n"
-            + "    ]\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "CC8-HTTP-BASIC",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com",
+                "Authentication": "BasicAuthentication",
+                "ProxyType": "Internet",
+                "TrustAll": "TRUE",
+                "User": "USER",
+                "Password": "pass"
+            },
+            "authTokens": [
+                {
+                    "type": "Basic",
+                    "value": "dGVzdDpwYgXNzMTIzNDU=",
+                    "http_header": {
+                        "key": "Authorization",
+                        "value": "Basic dGVzdDpwYgXNzMTIzNDU="
+                    }
+                }
+            ]
+        }
+        """;
 
     private static final String responseDestinationWithNoAuthToken =
-        "{\n"
-            + "    \"owner\": {\n"
-            + "        \"SubaccountId\": \"00000000-0000-0000-0000-000000000000\",\n"
-            + "        \"InstanceId\": null\n"
-            + "    },\n"
-            + "    \"destinationConfiguration\": {\n"
-            + "        \"Name\": \"Subscriber-CCT\",\n"
-            + "        \"Type\": \"HTTP\",\n"
-            + "        \"URL\": \"https://wrong.com\",\n"
-            + "        \"Authentication\": \"NoAuthentication\",\n"
-            + "        \"ProxyType\": \"Internet\",\n"
-            + "        \"Description\": \"Dummy destination that should be overwritten by a subscriber.\"\n"
-            + "    }\n"
-            + "}";
+        """
+        {
+            "owner": {
+                "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                "InstanceId": null
+            },
+            "destinationConfiguration": {
+                "Name": "Subscriber-CCT",
+                "Type": "HTTP",
+                "URL": "https://wrong.com",
+                "Authentication": "NoAuthentication",
+                "ProxyType": "Internet",
+                "Description": "Dummy destination that should be overwritten by a subscriber."
+            }
+        }
+        """;
     // endregion
 
     @RegisterExtension
@@ -1706,20 +1723,22 @@ class DestinationServiceTest
     {
         return String
             .format(
-                "{\n"
-                    + "    \"owner\": {\n"
-                    + "        \"SubaccountId\": \"someId\",\n"
-                    + "        \"InstanceId\": null\n"
-                    + "    },\n"
-                    + "    \"destinationConfiguration\": {\n"
-                    + "        \"Name\": \"%s\",\n"
-                    + "        \"Type\": \"HTTP\",\n"
-                    + "        \"URL\": \"%s\",\n"
-                    + "        \"Authentication\": \"NoAuthentication\",\n"
-                    + "        \"ProxyType\": \"Internet\",\n"
-                    + "        \"Description\": \"Test destination\"\n"
-                    + "    }\n"
-                    + "}",
+                """
+                {
+                    "owner": {
+                        "SubaccountId": "someId",
+                        "InstanceId": null
+                    },
+                    "destinationConfiguration": {
+                        "Name": "%s",
+                        "Type": "HTTP",
+                        "URL": "%s",
+                        "Authentication": "NoAuthentication",
+                        "ProxyType": "Internet",
+                        "Description": "Test destination"
+                    }
+                }
+                """,
                 name,
                 url);
     }

@@ -174,24 +174,26 @@ class ODataResponseErrorParsingTest
     void testParsingODataV4Error()
     {
         final String json =
-            "{"
-                + "\"error\": {"
-                + "  \"code\": \"err123\","
-                + "  \"message\": \"Unsupported functionality\","
-                + "  \"target\": \"query\","
-                + "  \"details\": ["
-                + "     {"
-                + "       \"code\": \"forty-two\","
-                + "       \"target\": \"$search\", "
-                + "       \"message\": \"$search query option not supported\""
-                + "     }"
-                + "   ],"
-                + "  \"innererror\": {"
-                + "     \"foo\": 123,"
-                + "     \"bar\": \"ok\""
-                + "  }"
-                + "}"
-                + "}";
+            """
+            {\
+            "error": {\
+              "code": "err123",\
+              "message": "Unsupported functionality",\
+              "target": "query",\
+              "details": [\
+                 {\
+                   "code": "forty-two",\
+                   "target": "$search", \
+                   "message": "$search query option not supported"\
+                 }\
+               ],\
+              "innererror": {\
+                 "foo": 123,\
+                 "bar": "ok"\
+              }\
+            }\
+            }\
+            """;
 
         final ODataRequestRead request =
             new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, "", ODataProtocol.V4);

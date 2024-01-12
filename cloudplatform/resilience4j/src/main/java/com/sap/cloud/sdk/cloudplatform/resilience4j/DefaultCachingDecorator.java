@@ -134,9 +134,11 @@ public class DefaultCachingDecorator implements GenericDecorator
                     .warn(
                         String
                             .format(
-                                "Cache with configuration identifier '%s' was closed. Therefore methods decorated "
-                                    + "using that identifier will not be cached anymore, but instead will be executed "
-                                    + "directly.",
+                                """
+                                Cache with configuration identifier '%s' was closed. Therefore methods decorated \
+                                using that identifier will not be cached anymore, but instead will be executed \
+                                directly.\
+                                """,
                                 configuration.identifier()));
                 return callable.call();
             }

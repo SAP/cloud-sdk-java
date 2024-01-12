@@ -79,8 +79,10 @@ class DefaultServiceBatchChangeSetGenerator
             .add(
                 String
                     .format(
-                        "Implementation of the {@link %s} interface, enabling you to combine multiple operations into one "
-                            + "changeset. For further information have a look into the {@link %s %s}.",
+                        """
+                        Implementation of the {@link %s} interface, enabling you to combine multiple operations into one \
+                        changeset. For further information have a look into the {@link %s %s}.\
+                        """,
                         changeSetInterface.name(),
                         basicServiceClass.fullName(),
                         basicServiceClass.name()));

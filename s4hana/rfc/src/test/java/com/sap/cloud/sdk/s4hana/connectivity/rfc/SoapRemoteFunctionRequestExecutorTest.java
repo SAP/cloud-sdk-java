@@ -39,13 +39,19 @@ class SoapRemoteFunctionRequestExecutorTest
         throws Exception
     {
         final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/"
-                + "envelope/\"><soap-env:Header/><soap-env:Body><soap-env:Fault><faultcode>soap-env:Server</fau"
-                + "ltcode><faultstring xml:lang=\"en\">Authorization missing for service \"urn:sap-com:document:"
-                + "sap:soap:functions:mc-style _--37BAPI_FIXEDASSET_GETLIST\", operation \"FixedassetGetlist\"; "
-                + "more details in the web service error log on provider side (UTC timestamp 20170821152434; Tra"
-                + "nsaction ID AF0DC6FADCD50210E00598DB19C81681)</faultstring><detail/></soap-env:Fault></soap-env:B"
-                + "ody></soap-env:Envelope>";
+            """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap-env:Header/>
+                <soap-env:Body>
+                    <soap-env:Fault>
+                        <faultcode>soap-env:Server</faultcode>
+                        <faultstring xml:lang="en">Authorization missing for service "urn:sap-com:document:sap:soap:functions:mc-style _--37BAPI_FIXEDASSET_GETLIST", operation "FixedassetGetlist";more details in the web service error log on provider side (UTC timestamp 20170821152434; Transaction ID AF0DC6FADCD50210E00598DB19C81681)
+                        </faultstring>
+                        <detail/>
+                    </soap-env:Fault>
+                </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         stubFor(
             post(anyUrl())
@@ -68,25 +74,27 @@ class SoapRemoteFunctionRequestExecutorTest
     void testExceptionDuringSoapServiceProcessing()
     {
         final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
-                + "<soap-env:Header/>\n"
-                + "<soap-env:Body>\n"
-                + "<soap-env:Fault>\n"
-                + "<faultcode>soap-env:Client</faultcode>\n"
-                + "<faultstring xml:lang=\"en\">ExcNoPermission</faultstring>\n"
-                + "<detail>\n"
-                + "<n0:FcGlobalParamsImportRfc.Exception xmlns:n0=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "<Name>ExcNoPermission</Name>\n"
-                + "<Text>Authorization \"Execute\" missing for Transaction Code \"CXGP\".</Text>\n"
-                + "<Message>\n"
-                + "<ID>GK</ID>\n"
-                + "<Number>051</Number>\n"
-                + "</Message>\n"
-                + "</n0:FcGlobalParamsImportRfc.Exception>\n"
-                + "</detail>\n"
-                + "</soap-env:Fault>\n"
-                + "</soap-env:Body>\n"
-                + "</soap-env:Envelope>";
+            """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap-env:Header/>
+                <soap-env:Body>
+                    <soap-env:Fault>
+                        <faultcode>soap-env:Client</faultcode>
+                        <faultstring xml:lang="en">ExcNoPermission</faultstring>
+                        <detail>
+                            <n0:FcGlobalParamsImportRfc.Exception xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+                                <Name>ExcNoPermission</Name>
+                                <Text>Authorization "Execute" missing for Transaction Code "CXGP".</Text>
+                                <Message>
+                                    <ID>GK</ID>
+                                    <Number>051</Number>
+                                </Message>
+                            </n0:FcGlobalParamsImportRfc.Exception>
+                        </detail>
+                    </soap-env:Fault>
+                </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         stubFor(
             post(anyUrl())
@@ -117,25 +125,27 @@ class SoapRemoteFunctionRequestExecutorTest
         SoapNamespace.RESPONSE_PREFIX_N0.setLabel("qqq");
 
         final String responsePayload =
-            "<ppp:Envelope xmlns:ppp=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
-                + "<ppp:Header/>\n"
-                + "<ppp:Body>\n"
-                + "<ppp:Fault>\n"
-                + "<faultcode>ppp:Client</faultcode>\n"
-                + "<faultstring xml:lang=\"en\">ExcNoPermission</faultstring>\n"
-                + "<detail>\n"
-                + "<qqq:FcGlobalParamsImportRfc.Exception xmlns:qqq=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "<Name>ExcNoPermission</Name>\n"
-                + "<Text>Authorization \"Execute\" missing for Transaction Code \"CXGP\".</Text>\n"
-                + "<Message>\n"
-                + "<ID>GK</ID>\n"
-                + "<Number>051</Number>\n"
-                + "</Message>\n"
-                + "</qqq:FcGlobalParamsImportRfc.Exception>\n"
-                + "</detail>\n"
-                + "</ppp:Fault>\n"
-                + "</ppp:Body>\n"
-                + "</ppp:Envelope>";
+            """
+            <ppp:Envelope xmlns:ppp="http://schemas.xmlsoap.org/soap/envelope/">
+                <ppp:Header/>
+                <ppp:Body>
+                    <ppp:Fault>
+                        <faultcode>ppp:Client</faultcode>
+                        <faultstring xml:lang="en">ExcNoPermission</faultstring>
+                        <detail>
+                            <qqq:FcGlobalParamsImportRfc.Exception xmlns:qqq="urn:sap-com:document:sap:soap:functions:mc-style">
+                                <Name>ExcNoPermission</Name>
+                                <Text>Authorization "Execute" missing for Transaction Code "CXGP".</Text>
+                                <Message>
+                                    <ID>GK</ID>
+                                    <Number>051</Number>
+                                </Message>
+                            </qqq:FcGlobalParamsImportRfc.Exception>
+                        </detail>
+                    </ppp:Fault>
+                </ppp:Body>
+            </ppp:Envelope>
+            """;
 
         stubFor(
             post(anyUrl())
@@ -165,13 +175,15 @@ class SoapRemoteFunctionRequestExecutorTest
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
         final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                + "<soap-env:Header/>"
-                + "<soap-env:Body>"
-                + "<n0:RfcTestResponse xmlns:n0=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "</n0:RfcTestResponse>\n"
-                + "</soap-env:Body>"
-                + "</soap-env:Envelope>";
+            """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap-env:Header/>
+                <soap-env:Body>
+                    <n0:RfcTestResponse xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+                    </n0:RfcTestResponse>
+                </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         stubFor(
             post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));
@@ -198,13 +210,15 @@ class SoapRemoteFunctionRequestExecutorTest
         SoapNamespace.RESPONSE_PREFIX_N0.setLabel("qqq");
 
         final String responsePayload =
-            "<ppp:Envelope xmlns:ppp=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                + "<ppp:Header/>"
-                + "<ppp:Body>"
-                + "<qqq:RfcTestResponse xmlns:qqq=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "</qqq:RfcTestResponse>\n"
-                + "</ppp:Body>"
-                + "</ppp:Envelope>";
+            """
+            <ppp:Envelope xmlns:ppp="http://schemas.xmlsoap.org/soap/envelope/">\
+            <ppp:Header/>\
+            <ppp:Body>\
+            <qqq:RfcTestResponse xmlns:qqq="urn:sap-com:document:sap:soap:functions:mc-style">
+            </qqq:RfcTestResponse>
+            </ppp:Body>\
+            </ppp:Envelope>\
+            """;
 
         stubFor(
             post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));
@@ -228,13 +242,15 @@ class SoapRemoteFunctionRequestExecutorTest
     void testHeadersInRollbackSoapRequest()
     {
         final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                + "<soap-env:Header/>"
-                + "<soap-env:Body>"
-                + "<n0:RfcTestResponse xmlns:n0=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "</n0:RfcTestResponse>\n"
-                + "</soap-env:Body>"
-                + "</soap-env:Envelope>";
+            """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap-env:Header/>
+                <soap-env:Body>
+                    <n0:RfcTestResponse xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+                    </n0:RfcTestResponse>
+                </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         stubFor(
             post(anyUrl()).withHeader("SOAPAction", matching(".*RfcTest$")).willReturn(ok().withBody(responsePayload)));

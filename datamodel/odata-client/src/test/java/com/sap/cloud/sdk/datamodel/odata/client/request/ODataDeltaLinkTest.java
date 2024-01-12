@@ -20,11 +20,13 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 class ODataDeltaLinkTest
 {
     private static final String PAYLOAD_DELTA_LINK =
-        "{"
-            + "  \"@odata.context\": \"$metadata#FooBar\","
-            + "  \"value\": [],"
-            + "  \"@odata.deltaLink\": \"/v1/foo/bar/endpoint?$deltatoken=s3cReT-t0k3n&foo=bar\""
-            + "}";
+        """
+        {\
+          "@odata.context": "$metadata#FooBar",\
+          "value": [],\
+          "@odata.deltaLink": "/v1/foo/bar/endpoint?$deltatoken=s3cReT-t0k3n&foo=bar"\
+        }\
+        """;
 
     @Test
     void testEmptyDeltaLinkV2()

@@ -56,8 +56,10 @@ class AnnotationHelper
                 throw new ODataGeneratorException(
                     String
                         .format(
-                            "Annotation parameter value for %s has an unsupported type of %s."
-                                + "Please make sure to only use the exposed constructors of the AnnotationParameter class.",
+                            """
+                            Annotation parameter value for %s has an unsupported type of %s.\
+                            Please make sure to only use the exposed constructors of the AnnotationParameter class.\
+                            """,
                             parameter.getName(),
                             parameterValue.getClass().getName()));
             }

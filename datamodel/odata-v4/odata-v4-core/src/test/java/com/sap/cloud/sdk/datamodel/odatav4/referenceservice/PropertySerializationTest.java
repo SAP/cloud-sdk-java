@@ -55,12 +55,14 @@ class PropertySerializationTest
             .isEqualTo(
                 JsonParser
                     .parseString(
-                        "{\"AddressInfo\":["
-                            + "{\"Address\":\"Konrad-Zuse-Ring 10, 14469\","
-                            + "\"City\":{\"Name\":\"Potsdam\",\"CountryRegion\":\"Brandenburg\",\"Region\":\"Nedlitz\",\"@odata.type\":\"#Trippin.City\"},"
-                            + "\"@odata.type\":\"#Trippin.Location\"}"
-                            + "],\"@odata.type\":\"#Trippin.Person\""
-                            + ",\"Friends\":[],\"Trips\":[]}"));
+                        """
+                        {"AddressInfo":[\
+                        {"Address":"Konrad-Zuse-Ring 10, 14469",\
+                        "City":{"Name":"Potsdam","CountryRegion":"Brandenburg","Region":"Nedlitz","@odata.type":"#Trippin.City"},\
+                        "@odata.type":"#Trippin.Location"}\
+                        ],"@odata.type":"#Trippin.Person"\
+                        ,"Friends":[],"Trips":[]}\
+                        """));
         // {"@odata.type":"#Trippin.Person","AddressInfo":[{"@odata.type":"#Trippin.Location","Address":"Konrad-Zuse-Ring 10, 14469","City":{"@odata.type":"#Trippin.City","Name":"Potsdam","CountryRegion":"Brandenburg","Region":"Nedlitz"}}],"Friends":[],"Trips":[]}
     }
 

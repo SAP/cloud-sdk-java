@@ -669,8 +669,10 @@ class NamespaceClassGenerator
                             .warn(
                                 String
                                     .format(
-                                        "Unable to generate code for function import '%s': Return type is an entity (%s), "
-                                            + "but it is either not found or its entity set has been filtered out.",
+                                        """
+                                        Unable to generate code for function import '%s': Return type is an entity (%s), \
+                                        but it is either not found or its entity set has been filtered out.\
+                                        """,
                                         functionImport.getName(),
                                         edmReturnType.getName()));
                         return;
@@ -894,7 +896,10 @@ class NamespaceClassGenerator
                     .error(
                         String
                             .format(
-                                "    Unsupported type detected:\n" + "      property name: %s, type: %s",
+                                """
+                                    Unsupported type detected:
+                                      property name: %s, type: %s\
+                                """,
                                 propertyName,
                                 propertyType.getKind().toString()));
                 return null;

@@ -41,25 +41,29 @@ class ODataRequestFunctionTest
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_FUNCTION = "TestFunction";
     private static final String ODATA_FUNCTION_PARAMETERS_V2 =
-        "?"
-            + "stringParameter='foo/bar'&"
-            + "booleanParameter=true&"
-            + "integerParameter=9000&"
-            + "doubleParameter=3.14d&"
-            + "nullParameter=null&"
-            + "durationParameter=duration'PT8H'&"
-            + "dateTimeParameter=datetime'2019-12-25T08:00:00'";
+        """
+        ?\
+        stringParameter='foo/bar'&\
+        booleanParameter=true&\
+        integerParameter=9000&\
+        doubleParameter=3.14d&\
+        nullParameter=null&\
+        durationParameter=duration'PT8H'&\
+        dateTimeParameter=datetime'2019-12-25T08:00:00'\
+        """;
 
     private static final String ODATA_FUNCTION_PARAMETERS_V4 =
-        "("
-            + "stringParameter='foo%2Fbar',"
-            + "booleanParameter=true,"
-            + "integerParameter=9000,"
-            + "doubleParameter=3.14,"
-            + "nullParameter=null,"
-            + "durationParameter=duration'PT8H',"
-            + "dateTimeParameter=2019-12-25T08:00:00Z"
-            + ")";
+        """
+        (\
+        stringParameter='foo%2Fbar',\
+        booleanParameter=true,\
+        integerParameter=9000,\
+        doubleParameter=3.14,\
+        nullParameter=null,\
+        durationParameter=duration'PT8H',\
+        dateTimeParameter=2019-12-25T08:00:00Z\
+        )\
+        """;
 
     private WireMockServer wireMockServer;
     private HttpClient client;

@@ -41,43 +41,47 @@ import lombok.ToString;
 class ODataPrimitiveAdapterTest
 {
     private static final String primitivesEntityInput =
-        "{"
-            + "  \"EdmBinaryProperty\" : \"Rk9PIEJBUg==\","
-            + "  \"EdmBooleanProperty\" : true,"
-            + "  \"EdmByteProperty\" : 200,"
-            + "  \"EdmDateTimeProperty\" : \"/Date(346833000)/\","
-            + "  \"EdmDateTimeOffsetProperty\" : \"/Date(346833000-300)/\","
-            + "  \"EdmDecimalProperty\" : 9.223372036854776E18,"
-            + "  \"EdmDoubleProperty\" : 3.1415926535897E93,"
-            + "  \"EdmGuidProperty\" : \"00000000-1111-2222-3333-444444444444\","
-            + "  \"EdmInt16Property\" : 1980,"
-            + "  \"EdmInt32Property\" : 16777216,"
-            + "  \"EdmInt64Property\" : 9223372036854775800,"
-            + "  \"EdmSByteProperty\" : -120,"
-            + "  \"EdmSingleProperty\" : 3.14,"
-            + "  \"EdmStringProperty\" : \"TEST STRING\","
-            + "  \"EdmTimeProperty\" : \"PT07H30M00S\""
-            + "}";
+        """
+        {
+          "EdmBinaryProperty" : "Rk9PIEJBUg==",
+          "EdmBooleanProperty" : true,
+          "EdmByteProperty" : 200,
+          "EdmDateTimeProperty" : "/Date(346833000)/",
+          "EdmDateTimeOffsetProperty" : "/Date(346833000-300)/",
+          "EdmDecimalProperty" : 9.223372036854776E18,
+          "EdmDoubleProperty" : 3.1415926535897E93,
+          "EdmGuidProperty" : "00000000-1111-2222-3333-444444444444",
+          "EdmInt16Property" : 1980,
+          "EdmInt32Property" : 16777216,
+          "EdmInt64Property" : 9223372036854775800,
+          "EdmSByteProperty" : -120,
+          "EdmSingleProperty" : 3.14,
+          "EdmStringProperty" : "TEST STRING",
+          "EdmTimeProperty" : "PT07H30M00S"
+        }
+        """;
 
     private static final String expectedSerializedEntity =
-        "{"
-            + "\"versionIdentifier\":null,"
-            + "\"EdmBinaryProperty\":\"Rk9PIEJBUg==\","
-            + "\"EdmBooleanProperty\":true,"
-            + "\"EdmByteProperty\":200,"
-            + "\"EdmDateTimeProperty\":\"/Date(1649342635567)/\","
-            + "\"EdmDateTimeOffsetProperty\":\"/Date(1649342635567-0300)/\","
-            + "\"EdmDecimalProperty\":9.223372036854776E+18,"
-            + "\"EdmDoubleProperty\":3.1415926535897E93,"
-            + "\"EdmGuidProperty\":\"00000000-1111-2222-3333-444444444444\","
-            + "\"EdmInt16Property\":1980,"
-            + "\"EdmInt32Property\":16777216,"
-            + "\"EdmInt64Property\":9223372036854775800,"
-            + "\"EdmSByteProperty\":-120,"
-            + "\"EdmSingleProperty\":3.14,"
-            + "\"EdmStringProperty\":\"TEST STRING\","
-            + "\"EdmTimeProperty\":\"PT14H25M34.567S\""
-            + "}";
+        """
+        {
+        "versionIdentifier":null,
+        "EdmBinaryProperty":"Rk9PIEJBUg==",
+        "EdmBooleanProperty":true,
+        "EdmByteProperty":200,
+        "EdmDateTimeProperty":"/Date(1649342635567)/",
+        "EdmDateTimeOffsetProperty":"/Date(1649342635567-0300)/",
+        "EdmDecimalProperty":9.223372036854776E+18,
+        "EdmDoubleProperty":3.1415926535897E93,
+        "EdmGuidProperty":"00000000-1111-2222-3333-444444444444",
+        "EdmInt16Property":1980,
+        "EdmInt32Property":16777216,
+        "EdmInt64Property":9223372036854775800,
+        "EdmSByteProperty":-120,
+        "EdmSingleProperty":3.14,
+        "EdmStringProperty":"TEST STRING",
+        "EdmTimeProperty":"PT14H25M34.567S"
+        }
+        """;
 
     @Builder
     @Data

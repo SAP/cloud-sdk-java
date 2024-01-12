@@ -44,10 +44,14 @@ class EntityFieldGenerator
             .add(
                 String
                     .format(
-                        "Template class to represent entity fields of the Entity {@link %s %s}. Instances of this object are used in query modifier methods of the entity\n"
-                            + "fluent helpers. Contains methods to compare a field's value with a provided value.\n\n"
-                            + "Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying OData\n"
-                            + "field names, so use the constructor with caution.\n\n",
+                        """
+                        Template class to represent entity fields of the Entity {@link %s %s}. Instances of this object are used in query modifier methods of the entity
+                        fluent helpers. Contains methods to compare a field's value with a provided value.
+                        
+                        Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying OData
+                        field names, so use the constructor with caution.
+                        
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 

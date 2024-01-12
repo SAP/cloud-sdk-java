@@ -60,34 +60,36 @@ class ApiClientExtensionsDeserializationTest
             .andRespond(
                 MockRestResponseCreators
                     .withSuccess(
-                        "{\n"
-                            + "  \"message\": \"Hello from the outer level.\",\n"
-                            + "  \"code\": 1337,\n"
-                            + "  \"inner\": {\n"
-                            + "    \"message\": \"Hello from the inner level.\",\n"
-                            + "    \"code\": 7331,\n"
-                            + "    \"innerComplexExtension\": {\n"
-                            + "      \"innerString\": \"inner\",\n"
-                            + "      \"innerInteger\": 24\n"
-                            + "    },\n"
-                            + "    \"innerListExtension\": [\n"
-                            + "      \"oof\",\n"
-                            + "      \"rab\",\n"
-                            + "      \"zab\"\n"
-                            + "    ],\n"
-                            + "    \"innerPrimitiveExtension\": \"additionalInnerValue\"\n"
-                            + "  },\n"
-                            + "  \"outerComplexExtension\": {\n"
-                            + "    \"outerString\": \"outer\",\n"
-                            + "    \"outerInteger\": 42\n"
-                            + "  },\n"
-                            + "  \"outerListExtension\": [\n"
-                            + "    \"foo\",\n"
-                            + "    \"bar\",\n"
-                            + "    \"baz\"\n"
-                            + "  ],\n"
-                            + "  \"outerPrimitiveExtension\": \"additionalOuterValue\"\n"
-                            + "}\n",
+                        """
+                        {
+                          "message": "Hello from the outer level.",
+                          "code": 1337,
+                          "inner": {
+                            "message": "Hello from the inner level.",
+                            "code": 7331,
+                            "innerComplexExtension": {
+                              "innerString": "inner",
+                              "innerInteger": 24
+                            },
+                            "innerListExtension": [
+                              "oof",
+                              "rab",
+                              "zab"
+                            ],
+                            "innerPrimitiveExtension": "additionalInnerValue"
+                          },
+                          "outerComplexExtension": {
+                            "outerString": "outer",
+                            "outerInteger": 42
+                          },
+                          "outerListExtension": [
+                            "foo",
+                            "bar",
+                            "baz"
+                          ],
+                          "outerPrimitiveExtension": "additionalOuterValue"
+                        }
+                        """,
                         MediaType.APPLICATION_JSON));
 
         final TestApi api = new TestApi(apiClient);

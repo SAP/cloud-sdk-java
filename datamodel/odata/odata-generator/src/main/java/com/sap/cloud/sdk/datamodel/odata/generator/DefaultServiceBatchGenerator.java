@@ -112,8 +112,10 @@ class DefaultServiceBatchGenerator
             .add(
                 String
                     .format(
-                        "Default implementation of the {@link %s} interface exposed in the {@link %s %s}, allowing you to "
-                            + "create multiple changesets and finally execute the batch request.",
+                        """
+                        Default implementation of the {@link %s} interface exposed in the {@link %s %s}, allowing you to \
+                        create multiple changesets and finally execute the batch request.\
+                        """,
                         interfaceToImplement.name(),
                         basicServiceClass.fullName(),
                         basicServiceClass.name()));

@@ -33,13 +33,15 @@ class DeserializationTest
     {
         // @formatter:off
         responseBody =
-                "{" +
-                "  \"name\": \"Cola\",\n" +
-                "  \"brand\": \"Coca-Cola\",\n" +
-                "  \"quantity\": 100,\n" +
-                "  \"price\": 1.5,\n" +
-                "  \"id\": 0\n" +
-                "}";
+                """
+                {
+                  "name": "Cola",
+                  "brand": "Coca-Cola",
+                  "quantity": 100,
+                  "price": 1.5,
+                  "id": 0
+                }
+                """;
         // @formatter:on
         stub(responseBody);
 
@@ -55,13 +57,15 @@ class DeserializationTest
     {
         // @formatter:off
         responseBody =
-                "{\n" +
-                "  \"name\": \"Cola\",\n" +
-                "  \"price\": 1.5,\n" +
-                "  \"id\": 0,\n" +
-                "  \"brand\": \"Coca-Cola\",\n" +
-                "  \"quantity\": 100\n" +
-                "}";
+                """
+                {
+                  "name": "Cola",
+                  "price": 1.5,
+                  "id": 0,
+                  "brand": "Coca-Cola",
+                  "quantity": 100
+                }
+                """;
         // @formatter:on
         stub(responseBody);
 
@@ -90,10 +94,12 @@ class DeserializationTest
     {
         // @formatter:off
         responseBody =
-                "{\n"
-              + "    \"name\": \"Cola\",\n"
-              + "    \"unexpectedField\": []\n"
-              + "}\n";
+                """
+                {
+                    "name": "Cola",
+                    "unexpectedField": []
+                }
+                """;
         // @formatter:on
         stub(responseBody);
 

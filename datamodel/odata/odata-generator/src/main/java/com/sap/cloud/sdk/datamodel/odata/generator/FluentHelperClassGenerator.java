@@ -132,8 +132,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Fluent helper to fetch multiple {@link %s %s} entities. "
-                            + "This fluent helper allows methods which modify the underlying query to be called before executing the query itself. ",
+                        """
+                        Fluent helper to fetch multiple {@link %s %s} entities. \
+                        This fluent helper allows methods which modify the underlying query to be called before executing the query itself. \
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -169,8 +171,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Fluent helper to fetch a single {@link %s %s} entity using key fields. "
-                            + "This fluent helper allows methods which modify the underlying query to be called before executing the query itself. ",
+                        """
+                        Fluent helper to fetch a single {@link %s %s} entity using key fields. \
+                        This fluent helper allows methods which modify the underlying query to be called before executing the query itself. \
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -223,8 +227,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Creates a fluent helper object that will fetch a single {@link %s %s} entity with the provided key field values. "
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Creates a fluent helper object that will fetch a single {@link %s %s} entity with the provided key field values. \
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -313,8 +319,10 @@ class FluentHelperClassGenerator
                 .add(
                     String
                         .format(
-                            "Creates a fluent helper object that will execute the <b>%s</b> OData function import with the provided parameters. "
-                                + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                            """
+                            Creates a fluent helper object that will execute the <b>%s</b> OData function import with the provided parameters. \
+                            To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                            """,
                             edmName));
 
             final JVar servicePathParam = constructor.param(JMod.FINAL, String.class, SERVICE_PATH_FIELD_NAME);
@@ -408,8 +416,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Fluent helper to create a new {@link %s %s} entity and save it to the S/4HANA system.<p>\n"
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Fluent helper to create a new {@link %s %s} entity and save it to the S/4HANA system.<p>
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -452,8 +462,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Creates a fluent helper object that will create a {@link %s %s} entity on the OData endpoint. "
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Creates a fluent helper object that will create a {@link %s %s} entity on the OData endpoint. \
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
         constructor.javadoc().addParam(servicePathParam).add("The service path to direct the create requests to.");
@@ -497,8 +509,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Fluent helper to update an existing {@link %s %s} entity and save it to the S/4HANA system.<p>\n"
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Fluent helper to update an existing {@link %s %s} entity and save it to the S/4HANA system.<p>
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -537,8 +551,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Creates a fluent helper object that will update a {@link %s %s} entity on the OData endpoint. "
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Creates a fluent helper object that will update a {@link %s %s} entity on the OData endpoint. \
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
         constructor.javadoc().addParam(servicePathParam).add("The service path to direct the update requests to.");
@@ -568,8 +584,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Fluent helper to delete an existing {@link %s %s} entity in the S/4HANA system.<p>\n"
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Fluent helper to delete an existing {@link %s %s} entity in the S/4HANA system.<p>
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
 
@@ -608,8 +626,10 @@ class FluentHelperClassGenerator
             .add(
                 String
                     .format(
-                        "Creates a fluent helper object that will delete a {@link %s %s} entity on the OData endpoint. "
-                            + "To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.",
+                        """
+                        Creates a fluent helper object that will delete a {@link %s %s} entity on the OData endpoint. \
+                        To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.\
+                        """,
                         entityClass.fullName(),
                         entityClass.name()));
         constructor.javadoc().addParam(servicePathParam).add("The service path to direct the update requests to.");

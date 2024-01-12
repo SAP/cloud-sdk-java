@@ -159,9 +159,11 @@ class OAuth2Service
         if( maybeTenant.isFailure() ) {
             log
                 .warn(
-                    "Unexpected state: An Auth Token was found in the current context, but the current tenant is undefined."
-                        + "This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results."
-                        + "Proceeding with tenant {} defined in the current token.",
+                    """
+                    Unexpected state: An Auth Token was found in the current context, but the current tenant is undefined.\
+                    This is unexpected, please ensure the TenantAccessor and AuthTokenAccessor return consistent results.\
+                    Proceeding with tenant {} defined in the current token.\
+                    """,
                     token.getAppTid());
             log.debug("The following token is used for the JwtBearerTokenFlow: {}", token);
         } else if( !maybeTenant.get().equals(token.getAppTid()) ) {

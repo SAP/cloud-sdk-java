@@ -43,23 +43,25 @@ class CustomFieldTypeConverterTest
     private static final String ENTITY_SET = "A_TestEntity";
     private static final String MY_CUSTOM_FIELD = "MyCustomField";
     private static final String RESPONSE =
-        "{"
-            + "  \"d\": {"
-            + "    \"results\": ["
-            + "      {"
-            + "        \"__metadata\": {"
-            + "          \"id\": \"https://127.0.0.1/service/path/A_TestEntity('1')\","
-            + "          \"uri\": \"https://127.0.0.1/service/path/A_TestEntity('1')\","
-            + "          \"type\": \"API_TEST.A_TestEntityType\""
-            + "        },"
-            + "        \"Id\": \"1\","
-            + "        \"SomeField\": \"123\","
-            + "        \"ETag\": \"SOME_ETAG\","
-            + "        \"MyCustomField\": %1$s"
-            + "      }"
-            + "    ]"
-            + "  }"
-            + "}";
+        """
+        {
+          "d": {
+            "results": [
+              {
+                "__metadata": {
+                  "id": "https://127.0.0.1/service/path/A_TestEntity('1')",
+                  "uri": "https://127.0.0.1/service/path/A_TestEntity('1')",
+                  "type": "API_TEST.A_TestEntityType"
+                },
+                "Id": "1",
+                "SomeField": "123",
+                "ETag": "SOME_ETAG",
+                "MyCustomField": %1$s
+              }
+            ]
+          }
+        }
+        """;
 
     private DefaultHttpDestination destination;
 

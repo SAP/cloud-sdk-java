@@ -54,9 +54,11 @@ class ServiceClassGenerator
     private static final String SERVICE_PATH_FIELD_NAMING = "servicePath";
 
     private static final String BUSINESS_HUB_LINK_TEMPLATE =
-        "<p>Reference: <a href='https://api.sap.com/shell/discover/contentpackage/SAPS4HANACloud/api/%s?section=OVERVIEW'>"
-            + "SAP Business Accelerator Hub"
-            + "</a></p>";
+        """
+        <p>Reference: <a href='https://api.sap.com/shell/discover/contentpackage/SAPS4HANACloud/api/%s?section=OVERVIEW'>\
+        SAP Business Accelerator Hub\
+        </a></p>\
+        """;
 
     private final Map<String, JDefinedClass> generatedServiceInterfaceClasses = new HashMap<>();
     private final Map<String, JDefinedClass> generatedServiceImplementationClasses = new HashMap<>();
@@ -457,9 +459,11 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A fluent helper to fetch a single {@link %s %s} entity using key fields. "
-                                + "This fluent helper allows methods which modify the underlying query to be called before executing the query itself. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object. ",
+                            """
+                            A fluent helper to fetch a single {@link %s %s} entity using key fields. \
+                            This fluent helper allows methods which modify the underlying query to be called before executing the query itself. \
+                            To perform execution, call the {@link %s#execute execute} method on the fluent helper object. \
+                            """,
                             entityClass.fullName(),
                             entityClass.name(),
                             generatedEntityByKeyFluentHelperClass.fullName()));
@@ -522,9 +526,11 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A fluent helper to fetch multiple {@link %s %s} entities. "
-                                + "This fluent helper allows methods which modify the underlying query to be called before executing the query itself. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object. ",
+                            """
+                            A fluent helper to fetch multiple {@link %s %s} entities. \
+                            This fluent helper allows methods which modify the underlying query to be called before executing the query itself. \
+                            To perform execution, call the {@link %s#execute execute} method on the fluent helper object. \
+                            """,
                             entityClass.fullName(),
                             entityClass.name(),
                             generatedEntityFluentHelperClass.fullName()));
@@ -582,8 +588,10 @@ class ServiceClassGenerator
                     .add(
                         String
                             .format(
-                                "A fluent helper object that will execute the <b>%s</b> OData function import with the provided parameters. "
-                                    + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object.",
+                                """
+                                A fluent helper object that will execute the <b>%s</b> OData function import with the provided parameters. \
+                                To perform execution, call the {@link %s#execute execute} method on the fluent helper object.\
+                                """,
                                 edmName,
                                 functionImportFluentHelperClass.fullName()));
 
@@ -658,8 +666,10 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A fluent helper to create a new {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object. ",
+                            """
+                            A fluent helper to create a new {@link %s %s} entity. \
+                            To perform execution, call the {@link %s#execute execute} method on the fluent helper object. \
+                            """,
                             entityClass.fullName(),
                             entityClass.name(),
                             generatedCreateFluentHelperClass.fullName()));
@@ -730,8 +740,10 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A fluent helper to update an existing {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object. ",
+                            """
+                            A fluent helper to update an existing {@link %s %s} entity. \
+                            To perform execution, call the {@link %s#execute execute} method on the fluent helper object. \
+                            """,
                             entityClass.fullName(),
                             entityClass.name(),
                             generatedUpdateFluentHelperClass.fullName()));
@@ -801,8 +813,10 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A fluent helper to delete an existing {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the fluent helper object. ",
+                            """
+                            A fluent helper to delete an existing {@link %s %s} entity. \
+                            To perform execution, call the {@link %s#execute execute} method on the fluent helper object. \
+                            """,
                             entityClass.fullName(),
                             entityClass.name(),
                             generatedDeleteFluentHelperClass.fullName()));

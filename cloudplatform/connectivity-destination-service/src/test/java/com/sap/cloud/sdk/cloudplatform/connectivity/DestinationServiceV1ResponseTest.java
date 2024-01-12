@@ -18,30 +18,32 @@ class DestinationServiceV1ResponseTest
     void testParsing()
     {
         final String payload =
-            "{\n"
-                + "  \"owner\": {\n"
-                + "    \"SubaccountId\": \"1234\",\n"
-                + "    \"InstanceId\": null\n"
-                + "  },\n"
-                + "  \"destinationConfiguration\": {\n"
-                + "    \"Name\": \"DummySAPAssertionSSODestination\",\n"
-                + "    \"Type\": \"HTTP\",\n"
-                + "    \"URL\": \"https://some.system.com\",\n"
-                + "    \"SystemUser\": \"SomeUser\",\n"
-                + "    \"Authentication\": \"SAPAssertionSSO\"\n"
-                + "  },\n"
-                + "  \"authTokens\": [\n"
-                + "    {\n"
-                + "      \"type\": \"MYSAPSSO2\",\n"
-                + "      \"value\": \"someString\",\n"
-                + "      \"http_header\": {\n"
-                + "        \"key\": \"Cookie\",\n"
-                + "        \"value\": \"MYSAPSSO2=someString\"\n"
-                + "      }\n"
-                + "    },\n"
-                + "    { \"error\":\"Simulated failure.\" }\n"
-                + "  ]\n"
-                + "}";
+            """
+            {
+              "owner": {
+                "SubaccountId": "1234",
+                "InstanceId": null
+              },
+              "destinationConfiguration": {
+                "Name": "DummySAPAssertionSSODestination",
+                "Type": "HTTP",
+                "URL": "https://some.system.com",
+                "SystemUser": "SomeUser",
+                "Authentication": "SAPAssertionSSO"
+              },
+              "authTokens": [
+                {
+                  "type": "MYSAPSSO2",
+                  "value": "someString",
+                  "http_header": {
+                    "key": "Cookie",
+                    "value": "MYSAPSSO2=someString"
+                  }
+                },
+                { "error":"Simulated failure." }
+              ]
+            }
+            """;
 
         final DestinationServiceV1Response sut = gson.fromJson(payload, DestinationServiceV1Response.class);
 

@@ -182,11 +182,13 @@ public final class RequestHeaderAccessor
             throw new ThreadContextExecutionException(
                 String
                     .format(
-                        "The 'executeWith...' API is currently supported only when using the Cloud SDK's 'DefaultFacade'"
-                            + " implementations (e.g. '%s'). This is an issue especially when using the CAP integration"
-                            + " ('cds-integration-cloud-sdk'). To workaround this shortcoming, please refer to the CAP"
-                            + " documentation about how to manipulate the request context: "
-                            + "https://cap.cloud.sap/docs/java/request-contexts#defining-requestcontext.",
+                        """
+                        The 'executeWith...' API is currently supported only when using the Cloud SDK's 'DefaultFacade'\
+                         implementations (e.g. '%s'). This is an issue especially when using the CAP integration\
+                         ('cds-integration-cloud-sdk'). To workaround this shortcoming, please refer to the CAP\
+                         documentation about how to manipulate the request context: \
+                        https://cap.cloud.sap/docs/java/request-contexts#defining-requestcontext.\
+                        """,
                         DefaultRequestHeaderFacade.class.getName()));
         }
 
