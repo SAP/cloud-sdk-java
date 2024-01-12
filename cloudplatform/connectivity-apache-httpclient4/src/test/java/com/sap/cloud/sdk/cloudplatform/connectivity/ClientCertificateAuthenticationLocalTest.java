@@ -7,15 +7,13 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +27,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.eclipse.jetty.util.resource.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -133,8 +130,7 @@ class ClientCertificateAuthenticationLocalTest
             NoSuchAlgorithmException
     {
         final KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        final InputStream fileStream = Resource.newResource(JKS_PATH).getInputStream();
-        keyStore.load(fileStream, CCA_PASSWORD.toCharArray());
+        keyStore.load(new FileInputStream(JKS_PATH), CCA_PASSWORD.toCharArray());
         return keyStore;
     }
 }
