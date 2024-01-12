@@ -134,14 +134,14 @@ class ODataResponseErrorParsingTest
                             "SAP_Transaction":"For backend administrators: use ADT feed reader \\"SAP Gateway Error Log\\" or run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
                             "SAP_Note":"See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
                          },
-                         "errordetails": [
-                          {\s
+                         "errordetails": [{
                             "code": "UF1",
                             "message": "$search query option not supported",
                             "target": "t1",
                             "additionalTargets": ["t2","t3"],
                             "severity": "error"
-                          }]      }
+                          }]
+                        }
                    }
                 }""";
 
