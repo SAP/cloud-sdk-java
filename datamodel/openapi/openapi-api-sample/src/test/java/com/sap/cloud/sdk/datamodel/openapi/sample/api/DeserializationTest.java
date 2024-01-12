@@ -31,7 +31,6 @@ class DeserializationTest
     @Test
     void testFullResponse()
     {
-        // @formatter:off
         responseBody =
                 """
                 {
@@ -42,7 +41,6 @@ class DeserializationTest
                   "id": 0
                 }
                 """;
-        // @formatter:on
         stub(responseBody);
 
         final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
@@ -55,7 +53,6 @@ class DeserializationTest
     @Test
     void testUnexpectedFieldOrder()
     {
-        // @formatter:off
         responseBody =
                 """
                 {
@@ -66,7 +63,6 @@ class DeserializationTest
                   "quantity": 100
                 }
                 """;
-        // @formatter:on
         stub(responseBody);
 
         final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
@@ -92,7 +88,6 @@ class DeserializationTest
     @Test
     void testUnexpectedAdditionalField()
     {
-        // @formatter:off
         responseBody =
                 """
                 {
@@ -100,7 +95,6 @@ class DeserializationTest
                     "unexpectedField": []
                 }
                 """;
-        // @formatter:on
         stub(responseBody);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
