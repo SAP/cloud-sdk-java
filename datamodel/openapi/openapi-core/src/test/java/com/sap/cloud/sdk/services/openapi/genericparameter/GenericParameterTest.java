@@ -46,12 +46,12 @@ class GenericParameterTest
         throws JsonProcessingException
     {
         final String expectedBody = """
-            {
-              "id":"foo",
-              "fieldPopulatedAsStringWithAnnotation":{"foo": "bar"},
-              "fieldPopulatedAsStringWithoutAnnotation":"{\\"foo\\": \\"bar\\"}",
-              "fieldPopulatedAsJacksonJsonNode":{"foo":"bar"}
-            }
+            {\
+            "id":"foo",\
+            "fieldPopulatedAsStringWithAnnotation":{"foo": "bar"},\
+            "fieldPopulatedAsStringWithoutAnnotation":"{\\"foo\\": \\"bar\\"}",\
+            "fieldPopulatedAsJacksonJsonNode":{"foo":"bar"}\
+            }\
             """;
 
         WireMock

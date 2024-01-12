@@ -191,14 +191,10 @@ class ODataSerializationTest
     @Test
     void testSerialisationForDateTimeAttributes()
     {
-        final String SERIALIZED_ENTITY = """
-            {
-              "IntegerValue":1,
-              "OffsetDateTimeValue":"/Date(694224000000-0240)/",
-              "LocalTimeValue":"PT13H20M0S",
-              "LocalDateTimeValue":"/Date(694224000000)/"
-            }
-            """;
+        final String SERIALIZED_ENTITY =
+            """
+                {"IntegerValue":1,"OffsetDateTimeValue":"/Date(694224000000-0240)/","LocalTimeValue":"PT13H20M0S","LocalDateTimeValue":"/Date(694224000000)/"}\
+                """;
         final TestEntity entity = new TestEntity();
 
         entity.setIntegerValue(1);
