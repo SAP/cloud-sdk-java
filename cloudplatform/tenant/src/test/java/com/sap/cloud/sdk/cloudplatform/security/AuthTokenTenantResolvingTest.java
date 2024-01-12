@@ -101,14 +101,14 @@ class AuthTokenTenantResolvingTest
             {
               "credentials": {
                 "clientid": "dummy",
-                "verificationkey":"-----BEGIN PUBLIC KEY-----
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzL56xNXQIJ6Z/rJZidgd
-        xBLOyADAb2S03ZbilqumarhmNshG2PVe2UzclCyawrTOzKMDpUsY9sI9am2R91Ky
-        zCZjbzzHZUv78JyTQR2V/91UTPjjWVI+RAWG1YEQ2toxkBvPziZHJxJIDaf8M7x3
-        PfWP2wiybjO4lLs5D9Ji37KlEZNtyy1CILR58kbIggQetfAUZJ2WGWMjneZC9bqA
-        tf8iThgTbH6mzAfLnnxWxkR0nc3CylVoA9RJNQyfzLkk4X9tCGiQpYbq+kGAeH5/
-        7xXzXZF+S85vQrIN7UaiGTeDykhQ1+Vcr4utMwl0uBZdHGJ0vEYgZ3bJEE+0HP2m
-        FQIDAQAB
+                "verificationkey":"-----BEGIN PUBLIC KEY-----\
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzL56xNXQIJ6Z/rJZidgd\
+        xBLOyADAb2S03ZbilqumarhmNshG2PVe2UzclCyawrTOzKMDpUsY9sI9am2R91Ky\
+        zCZjbzzHZUv78JyTQR2V/91UTPjjWVI+RAWG1YEQ2toxkBvPziZHJxJIDaf8M7x3\
+        PfWP2wiybjO4lLs5D9Ji37KlEZNtyy1CILR58kbIggQetfAUZJ2WGWMjneZC9bqA\
+        tf8iThgTbH6mzAfLnnxWxkR0nc3CylVoA9RJNQyfzLkk4X9tCGiQpYbq+kGAeH5/\
+        7xXzXZF+S85vQrIN7UaiGTeDykhQ1+Vcr4utMwl0uBZdHGJ0vEYgZ3bJEE+0HP2m\
+        FQIDAQAB\
         -----END PUBLIC KEY-----",
                 "xsappname": "dummy-app",
                 "tenantid": "XSUAA_Tenant",
