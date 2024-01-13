@@ -68,6 +68,40 @@ class ResilienceDecoratorTest
             .hasCauseExactlyInstanceOf(ObjectLookupFailedException.class);
     }
 
+    @Test
+    void testGetDecorationStrategyIgnoresLegacyStrategy()
+    {
+        final ResilienceDecorationStrategy firstStrategy = new NoResilienceDecorationStrategy();
+        final String originalLegacyStrategy = ResilienceDecorator.legacyDecorationStrategy;
+        ResilienceDecorator.legacyDecorationStrategy = firstStrategy.getClass().getName();
+
+        mockDecorationStrategies(firstStrategy);
+        ResilienceDecorator.resetDecorationStrategy();
+
+        assertThat(ResilienceDecorator.getDecorationStrategy())
+            .as("Legacy strategy should be used if it is the only strategy.")
+            .isSameAs(firstStrategy);
+
+        final ResilienceDecorationStrategy secondStrategy = mock(ResilienceDecorationStrategy.class);
+        mockDecorationStrategies(firstStrategy, secondStrategy);
+        ResilienceDecorator.resetDecorationStrategy();
+
+        assertThat(ResilienceDecorator.getDecorationStrategy())
+            .as("Legacy strategy should be ignored if there is exactly one alternative.")
+            .isSameAs(secondStrategy);
+
+        final ResilienceDecorationStrategy thirdStrategy = mock(ResilienceDecorationStrategy.class);
+        mockDecorationStrategies(firstStrategy, secondStrategy, thirdStrategy);
+        ResilienceDecorator.resetDecorationStrategy();
+
+        assertThatThrownBy(ResilienceDecorator::getDecorationStrategy)
+            .as("More than one non-legacy strategy should still lead to an exception.")
+            .isExactlyInstanceOf(ResilienceRuntimeException.class)
+            .hasCauseExactlyInstanceOf(ObjectLookupFailedException.class);
+
+        ResilienceDecorator.legacyDecorationStrategy = originalLegacyStrategy;
+    }
+
     private static void mockDecorationStrategies( @Nonnull final ResilienceDecorationStrategy... strategies )
     {
         final FacadeLocator.MockableInstance facadeLocator = mock(FacadeLocator.MockableInstance.class);
