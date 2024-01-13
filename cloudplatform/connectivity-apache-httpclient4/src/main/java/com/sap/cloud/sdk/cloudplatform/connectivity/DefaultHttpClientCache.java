@@ -65,13 +65,6 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
             Caffeine
                 .newBuilder()
                 .expireAfterWrite(duration, unit)
-                /*  // region 🙈
-                  .evictionListener((key, value, cause) -> {
-                      if( cause.wasEvicted() ) {
-                          value.close();
-                      }
-                  })
-                  // endregion*/
                 .ticker(ticker)
                 .build();
         CacheManager.register(cache);
