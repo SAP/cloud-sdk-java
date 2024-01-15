@@ -29,9 +29,9 @@ jobs:
           workflow-ref: ${{ env.BRANCH_NAME }}
           commit-sha: ${{ env.COMMIT_SHA }}
           parameters: >
-            -f repository-version='${{ env.BRANCH_REF }}' 
-            -f create-release-artifacts='false' 
-            -f check-blackduck='false'
+            -f repository-version=${{ env.BRANCH_REF }} 
+            -f create-release-artifacts=false 
+            -f check-blackduck=false
 
       - name: Await CI Workflow
         id: await-ci

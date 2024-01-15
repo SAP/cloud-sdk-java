@@ -33,8 +33,8 @@ jobs:
           workflow-ref: ${{ env.BRANCH_NAME }}
           commit-sha: ${{ env.COMMIT_SHA }}
           parameters: >
-            -f repository-version='${{ env.BRANCH_REF }}' 
-            -f create-release-artifacts='true' 
+            -f repository-version=${{ env.BRANCH_REF }} 
+            -f create-release-artifacts=true 
 
       - name: Await CI Workflow
         uses: ./.github/actions/await-workflow

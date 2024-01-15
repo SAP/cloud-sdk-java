@@ -5,6 +5,10 @@ inputs:
   run-id:
     description: "The id of the workflow run to wait for."
     required: true
+  poll-interval:
+    description: "The interval (in seconds) to poll for the workflow run status."
+    required: false
+    default: "60"
   commit-status:
     description: "The commit status message. Leave empty to not create a commit status."
     required: false
@@ -56,7 +60,7 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         echo "[DEBUG] Waiting for run '${{ inputs.run-id }}' to complete..."
-        gh run watch ${{ inputs.run-id }} --interval 10 > /dev/null
+        gh run watch ${{ inputs.run-id }} --interval ${{ inputs.poll-interval }} > /dev/null
         CONCLUSION=$(gh run view ${{ inputs.run-id }} --json conclusion | jq -r '.conclusion')
         
         echo "CONCLUSION=$CONCLUSION" >> $GITHUB_OUTPUT

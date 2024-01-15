@@ -41,6 +41,8 @@ runs:
         echo "[DEBUG] Previous run id = '$PREVIOUS_RUN_ID'"
         
         gh workflow run "${{ inputs.workflow }}" --ref "${{ inputs.workflow-ref }}" ${{ inputs.parameters }}
+        # allow for some initial delay as workflows take a moment to spin up
+        sleep 20
         
         for i in {0..6}; do
           LATEST_RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --commit=${{ inputs.commit-sha }} --json databaseId | jq -r '.[0].databaseId')
