@@ -22,7 +22,11 @@ import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 class HttpClientWrapper extends CloseableHttpClient
 {
     private final CloseableHttpClient httpClient;
+    @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
 
     @Override
@@ -42,6 +47,7 @@ class HttpClientWrapper extends CloseableHttpClient
         getConnectionManager().shutdown();
     }
 
+    @EqualsAndHashCode
     @RequiredArgsConstructor
     static class ApacheHttpHeader implements org.apache.http.Header
     {
@@ -88,7 +94,22 @@ class HttpClientWrapper extends CloseableHttpClient
         this.destination = destination;
     }
 
-    private HttpUriRequest wrapRequest( final HttpUriRequest request )
+    HttpClientWrapper withDestination( final HttpDestinationProperties destination )
+    {
+        // explicitly check the reference equality, since equals doesn't check header providers
+        // this is a slight improvement, avoiding unnecessary wrapper instantiation
+        // in cases where destination objects are reused / served from cache
+        if( !destination.equals(this.destination) ) {
+            throw new ShouldNotHappenException(
+                "This method must not be used outside of updating an instance of HttpClientWrapper for http clients served from the HttpClientCache.");
+        }
+        if( destination == this.destination ) {
+            return this;
+        }
+        return new HttpClientWrapper(httpClient, destination);
+    }
+
+    HttpUriRequest wrapRequest( final HttpUriRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
         URI requestUri = merger.merge(destination.getUri(), request.getURI());

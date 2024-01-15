@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -336,6 +337,7 @@ class DestinationServiceTest
                     behalf -> DefaultHttpDestination.builder("").build(),
                     () -> mock(ServiceBinding.class),
                     providerTenant.getTenantId()));
+        // identifier UUID added to isolate resilience states
         loader =
             new DestinationService(
                 scpCfDestinationServiceAdapter,
@@ -1101,9 +1103,7 @@ class DestinationServiceTest
         verify(scpCfDestinationServiceAdapter, times(1))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Destination cachedDestination = DestinationService.Cache.instanceSingle().getIfPresent(tenantCacheKey);
-
-        softly.assertThat(cachedDestination).isNotNull();
+        softly.assertThat(DestinationService.Cache.instanceSingle().asMap()).containsOnlyKeys(tenantCacheKey);
         softly.assertAll();
     }
 
@@ -1218,20 +1218,28 @@ class DestinationServiceTest
         secondThread.join();
         firstThread.join();
 
-        final CacheKey firstTenantCacheKey = CacheKey.fromIds("TenantA", null).append(destinationName, options);
-        final CacheKey secondTenantCacheKey = CacheKey.fromIds("TenantB", null).append(destinationName, options);
+        // assert cache isolation locks are created for each tenant, for both get-single and get-all commands
+        assertThat(DestinationService.Cache.isolationLocks().asMap())
+            .containsOnlyKeys(
+                CacheKey.fromIds("TenantA", null).append(destinationName, options),
+                CacheKey.fromIds("TenantA", null).append(options),
+                CacheKey.fromIds("TenantB", null).append(destinationName, options),
+                CacheKey.fromIds("TenantB", null).append(options));
 
-        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
-        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstTenantCacheKey)).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondTenantCacheKey)).isNotNull();
+        // assert cache entries for one get-single command for each tenant
+        assertThat(DestinationService.Cache.instanceSingle().asMap())
+            .containsOnlyKeys(
+                CacheKey.fromIds("TenantA", null).append(destinationName, options),
+                CacheKey.fromIds("TenantB", null).append(destinationName, options));
 
-        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstTenantCacheKey)).isNotNull();
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondTenantCacheKey)).isNotNull();
+        // assert no cache entries for get-all commands
+        assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
 
         softly.assertAll();
     }
@@ -1284,20 +1292,24 @@ class DestinationServiceTest
         assertThat(secondDestination).isNotEmpty();
         assertThat(firstDestination.get()).isNotSameAs(secondDestination.get());
 
-        final CacheKey firstCacheKey = CacheKey.of(tenant, principal1).append(destinationName, options);
-        final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
+        assertThat(DestinationService.Cache.isolationLocks().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(tenant, principal1).append(destinationName, options),
+                CacheKey.of(tenant, principal2).append(destinationName, options),
+                CacheKey.of(tenant, null).append(options));
 
-        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(2L);
-        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(tenant, principal1).append(destinationName, options),
+                CacheKey.of(tenant, principal2).append(destinationName, options));
 
-        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     @Test
@@ -1328,23 +1340,25 @@ class DestinationServiceTest
         assertThat(secondDestination).isNotEmpty();
         assertThat(firstDestination.get()).isNotSameAs(secondDestination.get());
 
-        final CacheKey isolationLockKey = CacheKey.of(tenant, null).append(destinationName, options);
-        final CacheKey firstCacheKey = CacheKey.of(tenant, principal1).append(destinationName, options);
-        final CacheKey secondCacheKey = CacheKey.of(tenant, principal2).append(destinationName, options);
+        assertThat(DestinationService.Cache.isolationLocks().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(tenant, null).append(destinationName, options),
+                CacheKey.of(tenant, null).append(options));
 
-        assertThat(DestinationService.Cache.isolationLocks()).isNotNull();
-        //If exchange strategy is LOOKUP_THEN_EXCHANGE, then isolation locks are obtained per tenant
-        assertThat(DestinationService.Cache.isolationLocks().estimatedSize()).isEqualTo(1L);
-        assertThat(DestinationService.Cache.isolationLocks().getIfPresent(isolationLockKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceSingle().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(tenant, principal1).append(destinationName, options),
+                CacheKey.of(tenant, principal2).append(destinationName, options));
 
-        assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(2L);
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(firstCacheKey)).isNotNull();
-        assertThat(DestinationService.Cache.instanceSingle().getIfPresent(secondCacheKey)).isNotNull();
+        assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     @Test
@@ -1363,7 +1377,6 @@ class DestinationServiceTest
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        DestinationService.Cache.enableChangeDetection();
         final Tenant tenant = new DefaultTenant("tenant");
         TenantAccessor.setTenantFacade(() -> Try.success(tenant));
 
@@ -1408,7 +1421,6 @@ class DestinationServiceTest
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        DestinationService.Cache.enableChangeDetection();
         final int circuitBreakerBuffer =
             ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE
                 * Math.round(ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_FAILURE_RATE_THRESHOLD)
@@ -1430,6 +1442,35 @@ class DestinationServiceTest
             .getConfigurationAsJsonWithUserToken(
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        // we are not performing further requests
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+    }
+
+    @Test
+    void testChangeDetectionDisabledDoesNotGetAll()
+    {
+        DestinationService.Cache.disableChangeDetection();
+
+        loader.tryGetDestination(destinationName).get();
+
+        assertThat(DestinationService.Cache.isolationLocks().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(subscriberTenant, null).append(destinationName, DestinationOptions.builder().build()));
+
+        assertThat(DestinationService.Cache.instanceSingle().asMap())
+            .containsOnlyKeys(
+                CacheKey.of(subscriberTenant, null).append(destinationName, DestinationOptions.builder().build()));
+
+        assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
+
+        verify(scpCfDestinationServiceAdapter, times(1))
+            .getConfigurationAsJsonWithUserToken(
+                "/destinations/" + destinationName,
+                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        // we are not performing further requests (i.e. there are no 'get-all' requests)
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
 
     /**
@@ -1502,25 +1543,22 @@ class DestinationServiceTest
                 .executeWithPrincipal(principalB, () -> loader.tryGetDestination(destinationName, options));
         });
 
-        assertThat(firstThread.get()).isNotEmpty();
-        assertThat(secondThread.get()).isNotEmpty();
+        softly.assertThat(firstThread.get()).isNotEmpty();
+        softly.assertThat(secondThread.get()).isNotEmpty();
         verify(tenantLockSpy, times(1)).lock();
         verify(tenantLockSpy, times(1)).unlock();
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
         verify(scpCfDestinationServiceAdapter, times(2))
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
 
-        final CacheKey principalACacheKey = CacheKey.fromIds("tenant", "PrincipalA").append(destinationName, options);
-        final CacheKey principalBCacheKey = CacheKey.fromIds("tenant", "PrincipalB").append(destinationName, options);
-
-        final Destination cachedPrincipalADestination =
-            DestinationService.Cache.instanceSingle().getIfPresent(principalACacheKey);
-        softly.assertThat(cachedPrincipalADestination).isNotNull();
-
-        final Destination cachedPrincipalBDestination =
-            DestinationService.Cache.instanceSingle().getIfPresent(principalBCacheKey);
-        softly.assertThat(cachedPrincipalBDestination).isNotNull();
+        softly
+            .assertThat(DestinationService.Cache.instanceSingle().asMap())
+            .containsOnlyKeys(
+                CacheKey.fromIds("tenant", "PrincipalA").append(destinationName, options),
+                CacheKey.fromIds("tenant", "PrincipalB").append(destinationName, options));
+        softly.assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
         softly.assertAll();
     }
