@@ -19,7 +19,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +26,6 @@ import javax.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -74,40 +72,40 @@ class DestinationKeyStoreExtractorTest
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final DestinationService loader = new DestinationService(destinationService);
 
-        final Map<String, String> destinationConfiguration =
-            ImmutableMap
-                .<String, String> builder()
-                .put("KeyStorePassword", PKCS12_KEY_STORE_PASSWORD)
-                .put("audience", "www.successfactors.com")
-                .put("authnContextClassRef", "urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession")
-                .put("WebIDEEnabled", "true")
-                .put("tokenServiceUrl", "https://apisalesdemo2.successfactors.eu:443/oauth/token")
-                .put("KeyStore", "key-store")
-                .put("URL", "https://apisalesdemo2.successfactors.eu:443")
-                .put("Name", "sfapi_dest")
-                .put("Type", "HTTP")
-                .put("companyId", "comepany-id")
-                .put("XFSystemName", "SFSF_SalesDemo")
-                .put("KeyStoreLocation", PKCS12_FILE_KEY_STORE_LOCATION)
-                .put("clientKey", "client-key")
-                .put("Authentication", "OAuth2SAMLBearerAssertion")
-                .put("nameIdFormat", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
-                .put("ProxyType", "Internet")
-                .build();
-        final Map<String, String> certificate1 =
-            ImmutableMap
-                .<String, String> builder()
-                .put("Name", PKCS12_FILE_KEY_STORE_LOCATION)
-                .put("Content", PKCS12_FILE_KEY_STORE_CONTENT)
-                //.put("Type", "Certificate") // <-- test condition: missing certificate.type
-                .build();
-        final Map<String, Object> destinationData =
-            ImmutableMap
-                .<String, Object> builder()
-                .put("destinationConfiguration", destinationConfiguration)
-                .put("certificates", org.assertj.core.util.Lists.newArrayList(certificate1))
-                .build();
-        doReturn(new Gson().toJson(destinationData))
+        final String destinationData =
+            """
+                {
+                    "destinationConfiguration" : {
+                        "KeyStorePassword":"%s",
+                        "audience":"www.successfactors.com",
+                        "authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession",
+                        "WebIDEEnabled":"true",
+                        "tokenServiceUrl":"https://apisalesdemo2.successfactors.eu:443/oauth/token",
+                        "KeyStore":"key-store",
+                        "URL":"https://apisalesdemo2.successfactors.eu:443",
+                        "Name":"sfapi_dest",
+                        "Type":"HTTP",
+                        "companyId":"comepany-id",
+                        "XFSystemName":"SFSF_SalesDemo",
+                        "KeyStoreLocation":"%s",
+                        "clientKey":"client-key",
+                        "Authentication":"OAuth2SAMLBearerAssertion",
+                        "nameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+                        "ProxyType":"Internet"
+                    },
+                    "certificates":[{
+                        "Name":"%s",
+                        "Content":"%s"
+                    }]
+                }
+                """
+                .formatted(
+                    PKCS12_KEY_STORE_PASSWORD,
+                    PKCS12_FILE_KEY_STORE_LOCATION,
+                    PKCS12_FILE_KEY_STORE_LOCATION,
+                    PKCS12_FILE_KEY_STORE_CONTENT);
+
+        doReturn(destinationData)
             .when(destinationService)
             .getConfigurationAsJsonWithUserToken(eq("/destinations/ABC"), any(OnBehalfOf.class));
 
