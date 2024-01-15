@@ -22,6 +22,7 @@ import org.apache.http.protocol.HttpContext;
 
 import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -91,6 +92,21 @@ class HttpClientWrapper extends CloseableHttpClient
                     + "Please check the application logs for further details.");
         }
         this.destination = destination;
+    }
+
+    HttpClientWrapper withDestination( final HttpDestinationProperties destination )
+    {
+        // explicitly check the reference equality, since equals doesn't check header providers
+        // this is a slight improvement, avoiding unnecessary wrapper instantiation
+        // in cases where destination objects are reused / served from cache
+        if( !destination.equals(this.destination) ) {
+            throw new ShouldNotHappenException(
+                "This method must not be used outside of updating an instance of HttpClientWrapper for http clients served from the HttpClientCache.");
+        }
+        if( destination == this.destination ) {
+            return this;
+        }
+        return new HttpClientWrapper(httpClient, destination);
     }
 
     HttpUriRequest wrapRequest( final HttpUriRequest request )
