@@ -29,4 +29,4 @@
 
 ### 🐛 Fixed Issues
 
--
+- Fixed an issue where adding header providers to a destination after it had already been used to obtain an `HttpClient` would not work as expected.
