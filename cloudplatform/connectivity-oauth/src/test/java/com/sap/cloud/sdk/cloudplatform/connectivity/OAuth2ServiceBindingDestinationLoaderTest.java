@@ -201,6 +201,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.get().getUri()).isEqualTo(baseUrl);
+        assertThat(result.get().get(DestinationProperty.NAME)).contains(TEST_SERVICE + "-id");
 
         assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
             .as("The destination should not be cached.")
