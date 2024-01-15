@@ -39,6 +39,8 @@ import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,7 +73,7 @@ class OAuth2Service
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
-
+    @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfig;
 
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )

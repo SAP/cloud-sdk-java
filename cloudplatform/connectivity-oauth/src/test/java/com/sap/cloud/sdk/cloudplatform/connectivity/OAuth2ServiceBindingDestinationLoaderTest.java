@@ -380,6 +380,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 new Header("foo", "bar"),
                 new Header("sap-language", "en"));
 
+        assertThat(result).as("The destination should not be cached.").isNotSameAs(baseDestination);
         verify(sut, times(1))
             .createHeaderProvider(
                 eq(tokenUrl),

@@ -51,11 +51,11 @@ class OAuth2DestinationBuilderTest
             post(urlEqualTo("/oauth/token"))
                 .withHeader("Authorization", absent())
                 .withRequestBody(notContaining("&assertion="))
-                .willReturn(okJson("{\"access_token\":\"TECHNICAL\",\"expires_in\":130}")));
+                .willReturn(okJson("{\"access_token\":\"TECHNICAL\",\"expires_in\":3600}")));
         stubFor(
             post(urlEqualTo("/oauth/token"))
                 .withRequestBody(containing("&assertion="))
-                .willReturn(okJson("{\"access_token\":\"PERSONAL\",\"expires_in\":4200}")));
+                .willReturn(okJson("{\"access_token\":\"PERSONAL\",\"expires_in\":3600}")));
         stubFor(get(anyUrl()).willReturn(ok()));
     }
 
