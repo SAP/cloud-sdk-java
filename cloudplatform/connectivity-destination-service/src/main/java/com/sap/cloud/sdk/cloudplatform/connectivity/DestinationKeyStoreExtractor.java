@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,12 +44,19 @@ class DestinationKeyStoreExtractor
     // See the supported key store file extensions:
     // https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
     //Mapping file extension to key store types
-    private static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE = ImmutableMap.of(
-            "pfx", "PKCS12",
-            "p12", "PKCS12",
-            "jks", "JKS",
-            "pem", "RSA"
+    private static final Map<String, BiFunction<String, String, KeyStore>> SUPPORTED_KEY_STORES = ImmutableMap.of(
+        "pfx", (cert,pw) -> retrieveExistingKeyStore(cert, pw, "PKCS12"),
+        "p12", (cert,pw) -> retrieveExistingKeyStore(cert, pw, "PKCS12"),
+        "jks", (cert,pw) -> retrieveExistingKeyStore(cert, pw, "JKS"),
+        "pem", DestinationKeyStoreExtractor::createNewKeyStoreFromPem
     );
+
+
+    private static KeyStore createNewKeyStoreFromPem(@Nonnull final String content, @Nullable String password)
+    {
+        // TODO
+        return null;
+    }
 
     //Check out supported trust store file extensions here:
     //https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
@@ -157,10 +165,10 @@ class DestinationKeyStoreExtractor
 
         final DestinationCertificate certificate = getDestinationCertificateFromProperty(locationKey);
 
-        final String storeType = getKeyStoreTypeByFileName(certificate.getName());
+        final BiFunction<String, String, KeyStore> storeTransformer =
+            getKeyStoreTransformerByFileName(certificate.getName());
         final String storePassword = destination.get(passwordKey).getOrNull();
-        final KeyStore store = retrieveExistingKeyStore(certificate.getContent(), storePassword, storeType);
-        return Option.some(store);
+        return Option.some(storeTransformer.apply(certificate.getContent(), storePassword));
     }
 
     @Nonnull
@@ -199,14 +207,14 @@ class DestinationKeyStoreExtractor
     }
 
     @Nonnull
-    private static String getKeyStoreTypeByFileName( @Nonnull final String name )
+    private static BiFunction<String, String, KeyStore> getKeyStoreTransformerByFileName( @Nonnull final String name )
     {
         final String fileExtension = FilenameUtils.getExtension(name.toLowerCase());
-        final String typeOfFileExt = SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE.get(fileExtension);
+        final BiFunction<String, String, KeyStore> typeOfFileExt = SUPPORTED_KEY_STORES.get(fileExtension);
         if( typeOfFileExt == null ) {
             final String message =
                 "Could not create Key Store with file extension: %s. Supported extensions: "
-                    + SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE.keySet();
+                    + SUPPORTED_KEY_STORES.keySet();
             throw new DestinationAccessException(String.format(message, fileExtension));
         }
         return typeOfFileExt;
