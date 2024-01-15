@@ -37,9 +37,12 @@ class ODataFetchMediaStreamTest
 {
     private static final String SRV_PATH = SdkGroceryStoreService.DEFAULT_SERVICE_PATH;
     private static final SdkGroceryStoreService SRV = new DefaultSdkGroceryStoreService().withServicePath(SRV_PATH);
-
-    private static final String JSON_RESPONSE =
-        """
+    // the following properties get ignored by the SDK:
+    // - id
+    // - uri
+    // - content_type
+    // - media_src
+    private static final String JSON_RESPONSE = """
         {
         "d" : {
           "results" : [

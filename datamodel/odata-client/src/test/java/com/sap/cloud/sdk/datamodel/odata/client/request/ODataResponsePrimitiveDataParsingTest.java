@@ -132,6 +132,10 @@ class ODataResponsePrimitiveDataParsingTest
         ColorEnum colorEnumValue;
 
         // https://docs.oasis-open.org/odata/odata-json-format/v4.01/csprd06/odata-json-format-v4.01-csprd06.html#sec_PrimitiveValue
+        // applied the following changes:
+        // - SingleValue: Replaced "INF" with "NaN", Java float expects "Infinity" instead (with an optional plus or minus in front). We would need another type adapter for that.
+        // - DurationValue: Dropped the last 3 nines before the S from the reference service example here because WTF they have picoseconds (10^-12 seconds) in there...
+        // - GeographyPoint: Excluded, could be added later if needed.
         private static final String PAYLOAD_ODATA_REFERENCE = """
             {
               "BooleanValue": false,

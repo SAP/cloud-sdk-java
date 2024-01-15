@@ -62,24 +62,24 @@ class ODataHealthyResponseValidatorTest
     void testODataError()
     {
         final String odata_error_json = """
-            {\
-            "error": {\
-              "code": "err123",\
-              "message": "Unsupported functionality",\
-              "target": "query",\
-              "details": [\
-                 {\
-                   "code": "forty-two",\
-                   "target": "$search", \
-                   "message": "$search query option not supported"\
-                 }\
-               ],\
-              "innererror": {\
-                 "foo": 123,\
-                 "bar": "ok"\
-              }\
-            }\
-            }\
+            {
+              "error": {
+                "code": "err123",
+                "message": "Unsupported functionality",
+                "target": "query",
+                "details": [
+                  {
+                    "code": "forty-two",
+                    "target": "$search",
+                    "message": "$search query option not supported"
+                  }
+                ],
+                "innererror": {
+                  "foo": 123,
+                  "bar": "ok"
+                }
+              }
+            }
             """;
 
         when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_INTERNAL_SERVER_ERROR);

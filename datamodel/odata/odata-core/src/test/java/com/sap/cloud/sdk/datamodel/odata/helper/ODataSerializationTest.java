@@ -58,6 +58,11 @@ import lombok.ToString;
 
 class ODataSerializationTest
 {
+    // take note that we are NOT using the following values:
+    // "LocalDateTimeValue": "datetime'1992-01-01T00:00:00'"
+    // "OffsetDateTimeValue": "datetimeoffset'1992-01-01T00:00:00Z-04:00'"
+    // "LocalTimeValue": "time'PT13H20M'"
+    // "GuidValue": "guid'123e4567-e89b-12d3-a456-426614174000'"
     private static final String SAMPLE_PAYLOAD = """
         {
           "d" : {
@@ -191,10 +196,14 @@ class ODataSerializationTest
     @Test
     void testSerialisationForDateTimeAttributes()
     {
-        final String SERIALIZED_ENTITY =
-            """
-                {"IntegerValue":1,"OffsetDateTimeValue":"/Date(694224000000-0240)/","LocalTimeValue":"PT13H20M0S","LocalDateTimeValue":"/Date(694224000000)/"}\
-                """;
+        final String SERIALIZED_ENTITY = """
+            {\
+            "IntegerValue":1,\
+            "OffsetDateTimeValue":"/Date(694224000000-0240)/",\
+            "LocalTimeValue":"PT13H20M0S",\
+            "LocalDateTimeValue":"/Date(694224000000)/"\
+            }\
+            """;
         final TestEntity entity = new TestEntity();
 
         entity.setIntegerValue(1);

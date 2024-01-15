@@ -87,46 +87,47 @@ class ODataResponseComplexDataParsingTest
 
         private static final String PAYLOAD_SAMPLE_SET = """
             {
-            "@odata.context": "serviceRoot/$metadata#People",
-            "@odata.nextLink": "serviceRoot/People?%24skiptoken=8",\
-            "value": [
-            {
-              "@odata.id": "serviceRoot/People('jackblack')",
-              "@odata.etag": "W/\\"08D1694BD49A0F11\\"",
-              "@odata.editLink": "serviceRoot/People('jackblack')",
-              "UserName": "jackblack",
-              "FirstName": "Jack",
-              "LastName": "Black",
-              "AddressInfo": [
-                  {
+              "@odata.context": "serviceRoot/$metadata#People",
+              "@odata.nextLink": "serviceRoot/People?%24skiptoken=8",
+              "value": [
+                {
+                  "@odata.id": "serviceRoot/People('jackblack')",
+                  "@odata.etag": "W/\\"08D1694BD49A0F11\\"",
+                  "@odata.editLink": "serviceRoot/People('jackblack')",
+                  "UserName": "jackblack",
+                  "FirstName": "Jack",
+                  "LastName": "Black",
+                  "AddressInfo": [
+                    {
                       "Address": "187 Suffolk Ln.",
                       "City": {
-                          "Name": "Boise",
-                          "CountryRegion": "United States",
-                          "Region": "ID"
+                        "Name": "Boise",
+                        "CountryRegion": "United States",
+                        "Region": "ID"
                       }
-                  }
-              ]
-            },
-            {
-              "@odata.id": "serviceRoot/People('kylegass')",
-              "@odata.etag": "W/\\"08D1694BD49A0F11\\"",
-              "@odata.editLink": "serviceRoot/People('kylegass')",
-              "UserName": "kylegass",
-              "FirstName": "Kyle",
-              "LastName": "Gass",
-              "AddressInfo": [
-                  {
+                    }
+                  ]
+                },
+                {
+                  "@odata.id": "serviceRoot/People('kylegass')",
+                  "@odata.etag": "W/\\"08D1694BD49A0F11\\"",
+                  "@odata.editLink": "serviceRoot/People('kylegass')",
+                  "UserName": "kylegass",
+                  "FirstName": "Kyle",
+                  "LastName": "Gass",
+                  "AddressInfo": [
+                    {
                       "Address": "187 Suffolk Ln.",
                       "City": {
-                          "Name": "Boise",
-                          "CountryRegion": "United States",
-                          "Region": "ID"
+                        "Name": "Boise",
+                        "CountryRegion": "United States",
+                        "Region": "ID"
                       }
-                  }
+                    }
+                  ]
+                }
               ]
             }
-            ]}\
             """;
 
         private static final String PAYLOAD_SAMPLE_ENTITY =
@@ -147,97 +148,97 @@ class ODataResponseComplexDataParsingTest
                       }
                   ],
                   "HomeAddress": null
-                }\
+                }
                 """;
 
         private static final String PAYLOAD_SAMPLE_ENTITY_WITH_EXPANDED_NAVIGATION_PROPERTY =
             """
                 {
-                    "@odata.context": "https://services.odata.org/TripPinRESTierService/(S(3ubj4rnppjfo1oflxryca1e2))/$metadata#People",
-                            "UserName": "russellwhyte",
-                            "FirstName": "Russell",
-                            "LastName": "Whyte",
-                            "AddressInfo": [
-                                {
-                                    "Address": "187 Suffolk Ln.",
-                                    "City": {
-                                        "Name": "Boise",
-                                        "CountryRegion": "United States",
-                                        "Region": "ID"
-                                    }
-                                }
-                            ],
-                            "HomeAddress": null,
-                            "Friends": [
-                                {
-                                    "UserName": "scottketchum",
-                                    "FirstName": "Scott",
-                                    "LastName": "Ketchum",
-                                    "AddressInfo": [
-                                        {
-                                            "Address": "2817 Milton Dr.",
-                                            "City": {
-                                                "Name": "Albuquerque",
-                                                "CountryRegion": "United States",
-                                                "Region": "NM"
-                                            }
-                                        }
-                                    ],
-                                    "HomeAddress": null
-                                },
-                                {
-                                    "UserName": "ronaldmundy",
-                                    "FirstName": "Ronald",
-                                    "LastName": "Mundy",
-                                    "AddressInfo": [
-                                        {
-                                            "Address": "187 Suffolk Ln.",
-                                            "City": {
-                                                "Name": "Boise",
-                                                "CountryRegion": "United States",
-                                                "Region": "ID"
-                                            }
-                                        }
-                                    ],
-                                    "HomeAddress": null
-                                }
-                            ]
-                }\
+                  "@odata.context": "https://services.odata.org/TripPinRESTierService/(S(3ubj4rnppjfo1oflxryca1e2))/$metadata#People",
+                  "UserName": "russellwhyte",
+                  "FirstName": "Russell",
+                  "LastName": "Whyte",
+                  "AddressInfo": [
+                    {
+                      "Address": "187 Suffolk Ln.",
+                      "City": {
+                        "Name": "Boise",
+                        "CountryRegion": "United States",
+                        "Region": "ID"
+                      }
+                    }
+                  ],
+                  "HomeAddress": null,
+                  "Friends": [
+                    {
+                      "UserName": "scottketchum",
+                      "FirstName": "Scott",
+                      "LastName": "Ketchum",
+                      "AddressInfo": [
+                        {
+                          "Address": "2817 Milton Dr.",
+                          "City": {
+                            "Name": "Albuquerque",
+                            "CountryRegion": "United States",
+                            "Region": "NM"
+                          }
+                        }
+                      ],
+                      "HomeAddress": null
+                    },
+                    {
+                      "UserName": "ronaldmundy",
+                      "FirstName": "Ronald",
+                      "LastName": "Mundy",
+                      "AddressInfo": [
+                        {
+                          "Address": "187 Suffolk Ln.",
+                          "City": {
+                            "Name": "Boise",
+                            "CountryRegion": "United States",
+                            "Region": "ID"
+                          }
+                        }
+                      ],
+                      "HomeAddress": null
+                    }
+                  ]
+                }
                 """;
 
         private static final String PAYLOAD_ENTITY_WITH_BINARY_NAVIGATION_PROPERTY = """
             {
-                        "UserName": "russellwhyte",
-                        "FirstName": "Russell",
-                        "LastName": "Whyte",
-                        "AddressInfo": [
-                            {
-                                "Address": "187 Suffolk Ln.",
-                                "City": {
-                                    "Name": "Boise",
-                                    "CountryRegion": "United States",
-                                    "Region": "ID"
-                                }
-                            }
-                        ],
-                        "HomeAddress": null,
-                        "BestFriend": {
-                            "UserName": "scottketchum",
-                            "FirstName": "Scott",
-                            "LastName": "Ketchum",
-                            "AddressInfo": [
-                                {
-                                    "Address": "2817 Milton Dr.",
-                                    "City": {
-                                        "Name": "Albuquerque",
-                                        "CountryRegion": "United States",
-                                        "Region": "NM"
-                                    }
-                                }
-                            ],
-                            "HomeAddress": null
-                        }
-                    }\
+              "UserName": "russellwhyte",
+              "FirstName": "Russell",
+              "LastName": "Whyte",
+              "AddressInfo": [
+                {
+                  "Address": "187 Suffolk Ln.",
+                  "City": {
+                    "Name": "Boise",
+                    "CountryRegion": "United States",
+                    "Region": "ID"
+                  }
+                }
+              ],
+              "HomeAddress": null,
+              "BestFriend": {
+                "UserName": "scottketchum",
+                "FirstName": "Scott",
+                "LastName": "Ketchum",
+                "AddressInfo": [
+                  {
+                    "Address": "2817 Milton Dr.",
+                    "City": {
+                      "Name": "Albuquerque",
+                      "CountryRegion": "United States",
+                      "Region": "NM"
+                    }
+                  }
+                ],
+                "HomeAddress": null
+              }
+            }
             """;
 
     }
