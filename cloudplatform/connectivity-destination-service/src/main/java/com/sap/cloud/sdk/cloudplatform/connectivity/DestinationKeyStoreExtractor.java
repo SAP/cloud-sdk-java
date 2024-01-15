@@ -46,7 +46,8 @@ class DestinationKeyStoreExtractor
     private static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE = ImmutableMap.of(
             "pfx", "PKCS12",
             "p12", "PKCS12",
-            "jks", "JKS"
+            "jks", "JKS",
+            "pem", "RSA"
     );
 
     //Check out supported trust store file extensions here:
