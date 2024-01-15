@@ -396,7 +396,7 @@ jobs:
 
   blackduck:
     name: "Run BlackDuck Scan"
-    if: ${{ github.event.inputs.run-blackduck-scan == "true" }}
+    if: ${{ github.event.inputs.run-blackduck-scan == 'true' }}
     needs: [context]
     runs-on: ubuntu-latest
     steps:
