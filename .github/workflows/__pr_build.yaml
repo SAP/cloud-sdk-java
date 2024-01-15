@@ -42,7 +42,10 @@ jobs:
       commit: ${{ steps.calculate-commit-id.outputs.COMMIT }}
     runs-on: ubuntu-latest
     steps:
-      - id: calculate-commit-id
+      - name: "Print Context"
+        run: echo "[DEBUG] ${{ toJson(github) }}"
+      - name: "Calculate Commit SHA"
+        id: calculate-commit-id
         run: |
           if [[ -n "${{ github.event.inputs.commit }}" ]]; then
             echo "COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_OUTPUT
