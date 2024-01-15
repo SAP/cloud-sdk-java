@@ -12,11 +12,13 @@ on:
       build-release-artifacts:
         description: "Whether to build release artifacts"
         required: false
-        default: "false"
+        type: boolean
+        default: false
       run-blackduck-scan:
         description: "Whether to run a BlackDuck scan"
         required: false
-        default: "false"
+        type: boolean
+        default: false
 
 env:
   M2_ROOT: ~/.m2/
