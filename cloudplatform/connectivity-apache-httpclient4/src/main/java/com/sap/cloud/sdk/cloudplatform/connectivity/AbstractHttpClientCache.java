@@ -101,6 +101,9 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
         catch( final RuntimeException e ) {
             return Try.failure(new HttpClientInstantiationException(e));
         }
+        if( destination != null && httpClient instanceof HttpClientWrapper ) {
+            return Try.success(((HttpClientWrapper) httpClient).withDestination(destination));
+        }
         return Try.success(httpClient);
     }
 

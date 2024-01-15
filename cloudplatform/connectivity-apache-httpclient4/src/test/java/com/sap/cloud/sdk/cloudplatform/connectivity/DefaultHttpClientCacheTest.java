@@ -34,7 +34,6 @@ import io.vavr.control.Option;
 
 class DefaultHttpClientCacheTest
 {
-
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
     private static final DefaultHttpDestination USER_TOKEN_EXCHANGE_DESTINATION =
         DefaultHttpDestination
@@ -215,14 +214,17 @@ class DefaultHttpClientCacheTest
         final HttpClientWrapper client2 = (HttpClientWrapper) sut.tryGetHttpClient(secondDestination, FACTORY).get();
 
         assertThat(client1.getDestination()).isSameAs(firstDestination);
-        assertThat(client2.getDestination()).isSameAs(firstDestination);
+        assertThat(client2.getDestination()).isSameAs(secondDestination);
 
         final HttpUriRequest request1 = client1.wrapRequest(new HttpGet());
         final HttpUriRequest request2 = client2.wrapRequest(new HttpGet());
 
         // This behavior is to be improved by https://github.com/SAP/cloud-sdk-java-backlog/issues/396
         assertThat(request1.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
-        assertThat(request2.getAllHeaders()).containsExactly(new HttpClientWrapper.ApacheHttpHeader(header1));
+        assertThat(request2.getAllHeaders())
+            .containsExactly(
+                new HttpClientWrapper.ApacheHttpHeader(header1),
+                new HttpClientWrapper.ApacheHttpHeader(header2));
     }
 
     @Test
