@@ -29,12 +29,20 @@ class EnvVarDestinationLoaderTest
         final URI destinationUri = URI.create("https://www.sap.de");
 
         final String variableName = "destinations";
-        final String variableContent =
-            "[{\"name\": \""
-                + destinationName
-                + "\", \"URL\": \""
-                + destinationUri
-                + "\", \"username\": \"USER\", \"password\": \"PASSWORD\", \"object\": {\"inner\": \"value\", \"other\":\"also value\"}}]";
+        final String variableContent = """
+            [
+              {
+                "name": "%s",
+                "URL": "%s",
+                "username": "USER",
+                "password": "PASSWORD",
+                "object": {
+                  "inner": "value",
+                  "other": "also value"
+                }
+              }
+            ]
+            """.formatted(destinationName, destinationUri.toString());
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
 
         final Try<Destination> maybeDestination =
@@ -52,28 +60,27 @@ class EnvVarDestinationLoaderTest
     void testCompleteDestinationAttributes()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"proxyType\": \"Internet\","
-                + "\"description\": \"This destination rocks!\","
-                + "\"authentication\": \"BasicAuthentication\","
-                + "\"URL\": \"https://URL\","
-                + "\"user\": \"USER\","
-                + "\"password\": \"PASSWORD\","
-                + "\"isTrustingAllCertificates\": \"true\","
-                + "\"TrustStoreLocation\": \"LOCATION\","
-                + "\"TrustStorePassword\": \"PASSWORD\","
-                + "\"KeyStoreLocation\": \"LOCATION\","
-                + "\"KeyStorePassword\": \"PASSWORD\","
-                + "\"TLSVersion\" : \"1.3\","
-                + "\"proxy\": \"proxy:1234\""
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "proxyType": "Internet",
+                "description": "This destination rocks!",
+                "authentication": "BasicAuthentication",
+                "URL": "https://URL",
+                "user": "USER",
+                "password": "PASSWORD",
+                "isTrustingAllCertificates": "true",
+                "TrustStoreLocation": "LOCATION",
+                "TrustStorePassword": "PASSWORD",
+                "KeyStoreLocation": "LOCATION",
+                "KeyStorePassword": "PASSWORD",
+                "TLSVersion" : "1.3",
+                "proxy": "proxy:1234"
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -83,31 +90,17 @@ class EnvVarDestinationLoaderTest
         VavrAssertions.assertThat(maybeDestination).isSuccess();
 
         final Destination destination = maybeDestination.get();
+        assertThat(destination.get("description", String.class::cast)).contains("This destination rocks!");
 
         assertThat(destination.isHttp()).isTrue();
-
-        final Option<String> description = destination.get("description", String.class::cast);
-
-        assertThat(description.get()).isEqualTo("This destination rocks!");
-
         final HttpDestination httpDestination = destination.asHttp();
 
-        final Option<String> name = httpDestination.get(DestinationProperty.NAME);
-
-        assertThat(name.get()).isEqualTo(destinationName);
-
-        final Option<ProxyType> proxyType = httpDestination.getProxyType();
-
-        assertThat(proxyType.get()).isEqualTo(ProxyType.INTERNET);
-
+        assertThat(httpDestination.get(DestinationProperty.NAME)).contains(destinationName);
+        assertThat(httpDestination.getProxyType()).contains(ProxyType.INTERNET);
         assertThat(httpDestination.getUri()).isEqualTo(URI.create("https://URL"));
-
         assertThat(httpDestination.isTrustingAllCertificates()).isTrue();
-
         assertThat(httpDestination.getProxyConfiguration().get().getUri()).isEqualTo(URI.create("http://proxy:1234"));
-
-        assertThat(httpDestination.getTlsVersion().get()).isEqualTo("1.3");
-
+        assertThat(httpDestination.getTlsVersion()).contains("1.3");
         assertThat(httpDestination.getAuthenticationType())
             .isEqualByComparingTo(AuthenticationType.BASIC_AUTHENTICATION);
 
@@ -120,17 +113,16 @@ class EnvVarDestinationLoaderTest
     void testProxyUriSpecified()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"proxy\": \"https://proxy:1234\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "proxy": "https://proxy:1234"
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -146,19 +138,18 @@ class EnvVarDestinationLoaderTest
     void testProxyUriAndProxyHostAndPortSpecified()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"proxyHost\": \"looser\","
-                + "\"proxyPort\": \"5678\","
-                + "\"proxy\": \"winner:1234\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "proxyHost": "looser",
+                "proxyPort": "5678",
+                "proxy": "winner:1234"
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -174,18 +165,17 @@ class EnvVarDestinationLoaderTest
     void testProxyHostAndPortSpecified()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"proxyHost\": \"proxy\","
-                + "\"proxyPort\": \"1234\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "proxyHost": "proxy",
+                "proxyPort": "1234",
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -201,19 +191,18 @@ class EnvVarDestinationLoaderTest
     void testProxyTypeUncommonSpelling()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"proxyType\": \"onpremise\","
-                + "\"description\": \"This destination rocks!\","
-                + "\"authentication\": \"BasicAuthentication\""
-                + "\"URL\": \"https://URL\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "proxyType": "onpremise",
+                "description": "This destination rocks!",
+                "authentication": "BasicAuthentication"
+                "URL": "https://URL",
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -236,20 +225,19 @@ class EnvVarDestinationLoaderTest
     void testAdditionalProperty()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"proxyType\": \"onpremise\","
-                + "\"description\": \"This destination rocks!\","
-                + "\"authentication\": \"BasicAuthentication\""
-                + "\"URL\": \"https://URL\","
-                + "\"shoeSize\": 42"
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "proxyType": "onpremise",
+                "description": "This destination rocks!",
+                "authentication": "BasicAuthentication"
+                "URL": "https://URL",
+                "shoeSize": 42
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -271,11 +259,11 @@ class EnvVarDestinationLoaderTest
         final String destinationName = "MyDestination";
         final String variableContent = """
             [
-            {
-            "type": "HTTP",
-            "URL": "https://URL",
-            "proxy": "https://proxy:1234",
-            }
+              {
+                "type": "HTTP",
+                "URL": "https://URL",
+                "proxy": "https://proxy:1234"
+              }
             ]
             """;
 
@@ -294,17 +282,16 @@ class EnvVarDestinationLoaderTest
     void testUpperAndLowerCaseInParameterNames()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"Proxy\": \"https://proxy:1234\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "proxy": "https://proxy:1234"
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -320,21 +307,20 @@ class EnvVarDestinationLoaderTest
     void testFallbackPropertyKeys()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"proxyType\": \"onpremise\","
-                + "\"description\": \"This destination rocks!\","
-                + "\"URL\": \"https://URL\","
-                + "\"username\": \"USER\","
-                + "\"password\": \"PASSWORD\","
-                + "\"authtype\": \"BasicAuthentication\""
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "proxyType": "onpremise",
+                "description": "This destination rocks!",
+                "URL": "https://URL",
+                "username": "USER",
+                "password": "PASSWORD",
+                "authtype": "BasicAuthentication"
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -353,18 +339,17 @@ class EnvVarDestinationLoaderTest
     void testFallbackToBasicAuth()
     {
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"username\": \"USER\","
-                + "\"password\": \"PASSWORD\","
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "username": "USER",
+                "password": "PASSWORD",
+              }
+            ]
+            """.formatted(destinationName);
 
         final String variableName = "destinations";
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
@@ -406,17 +391,16 @@ class EnvVarDestinationLoaderTest
         final String variableName = "destinations";
 
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"authentication\": \"TokenForwarding\""
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "authentication": "TokenForwarding"
+              }
+            ]
+            """.formatted(destinationName);
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
         final Try<Destination> maybeDestination =
             new EnvVarDestinationLoader(envVars, variableName).tryGetDestination(destinationName);
@@ -431,17 +415,16 @@ class EnvVarDestinationLoaderTest
         final String variableName = "destinations";
 
         final String destinationName = "MyDestination";
-        final String variableContent =
-            "["
-                + "{"
-                + "\"type\": \"HTTP\","
-                + "\"name\": \""
-                + destinationName
-                + "\","
-                + "\"URL\": \"https://URL\","
-                + "\"forwardAuthToken\": true"
-                + "}"
-                + "]";
+        final String variableContent = """
+            [
+              {
+                "type": "HTTP",
+                "name": "%s",
+                "URL": "https://URL",
+                "forwardAuthToken": true
+              }
+            ]
+            """.formatted(destinationName);
         final Function<String, String> envVars = HashMap.of(variableName, variableContent);
         final Try<Destination> maybeDestination =
             new EnvVarDestinationLoader(envVars, variableName).tryGetDestination(destinationName);
@@ -455,9 +438,9 @@ class EnvVarDestinationLoaderTest
     {
         final String variableContent = """
             [
-            {"type":"HTTP","name":"foo","URL":"https://foo"},
-            {"type":"HTTP","name":"bar","URL":"https://bar"},
-            {"type":"HTTP","name":"baz","URL":"https://baz"}
+              {"type":"HTTP","name":"foo","URL":"https://foo"},
+              {"type":"HTTP","name":"bar","URL":"https://bar"},
+              {"type":"HTTP","name":"baz","URL":"https://baz"}
             ]
             """;
 
