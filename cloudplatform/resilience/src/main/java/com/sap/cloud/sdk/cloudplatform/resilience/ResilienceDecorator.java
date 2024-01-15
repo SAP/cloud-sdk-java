@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.resilience;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -26,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ResilienceDecorator
 {
+    // non-final for testing
+    static String legacyDecorationStrategy = "com.sap.cloud.sdk.frameworks.resilience4j.Resilience4jDecorationStrategy";
+
     /**
      * The current instance of {@link ResilienceDecorationStrategy} to be used to guarantee resilient function
      * properties.
@@ -77,29 +81,41 @@ public final class ResilienceDecorator
     {
         final Collection<ResilienceDecorationStrategy> facades =
             FacadeLocator.getFacades(ResilienceDecorationStrategy.class);
-        if( facades.size() > 1 ) {
-            final String classes = facades.stream().map(f -> f.getClass().getName()).collect(Collectors.joining(", "));
-            final String exceptionMessage =
-                String
-                    .format(
-                        "Too many implementations of %s found. Make sure to only have a single implementation of the interface on your classpath: %s",
-                        ResilienceDecorationStrategy.class.getName(),
-                        classes);
-            final String logMessage =
-                String
-                    .format(
-                        "%s. Using any resilience pattern will lead to an exception at runtime UNLESS the %s is explicitly overwritten using 'ResilienceDecorator.setDecorationStrategy(ResilienceDecorationStrategy)'.",
-                        exceptionMessage,
-                        ResilienceDecorationStrategy.class.getName());
-            log.warn(logMessage);
-            throw new ObjectLookupFailedException(exceptionMessage);
-        }
 
         if( facades.isEmpty() ) {
             return new NoResilienceDecorationStrategy();
         }
+        if( facades.size() == 1 ) {
+            return facades.iterator().next();
+        }
 
-        return facades.iterator().next();
+        final List<ResilienceDecorationStrategy> facadesWithoutLegacyImplementation =
+            facades.stream().filter(f -> !f.getClass().getName().equals(legacyDecorationStrategy)).toList();
+        if( facadesWithoutLegacyImplementation.size() == 1 ) {
+            final ResilienceDecorationStrategy strategy = facadesWithoutLegacyImplementation.get(0);
+            log
+                .info(
+                    "Ignoring legacy implementation '{}' from Cloud SDK version 4.X in favor of: {}",
+                    legacyDecorationStrategy,
+                    strategy);
+            return strategy;
+        }
+
+        final String classes = facades.stream().map(f -> f.getClass().getName()).collect(Collectors.joining(", "));
+        final String exceptionMessage =
+            String
+                .format(
+                    "Too many implementations of %s found. Make sure to only have a single implementation of the interface on your classpath: %s",
+                    ResilienceDecorationStrategy.class.getName(),
+                    classes);
+        final String logMessage =
+            String
+                .format(
+                    "%s. Using any resilience pattern will lead to an exception at runtime UNLESS the %s is explicitly overwritten using 'ResilienceDecorator.setDecorationStrategy(ResilienceDecorationStrategy)'.",
+                    exceptionMessage,
+                    ResilienceDecorationStrategy.class.getName());
+        log.warn(logMessage);
+        throw new ObjectLookupFailedException(exceptionMessage);
     }
 
     /**
@@ -156,7 +172,6 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
      * @return A decorated supplier.
      */
     @Nonnull
@@ -176,7 +191,6 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
      * @return The value of the supplier.
      */
     @Nullable
@@ -198,7 +212,6 @@ public final class ResilienceDecorator
      *            In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return A decorated supplier.
      */
     @Nonnull
@@ -221,7 +234,6 @@ public final class ResilienceDecorator
      *            In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return The value of the supplier.
      */
     @Nullable
@@ -242,7 +254,6 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
      * @return A decorated callable.
      */
     @Nonnull
@@ -262,11 +273,9 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
+     * @return The value returned by the callable.
      * @throws Exception
      *             Exception that can be thrown by the callable.
-     *
-     * @return The value returned by the callable.
      */
     @SuppressWarnings( "PMD.SignatureDeclareThrowsException" )
     @Nullable
@@ -289,7 +298,6 @@ public final class ResilienceDecorator
      *            In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return A decorated callable.
      */
     @Nonnull
@@ -312,7 +320,6 @@ public final class ResilienceDecorator
      *            (Optional) In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return The value returned by the callable.
      */
     @Nullable
@@ -335,7 +342,6 @@ public final class ResilienceDecorator
      *            (Optional) In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return An instance of Future being executed asynchronously.
      */
     @Nonnull
@@ -356,7 +362,6 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
      * @return An instance of Future being executed asynchronously.
      */
     @Nonnull
@@ -378,7 +383,6 @@ public final class ResilienceDecorator
      *            (Optional) In case of failure, execute this function.
      * @param <T>
      *            The return type of the call.
-     *
      * @return An instance of Future being executed asynchronously.
      */
     @Nonnull
@@ -399,7 +403,6 @@ public final class ResilienceDecorator
      *            The configuration of the resilient call.
      * @param <T>
      *            The return type of the call.
-     *
      * @return An instance of Future being executed asynchronously.
      */
     @Nonnull
