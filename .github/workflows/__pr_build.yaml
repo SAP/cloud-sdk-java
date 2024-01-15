@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Print Context"
-        run: echo "[DEBUG] ${{ toJson(github) }}"
+        run: echo "${{ toJson(github) }}"
       - name: "Calculate Commit SHA"
         id: calculate-commit-id
         run: |
