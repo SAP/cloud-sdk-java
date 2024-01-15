@@ -44,12 +44,12 @@ jobs:
     steps:
       - id: calculate-commit-id
         run: |
-          if [[ ! -z "${{ github.event.inputs.commit }}" ]]; then
+          if [[ -n "${{ github.event.inputs.commit }}" ]]; then
             echo "COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          if [[ "${{ github.event.event_name }}" == "pull_request" }}; then
+          if [[ "${{ github.event.event_name }}" == "pull_request" ]]; then
             echo "COMMIT=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
             exit 0
           fi
