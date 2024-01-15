@@ -19,19 +19,19 @@ on:
         default: "false"
 
 env:
-  M2_ROOT: ~/.m2
+  M2_ROOT: ~/.m2/
   RELEASE_ARTIFACT_NAME: "release-artifacts"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
-    ${{ env.M2_ROOT }}/repository/com/sap/cloud/sdk/
-    ${{ env.M2_ROOT }}/archetype-catalog.xml
+    ~/.m2/repository/com/sap/cloud/sdk/
+    ~/.m2/archetype-catalog.xml
   SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
   SDK_TARGETS_PATH: |
     ./**/target/
   DEPENDENCIES_CACHE_KEY: "dependencies"
   DEPENDENCIES_PATH: |
-    ${{ env.M2_ROOT }}/repository/**
-    !${{ env.M2_ROOT }}/repository/com/sap/cloud/sdk/**
+    ~/.m2/repository/**
+    !~/.m2/repository/com/sap/cloud/sdk/**
 
   MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
   MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
