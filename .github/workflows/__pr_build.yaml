@@ -6,9 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       branch:
+        # the branch name is needed for the CodeQL analysis
         description: "Branch of the code to be built"
         required: true
       commit:
+        # this commit is what is actually going to be checked out
         description: "Commit SHA of the code to be built"
         required: true
       build-release-artifacts:
@@ -51,13 +53,18 @@ jobs:
         id: calculate-branch-name
         run: |
           if [[ -n "${{ github.event.inputs.branch }}" ]]; then
+            
+            if [[ "${{ github.event.inputs.branch }}" == "refs/heads/*" ]]; then
               echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
-              exit 0
+            else
+              echo "BRANCH=refs/heads/${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+            fi
+            exit 0
           fi
           
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
-              exit 0
+            echo "BRANCH=refs/heads/${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+            exit 0
           fi
           
           echo "Unable to determine branch name as the workflow was not triggered by a pull request and the branch input was not provided"
@@ -247,14 +254,14 @@ jobs:
             "report": ".pipeline/scripts/print-checkstyle.py"
           }
           - {
-              "name": "PMD",
-              "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
-              "report": ".pipeline/scripts/print-pmd.py"
+            "name": "PMD",
+            "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
+            "report": ".pipeline/scripts/print-pmd.py"
           }
           - {
-              "name": "Spotbugs",
-              "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
-              "report": ".pipeline/scripts/print-spotbugs.py"
+            "name": "Spotbugs",
+            "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
+            "report": ".pipeline/scripts/print-spotbugs.py"
           }
     name: "Run ${{ matrix.task.name }} Analysis"
     steps:
@@ -435,7 +442,7 @@ jobs:
   blackduck:
     name: "Run BlackDuck Scan"
     if: ${{ github.event.inputs.run-blackduck-scan == 'true' }}
-    needs: [context]
+    needs: [ context ]
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
