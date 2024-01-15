@@ -7,6 +7,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1R
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -50,13 +51,6 @@ class DestinationKeyStoreExtractor
         "jks", (cert,pw) -> retrieveExistingKeyStore(cert, pw, "JKS"),
         "pem", DestinationKeyStoreExtractor::createNewKeyStoreFromPem
     );
-
-
-    private static KeyStore createNewKeyStoreFromPem(@Nonnull final String content, @Nullable String password)
-    {
-        // TODO
-        return null;
-    }
 
     //Check out supported trust store file extensions here:
     //https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
@@ -265,6 +259,24 @@ class DestinationKeyStoreExtractor
         }
         catch( final IOException | NoSuchAlgorithmException | CertificateException e ) {
             throw new DestinationAccessException("Failed to load key store.", e);
+        }
+    }
+
+    @Nonnull
+    private static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
+    {
+        try {
+            final String s = new String(Base64.getDecoder().decode(data));
+            final int del = s.indexOf("-----BEGIN CERTIFICATE-----");
+            if( del <= 0 ) {
+                throw new IllegalArgumentException("PEM format cannot be parsed.");
+            }
+            final char[] pw = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
+            final KeyStoreReader reader = KeyStoreReader.builder().alias("1").password(pw).build();
+            return reader.createKeyStore(new StringReader(s.substring(del)), new StringReader(s.substring(0, del)));
+        }
+        catch( final Exception e ) {
+            throw new DestinationAccessException("Failed to instantiate new KeyStore.", e);
         }
     }
 
