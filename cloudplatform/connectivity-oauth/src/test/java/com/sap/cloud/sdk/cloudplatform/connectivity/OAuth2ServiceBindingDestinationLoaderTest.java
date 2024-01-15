@@ -345,20 +345,12 @@ class OAuth2ServiceBindingDestinationLoaderTest
     @Test
     void testProxiedDestination()
     {
+        final URI proxyUrl = URI.create("http://proxyUrl:1234");
         final DefaultHttpDestination baseDestination =
-            DefaultHttpDestination
-                .builder(baseUrl)
-                .name("foo")
-                .header(HttpHeaders.AUTHORIZATION, "some-auth")
-                .headerProviders(( any ) -> Collections.singletonList(new Header("foo", "bar")))
-                .property(DestinationProperty.SAP_LANGUAGE, "en")
-                .proxyType(ProxyType.ON_PREMISE)
-                .build();
-
-        final Header expectedProxyHeader = new Header(HttpHeaders.PROXY_AUTHORIZATION, "proxy-auth");
+            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).build();
 
         final DestinationHeaderProvider headerProviderMock = mock(DestinationHeaderProvider.class);
-        when(headerProviderMock.getHeaders(any())).thenReturn(Collections.singletonList(expectedProxyHeader));
+        when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
 
         sut = spy(new OAuth2ServiceBindingDestinationLoader());
         doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any());
@@ -367,21 +359,36 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut
                 .toProxiedDestination(
                     baseDestination,
-                    URI.create("proxyUrl"),
+                    proxyUrl,
                     tokenUrl,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
-        assertThat(result.getHeaders(baseUrl))
-            .containsExactlyInAnyOrder(
-                new Header(HttpHeaders.AUTHORIZATION, "some-auth"),
-                expectedProxyHeader,
-                new Header("foo", "bar"),
-                new Header("sap-language", "en"));
+        assertThat(result)
+            .as("The new destination should have additional proxy properties.")
+            .isNotEqualTo(baseDestination);
+        assertThat(result.getProxyConfiguration()).contains(ProxyConfiguration.of(proxyUrl));
+        assertThat(((DefaultHttpDestination) result).getCustomHeaderProviders()).contains(headerProviderMock);
 
-        assertThat(result).as("The destination should not be cached.").isNotSameAs(baseDestination);
-        verify(sut, times(1))
+        final HttpDestination secondInvocationResult =
+            sut
+                .toProxiedDestination(
+                    baseDestination,
+                    proxyUrl,
+                    tokenUrl,
+                    credentials,
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        assertThat(secondInvocationResult)
+            .as("There should not be a cache in place for proxied destinations.")
+            .isNotSameAs(result);
+        assertThat(secondInvocationResult)
+            .as("The destination objects should be equal so that they use the same HTTP client.")
+            .isEqualTo(result)
+            .isNotSameAs(result);
+
+        verify(sut, times(2))
             .createHeaderProvider(
                 eq(tokenUrl),
                 eq(credentials),

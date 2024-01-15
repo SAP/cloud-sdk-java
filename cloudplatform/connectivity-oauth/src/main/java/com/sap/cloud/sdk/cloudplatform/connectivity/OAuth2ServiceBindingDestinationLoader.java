@@ -5,7 +5,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Beta
 public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
-    private static final Duration TOKEN_RETRIEVAL_TIMEOUT = Duration.ofSeconds(10);
     @Nonnull
     // package-private for testing
     static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS =

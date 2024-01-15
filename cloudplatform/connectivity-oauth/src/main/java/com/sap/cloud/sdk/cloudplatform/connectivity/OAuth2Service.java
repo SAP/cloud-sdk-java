@@ -81,6 +81,13 @@ class OAuth2Service
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
+        /*
+         * Reasoning for always using ResilienceIsolationMode.TENANT_OPTIONAL, regardless of onBehalfOf:
+         * - for TECHNICAL_USER_CURRENT_TENANT this is trivially correct
+         * - for NAMED_USER_CURRENT_TENANT the resilience should still be applied per-tenant only
+         * - for TECHNICAL_USER_PROVIDER && current tenant != provider the isolation is stronger than it needs to be,
+         *   but the downside is arguably not worth keeping a second configuration for this case only
+         */
         resilienceConfig =
             ResilienceConfiguration
                 .of(identity.getId())
