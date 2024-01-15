@@ -241,13 +241,11 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
             createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
-        final String idString = Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
-                + "-" + clientIdentity.getId();
-        return DefaultHttpDestination
-            .builder(serviceUri)
-            .headerProviders(headerProvider)
-            .name(idString)
-            .build();
+        final String idString =
+            Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
+                + "-"
+                + clientIdentity.getId();
+        return DefaultHttpDestination.builder(serviceUri).headerProviders(headerProvider).name(idString).build();
     }
 
     DestinationHeaderProvider createHeaderProvider(

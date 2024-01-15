@@ -104,8 +104,7 @@ class OAuth2DestinationBuilderTest
         assertThat(headers).containsExactly(new Header("Authorization", "Bearer PERSONAL"));
 
         // indirect header validation
-        final HttpResponse response =
-            HttpClientAccessor.getHttpClient(destination).execute(new HttpGet("/personal"));
+        final HttpResponse response = HttpClientAccessor.getHttpClient(destination).execute(new HttpGet("/personal"));
         assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
 
         // assert tokens are cached

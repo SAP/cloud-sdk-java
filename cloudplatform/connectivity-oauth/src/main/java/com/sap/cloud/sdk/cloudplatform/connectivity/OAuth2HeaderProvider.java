@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
@@ -32,8 +31,7 @@ class OAuth2HeaderProvider implements DestinationHeaderProvider
         final DestinationProperties destination = requestContext.getDestination();
         assertTenantRemainedConsistent(destination);
 
-        final String accessToken =
-            oauth2service.retrieveAccessToken();
+        final String accessToken = oauth2service.retrieveAccessToken();
 
         return singletonList(new Header(authHeaderName, "Bearer " + accessToken));
     }

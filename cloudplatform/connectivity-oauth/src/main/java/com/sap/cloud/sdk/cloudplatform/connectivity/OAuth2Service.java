@@ -39,8 +39,6 @@ import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import io.vavr.control.Try;
-import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -81,10 +79,12 @@ class OAuth2Service
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
-        resilienceConfig = ResilienceConfiguration
+        resilienceConfig =
+            ResilienceConfiguration
                 .of(identity.getId())
                 .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
-                .timeLimiterConfiguration(ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
+                .timeLimiterConfiguration(
+                    ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
     }
 
     static void clearCache()

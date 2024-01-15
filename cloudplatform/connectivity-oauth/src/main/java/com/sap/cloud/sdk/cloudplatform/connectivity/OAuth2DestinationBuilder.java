@@ -4,16 +4,11 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import java.time.Duration;
-import java.util.UUID;
-
 import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.security.config.ClientIdentity;
 
 import lombok.extern.slf4j.Slf4j;
