@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -100,9 +101,14 @@ class DestinationServiceFactoryTest
         assertThat(result.get(DestinationProperty.NAME)).contains("httpDestination");
         assertThat(result.get(DestinationProperty.URI)).contains("https://example.com");
         assertThat(result.get(DestinationProperty.AUTH_TOKENS).isDefined()).isTrue();
-        assertThat(result.get(DestinationProperty.AUTH_TOKENS).get()).asList().containsExactly(token);
+        assertThat(result.get(DestinationProperty.AUTH_TOKENS).get())
+            .asInstanceOf(InstanceOfAssertFactories.LIST)
+            .isNotEmpty()
+            .containsExactlyInAnyOrder(token);
         assertThat(result.get(DestinationProperty.CERTIFICATES).isDefined()).isTrue();
-        assertThat(result.get(DestinationProperty.CERTIFICATES).get()).asList().containsExactly(certificate);
+        assertThat(result.get(DestinationProperty.CERTIFICATES).get())
+            .asInstanceOf(InstanceOfAssertFactories.LIST)
+            .containsExactly(certificate);
     }
 
     @Test
