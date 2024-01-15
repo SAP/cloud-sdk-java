@@ -43,6 +43,7 @@ jobs:
   context:
     name: "Collect Context"
     outputs:
+      branch: ${{ steps.calculate-branch-name.outputs.BRANCH }}
       commit: ${{ steps.calculate-commit-id.outputs.COMMIT }}
     runs-on: ubuntu-latest
     steps:
@@ -329,6 +330,7 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:java"
+          ref: ${{ needs.context.outputs.branch }}
           sha: ${{ needs.context.outputs.commit }}
 
   test-archetypes:
