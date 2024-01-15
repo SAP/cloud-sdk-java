@@ -153,7 +153,7 @@ jobs:
           fi
 
       - name: "Upload Release Artifacts"
-        if: ${{ github.event.inputs.build-release-artifacts }} == "true"
+        if: ${{ github.event.inputs.build-release-artifacts == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.RELEASE_ARTIFACT_NAME }}
@@ -192,6 +192,11 @@ jobs:
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.SDK_M2_PATH }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -248,6 +253,11 @@ jobs:
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.SDK_M2_PATH }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
