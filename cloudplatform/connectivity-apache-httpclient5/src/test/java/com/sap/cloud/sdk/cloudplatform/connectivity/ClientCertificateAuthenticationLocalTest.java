@@ -27,6 +27,7 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -47,6 +48,15 @@ class ClientCertificateAuthenticationLocalTest
     @RegisterExtension
     static final WireMockExtension server =
         WireMockExtension.newInstance().options(buildWireMockConfiguration()).build();
+
+    @BeforeEach
+    @AfterEach
+    void resetHttpClientCacheBeforeEach()
+    {
+        // although the WireMock URL is dynamic (and thus different HTTP clients are created),
+        // it is safer to reset the cache in case URLs randomly match
+        ApacheHttpClient5Accessor.setHttpClientCache(null);
+    }
 
     @BeforeEach
     void before()

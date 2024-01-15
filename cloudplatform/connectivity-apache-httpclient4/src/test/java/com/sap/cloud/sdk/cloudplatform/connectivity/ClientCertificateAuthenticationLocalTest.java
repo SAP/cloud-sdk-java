@@ -28,6 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -44,6 +45,15 @@ class ClientCertificateAuthenticationLocalTest
     private static final String CCA_PASSWORD = "cca-password";
     private static final String JKS_PATH =
         "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName() + "/client-cert.pkcs12";
+
+    @BeforeEach
+    @AfterEach
+    void resetHttpClientCacheBeforeEach()
+    {
+        // although the WireMock URL is dynamic (and thus different HTTP clients are created),
+        // it is safer to reset the cache in case URLs randomly match
+        HttpClientAccessor.setHttpClientCache(null);
+    }
 
     @RegisterExtension
     static final WireMockExtension server =
