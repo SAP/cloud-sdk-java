@@ -1,25 +1,27 @@
 name: "Build Pull Request"
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
   workflow_dispatch:
     inputs:
       commit:
+        # this commit is what is actually going to be checked out
         description: "Commit SHA of the code to be built"
-        required: false
-        default: ""
+        required: true
       build-release-artifacts:
         description: "Whether to build release artifacts"
         required: false
-        default: "false"
+        type: boolean
+        default: false
       run-blackduck-scan:
         description: "Whether to run a BlackDuck scan"
         required: false
-        default: "false"
+        type: boolean
+        default: false
 
 env:
+  M2_ROOT: ~/.m2/
   RELEASE_ARTIFACT_NAME: "release-artifacts"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
@@ -35,6 +37,7 @@ env:
 
   MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
   MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
+  MVN_SKIP_CI_PLUGINS: -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip
 
 jobs:
   context:
@@ -43,14 +46,15 @@ jobs:
       commit: ${{ steps.calculate-commit-id.outputs.COMMIT }}
     runs-on: ubuntu-latest
     steps:
-      - id: calculate-commit-id
+      - name: "Calculate Commit SHA"
+        id: calculate-commit-id
         run: |
-          if [[ ! -z "${{ github.event.inputs.commit }}" ]]; then
+          if [[ -n "${{ github.event.inputs.commit }}" ]]; then
             echo "COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          if [[ "${{ github.event.event_name }}" == "pull_request" }}; then
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "COMMIT=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -128,7 +132,7 @@ jobs:
           fi
 
       - name: "Cache Dependencies"
-        if: ${{ steps.restore-dependencies.outputs.cache-hit == 'false' }}
+        if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
@@ -153,7 +157,7 @@ jobs:
           fi
 
       - name: "Upload Release Artifacts"
-        if: ${{ github.event.inputs.build-release-artifacts }} == "true"
+        if: ${{ github.event.inputs.build-release-artifacts == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.RELEASE_ARTIFACT_NAME }}
@@ -191,7 +195,12 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -222,14 +231,14 @@ jobs:
             "report": ".pipeline/scripts/print-checkstyle.py"
           }
           - {
-              "name": "PMD",
-              "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
-              "report": ".pipeline/scripts/print-pmd.py"
+            "name": "PMD",
+            "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
+            "report": ".pipeline/scripts/print-pmd.py"
           }
           - {
-              "name": "Spotbugs",
-              "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
-              "report": ".pipeline/scripts/print-spotbugs.py"
+            "name": "Spotbugs",
+            "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
+            "report": ".pipeline/scripts/print-spotbugs.py"
           }
     name: "Run ${{ matrix.task.name }} Analysis"
     steps:
@@ -247,7 +256,12 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -255,7 +269,7 @@ jobs:
 
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip ${{ matrix.task.mvn_goal }}"
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
           
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
@@ -291,7 +305,7 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true ${{ env.MVN_SKIP_CI_PLUGINS }}"
           
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
@@ -329,7 +343,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.SDK_M2_PATH }}
+          path: ${{ env.M2_ROOT }}
 
       - name: "Determine Version"
         id: get-version
@@ -349,15 +363,18 @@ jobs:
           -Dhttp.keepAlive=false
 
       - name: "Verify ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: >
           mvn clean verify -B
           -Dhttp.keepAlive=false
           -Dmaven.test.skip=true
 
       - name: "Test ${{ matrix.task.name }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: mvn test -B -Dsurefire.logLevel='error'
 
       - name: "Spotbugs ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: >
           mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
           -pl !integration-tests
@@ -365,6 +382,7 @@ jobs:
           -Dmaven.wagon.http.pool=false
 
       - name: "Start ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}/application
         run: |
           logFilePath=log.txt
           ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
@@ -388,6 +406,7 @@ jobs:
           fi
 
       - name: "Verify .gitignore ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
         run: |
           if [[ ! -f .gitignore ]]; then
               ls -lah
@@ -397,8 +416,8 @@ jobs:
 
   blackduck:
     name: "Run BlackDuck Scan"
-    if: ${{ github.event.inputs.run-blackduck-scan == "true" }}
-    needs: [context]
+    if: ${{ github.event.inputs.run-blackduck-scan == 'true' }}
+    needs: [ context ]
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
