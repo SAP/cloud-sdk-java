@@ -111,7 +111,7 @@ class ClientCertificateAuthenticationLocalTest
 
         // sanity check: we can't be certain we will get an SSLHandshakeException
         // sometimes we get a SocketException instead, unknown why
-        // thus we run the success tas case again to verify the server hasn't crashed
+        // thus we run the success test case again to verify the server hasn't crashed
         testClientCorrectlyConfigured();
     }
 
