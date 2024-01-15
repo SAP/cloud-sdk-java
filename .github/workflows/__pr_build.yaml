@@ -19,18 +19,19 @@ on:
         default: "false"
 
 env:
+  M2_ROOT: ~/.m2
   RELEASE_ARTIFACT_NAME: "release-artifacts"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
-    ~/.m2/repository/com/sap/cloud/sdk/
-    ~/.m2/archetype-catalog.xml
+    ${{ env.M2_ROOT }}/repository/com/sap/cloud/sdk/
+    ${{ env.M2_ROOT }}/archetype-catalog.xml
   SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
   SDK_TARGETS_PATH: |
     ./**/target/
   DEPENDENCIES_CACHE_KEY: "dependencies"
   DEPENDENCIES_PATH: |
-    ~/.m2/repository/**
-    !~/.m2/repository/com/sap/cloud/sdk/**
+    ${{ env.M2_ROOT }}/repository/**
+    !${{ env.M2_ROOT }}/repository/com/sap/cloud/sdk/**
 
   MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
   MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
@@ -128,7 +129,7 @@ jobs:
           fi
 
       - name: "Cache Dependencies"
-        if: ${{ steps.restore-dependencies.outputs.cache-hit == 'false' }}
+        if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
@@ -191,12 +192,12 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.SDK_M2_PATH }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -252,12 +253,12 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.SDK_M2_PATH }}
+          path: ${{ env.M2_ROOT }}
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -339,7 +340,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.SDK_M2_PATH }}
+          path: ${{ env.M2_ROOT }}
 
       - name: "Determine Version"
         id: get-version
