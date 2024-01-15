@@ -5,10 +5,12 @@ on:
 
   workflow_dispatch:
     inputs:
+      branch:
+        description: "Branch of the code to be built"
+        required: true
       commit:
         description: "Commit SHA of the code to be built"
-        required: false
-        default: ""
+        required: true
       build-release-artifacts:
         description: "Whether to build release artifacts"
         required: false
@@ -35,6 +37,7 @@ env:
 
   MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
   MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
+  MVN_SKIP_CI_PLUGINS: -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip
 
 jobs:
   context:
@@ -43,6 +46,21 @@ jobs:
       commit: ${{ steps.calculate-commit-id.outputs.COMMIT }}
     runs-on: ubuntu-latest
     steps:
+      - name: "Calculate Branch Name"
+        id: calculate-branch-name
+        run: |
+          if [[ -n "${{ github.event.inputs.branch }}" ]]; then
+              echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+              exit 0
+          fi
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              echo "BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+              exit 0
+          fi
+          
+          echo "Unable to determine branch name as the workflow was not triggered by a pull request and the branch input was not provided"
+          exit 1
       - name: "Calculate Commit SHA"
         id: calculate-commit-id
         run: |
@@ -266,7 +284,7 @@ jobs:
 
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip ${{ matrix.task.mvn_goal }}"
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
           
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
@@ -302,7 +320,7 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true ${{ env.MVN_SKIP_CI_PLUGINS }}"
           
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
@@ -311,6 +329,7 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:java"
+          sha: ${{ needs.context.outputs.commit }}
 
   test-archetypes:
     runs-on: ubuntu-latest
