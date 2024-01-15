@@ -87,8 +87,8 @@ class OAuth2ServiceTest
         final String token1 = service.retrieveAccessToken();
         final String token2 = service.retrieveAccessToken();
 
-        assertThat(token1).isEqualTo("token");
-        assertThat(token2).isEqualTo("token");
+        assertThat(token1).isEqualTo(TOKEN_1);
+        assertThat(token2).isEqualTo(TOKEN_1);
 
         SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
     }
@@ -159,8 +159,7 @@ class OAuth2ServiceTest
         SERVER_1
             .stubFor(
                 post("/oauth/token")
-                    .willReturn(
-                        okJson(RESPONSE_TEMPLATE.formatted("token_1")).withHeader("Set-Cookie", "myCookie=123")));
+                    .willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_1)).withHeader("Set-Cookie", "myCookie=123")));
 
         final OAuth2Service service = new OAuth2Service(SERVER_1.baseUrl(), IDENTITY_1, TECHNICAL_USER_CURRENT_TENANT);
 
@@ -185,8 +184,8 @@ class OAuth2ServiceTest
         final String token1 = service1.retrieveAccessToken();
         final String token2 = service2.retrieveAccessToken();
 
-        assertThat(token1).isEqualTo("token_1");
-        assertThat(token2).isEqualTo("token_2");
+        assertThat(token1).isEqualTo(TOKEN_1);
+        assertThat(token2).isEqualTo(TOKEN_2);
 
         SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
         SERVER_2.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
