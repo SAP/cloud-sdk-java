@@ -5,16 +5,15 @@ on:
     branches: [ "main" ]
 
 env:
-  CI_BUILD_WORKFLOW: "ci.yaml" # Name of the workflow that should be triggered for CI builds
-  RELEASE_ARTIFACT_NAME: "sap-cloud-sdk.zip" # Name of the artifact that should be downloaded from the CI build workflow
+  CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI builds
+  RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI build workflow
   COMMIT_SHA: ${{ github.sha }}
   BRANCH_NAME: ${{ github.ref_name }}
-  BRANCH_REF: ${{ github.ref }}
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version --threads 1C"
 
 jobs:
   run-ci:
-    name: Continuous Integration
+    name: "Continuous Integration"
     runs-on: ubuntu-latest
     outputs:
       ci-run-id: ${{ steps.trigger-ci.outputs.run-id }}
@@ -22,37 +21,36 @@ jobs:
       actions: write # needed to trigger the ci-build workflow
       statuses: write # needed to update the commit status
     steps:
-      - name: Checkout repository
+      - name: "Checkout repository"
         uses: actions/checkout@v4
 
-      - name: Trigger CI Workflow
+      - name: "Trigger CI Workflow"
         id: trigger-ci
         uses: ./.github/actions/trigger-workflow
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ env.BRANCH_NAME }}
-          commit-sha: ${{ env.COMMIT_SHA }}
+          commit: ${{ env.COMMIT_SHA }}
           parameters: >
-            -f repository-version=${{ env.BRANCH_REF }} 
-            -f create-release-artifacts=true 
+            -f build-release-artifacts=true
 
-      - name: Await CI Workflow
+      - name: "Await CI Workflow"
         uses: ./.github/actions/await-workflow
         with:
           run-id: ${{ steps.trigger-ci.outputs.run-id }}
           commit-status: "Continuous Integration Workflow"
 
   deploy-snapshot:
-    name: Deploy Snapshot
+    name: "Deploy Snapshot"
     needs: [ run-ci ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       actions: read # needed to download the artifacts from the ci-build workflow
     steps:
-      - name: Checkout repository
+      - name: "Checkout repository"
         uses: actions/checkout@v4
-      - name: Setup java
+      - name: "Setup java"
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
@@ -61,18 +59,16 @@ jobs:
           server-username: ${{ secrets.ARTIFACTORY_USER }}
           server-password: ${{ secrets.ARTIFACTORY_TOKEN }}
 
-      - name: Publish Snapshot
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: "Download Release Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.RELEASE_ARTIFACT_NAME }}
+          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+
+      - name: "Publish Snapshot"
+        working-directory: ${{ env.RELEASE_ARTIFACT_NAME }}
         run: >
-          gh run download ${{ needs.run-ci.outputs.ci-run-id }} --name "${{ env.RELEASE_ARTIFACT_NAME }}" -d .
-          
-          unzip "${{ env.RELEASE_ARTIFACT_NAME }}" -d .
-
-          cd release
-
-          mvn
-          ${{ env.MVN_CLI_ARGS }}
+          mvn ${{ env.MVN_CLI_ARGS }}
           -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
           -DrepositoryId=artifactory-snapshots
           -Dmaven.install.skip=true
@@ -86,9 +82,9 @@ jobs:
     needs: [ run-ci, deploy-snapshot ]
     if: ${{ failure() }}
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v4
-      - name: Notify
+      - name: "Notify"
         run: python .pipeline/scripts/notify.py
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
