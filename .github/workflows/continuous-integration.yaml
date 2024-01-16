@@ -23,7 +23,7 @@ on:
 env:
   M2_ROOT: ~/.m2/
   RELEASE_ARTIFACT_NAME: "release-artifacts"
-  RELEASE_ARTIFACT_PATH: "~/.sdk-release"
+  RELEASE_ARTIFACT_PATH: "$HOME/.sdk-release"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
     ~/.m2/repository/com/sap/cloud/sdk/
