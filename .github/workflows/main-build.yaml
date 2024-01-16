@@ -64,6 +64,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.RELEASE_ARTIFACT_NAME }}
+          github-token: ${{ github.token }}
           run-id: ${{ needs.run-ci.outputs.ci-run-id }}
 
       - name: "Publish Snapshot"
