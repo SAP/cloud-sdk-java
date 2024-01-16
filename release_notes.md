@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- The de-facto standard `resilience4j` implementation for the resilience API now included by default.
+- The de-facto standard `resilience4j` implementation for the resilience API is now included by default.
   In case you are loading a different implementation of the `Resilience4jDecorationStrategy` via the Java Service Provider Interface (SPI), you should use `resilience-api` and ensure `resilience4j` is not loaded transitively.
   Alternatively, you can invoke `ResilienceDecorator.setDecorationStrategy` explicitly in your code.
   - In case you are using custom facade implementations for accessors (e.g. `TenantAccessor`) this might have additional implications.
