@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1R
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -266,7 +267,7 @@ class DestinationKeyStoreExtractor
     private static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
     {
         try {
-            final String s = new String(Base64.getDecoder().decode(data));
+            final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8);
             final int del = s.indexOf("-----BEGIN CERTIFICATE-----");
             if( del <= 0 ) {
                 throw new IllegalArgumentException("PEM format cannot be parsed.");
