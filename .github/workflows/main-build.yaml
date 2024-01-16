@@ -30,8 +30,9 @@ jobs:
         with:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ env.BRANCH_NAME }}
-          commit: ${{ env.COMMIT_SHA }}
+          commit-sha: ${{ env.COMMIT_SHA }}
           parameters: >
+            -f commit=${{ env.COMMIT_SHA }}
             -f build-release-artifacts=true
 
       - name: "Await CI Workflow"
