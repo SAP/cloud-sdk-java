@@ -10,12 +10,12 @@ on:
         description: "Commit SHA of the code to be built"
         required: true
       build-release-artifacts:
-        description: "Whether to build release artifacts"
+        description: "Build Release Artifacts"
         required: false
         type: boolean
         default: false
       run-blackduck-scan:
-        description: "Whether to run a BlackDuck scan"
+        description: "Run BlackDuck Scan"
         required: false
         type: boolean
         default: false
@@ -23,6 +23,7 @@ on:
 env:
   M2_ROOT: ~/.m2/
   RELEASE_ARTIFACT_NAME: "release-artifacts"
+  RELEASE_ARTIFACT_PATH: "~/.sdk-release"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
     ~/.m2/repository/com/sap/cloud/sdk/
@@ -126,7 +127,8 @@ jobs:
           
           if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             VERSION=$(cat latest.json | jq -r .version)
-            python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix "${{ env.RELEASE_ARTIFACT_NAME }}"
+            mkdir -p ${{ env.RELEASE_ARTIFACT_PATH }}
+            python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix "${{ env.RELEASE_ARTIFACT_PATH }}/${{ env.RELEASE_ARTIFACT_NAME }}"
           else
             echo "[DEBUG] Skipping release artifact generation"
           fi
@@ -161,7 +163,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          path: ${{ env.RELEASE_ARTIFACT_NAME }}
+          path: ${{ env.RELEASE_ARTIFACT_PATH }}/${{ env.RELEASE_ARTIFACT_NAME }}
           retention-days: 1
       - name: "Upload SDK M2"
         uses: actions/upload-artifact@v4
