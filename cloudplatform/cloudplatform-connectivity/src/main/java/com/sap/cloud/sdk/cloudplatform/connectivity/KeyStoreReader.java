@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -25,7 +27,9 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.util.io.pem.PemObject;
 
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -62,7 +66,10 @@ class KeyStoreReader
 
     @Nonnull
     KeyStore createKeyStore( @Nonnull final Reader certReader, @Nonnull final Reader keyReader )
-        throws Exception
+        throws KeyStoreException,
+            CertificateException,
+            IOException,
+            NoSuchAlgorithmException
     {
         final Certificate[] clientCertificates =
             Try.of(() -> loadCertificates(certReader)).getOrElseGet(fallbackCertificates);
@@ -99,7 +106,9 @@ class KeyStoreReader
 
     @Nonnull
     static PrivateKey loadPrivateKey( @Nonnull final Reader keyReader, @Nullable final char[] password )
-        throws Exception
+        throws IOException,
+            OperatorCreationException,
+            PKCSException
     {
         try( PEMParser pemParser = new PEMParser(keyReader) ) {
             final Object raw = pemParser.readObject();
