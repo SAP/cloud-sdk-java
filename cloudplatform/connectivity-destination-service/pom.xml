@@ -64,11 +64,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>resilience4j</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>security</artifactId>
 		</dependency>
 		<dependency>
@@ -230,9 +225,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<configuration>
+					<ignoredUsedUndeclaredDependencies>
+						<!-- include resilience via the aggregator to ensure the default implementation is present -->
+						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience-api</ignoredUsedUndeclaredDependency>
+					</ignoredUsedUndeclaredDependencies>
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
-						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience4j</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<!-- Included by default to serve as the default implementation for service binding connectivity -->
