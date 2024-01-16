@@ -126,7 +126,7 @@ jobs:
           
           if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             VERSION=$(cat latest.json | jq -r .version)
-            python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix ${{ env.RELEASE_ARTIFACTS_NAME }}
+            python .pipeline/scripts/generate-release-artifacts.py --version $VERSION --path-prefix "${{ env.RELEASE_ARTIFACT_NAME }}"
           else
             echo "[DEBUG] Skipping release artifact generation"
           fi
