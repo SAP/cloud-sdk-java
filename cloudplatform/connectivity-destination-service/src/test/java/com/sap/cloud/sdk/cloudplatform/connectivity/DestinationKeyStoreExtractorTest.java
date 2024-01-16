@@ -1,8 +1,10 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -17,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.List;
 
@@ -183,6 +186,7 @@ class DestinationKeyStoreExtractorTest
 
     @Test
     void testGetKeyStoreWithPemFile()
+        throws KeyStoreException
     {
         final String fileLocation = PEM_FILE_KEY_STORE_LOCATION;
         final String fileContent = PEM_FILE_KEY_STORE_CONTENT;
@@ -200,6 +204,12 @@ class DestinationKeyStoreExtractorTest
 
         final Option<KeyStore> keyStore = new DestinationKeyStoreExtractor(testDestination).getKeyStore();
         assertThat(keyStore).isNotEmpty();
+
+        final String cert = "1";
+        assertThat(keyStore.get().getCertificate(cert))
+            .isNotNull()
+            .extracting(c -> ((X509Certificate) c).getSubjectX500Principal().getName(), as(STRING))
+            .contains("CN=pem-test");
     }
 
     @Test
