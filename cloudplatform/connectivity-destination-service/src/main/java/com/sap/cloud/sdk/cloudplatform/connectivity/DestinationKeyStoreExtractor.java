@@ -280,7 +280,7 @@ class DestinationKeyStoreExtractor
             }
 
             final String alias = "1";
-            final char[] pw = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
+            final char[] pw = Strings.isNullOrEmpty(password) ? new char[0] : password.toCharArray();
             return KeyStoreReader.createKeyStore(alias, pw, new StringReader(match.group()), new StringReader(key));
         }
         catch( final Exception e ) {

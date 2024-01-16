@@ -13,15 +13,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
 
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.SocketException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.Base64;
 
 import javax.net.ssl.SSLHandshakeException;
 import javax.security.auth.x500.X500Principal;
@@ -45,7 +43,7 @@ import lombok.SneakyThrows;
 class ClientCertificateAuthenticationLocalTest
 {
     private static final String RES =
-        "src/test/resources/%s/".formatted(ClientCertificateAuthenticationLocalTest.class.getSimpleName());
+        "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName();
     private static final String CCA_PASSWORD = "cca-password";
     private static final String JKS_PATH = RES + "/client-cert.pkcs12";
     private static final String CRT_PATH = RES + "/client-cert.crt";
@@ -106,9 +104,8 @@ class ClientCertificateAuthenticationLocalTest
     @SneakyThrows
     void testClientCorrectlyConfiguredPem()
     {
-        final String data = Files.readString(Path.of(CRT_PATH)) + "\n" + Files.readString(Path.of(KEY_PATH));
-        final String dataEnc = Base64.getEncoder().encodeToString(data.getBytes());
-        final KeyStore createdKeystore = DestinationKeyStoreExtractor.createNewKeyStoreFromPem(dataEnc, null);
+        final FileReader certs = new FileReader(CRT_PATH), key = new FileReader(KEY_PATH);
+        final KeyStore createdKeystore = KeyStoreReader.createKeyStore("1", new char[0], certs, key);
         final HttpDestination destination =
             spy(
                 DefaultHttpDestination

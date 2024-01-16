@@ -46,7 +46,7 @@ class KeyStoreReader
     @Nonnull
     static KeyStore createKeyStore(
         @Nonnull final String alias,
-        @Nullable final char[] password,
+        @Nonnull final char[] password,
         @Nonnull final Reader certReader,
         @Nonnull final Reader keyReader )
         throws KeyStoreException,
@@ -60,7 +60,7 @@ class KeyStoreReader
             Try.of(() -> loadKey(keyReader, password)).getOrElseThrow(e -> new DestinationAccessException(MSG_KEY, e));
         final KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null);
-        keyStore.setKeyEntry(alias, privateKey, password == null ? new char[0] : password, clientCertificates);
+        keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
         return keyStore;
     }
 

@@ -125,10 +125,5 @@
 			<artifactId>security</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-destination-service</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>
