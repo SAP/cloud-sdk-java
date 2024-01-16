@@ -408,7 +408,49 @@ jobs:
           git commit -m "Update to version ${{ needs.prepare-release.outputs.new_snapshot }}"
           git push
 
-      - name: Create PR
+      - name: Checkout SAP/cloud-sdk
+        uses: actions/checkout@v3
+        with:
+          repository: SAP/cloud-sdk
+          path: cloud-sdk
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: Create a new-release-notes branch
+        working-directory: ./cloud-sdk
+        run: git checkout -B new-release-notes
+
+      - name: Copy release notes to docs repo
+        run: cp release_notes.md cloud-sdk/
+
+      - name: Commit changes
+        working-directory: ./cloud-sdk
+        run: |
+          git add .
+          git commit -m "Add new release notes"
+
+      - name: Push changes
+        working-directory: ./cloud-sdk
+        run: git push origin new-release-notes
+
+      - name: Create Documentation repository Pull Request
+        working-directory: ./cloud-sdk
+        run: |
+          PR_TITLE="Add SAP Cloud SDK for Java v$MAJOR_VERSION release notes"
+          PR_BODY="Add release notes for v$MAJOR_VERSION to the SAP Cloud SDK for Java docs."
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+        env:
+          MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
+          VERSION: ${{ env.VERSION }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: Reset release notes
+        run: |
+          cp release_notes_template.md release_notes.md
+          git add .
+          git commit -m "Reset release notes"
+          git push
+
+      - name: Create SDK repository Pull Request
         run: |
           RELEASE_URL=$(gh release view rel/$VERSION --json url | jq -r .url)
           PR_BODY=$(python .pipeline/scripts/print-pr-body.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/$COMMIT_ID --release-url $RELEASE_URL)
