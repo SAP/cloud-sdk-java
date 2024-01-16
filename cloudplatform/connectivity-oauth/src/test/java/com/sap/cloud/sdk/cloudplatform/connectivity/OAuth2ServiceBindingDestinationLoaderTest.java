@@ -386,8 +386,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
             .isNotSameAs(result);
         assertThat(secondInvocationResult)
             .as("The destination objects should be equal so that they use the same HTTP client.")
-            .isEqualTo(result)
-            .isNotSameAs(result);
+            .isEqualTo(result);
 
         verify(sut, times(2))
             .createHeaderProvider(
