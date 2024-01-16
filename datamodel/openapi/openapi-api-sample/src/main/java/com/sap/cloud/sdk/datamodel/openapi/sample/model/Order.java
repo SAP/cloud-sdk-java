@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,6 +54,7 @@ public class Order
     private String nullableProperty;
 
     @JsonAnySetter
+    @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
@@ -264,6 +266,33 @@ public class Order
             throw new NoSuchElementException("Order has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
+    }
+
+    /**
+     * Put unrecognizable properties of the {@link Order}.
+     *
+     * @param customFields
+     *            The properties to be stored
+     */
+    @JsonIgnore
+    public void putAllCustomFields( @Nonnull Map<String, Object> customFields )
+    {
+        cloudSdkCustomFields.putAll(customFields);
+    }
+
+    /**
+     * Put an unrecognizable property of the {@link Order}. If the map previously contained a mapping for the key, the
+     * old value is replaced by the specified value.
+     *
+     * @param customFieldName
+     *            The name of the property
+     * @param customFieldValue
+     *            The value of the property
+     */
+    @JsonIgnore
+    public void putCustomField( @Nonnull String customFieldName, @Nonnull Object customFieldValue )
+    {
+        cloudSdkCustomFields.put(customFieldName, customFieldValue);
     }
 
     @Override

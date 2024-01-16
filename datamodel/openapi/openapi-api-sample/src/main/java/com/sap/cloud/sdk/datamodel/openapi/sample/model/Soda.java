@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -50,6 +51,7 @@ public class Soda
     private Float price;
 
     @JsonAnySetter
+    @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
@@ -225,6 +227,33 @@ public class Soda
             throw new NoSuchElementException("Soda has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
+    }
+
+    /**
+     * Put unrecognizable properties of the {@link Soda}.
+     *
+     * @param customFields
+     *            The properties to be stored
+     */
+    @JsonIgnore
+    public void putAllCustomFields( @Nonnull Map<String, Object> customFields )
+    {
+        cloudSdkCustomFields.putAll(customFields);
+    }
+
+    /**
+     * Put an unrecognizable property of the {@link Soda}. If the map previously contained a mapping for the key, the
+     * old value is replaced by the specified value.
+     *
+     * @param customFieldName
+     *            The name of the property
+     * @param customFieldValue
+     *            The value of the property
+     */
+    @JsonIgnore
+    public void putCustomField( @Nonnull String customFieldName, @Nonnull Object customFieldValue )
+    {
+        cloudSdkCustomFields.put(customFieldName, customFieldValue);
     }
 
     @Override
