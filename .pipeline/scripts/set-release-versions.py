@@ -13,6 +13,8 @@ class _CommentedTreeBuilder(ElementTree.TreeBuilder):
         self.data(data)
         self.end(ElementTree.Comment)
 
+def _update_readme(sdk_version):
+    _update_file("README.md", r'(maven_central-)(.+)(-blue\.svg)', r'\g<1>%s\g<3>' % sdk_version)
 
 def _update_pom_files(sdk_version):
     _update_version_tags(sdk_version)
@@ -72,6 +74,8 @@ def _update_file(file_name, search_str, replace_str):
 
 def set_sdk_version(full_version):
     _update_pom_files(full_version)
+    if "SNAPSHOT" not in full_version:
+        _update_readme(full_version)
 
 if __name__ == '__main__':
     try:
