@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.ArgumentMatchers.any;
@@ -210,6 +211,41 @@ class DestinationKeyStoreExtractorTest
             .isNotNull()
             .extracting(c -> ((X509Certificate) c).getSubjectX500Principal().getName(), as(STRING))
             .contains("CN=pem-test");
+    }
+
+    @Test
+    void testBrokenKeyStoreWithPemFile()
+    {
+        final String[] cases =
+            new String[] {
+                "", // empty
+                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n", // only one cert
+                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n".repeat(5), // multiple certs
+                "-----BEGIN PRIVATE KEY-----\nFOO\n-----END PRIVATE KEY-----\n" // only a key
+            };
+
+        for( final String c : cases ) {
+            final String fileLocation = "foo.pem";
+            final String fileContent = Base64.getEncoder().encodeToString(c.getBytes());
+
+            final DefaultHttpDestination testDestination =
+                DefaultHttpDestination
+                    .builder(VALID_URI)
+                    .name(MOCKED_DESTINATION_NAME)
+                    .property(DestinationProperty.KEY_STORE_LOCATION, fileLocation)
+                    .property(DestinationProperty.KEY_STORE_PASSWORD, PEM_KEY_STORE_PASSWORD)
+                    .property(
+                        DestinationProperty.CERTIFICATES,
+                        createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
+                    .build();
+
+            assertThatCode(() -> new DestinationKeyStoreExtractor(testDestination).getKeyStore())
+                .isInstanceOf(DestinationAccessException.class)
+                .hasMessageContaining("Failed to instantiate new KeyStore.")
+                .cause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("PEM format cannot be parsed.");
+        }
     }
 
     @Test

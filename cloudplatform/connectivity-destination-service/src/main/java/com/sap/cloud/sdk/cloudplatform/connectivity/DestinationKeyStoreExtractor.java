@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -267,14 +269,19 @@ class DestinationKeyStoreExtractor
     private static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
     {
         try {
-            final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8);
-            final int del = s.indexOf("-----BEGIN CERTIFICATE-----");
-            if( del <= 0 ) {
+            final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
+
+            final Pattern p = Pattern.compile("[-]+BEGIN CERTIFICATE[-]+.*[-]+END CERTIFICATE[-]+", Pattern.DOTALL);
+            final Matcher match = p.matcher(s);
+            final String key;
+
+            if( !match.find() || (key = s.substring(0, match.start()) + s.substring(match.end())).isEmpty() ) {
                 throw new IllegalArgumentException("PEM format cannot be parsed.");
             }
+
             final char[] pw = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
             final KeyStoreReader reader = KeyStoreReader.builder().alias("1").password(pw).build();
-            return reader.createKeyStore(new StringReader(s.substring(del)), new StringReader(s.substring(0, del)));
+            return reader.createKeyStore(new StringReader(match.group()), new StringReader(key));
         }
         catch( final Exception e ) {
             throw new DestinationAccessException("Failed to instantiate new KeyStore.", e);
