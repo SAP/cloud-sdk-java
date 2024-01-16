@@ -9,12 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ProxyConfiguration;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
@@ -46,10 +42,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker
 
     static final String MOCKED_TENANT = "00000000-0000-0000-0000-000000000000";
     static final String MOCKED_PRINCIPAL = "MockedUser";
-
-    @Getter( AccessLevel.PACKAGE )
-    @Nullable
-    private ProxyConfiguration proxyConfiguration;
 
     @Getter( AccessLevel.PACKAGE )
     private LocaleFacade localeFacade;
@@ -89,20 +81,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker
     public MockUtil()
     {
         CacheManager.invalidateAll();
-    }
-
-    /**
-     * Set the proxy configuration.
-     *
-     * @param proxyConfiguration
-     *            The proxy configuration.
-     * @return The MockUtil reference.
-     */
-    @Nonnull
-    public MockUtil withProxy( @Nullable final ProxyConfiguration proxyConfiguration )
-    {
-        this.proxyConfiguration = proxyConfiguration;
-        return this;
     }
 
     /**
