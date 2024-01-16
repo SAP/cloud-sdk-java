@@ -56,10 +56,11 @@ class AbstractX509SslContextProviderTest
 
     @Test
     void testKeyParsing()
-        throws IOException
+        throws Exception
     {
         final FileReader key = new FileReader(getTestFile("valid_key.pem"));
-        final PrivateKey privateKey = KeyStoreReader.loadPrivateKey(key);
+        final char[] pw = "changeit".toCharArray();
+        final PrivateKey privateKey = KeyStoreReader.loadPrivateKey(key, pw);
 
         assertThat(privateKey.getAlgorithm()).containsIgnoringCase("RSA");
     }
@@ -69,7 +70,8 @@ class AbstractX509SslContextProviderTest
         throws FileNotFoundException
     {
         final FileReader key = new FileReader(getTestFile("invalid_key"));
-        assertThatThrownBy(() -> KeyStoreReader.loadPrivateKey(key)).isInstanceOf(CloudPlatformException.class);
+        final char[] pw = "changeit".toCharArray();
+        assertThatThrownBy(() -> KeyStoreReader.loadPrivateKey(key, pw)).isInstanceOf(CloudPlatformException.class);
     }
 
     @Test

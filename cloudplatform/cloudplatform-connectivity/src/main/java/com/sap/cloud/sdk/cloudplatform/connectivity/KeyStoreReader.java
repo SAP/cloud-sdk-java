@@ -19,9 +19,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.bouncycastle.util.io.pem.PemObject;
 
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -62,7 +66,8 @@ class KeyStoreReader
     {
         final Certificate[] clientCertificates =
             Try.of(() -> loadCertificates(certReader)).getOrElseGet(fallbackCertificates);
-        final PrivateKey privateKey = Try.of(() -> loadPrivateKey(keyReader)).getOrElseGet(fallbackPrivateKey);
+        final PrivateKey privateKey =
+            Try.of(() -> loadPrivateKey(keyReader, password)).getOrElseGet(fallbackPrivateKey);
         final KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null);
         keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
@@ -93,15 +98,23 @@ class KeyStoreReader
     }
 
     @Nonnull
-    static PrivateKey loadPrivateKey( @Nonnull final Reader keyReader )
-        throws IOException
+    static PrivateKey loadPrivateKey( @Nonnull final Reader keyReader, @Nullable final char[] password )
+        throws Exception
     {
         try( PEMParser pemParser = new PEMParser(keyReader) ) {
-            final PEMKeyPair keyPair = (PEMKeyPair) pemParser.readObject();
-            if( keyPair == null ) {
-                throw new CloudPlatformException("Provided key data did not contain a valid PEM key.");
+            final Object raw = pemParser.readObject();
+            if( raw instanceof PEMKeyPair ) {
+                return new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) raw).getPrivate();
             }
-            return new JcaPEMKeyConverter().getKeyPair(keyPair).getPrivate();
+            if( raw instanceof PrivateKey ) {
+                return (PrivateKey) raw;
+            }
+            if( raw instanceof PKCS8EncryptedPrivateKeyInfo ) {
+                final InputDecryptorProvider c = new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password);
+                final PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) raw).decryptPrivateKeyInfo(c);
+                return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+            }
+            throw new CloudPlatformException("Provided key data did not contain a valid PEM key.");
         }
     }
 }
