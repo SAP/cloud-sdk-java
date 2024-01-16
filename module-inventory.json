@@ -155,6 +155,17 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
+    "artifactId": "resilience-api",
+    "packaging": "jar",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Stable",
+    "pomFile": "cloudplatform/resilience-api/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
+    "parentArtifactId": "cloudplatform-parent",
+    "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "resilience4j",
     "packaging": "jar",
     "releaseAudience": "Public",

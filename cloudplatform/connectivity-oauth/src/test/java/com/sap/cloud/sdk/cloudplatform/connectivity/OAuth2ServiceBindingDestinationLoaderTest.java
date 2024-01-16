@@ -236,7 +236,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
