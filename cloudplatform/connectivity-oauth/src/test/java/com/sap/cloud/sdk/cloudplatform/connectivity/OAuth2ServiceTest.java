@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 
@@ -221,7 +222,7 @@ class OAuth2ServiceTest
         final OAuth2Service service = new OAuth2Service(SERVER_1.baseUrl(), IDENTITY_1, TECHNICAL_USER_PROVIDER);
 
         final ResilienceConfiguration config = service.getResilienceConfig();
-        assertThat(config.identifier()).isEqualTo(IDENTITY_1.getId());
+        assertThat(config.identifier()).isEqualTo(URI.create(SERVER_1.baseUrl()).getHost() + "-" + IDENTITY_1.getId());
         assertThat(config.isolationMode()).isEqualTo(ResilienceIsolationMode.TENANT_OPTIONAL);
         assertThat(config.timeLimiterConfiguration().timeoutDuration()).isGreaterThan(Duration.ZERO);
     }

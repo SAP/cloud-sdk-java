@@ -90,7 +90,7 @@ class OAuth2Service
          */
         resilienceConfig =
             ResilienceConfiguration
-                .of(identity.getId())
+                .of(endpoints.getTokenEndpoint().getHost() + "-" + identity.getId())
                 .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
                 .timeLimiterConfiguration(
                     ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
