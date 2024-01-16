@@ -60,7 +60,7 @@ class KeyStoreReader
             Try.of(() -> loadKey(keyReader, password)).getOrElseThrow(e -> new DestinationAccessException(MSG_KEY, e));
         final KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null);
-        keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
+        keyStore.setKeyEntry(alias, privateKey, password == null ? new char[0] : password, clientCertificates);
         return keyStore;
     }
 
@@ -106,6 +106,9 @@ class KeyStoreReader
                 final InputDecryptorProvider c = new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password);
                 final PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) raw).decryptPrivateKeyInfo(c);
                 return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+            }
+            if( raw instanceof PrivateKeyInfo ) {
+                return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) raw);
             }
             throw new IllegalArgumentException("Provided key data did not contain a valid PEM key.");
         }

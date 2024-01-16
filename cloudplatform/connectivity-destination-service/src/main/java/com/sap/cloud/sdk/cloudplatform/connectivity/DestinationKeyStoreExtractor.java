@@ -266,7 +266,7 @@ class DestinationKeyStoreExtractor
     }
 
     @Nonnull
-    private static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
+    static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
     {
         try {
             final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
@@ -275,7 +275,7 @@ class DestinationKeyStoreExtractor
             final Matcher match = p.matcher(s);
             final String key;
 
-            if( !match.find() || (key = s.substring(0, match.start()) + s.substring(match.end())).isEmpty() ) {
+            if( !match.find() || (key = (s.substring(0, match.start()) + s.substring(match.end())).trim()).isEmpty() ) {
                 throw new IllegalArgumentException("PEM format cannot be parsed.");
             }
 
