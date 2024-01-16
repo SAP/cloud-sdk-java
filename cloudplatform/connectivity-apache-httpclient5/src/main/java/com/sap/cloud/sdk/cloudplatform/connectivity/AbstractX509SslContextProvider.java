@@ -21,7 +21,8 @@ import io.vavr.control.Try;
  */
 abstract class AbstractX509SslContextProvider implements PlatformSslContextProvider
 {
-    private static final KeyStoreReader KEY_STORE_READER = new KeyStoreReader();
+    private static final String DEFAULT_ALIAS = "instance-identity";
+    private static final char[] DEFAULT_PASSWORD = "changeit".toCharArray();
 
     /**
      * Convenience for {@code tryGetContext(new StringReader(cert), new StringReader(key))}
@@ -54,8 +55,8 @@ abstract class AbstractX509SslContextProvider implements PlatformSslContextProvi
     {
         final SSLContextBuilder sslContextBuilder = SSLContextBuilder.create();
         return Try
-            .of(() -> KEY_STORE_READER.createKeyStore(certReader, keyReader))
-            .mapTry(k -> sslContextBuilder.loadKeyMaterial(k, KEY_STORE_READER.password))
+            .of(() -> KeyStoreReader.createKeyStore(DEFAULT_ALIAS, DEFAULT_PASSWORD, certReader, keyReader))
+            .mapTry(k -> sslContextBuilder.loadKeyMaterial(k, DEFAULT_PASSWORD))
             .mapTry(SSLContextBuilder::build);
     }
 }

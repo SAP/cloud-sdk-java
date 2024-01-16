@@ -16,7 +16,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,49 +31,33 @@ import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.util.io.pem.PemObject;
 
-import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor( access = AccessLevel.PRIVATE )
 class KeyStoreReader
 {
-    @Builder.Default
-    @Nonnull
-    final String alias = "instance-identity";
-
-    @Builder.Default
-    @Nullable
-    final char[] password = "changeit".toCharArray();
-
-    @Builder.Default
-    @Nonnull
-    final Function<Throwable, Certificate[]> fallbackCertificates = ( e ) -> {
-        throw new CloudPlatformException("Provided certificate data did not contain any valid X.509 certificates.", e);
-    };
-
-    @Builder.Default
-    @Nonnull
-    final Function<Throwable, PrivateKey> fallbackPrivateKey = ( e ) -> {
-        throw new CloudPlatformException("Provided key data did not contain a valid PEM key.", e);
-    };
+    private static final String MSG_CERT = "Provided certificate data did not contain any valid X.509 certificates.";
+    private static final String MSG_KEY = "Provided key data did not contain a valid PEM key";
 
     @Nonnull
-    KeyStore createKeyStore( @Nonnull final Reader certReader, @Nonnull final Reader keyReader )
+    static KeyStore createKeyStore(
+        @Nonnull final String alias,
+        @Nullable final char[] password,
+        @Nonnull final Reader certReader,
+        @Nonnull final Reader keyReader )
         throws KeyStoreException,
             CertificateException,
             IOException,
             NoSuchAlgorithmException
     {
         final Certificate[] clientCertificates =
-            Try.of(() -> loadCertificates(certReader)).getOrElseGet(fallbackCertificates);
+            Try.of(() -> loadCertificates(certReader)).getOrElseThrow(e -> new DestinationAccessException(MSG_CERT, e));
         final PrivateKey privateKey =
-            Try.of(() -> loadPrivateKey(keyReader, password)).getOrElseGet(fallbackPrivateKey);
+            Try.of(() -> loadKey(keyReader, password)).getOrElseThrow(e -> new DestinationAccessException(MSG_KEY, e));
         final KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null);
         keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
@@ -99,13 +82,14 @@ class KeyStoreReader
             }
         }
         if( certs.isEmpty() ) {
-            throw new CloudPlatformException("Provided certificate data did not contain any valid X.509 certificates.");
+            throw new IllegalArgumentException(
+                "Provided certificate data did not contain any valid X.509 certificates.");
         }
         return certs.toArray(new Certificate[0]);
     }
 
     @Nonnull
-    static PrivateKey loadPrivateKey( @Nonnull final Reader keyReader, @Nullable final char[] password )
+    static PrivateKey loadKey( @Nonnull final Reader keyReader, @Nullable final char[] password )
         throws IOException,
             OperatorCreationException,
             PKCSException
@@ -123,7 +107,7 @@ class KeyStoreReader
                 final PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) raw).decryptPrivateKeyInfo(c);
                 return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
             }
-            throw new CloudPlatformException("Provided key data did not contain a valid PEM key.");
+            throw new IllegalArgumentException("Provided key data did not contain a valid PEM key.");
         }
     }
 }

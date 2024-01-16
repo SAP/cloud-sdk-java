@@ -279,9 +279,9 @@ class DestinationKeyStoreExtractor
                 throw new IllegalArgumentException("PEM format cannot be parsed.");
             }
 
+            final String alias = "1";
             final char[] pw = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
-            final KeyStoreReader reader = KeyStoreReader.builder().alias("1").password(pw).build();
-            return reader.createKeyStore(new StringReader(match.group()), new StringReader(key));
+            return KeyStoreReader.createKeyStore(alias, pw, new StringReader(match.group()), new StringReader(key));
         }
         catch( final Exception e ) {
             throw new DestinationAccessException("Failed to instantiate new KeyStore.", e);
