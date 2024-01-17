@@ -71,7 +71,7 @@ jobs:
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
-          gut push origin $TAG_NAME
+          git push origin $TAG_NAME
 
   run-ci:
     name: "Continuous Integration"
