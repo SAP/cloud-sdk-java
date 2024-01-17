@@ -49,9 +49,11 @@ class EntitySelectableGenerator
             .add(
                 String
                     .format(
-                        ""
-                            + "Interface to enable OData entity selectors for {@link %1$s %2$s}. "
-                            + "This interface is used by {@link %3$s %4$s} and {@link %5$s %6$s}.\n\n",
+                        """
+                            Interface to enable OData entity selectors for {@link %1$s %2$s}. \
+                            This interface is used by {@link %3$s %4$s} and {@link %5$s %6$s}.
+
+                            """,
                         entityClass.fullName(),
                         entityClass.name(),
                         entityField.fullName(),

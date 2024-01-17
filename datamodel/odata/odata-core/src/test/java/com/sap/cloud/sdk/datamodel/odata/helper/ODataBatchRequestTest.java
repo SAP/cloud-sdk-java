@@ -84,13 +84,15 @@ class ODataBatchRequestTest
 
     private static String multipartNoContent()
     {
-        return "Content-Type: application/http\r\n"
-            + "Content-Length: 71\r\n"
-            + "content-transfer-encoding: binary\r\n"
-            + "\r\n"
-            + "HTTP/1.1 204 No Content\r\n"
-            + "Content-Length: 0\r\n"
-            + "dataserviceversion: 2.0\r\n";
+        return """
+            Content-Type: application/http
+            Content-Length: 71
+            content-transfer-encoding: binary
+
+            HTTP/1.1 204 No Content
+            Content-Length: 0
+            dataserviceversion: 2.0
+            """;
     }
 
     private static final String SINGLE_CHANGESET_RESPONSE_MULTIPART =

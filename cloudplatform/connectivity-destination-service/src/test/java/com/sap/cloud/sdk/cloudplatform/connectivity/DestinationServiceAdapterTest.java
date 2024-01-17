@@ -306,9 +306,10 @@ class DestinationServiceAdapterTest
         final DestinationServiceAdapter adapterToTest = createSut(serviceBinding);
         assertThatThrownBy(adapterToTest::getProviderTenantId)
             .isInstanceOf(DestinationAccessException.class)
-            .hasMessage(
-                "The provider tenant id is not defined in the service binding."
-                    + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
+            .hasMessage("""
+                The provider tenant id is not defined in the service binding.\
+                 Please verify that the service binding contains the field 'tenantid' in the credentials list.\
+                """);
     }
 
     private static DestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )

@@ -112,15 +112,10 @@ public class DefaultAnnotationStrategy implements AnnotationStrategy
         if( !isArgLimitExceeded ) {
             result.add(new AnnotationDefinition(Builder.class));
         } else {
-            logger
-                .info(
-                    String
-                        .format(
-                            "  VdmObject class %s has %d properties, which exceeds the Java limit of constructor arguments (%d). "
-                                + "Builder will not be available for this entity.",
-                            context.getJavaClassName(),
-                            context.getNumberOfProperties(),
-                            JAVA_MAXIMUM_ARGUMENTS));
+            logger.info(String.format("""
+                  VdmObject class %s has %d properties, which exceeds the Java limit of constructor arguments (%d). \
+                Builder will not be available for this entity.\
+                """, context.getJavaClassName(), context.getNumberOfProperties(), JAVA_MAXIMUM_ARGUMENTS));
         }
 
         result.add(new AnnotationDefinition(Data.class));

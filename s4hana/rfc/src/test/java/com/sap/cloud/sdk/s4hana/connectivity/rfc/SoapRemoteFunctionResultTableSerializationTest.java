@@ -38,22 +38,22 @@ class SoapRemoteFunctionResultTableSerializationTest
     void testDeserializeEmptyTable()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
-        final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
-                + "   <soap-env:Header/>\n"
-                + "   <soap-env:Body>\n"
-                + "      <n0:FtbiGetFxRatesResponse xmlns:n0=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "         <EtFxRates>\n"
-                + "            <item>\n"
-                +
-                //Here is the empty inner table named "Messages"
-                "               <Messages/>\n"
-                + "            </item>\n"
-                + "         </EtFxRates>\n"
-                + "         <EtMessagesGeneral/>\n"
-                + "      </n0:FtbiGetFxRatesResponse>\n"
-                + "   </soap-env:Body>\n"
-                + "</soap-env:Envelope>";
+        // Contains empty inner table is named "Messages"
+        final String responsePayload = """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+               <soap-env:Header/>
+               <soap-env:Body>
+                  <n0:FtbiGetFxRatesResponse xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+                     <EtFxRates>
+                        <item>
+                           <Messages/>
+                        </item>
+                     </EtFxRates>
+                     <EtMessagesGeneral/>
+                  </n0:FtbiGetFxRatesResponse>
+               </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         WireMock
             .stubFor(
@@ -82,40 +82,39 @@ class SoapRemoteFunctionResultTableSerializationTest
     void testDeserializeFilledTable()
         throws com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
     {
-        final String responsePayload =
-            "<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
-                + "   <soap-env:Header/>\n"
-                + "   <soap-env:Body>\n"
-                + "      <n0:FtbiGetFxRatesResponse xmlns:n0=\"urn:sap-com:document:sap:soap:functions:mc-style\">\n"
-                + "         <EtFxRates>\n"
-                + "            <item>\n"
-                + "               <RowUuid>b251ecf65bec48ed9db39a313a7654ad</RowUuid>\n"
-                +
-                //Here is the filled inner table with one entry
-                "               <Messages>\n"
-                + "                  <item>\n"
-                + "                     <Type>W</Type>\n"
-                + "                     <Id>FTBB</Id>\n"
-                + "                     <Number>005</Number>\n"
-                + "                     <Message/>\n"
-                + "                     <LogNo/>\n"
-                + "                     <LogMsgNo>000000</LogMsgNo>\n"
-                + "                     <MessageV1>06/01/2020</MessageV1>\n"
-                + "                     <MessageV2>05/26/2020</MessageV2>\n"
-                + "                     <MessageV3/>\n"
-                + "                     <MessageV4/>\n"
-                + "                     <Parameter/>\n"
-                + "                     <Row>0</Row>\n"
-                + "                     <Field/>\n"
-                + "                     <System/>\n"
-                + "                  </item>\n"
-                + "               </Messages>\n"
-                + "            </item>\n"
-                + "         </EtFxRates>\n"
-                + "         <EtMessagesGeneral/>\n"
-                + "      </n0:FtbiGetFxRatesResponse>\n"
-                + "   </soap-env:Body>\n"
-                + "</soap-env:Envelope>";
+        final String responsePayload = """
+            <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+               <soap-env:Header/>
+               <soap-env:Body>
+                  <n0:FtbiGetFxRatesResponse xmlns:n0="urn:sap-com:document:sap:soap:functions:mc-style">
+                     <EtFxRates>
+                        <item>
+                           <RowUuid>b251ecf65bec48ed9db39a313a7654ad</RowUuid>
+                           <Messages>
+                              <item>
+                                 <Type>W</Type>
+                                 <Id>FTBB</Id>
+                                 <Number>005</Number>
+                                 <Message/>
+                                 <LogNo/>
+                                 <LogMsgNo>000000</LogMsgNo>
+                                 <MessageV1>06/01/2020</MessageV1>
+                                 <MessageV2>05/26/2020</MessageV2>
+                                 <MessageV3/>
+                                 <MessageV4/>
+                                 <Parameter/>
+                                 <Row>0</Row>
+                                 <Field/>
+                                 <System/>
+                              </item>
+                           </Messages>
+                        </item>
+                     </EtFxRates>
+                     <EtMessagesGeneral/>
+                  </n0:FtbiGetFxRatesResponse>
+               </soap-env:Body>
+            </soap-env:Envelope>
+            """;
 
         WireMock
             .stubFor(

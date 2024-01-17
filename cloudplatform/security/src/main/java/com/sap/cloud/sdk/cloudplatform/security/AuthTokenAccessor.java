@@ -158,15 +158,13 @@ public final class AuthTokenAccessor
     {
         final AuthTokenFacade facade = getAuthTokenFacade();
         if( !ExecutableAuthTokenFacade.class.isAssignableFrom(facade.getClass()) ) {
-            throw new ThreadContextExecutionException(
-                String
-                    .format(
-                        "The 'executeWith...' API is currently supported only when using the Cloud SDK's 'DefaultFacade'"
-                            + " implementations (e.g. '%s'). This is an issue especially when using the CAP integration"
-                            + " ('cds-integration-cloud-sdk'). To workaround this shortcoming, please refer to the CAP"
-                            + " documentation about how to manipulate the request context:"
-                            + " https://cap.cloud.sap/docs/java/request-contexts#defining-requestcontext.",
-                        ExecutableAuthTokenFacade.class.getName()));
+            throw new ThreadContextExecutionException(String.format("""
+                The 'executeWith...' API is currently supported only when using the Cloud SDK's 'DefaultFacade'\
+                 implementations (e.g. '%s'). This is an issue especially when using the CAP integration\
+                 ('cds-integration-cloud-sdk'). To workaround this shortcoming, please refer to the CAP\
+                 documentation about how to manipulate the request context:\
+                 https://cap.cloud.sap/docs/java/request-contexts#defining-requestcontext.\
+                """, ExecutableAuthTokenFacade.class.getName()));
         }
 
         return ((ExecutableAuthTokenFacade) facade).executeWithAuthToken(authToken, callable);

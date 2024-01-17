@@ -137,26 +137,27 @@ class FieldSerializationTest
         OffsetDateTime dateTimeOffsetValue;
 
         // https://docs.oasis-open.org/odata/odata-json-format/v4.01/csprd06/odata-json-format-v4.01-csprd06.html#sec_PrimitiveValue
-        private static final String PAYLOAD_ODATA_REFERENCE =
-            "{"
-                + "\"@odata.type\":\"#TestEntity\","
-                + "\"ByteValue\":255,"
-                + "\"SByteValue\":-128,"
-                + "\"Int16Value\":1,"
-                + "\"Int32Value\":-1234,"
-                + "\"Int64Value\":1234567890,"
-                + "\"SingleValue\":1234.5677,"
-                + "\"DoubleValue\":1234.5678,"
-                + "\"DecimalValue\":110,"
-                + "\"BooleanValue\":false,"
-                + "\"StringValue\":\"test\","
-                + "\"BinaryValue\":\"AQID\","
-                + "\"GuidValue\":\"00000000-1111-2222-3333-444444444444\","
-                + "\"TimeOfDayValue\":\"12:00:00\","
-                + "\"DateValue\":\"1999-03-14\","
-                + "\"DateTimeOffsetValue\":\"1999-03-14T00:00:00Z\","
-                + "\"GeographyPoint\":{\"type\":\"Point\",\"coordinates\":[142.1,64.1]}"
-                + "}";
+        private static final String PAYLOAD_ODATA_REFERENCE = """
+            {\
+            "@odata.type":"#TestEntity",\
+            "ByteValue":255,\
+            "SByteValue":-128,\
+            "Int16Value":1,\
+            "Int32Value":-1234,\
+            "Int64Value":1234567890,\
+            "SingleValue":1234.5677,\
+            "DoubleValue":1234.5678,\
+            "DecimalValue":110,\
+            "BooleanValue":false,\
+            "StringValue":"test",\
+            "BinaryValue":"AQID",\
+            "GuidValue":"00000000-1111-2222-3333-444444444444",\
+            "TimeOfDayValue":"12:00:00",\
+            "DateValue":"1999-03-14",\
+            "DateTimeOffsetValue":"1999-03-14T00:00:00Z",\
+            "GeographyPoint":{"type":"Point","coordinates":[142.1,64.1]}\
+            }\
+            """;
     }
 
     @Test

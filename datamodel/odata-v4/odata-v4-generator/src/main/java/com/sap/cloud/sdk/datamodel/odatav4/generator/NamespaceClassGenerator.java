@@ -1147,13 +1147,10 @@ class NamespaceClassGenerator
                     precision,
                     scale);
             default:
-                logger
-                    .error(
-                        String
-                            .format(
-                                "    Unsupported type detected:\n" + "      property name: %s, type: %s",
-                                propertyName,
-                                propertyType.getKind()));
+                logger.error(String.format("""
+                        Unsupported type detected:
+                          property name: %s, type: %s\
+                    """, propertyName, propertyType.getKind()));
                 return null;
         }
     }

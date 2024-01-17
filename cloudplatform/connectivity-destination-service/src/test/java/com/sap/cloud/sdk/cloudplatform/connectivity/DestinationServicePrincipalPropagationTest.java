@@ -72,15 +72,18 @@ class DestinationServicePrincipalPropagationTest
 
     private static final Try<Principal> SOME_PRINCIPAL = Try.success(new DefaultPrincipal("p"));
 
-    private static final String DESTINATION =
-        "{\"destinationConfiguration\": {"
-            + "\"URL\": \"https://example.com\","
-            + "\"Name\": \"test\","
-            + "\"ProxyType\": \"OnPremise\","
-            + "\"Authentication\": \"PrincipalPropagation\","
-            + "\"CloudConnectorLocationId\":\"LOC1\","
-            + "\"Type\": \"HTTP\""
-            + "}}";
+    private static final String DESTINATION = """
+        {
+          "destinationConfiguration": {
+            "URL": "https://example.com",
+            "Name": "test",
+            "ProxyType": "OnPremise",
+            "Authentication": "PrincipalPropagation",
+            "CloudConnectorLocationId":"LOC1",
+            "Type": "HTTP"
+          }
+        }
+        """;
 
     private final AuthTokenFacade authTokenFacade = mock(AuthTokenFacade.class);
     private final TenantFacade tenantFacade = mock(TenantFacade.class);
