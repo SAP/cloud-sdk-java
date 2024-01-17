@@ -309,30 +309,22 @@ public class OrderWithTimestamp
     }
 
     /**
-     * Put unrecognizable properties of the {@link OrderWithTimestamp}.
-     *
-     * @param customFields
-     *            The properties to be stored
-     */
-    @JsonIgnore
-    public void putAllCustomFields( @Nonnull Map<String, Object> customFields )
-    {
-        cloudSdkCustomFields.putAll(customFields);
-    }
-
-    /**
-     * Put an unrecognizable property of the {@link OrderWithTimestamp}. If the map previously contained a mapping for
-     * the key, the old value is replaced by the specified value.
+     * Set an unrecognizable property of this {@link Order} instance. If the map previously contained a mapping for the
+     * key, the old value is replaced by the specified value. If the customFieldValue is null, the property is removed.
      *
      * @param customFieldName
      *            The name of the property
      * @param customFieldValue
-     *            The value of the property
+     *            The value of the property, if null, the property is removed.
      */
     @JsonIgnore
-    public void putCustomField( @Nonnull String customFieldName, @Nonnull Object customFieldValue )
+    public void setCustomField( @Nonnull String customFieldName, @Nullable Object customFieldValue )
     {
-        cloudSdkCustomFields.put(customFieldName, customFieldValue);
+        if( customFieldValue == null ) {
+            cloudSdkCustomFields.remove(customFieldName);
+        } else {
+            cloudSdkCustomFields.put(customFieldName, customFieldValue);
+        }
     }
 
     @Override

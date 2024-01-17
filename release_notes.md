@@ -33,8 +33,7 @@
 ### ✨ New Functionality
 
 - `OpenAPI` generated objects can now write custom fields which are not part of the object's schema:
-  - `putAllCustomFields(Map.of("nameOfField", "valueOfField", ...))`
-  - `putCustomField("nameOfField", "valueOfField")`
+  - `setCustomField("nameOfField", "valueOfField")`
 
 ### 📈 Improvements
 
