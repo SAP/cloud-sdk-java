@@ -83,7 +83,7 @@ public class OAuth2DestinationBuilder
             final OAuth2Service oauth2service = new OAuth2Service(tokenUrl, client, behalf);
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
-            destinationBuilder.name(client.getId());
+            destinationBuilder.name(String.valueOf(client.getId().hashCode()));
 
             return destinationBuilder
                 .headerProviders(new OAuth2HeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION));

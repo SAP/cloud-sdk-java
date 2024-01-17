@@ -215,10 +215,13 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
             createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
+        // use a hash code of the client id to not unnecessarily expose the client id
+        // (as the destination name is included in the toString() method of the destination
+        // this should be optional, as the client id is technically not a secret, but using a hash here doesn't hurt
         final String idString =
             Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
                 + "-"
-                + clientIdentity.getId();
+                + clientIdentity.getId().hashCode();
         return DefaultHttpDestination.builder(serviceUri).headerProviders(headerProvider).name(idString).build();
     }
 
