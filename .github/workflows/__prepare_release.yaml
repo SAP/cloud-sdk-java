@@ -15,6 +15,9 @@ env:
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
 
+  # TODO: replace this with the actual docs repo
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
+
 jobs:
   bump-version:
     name: "Bump Version"
@@ -154,9 +157,172 @@ jobs:
         if: ${{ failure() }}
         run: git push -d origin ${{ needs.bump-version.outputs.release-branch }}
 
-  create-pr:
-    name: "Create Update PR"
-    needs: [ bump-version, run-ci, create-release ]
+  create-docs-pr:
+    name: "Create JavaDocs PR"
+    needs: [ bump-version, run-ci ]
+    outputs:
+      pr-url: ${{ steps.create-javadoc-pr.outputs.PR_URL }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Code Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
+      - name: "Checkout Docs Repository"
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DOCS_REPO }}
+          path: ~/.cloud-sdk-docs
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+      # needed to get the aggregated JavaDocs
+      - name: "Download SDK Targets"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          path: ~/.targets
+
+      - name: "Determine Major Version"
+        id: determine-major-version
+        run: echo "MAJOR_VERSION=$(jq -r '.version' | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+
+      - name: "Prepare Git"
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
+
+      - name: "Replace JavaDoc"
+        id: replace-javadoc
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          TARGET_DIR=static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
+          
+          rm -rf $TARGET_DIR
+          mkdir -p $TARGET_DIR
+          mv ~/.targets/target/site/apidocs/* $TARGET_DIR
+          
+          git add -A $TARGET_DIR
+          
+          CHANGED_FILES="$(git status -s)"
+          if [[ -z "$CHANGED_FILES" ]]; then
+              echo "[DEBUG] No changes to API docs detected, skipping Pull Request creation."
+              echo "CREATE_PR=false" >> $GITHUB_OUTPUT
+              exit 0
+          fi
+          
+          echo "CREATE_PR=true" >> $GITHUB_OUTPUT
+          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          git switch --create $BRANCH_NAME
+          git commit -m "chore: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
+          COMMIT_SHA=$(git log -1 --pretty=format:"%H")
+          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+
+      - name: "Create JavaDoc PR"
+        id: create-javadoc-pr
+        if: ${{ steps.replace-javadoc.outputs.CREATE_PR == 'true' }}
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          PR_TITLE="Java: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
+          PR_BODY="Replace the contents of v${{ steps.determine-major-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
+          
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+          
+          PR_URL=$(gh pr list --repo "SAP/cloud-sdk" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
+          if [[ -z "$PR_URL" ]]; then
+              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in SAP/cloud-sdk"
+              exit 1
+          fi
+          
+          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+  create-release-notes-pr:
+    name: "Create Release Notes PR"
+    needs: [ bump-version, run-ci ]
+    outputs:
+      pr-url: ${{ steps.create-release-notes-pr.outputs.PR_URL }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Code Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
+      - name: "Checkout Docs Repository"
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DOCS_REPO }}
+          path: ~/.cloud-sdk-docs
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+      - name: "Prepare Git"
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
+
+      - name: "Update Release Notes"
+        run: |
+          TARGET_FILE=~/.cloud-sdk-docs/docs-java/release-notes/release-notes-0-to-14.mdx
+          SOURCE_FILE=./release_notes.md
+          TEMP_FILE=~/.temp-release-notes.md
+          
+          cat $SOURCE_FILE > $TEMP_FILE
+          cat $TARGET_FILE >> $TEMP_FILE
+          cat $TEMP_FILE > $TARGET_FILE
+
+      - name: "Push Release Notes"
+        id: push-release-notes
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          git add -A .
+          
+          CHANGED_FILES="$(git status -s)"
+          if [[ -z "$CHANGED_FILES" ]]; then
+            echo "[DEBUG] No changes to release notes detected, skipping Pull Request creation."
+            echo "CREATE_PR=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi 
+          
+          echo "CREATE_PR=true" >> $GITHUB_OUTPUT
+          BRANCH_NAME=java/release-notes-${{ needs.bump-version.outputs.release-version }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          git switch --create $BRANCH_NAME
+          git commit -m "chore: Add release notes ${{ needs.bump-version.outputs.release-version }}"
+          COMMIT_SHA=$(git log -1 --pretty=format:"%H")
+          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+
+      - name: "Create Release Notes PR"
+        id: create-release-notes-pr
+        if: ${{ steps.push-release-notes.outputs.CREATE_PR == 'true' }}
+        working-directory: ~/.cloud-sdk-docs
+        run: |
+          PR_TITLE="Java: Add Release Notes for ${{ needs.bump-version.outputs.release-version }}"
+          PR_BODY="Add release notes for version ${{ needs.bump-version.outputs.release-version }}."
+          
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+          
+          PR_URL=$(gh pr list --repo "SAP/cloud-sdk" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
+          if [[ -z "$PR_URL" ]]; then
+              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in SAP/cloud-sdk"
+              exit 1
+          fi
+          
+          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+  create-code-pr:
+    name: "Create Code PR"
+    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr ]
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
@@ -175,10 +341,28 @@ jobs:
           git commit -m "Update to version ${{ needs.bump-version.outputs.new-version }}"
           git push
 
+      - name: "Create PR Body"
+        id: create-pr-body
+        run: |
+          TEMP_FILE=~/.temp-pr-body.md
+          
+          COMMIT_URL="${{ github.event.repository.html_url }}/commit/${{ needs.bump-version.outputs.release-commit }}"
+          RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
+          
+          echo "## TODOs" > $TEMP_FILE
+          echo "" >> $TEMP_FILE
+          echo "- [ ] Review changes in [the release commit]($COMMIT_URL)" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-javadoc-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- [ ] Review the [Draft Release]($RELEASE_URL)" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** this PR" >> $TEMP_FILE
+          
+          echo "PR_BODY=$(cat $TEMP_FILE)" >> $GITHUB_OUTPUT
+
       - name: "Create PR"
         run: |
           RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
-          PR_BODY=$(python .pipeline/scripts/print-pr-body.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/${{ needs.bump-version.outputs.release-commit }} --release-url $RELEASE_URL)
+          PR_BODY=${{ steps.create-pr-body.outputs.PR_BODY }}
 
           gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "$PR_BODY"
         env:
@@ -186,7 +370,7 @@ jobs:
 
   notify-job:
     runs-on: ubuntu-latest
-    needs: [ bump-version, run-ci, create-release, create-pr ]
+    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr, create-code-pr ]
     if: ${{ failure() }}
     steps:
       - name: "Checkout Repository"
