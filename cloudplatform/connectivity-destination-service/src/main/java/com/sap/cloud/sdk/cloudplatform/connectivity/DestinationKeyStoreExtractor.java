@@ -47,12 +47,14 @@ class DestinationKeyStoreExtractor
     // See the supported key store file extensions:
     // https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
     // Mapping file extension to key store types
-    private static final Map<String, BiFunction<String, String, KeyStore>> SUPPORTED_KEY_STORES = ImmutableMap.of(
-        "pfx", (ks,pw) -> retrieveExistingKeyStore(ks, pw, "PKCS12"),
-        "p12", (ks,pw) -> retrieveExistingKeyStore(ks, pw, "PKCS12"),
-        "jks", (ks,pw) -> retrieveExistingKeyStore(ks, pw, "JKS"),
-        "pem", DestinationKeyStoreExtractor::createNewKeyStoreFromPem
-    );
+    private static final Map<String, BiFunction<String, String, KeyStore>> SUPPORTED_KEY_STORES =
+        ImmutableMap
+            .<String, BiFunction<String, String, KeyStore>> builder()
+            .put("pfx", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "PKCS12"))
+            .put("p12", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "PKCS12"))
+            .put("jks", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "JKS"))
+            .put("pem", DestinationKeyStoreExtractor::createNewKeyStoreFromPem)
+            .build();
 
     //Check out supported trust store file extensions here:
     //https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
