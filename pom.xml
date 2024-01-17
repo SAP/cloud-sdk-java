@@ -145,7 +145,8 @@
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-bom</artifactId>
 				<version>${jetty.version}</version>
-				<scope>test</scope>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!--Dependencies with runtime scope-->
 			<!-- replaces the excluded commons-logging with slf4j -->
