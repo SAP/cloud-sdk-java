@@ -1,20 +1,21 @@
-# 5.1.0-SNAPSHOT
+
+## 5.1.0-SNAPSHOT
 
 [All Release Changes](https://github.com/SAP/cloud-sdk-java/releases)
 
-## 🚧 Known Issues
+### 🚧 Known Issues
 
 - 
 
-## 🔧 Compatibility Notes
+### 🔧 Compatibility Notes
 
 - 
 
-## ✨ New Functionality
+### ✨ New Functionality
 
 - 
 
-## 📈 Improvements
+### 📈 Improvements
 
 - Dependency Updates:
   - SAP dependency updates:
@@ -25,6 +26,6 @@
     - Minor version updates:
       - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
 
-## 🐛 Fixed Issues
+### 🐛 Fixed Issues
 
 - 
