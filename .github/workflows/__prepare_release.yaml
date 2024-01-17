@@ -112,6 +112,7 @@ jobs:
     name: "Create GitHub Release"
     needs: [ bump-version, run-ci ]
     outputs:
+      release-name: ${{ steps.create-release.outputs.RELEASE_NAME }}
       release-url: ${{ steps.create-release.outputs.RELEASE_URL }}
     permissions:
       contents: write # needed to create a new release
@@ -148,7 +149,10 @@ jobs:
           tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/site/apidocs/ .
           tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
-          RELEASE_URL=$(gh release create "rel/${{ needs.bump-version.outputs.release-version }}" \
+          RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          
+          RELEASE_URL=$(gh release create "$RELEASE_NAME" \
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
@@ -205,7 +209,8 @@ jobs:
           mkdir -p $TARGET_DIR
           mv ./.targets/target/site/apidocs/* $TARGET_DIR
           
-          git add -A $TARGET_DIR
+          cd ./.cloud-sdk-docs
+          git add -A .
           
           CHANGED_FILES="$(git status -s)"
           if [[ -z "$CHANGED_FILES" ]]; then
@@ -380,7 +385,7 @@ jobs:
 
       - name: "Delete Release"
         if: ${{ needs.create-release.outputs.release-url != '' }}
-        run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-url }} --yes
+        run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-name }} --yes
         env:
           GITHUB_TOKEN: ${{ github.token }}
         continue-on-error: true
