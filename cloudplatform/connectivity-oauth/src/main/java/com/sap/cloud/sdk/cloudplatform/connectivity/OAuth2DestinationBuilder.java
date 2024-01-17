@@ -4,16 +4,11 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import java.time.Duration;
-import java.util.UUID;
-
 import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
 
 import com.google.common.annotations.Beta;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.security.config.ClientIdentity;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @Beta
 public class OAuth2DestinationBuilder
 {
-    private static final Duration TOKEN_RETRIEVAL_TIMEOUT = Duration.ofSeconds(10);
-
     /**
      * Helper interface to serve mandatory input for OAuth2 token endpoint.
      *
@@ -90,27 +83,10 @@ public class OAuth2DestinationBuilder
             final OAuth2Service oauth2service = new OAuth2Service(tokenUrl, client, behalf);
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
-            // random uuid to make sure equals and hash code works effectively by reference
-            final String destinationName = UUID.randomUUID().toString();
-            destinationBuilder.name(destinationName);
-
-            destinationBuilder
-                .property(
-                    OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                    createTokenRetrievalResilienceConfiguration(destinationName));
+            destinationBuilder.name(String.valueOf(client.getId().hashCode()));
 
             return destinationBuilder
                 .headerProviders(new OAuth2HeaderProvider(oauth2service, HttpHeaders.AUTHORIZATION));
         };
-    }
-
-    @Nonnull
-    private static ResilienceConfiguration createTokenRetrievalResilienceConfiguration(
-        @Nonnull final String destinationName )
-    {
-        return ResilienceConfiguration
-            .of(destinationName)
-            .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
-            .timeLimiterConfiguration(ResilienceConfiguration.TimeLimiterConfiguration.of(TOKEN_RETRIEVAL_TIMEOUT));
     }
 }
