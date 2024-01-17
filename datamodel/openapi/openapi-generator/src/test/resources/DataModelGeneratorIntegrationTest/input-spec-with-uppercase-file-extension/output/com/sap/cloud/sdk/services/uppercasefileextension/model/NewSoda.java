@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -57,6 +58,7 @@ public class NewSoda
   private Float price;
 
   @JsonAnySetter
+  @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
    /**
@@ -182,7 +184,7 @@ public class NewSoda
   }
 
   /**
-   * Get the value of an unrecognizable property of the {@link NewSoda}.
+   * Get the value of an unrecognizable property of this {@link NewSoda} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -194,6 +196,19 @@ public class NewSoda
     }
     return cloudSdkCustomFields.get(name);
   }
+
+  /**
+   * Set an unrecognizable property of this {@link NewSoda} instance. If the map previously contained a mapping
+   * for the key, the old value is replaced by the specified value.
+   * @param customFieldName The name of the property
+   * @param customFieldValue The value of the property
+   */
+  @JsonIgnore
+  public void setCustomField( @Nonnull String customFieldName, @Nullable Object customFieldValue )
+  {
+      cloudSdkCustomFields.put(customFieldName, customFieldValue);
+  }
+
 
   @Override
   public boolean equals(@Nullable final java.lang.Object o) {

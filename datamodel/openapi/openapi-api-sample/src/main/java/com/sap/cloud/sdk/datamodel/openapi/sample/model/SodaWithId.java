@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,6 +54,7 @@ public class SodaWithId
     private Long id;
 
     @JsonAnySetter
+    @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
@@ -248,7 +250,7 @@ public class SodaWithId
     }
 
     /**
-     * Get the value of an unrecognizable property of the {@link SodaWithId}.
+     * Get the value of an unrecognizable property of this {@link SodaWithId} instance.
      *
      * @param name
      *            The name of the property
@@ -264,6 +266,21 @@ public class SodaWithId
             throw new NoSuchElementException("SodaWithId has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
+    }
+
+    /**
+     * Set an unrecognizable property of this {@link SodaWithId} instance. If the map previously contained a mapping for
+     * the key, the old value is replaced by the specified value.
+     *
+     * @param customFieldName
+     *            The name of the property
+     * @param customFieldValue
+     *            The value of the property
+     */
+    @JsonIgnore
+    public void setCustomField( @Nonnull String customFieldName, @Nullable Object customFieldValue )
+    {
+        cloudSdkCustomFields.put(customFieldName, customFieldValue);
     }
 
     @Override
