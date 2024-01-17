@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -101,7 +102,7 @@ class DeserializationTest
 
         assertThat(actual.getName()).isEqualTo("Cola");
         assertThat(actual.getCustomFieldNames()).containsExactly("unexpectedField");
-        assertThat(actual.getCustomField("unexpectedField")).asList().isEmpty();
+        assertThat(actual.getCustomField("unexpectedField")).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
     }
 
     private void stub( String responseBody )
