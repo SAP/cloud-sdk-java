@@ -90,7 +90,7 @@ class EnvVarDestinationLoaderTest
         VavrAssertions.assertThat(maybeDestination).isSuccess();
 
         final Destination destination = maybeDestination.get();
-        assertThat(destination.get("description", String.class::cast)).contains("This destination rocks!");
+        assertThat(destination.get("description")).contains("This destination rocks!");
 
         assertThat(destination.isHttp()).isTrue();
         final HttpDestination httpDestination = destination.asHttp();
