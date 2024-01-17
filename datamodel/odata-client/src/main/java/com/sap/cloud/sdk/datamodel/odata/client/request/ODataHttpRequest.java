@@ -124,8 +124,10 @@ class ODataHttpRequest
             throw new ODataConnectionException(
                 this.odataRequest,
                 httpRequest,
-                "Time out occurred because of a probable connection leak. Please execute your request with try-with-resources to ensure resources are properly closed."
-                    + "If you are using the OData client instead to execute your request, explicitly consume the entity of the associated HttpResponse using EntityUtils.consume(httpEntity)",
+                """
+                    Time out occurred because of a probable connection leak. Please execute your request with try-with-resources to ensure resources are properly closed.\
+                    If you are using the OData client instead to execute your request, explicitly consume the entity of the associated HttpResponse using EntityUtils.consume(httpEntity)\
+                    """,
                 e);
 
         }

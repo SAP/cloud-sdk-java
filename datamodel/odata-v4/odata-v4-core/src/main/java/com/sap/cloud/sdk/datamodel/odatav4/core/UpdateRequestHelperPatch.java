@@ -80,9 +80,11 @@ class UpdateRequestHelperPatch
             if( o.size() < 1 ) {
                 log
                     .warn(
-                        "Update strategy is to modify with PATCH, but no fields have changed. "
-                            + "Make sure to modify the entity via its setters or by naming them explicitly via 'includingFields(fields ...)'. "
-                            + "This request may be bound to fail in the target system.");
+                        """
+                            Update strategy is to modify with PATCH, but no fields have changed. \
+                            Make sure to modify the entity via its setters or by naming them explicitly via 'includingFields(fields ...)'. \
+                            This request may be bound to fail in the target system.\
+                            """);
             }
 
             // add default OData annotation properties, e.g. @odata.type

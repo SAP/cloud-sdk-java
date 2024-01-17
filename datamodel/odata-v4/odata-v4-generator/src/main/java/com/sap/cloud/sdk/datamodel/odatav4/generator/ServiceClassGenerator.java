@@ -68,9 +68,11 @@ class ServiceClassGenerator
     private static final String SERVICE_PATH_FIELD_NAMING = "servicePath";
 
     private static final String BUSINESS_HUB_LINK_TEMPLATE =
-        "<p>Reference: <a href='https://api.sap.com/shell/discover/contentpackage/SAPS4HANACloud/api/%s?section=OVERVIEW'>"
-            + "SAP Business Accelerator Hub"
-            + "</a></p>";
+        """
+            <p>Reference: <a href='https://api.sap.com/shell/discover/contentpackage/SAPS4HANACloud/api/%s?section=OVERVIEW'>\
+            SAP Business Accelerator Hub\
+            </a></p>\
+            """;
 
     private final Map<String, JDefinedClass> generatedServiceInterfaceClasses = new HashMap<>();
     private final Map<String, JDefinedClass> generatedServiceImplementationClasses = new HashMap<>();
@@ -202,8 +204,10 @@ class ServiceClassGenerator
             .add(
                 String
                     .format(
-                        "A request builder to handle batch operation on this service. "
-                            + "To perform execution, call the {@link %s#execute(Destination) execute} method on the request builder object.",
+                        """
+                            A request builder to handle batch operation on this service. \
+                            To perform execution, call the {@link %s#execute(Destination) execute} method on the request builder object.\
+                            """,
                         batchRequestBuilder.fullName()));
     }
 
@@ -421,9 +425,11 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A request builder to fetch a single {@link %s %s} entity using key fields. "
-                                + "This request builder allows methods which modify the underlying query to be called before executing the query itself. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
+                            """
+                                A request builder to fetch a single {@link %s %s} entity using key fields. \
+                                This request builder allows methods which modify the underlying query to be called before executing the query itself. \
+                                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                                """,
                             entityClass.fullName(),
                             entityClass.name(),
                             getByKeyRequestBuilder.fullName()));
@@ -510,9 +516,11 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A request builder to fetch multiple {@link %s %s} entities. "
-                                + "This request builder allows methods which modify the underlying query to be called before executing the query itself. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
+                            """
+                                A request builder to fetch multiple {@link %s %s} entities. \
+                                This request builder allows methods which modify the underlying query to be called before executing the query itself. \
+                                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                                """,
                             entityClass.fullName(),
                             entityClass.name(),
                             getAllRequestBuilder.fullName()));
@@ -561,9 +569,11 @@ class ServiceClassGenerator
                 .add(
                     String
                         .format(
-                            "A request builder to fetch the count of {@link %s %s} entities. "
-                                + "This request builder allows methods which modify the underlying query to be called before executing the query itself. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
+                            """
+                                A request builder to fetch the count of {@link %s %s} entities. \
+                                This request builder allows methods which modify the underlying query to be called before executing the query itself. \
+                                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                                """,
                             entityClass.fullName(),
                             entityClass.name(),
                             countRequestBuilder.fullName()));
@@ -639,17 +649,10 @@ class ServiceClassGenerator
                                 "<p>Creates a request builder for the <b>%s</b> OData %s.</p>",
                                 edmName,
                                 operation));
-                interfaceMethod
-                    .javadoc()
-                    .addReturn()
-                    .add(
-                        String
-                            .format(
-                                "A request builder object that will execute the <b>%s</b> OData %s with the provided parameters. "
-                                    + "To perform execution, call the {@link %s#execute execute} method on the request builder object.",
-                                edmName,
-                                operation,
-                                unboundOperationRequestBuilder.getName()));
+                interfaceMethod.javadoc().addReturn().add(String.format("""
+                    A request builder object that will execute the <b>%s</b> OData %s with the provided parameters. \
+                    To perform execution, call the {@link %s#execute execute} method on the request builder object.\
+                    """, edmName, operation, unboundOperationRequestBuilder.getName()));
 
                 final JMethod implementationMethod =
                     serviceImplementationClass
@@ -742,17 +745,10 @@ class ServiceClassGenerator
                             "{@link %s %s} entity object that will be created in the S/4HANA system.",
                             entityClass.fullName(),
                             entityClass.name()));
-            interfaceMethod
-                .javadoc()
-                .addReturn()
-                .add(
-                    String
-                        .format(
-                            "A request builder to create a new {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
-                            entityClass.fullName(),
-                            entityClass.name(),
-                            createRequestBuilder.fullName()));
+            interfaceMethod.javadoc().addReturn().add(String.format("""
+                A request builder to create a new {@link %s %s} entity. \
+                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                """, entityClass.fullName(), entityClass.name(), createRequestBuilder.fullName()));
 
             final JMethod implementationMethod =
                 serviceImplementationClass.method(JMod.PUBLIC, createRequestBuilder, methodName);
@@ -808,17 +804,10 @@ class ServiceClassGenerator
                             "{@link %s %s} entity object that will be updated in the S/4HANA system.",
                             entityClass.fullName(),
                             entityClass.name()));
-            interfaceMethod
-                .javadoc()
-                .addReturn()
-                .add(
-                    String
-                        .format(
-                            "A request builder to update an existing {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
-                            entityClass.fullName(),
-                            entityClass.name(),
-                            updateRequestBuilder.fullName()));
+            interfaceMethod.javadoc().addReturn().add(String.format("""
+                A request builder to update an existing {@link %s %s} entity. \
+                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                """, entityClass.fullName(), entityClass.name(), updateRequestBuilder.fullName()));
 
             final JMethod implementationMethod =
                 serviceImplementationClass.method(JMod.PUBLIC, updateRequestBuilder, methodName);
@@ -875,17 +864,10 @@ class ServiceClassGenerator
                             "{@link %s %s} entity object that will be deleted in the S/4HANA system.",
                             entityClass.fullName(),
                             entityClass.name()));
-            interfaceMethod
-                .javadoc()
-                .addReturn()
-                .add(
-                    String
-                        .format(
-                            "A request builder to delete an existing {@link %s %s} entity. "
-                                + "To perform execution, call the {@link %s#execute execute} method on the request builder object. ",
-                            entityClass.fullName(),
-                            entityClass.name(),
-                            deleteRequestBuilder.fullName()));
+            interfaceMethod.javadoc().addReturn().add(String.format("""
+                A request builder to delete an existing {@link %s %s} entity. \
+                To perform execution, call the {@link %s#execute execute} method on the request builder object. \
+                """, entityClass.fullName(), entityClass.name(), deleteRequestBuilder.fullName()));
 
             final JMethod implementationMethod =
                 serviceImplementationClass.method(JMod.PUBLIC, deleteRequestBuilder, methodName);

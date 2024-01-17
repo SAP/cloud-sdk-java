@@ -94,31 +94,35 @@ class FluentHelperCreateODataClientTest
     void testEntitySerialization()
     {
         final String request =
-            "{"
-                + "  \"Name\": \"Product\","
-                + "  \"Price\": \"19.99\","
-                + "  \"Vendor\": { \"Name\": \"SAP\" },"
-                + "  \"Image\": \"AQID\""
-                + "}";
+            """
+            {
+              "Name": "Product",
+              "Price": "19.99",
+              "Vendor": { "Name": "SAP" },
+              "Image": "AQID"
+            }
+            """;
         final String response =
-            "{"
-                + "  \"d\": {"
-                + "    \"__metadata\": {"
-                + "      \"id\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)\","
-                + "      \"uri\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)\","
-                + "      \"type\": \"SdkGroceryStore.ProductType\","
-                + "      \"etag\": \"W/\\\"datetimeoffset'2023-04-18T10%3A55%3A00.5351290Z'\\\"\""
-                + "    },"
-                + "    \"Id\": \"44444\","
-                + "    \"Name\": \"Product\","
-                + "    \"Price\": \"19.99\","
-                + "    \"VendorId\": 42,"
-                + "    \"Image\": \"AQID\","
-                + "    \"ShelfId\": null,"
-                + "    \"Vendor\": {\"__deferred\": {\"uri\": \"https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor\"}},"
-                + "    \"Shelf\": {\"__deferred\": {\"uri\": \"https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf\"}}"
-                + "  }"
-                + "}";
+            """
+            {
+              "d": {
+                "__metadata": {
+                  "id": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                  "uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                  "type": "SdkGroceryStore.ProductType",
+                  "etag": "W/\\"datetimeoffset'2023-04-18T10%3A55%3A00.5351290Z'\\""
+                },
+                "Id": "44444",
+                "Name": "Product",
+                "Price": "19.99",
+                "VendorId": 42,
+                "Image": "AQID",
+                "ShelfId": null,
+                "Vendor": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor"}},
+                "Shelf": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf"}}
+              }
+            }
+            """;
 
         stubFor(head(anyUrl()).willReturn(serverError()));
         stubFor(post(urlEqualTo(ODATA_QUERY_URL)).withRequestBody(equalToJson(request)).willReturn(okJson(response)));

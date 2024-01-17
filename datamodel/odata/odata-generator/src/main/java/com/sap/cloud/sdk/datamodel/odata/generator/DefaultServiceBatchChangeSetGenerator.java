@@ -74,16 +74,10 @@ class DefaultServiceBatchChangeSetGenerator
 
         defaultImplementation._implements(changeSetInterface);
 
-        defaultImplementation
-            .javadoc()
-            .add(
-                String
-                    .format(
-                        "Implementation of the {@link %s} interface, enabling you to combine multiple operations into one "
-                            + "changeset. For further information have a look into the {@link %s %s}.",
-                        changeSetInterface.name(),
-                        basicServiceClass.fullName(),
-                        basicServiceClass.name()));
+        defaultImplementation.javadoc().add(String.format("""
+            Implementation of the {@link %s} interface, enabling you to combine multiple operations into one \
+            changeset. For further information have a look into the {@link %s %s}.\
+            """, changeSetInterface.name(), basicServiceClass.fullName(), basicServiceClass.name()));
 
         return defaultImplementation;
     }

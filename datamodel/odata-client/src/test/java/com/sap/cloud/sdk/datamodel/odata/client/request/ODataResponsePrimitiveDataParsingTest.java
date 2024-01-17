@@ -132,28 +132,29 @@ class ODataResponsePrimitiveDataParsingTest
         ColorEnum colorEnumValue;
 
         // https://docs.oasis-open.org/odata/odata-json-format/v4.01/csprd06/odata-json-format-v4.01-csprd06.html#sec_PrimitiveValue
-        private static final String PAYLOAD_ODATA_REFERENCE =
-            "{\n"
-                + "  \"BooleanValue\": false,\n"
-                + "  \"BinaryValue\": \"T0RhdGE\",\n"
-                + "  \"IntegerValue\": -128,\n"
-                + "  \"DoubleValue\": 3.1415926535897931,\n" //
-                // Replaced "INF" with "NaN", Java float expects "Infinity" instead (with an optional plus or minus in front). We would need another type adapter for that.
-                + "  \"SingleValue\": \"NaN\",\n"
-                + "  \"DecimalValue\": 12.3999999999999999,\n"
-                + "  \"StringValue\": \"Say \\\"Hello\\\",\\nthen go\",\n"
-                + "  \"DateValue\": \"2012-12-03\",\n"
-                + "  \"DateTimeOffsetValue\": \"2012-12-03T07:16:23Z\",\n"
-                // Dropped the last 3 nines before the S from the reference service example here because WTF they have picoseconds (10^-12 seconds) in there...
-                + "  \"DurationValue\": \"P12DT23H59M59.999999999S\",\n"
-                + "  \"TimeOfDayValue\": \"07:59:59.999\",\n"
-                + "  \"GuidValue\": \"01234567-89ab-cdef-0123-456789abcdef\",\n"
-                + "  \"Int64Value\": 0\n,"
-                + "  \"ColorEnumValue\": \"Yellow\"\n"
-                /* excluded for now, not needed and out of ticket scope
-                "  \"GeographyPoint\": {\"type\": \"Point\",\"coordinates\":[142.1,64.1]}\n" +
-                */
-                + "}";
+        // applied the following changes:
+        // - SingleValue: Replaced "INF" with "NaN", Java float expects "Infinity" instead (with an optional plus or minus in front). We would need another type adapter for that.
+        // - DurationValue: Dropped the last 3 nines before the S from the reference service example here because WTF they have picoseconds (10^-12 seconds) in there...
+        // - GeographyPoint: Excluded, could be added later if needed.
+        private static final String PAYLOAD_ODATA_REFERENCE = """
+            {
+              "BooleanValue": false,
+              "BinaryValue": "T0RhdGE",
+              "IntegerValue": -128,
+              "DoubleValue": 3.1415926535897931,
+              "SingleValue": "NaN",
+              "DecimalValue": 12.3999999999999999,
+              "StringValue": "Say \\"Hello\\",\\nthen go",
+              "DateValue": "2012-12-03",
+              "DateTimeOffsetValue": "2012-12-03T07:16:23Z",
+              "DurationValue": "P12DT23H59M59.999999999S",
+              "TimeOfDayValue": "07:59:59.999",
+              "GuidValue": "01234567-89ab-cdef-0123-456789abcdef",
+              "Int64Value": 0
+            ,\
+              "ColorEnumValue": "Yellow"
+            }\
+            """;
 
         private static final ReferenceObject expectedObject =
             new ReferenceObject(
