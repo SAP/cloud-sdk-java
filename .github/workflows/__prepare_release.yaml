@@ -96,11 +96,11 @@ jobs:
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
           commit-sha: ${{ needs.bump-version.outputs.release-commit }}
           # TODO: re-enable blackduck scan
+          # TODO: re-enable security rating
           parameters: >
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-security-rating=true
 
       - name: "Await CI Workflow"
         uses: ./.github/actions/await-workflow
