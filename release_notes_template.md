@@ -1,4 +1,3 @@
-
 ## 5.1.0-SNAPSHOT
 
 [All Release Changes](https://github.com/SAP/cloud-sdk-java/releases)
