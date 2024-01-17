@@ -27,6 +27,7 @@ jobs:
       new-version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}
       release-branch: ${{ steps.prepare-release.outputs.BRANCH_NAME }}
       release-commit: ${{ steps.prepare-release.outputs.RELEASE_COMMIT_ID }}
+      release-tag: ${{ steps.prepare-release.outputs.TAG_NAME }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
@@ -64,8 +65,13 @@ jobs:
           # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
           RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
           echo "RELEASE_COMMIT_ID=$RELEASE_COMMIT_ID" >> $GITHUB_OUTPUT
+          
+          TAG_NAME=rel/${{ steps.determine-versions.outputs.RELEASE_VERSION }}
+          git tag $TAG_NAME $RELEASE_COMMIT_ID
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
           git push origin $BRANCH_NAME:$BRANCH_NAME
+          gut push origin $TAG_NAME
 
   run-ci:
     name: "Continuous Integration"
@@ -74,7 +80,6 @@ jobs:
     needs: [ bump-version ]
     runs-on: ubuntu-latest
     permissions:
-      contents: write # needed to delete the release branch in case of any failure
       actions: write # needed to trigger the ci-build workflow
       statuses: write # needed to update the commit status
     steps:
@@ -102,10 +107,6 @@ jobs:
         with:
           run-id: ${{ steps.trigger-ci.outputs.run-id }}
           commit-status: "Continuous Integration Workflow"
-
-      - name: "Delete Branch On Failure"
-        if: ${{ failure() }}
-        run: git push -d origin ${{ needs.bump-version.outputs.release-branch }}
 
   create-release:
     name: "Create GitHub Release"
@@ -145,7 +146,7 @@ jobs:
           tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
           gh release create "rel/${{ needs.bump-version.outputs.release-version }}" \
-          --target ${{ needs.bump-version.outputs.release-commit }} \
+          --target ${{ needs.bump-version.outputs.release-tag }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
           apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
@@ -153,14 +154,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: "Delete Branch On Failure"
-        if: ${{ failure() }}
-        run: git push -d origin ${{ needs.bump-version.outputs.release-branch }}
-
   create-docs-pr:
     name: "Create JavaDocs PR"
     needs: [ bump-version, run-ci ]
     outputs:
+      branch: ${{ steps.replace-javadoc.outputs.BRANCH_NAME }}
       pr-url: ${{ steps.create-javadoc-pr.outputs.PR_URL }}
     runs-on: ubuntu-latest
     steps:
@@ -185,7 +183,7 @@ jobs:
 
       - name: "Determine Major Version"
         id: determine-major-version
-        run: echo "MAJOR_VERSION=$(jq -r '.version' | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+        run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
 
       - name: "Prepare Git"
         working-directory: ~/.cloud-sdk-docs
@@ -231,11 +229,11 @@ jobs:
           PR_TITLE="Java: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
           PR_BODY="Replace the contents of v${{ steps.determine-major-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
           
-          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}"
           
-          PR_URL=$(gh pr list --repo "SAP/cloud-sdk" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
+          PR_URL=$(gh pr list --repo "${{ env.DOCS_REPO }}" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
           if [[ -z "$PR_URL" ]]; then
-              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in SAP/cloud-sdk"
+              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in ${{ env.DOCS_REPO }}"
               exit 1
           fi
           
@@ -247,6 +245,7 @@ jobs:
     name: "Create Release Notes PR"
     needs: [ bump-version, run-ci ]
     outputs:
+      branch: ${{ steps.push-release-notes.outputs.BRANCH_NAME }}
       pr-url: ${{ steps.create-release-notes-pr.outputs.PR_URL }}
     runs-on: ubuntu-latest
     steps:
@@ -308,11 +307,11 @@ jobs:
           PR_TITLE="Java: Add Release Notes for ${{ needs.bump-version.outputs.release-version }}"
           PR_BODY="Add release notes for version ${{ needs.bump-version.outputs.release-version }}."
           
-          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}"
           
-          PR_URL=$(gh pr list --repo "SAP/cloud-sdk" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
+          PR_URL=$(gh pr list --repo "${{ env.DOCS_REPO }}" --search "${{ steps.replace-javadoc.outputs.COMMIT_SHA }}" --state open --json url | jq -r .[0].url)
           if [[ -z "$PR_URL" ]]; then
-              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in SAP/cloud-sdk"
+              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in ${{ env.DOCS_REPO }}"
               exit 1
           fi
           
@@ -323,6 +322,8 @@ jobs:
   create-code-pr:
     name: "Create Code PR"
     needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr ]
+    outputs:
+      pr-url: ${{ steps.create-code-pr.outputs.PR_URL }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
@@ -359,12 +360,20 @@ jobs:
           
           echo "PR_BODY=$(cat $TEMP_FILE)" >> $GITHUB_OUTPUT
 
-      - name: "Create PR"
+      - name: "Create Code PR"
         run: |
           RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
           PR_BODY=${{ steps.create-pr-body.outputs.PR_BODY }}
 
           gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "$PR_BODY"
+          
+          PR_URL=$(gh pr list --search "${{ needs.bump-version.outputs.release-commit }}" --state open --json url | jq -r .[0].url)
+          if [[ -z "$PR_URL" ]]; then
+              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in code repository"
+              exit 1
+          fi
+
+          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -382,5 +391,65 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+          WORKFLOW_RUN_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
           BRANCH_NAME: ${{ github.event.inputs.branch }}
+
+  rollback-code-changes:
+    needs: [ bump-version ]
+    if: ${{ failure() }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: "Delete Release Branch"
+        if: ${{ needs.bump-version.outputs.release-branch != '' }}
+        run: git push --delete origin ${{ needs.bump-version.outputs.release-branch }}
+        continue-on-error: true
+
+      - name: "Delete Release Tag"
+        if: ${{ needs.bump-version.outputs.release-tag != '' }}
+        run: git push --delete origin ${{ needs.bump-version.outputs.release-tag }}
+        continue-on-error: true
+
+  rollback-github-release:
+    needs: [ create-release ]
+    if: ${{ failure() }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+        - name: "Delete Release"
+          if: ${{ needs.create-release.outputs.release-url != '' }}
+          run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-url }} --yes
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          continue-on-error: true
+
+  rollback-javadoc-changes:
+    needs: [ create-docs-pr ]
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Delete PR"
+        if: ${{ needs.create-docs-pr.outputs.pr-url != '' }}
+        run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-docs-pr.outputs.pr-url }} --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+        continue-on-error: true
+
+  rollback-release-notes-changes:
+    needs: [ create-release-notes-pr ]
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Delete PR"
+        if: ${{ needs.create-release-notes-pr.outputs.pr-url != '' }}
+        run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-release-notes-pr.outputs.pr-url }} --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+        continue-on-error: true
