@@ -190,7 +190,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wiremock</groupId>
-			<artifactId>wiremock</artifactId>
+			<artifactId>wiremock-standalone</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -232,6 +232,9 @@
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
 						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>jakarta.servlet:jakarta.servlet-api</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.sdk.cloudplatform:servlet-jakarta</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.sap.cloud.environment.servicebinding</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
 					<ignoredNonTestScopedDependencies>
 						<!-- Included by default to serve as the default implementation for service binding connectivity -->

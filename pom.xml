@@ -110,8 +110,7 @@
 		<openapi-generator.version>7.2.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
-		<!--  Dependency convergence dependencies  -->
-		<jetty.version>11.0.18</jetty.version>
+		<jetty.version>12.0.5</jetty.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
 		<bouncycastle.version>1.77</bouncycastle.version>
@@ -141,6 +140,12 @@
 				<version>${spring.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-bom</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
 			</dependency>
 			<!--Dependencies with runtime scope-->
 			<!-- replaces the excluded commons-logging with slf4j -->
@@ -300,9 +305,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.wiremock</groupId>
-				<artifactId>wiremock</artifactId>
+				<artifactId>wiremock-standalone</artifactId>
 				<version>${wiremock.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
@@ -326,25 +330,6 @@
 				<groupId>org.skyscreamer</groupId>
 				<artifactId>jsonassert</artifactId>
 				<version>${jsonassert.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!--Only used in odata-core-->
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-io</artifactId>
-				<version>${jetty.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-util</artifactId>
-				<version>${jetty.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<!--Used in odata generator and open api generator maven plugins-->
