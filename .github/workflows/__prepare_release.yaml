@@ -346,11 +346,11 @@ jobs:
           
           echo "## TODOs" > $TEMP_FILE
           echo "" >> $TEMP_FILE
-          echo "- [ ] Review changes in [the release commit]($COMMIT_URL)" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-javadoc-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** this PR" >> $TEMP_FILE
+          echo "- \[ \] Review changes in \[the release commit\]($COMMIT_URL)" >> $TEMP_FILE
+          echo "- \[ \] Review **and approve** the \[Release Notes PR\](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- \[ \] Review **and approve** the \[JavaDocs PR\](${{ needs.create-docs-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- \[ \] Review the \[Draft Release\](${{ needs.create-release.outputs.release-url }})" >> $TEMP_FILE
+          echo "- \[ \] Review **and approve** this PR" >> $TEMP_FILE
           
           echo "PR_BODY=$(cat $TEMP_FILE)" >> $GITHUB_OUTPUT
 
