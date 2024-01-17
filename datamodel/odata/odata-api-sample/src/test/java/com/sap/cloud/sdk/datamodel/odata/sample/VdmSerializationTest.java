@@ -21,17 +21,19 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Vendo
 class VdmSerializationTest
 {
     private static final String PRODUCT_JSON =
-        "{"
-            + "\"versionIdentifier\":null,"
-            + "\"Id\":10401010,"
-            + "\"Name\":\"Cloud SDK\","
-            + "\"ShelfId\":null,"
-            + "\"VendorId\":null,"
-            + "\"Price\":null,"
-            + "\"Image\":null,"
-            + "\"Vendor\":{\"versionIdentifier\":null,\"Id\":null,\"Name\":\"SAP\",\"AddressId\":null,\"Address\":null},"
-            + "\"Shelf\":[{\"versionIdentifier\":null,\"Id\":500,\"FloorPlanId\":200,\"FloorPlan\":null,\"Products\":[]}]"
-            + "}";
+        """
+        {
+          "versionIdentifier":null,
+          "Id":10401010,
+          "Name":"Cloud SDK",
+          "ShelfId":null,
+          "VendorId":null,
+          "Price":null,
+          "Image":null,
+          "Vendor":{"versionIdentifier":null,"Id":null,"Name":"SAP","AddressId":null,"Address":null},
+          "Shelf":[{"versionIdentifier":null,"Id":500,"FloorPlanId":200,"FloorPlan":null,"Products":[]}]
+        }
+        """;
 
     private static final Product PRODUCT_OBJECT =
         Product

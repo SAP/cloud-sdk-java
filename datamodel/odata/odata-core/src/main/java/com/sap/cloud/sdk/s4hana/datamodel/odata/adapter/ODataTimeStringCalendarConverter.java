@@ -18,11 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class ODataTimeStringCalendarConverter extends AbstractTypeConverter<String, Calendar>
 {
-    private static final Pattern PATTERN =
-        Pattern
-            .compile(
-                "P(?:(\\p{Digit}{1,2})Y)?(?:(\\p{Digit}{1,2})M)?(?:(\\p{Digit}{1,2})D)?"
-                    + "T(?:(\\p{Digit}{1,2})H)?(?:(\\p{Digit}{1,4})M)?(?:(\\p{Digit}{1,5})(?:\\.(\\p{Digit}+?)0*)?S)?");
+    private static final Pattern PATTERN = Pattern.compile("""
+        P(?:(\\p{Digit}{1,2})Y)?(?:(\\p{Digit}{1,2})M)?(?:(\\p{Digit}{1,2})D)?\
+        T(?:(\\p{Digit}{1,2})H)?(?:(\\p{Digit}{1,4})M)?(?:(\\p{Digit}{1,5})(?:\\.(\\p{Digit}+?)0*)?S)?\
+        """);
 
     @Nonnull
     @Override
