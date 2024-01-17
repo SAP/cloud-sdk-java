@@ -184,7 +184,7 @@ public class UpdateSoda
   }
 
   /**
-   * Get the value of an unrecognizable property of the {@link UpdateSoda}.
+   * Get the value of an unrecognizable property of this {@link UpdateSoda} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -198,20 +198,15 @@ public class UpdateSoda
   }
 
   /**
-   * Set an unrecognizable property of this {@link Order} instance. If the map previously contained a mapping for the
-   * key, the old value is replaced by the specified value. If the customFieldValue is null, the property is removed.
+   * Set an unrecognizable property of this {@link UpdateSoda} instance. If the map previously contained a mapping
+   * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
-   * @param customFieldValue The value of the property, if null, the property is removed.
+   * @param customFieldValue The value of the property
    */
   @JsonIgnore
   public void setCustomField( @Nonnull String customFieldName, @Nullable Object customFieldValue )
   {
-      if( customFieldValue == null ) {
-          cloudSdkCustomFields.remove(customFieldName);
-      }
-      else {
-          cloudSdkCustomFields.put(customFieldName, customFieldValue);
-      }
+      cloudSdkCustomFields.put(customFieldName, customFieldValue);
   }
 
 
