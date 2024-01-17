@@ -46,28 +46,32 @@ import lombok.SneakyThrows;
 class ExtendedEntityClassTest
 {
     private static final String PRODUCT_INPUT =
-        "{"
-            + "  \"versionIdentifier\": \"testVersion\","
-            + "  \"Id\": \"1005\","
-            + "  \"Name\": \"Cloud SDK\","
-            + "  \"Image\": \"Rk9PIEJBUg==\","
-            + "  \"Weight\": 42,"
-            + "  \"Shoesize\": 8"
-            + "}";
+        """
+        {
+          "versionIdentifier": "testVersion",
+          "Id": "1005",
+          "Name": "Cloud SDK",
+          "Image": "Rk9PIEJBUg==",
+          "Weight": 42,
+          "Shoesize": 8
+        }
+        """;
     private static final String EXPECTED_PRODUCT_OUTPUT =
-        "{"
-            + "\"versionIdentifier\":\"testVersion\","
-            + "\"Id\":1005,"
-            + "\"Name\":\"Cloud SDK\","
-            + "\"ShelfId\":null,"
-            + "\"VendorId\":null,"
-            + "\"Price\":null,"
-            + "\"Image\":\"Rk9PIEJBUg==\","
-            + "\"Vendor\":null,"
-            + "\"Shelf\":null,"
-            + "\"Weight\":42,"
-            + "\"Shoesize\":8"
-            + "}";;
+        """
+        {
+        "versionIdentifier":"testVersion",
+        "Id":1005,
+        "Name":"Cloud SDK",
+        "ShelfId":null,
+        "VendorId":null,
+        "Price":null,
+        "Image":"Rk9PIEJBUg==",
+        "Vendor":null,
+        "Shelf":null,
+        "Weight":42,
+        "Shoesize":8
+        }
+        """;
 
     @AllArgsConstructor
     @NoArgsConstructor

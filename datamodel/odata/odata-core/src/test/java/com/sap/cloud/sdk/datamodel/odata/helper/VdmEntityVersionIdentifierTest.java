@@ -73,21 +73,22 @@ class VdmEntityVersionIdentifierTest
                 key2val,
                 key3val);
 
-    private static final String getDocumentItemResponseBody =
-        "{"
-            + "  \"d\": {"
-            + "    \"__metadata\": {"
-            + "      \"id\": \"https://127.0.0.1/path/to/service/A_TestEntity(Key1='2018',Key2='100010641',Key3='1')\","
-            + "      \"uri\": \"https://127.0.0.1/path/to/service/A_TestEntity(Key1='2018',Key2='100010641',Key3='1')\","
-            + "      \"type\": \"SERVICE.A_TestEntityType\","
-            + "      \"etag\": \"W/\\\"datetimeoffset'2018-01-09T08%3A33%3A53.8828600Z'\\\"\""
-            + "    },"
-            + "    \"Key1\": \"2015\","
-            + "    \"Key2\": \"100000000\","
-            + "    \"Key3\": \"1\","
-            + "    \"SomeField\": \"Foo\""
-            + "  }"
-            + "}";
+    private static final String getDocumentItemResponseBody = """
+        {
+          "d": {
+            "__metadata": {
+              "id": "https://127.0.0.1/path/to/service/A_TestEntity(Key1='2018',Key2='100010641',Key3='1')",
+              "uri": "https://127.0.0.1/path/to/service/A_TestEntity(Key1='2018',Key2='100010641',Key3='1')",
+              "type": "SERVICE.A_TestEntityType",
+              "etag": "W/\\"datetimeoffset'2018-01-09T08%3A33%3A53.8828600Z'\\""
+            },
+            "Key1": "2015",
+            "Key2": "100000000",
+            "Key3": "1",
+            "SomeField": "Foo"
+          }
+        }
+        """;
 
     @Data
     @NoArgsConstructor

@@ -185,14 +185,12 @@ class CollectionValueActionRequestBuilderTest
     void testActionWithComplexTypeResponse()
     {
 
-        stubFor(
-            post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION))
-                .willReturn(
-                    okJson(
-                        "{ \"value\" : ["
-                            + "{ \"City\" : \"Stockholm\" ,\"Country\" : \"Sweden\"},"
-                            + "{ \"City\" : \"Dubrovnik\",\"Country\" : \"Croatia\" }"
-                            + "]}")));
+        stubFor(post(urlPathEqualTo(DEFAULT_SERVICE_PATH + '/' + ODATA_ACTION)).willReturn(okJson("""
+            { "value" : [\
+            { "City" : "Stockholm" ,"Country" : "Sweden"},\
+            { "City" : "Dubrovnik","Country" : "Croatia" }\
+            ]}\
+            """)));
 
         final CollectionValueActionRequestBuilder<ComplexType> sut =
             new CollectionValueActionRequestBuilder<>(DEFAULT_SERVICE_PATH, ODATA_ACTION, ComplexType.class);
