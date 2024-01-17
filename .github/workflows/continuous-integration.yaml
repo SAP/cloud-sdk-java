@@ -137,7 +137,7 @@ jobs:
             VERSION=$(cat latest.json | jq -r .version)
             mkdir -p $HOME/.sdk-release
           
-            PYTHON_ARGS="--version $VERSION --path-prefix '$HOME/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}'"
+            PYTHON_ARGS="--version $VERSION --path-prefix $HOME/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}"
             if [[ "${{ github.event.inputs.sign-release-artifacts }}" == "true" ]]; then
               echo "[DEBUG] Signing release artifacts"
               PYTHON_ARGS="$PYTHON_ARGS --with-signing"
