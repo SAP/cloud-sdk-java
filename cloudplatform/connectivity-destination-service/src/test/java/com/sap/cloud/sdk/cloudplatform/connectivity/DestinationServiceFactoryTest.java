@@ -1,13 +1,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.Collections.singletonList;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -89,10 +89,10 @@ class DestinationServiceFactoryTest
         response.getDestinationConfiguration().put("URL", "https://example.com");
 
         final DestinationAuthToken token = new DestinationAuthToken();
-        response.setAuthTokens(Collections.singletonList(token));
+        response.setAuthTokens(singletonList(token));
 
         final DestinationCertificate certificate = new DestinationCertificate();
-        response.setCertificates(Collections.singletonList(certificate));
+        response.setCertificates(singletonList(certificate));
 
         final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
@@ -100,15 +100,8 @@ class DestinationServiceFactoryTest
         assertThat(result.get(DestinationProperty.TYPE)).contains(DestinationType.HTTP);
         assertThat(result.get(DestinationProperty.NAME)).contains("httpDestination");
         assertThat(result.get(DestinationProperty.URI)).contains("https://example.com");
-        assertThat(result.get(DestinationProperty.AUTH_TOKENS).isDefined()).isTrue();
-        assertThat(result.get(DestinationProperty.AUTH_TOKENS).get())
-            .asInstanceOf(InstanceOfAssertFactories.LIST)
-            .isNotEmpty()
-            .containsExactlyInAnyOrder(token);
-        assertThat(result.get(DestinationProperty.CERTIFICATES).isDefined()).isTrue();
-        assertThat(result.get(DestinationProperty.CERTIFICATES).get())
-            .asInstanceOf(InstanceOfAssertFactories.LIST)
-            .containsExactly(certificate);
+        assertThat(result.get(DestinationProperty.AUTH_TOKENS)).containsExactly(singletonList(token));
+        assertThat(result.get(DestinationProperty.CERTIFICATES)).containsExactly(singletonList(certificate));
     }
 
     @Test
