@@ -50,6 +50,7 @@ unchanged_sections = [
 - 
 
 """]
+
 file_name = "release_notes.md"
 if os.path.exists(file_name):
     remove_unchanged_sections(file_name, unchanged_sections)
