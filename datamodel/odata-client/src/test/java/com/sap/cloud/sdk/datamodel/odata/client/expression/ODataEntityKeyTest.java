@@ -96,15 +96,16 @@ class ODataEntityKeyTest
     void testDataTypeSerialisationV4()
     {
 
-        final String expected =
-            "("
-                + "stringParameter='test',"
-                + "booleanParameter=true,"
-                + "integerParameter=9000,"
-                + "decimalParameter=3.14,"
-                + "durationParameter=duration'PT8H',"
-                + "dateTimeParameter=2019-12-25T08:00:00Z"
-                + ")";
+        final String expected = """
+            (\
+            stringParameter='test',\
+            booleanParameter=true,\
+            integerParameter=9000,\
+            decimalParameter=3.14,\
+            durationParameter=duration'PT8H',\
+            dateTimeParameter=2019-12-25T08:00:00Z\
+            )\
+            """;
 
         keyV4.addKeyProperty("stringParameter", "test");
         keyV4.addKeyProperty("booleanParameter", true);
