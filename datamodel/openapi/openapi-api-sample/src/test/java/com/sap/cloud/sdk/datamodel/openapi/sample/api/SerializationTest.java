@@ -33,16 +33,16 @@ class SerializationTest
     @Test
     void testPutPayload()
     {
-        // @formatter:off
         expected =
-               "{\n" +
-               "  \"name\": \"Cola\",\n" +
-               "  \"brand\": \"Coca-Cola\",\n" +
-               "  \"quantity\": 100,\n" +
-               "  \"price\": 1.5,\n" +
-               "  \"id\": 0\n" +
-               "}";
-        // @formatter:on
+               """
+               {
+                 "name": "Cola",
+                 "brand": "Coca-Cola",
+                 "quantity": 100,
+                 "price": 1.5,
+                 "id": 0
+               }
+               """;
 
         final SodaWithId obj = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
 
@@ -55,16 +55,16 @@ class SerializationTest
     void testJacksonSerialization()
         throws JsonProcessingException
     {
-        // @formatter:off
         expected =
-               "{\n" +
-               "  \"name\": \"Cola\",\n" +
-               "  \"brand\": \"Coca-Cola\",\n" +
-               "  \"quantity\": 100,\n" +
-               "  \"price\": 1.5,\n" +
-               "  \"id\": 0\n" +
-               "}";
-        // @formatter:on
+               """
+               {
+                 "name": "Cola",
+                 "brand": "Coca-Cola",
+                 "quantity": 100,
+                 "price": 1.5,
+                 "id": 0
+               }
+               """;
 
         final SodaWithId obj = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
 

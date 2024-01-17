@@ -45,11 +45,14 @@ class GenericParameterTest
     void testInvocationWithGenericParameter( @Nonnull final WireMockRuntimeInfo wm )
         throws JsonProcessingException
     {
-        final String expectedBody =
-            "{\"id\":\"foo\","
-                + "\"fieldPopulatedAsStringWithAnnotation\":{\"foo\": \"bar\"},"
-                + "\"fieldPopulatedAsStringWithoutAnnotation\":\"{\\\"foo\\\": \\\"bar\\\"}\","
-                + "\"fieldPopulatedAsJacksonJsonNode\":{\"foo\":\"bar\"}}";
+        final String expectedBody = """
+            {\
+            "id":"foo",\
+            "fieldPopulatedAsStringWithAnnotation":{"foo": "bar"},\
+            "fieldPopulatedAsStringWithoutAnnotation":"{\\"foo\\": \\"bar\\"}",\
+            "fieldPopulatedAsJacksonJsonNode":{"foo":"bar"}\
+            }\
+            """;
 
         WireMock
             .stubFor(

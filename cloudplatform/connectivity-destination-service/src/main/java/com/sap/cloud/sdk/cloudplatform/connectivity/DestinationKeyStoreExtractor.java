@@ -39,15 +39,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 class DestinationKeyStoreExtractor
 {
-    // @formatter:off
     // See the supported key store file extensions:
     // https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
-    //Mapping file extension to key store types
-    private static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE = ImmutableMap.of(
-            "pfx", "PKCS12",
-            "p12", "PKCS12",
-            "jks", "JKS"
-    );
+    // Mapping file extension to key store types
+    private static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE =
+        ImmutableMap.of("pfx", "PKCS12", "p12", "PKCS12", "jks", "JKS");
 
     //Check out supported trust store file extensions here:
     //https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
@@ -55,7 +51,6 @@ class DestinationKeyStoreExtractor
     static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_TRUST_STORE = ImmutableMap.of("jks", "JKS");
 
     static final List<String> SUPPORTED_CERT_FILE_EXTENSIONS_AS_TRUST_STORE = ImmutableList.of("crt", "cer", "der");
-    // @formatter:on
 
     @Nonnull
     private final PropertyKeyExtractor destination;

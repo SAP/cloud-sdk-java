@@ -32,16 +32,16 @@ class DeserializationTest
     @Test
     void testFullResponse()
     {
-        // @formatter:off
         responseBody =
-                "{" +
-                "  \"name\": \"Cola\",\n" +
-                "  \"brand\": \"Coca-Cola\",\n" +
-                "  \"quantity\": 100,\n" +
-                "  \"price\": 1.5,\n" +
-                "  \"id\": 0\n" +
-                "}";
-        // @formatter:on
+                """
+                {
+                  "name": "Cola",
+                  "brand": "Coca-Cola",
+                  "quantity": 100,
+                  "price": 1.5,
+                  "id": 0
+                }
+                """;
         stub(responseBody);
 
         final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
@@ -54,16 +54,16 @@ class DeserializationTest
     @Test
     void testUnexpectedFieldOrder()
     {
-        // @formatter:off
         responseBody =
-                "{\n" +
-                "  \"name\": \"Cola\",\n" +
-                "  \"price\": 1.5,\n" +
-                "  \"id\": 0,\n" +
-                "  \"brand\": \"Coca-Cola\",\n" +
-                "  \"quantity\": 100\n" +
-                "}";
-        // @formatter:on
+                """
+                {
+                  "name": "Cola",
+                  "price": 1.5,
+                  "id": 0,
+                  "brand": "Coca-Cola",
+                  "quantity": 100
+                }
+                """;
         stub(responseBody);
 
         final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
@@ -89,13 +89,13 @@ class DeserializationTest
     @Test
     void testUnexpectedAdditionalField()
     {
-        // @formatter:off
         responseBody =
-                "{\n"
-              + "    \"name\": \"Cola\",\n"
-              + "    \"unexpectedField\": []\n"
-              + "}\n";
-        // @formatter:on
+                """
+                {
+                    "name": "Cola",
+                    "unexpectedField": []
+                }
+                """;
         stub(responseBody);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
