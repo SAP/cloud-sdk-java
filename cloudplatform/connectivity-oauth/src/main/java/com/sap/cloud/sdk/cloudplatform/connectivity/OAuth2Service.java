@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTo
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedException;
@@ -37,6 +39,8 @@ import com.sap.cloud.security.xsuaa.tokenflows.JwtBearerTokenFlow;
 import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +50,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OAuth2Service
 {
+    private static final Duration DEFAULT_TOKEN_RETRIEVAL_TIMEOUT = Duration.ofSeconds(10);
+
     /**
      * Cache to reuse OAuth2TokenService and with that reuse the underlying response cache.
      * <p>
@@ -67,12 +73,27 @@ class OAuth2Service
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
+    @Getter( AccessLevel.PACKAGE )
+    private final ResilienceConfiguration resilienceConfig;
 
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
+        /*
+         * Reasoning for always using ResilienceIsolationMode.TENANT_OPTIONAL, regardless of onBehalfOf:
+         * - for TECHNICAL_USER_CURRENT_TENANT this is trivially correct
+         * - for NAMED_USER_CURRENT_TENANT the resilience should still be applied per-tenant only
+         * - for TECHNICAL_USER_PROVIDER && current tenant != provider the isolation is stronger than it needs to be,
+         *   but the downside is arguably not worth keeping a second configuration for this case only
+         */
+        resilienceConfig =
+            ResilienceConfiguration
+                .of(endpoints.getTokenEndpoint().getHost() + "-" + identity.getId())
+                .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
+                .timeLimiterConfiguration(
+                    ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
     }
 
     static void clearCache()
@@ -90,7 +111,7 @@ class OAuth2Service
     }
 
     @Nonnull
-    String retrieveAccessToken( @Nonnull final ResilienceConfiguration resilienceConfig )
+    String retrieveAccessToken()
     {
         log.debug("Retrieving Access Token from XSUAA on behalf of {}.", onBehalfOf);
 
@@ -147,7 +168,6 @@ class OAuth2Service
     @Nullable
     private OAuth2TokenResponse executeUserExchangeFlow()
     {
-
         final Try<DecodedJWT> maybeToken = AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt);
         final Try<String> maybeTenant = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId);
 
