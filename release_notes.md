@@ -49,6 +49,7 @@
       - Update [Jackson](https://central.sonatype.com/artifact/com.fasterxml.jackson.core/jackson-core/2.16.1) from `2.15.3` to `2.16.1`
       - Update [Commons Lang](https://central.sonatype.com/artifact/org.apache.commons/commons-lang3/3.14.0) from `3.13.0` to `3.14.0`
 
+      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
 
 ### 🐛 Fixed Issues
 
