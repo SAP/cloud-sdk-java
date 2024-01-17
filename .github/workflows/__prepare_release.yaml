@@ -377,34 +377,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  notify-job:
+  handle-failure:
     runs-on: ubuntu-latest
     needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr, create-code-pr ]
-    if: ${{ failure() }}
-    steps:
-      - name: "Checkout Repository"
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch }}
-      - name: "Notify"
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.event.inputs.branch }}
-
-  rollback-code-changes:
-    needs: [ bump-version ]
-    if: ${{ failure() }}
     permissions:
-      contents: write
-    runs-on: ubuntu-latest
+      contents: write # needed to delete the GitHub release
+    if: ${{ failure() }}
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
+
+      - name: "Delete Release"
+        if: ${{ needs.create-release.outputs.release-url != '' }}
+        run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-url }} --yes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        continue-on-error: true
 
       - name: "Delete Release Branch"
         if: ${{ needs.bump-version.outputs.release-branch != '' }}
@@ -416,40 +406,24 @@ jobs:
         run: git push --delete origin ${{ needs.bump-version.outputs.release-tag }}
         continue-on-error: true
 
-  rollback-github-release:
-    needs: [ create-release ]
-    if: ${{ failure() }}
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-        - name: "Delete Release"
-          if: ${{ needs.create-release.outputs.release-url != '' }}
-          run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-url }} --yes
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          continue-on-error: true
-
-  rollback-javadoc-changes:
-    needs: [ create-docs-pr ]
-    if: ${{ failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Delete PR"
+      - name: "Delete Docs PR"
         if: ${{ needs.create-docs-pr.outputs.pr-url != '' }}
         run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-docs-pr.outputs.pr-url }} --delete-branch
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
-  rollback-release-notes-changes:
-    needs: [ create-release-notes-pr ]
-    if: ${{ failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Delete PR"
+      - name: "Delete Release Notes PR"
         if: ${{ needs.create-release-notes-pr.outputs.pr-url != '' }}
         run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-release-notes-pr.outputs.pr-url }} --delete-branch
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
+
+      - name: "Notify"
+        run: python .pipeline/scripts/notify.py
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          WORKFLOW: ${{ github.workflow }}
+          WORKFLOW_RUN_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
+          BRANCH_NAME: ${{ github.event.inputs.branch }}
