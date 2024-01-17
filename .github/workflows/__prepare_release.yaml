@@ -267,6 +267,7 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
+      # TODO: use the "correct" / improved logic for updating release notes
       - name: "Update Release Notes"
         run: |
           TARGET_FILE=./.cloud-sdk-docs/docs-java/release-notes/release-notes-0-to-14.mdx
@@ -314,6 +315,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
+      # TODO: use the "correct" / improved logic for resetting the release notes
+      - name: "Prepare Release Notes for next Version"
+        run: |
+          echo "" > release_notes.md
+          
+          git commit release_notes.md -m "chore: Prepare release notes for next version"
+          git push
+
   create-code-pr:
     name: "Create Code PR"
     needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr ]
@@ -337,6 +346,7 @@ jobs:
           git commit -m "Update to version ${{ needs.bump-version.outputs.new-version }}"
           git push
 
+      # TODO: this script is currently producing errors... No idea why
       - name: "Create PR Body"
         id: create-pr-body
         run: |
@@ -346,11 +356,11 @@ jobs:
           
           echo "## TODOs" > $TEMP_FILE
           echo "" >> $TEMP_FILE
-          echo "- \[ \] Review changes in \[the release commit\]($COMMIT_URL)" >> $TEMP_FILE
-          echo "- \[ \] Review **and approve** the \[Release Notes PR\](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- \[ \] Review **and approve** the \[JavaDocs PR\](${{ needs.create-docs-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- \[ \] Review the \[Draft Release\](${{ needs.create-release.outputs.release-url }})" >> $TEMP_FILE
-          echo "- \[ \] Review **and approve** this PR" >> $TEMP_FILE
+          echo "- [ ] Review changes in [the release commit]($COMMIT_URL)" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})" >> $TEMP_FILE
+          echo "- [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})" >> $TEMP_FILE
+          echo "- [ ] Review **and approve** this PR" >> $TEMP_FILE
           
           echo "PR_BODY=$(cat $TEMP_FILE)" >> $GITHUB_OUTPUT
 
