@@ -71,6 +71,7 @@ jobs:
     needs: [ bump-version ]
     runs-on: ubuntu-latest
     permissions:
+      contents: write # needed to delete the release branch in case of any failure
       actions: write # needed to trigger the ci-build workflow
       statuses: write # needed to update the commit status
     steps:
