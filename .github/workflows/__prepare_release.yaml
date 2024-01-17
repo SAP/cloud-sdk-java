@@ -87,6 +87,7 @@ jobs:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
           commit-sha: ${{ needs.bump-version.outputs.release-commit }}
+          # TODO: re-enable blackduck scan
           parameters: >
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
@@ -137,15 +138,15 @@ jobs:
 
       - name: "Create Release"
         run: |
-          zip -q -r javadoc-${{ needs.bump-version.outputs.release-version }}.zip .targets/target/site/apidocs/*
-          zip -q -r release-${{ needs.bump-version.outputs.release-version }}.zip .release-artifacts/*
+          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/site/apidocs/ .
+          tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
           gh release create "rel/${{ needs.bump-version.outputs.release-version }}" \
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
-          javadoc-${{ needs.bump-version.outputs.release-version }}.zip \
-          release-${{ needs.bump-version.outputs.release-version }}.zip
+          apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
+          release-${{ needs.bump-version.outputs.release-version }}.tar.gz
         env:
           GH_TOKEN: ${{ github.token }}
 
