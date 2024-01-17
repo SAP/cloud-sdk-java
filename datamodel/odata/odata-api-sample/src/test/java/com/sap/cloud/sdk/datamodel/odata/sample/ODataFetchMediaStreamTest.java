@@ -37,32 +37,37 @@ class ODataFetchMediaStreamTest
 {
     private static final String SRV_PATH = SdkGroceryStoreService.DEFAULT_SERVICE_PATH;
     private static final SdkGroceryStoreService SRV = new DefaultSdkGroceryStoreService().withServicePath(SRV_PATH);
-
-    private static final String JSON_RESPONSE =
-        "{"
-            + "\"d\" : {"
-            + "  \"results\" : ["
-            + "    {"
-            + "      \"__metadata\" : {"
-            + "        \"id\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)\"," // ignored by the SDK
-            + "        \"uri\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)\"," // ignored by the SDK
-            + "        \"type\": \"SdkGroceryStore.ProductType\","
-            + "        \"etag\": \"W/\\\"datetimeoffset'2023-04-18T10%3A55%3A00.5351290Z'\\\"\","
-            + "        \"content_type\" : \"text/plain\"," // ignored by the SDK
-            + "        \"media_src\" : \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/$value\"" // ignored by the SDK
-            + "      },"
-            + "      \"Id\" : 44444,"
-            + "      \"Name\" : \"Cloud SDK\","
-            + "      \"ShelfId\" : 300,"
-            + "      \"VendorId\" : 500,"
-            + "      \"Price\" : 10200,"
-            + "      \"Image\" : \"REDACTED\","
-            + "      \"Vendor\": {\"__deferred\": {\"uri\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor\"}},"
-            + "      \"Shelf\": {\"__deferred\": {\"uri\": \"https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf\"}}"
-            + "    }"
-            + "  ]"
-            + "}"
-            + "}";
+    // the following properties get ignored by the SDK:
+    // - id
+    // - uri
+    // - content_type
+    // - media_src
+    private static final String JSON_RESPONSE = """
+        {
+        "d" : {
+          "results" : [
+            {
+              "__metadata" : {
+                "id": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                "uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                "type": "SdkGroceryStore.ProductType",
+                "etag": "W/\\"datetimeoffset'2023-04-18T10%3A55%3A00.5351290Z'\\"",
+                "content_type" : "text/plain",
+                "media_src" : "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/$value"
+              },
+              "Id" : 44444,
+              "Name" : "Cloud SDK",
+              "ShelfId" : 300,
+              "VendorId" : 500,
+              "Price" : 10200,
+              "Image" : "REDACTED",
+              "Vendor": {"__deferred": {"uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor"}},
+              "Shelf": {"__deferred": {"uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf"}}
+            }
+          ]
+        }
+        }
+        """;
 
     private DefaultHttpDestination destination;
 
