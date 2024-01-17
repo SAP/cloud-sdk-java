@@ -1,0 +1,202 @@
+name: "Prepare Release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The Branch to Release From"
+        required: false
+        default: ${{ github.event.repository.default_branch }}
+      release-version:
+        description: "The Version to Release"
+        required: false
+
+env:
+  CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI build
+  RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
+  SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
+
+jobs:
+  bump-version:
+    name: "Bump Version"
+    outputs:
+      current-version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}
+      release-version: ${{ steps.determine-versions.outputs.RELEASE_VERSION }}
+      new-version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}
+      release-branch: ${{ steps.prepare-release.outputs.BRANCH_NAME }}
+      release-commit: ${{ steps.prepare-release.outputs.RELEASE_COMMIT_ID }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: "Determine Versions"
+        id: determine-versions
+        run: python .pipeline/scripts/get-release-versions.py
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.release-version }}
+
+      - run: "echo Release Version: ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
+      - run: "echo Current Version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}"
+      - run: "echo New Version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}"
+
+      - name: "Prepare git"
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: "Set Release Version to ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
+        id: prepare-release
+        run: |
+          # NOTE: If you change this pattern here, also adjust perform_release.yml:
+          BRANCH_NAME=RELEASE-${{ steps.determine-versions.outputs.RELEASE_VERSION }}
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          git switch --create $BRANCH_NAME
+
+          python .pipeline/scripts/set-release-versions.py --version ${{ steps.determine-versions.outputs.RELEASE_VERSION }}
+          git add .
+          git commit -m "Update to version ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
+
+          # We need to get the commit id, and push the branch so the release tag will point at the right commit afterwards
+          RELEASE_COMMIT_ID=$(git log -1 --pretty=format:"%H")
+          echo "RELEASE_COMMIT_ID=$RELEASE_COMMIT_ID" >> $GITHUB_OUTPUT
+
+          git push origin $BRANCH_NAME:$BRANCH_NAME
+
+  run-ci:
+    name: "Continuous Integration"
+    outputs:
+      ci-run-id: ${{ steps.trigger-ci.outputs.run-id }}
+    needs: [ bump-version ]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to trigger the ci-build workflow
+      statuses: write # needed to update the commit status
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
+
+      - name: "Trigger CI Workflow"
+        id: trigger-ci
+        uses: ./.github/actions/trigger-workflow
+        with:
+          workflow: ${{ env.CI_BUILD_WORKFLOW }}
+          workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
+          commit-sha: ${{ needs.bump-version.outputs.release-commit }}
+          parameters: >
+            -f commit=${{ needs.bump-version.outputs.release-commit }}
+            -f build-release-artifacts=true
+            -f sign-release-artifacts=true
+            -f run-blackduck-scan=true
+            -f run-security-rating=true
+
+      - name: "Await CI Workflow"
+        uses: ./.github/actions/await-workflow
+        with:
+          run-id: ${{ steps.trigger-ci.outputs.run-id }}
+          commit-status: "Continuous Integration Workflow"
+
+      - name: "Delete Branch On Failure"
+        if: ${{ failure() }}
+        run: git push -d origin ${{ needs.bump-version.outputs.release-branch }}
+
+  create-release:
+    name: "Create GitHub Release"
+    needs: [ bump-version, run-ci ]
+    permissions:
+      contents: write # needed to create a new release
+      actions: read # needed to download the artifacts from the CI workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
+      - name: "Download Release Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.RELEASE_ARTIFACT_NAME }}
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          path: .release-artifacts/
+      # needed to get the aggregated JavaDocs
+      - name: "Download SDK Targets"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          path: .targets/
+      - name: "Prepare git"
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: "Create Release"
+        run: |
+          zip -q -r javadoc-${{ needs.bump-version.outputs.release-version }}.zip .targets/target/site/apidocs/*
+          zip -q -r release-${{ needs.bump-version.outputs.release-version }}.zip .release-artifacts/*
+          
+          gh release create "rel/${{ needs.bump-version.outputs.release-version }}" \
+          --target ${{ needs.bump-version.outputs.release-commit }} \
+          --title "Release ${{ needs.bump-version.outputs.release-version }}" \
+          --draft --generate-notes \
+          javadoc-${{ needs.bump-version.outputs.release-version }}.zip \
+          release-${{ needs.bump-version.outputs.release-version }}.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: "Delete Branch On Failure"
+        if: ${{ failure() }}
+        run: git push -d origin ${{ needs.bump-version.outputs.release-branch }}
+
+  create-pr:
+    name: "Create Update PR"
+    needs: [ bump-version, run-ci, create-release ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
+      - name: "Prepare Git"
+        run: |
+          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
+          git config --global user.name "Maven Central Release Script"
+
+      - name: "Set New Version"
+        run: |
+          python .pipeline/scripts/set-release-versions.py --version ${{ needs.bump-version.outputs.new-version }}
+          git add .
+          git commit -m "Update to version ${{ needs.bump-version.outputs.new-version }}"
+          git push
+
+      - name: "Create PR"
+        run: |
+          RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
+          PR_BODY=$(python .pipeline/scripts/print-pr-body.py --commit-url https://github.com/SAP/cloud-sdk-java/commit/${{ needs.bump-version.outputs.release-commit }} --release-url $RELEASE_URL)
+
+          gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "$PR_BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-job:
+    runs-on: ubuntu-latest
+    needs: [ bump-version, run-ci, create-release, create-pr ]
+    if: ${{ failure() }}
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - name: "Notify"
+        run: python .pipeline/scripts/notify.py
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          WORKFLOW: ${{ github.workflow }}
+          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
+          BRANCH_NAME: ${{ github.event.inputs.branch }}
