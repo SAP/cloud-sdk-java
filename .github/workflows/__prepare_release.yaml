@@ -5,8 +5,7 @@ on:
     inputs:
       branch:
         description: "The Branch to Release From"
-        required: false
-        default: ${{ github.event.repository.default_branch }}
+        required: true
       release-version:
         description: "The Version to Release"
         required: false
