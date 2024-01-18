@@ -269,14 +269,16 @@ class DestinationKeyStoreExtractor
     static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
     {
         try {
-            final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
+            final String decoded = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
 
-            final Pattern p = Pattern.compile("-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+", Pattern.DOTALL);
-            final Matcher match = p.matcher(s);
-            final String key;
-
-            if( !match.find() || (key = (s.substring(0, match.start()) + s.substring(match.end())).trim()).isEmpty() ) {
-                throw new IllegalArgumentException("PEM format cannot be parsed.");
+            final Pattern pattern = Pattern.compile("-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+", Pattern.DOTALL);
+            final Matcher match = pattern.matcher(decoded);
+            if( !match.find() ) {
+                throw new IllegalArgumentException("PEM format cannot be parsed: No certificate entry found.");
+            }
+            final String key = (decoded.substring(0, match.start()) + decoded.substring(match.end())).trim();
+            if( key.isEmpty() ) {
+                throw new IllegalArgumentException("PEM format cannot be parsed: No private key entry found.");
             }
 
             final String alias = "1";
