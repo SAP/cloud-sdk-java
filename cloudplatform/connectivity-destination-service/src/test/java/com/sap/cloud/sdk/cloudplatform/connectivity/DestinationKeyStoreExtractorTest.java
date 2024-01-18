@@ -181,8 +181,8 @@ class DestinationKeyStoreExtractorTest
 
         final KeyStore expectedKeyStore = createKeyStoreObjectFromPkcsFile();
 
-        final String cert = "1";
-        assertThat(actualKeyStore.getCertificate(cert)).isEqualTo(expectedKeyStore.getCertificate(cert)).isNotNull();
+        final String alias = "1";
+        assertThat(actualKeyStore.getCertificate(alias)).isEqualTo(expectedKeyStore.getCertificate(alias)).isNotNull();
     }
 
     @Test
@@ -206,8 +206,8 @@ class DestinationKeyStoreExtractorTest
         final Option<KeyStore> keyStore = new DestinationKeyStoreExtractor(testDestination).getKeyStore();
         assertThat(keyStore).isNotEmpty();
 
-        final String cert = "1";
-        assertThat(keyStore.get().getCertificate(cert))
+        final String alias = "1";
+        assertThat(keyStore.get().getCertificate(alias))
             .isNotNull()
             .extracting(c -> ((X509Certificate) c).getSubjectX500Principal().getName(), as(STRING))
             .contains("CN=pem-test");
