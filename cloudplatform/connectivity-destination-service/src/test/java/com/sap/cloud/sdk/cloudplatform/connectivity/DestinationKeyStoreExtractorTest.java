@@ -3,8 +3,8 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -239,7 +239,7 @@ class DestinationKeyStoreExtractorTest
                         createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
                     .build();
 
-            assertThatCode(() -> new DestinationKeyStoreExtractor(testDestination).getKeyStore())
+            assertThatThrownBy(() -> new DestinationKeyStoreExtractor(testDestination).getKeyStore())
                 .isInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("Failed to instantiate new KeyStore.")
                 .cause()
