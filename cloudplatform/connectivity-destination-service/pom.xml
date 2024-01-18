@@ -217,6 +217,7 @@
 					<ignoredUsedUndeclaredDependencies>
 						<!-- include resilience via the aggregator to ensure the default implementation is present -->
 						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience-api</ignoredUsedUndeclaredDependency>
+						<!-- Rely on "java-security-test" to provide a "wiremock-standalone" test dependency transitively -->
 						<ignoredUsedUndeclaredDependency>org.wiremock:wiremock-standalone</ignoredUsedUndeclaredDependency>
 					</ignoredUsedUndeclaredDependencies>
 					<ignoredUnusedDeclaredDependencies>
