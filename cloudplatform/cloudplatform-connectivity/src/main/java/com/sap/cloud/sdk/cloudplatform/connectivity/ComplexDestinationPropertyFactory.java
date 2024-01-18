@@ -189,21 +189,27 @@ class ComplexDestinationPropertyFactory
                 .get(DestinationProperty.AUTH_TYPE)
                 .orElse(() -> baseProperties.get(DestinationProperty.AUTH_TYPE_FALLBACK));
 
+        final boolean forwardAuthToken = baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false);
+
+        if( (authType.isEmpty() || authType.get() == AuthenticationType.NO_AUTHENTICATION)
+            && basicCredentials.isDefined() ) {
+            return AuthenticationType.BASIC_AUTHENTICATION;
+        }
+
+        if( (authType.isEmpty() || authType.get() == AuthenticationType.NO_AUTHENTICATION) && forwardAuthToken ) {
+            return AuthenticationType.TOKEN_FORWARDING;
+        }
+
         if( authType.isEmpty() ) {
-            final AuthenticationType fallback;
-
-            if( basicCredentials.isDefined() ) {
-                fallback = AuthenticationType.BASIC_AUTHENTICATION;
-            } else if( baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false) ) {
-                fallback = AuthenticationType.TOKEN_FORWARDING;
-            } else {
-                fallback = AuthenticationType.NO_AUTHENTICATION;
-            }
-
             final String msg = "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.";
-            log.debug(msg, DestinationProperty.AUTH_TYPE, DestinationProperty.AUTH_TYPE_FALLBACK, fallback);
+            log
+                .debug(
+                    msg,
+                    DestinationProperty.AUTH_TYPE,
+                    DestinationProperty.AUTH_TYPE_FALLBACK,
+                    AuthenticationType.NO_AUTHENTICATION);
 
-            return fallback;
+            return AuthenticationType.NO_AUTHENTICATION;
         }
         return authType.get();
     }
