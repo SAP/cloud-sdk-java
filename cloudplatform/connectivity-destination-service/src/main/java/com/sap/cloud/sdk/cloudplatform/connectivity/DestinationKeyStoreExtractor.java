@@ -271,7 +271,7 @@ class DestinationKeyStoreExtractor
         try {
             final String s = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
 
-            final Pattern p = Pattern.compile("[-]+BEGIN CERTIFICATE[-]+.*[-]+END CERTIFICATE[-]+", Pattern.DOTALL);
+            final Pattern p = Pattern.compile("-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+", Pattern.DOTALL);
             final Matcher match = p.matcher(s);
             final String key;
 
