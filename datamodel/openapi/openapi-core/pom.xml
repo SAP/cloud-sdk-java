@@ -104,6 +104,12 @@
 			<artifactId>httpcore5</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -114,6 +120,9 @@
 					<ignoredNonTestScopedDependencies>
 						<ignoredNonTestScopedDependency>com.fasterxml.jackson.core:jackson-core</ignoredNonTestScopedDependency>
 					</ignoredNonTestScopedDependencies>
+					<ignoredUnusedDeclaredDependencies>
+						<ignoredUnusedDeclaredDependency>org.hamcrest:hamcrest</ignoredUnusedDeclaredDependency>
+					</ignoredUnusedDeclaredDependencies>
 				</configuration>
 			</plugin>
 		</plugins>
