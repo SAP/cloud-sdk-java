@@ -56,7 +56,7 @@ def remove_unchanged_sections(file, unchanged_sections):
 def set_header(file, version):
     date = datetime.today().strftime('%B %d, %Y')
     # Replace the first line with: ## 5.2.0 - January 17, 2024
-    file = re.sub("^.*", "## " + version + " - " + date, file)
+    file = re.sub("^## .*", "## " + version + " - " + date, file)
     return file
 
 def link_github_release(file, version):
