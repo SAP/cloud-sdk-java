@@ -138,5 +138,5 @@
 			<artifactId>security</artifactId>
 			<scope>test</scope>
 		</dependency>
-    </dependencies>
+	</dependencies>
 </project>
