@@ -266,9 +266,9 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create docs repo branch java-release-notes1-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create docs repo branch java-release-notes2-${{ needs.bump-version.outputs.release-version }}"
         working-directory: ./cloud-sdk
-        run: git checkout -B java-release-notes1-${{ needs.bump-version.outputs.release-version }}
+        run: git checkout -B java-release-notes2-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
@@ -281,7 +281,7 @@ jobs:
 
       - name: "Push docs repo release notes"
         working-directory: ./cloud-sdk
-        run: git push origin java-release-notes1-${{ needs.bump-version.outputs.release-version }}
+        run: git push origin java-release-notes2-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create docs repo pull request"
         working-directory: ./cloud-sdk
