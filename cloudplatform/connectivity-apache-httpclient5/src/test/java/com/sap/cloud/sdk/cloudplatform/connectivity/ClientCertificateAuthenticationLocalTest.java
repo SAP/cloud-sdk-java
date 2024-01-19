@@ -34,20 +34,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 class ClientCertificateAuthenticationLocalTest
 {
     private static final String BASE_PATH =
         "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName();
-    private static final String JKS_PATH = BASE_PATH + "/client-cert.p12";
-    private static final String JKS_PATH_NOPW = BASE_PATH + "/client-nopw.p12";
-    private static final String JKS_PW = "cca-password";
+    private static final String PKCS12_PW = "cca-password";
+    private static final String PKCS12_PATH = BASE_PATH + "/client-cert.p12";
+    private static final String PKCS12_PATH_NOPW = BASE_PATH + "/client-nopw.p12";
+    private static final String JKS_PATH_NOPW = BASE_PATH + "/client-nopw.jks";
 
     @RegisterExtension
     static final WireMockExtension server =
@@ -68,52 +72,34 @@ class ClientCertificateAuthenticationLocalTest
         server.stubFor(WireMock.get(anyUrl()).willReturn(ok()));
     }
 
-    @Test
-    @SneakyThrows
-    void testClientCorrectlyConfigured()
+    @RequiredArgsConstructor
+    enum TestCase
     {
-        final HttpDestination destination =
-            spy(
-                DefaultHttpDestination
-                    .builder(server.baseUrl())
-                    .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
-                    .proxyType(ProxyType.INTERNET)
-                    .keyStore(getClientKeyStore(JKS_PATH, JKS_PW.toCharArray()))
-                    .keyStorePassword(JKS_PW)
-                    .trustAllCertificates()
-                    .build());
+        PKCS12_WITH_PW("PKCS12", PKCS12_PATH, PKCS12_PW),
+        PKCS12_EMPTY_PW("PKCS12", PKCS12_PATH_NOPW, ""),
+        JKS_EMPTY_PW("JKS", JKS_PATH_NOPW, ""),
+        JKS_NULL_PW("JKS", JKS_PATH_NOPW, null);
 
-        final HttpClientContext context = HttpClientContext.create();
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
-
-        httpClient.execute(new HttpGet("/"), context, r -> assertThat(r.getCode()).isEqualTo(200));
-
-        assertThat(context.getUserToken()).isNotNull();
-        assertThat(context.getUserToken()).isInstanceOf(X500Principal.class);
-        assertThat(context.getUserToken(X500Principal.class).getName()).contains("CN=localhost");
-
-        // assert keystore methods have been used
-        verify(destination).getKeyStorePassword();
-        verify(destination).getKeyStore();
-
-        // request had no authorization header
-        server.verify(getRequestedFor(anyUrl()).withoutHeader(HttpHeaders.AUTHORIZATION));
+        final String format, path, pw;
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource( TestCase.class )
     @SneakyThrows
-    void testClientCorrectlyConfiguredNoPassword()
+    void testClientCorrectlyConfigured( @Nonnull final TestCase testCase )
     {
-        final HttpDestination destination =
-            spy(
-                DefaultHttpDestination
-                    .builder(server.baseUrl())
-                    .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
-                    .proxyType(ProxyType.INTERNET)
-                    .keyStore(getClientKeyStore(JKS_PATH_NOPW, new char[0])) // `null` password does NOT work
-                    .trustAllCertificates()
-                    .build());
+        final DefaultHttpDestination.Builder destBuilder =
+            DefaultHttpDestination
+                .builder(server.baseUrl())
+                .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
+                .proxyType(ProxyType.INTERNET)
+                .trustAllCertificates()
+                .keyStore(getClientKeyStore(testCase.format, testCase.path, testCase.pw));
+        if( testCase.pw != null ) {
+            destBuilder.keyStorePassword(testCase.pw);
+        }
 
+        final HttpDestination destination = spy(destBuilder.build());
         final HttpClientContext context = HttpClientContext.create();
         final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
 
@@ -127,7 +113,7 @@ class ClientCertificateAuthenticationLocalTest
         verify(destination).getKeyStorePassword();
         verify(destination).getKeyStore();
 
-        // request had no authorization header
+        // requests had no authorization header
         server.verify(getRequestedFor(anyUrl()).withoutHeader(HttpHeaders.AUTHORIZATION));
     }
 
@@ -152,7 +138,7 @@ class ClientCertificateAuthenticationLocalTest
         // sanity check: we can't be certain we will get an SSLHandshakeException
         // sometimes we get a SocketException instead, unknown why
         // thus we run the success test case again to verify the server hasn't crashed
-        testClientCorrectlyConfigured();
+        testClientCorrectlyConfigured(TestCase.PKCS12_WITH_PW);
     }
 
     private static WireMockConfiguration buildWireMockConfiguration()
@@ -161,19 +147,20 @@ class ClientCertificateAuthenticationLocalTest
             .httpDisabled(true)
             .dynamicHttpsPort()
             .needClientAuth(true)
-            .trustStorePath(JKS_PATH)
-            .trustStorePassword(JKS_PW)
-            .trustStoreType("JKS");
+            .trustStorePath(PKCS12_PATH)
+            .trustStorePassword(PKCS12_PW);
     }
 
-    private static KeyStore getClientKeyStore( @Nonnull final String ksPath, @Nullable final char[] pw )
-        throws KeyStoreException,
-            IOException,
-            CertificateException,
-            NoSuchAlgorithmException
+    private static
+        KeyStore
+        getClientKeyStore( @Nonnull final String format, @Nonnull final String ksPath, @Nullable final String pw )
+            throws KeyStoreException,
+                IOException,
+                CertificateException,
+                NoSuchAlgorithmException
     {
-        final KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        keyStore.load(new FileInputStream(ksPath), pw);
+        final KeyStore keyStore = KeyStore.getInstance(format);
+        keyStore.load(new FileInputStream(ksPath), pw == null ? null : pw.toCharArray());
         return keyStore;
     }
 }
