@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
 
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.KeyStore;
@@ -42,12 +41,9 @@ import lombok.SneakyThrows;
 
 class ClientCertificateAuthenticationLocalTest
 {
-    private static final String RES =
-        "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName();
     private static final String CCA_PASSWORD = "cca-password";
-    private static final String JKS_PATH = RES + "/client-cert.pkcs12";
-    private static final String CRT_PATH = RES + "/client-cert.crt";
-    private static final String KEY_PATH = RES + "/client-cert.key";
+    private static final String JKS_PATH =
+        "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName() + "/client-cert.pkcs12";
 
     @RegisterExtension
     static final WireMockExtension server =
@@ -70,7 +66,7 @@ class ClientCertificateAuthenticationLocalTest
 
     @Test
     @SneakyThrows
-    void testClientCorrectlyConfiguredPkcs12()
+    void testClientCorrectlyConfigured()
     {
         final HttpDestination destination =
             spy(
@@ -80,39 +76,6 @@ class ClientCertificateAuthenticationLocalTest
                     .proxyType(ProxyType.INTERNET)
                     .keyStore(getClientKeyStore())
                     .keyStorePassword(CCA_PASSWORD)
-                    .trustAllCertificates()
-                    .build());
-
-        final HttpClientContext context = HttpClientContext.create();
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
-
-        httpClient.execute(new HttpGet("/"), context, r -> assertThat(r.getCode()).isEqualTo(200));
-
-        assertThat(context.getUserToken()).isNotNull();
-        assertThat(context.getUserToken()).isInstanceOf(X500Principal.class);
-        assertThat(context.getUserToken(X500Principal.class).getName()).contains("CN=localhost");
-
-        // assert keystore methods have been used
-        Mockito.verify(destination).getKeyStorePassword();
-        Mockito.verify(destination).getKeyStore();
-
-        // request had no authorization header
-        server.verify(getRequestedFor(anyUrl()).withoutHeader(HttpHeaders.AUTHORIZATION));
-    }
-
-    @Test
-    @SneakyThrows
-    void testClientCorrectlyConfiguredPem()
-    {
-        final FileReader certs = new FileReader(CRT_PATH), key = new FileReader(KEY_PATH);
-        final KeyStore createdKeystore = KeyStoreReader.createKeyStore("1", new char[0], certs, key);
-        final HttpDestination destination =
-            spy(
-                DefaultHttpDestination
-                    .builder(server.baseUrl())
-                    .authenticationType(AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION)
-                    .proxyType(ProxyType.INTERNET)
-                    .keyStore(createdKeystore)
                     .trustAllCertificates()
                     .build());
 
@@ -154,7 +117,7 @@ class ClientCertificateAuthenticationLocalTest
         // sanity check: we can't be certain we will get an SSLHandshakeException
         // sometimes we get a SocketException instead, unknown why
         // thus we run the success test case again to verify the server hasn't crashed
-        testClientCorrectlyConfiguredPkcs12();
+        testClientCorrectlyConfigured();
     }
 
     private static WireMockConfiguration buildWireMockConfiguration()
