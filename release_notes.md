@@ -46,6 +46,7 @@
   This is no longer required, as the Cloud SDK 4 strategy will gracefully be ignored, if there is exactly one alternative.
 - Improved the application of resilience patterns for OAuth authorization flows.
   Stateful resilience patterns (e.g. circuit breaker) will now be applied per `client_id` of the OAuth client (was per instance of the OAuth service / destination).
+- Improved the `ApacheHttpClient5CacheBuilder` API, it previously would return a non-public class.
 - Dependency Updates:
   - SAP dependency updates:
       - Update the [SAP Security Library](https://github.com/SAP/cloud-security-services-integration-library) from `3.3.1` to `3.3.3`
