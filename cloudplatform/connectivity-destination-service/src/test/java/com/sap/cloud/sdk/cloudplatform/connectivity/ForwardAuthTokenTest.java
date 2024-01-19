@@ -1,16 +1,11 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -19,13 +14,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.google.common.net.HttpHeaders;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 
 public class ForwardAuthTokenTest
 {
@@ -34,39 +28,29 @@ public class ForwardAuthTokenTest
         return List
             .of(
                 // forwardAuthToken = true && authType = NoAuthentication
-                new TestCase(
-                    Map
-                        .of(
-                            DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(),
-                            "true",
-                            DestinationProperty.AUTH_TYPE.getKeyName(),
-                            AuthenticationType.NO_AUTHENTICATION),
-                    AssertionType.TOKEN_IS_FORWARDED),
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectTokenForwarding(),
                 // forwardAuthToken = true && unset authType
-                new TestCase(
-                    Map.of(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "true"),
-                    AssertionType.TOKEN_IS_FORWARDED),
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .expectTokenForwarding(),
                 // forwardAuthToken = false && authType = NoAuthentication
-                new TestCase(
-                    Map
-                        .of(
-                            DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(),
-                            "false",
-                            DestinationProperty.AUTH_TYPE.getKeyName(),
-                            AuthenticationType.NO_AUTHENTICATION),
-                    AssertionType.TOKEN_IS_NOT_FORWARDED),
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectNoTokenForwarding(),
                 // forwardAuthToken = false && unset authType
-                new TestCase(
-                    Map.of(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false"),
-                    AssertionType.TOKEN_IS_NOT_FORWARDED),
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .expectNoTokenForwarding(),
                 // unset forwardAuthToken && authType = NoAuthentication
-                new TestCase(
-                    Map.of(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION),
-                    AssertionType.TOKEN_IS_NOT_FORWARDED),
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectNoTokenForwarding(),
                 // unset forwardAuthToken && unset authType
-                new TestCase(Map.of(), AssertionType.TOKEN_IS_NOT_FORWARDED)
-
-            );
+                TestCaseBuilder.forNoProperties().expectNoTokenForwarding());
     }
 
     private enum AssertionType
@@ -84,6 +68,48 @@ public class ForwardAuthTokenTest
 
     private record TestCase( Map<String, Object> properties, AssertionType forwardingAssertion )
     {
+    }
+
+    private static class TestCaseBuilder
+    {
+
+        private final Map<String, Object> properties = new HashMap<>();
+
+        TestCaseBuilder( String key, Object value )
+        {
+            properties.put(key, value);
+        }
+
+        TestCaseBuilder()
+        {
+
+        }
+
+        static TestCaseBuilder forProperty( String key, Object value )
+        {
+            return new TestCaseBuilder(key, value);
+        }
+
+        static TestCaseBuilder forNoProperties()
+        {
+            return new TestCaseBuilder();
+        }
+
+        TestCaseBuilder and( final String key, final Object value )
+        {
+            properties.put(key, value);
+            return this;
+        }
+
+        TestCase expectTokenForwarding()
+        {
+            return new TestCase(properties, AssertionType.TOKEN_IS_FORWARDED);
+        }
+
+        TestCase expectNoTokenForwarding()
+        {
+            return new TestCase(properties, AssertionType.TOKEN_IS_NOT_FORWARDED);
+        }
     }
 
     @ParameterizedTest
@@ -104,28 +130,14 @@ public class ForwardAuthTokenTest
 
     private HttpDestination buildDestinationServiceDestination( final Map<String, Object> properties )
     {
-        // to circumvent caching in the destination loader we generate a random destination name here
-        final String destinationName = "SomeDestinationName" + UUID.randomUUID();
-        final String serviceResponse = buildServiceResponse(destinationName, properties);
-
-        final DestinationServiceAdapter adapter =
-            spy(
-                new DestinationServiceAdapter(
-                    behalf -> DefaultHttpDestination.builder("").build(),
-                    () -> mock(ServiceBinding.class),
-                    "providerTenantId"));
-        final DestinationLoader loader =
-            new DestinationService(
-                adapter,
-                ResilienceConfiguration.empty("testSingle"),
-                ResilienceConfiguration.empty("testMultiple"));
-
-        doReturn(serviceResponse).when(adapter).getConfigurationAsJson(eq("/destinations/" + destinationName), any());
-
-        return loader.tryGetDestination(destinationName).get().asHttp();
+        final String serviceResponse = buildServiceResponse(properties);
+        final DestinationServiceV1Response parsedResponse =
+            new Gson().fromJson(serviceResponse, DestinationServiceV1Response.class);
+        final Destination destination = DestinationServiceFactory.fromDestinationServiceV1Response(parsedResponse);
+        return destination.asHttp();
     }
 
-    private String buildServiceResponse( final String destinationName, final Map<String, Object> properties )
+    private String buildServiceResponse( final Map<String, Object> properties )
     {
         final JsonElement response = JsonParser.parseString("""
             {
@@ -134,14 +146,14 @@ public class ForwardAuthTokenTest
                     "InstanceId": null
                 },
                 "destinationConfiguration": {
-                    "Name": "%s",
+                    "Name": "SomeDestination",
                     "Type": "HTTP",
                     "URL": "sap.com",
                     "ProxyType": "Internet",
                     "Description": "Test destination"
                 }
             }
-            """.formatted(destinationName));
+            """);
         final JsonObject config = response.getAsJsonObject().get("destinationConfiguration").getAsJsonObject();
         for( final Map.Entry<String, Object> entry : properties.entrySet() ) {
             config.add(entry.getKey(), new JsonPrimitive(entry.getValue().toString()));

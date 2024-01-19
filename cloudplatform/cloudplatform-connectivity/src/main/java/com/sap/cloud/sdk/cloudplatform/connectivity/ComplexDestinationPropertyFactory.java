@@ -184,34 +184,29 @@ class ComplexDestinationPropertyFactory
         @Nonnull final DestinationProperties baseProperties,
         @Nonnull final Option<BasicCredentials> basicCredentials )
     {
-        final Option<AuthenticationType> authType =
+        final AuthenticationType authType =
             baseProperties
                 .get(DestinationProperty.AUTH_TYPE)
-                .orElse(() -> baseProperties.get(DestinationProperty.AUTH_TYPE_FALLBACK));
+                .orElse(() -> baseProperties.get(DestinationProperty.AUTH_TYPE_FALLBACK))
+                .onEmpty(
+                    () -> log
+                        .debug(
+                            "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.",
+                            DestinationProperty.AUTH_TYPE,
+                            DestinationProperty.AUTH_TYPE_FALLBACK,
+                            AuthenticationType.NO_AUTHENTICATION))
+                .getOrElse(AuthenticationType.NO_AUTHENTICATION);
 
         final boolean forwardAuthToken = baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false);
 
-        if( (authType.isEmpty() || authType.get() == AuthenticationType.NO_AUTHENTICATION)
-            && basicCredentials.isDefined() ) {
+        if( authType == AuthenticationType.NO_AUTHENTICATION && basicCredentials.isDefined() ) {
             return AuthenticationType.BASIC_AUTHENTICATION;
         }
 
-        if( (authType.isEmpty() || authType.get() == AuthenticationType.NO_AUTHENTICATION) && forwardAuthToken ) {
+        if( authType == AuthenticationType.NO_AUTHENTICATION && forwardAuthToken ) {
             return AuthenticationType.TOKEN_FORWARDING;
         }
-
-        if( authType.isEmpty() ) {
-            final String msg = "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.";
-            log
-                .debug(
-                    msg,
-                    DestinationProperty.AUTH_TYPE,
-                    DestinationProperty.AUTH_TYPE_FALLBACK,
-                    AuthenticationType.NO_AUTHENTICATION);
-
-            return AuthenticationType.NO_AUTHENTICATION;
-        }
-        return authType.get();
+        return authType;
     }
 
     @Nonnull
