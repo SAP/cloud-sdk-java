@@ -21,6 +21,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Base64;
 import java.util.List;
 
@@ -187,7 +188,7 @@ class DestinationKeyStoreExtractorTest
 
     @Test
     void testGetKeyStoreWithPemFile()
-        throws KeyStoreException
+        throws Exception
     {
         final String fileLocation = PEM_FILE_KEY_STORE_LOCATION;
         final String fileContent = PEM_FILE_KEY_STORE_CONTENT;
@@ -207,6 +208,9 @@ class DestinationKeyStoreExtractorTest
         assertThat(keyStore).isNotEmpty();
 
         final String alias = "1";
+
+        assertThat(keyStore.get().getKey(alias, PEM_KEY_STORE_PASSWORD.toCharArray()))
+            .isInstanceOf(RSAPrivateCrtKey.class);
         assertThat(keyStore.get().getCertificate(alias))
             .isNotNull()
             .extracting(c -> ((X509Certificate) c).getSubjectX500Principal().getName(), as(STRING))
