@@ -249,7 +249,6 @@ jobs:
     outputs:
       branch: ${{ steps.push-release-notes.outputs.BRANCH_NAME }}
       pr-url: ${{ steps.create-release-notes-pr.outputs.PR_URL }}
-      release-version: ${{ steps.determine-versions.outputs.RELEASE_VERSION }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Code Repository"
@@ -283,7 +282,7 @@ jobs:
 
       - name: "Push changes"
         working-directory: ./cloud-sdk
-        run: git push origin new-release-notes
+        run: git push origin java-release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create Documentation repository Pull Request"
         working-directory: ./cloud-sdk
@@ -296,7 +295,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
-      - name: Reset release notes
+      - name: "Reset release notes"
         run: |
           cp release_notes_template.md release_notes.md
           git add .
