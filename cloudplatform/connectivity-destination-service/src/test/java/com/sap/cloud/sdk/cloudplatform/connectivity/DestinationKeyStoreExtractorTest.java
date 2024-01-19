@@ -219,9 +219,9 @@ class DestinationKeyStoreExtractorTest
         final String[] cases =
             new String[] {
                 "", // empty
-                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n", // only one cert
-                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n".repeat(5), // multiple certs
-                "-----BEGIN PRIVATE KEY-----\nFOO\n-----END PRIVATE KEY-----\n" // only a key
+                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n", // only one cert, no key
+                "-----BEGIN CERTIFICATE-----\nFOO\n-----END CERTIFICATE-----\n".repeat(5), // certs, no key
+                "-----BEGIN PRIVATE KEY-----\nFOO\n-----END PRIVATE KEY-----\n" // key, no certs
             };
 
         for( final String c : cases ) {
@@ -244,7 +244,7 @@ class DestinationKeyStoreExtractorTest
                 .hasMessageContaining("Failed to instantiate new KeyStore.")
                 .cause()
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("PEM format cannot be parsed.");
+                .hasMessageStartingWith("PEM format cannot be parsed");
         }
     }
 
