@@ -36,7 +36,7 @@ class AbstractX509SslContextProviderTest
             CertificateException
     {
         final FileReader cert = new FileReader(getTestFile("valid_cert.pem"));
-        final Certificate[] certificates = AbstractX509SslContextProvider.loadCertificates(cert);
+        final Certificate[] certificates = KeyStoreReader.loadCertificates(cert);
 
         assertThat(certificates).isNotEmpty();
         assertThat(certificates[0].getType()).isEqualTo("X.509");
@@ -51,16 +51,16 @@ class AbstractX509SslContextProviderTest
         throws FileNotFoundException
     {
         final FileReader cert = new FileReader(getTestFile("invalid_cert"));
-        assertThatThrownBy(() -> AbstractX509SslContextProvider.loadCertificates(cert))
-            .isInstanceOf(CloudPlatformException.class);
+        assertThatThrownBy(() -> KeyStoreReader.loadCertificates(cert)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void testKeyParsing()
-        throws IOException
+        throws Exception
     {
         final FileReader key = new FileReader(getTestFile("valid_key.pem"));
-        final PrivateKey privateKey = AbstractX509SslContextProvider.loadPrivateKey(key);
+        final char[] pw = "changeit".toCharArray();
+        final PrivateKey privateKey = KeyStoreReader.loadKey(key, pw);
 
         assertThat(privateKey.getAlgorithm()).containsIgnoringCase("RSA");
     }
@@ -70,8 +70,8 @@ class AbstractX509SslContextProviderTest
         throws FileNotFoundException
     {
         final FileReader key = new FileReader(getTestFile("invalid_key"));
-        assertThatThrownBy(() -> AbstractX509SslContextProvider.loadPrivateKey(key))
-            .isInstanceOf(CloudPlatformException.class);
+        final char[] pw = "changeit".toCharArray();
+        assertThatThrownBy(() -> KeyStoreReader.loadKey(key, pw)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
