@@ -110,7 +110,6 @@
 		<openapi-generator.version>7.2.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
-		<!--  Dependency convergence dependencies  -->
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
 		<bouncycastle.version>1.77</bouncycastle.version>

@@ -46,6 +46,8 @@
 - Improved the application of resilience patterns for OAuth authorization flows.
   Stateful resilience patterns (e.g. circuit breaker) will now be applied per `client_id` of the OAuth client (was per instance of the OAuth service / destination).
 - Dependency Updates:
+  - SAP dependency updates:
+      - Update the [SAP Security Library](https://github.com/SAP/cloud-security-services-integration-library) from `3.3.1` to `3.3.3`
   - Other dependency updates:
       - Update [Guava](https://central.sonatype.com/artifact/com.google.guava/guava/33.0.0-jre) from `32.1.3-jre` to `33.0.0-jre`
       - Update [Jackson](https://central.sonatype.com/artifact/com.fasterxml.jackson.core/jackson-core/2.16.1) from `2.15.3` to `2.16.1`
