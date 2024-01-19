@@ -267,16 +267,40 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      # TODO: use the "correct" / improved logic for updating release notes
-      - name: "Update Release Notes"
+      - name: "Create a new branch java-release-notes-${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
+        working-directory: ./cloud-sdk
+        run: git checkout -B java-release-notes-${{ steps.determine-versions.outputs.RELEASE_VERSION }}
+
+      - name: "Copy release notes to docs repo"
+        run: python .pipeline/scripts/release_notes_automation.py --version ${{ steps.determine-versions.outputs.RELEASE_VERSION }} --folder "cloud-sdk/docs-java/release-notes"
+
+      - name: "Commit changes"
+        working-directory: ./cloud-sdk
         run: |
-          TARGET_FILE=./.cloud-sdk-docs/docs-java/release-notes/release-notes-0-to-14.mdx
-          SOURCE_FILE=./release_notes.md
-          TEMP_FILE=./.temp-release-notes.md
-          
-          cat $SOURCE_FILE > $TEMP_FILE
-          cat $TARGET_FILE >> $TEMP_FILE
-          cat $TEMP_FILE > $TARGET_FILE
+          git add .
+          git commit -m "Add new release notes"
+
+      - name: "Push changes"
+        working-directory: ./cloud-sdk
+        run: git push origin new-release-notes
+
+      - name: "Create Documentation repository Pull Request"
+        working-directory: ./cloud-sdk
+        run: |
+          PR_TITLE="Add SAP Cloud SDK for Java v$MAJOR_VERSION release notes"
+          PR_BODY="Add release notes for v$MAJOR_VERSION to the SAP Cloud SDK for Java docs."
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+        env:
+          MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
+          VERSION: ${{ env.VERSION }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: Reset release notes
+        run: |
+          cp release_notes_template.md release_notes.md
+          git add .
+          git commit -m "Reset release notes"
+          git push
 
       - name: "Push Release Notes"
         id: push-release-notes
