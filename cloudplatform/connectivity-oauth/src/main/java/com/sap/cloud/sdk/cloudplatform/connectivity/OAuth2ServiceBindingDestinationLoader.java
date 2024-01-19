@@ -5,9 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -21,8 +19,6 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.Options;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.security.config.ClientIdentity;
 
 import io.vavr.control.Option;
@@ -41,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Beta
 public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
-    private static final Duration TOKEN_RETRIEVAL_TIMEOUT = Duration.ofSeconds(10);
     @Nonnull
     // package-private for testing
     static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS =
@@ -210,30 +205,6 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     }
 
     @Nonnull
-    HttpDestination toProxiedDestination(
-        @Nonnull final HttpDestination destinationToBeProxied,
-        @Nonnull final URI proxyUrl,
-        @Nonnull final URI tokenUrl,
-        @Nonnull final ClientIdentity clientIdentity,
-        @Nonnull final OnBehalfOf behalf )
-    {
-        final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUrl, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION);
-
-        final String name =
-            destinationToBeProxied.get(DestinationProperty.NAME).getOrElse(() -> UUID.randomUUID().toString());
-
-        return DefaultHttpDestination
-            .fromDestination(destinationToBeProxied)
-            .proxy(proxyUrl)
-            .headerProviders(headerProvider)
-            .property(
-                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                createTokenRetrievalResilienceConfiguration(name))
-            .buildInternal();
-    }
-
-    @Nonnull
     HttpDestination toDestination(
         @Nonnull final URI serviceUri,
         @Nonnull final URI tokenUri,
@@ -244,16 +215,32 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
             createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
-        final String idString = Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown");
-        final String name = idString + "-" + UUID.randomUUID();
+        // use a hash code of the client id to not unnecessarily expose the client id
+        // (as the destination name is included in the toString() method of the destination
+        // this should be optional, as the client id is technically not a secret, but using a hash here doesn't hurt
+        final String idString =
+            Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
+                + "-"
+                + clientIdentity.getId().hashCode();
+        return DefaultHttpDestination.builder(serviceUri).headerProviders(headerProvider).name(idString).build();
+    }
+
+    @Nonnull
+    HttpDestination toProxiedDestination(
+        @Nonnull final HttpDestination destinationToBeProxied,
+        @Nonnull final URI proxyUrl,
+        @Nonnull final URI tokenUrl,
+        @Nonnull final ClientIdentity clientIdentity,
+        @Nonnull final OnBehalfOf behalf )
+    {
+        final DestinationHeaderProvider headerProvider =
+            createHeaderProvider(tokenUrl, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION);
+
         return DefaultHttpDestination
-            .builder(serviceUri)
+            .fromDestination(destinationToBeProxied)
+            .proxy(proxyUrl)
             .headerProviders(headerProvider)
-            .name(name)
-            .property(
-                OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG,
-                createTokenRetrievalResilienceConfiguration(name))
-            .build();
+            .buildInternal();
     }
 
     DestinationHeaderProvider createHeaderProvider(
@@ -266,15 +253,5 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
 
         final OAuth2Service oAuth2Service = new OAuth2Service(tokenUrl.toString(), clientIdentity, behalf);
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
-    }
-
-    @Nonnull
-    private static ResilienceConfiguration createTokenRetrievalResilienceConfiguration(
-        @Nonnull final String destinationName )
-    {
-        return ResilienceConfiguration
-            .of(destinationName)
-            .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
-            .timeLimiterConfiguration(ResilienceConfiguration.TimeLimiterConfiguration.of(TOKEN_RETRIEVAL_TIMEOUT));
     }
 }
