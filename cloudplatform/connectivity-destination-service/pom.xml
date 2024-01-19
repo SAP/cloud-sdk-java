@@ -176,21 +176,10 @@
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-security-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>wiremock-standalone</artifactId>
-					<groupId>org.wiremock</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.security.xsuaa</groupId>
 			<artifactId>token-client</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.wiremock</groupId>
-			<artifactId>wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -228,6 +217,8 @@
 					<ignoredUsedUndeclaredDependencies>
 						<!-- include resilience via the aggregator to ensure the default implementation is present -->
 						<ignoredUsedUndeclaredDependency>com.sap.cloud.sdk.cloudplatform:resilience-api</ignoredUsedUndeclaredDependency>
+						<!-- Rely on "java-security-test" to provide a "wiremock-standalone" test dependency transitively -->
+						<ignoredUsedUndeclaredDependency>org.wiremock:wiremock-standalone</ignoredUsedUndeclaredDependency>
 					</ignoredUsedUndeclaredDependencies>
 					<ignoredUnusedDeclaredDependencies>
 						<!-- default resilience implementation -->
