@@ -6,6 +6,8 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 
 class ApacheHttpClient5CacheBuilderTest
@@ -14,6 +16,7 @@ class ApacheHttpClient5CacheBuilderTest
     void testBuilderContainsOptionalParametersOnly()
     {
         // make sure we can build a new cache instance without supplying any parameters
-        assertThatNoException().isThrownBy(() -> new ApacheHttpClient5CacheBuilder().build());
+        assertThatNoException()
+            .isThrownBy(() -> new ApacheHttpClient5CacheBuilder().duration(Duration.ofHours(1)).build());
     }
 }
