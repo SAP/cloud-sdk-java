@@ -50,7 +50,7 @@ class ClientCertificateAuthenticationLocalTest
         "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName();
     private static final String PKCS12_PW = "cca-password";
     private static final String PKCS12_PATH = BASE_PATH + "/client-cert.p12";
-    private static final String PKCS12_PATH_NOPW = BASE_PATH + "/client-nopw.p12";
+    private static final String PKCS12_PATH_NOPW = BASE_PATH + "/client-emptypw.p12";
     private static final String JKS_PATH_NOPW = BASE_PATH + "/client-nopw.jks";
 
     @RegisterExtension
