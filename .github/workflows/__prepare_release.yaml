@@ -267,35 +267,35 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create a new branch java-release-notes-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create new docs repo branch java-release-notes1-${{ needs.bump-version.outputs.release-version }}"
         working-directory: ./cloud-sdk
-        run: git checkout -B java-release-notes-${{ needs.bump-version.outputs.release-version }}
+        run: git checkout -B java-release-notes1-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy release notes to docs repo"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
 
-      - name: "Commit changes"
+      - name: "Commit release notes to docs repo"
         working-directory: ./cloud-sdk
         run: |
           git add .
           git commit -m "Add new release notes"
 
-      - name: "Push changes"
+      - name: "Push release notes to docs repo"
         working-directory: ./cloud-sdk
-        run: git push origin java-release-notes-${{ needs.bump-version.outputs.release-version }}
+        run: git push origin java-release-notes1-${{ needs.bump-version.outputs.release-version }}
 
-      - name: "Create Documentation repository pull request"
+      - name: "Create docs repo pull request"
         working-directory: ./cloud-sdk
         run: |
-          PR_TITLE="Add SAP Cloud SDK for Java v$MAJOR_VERSION release notes"
-          PR_BODY="Add release notes for v$MAJOR_VERSION to the SAP Cloud SDK for Java docs."
+          PR_TITLE="Add SAP Cloud SDK for Java v${{ needs.bump-version.outputs.release-version }} release notes"
+          PR_BODY="Add release notes for v${{ needs.bump-version.outputs.release-version }} to the SAP Cloud SDK for Java docs."
           gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
         env:
           MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
           VERSION: ${{ env.VERSION }}
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
-      - name: "Reset release notes"
+      - name: "Reset code repo release notes"
         run: |
           cp release_notes_template.md release_notes.md
           git add .
