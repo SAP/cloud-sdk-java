@@ -284,12 +284,12 @@ jobs:
         working-directory: ./cloud-sdk
         run: git push origin java-release-notes-${{ needs.bump-version.outputs.release-version }}
 
-      - name: "Create Documentation repository Pull Request"
+      - name: "Create Documentation repository pull request"
         working-directory: ./cloud-sdk
         run: |
           PR_TITLE="Add SAP Cloud SDK for Java v$MAJOR_VERSION release notes"
           PR_BODY="Add release notes for v$MAJOR_VERSION to the SAP Cloud SDK for Java docs."
-          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "SAP/cloud-sdk"
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
         env:
           MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
           VERSION: ${{ env.VERSION }}
@@ -300,51 +300,6 @@ jobs:
           cp release_notes_template.md release_notes.md
           git add .
           git commit -m "Reset release notes"
-          git push
-
-      - name: "Push Release Notes"
-        id: push-release-notes
-        working-directory: ./cloud-sdk
-        run: |
-          git add -A .
-          
-          CHANGED_FILES="$(git status -s)"
-          if [[ -z "$CHANGED_FILES" ]]; then
-            echo "[DEBUG] No changes to release notes detected, skipping Pull Request creation."
-            echo "CREATE_PR=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi 
-          
-          echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-notes-${{ needs.bump-version.outputs.release-version }}
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          
-          git switch --create $BRANCH_NAME
-          git commit -m "chore: Add release notes ${{ needs.bump-version.outputs.release-version }}"
-          COMMIT_SHA=$(git log -1 --pretty=format:"%H")
-          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
-          
-          git push origin $BRANCH_NAME:$BRANCH_NAME
-
-      - name: "Create Release Notes PR"
-        id: create-release-notes-pr
-        if: ${{ steps.push-release-notes.outputs.CREATE_PR == 'true' }}
-        working-directory: ./cloud-sdk
-        run: |
-          PR_TITLE="Java: Add Release Notes for ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Add release notes for version ${{ needs.bump-version.outputs.release-version }}."
-          
-          PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")          
-          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      # TODO: use the "correct" / improved logic for resetting the release notes
-      - name: "Prepare Release Notes for next Version"
-        run: |
-          echo "" > release_notes.md
-          
-          git commit release_notes.md -m "chore: Prepare release notes for next version"
           git push
 
   create-code-pr:
