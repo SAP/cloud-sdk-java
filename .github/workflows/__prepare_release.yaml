@@ -325,30 +325,16 @@ jobs:
           git commit -m "Update to version ${{ needs.bump-version.outputs.new-version }}"
           git push
 
-      # TODO: this script is currently producing errors... No idea why
-      - name: "Create PR Body"
-        id: create-pr-body
-        run: |
-          TEMP_FILE=~/.temp-pr-body.md
-          
-          COMMIT_URL="${{ github.event.repository.html_url }}/commit/${{ needs.bump-version.outputs.release-commit }}"
-          
-          echo "## TODOs" > $TEMP_FILE
-          echo "" >> $TEMP_FILE
-          echo "- [ ] Review changes in [the release commit]($COMMIT_URL)" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})" >> $TEMP_FILE
-          echo "- [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})" >> $TEMP_FILE
-          echo "- [ ] Review **and approve** this PR" >> $TEMP_FILE
-          
-          echo "PR_BODY=$(cat $TEMP_FILE)" >> $GITHUB_OUTPUT
-
       - name: "Create Code PR"
         run: |
           RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
-          PR_BODY=${{ steps.create-pr-body.outputs.PR_BODY }}
 
-          gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "$PR_BODY"
+          gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
+          - [ ] Review changes in [the release commit]($COMMIT_URL)
+          - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
+          - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
+          - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
+          - [ ] Review **and approve** this PR"
           
           PR_URL=$(gh pr list --search "${{ needs.bump-version.outputs.release-commit }}" --state open --json url | jq -r .[0].url)
           if [[ -z "$PR_URL" ]]; then
