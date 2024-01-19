@@ -34,6 +34,7 @@
 
 - `OpenAPI` generated objects can now write custom fields which are not part of the object's schema:
   - `setCustomField("nameOfField", "valueOfField")`
+- Destinations from _BTP Destination Service_ with `AuthenticationType=ClientCertificateAuthentication` now support _PEM_ file format for provided key-stores.
 
 ### 📈 Improvements
 
