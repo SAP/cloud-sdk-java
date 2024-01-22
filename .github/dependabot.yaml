@@ -10,13 +10,21 @@ updates:
       timezone: 'Europe/Berlin'
     open-pull-requests-limit: 5
     groups:
-      production-dependencies:
+      production-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
-      production-major-dependencies:
+        exclude-patterns:
+          - "*-plugin"
+      production-major:
         dependency-type: "production"
         update-types: [ "major" ]
-      development-dependencies:
+        exclude-patterns:
+          - "*-plugin"
+      plugins:
+        dependency-type: "production"
+        patterns:
+          - "*-plugin"
+      development:
         dependency-type: "development"
     ignore:
       # leads to unintended formatting of POM files
