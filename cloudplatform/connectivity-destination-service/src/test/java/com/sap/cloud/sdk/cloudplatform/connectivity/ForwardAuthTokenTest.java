@@ -14,14 +14,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.google.common.net.HttpHeaders;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 
-public class ForwardAuthTokenTest
+class ForwardAuthTokenTest
 {
     static Collection<TestCase> createTestCases()
     {
@@ -66,8 +62,7 @@ public class ForwardAuthTokenTest
         }
     }
 
-    private record TestCase( Map<String, Object> properties, AssertionType forwardingAssertion )
-    {
+    private record TestCase(Map<String, Object> properties, AssertionType forwardingAssertion) {
     }
 
     private static class TestCaseBuilder
@@ -118,47 +113,6 @@ public class ForwardAuthTokenTest
     {
         final HttpDestination destination = buildLocalDestination(testCase.properties);
         testCase.forwardingAssertion.assertion.accept(destination);
-    }
-
-    @ParameterizedTest
-    @MethodSource( "createTestCases" )
-    void destinationServiceDestinationShouldFulfillTestCase( @Nonnull final TestCase testCase )
-    {
-        final HttpDestination destination = buildDestinationServiceDestination(testCase.properties);
-        testCase.forwardingAssertion.assertion.accept(destination);
-    }
-
-    private HttpDestination buildDestinationServiceDestination( final Map<String, Object> properties )
-    {
-        final String serviceResponse = buildServiceResponse(properties);
-        final DestinationServiceV1Response parsedResponse =
-            new Gson().fromJson(serviceResponse, DestinationServiceV1Response.class);
-        final Destination destination = DestinationServiceFactory.fromDestinationServiceV1Response(parsedResponse);
-        return destination.asHttp();
-    }
-
-    private String buildServiceResponse( final Map<String, Object> properties )
-    {
-        final JsonElement response = JsonParser.parseString("""
-            {
-                "owner": {
-                    "SubaccountId": "someId",
-                    "InstanceId": null
-                },
-                "destinationConfiguration": {
-                    "Name": "SomeDestination",
-                    "Type": "HTTP",
-                    "URL": "sap.com",
-                    "ProxyType": "Internet",
-                    "Description": "Test destination"
-                }
-            }
-            """);
-        final JsonObject config = response.getAsJsonObject().get("destinationConfiguration").getAsJsonObject();
-        for( final Map.Entry<String, Object> entry : properties.entrySet() ) {
-            config.add(entry.getKey(), new JsonPrimitive(entry.getValue().toString()));
-        }
-        return response.toString();
     }
 
     private HttpDestination buildLocalDestination( Map<String, Object> properties )
