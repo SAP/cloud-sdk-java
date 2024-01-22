@@ -1,0 +1,28 @@
+# configuration docu: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: maven
+    target-branch: main
+    directory: '/'
+    schedule:
+      interval: daily
+      time: '08:00'
+      timezone: 'Europe/Berlin'
+    open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types: ["minor", "patch"]
+      production-major-dependencies:
+        dependency-type: "production"
+        update-types: [ "major" ]
+      development-dependencies:
+        dependency-type: "development"
+    ignore:
+      # leads to unintended formatting of POM files
+      - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
