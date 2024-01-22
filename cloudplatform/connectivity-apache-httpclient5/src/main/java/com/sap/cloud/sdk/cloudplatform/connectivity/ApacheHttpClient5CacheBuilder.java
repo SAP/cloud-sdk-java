@@ -62,7 +62,7 @@ public class ApacheHttpClient5CacheBuilder
      * @return The new {@link ApacheHttpClient5Cache} instance.
      */
     @Nonnull
-    public DefaultApacheHttpClient5Cache build()
+    public ApacheHttpClient5Cache build()
     {
         return new DefaultApacheHttpClient5Cache(duration);
     }
