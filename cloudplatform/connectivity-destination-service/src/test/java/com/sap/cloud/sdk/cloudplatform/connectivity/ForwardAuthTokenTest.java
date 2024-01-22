@@ -14,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.google.common.net.HttpHeaders;
-
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 
 class ForwardAuthTokenTest
@@ -62,7 +61,8 @@ class ForwardAuthTokenTest
         }
     }
 
-    private record TestCase(Map<String, Object> properties, AssertionType forwardingAssertion) {
+    private record TestCase( Map<String, Object> properties, AssertionType forwardingAssertion )
+    {
     }
 
     private static class TestCaseBuilder

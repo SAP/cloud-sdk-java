@@ -123,7 +123,8 @@ class DestinationServiceFactoryTest
     }
 
     @Test
-    void propertyForwardAuthTokenShouldSetAuthenticationType() {
+    void propertyForwardAuthTokenShouldSetAuthenticationType()
+    {
         response.getDestinationConfiguration().put("Type", "HTTP");
         response.getDestinationConfiguration().put("Name", "httpDestination");
         response.getDestinationConfiguration().put("URL", "https://example.com");
