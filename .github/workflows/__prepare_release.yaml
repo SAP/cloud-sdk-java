@@ -70,7 +70,7 @@ jobs:
           git tag $TAG_NAME $RELEASE_COMMIT_ID
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
-          git push origin $BRANCH_NAME:$BRANCH_NAME
+          git push origin $BRANCH_NAME
           git push origin $TAG_NAME
 
   run-ci:
@@ -202,6 +202,7 @@ jobs:
 
       - name: "Replace JavaDoc"
         id: replace-javadoc
+        # TODO: rename branch to java/release-docs-${{ needs.bump-version.outputs.release-version }}
         run: |
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
@@ -220,7 +221,7 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
+          BRANCH_NAME=java/release-docs1-${{ needs.bump-version.outputs.release-version }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME
@@ -228,7 +229,7 @@ jobs:
           COMMIT_SHA=$(git log -1 --pretty=format:"%H")
           echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
 
-          git push origin $BRANCH_NAME:$BRANCH_NAME
+          git push origin $BRANCH_NAME
 
       - name: "Create JavaDoc PR"
         id: create-javadoc-pr
@@ -266,9 +267,9 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create docs repo branch java-release-notes2-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create docs repo branch java/release-notes-${{ needs.bump-version.outputs.release-version }}"
         working-directory: ./cloud-sdk
-        run: git checkout -B java-release-notes2-${{ needs.bump-version.outputs.release-version }}
+        run: git checkout -B java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
@@ -281,19 +282,18 @@ jobs:
 
       - name: "Push docs repo release notes"
         working-directory: ./cloud-sdk
-        run: git push origin java-release-notes2-${{ needs.bump-version.outputs.release-version }}
+        run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create docs repo pull request"
+        id: create-release-notes-pr
         working-directory: ./cloud-sdk
         run: |
-          PR_TITLE="Add SAP Cloud SDK for Java v${{ needs.bump-version.outputs.release-version }} release notes"
-          PR_BODY="Add release notes for v${{ needs.bump-version.outputs.release-version }} to the SAP Cloud SDK for Java docs."
+          PR_TITLE="Java: Add release notes for release ${{ needs.bump-version.outputs.release-version }}"
+          PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
-          MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
-          VERSION: ${{ env.VERSION }}
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Reset and push code repo release notes"
@@ -328,21 +328,11 @@ jobs:
 
       - name: "Create Code PR"
         run: |
-          RELEASE_URL=$(gh release view rel/${{ needs.bump-version.outputs.release-version }} --json url | jq -r .url)
-
-          gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
-          - [ ] Review changes in [the release commit]($COMMIT_URL)
+          PR_URL=$(gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
           - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
-          - [ ] Review **and approve** this PR"
-          
-          PR_URL=$(gh pr list --search "${{ needs.bump-version.outputs.release-commit }}" --state open --json url | jq -r .[0].url)
-          if [[ -z "$PR_URL" ]]; then
-              echo "[ERROR] Could not find PR for commit ${{ steps.replace-javadoc.outputs.COMMIT_SHA }} in code repository"
-              exit 1
-          fi
-
+          - [ ] Review **and approve** this PR")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
