@@ -182,6 +182,7 @@ class SSLContextFactory
             log.debug("Using key store of destination with aliases: {}", Collections.list(keyStore.aliases()));
         }
 
+        @Nonnull
         final char[] keyStorePassword =
             destination
                 .getKeyStorePassword()
