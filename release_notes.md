@@ -17,13 +17,8 @@
 ### 📈 Improvements
 
 - Dependency Updates:
-  - SAP dependency updates:
-    - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-  - Other dependency updates:
-    - Major version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-    - Minor version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
+  - Update `org.apache.olingo` from `4.10.0` to `5.0.0`
+  - Update `io.github.resilience4j` from `1.7.1` to `2.2.0`
 
 ### 🐛 Fixed Issues
 
