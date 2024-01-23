@@ -65,7 +65,7 @@
 		<!-- Resilience & Caching -->
 		<caffeine.version>3.1.8</caffeine.version>
 		<jcache.version>1.1.1</jcache.version>
-		<resilience4j.version>1.7.1</resilience4j.version>
+		<resilience4j.version>2.2.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
 		<gson.version>2.10.1</gson.version>
 		<jackson.version>2.16.1</jackson.version>
