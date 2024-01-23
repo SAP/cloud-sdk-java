@@ -184,28 +184,29 @@ class ComplexDestinationPropertyFactory
         @Nonnull final DestinationProperties baseProperties,
         @Nonnull final Option<BasicCredentials> basicCredentials )
     {
-        final Option<AuthenticationType> authType =
+        final AuthenticationType authType =
             baseProperties
                 .get(DestinationProperty.AUTH_TYPE)
-                .orElse(() -> baseProperties.get(DestinationProperty.AUTH_TYPE_FALLBACK));
+                .orElse(() -> baseProperties.get(DestinationProperty.AUTH_TYPE_FALLBACK))
+                .onEmpty(
+                    () -> log
+                        .debug(
+                            "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.",
+                            DestinationProperty.AUTH_TYPE,
+                            DestinationProperty.AUTH_TYPE_FALLBACK,
+                            AuthenticationType.NO_AUTHENTICATION))
+                .getOrElse(AuthenticationType.NO_AUTHENTICATION);
 
-        if( authType.isEmpty() ) {
-            final AuthenticationType fallback;
+        final boolean forwardAuthToken = baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false);
 
-            if( basicCredentials.isDefined() ) {
-                fallback = AuthenticationType.BASIC_AUTHENTICATION;
-            } else if( baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false) ) {
-                fallback = AuthenticationType.TOKEN_FORWARDING;
-            } else {
-                fallback = AuthenticationType.NO_AUTHENTICATION;
-            }
-
-            final String msg = "No valid JSON primitive '{}' or '{}' defined. Falling back to {}.";
-            log.debug(msg, DestinationProperty.AUTH_TYPE, DestinationProperty.AUTH_TYPE_FALLBACK, fallback);
-
-            return fallback;
+        if( authType == AuthenticationType.NO_AUTHENTICATION && basicCredentials.isDefined() ) {
+            return AuthenticationType.BASIC_AUTHENTICATION;
         }
-        return authType.get();
+
+        if( authType == AuthenticationType.NO_AUTHENTICATION && forwardAuthToken ) {
+            return AuthenticationType.TOKEN_FORWARDING;
+        }
+        return authType;
     }
 
     @Nonnull
