@@ -54,6 +54,7 @@
       - Update [Guava](https://central.sonatype.com/artifact/com.google.guava/guava/33.0.0-jre) from `32.1.3-jre` to `33.0.0-jre`
       - Update [Jackson](https://central.sonatype.com/artifact/com.fasterxml.jackson.core/jackson-core/2.16.1) from `2.15.3` to `2.16.1`
       - Update [Commons Lang](https://central.sonatype.com/artifact/org.apache.commons/commons-lang3/3.14.0) from `3.13.0` to `3.14.0`
+- Destinations retrieved from the BTP Destination Service now correctly evaluate the `forwardAuthToken` property if it has the authentication type `NoAuthentication`.
 
 ### 🐛 Fixed Issues
 
