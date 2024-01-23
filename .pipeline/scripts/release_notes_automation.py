@@ -95,23 +95,11 @@ def count_releases(filename):
                 count += 1
     return count
 
-def find_target_file(folder, filenames):
-    pattern = re.compile(r"^release-notes-\d+-to-\d+.mdx$")
-    highest_release_notes = 0
-
-    for file in filenames:
-        absoulte_path = os.path.join(folder, file)
-        print(file)
-        # if file matches release-notes-X-to-Y.mdx and has less than 15 releases, return its name
-        if pattern.match(file) and os.path.isfile(absoulte_path):
-            if count_releases(absoulte_path) < 15:
-                return file
-            else:
-                # parse X in the release-notes-X-to-Y.mdx file
-                highest_release_notes = max(highest_release_notes, int(file.split("-")[2]))
-
-    # if no file was found, create a release-notes-X-to-Y.mdx filename
-    return "release-notes-" + str(highest_release_notes + 15) + "-to-" + str(highest_release_notes + 29) + ".mdx"
+def find_target_file(version):
+    # release-notes-X-to-Y.mdx with every 15 versions the index increases by 15 and stays the same for 15 versions
+    minor_version = int(version.split(".")[1])
+    index = minor_version // 15 * 15
+    return "release-notes-" + str(index) + "-to-" + str(index + 14) + ".mdx"
 
 def write_release_notes(folder, target_file):
     absolute_target_file = os.path.join(folder, target_file)
@@ -128,24 +116,17 @@ def write_release_notes(folder, target_file):
 file_name = "release_notes.md"
 
 if __name__ == '__main__':
-    try:
-        parser = argparse.ArgumentParser(description='SAP Cloud SDK - Release Notes formatting script.')
+    parser = argparse.ArgumentParser(description='SAP Cloud SDK - Release Notes formatting script.')
 
-        parser.add_argument('--version', metavar='VERSION', help='The version to be released.',required=True)
-        parser.add_argument('--folder', metavar='FOLDER', help='The cloud-sdk/docs-java/release-notes folder.', required=True)
-        args = parser.parse_args()
+    parser.add_argument('--version', metavar='VERSION', help='The version to be released.',required=True)
+    parser.add_argument('--folder', metavar='FOLDER', help='The cloud-sdk/docs-java/release-notes folder.', required=True)
+    args = parser.parse_args()
 
+    file = read_file(file_name)
+    file = remove_unchanged_sections(file, unchanged_sections)
+    file = set_header(file, args.version)
+    file = link_github_release(file, args.version)
+    file = clean_up_dependency_updates(file)
 
-        if os.path.exists(file_name):
-            file = read_file(file_name)
-            file = remove_unchanged_sections(file, unchanged_sections)
-            file = set_header(file, args.version)
-            file = link_github_release(file, args.version)
-            file = clean_up_dependency_updates(file)
-
-            release_notes_list = os.listdir(args.folder)
-            target_file = find_target_file(args.folder, release_notes_list)
-            write_release_notes(args.folder, target_file)
-
-    except KeyboardInterrupt:
-        sys.exit(1)
+    target_file = find_target_file(args.version)
+    write_release_notes(args.folder, target_file)

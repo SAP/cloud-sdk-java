@@ -97,7 +97,7 @@ jobs:
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-blackduck-scan = true
+            -f run-blackduck-scan=true
             -f run-security-rating=true
 
       - name: "Await CI Workflow"
@@ -281,12 +281,26 @@ jobs:
         working-directory: ./cloud-sdk
         run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
+      - name: "Determine Minor Version"
+        id: determine-minor-version
+        run: echo "MINOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 2)" >> $GITHUB_OUTPUT
+
       - name: "Create docs repo pull request"
         id: create-release-notes-pr
         working-directory: ./cloud-sdk
         run: |
           PR_TITLE="Java: Add release notes for release ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+
+          # if the minor version is a multiple of 15, then change the PR_BODY to "# ⚠️Update the `docs-java/release-notes/index.jsx` file⚠️"
+          # else the PR_BODY will be "Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+
+          minor_version=$(echo ${{ needs.bump-version.outputs.release-version }} | cut -d '.' -f 2)
+          if [[ $((minor_version % 15)) -eq 0 ]]; then
+            PR_BODY="# ⚠️Update the \`docs-java/release-notes/index.jsx\` file⚠️"
+          else
+            PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+          fi
+          
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
