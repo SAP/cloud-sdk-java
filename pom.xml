@@ -82,7 +82,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.57.7.1</jco-api.version>
+		<jco-api.version>4.67.12</jco-api.version>
 		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -98,7 +98,7 @@
 		<slf4j.version>2.0.11</slf4j.version>
 		<assertj-core.version>3.25.1</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.8.0</mockito.version>
+		<mockito.version>5.9.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -118,7 +118,7 @@
 		<qdox.version>2.0.3</qdox.version>
 		<wiremock.version>3.3.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.10</kotlin.version>
+		<kotlin.version>1.9.22</kotlin.version>
 		<byte-buddy.version>1.14.11</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
