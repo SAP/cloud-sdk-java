@@ -35,7 +35,6 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
@@ -202,8 +201,16 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.get().getUri()).isEqualTo(baseUrl);
+        assertThat(result.get().get(DestinationProperty.NAME)).contains(TEST_SERVICE + "-" + "id".hashCode());
 
-        verify(sut, times(1))
+        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
+            .as("The destination should not be cached.")
+            .isNotSameAs(result.get());
+        assertThat(sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).get())
+            .as("The destination objects should be equal so that they use the same HTTP client.")
+            .isEqualTo(result.get());
+
+        verify(sut, times(3))
             .toDestination(
                 eq(baseUrl),
                 eq(tokenUrl),
@@ -339,20 +346,12 @@ class OAuth2ServiceBindingDestinationLoaderTest
     @Test
     void testProxiedDestination()
     {
+        final URI proxyUrl = URI.create("http://proxyUrl:1234");
         final DefaultHttpDestination baseDestination =
-            DefaultHttpDestination
-                .builder(baseUrl)
-                .name("foo")
-                .header(HttpHeaders.AUTHORIZATION, "some-auth")
-                .headerProviders(( any ) -> Collections.singletonList(new Header("foo", "bar")))
-                .property(DestinationProperty.SAP_LANGUAGE, "en")
-                .proxyType(ProxyType.ON_PREMISE)
-                .build();
-
-        final Header expectedProxyHeader = new Header(HttpHeaders.PROXY_AUTHORIZATION, "proxy-auth");
+            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).build();
 
         final DestinationHeaderProvider headerProviderMock = mock(DestinationHeaderProvider.class);
-        when(headerProviderMock.getHeaders(any())).thenReturn(Collections.singletonList(expectedProxyHeader));
+        when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
 
         sut = spy(new OAuth2ServiceBindingDestinationLoader());
         doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any());
@@ -361,54 +360,40 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut
                 .toProxiedDestination(
                     baseDestination,
-                    URI.create("proxyUrl"),
+                    proxyUrl,
                     tokenUrl,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
-        assertThat(result.getHeaders(baseUrl))
-            .containsExactlyInAnyOrder(
-                new Header(HttpHeaders.AUTHORIZATION, "some-auth"),
-                expectedProxyHeader,
-                new Header("foo", "bar"),
-                new Header("sap-language", "en"));
+        assertThat(result)
+            .as("The new destination should have additional proxy properties.")
+            .isNotEqualTo(baseDestination);
+        assertThat(result.getProxyConfiguration()).contains(ProxyConfiguration.of(proxyUrl));
+        assertThat(((DefaultHttpDestination) result).getCustomHeaderProviders()).contains(headerProviderMock);
 
-        verify(sut, times(1))
+        final HttpDestination secondInvocationResult =
+            sut
+                .toProxiedDestination(
+                    baseDestination,
+                    proxyUrl,
+                    tokenUrl,
+                    credentials,
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+
+        assertThat(secondInvocationResult)
+            .as("There should not be a cache in place for proxied destinations.")
+            .isNotSameAs(result);
+        assertThat(secondInvocationResult)
+            .as("The destination objects should be equal so that they use the same HTTP client.")
+            .isEqualTo(result);
+
+        verify(sut, times(2))
             .createHeaderProvider(
                 eq(tokenUrl),
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
                 eq(HttpHeaders.PROXY_AUTHORIZATION));
-    }
-
-    @Test
-    void testResilienceIsAdded()
-    {
-        final DefaultHttpDestination baseDestination = DefaultHttpDestination.builder(baseUrl).name("foo").build();
-
-        sut = new OAuth2ServiceBindingDestinationLoader();
-
-        HttpDestination result =
-            sut.toDestination(baseUrl, tokenUrl, credentials, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, TEST_SERVICE);
-
-        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
-        ResilienceConfiguration config =
-            (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
-        assertThat(config.identifier()).startsWith(TEST_SERVICE.toString());
-
-        result =
-            sut
-                .toProxiedDestination(
-                    baseDestination,
-                    baseUrl,
-                    tokenUrl,
-                    credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-
-        assertThat(result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG)).isNotEmpty();
-        config = (ResilienceConfiguration) result.get(OAuth2HeaderProvider.PROPERTY_OAUTH2_RESILIENCE_CONFIG).get();
-        assertThat(config.identifier()).startsWith(baseDestination.get(DestinationProperty.NAME).get());
     }
 
     @Test

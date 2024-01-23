@@ -97,9 +97,10 @@ class DestinationServiceAdapter
             return credentials.getString("tenantid");
         }
 
-        throw new DestinationAccessException(
-            "The provider tenant id is not defined in the service binding."
-                + " Please verify that the service binding contains the field 'tenantid' in the credentials list.");
+        throw new DestinationAccessException("""
+            The provider tenant id is not defined in the service binding.\
+             Please verify that the service binding contains the field 'tenantid' in the credentials list.\
+            """);
     }
 
     private Function<OnBehalfOf, HttpDestination> prepareServiceDestinationComputation()

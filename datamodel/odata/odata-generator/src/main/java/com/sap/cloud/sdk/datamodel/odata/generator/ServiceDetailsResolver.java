@@ -71,14 +71,16 @@ class ServiceDetailsResolver
 
         if( details == null || details.getServiceUrl() == null ) {
             throw new ODataGeneratorReadException(
-                "Could not determine a valid default service path. A default service path is the prefix of the HTTP "
-                    + "query component used for all outgoing queries of the service to be generated (if no custom "
-                    + "service path is given).\n"
-                    + "Tried to determine the service path with the following priority:\n"
-                    + " 1. The 'basePath' field in the swagger file\n"
-                    + " 2. The default base path (if given via the Maven Plugin or Builder method) concatenated with "
-                    + "the namespace defined in metadata file. In case of no namespace, filename is considered as the service name.\n"
-                    + " 3. The atom:link field in the metadata file.");
+                """
+                    Could not determine a valid default service path. A default service path is the prefix of the HTTP \
+                    query component used for all outgoing queries of the service to be generated (if no custom \
+                    service path is given).
+                    Tried to determine the service path with the following priority:
+                     1. The 'basePath' field in the swagger file
+                     2. The default base path (if given via the Maven Plugin or Builder method) concatenated with \
+                    the namespace defined in metadata file. In case of no namespace, filename is considered as the service name.
+                     3. The atom:link field in the metadata file.\
+                    """);
         }
 
         return details;
@@ -112,14 +114,10 @@ class ServiceDetailsResolver
         if( doc != null ) {
             final NodeList schemas = doc.getElementsByTagName("Schema");
             if( schemas.getLength() > 1 ) {
-                logger
-                    .info(
-                        String
-                            .format(
-                                "Expected to have a single schema tag in the metadata file %s, but found %d instead. "
-                                    + "The first schema with a defined namespace found will be used.",
-                                metadataFile.getName(),
-                                schemas.getLength()));
+                logger.info(String.format("""
+                    Expected to have a single schema tag in the metadata file %s, but found %d instead. \
+                    The first schema with a defined namespace found will be used.\
+                    """, metadataFile.getName(), schemas.getLength()));
             }
             return getFirstDefinedNamespace(schemas);
         }
@@ -198,14 +196,10 @@ class ServiceDetailsResolver
         if( doc != null ) {
             final NodeList schemas = doc.getElementsByTagName("Schema");
             if( schemas.getLength() > 1 ) {
-                logger
-                    .info(
-                        String
-                            .format(
-                                "Expected to have a single schema tag in the metadata file %s, but found %d instead. "
-                                    + "The first atom:link found will be used.",
-                                metadataFile.getName(),
-                                schemas.getLength()));
+                logger.info(String.format("""
+                    Expected to have a single schema tag in the metadata file %s, but found %d instead. \
+                    The first atom:link found will be used.\
+                    """, metadataFile.getName(), schemas.getLength()));
             }
 
             final Node atomLinkNode = findFirstChildNodeWithAtomLink(schemas);

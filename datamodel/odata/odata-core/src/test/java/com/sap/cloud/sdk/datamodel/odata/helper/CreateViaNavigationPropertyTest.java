@@ -56,45 +56,47 @@ class CreateViaNavigationPropertyTest
     private static final String RELATIONS_NAV_PROP = "to_Relations";
 
     private static final String JSON_MOCK_REQUEST = "{\"Description\" :\"DE\"}";
-    private static final String JSON_CREATED_RESPONSE =
-        "{"
-            + "  \"d\": {"
-            + "    \"__metadata\": {"
-            + "      \"id\": \"https://127.0.0.1/service/path/A_TestEntity(Name='2',Relation='652138')\","
-            + "      \"uri\": \"https://127.0.0.1/service/path/A_TestEntity(Name='2',Relation='652138')\","
-            + "      \"type\": \"TEST_SERVICE.A_RelatedEntityType\""
-            + "    }"
-            + "  }"
-            + "}";
-    private static final String JSON_NOT_IMPLEMENTED_RESPONSE =
-        "{"
-            + "  \"error\": {"
-            + "    \"code\": \"AB/100\","
-            + "    \"message\": {"
-            + "      \"lang\": \"en\","
-            + "      \"value\": \"Invalid method invocation: 'CREATE' method is called on the non-root entity 'A_RelatedEntity'\""
-            + "    },"
-            + "    \"innererror\": {"
-            + "      \"application\": {"
-            + "        \"component_id\": \"AB-CDE-FGH-IJ\","
-            + "        \"service_namespace\": \"/SAP/\","
-            + "        \"service_id\": \"TEST_SERVICE\","
-            + "        \"service_version\": \"0001\""
-            + "      },"
-            + "      \"transactionid\": \"10000\","
-            + "      \"timestamp\": \"20180815132618.3364870\","
-            + "      \"errordetails\": ["
-            + "        {"
-            + "          \"code\": \"INNER-CODE-1\","
-            + "          \"message\": \"INNER-MESSAGE-1\","
-            + "          \"propertyref\": \"\","
-            + "          \"severity\": \"error\","
-            + "          \"target\": \"\""
-            + "        }"
-            + "      ]"
-            + "    }"
-            + "  }"
-            + "}";
+    private static final String JSON_CREATED_RESPONSE = """
+        {
+          "d": {
+            "__metadata": {
+              "id": "https://127.0.0.1/service/path/A_TestEntity(Name='2',Relation='652138')",
+              "uri": "https://127.0.0.1/service/path/A_TestEntity(Name='2',Relation='652138')",
+              "type": "TEST_SERVICE.A_RelatedEntityType"
+            }
+          }
+        }
+        """;
+    private static final String JSON_NOT_IMPLEMENTED_RESPONSE = """
+        {
+          "error": {
+            "code": "AB/100",
+            "message": {
+              "lang": "en",
+              "value": "Invalid method invocation: 'CREATE' method is called on the non-root entity 'A_RelatedEntity'"
+            },
+            "innererror": {
+              "application": {
+                "component_id": "AB-CDE-FGH-IJ",
+                "service_namespace": "/SAP/",
+                "service_id": "TEST_SERVICE",
+                "service_version": "0001"
+              },
+              "transactionid": "10000",
+              "timestamp": "20180815132618.3364870",
+              "errordetails": [
+                {
+                  "code": "INNER-CODE-1",
+                  "message": "INNER-MESSAGE-1",
+                  "propertyref": "",
+                  "severity": "error",
+                  "target": ""
+                }
+              ]
+            }
+          }
+        }
+        """;
 
     private DefaultHttpDestination destination;
 

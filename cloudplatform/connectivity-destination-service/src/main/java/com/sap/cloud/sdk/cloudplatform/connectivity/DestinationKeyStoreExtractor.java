@@ -7,6 +7,8 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1R
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,15 +44,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 class DestinationKeyStoreExtractor
 {
-    // @formatter:off
     // See the supported key store file extensions:
     // https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
-    //Mapping file extension to key store types
-    private static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE = ImmutableMap.of(
-            "pfx", "PKCS12",
-            "p12", "PKCS12",
-            "jks", "JKS"
-    );
+    // Mapping file extension to key store types
+    private static final Map<String, BiFunction<String, String, KeyStore>> SUPPORTED_KEY_STORES =
+        ImmutableMap
+            .<String, BiFunction<String, String, KeyStore>> builder()
+            .put("pfx", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "PKCS12"))
+            .put("p12", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "PKCS12"))
+            .put("jks", ( ks, pw ) -> retrieveExistingKeyStore(ks, pw, "JKS"))
+            .put("pem", DestinationKeyStoreExtractor::createNewKeyStoreFromPem)
+            .build();
 
     //Check out supported trust store file extensions here:
     //https://help.sap.com/viewer/cca91383641e40ffbe03bdc78f00f681/Cloud/en-US/df1bb55a526942b9bee78fea2ebb3162.html
@@ -55,7 +62,6 @@ class DestinationKeyStoreExtractor
     static final Map<String, String> SUPPORTED_KEY_STORE_TYPES_AS_TRUST_STORE = ImmutableMap.of("jks", "JKS");
 
     static final List<String> SUPPORTED_CERT_FILE_EXTENSIONS_AS_TRUST_STORE = ImmutableList.of("crt", "cer", "der");
-    // @formatter:on
 
     @Nonnull
     private final PropertyKeyExtractor destination;
@@ -156,10 +162,10 @@ class DestinationKeyStoreExtractor
 
         final DestinationCertificate certificate = getDestinationCertificateFromProperty(locationKey);
 
-        final String storeType = getKeyStoreTypeByFileName(certificate.getName());
+        final BiFunction<String, String, KeyStore> storeTransformer =
+            getKeyStoreTransformerByFileName(certificate.getName());
         final String storePassword = destination.get(passwordKey).getOrNull();
-        final KeyStore store = retrieveExistingKeyStore(certificate.getContent(), storePassword, storeType);
-        return Option.some(store);
+        return Option.some(storeTransformer.apply(certificate.getContent(), storePassword));
     }
 
     @Nonnull
@@ -198,14 +204,14 @@ class DestinationKeyStoreExtractor
     }
 
     @Nonnull
-    private static String getKeyStoreTypeByFileName( @Nonnull final String name )
+    private static BiFunction<String, String, KeyStore> getKeyStoreTransformerByFileName( @Nonnull final String name )
     {
         final String fileExtension = FilenameUtils.getExtension(name.toLowerCase());
-        final String typeOfFileExt = SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE.get(fileExtension);
+        final BiFunction<String, String, KeyStore> typeOfFileExt = SUPPORTED_KEY_STORES.get(fileExtension);
         if( typeOfFileExt == null ) {
             final String message =
                 "Could not create Key Store with file extension: %s. Supported extensions: "
-                    + SUPPORTED_KEY_STORE_TYPES_AS_KEY_STORE.keySet();
+                    + SUPPORTED_KEY_STORES.keySet();
             throw new DestinationAccessException(String.format(message, fileExtension));
         }
         return typeOfFileExt;
@@ -256,6 +262,31 @@ class DestinationKeyStoreExtractor
         }
         catch( final IOException | NoSuchAlgorithmException | CertificateException e ) {
             throw new DestinationAccessException("Failed to load key store.", e);
+        }
+    }
+
+    @Nonnull
+    static KeyStore createNewKeyStoreFromPem( @Nonnull final String data, @Nullable final String password )
+    {
+        try {
+            final String decoded = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8).trim();
+
+            final Pattern pattern = Pattern.compile("-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+", Pattern.DOTALL);
+            final Matcher match = pattern.matcher(decoded);
+            if( !match.find() ) {
+                throw new IllegalArgumentException("PEM format cannot be parsed: No certificate entry found.");
+            }
+            final String key = (decoded.substring(0, match.start()) + decoded.substring(match.end())).trim();
+            if( key.isEmpty() ) {
+                throw new IllegalArgumentException("PEM format cannot be parsed: No private key entry found.");
+            }
+
+            final String alias = "1";
+            final char[] pw = Strings.isNullOrEmpty(password) ? new char[0] : password.toCharArray();
+            return KeyStoreReader.createKeyStore(alias, pw, new StringReader(match.group()), new StringReader(key));
+        }
+        catch( final Exception e ) {
+            throw new DestinationAccessException("Failed to instantiate new KeyStore.", e);
         }
     }
 

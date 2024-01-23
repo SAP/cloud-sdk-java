@@ -19,13 +19,14 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 class ODataNextLinkTest
 {
-    private static final String PAYLOAD_NEXT_LINK =
-        "{"
-            + "  \"d\": {"
-            + "    \"results\": [],"
-            + "    \"__next\": \"/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar\""
-            + "  }"
-            + "}";
+    private static final String PAYLOAD_NEXT_LINK = """
+        {
+          "d": {
+            "results": [],
+            "__next": "/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar"
+          }
+        }
+        """;
 
     @Test
     void testNotParsedNextLinkV4()
