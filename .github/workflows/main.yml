@@ -1,6 +1,7 @@
 name: "Test Github variables"
 on:
   workflow_dispatch:
+  
 jobs:
   test-var:
     runs-on: ubuntu-latest
