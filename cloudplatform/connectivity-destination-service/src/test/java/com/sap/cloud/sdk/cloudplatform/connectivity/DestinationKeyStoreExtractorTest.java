@@ -17,7 +17,6 @@ import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -351,7 +350,8 @@ class DestinationKeyStoreExtractorTest
         final Option<KeyStore> keyStore = new DestinationKeyStoreExtractor(destination).getKeyStore();
         assertThat(keyStore).isNotEmpty();
         assertThat(Collections.list(keyStore.get().aliases())).containsExactly("1");
-        assertThat(keyStore.get().getKey("1", null)).isInstanceOf(PrivateKey.class);
+        assertThat(keyStore.get().getKey("1", null)).isInstanceOf(RSAPrivateCrtKey.class);
+        assertThat(keyStore.get().getKey("1", new char[0])).isInstanceOf(RSAPrivateCrtKey.class);
         assertThat(keyStore.get().getCertificate("1")).isInstanceOf(X509Certificate.class);
     }
 
@@ -375,7 +375,8 @@ class DestinationKeyStoreExtractorTest
         final Option<KeyStore> keyStore = new DestinationKeyStoreExtractor(destination).getKeyStore();
         assertThat(keyStore).isNotEmpty();
         assertThat(Collections.list(keyStore.get().aliases())).containsExactly("1");
-        assertThat(keyStore.get().getKey("1", null)).isInstanceOf(PrivateKey.class);
+        assertThat(keyStore.get().getKey("1", null)).isInstanceOf(RSAPrivateCrtKey.class);
+        assertThat(keyStore.get().getKey("1", new char[0])).isInstanceOf(RSAPrivateCrtKey.class);
         assertThat(keyStore.get().getCertificate("1")).isInstanceOf(X509Certificate.class);
     }
 
