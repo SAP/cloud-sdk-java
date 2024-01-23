@@ -191,8 +191,10 @@ jobs:
       - name: Test
         run: |
           mvn $MVN_CLI_ARGS_SINGLE_THREAD org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report
+      # Do not run this step on a forked repository
+      # Fixed in https://github.com/ScaCap/action-surefire-report/issues/31
       - name: Test Report
-        if: success() || failure() && github.repository == 'SAP/cloud-sdk-java' # Do not run this step on a forked repository
+        if: github.repository == 'SAP/cloud-sdk-java' && (success() || failure())
         uses: scacap/action-surefire-report@v1
       - name: Coverage Report
         run: |
