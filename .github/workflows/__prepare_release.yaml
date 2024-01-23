@@ -221,7 +221,7 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs1-${{ needs.bump-version.outputs.release-version }}
+          BRANCH_NAME=java/release-docs3-${{ needs.bump-version.outputs.release-version }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME
@@ -267,9 +267,9 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create docs repo branch java/release-notes-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create docs repo branch java/release-notes3-${{ needs.bump-version.outputs.release-version }}"
         working-directory: ./cloud-sdk
-        run: git checkout -B java/release-notes-${{ needs.bump-version.outputs.release-version }}
+        run: git checkout -B java/release-notes3-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
@@ -282,14 +282,23 @@ jobs:
 
       - name: "Push docs repo release notes"
         working-directory: ./cloud-sdk
-        run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
+        run: git push origin java/release-notes3-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create docs repo pull request"
         id: create-release-notes-pr
         working-directory: ./cloud-sdk
         run: |
           PR_TITLE="Java: Add release notes for release ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+
+          # if the minor version is a multiple of 15, then change the PR_BODY to "# ⚠️Update the `docs-java/release-notes/index.jsx` file⚠️"
+          # else the PR_BODY will be "Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+
+          minor_version=$(echo ${{ needs.bump-version.outputs.release-version }} | cut -d '.' -f 2)
+          if [[ $((minor_version % 15)) -eq 0 ]]; then
+            PR_BODY="# ⚠️Update the \`docs-java/release-notes/index.jsx\` file⚠️"
+          else
+            PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
+          fi
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
@@ -298,7 +307,7 @@ jobs:
 
       - name: "Reset and push code repo release notes"
         run: |
-          cp release_notes_template.md release_notes.md
+          cp scripts/release_notes_template.md release_notes.md
           git add .
           git commit -m "Reset release notes"
           git push
