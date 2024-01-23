@@ -9,6 +9,8 @@ updates:
       time: '08:00'
       timezone: 'Europe/Berlin'
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore: [DevOps] '
     groups:
       production-minor-patch:
         dependency-type: "production"
@@ -24,32 +26,38 @@ updates:
         dependency-type: "production"
         patterns:
           - "*-plugin"
-      development:
+      test:
         dependency-type: "development"
     ignore:
       # updating leads to unintended formatting of POM files
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
       # used by deprecated code only, not worth updating for now
       - dependency-name: 'org.apache.axis2:*'
-      # updating currently doesn't work with our custom checkstyle rules
+      # updating currently doesn't work as our rules are not compatible with the latest version
       - dependency-name: 'com.puppycrawl.tools:checkstyle'
 
   # archetype updates
-  - package-ecosystem: maven
-    target-branch: main
-    directory: '/archetypes/spring-boot3/src/main/resources/archetype-resources/pom.xml'
-    schedule:
-      interval: weekly
-    groups:
-      archetypes:
-        patterns:
-          - "*"
+  # Dependabot seems to be unable to handle those, so this is disabled for now
+  # example log from Dependabot: msg="updater container failed" error="waiting for updater: bad response from container: 1" exit_code=1
+  # - package-ecosystem: maven
+  #   target-branch: main
+  #   directory: '/archetypes/spring-boot3/src/main/resources/archetype-resources/'
+  #   schedule:
+  #     interval: weekly
+  #   commit-message:
+  #     prefix: 'chore: [DevOps] '
+  #   groups:
+  #     Archetype:
+  #       patterns:
+  #         - "*"
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: monthly
+    commit-message:
+      prefix: 'chore: [DevOps] '
     groups:
-      all:
+      github-actions:
         patterns:
           - "*"
