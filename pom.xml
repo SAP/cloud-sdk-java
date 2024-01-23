@@ -102,7 +102,7 @@
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
-		<olingo-v4.version>4.10.0</olingo-v4.version>
+		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
@@ -117,7 +117,7 @@
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.0.3</qdox.version>
 		<wiremock.version>3.3.1</wiremock.version>
-		<checkstyle.version>8.41</checkstyle.version>
+		<checkstyle.version>10.12.7</checkstyle.version>
 		<kotlin.version>1.9.10</kotlin.version>
 		<byte-buddy.version>1.14.11</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
