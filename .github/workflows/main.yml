@@ -1,0 +1,8 @@
+name: "Test Github variables"
+runs:
+  using: composite
+  steps:
+    - name: Print Github variables
+      run: |
+        echo "Github repo value: ${{ github.repository }}"
+      shell: bash
