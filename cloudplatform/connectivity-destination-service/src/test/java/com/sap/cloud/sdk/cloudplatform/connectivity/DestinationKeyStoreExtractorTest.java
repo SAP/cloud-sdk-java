@@ -379,25 +379,22 @@ class DestinationKeyStoreExtractorTest
     @Test
     void testGetTrustStoreFromUnsupportedFileExtension()
     {
-        assertThatExceptionOfType(DestinationAccessException.class).isThrownBy(() -> {
-            final String fileLocation = TRUST_STORE_FILE_WITH_UNSUPPORTED_EXTENSION;
-            final String fileContent = JKS_FILE_KEY_STORE_CONTENT;
+        final String fileLocation = TRUST_STORE_FILE_WITH_UNSUPPORTED_EXTENSION;
+        final String fileContent = JKS_FILE_KEY_STORE_CONTENT;
 
-            final DefaultHttpDestination testDestination =
-                DefaultHttpDestination
-                    .builder(VALID_URI)
-                    .name(MOCKED_DESTINATION_NAME)
-                    .property(DestinationProperty.TRUST_STORE_LOCATION, fileLocation)
-                    .property(DestinationProperty.TRUST_STORE_PASSWORD, JKS_KEY_STORE_PASSWORD)
-                    .property(
-                        DestinationProperty.CERTIFICATES,
-                        createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
-                    .build();
+        final DefaultHttpDestination testDestination =
+            DefaultHttpDestination
+                .builder(VALID_URI)
+                .name(MOCKED_DESTINATION_NAME)
+                .property(DestinationProperty.TRUST_STORE_LOCATION, fileLocation)
+                .property(DestinationProperty.TRUST_STORE_PASSWORD, JKS_KEY_STORE_PASSWORD)
+                .property(
+                    DestinationProperty.CERTIFICATES,
+                    createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
+                .build();
 
-            final AuthTokenHeaderProvider propertyFactoryUnderTest = new AuthTokenHeaderProvider();
-
-            final KeyStore actualKeyStore = new DestinationKeyStoreExtractor(testDestination).getTrustStore().get();
-        });
+        final DestinationKeyStoreExtractor extractor = new DestinationKeyStoreExtractor(testDestination);
+        assertThatExceptionOfType(DestinationAccessException.class).isThrownBy(extractor::getTrustStore);
     }
 
     @Test
