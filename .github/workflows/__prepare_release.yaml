@@ -14,7 +14,9 @@ env:
   CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI build
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
-  DOCS_REPO: SAP/cloud-sdk
+
+  # TODO: replace this with the actual docs repo
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
 
 jobs:
   bump-version:
@@ -93,12 +95,12 @@ jobs:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
           commit-sha: ${{ needs.bump-version.outputs.release-commit }}
+          # TODO: re-enable blackduck scan
+          # TODO: re-enable security rating
           parameters: >
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-blackduck-scan = true
-            -f run-security-rating=true
 
       - name: "Await CI Workflow"
         uses: ./.github/actions/await-workflow
@@ -200,6 +202,7 @@ jobs:
 
       - name: "Replace JavaDoc"
         id: replace-javadoc
+        # TODO: rename branch to java/release-docs-${{ needs.bump-version.outputs.release-version }}
         run: |
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
@@ -218,7 +221,7 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
+          BRANCH_NAME=java/release-docs1-${{ needs.bump-version.outputs.release-version }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME

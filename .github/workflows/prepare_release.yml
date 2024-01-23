@@ -300,7 +300,6 @@ jobs:
           else
             PR_BODY="Add the SAP Cloud SDK ${{ needs.bump-version.outputs.release-version }} release notes"
           fi
-          
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
