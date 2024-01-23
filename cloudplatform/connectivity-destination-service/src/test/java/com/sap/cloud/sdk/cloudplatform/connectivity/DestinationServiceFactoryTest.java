@@ -121,4 +121,17 @@ class DestinationServiceFactoryTest
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining("some-error-message");
     }
+
+    @Test
+    void propertyForwardAuthTokenShouldSetAuthenticationType()
+    {
+        response.getDestinationConfiguration().put("Type", "HTTP");
+        response.getDestinationConfiguration().put("Name", "httpDestination");
+        response.getDestinationConfiguration().put("URL", "https://example.com");
+        response.getDestinationConfiguration().put("forwardAuthToken", "true");
+
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
+
+        assertThat(result.asHttp().getAuthenticationType()).isEqualTo(AuthenticationType.TOKEN_FORWARDING);
+    }
 }
