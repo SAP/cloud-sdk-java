@@ -31,18 +31,18 @@ jobs:
         id: branch-names
         run: |
           # branch=RELEASE-5.2.0
-          VERSION=$(echo "${{ github.event.review.branch }}" | awk -F'(-)' '{print $2}')
-          echo Version "${{ github.event.review.branch }}"
+          VERSION=$(echo "${{ github.event.pull_request.head.ref }}" | awk -F'(-)' '{print $2}')
+          echo Version "${{ github.event.pull_request.head.ref }}"
 
           RELEASE_BRANCH_NAME=RELEASE-$VERSION
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
           echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          JAVADOC_BRANCH_NAME=release-docs5-$VERSION
+          JAVADOC_BRANCH_NAME=release-docs6-$VERSION
           echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
           echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          RELEASE_NOTES_BRANCH_NAME=release-notes5-$VERSION
+          RELEASE_NOTES_BRANCH_NAME=release-notes6-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
 
