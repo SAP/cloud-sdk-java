@@ -38,15 +38,15 @@ jobs:
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
           echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          JAVADOC_BRANCH_NAME=release-docs6-$VERSION
+          JAVADOC_BRANCH_NAME=release-docs7-$VERSION
           echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
           echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          RELEASE_NOTES_BRANCH_NAME=release-notes6-$VERSION
+          RELEASE_NOTES_BRANCH_NAME=release-notes7-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          $GIT_TAG=rel/$VERSION
+          GIT_TAG=rel/$VERSION
           echo Git Tag "$GIT_TAG"
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_OUTPUT
 
