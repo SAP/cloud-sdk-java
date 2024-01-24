@@ -30,19 +30,18 @@ jobs:
       - name: "Get PR branch names"
         id: branch-names
         run: |
-          # branch=RELEASE-5.2.0
-          VERSION=$(echo "${{ github.event.pull_request.head.ref }}" | awk -F'(-)' '{print $2}')
-          echo Version "${{ github.event.pull_request.head.ref }}"
-
-          RELEASE_BRANCH_NAME=RELEASE-$VERSION
+          RELEASE_BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
           echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          JAVADOC_BRANCH_NAME=release-docs7-$VERSION
+          VERSION=$(echo "$RELEASE_BRANCH_NAME" | cut -d'-' -f2)
+          echo Version "$VERSION"
+
+          JAVADOC_BRANCH_NAME=release-docs8-$VERSION
           echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
           echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          RELEASE_NOTES_BRANCH_NAME=release-notes7-$VERSION
+          RELEASE_NOTES_BRANCH_NAME=release-notes8-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
 
@@ -53,11 +52,12 @@ jobs:
       - name: "Download Release Asset"
         id: download-asset
         run: |
-          gh release download "${{ steps.branch-names.outputs.GIT_TAG }}" --dir ./ --repo "SAP/cloud-sdk-java"
+          gh release download "$GIT_TAG" --dir ./ --repo "SAP/cloud-sdk-java"
           unzip sap-cloud-sdk-java-*.zip -d .
           unzip sap-cloud-sdk-aggregated-javadoc-*.zip -d .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TAG: ${{ steps.branch-names.outputs.GIT_TAG }}
 
       - name: "Import GPG Key"
         run: |
