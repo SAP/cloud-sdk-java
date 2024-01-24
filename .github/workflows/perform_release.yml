@@ -35,15 +35,15 @@ jobs:
           # version="rel/"+tag
           VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')
 
-          RELEASE_BRANCH_NAME="RELEASE-$VERSION"
+          RELEASE_BRANCH_NAME=RELEASE-$VERSION
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
           echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          JAVADOC_BRANCH_NAME="release-docs3-$VERSION"
+          JAVADOC_BRANCH_NAME=release-docs3-$VERSION
           echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
           echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          RELEASE_NOTES_BRANCH_NAME="release-notes3-$VERSION"
+          RELEASE_NOTES_BRANCH_NAME=release-notes3-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
 
