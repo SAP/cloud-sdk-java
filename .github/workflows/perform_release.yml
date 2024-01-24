@@ -30,10 +30,8 @@ jobs:
       - name: "Download Release Asset"
         id: download-asset
         run: |
-          GIT_TAG=${{ github.event.release.tag_name }}
-          echo Git Tag "$GIT_TAG"
-          # version="rel/"+tag
-          VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')
+          # branch=RELEASE-5.2.0
+          VERSION=$(echo "${{ github.event.review.branch }}" | awk -F'(-)' '{print $2}')
 
           RELEASE_BRANCH_NAME=RELEASE-$VERSION
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
@@ -46,6 +44,10 @@ jobs:
           RELEASE_NOTES_BRANCH_NAME=release-notes4-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+          $GIT_TAG=rel/$VERSION
+          echo Git Tag "$GIT_TAG"
+          echo "GIT_TAG=$GIT_TAG" >> $GITHUB_OUTPUT
 
           gh release download "$GIT_TAG" --dir ./ --repo "SAP/cloud-sdk-java"
           unzip sap-cloud-sdk-java-*.zip -d .
@@ -104,9 +106,6 @@ jobs:
 
       - name: "Publish the Draft Release"
         run: gh release edit "$GIT_TAG" --repo "SAP/cloud-sdk-java"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_TAG: ${{ github.event.release.tag_name }}
 
   notify-job:
     runs-on: ubuntu-latest
