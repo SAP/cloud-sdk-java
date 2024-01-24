@@ -27,7 +27,7 @@ jobs:
         run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
         id: get-version
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
@@ -89,7 +89,7 @@ jobs:
     name: ${{ matrix.task.archetype }}
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: ${{ matrix.task.javaVersion }}
@@ -204,7 +204,7 @@ jobs:
 
       # Force Java 17
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
