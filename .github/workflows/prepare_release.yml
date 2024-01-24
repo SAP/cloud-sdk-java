@@ -119,13 +119,13 @@ jobs:
           mvn $MVN_CLI_ARGS com.github.spotbugs:spotbugs-maven-plugin:spotbugs
           python .pipeline/scripts/print-spotbugs.py
       - name: Upload release package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ needs.prepare-release.outputs.release_version }}.zip
           retention-days: 1
       - name: Upload JavaDocs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cloud-sdk-aggregated-javadoc
           path: ./target/site/apidocs
