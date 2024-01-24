@@ -221,7 +221,7 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs3-${{ needs.bump-version.outputs.release-version }}
+          BRANCH_NAME=java/release-docs4-${{ needs.bump-version.outputs.release-version }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME
@@ -267,9 +267,9 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create docs repo branch java/release-notes3-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create docs repo branch java/release-notes4-${{ needs.bump-version.outputs.release-version }}"
         working-directory: ./cloud-sdk
-        run: git checkout -B java/release-notes3-${{ needs.bump-version.outputs.release-version }}
+        run: git checkout -B java/release-notes4-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
@@ -282,7 +282,7 @@ jobs:
 
       - name: "Push docs repo release notes"
         working-directory: ./cloud-sdk
-        run: git push origin java/release-notes3-${{ needs.bump-version.outputs.release-version }}
+        run: git push origin java/release-notes4-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create docs repo pull request"
         id: create-release-notes-pr
