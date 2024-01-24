@@ -58,7 +58,7 @@
 		<!-- collection utilities, @Beta annotation -->
 		<commons-io.version>2.15.1</commons-io.version>
 		<!-- Apache file utils -->
-		<axis2.version>1.7.9</axis2.version>
+		<axis2.version>1.8.2</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
 		<commons-lang3.version>3.14.0</commons-lang3.version>
 		<!-- Soap requests -->
