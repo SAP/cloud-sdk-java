@@ -39,7 +39,7 @@ jobs:
     name: ${{ matrix.task.name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -65,7 +65,7 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Determine Version
         run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
         id: get-version
@@ -156,7 +156,7 @@ jobs:
       contents: read
     name: Test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -205,7 +205,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Checkstyle
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -248,7 +248,7 @@ jobs:
     runs-on: ubuntu-latest
     name: PMD
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -295,7 +295,7 @@ jobs:
       contents: read
     name: Spotbugs
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -345,7 +345,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup java
         uses: actions/setup-java@v3
@@ -501,7 +501,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup java
         uses: actions/setup-java@v3
         with:
@@ -552,7 +552,7 @@ jobs:
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Notify
         run: python .pipeline/scripts/notify.py
         env:

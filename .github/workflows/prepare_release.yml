@@ -25,7 +25,7 @@ jobs:
       new_snapshot: ${{ steps.get-release-versions.outputs.NEW_SNAPSHOT }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.repository.default_branch }}
 
@@ -79,7 +79,7 @@ jobs:
     name: Test and Package
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.release_commit_id }}
       - name: Setup Java
@@ -264,7 +264,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.release_commit_id }}
 
@@ -303,7 +303,7 @@ jobs:
     needs: prepare-release
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           ref: ${{ needs.prepare-release.outputs.branch_name }}
@@ -342,7 +342,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare-release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.branch_name }}
       - uses: SAP/fosstars-rating-core-action@v1.14.0
@@ -359,7 +359,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.branch_name }}
 
@@ -434,7 +434,7 @@ jobs:
     if: ${{ failure() }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Delete Release Branch
         run: |
           git push origin --delete ${{ needs.prepare-release.outputs.branch_name }}

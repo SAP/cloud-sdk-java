@@ -94,7 +94,7 @@ jobs:
           # GIT_TAG: rel/${{ github.event.inputs.release_version }}
 
       - name: Checkout SAP/cloud-sdk
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: SAP/cloud-sdk
           path: cloud-sdk
@@ -161,7 +161,7 @@ jobs:
     if: ${{ failure() }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Notify
         run: python .pipeline/scripts/notify.py
         env:
