@@ -16,7 +16,7 @@ jobs:
       contents: write
       pull-requests: write
     outputs:
-      branch_name: ${{ steps.download-asset.outputs.RELEASE_BRANCH_NAME }}
+      branch_name: ${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}
     steps:
       - name: "Setup java"
         uses: actions/setup-java@v3
@@ -27,21 +27,22 @@ jobs:
           server-username: MAVEN_CENTRAL_USER # env variable for username in deploy
           server-password: MAVEN_CENTRAL_PASSWORD # env variable for token in deploy
 
-      - name: "Download Release Asset"
-        id: download-asset
+      - name: "Get PR branch names"
+        id: branch-names
         run: |
           # branch=RELEASE-5.2.0
           VERSION=$(echo "${{ github.event.review.branch }}" | awk -F'(-)' '{print $2}')
+          echo Version "${{ github.event.review.branch }}"
 
           RELEASE_BRANCH_NAME=RELEASE-$VERSION
           echo Release Branch Name "$RELEASE_BRANCH_NAME"
           echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          JAVADOC_BRANCH_NAME=release-docs4-$VERSION
+          JAVADOC_BRANCH_NAME=release-docs5-$VERSION
           echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
           echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
 
-          RELEASE_NOTES_BRANCH_NAME=release-notes4-$VERSION
+          RELEASE_NOTES_BRANCH_NAME=release-notes5-$VERSION
           echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
 
@@ -49,7 +50,10 @@ jobs:
           echo Git Tag "$GIT_TAG"
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_OUTPUT
 
-          gh release download "$GIT_TAG" --dir ./ --repo "SAP/cloud-sdk-java"
+      - name: "Download Release Asset"
+        id: download-asset
+        run: |
+          gh release download "${{ steps.branch-names.outputs.GIT_TAG }}" --dir ./ --repo "SAP/cloud-sdk-java"
           unzip sap-cloud-sdk-java-*.zip -d .
           unzip sap-cloud-sdk-aggregated-javadoc-*.zip -d .
         env:
@@ -90,17 +94,17 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: "Merge Release PR if Approved"
-        run: gh pr merge --squash "${{ steps.download-asset.outputs.RELEASE_BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: "Merge Javadoc PR if Approved"
-        run: gh pr merge --squash "${{ steps.download-asset.outputs.JAVADOC_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.JAVADOC_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Merge Release Notes PR if Approved"
-        run: gh pr merge --squash "${{ steps.download-asset.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
