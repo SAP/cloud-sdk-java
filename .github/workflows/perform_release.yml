@@ -87,13 +87,6 @@ jobs:
           MAVEN_CENTRAL_PROFILE_ID: ${{ secrets.MAVEN_CENTRAL_PROFILE_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: "Get SDK Major Version"
-        run: |
-          echo "VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}')" >> $GITHUB_ENV
-          echo "MAJOR_VERSION=$(echo $GIT_TAG | awk -F'/' '{print $2}' | awk -F'.' '{print $1}')" >> $GITHUB_ENV
-        env:
-          GIT_TAG: ${{ github.event.release.tag_name }}
-
       - name: "Merge Release PR if Approved"
         run: gh pr merge --squash "${{ steps.download-asset.outputs.RELEASE_BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
         env:
@@ -108,6 +101,12 @@ jobs:
         run: gh pr merge --squash "${{ steps.download-asset.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: "Publish the Draft Release"
+        run: gh release edit "$GIT_TAG" --repo "SAP/cloud-sdk-java"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TAG: ${{ github.event.release.tag_name }}
 
   notify-job:
     runs-on: ubuntu-latest
