@@ -261,10 +261,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.DOCS_REPO }}
-          path: cloud-sdk
+          path: .cloud-sdk-docs
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
       - name: "Prepare Git"
-        working-directory: ./cloud-sdk
+        working-directory: ./.cloud-sdk-docs
         run: |
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
@@ -274,21 +274,21 @@ jobs:
         run: git checkout -B java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
-        run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder "cloud-sdk/docs-java/release-notes"
+        run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder ".cloud-sdk-docs/docs-java/release-notes"
 
       - name: "Commit docs repo release notes"
-        working-directory: ./cloud-sdk
+        working-directory: ./.cloud-sdk-docs
         run: |
           git add .
           git commit -m "Add new release notes"
 
       - name: "Push docs repo release notes"
-        working-directory: ./cloud-sdk
+        working-directory: ./.cloud-sdk-docs
         run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Create docs repo pull request"
         id: create-release-notes-pr
-        working-directory: ./cloud-sdk
+        working-directory: ./.cloud-sdk-docs
         run: |
           PR_TITLE="Java: Add release notes for release ${{ needs.bump-version.outputs.release-version }}"
 
