@@ -311,7 +311,8 @@ jobs:
         run: |
           cp .pipeline/scripts/release_notes_template.md release_notes.md
           git add release_notes.md
-          git rm -r ./.cloud-sdk-docs
+          # Delete the .cloud-sdk-docs directory
+          git clean -d -x -f
 
           CHANGED_FILES="$(git status -s)"
           if [[ -z "$CHANGED_FILES" ]]; then
