@@ -10,6 +10,7 @@ env:
 
 jobs:
   release:
+    name: "Release"
     if: github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
     permissions:
@@ -118,7 +119,7 @@ jobs:
 
       - name: "Publish the Draft Release"
         # TODO: replace the fork repo with the code repo
-        run: gh release edit ${{ steps.branch-names.outputs.GIT_TAG }} --repo "Johannes-Schneider/cloud-sdk-java"
+        run: gh release edit ${{ steps.branch-names.outputs.GIT_TAG }} --draft=false --repo "Johannes-Schneider/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ github.token }}
 

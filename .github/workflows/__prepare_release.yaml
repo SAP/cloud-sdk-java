@@ -310,7 +310,7 @@ jobs:
       - name: "Reset and push code repo release notes"
         run: |
           cp .pipeline/scripts/release_notes_template.md release_notes.md
-          git add .
+          git add release_notes.md
           git commit -m "Reset release notes"
           git push
 
