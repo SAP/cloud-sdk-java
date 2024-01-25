@@ -54,8 +54,9 @@ jobs:
         # TODO: replace the fork repo with the code repo
         run: |
           gh release download ${{ steps.branch-names.outputs.GIT_TAG }} --dir ./ --repo "Johannes-Schneider/cloud-sdk-java"
-          unzip sap-cloud-sdk-java-*.zip -d .
-          unzip sap-cloud-sdk-aggregated-javadoc-*.zip -d .
+          # x=extract v=verbose z=decompress f=file C=destination directory
+          tar -xvzf apidocs-*.tar.gz -C .
+          tar -xvzf release-*.tar.gz -C .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -66,7 +67,6 @@ jobs:
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: "Perform Release"
-        working-directory: ./release
         run: >
           echo "Hello"
 #          mvn
@@ -94,17 +94,20 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: "Merge Release PR if Approved"
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}" --repo "SAP/cloud-sdk-java"
+        # TODO: replace the fork repo with the code repo
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: "Merge Javadoc PR if Approved"
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.JAVADOC_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
+        # TODO: replace the fork repo with the docs repo
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.JAVADOC_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Merge Release Notes PR if Approved"
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "SAP/cloud-sdk"
+        # TODO: replace the fork repo with the docs repo
+        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
