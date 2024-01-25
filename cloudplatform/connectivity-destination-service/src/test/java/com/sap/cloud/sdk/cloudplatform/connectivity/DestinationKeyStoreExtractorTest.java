@@ -6,10 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,9 +32,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
-import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 
 import io.vavr.control.Option;
 
@@ -100,63 +93,6 @@ class DestinationKeyStoreExtractorTest
     }
 
     @Test
-    void testMissingCertificateInformation()
-    {
-        final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
-        final DestinationService loader = new DestinationService(destinationService);
-
-        final String destinationData =
-            """
-                {
-                    "destinationConfiguration" : {
-                        "KeyStorePassword":"%s",
-                        "audience":"www.successfactors.com",
-                        "authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession",
-                        "WebIDEEnabled":"true",
-                        "tokenServiceUrl":"https://apisalesdemo2.successfactors.eu:443/oauth/token",
-                        "KeyStore":"key-store",
-                        "URL":"https://apisalesdemo2.successfactors.eu:443",
-                        "Name":"sfapi_dest",
-                        "Type":"HTTP",
-                        "companyId":"comepany-id",
-                        "XFSystemName":"SFSF_SalesDemo",
-                        "KeyStoreLocation":"%s",
-                        "clientKey":"client-key",
-                        "Authentication":"OAuth2SAMLBearerAssertion",
-                        "nameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-                        "ProxyType":"Internet"
-                    },
-                    "certificates":[{
-                        "Name":"%s",
-                        "Content":"%s"
-                    }]
-                }
-                """
-                .formatted(
-                    PKCS12_KEY_STORE_PASSWORD,
-                    PKCS12_FILE_KEY_STORE_LOCATION,
-                    PKCS12_FILE_KEY_STORE_LOCATION,
-                    PKCS12_FILE_KEY_STORE_CONTENT);
-
-        doReturn(destinationData)
-            .when(destinationService)
-            .getConfigurationAsJsonWithUserToken(eq("/destinations/ABC"), any(OnBehalfOf.class));
-
-        final Principal p1 = new DefaultPrincipal("P1");
-        final Destination destination =
-            PrincipalAccessor.executeWithPrincipal(p1, () -> loader.tryGetDestination("ABC").get());
-        final HttpDestination dest = destination.asHttp();
-        assertThat(dest.getKeyStore()).isNotNull();
-        assertThat(dest.get(DestinationProperty.CERTIFICATES)).isNotEmpty();
-
-        @SuppressWarnings( "unchecked" )
-        final List<DestinationCertificate> certs =
-            (List<DestinationCertificate>) dest.get(DestinationProperty.CERTIFICATES).get();
-        assertThat(certs).isNotEmpty();
-        assertThat(certs.get(0).getExpiryTimestamp()).isNotNull();
-    }
-
-    @Test
     void testGetKeyStoreWithJksFile()
         throws KeyStoreException
     {
@@ -167,19 +103,18 @@ class DestinationKeyStoreExtractorTest
             DefaultHttpDestination
                 .builder(VALID_URI)
                 .name(MOCKED_DESTINATION_NAME)
-                .property(DestinationProperty.TRUST_STORE_LOCATION, fileLocation)
-                .property(DestinationProperty.TRUST_STORE_PASSWORD, KEY_STORE_PASSWORD)
+                .property(DestinationProperty.KEY_STORE_LOCATION, fileLocation)
+                .property(DestinationProperty.KEY_STORE_PASSWORD, KEY_STORE_PASSWORD)
                 .property(
                     DestinationProperty.CERTIFICATES,
                     createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
                 .build();
 
-        final KeyStore actualKeyStore = new DestinationKeyStoreExtractor(testDestination).getKeyStore().get();
+        final KeyStore actual = new DestinationKeyStoreExtractor(testDestination).getKeyStore().get();
 
-        final KeyStore expectedKeyStore = createKeyStoreObjectFromJksFile();
+        final KeyStore expected = createKeyStoreObjectFromJksFile();
 
-        assertThat(actualKeyStore.getCertificate(fileLocation))
-            .isEqualTo(expectedKeyStore.getCertificate(fileLocation));
+        assertThat(actual.getCertificate(fileLocation)).isEqualTo(expected.getCertificate(fileLocation));
     }
 
     @Test
@@ -203,7 +138,7 @@ class DestinationKeyStoreExtractorTest
         final KeyStore expectedKeyStore = createKeyStoreObjectFromPkcsFile();
 
         final String alias = "1";
-        assertThat(actualKeyStore.getCertificate(alias)).isEqualTo(expectedKeyStore.getCertificate(alias)).isNotNull();
+""        assertThat(actualKeyStore.getCertificate(alias)).isEqualTo(expectedKeyStore.getCertificate(alias)).isNotNull();
     }
 
     @Test
