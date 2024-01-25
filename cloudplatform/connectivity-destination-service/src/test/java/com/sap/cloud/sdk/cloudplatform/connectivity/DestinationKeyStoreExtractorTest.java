@@ -138,7 +138,7 @@ class DestinationKeyStoreExtractorTest
         final KeyStore expectedKeyStore = createKeyStoreObjectFromPkcsFile();
 
         final String alias = "1";
-""        assertThat(actualKeyStore.getCertificate(alias)).isEqualTo(expectedKeyStore.getCertificate(alias)).isNotNull();
+        assertThat(actualKeyStore.getCertificate(alias)).isEqualTo(expectedKeyStore.getCertificate(alias)).isNotNull();
     }
 
     @Test
