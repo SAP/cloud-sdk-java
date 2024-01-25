@@ -112,8 +112,16 @@ jobs:
           # https://github.com/cli/cli/issues/8092#issuecomment-1814439651
           # The Release Notes mergeability computation hasn't completed yet
           # Because the base branch just changed from merging the Javadoc.
-          sleep 5
-          gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
+          # Sleep and retry to work around "Base branch was modified." error.
+          for i in {1..3}; do
+            sleep 5
+            if gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"; then
+              break
+            fi
+            if [[ $i -eq 3 ]]; then
+              exit 1
+            fi
+          done
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
