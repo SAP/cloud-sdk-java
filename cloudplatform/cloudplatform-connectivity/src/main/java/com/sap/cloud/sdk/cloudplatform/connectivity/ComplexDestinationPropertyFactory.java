@@ -209,7 +209,7 @@ class ComplexDestinationPropertyFactory
         final boolean forwardAuthToken =
             baseProperties
                 .get(DestinationProperty.FORWARD_AUTH_TOKEN)
-                .orElse(baseProperties.get(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN))
+                .orElse(() -> baseProperties.get(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN))
                 .getOrElse(false);
 
         if( authType == AuthenticationType.NO_AUTHENTICATION && forwardAuthToken ) {
