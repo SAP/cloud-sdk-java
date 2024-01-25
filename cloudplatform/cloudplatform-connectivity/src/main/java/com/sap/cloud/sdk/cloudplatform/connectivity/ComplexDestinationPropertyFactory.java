@@ -197,13 +197,29 @@ class ComplexDestinationPropertyFactory
                             AuthenticationType.NO_AUTHENTICATION))
                 .getOrElse(AuthenticationType.NO_AUTHENTICATION);
 
-        final boolean forwardAuthToken = baseProperties.get(DestinationProperty.FORWARD_AUTH_TOKEN).getOrElse(false);
-
         if( authType == AuthenticationType.NO_AUTHENTICATION && basicCredentials.isDefined() ) {
+            log
+                .debug(
+                    "Found Authentication Type {}, but basic credentials are provided. Changing Auth Type to {}.",
+                    AuthenticationType.NO_AUTHENTICATION,
+                    AuthenticationType.BASIC_AUTHENTICATION);
             return AuthenticationType.BASIC_AUTHENTICATION;
         }
 
+        final boolean forwardAuthToken =
+            baseProperties
+                .get(DestinationProperty.FORWARD_AUTH_TOKEN)
+                .orElse(baseProperties.get(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN))
+                .getOrElse(false);
+
         if( authType == AuthenticationType.NO_AUTHENTICATION && forwardAuthToken ) {
+            log
+                .debug(
+                    "Found Authentication Type {}, but either {} or {} destination properties are provided. Changing Auth Type to {}.",
+                    AuthenticationType.NO_AUTHENTICATION,
+                    DestinationProperty.FORWARD_AUTH_TOKEN,
+                    DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN,
+                    AuthenticationType.TOKEN_FORWARDING);
             return AuthenticationType.TOKEN_FORWARDING;
         }
         return authType;

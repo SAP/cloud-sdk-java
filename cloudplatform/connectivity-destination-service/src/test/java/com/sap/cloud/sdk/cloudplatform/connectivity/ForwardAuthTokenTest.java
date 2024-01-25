@@ -40,6 +40,26 @@ class ForwardAuthTokenTest
                 TestCaseBuilder
                     .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
                     .expectNoTokenForwarding(),
+
+                // HTML5.ForwardAuthToken = true && authType = NoAuthentication
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectTokenForwarding(),
+                // HTML5.ForwardAuthToken = true && unset authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .expectTokenForwarding(),
+                // HTML5.ForwardAuthToken = false && authType = NoAuthentication
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectNoTokenForwarding(),
+                // HTML5.ForwardAuthToken = false && unset authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .expectNoTokenForwarding(),
+
                 // unset forwardAuthToken && authType = NoAuthentication
                 TestCaseBuilder
                     .forProperty(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
