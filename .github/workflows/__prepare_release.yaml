@@ -311,6 +311,13 @@ jobs:
         run: |
           cp .pipeline/scripts/release_notes_template.md release_notes.md
           git add release_notes.md
+
+          CHANGED_FILES="$(git status -s)"
+          if [[ -z "$CHANGED_FILES" ]]; then
+              echo "[DEBUG] No changes to release_notes.md detected, skipping reset."
+              exit 0
+          fi
+
           git commit -m "Reset release notes"
           git push
 
