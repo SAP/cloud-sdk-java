@@ -309,10 +309,10 @@ jobs:
 
       - name: "Reset and push code repo release notes"
         run: |
+          rm -rf .cloud-sdk-docs
+
           cp .pipeline/scripts/release_notes_template.md release_notes.md
           git add release_notes.md
-          # Delete the .cloud-sdk-docs directory
-          git clean -d -x -f
 
           CHANGED_FILES="$(git status -s)"
           if [[ -z "$CHANGED_FILES" ]]; then
