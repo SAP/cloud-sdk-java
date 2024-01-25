@@ -29,7 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -73,8 +74,30 @@ class DestinationKeyStoreExtractorTest
 
     private static final String TRUST_STORE_FILE_WITH_UNSUPPORTED_EXTENSION = "trustcert.jpg";
 
-    @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
+    @Test
+    void testNoCertificatesDefined()
+    {
+        final DestinationKeyStoreExtractor sut = new DestinationKeyStoreExtractor(DefaultDestination.builder().build());
+        assertThat(sut.getKeyStore()).isEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource( AuthenticationType.class )
+    void testKeyStoreIsIgnoredForSelectAuthTypes( AuthenticationType authType )
+    {
+        final Destination destination =
+            DefaultHttpDestination
+                .builder(URI.create("foo.com"))
+                .authenticationType(authType)
+                .property(DestinationProperty.KEY_STORE_LOCATION, "foo")
+                .build();
+        final DestinationKeyStoreExtractor sut = new DestinationKeyStoreExtractor(destination);
+
+        switch( authType ) {
+            case SAML_ASSERTION, OAUTH2_SAML_BEARER_ASSERTION -> assertThat(sut.getKeyStore()).isEmpty();
+            default -> assertThatThrownBy(sut::getKeyStore);
+        }
+    }
 
     @Test
     void testMissingCertificateInformation()
@@ -151,10 +174,7 @@ class DestinationKeyStoreExtractorTest
                     createCertificateJson(fileLocation, fileContent, "CERTIFICATE"))
                 .build();
 
-        final KeyStore actualKeyStore =
-            new DestinationKeyStoreExtractor(testDestination)
-                .getKeyStore(DestinationProperty.TRUST_STORE_LOCATION, DestinationProperty.TRUST_STORE_PASSWORD)
-                .get();
+        final KeyStore actualKeyStore = new DestinationKeyStoreExtractor(testDestination).getKeyStore().get();
 
         final KeyStore expectedKeyStore = createKeyStoreObjectFromJksFile();
 
