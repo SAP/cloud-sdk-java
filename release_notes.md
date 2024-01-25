@@ -16,6 +16,7 @@
 
 ### 📈 Improvements
 
+- The destination property `HTML5.ForwardAuthToken` is now evaluated and forwards the current AuthToken to the target system.
 - Dependency Updates:
   - Update `org.apache.olingo` from `4.10.0` to `5.0.0`
   - Update `io.github.resilience4j` from `1.7.1` to `2.2.0`
