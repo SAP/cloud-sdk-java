@@ -43,6 +43,8 @@ jobs:
       - run: "echo Current Version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}"
       - run: "echo New Version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}"
 
+      # TODO: Could we replace noreply+s4hana-cloud-sdk@sap.com with cloudsdk@sap.com everywhere
+      # TODO: Could we have a central git config using env: GIT_CONFIG_PARAMETERS:
       - name: "Prepare git"
         run: |
           git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
@@ -281,6 +283,7 @@ jobs:
         working-directory: ./cloud-sdk
         run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
+        # TODO: remove this useless step
       - name: "Determine Minor Version"
         id: determine-minor-version
         run: echo "MINOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 2)" >> $GITHUB_OUTPUT
