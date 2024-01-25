@@ -30,6 +30,8 @@ local_m2/*
 **/vdm-integration-tests/serviceNameMappings.properties
 .venv
 .mvn
+mvnw
+mvnw.cmd
 **/.factorypath
 mvnvm.properties
 javadoc.properties
