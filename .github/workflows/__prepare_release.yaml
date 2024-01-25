@@ -311,7 +311,7 @@ jobs:
         run: |
           cp .pipeline/scripts/release_notes_template.md release_notes.md
           git add release_notes.md
-          git rm .cloud-sdk-docs
+          git rm -r ./.cloud-sdk-docs
 
           CHANGED_FILES="$(git status -s)"
           if [[ -z "$CHANGED_FILES" ]]; then
