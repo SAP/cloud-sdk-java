@@ -270,7 +270,7 @@ jobs:
           git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Create docs repo branch java/release-notes-${{ needs.bump-version.outputs.release-version }}"
-        working-directory: ./cloud-sdk
+        working-directory: ./.cloud-sdk-docs
         run: git checkout -B java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
       - name: "Copy docs repo release notes"
