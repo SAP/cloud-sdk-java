@@ -95,7 +95,7 @@ class DestinationKeyStoreExtractorTest
 
         switch( authType ) {
             case SAML_ASSERTION, OAUTH2_SAML_BEARER_ASSERTION -> assertThat(sut.getKeyStore()).isEmpty();
-            default -> assertThatThrownBy(sut::getKeyStore);
+            default -> assertThatThrownBy(sut::getKeyStore).isInstanceOf(DestinationAccessException.class);
         }
     }
 
