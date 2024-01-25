@@ -4,7 +4,7 @@ on:
   pull_request_review:
     types: [submitted]
     branches: [RELEASE-*]
-
+# TODO: Manual trigger
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
@@ -51,8 +51,9 @@ jobs:
 
       - name: "Download Release Asset"
         id: download-asset
+        # TODO: replace the fork repo with the code repo
         run: |
-          gh release download ${{ steps.branch-names.outputs.GIT_TAG }} --dir ./ --repo "SAP/cloud-sdk-java"
+          gh release download ${{ steps.branch-names.outputs.GIT_TAG }} --dir ./ --repo "Johannes-Schneider/cloud-sdk-java"
           unzip sap-cloud-sdk-java-*.zip -d .
           unzip sap-cloud-sdk-aggregated-javadoc-*.zip -d .
         env:
