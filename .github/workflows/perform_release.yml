@@ -107,7 +107,12 @@ jobs:
 
       - name: "Merge Release Notes PR if Approved"
         # TODO: replace the fork repo with the docs repo
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
+        run: |
+          # https://github.com/cli/cli/issues/8092#issuecomment-1814439651
+          # The Release Notes mergeability computation hasn't completed yet
+          # Because the base branch just changed from merging the Javadoc.
+          sleep 5
+          gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
