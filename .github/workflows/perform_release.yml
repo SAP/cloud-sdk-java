@@ -117,7 +117,8 @@ jobs:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Publish the Draft Release"
-        run: gh release edit ${{ steps.branch-names.outputs.GIT_TAG }} --repo "SAP/cloud-sdk-java"
+        # TODO: replace the fork repo with the code repo
+        run: gh release edit ${{ steps.branch-names.outputs.GIT_TAG }} --repo "Johannes-Schneider/cloud-sdk-java"
         env:
           GH_TOKEN: ${{ github.token }}
 
