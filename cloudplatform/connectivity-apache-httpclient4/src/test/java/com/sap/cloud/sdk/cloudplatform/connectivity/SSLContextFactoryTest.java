@@ -18,6 +18,8 @@ import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -28,14 +30,16 @@ import io.vavr.control.Try;
 
 class SSLContextFactoryTest
 {
-    @Test
-    void testDestinationWithDefaultSettings()
+    @ParameterizedTest
+    @EnumSource( AuthenticationType.class )
+    void testDestinationWithDefaultSettings( AuthenticationType authenticationType )
         throws GeneralSecurityException,
             IOException
     {
         final SSLContextBuilder sslContextBuilder = Mockito.spy(SSLContextBuilder.class);
 
-        final DefaultHttpDestination destination = DefaultHttpDestination.builder("uri").build();
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination.builder("uri").authenticationType(authenticationType).build();
 
         final SSLContextFactory sslContextFactory = new SSLContextFactory(sslContextBuilder);
 
@@ -90,48 +94,6 @@ class SSLContextFactoryTest
         new SSLContextFactory(sslContextBuilder).createSSLContext(destination);
 
         Mockito.verify(sslContextBuilder).loadKeyMaterial(keyStoreMock, "password".toCharArray());
-    }
-
-    @Test
-    @SuppressWarnings( "unchecked" )
-    void testDestinationWithKeyStoreAndAuthTypeIgnoringKeyStore()
-        throws GeneralSecurityException,
-            IOException
-    {
-        final SSLContextBuilder sslContextBuilder = Mockito.mock(SSLContextBuilder.class);
-
-        final KeyStoreSpi keyStoreSpiMock = Mockito.spy(KeyStoreSpi.class);
-        final KeyStore keyStoreMock = new MyKeyStore(keyStoreSpiMock);
-        keyStoreMock.load(null); // this is important to put the internal flag "initialized" to true
-
-        final Enumeration<String> keyStoreAliases = (Enumeration<String>) Mockito.mock(Enumeration.class);
-
-        Mockito.when(keyStoreSpiMock.engineAliases()).thenReturn(keyStoreAliases);
-        Mockito.when(keyStoreAliases.hasMoreElements()).thenReturn(Boolean.FALSE);
-
-        DefaultHttpDestination destination =
-            DefaultHttpDestination
-                .builder("uri")
-                .keyStore(keyStoreMock)
-                .keyStorePassword("password")
-                .authenticationType(AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION)
-                .build();
-
-        new SSLContextFactory(sslContextBuilder).createSSLContext(destination);
-
-        destination =
-            DefaultHttpDestination
-                .builder("uri")
-                .keyStore(keyStoreMock)
-                .keyStorePassword("password")
-                .authenticationType(AuthenticationType.SAML_ASSERTION)
-                .build();
-
-        new SSLContextFactory(sslContextBuilder).createSSLContext(destination);
-
-        Mockito
-            .verify(sslContextBuilder, Mockito.never())
-            .loadKeyMaterial(ArgumentMatchers.any(KeyStore.class), ArgumentMatchers.any(char[].class));
     }
 
     @Test

@@ -16,6 +16,8 @@
 
 ### 📈 Improvements
 
+- Improve how certificates are evaluated for the authentication types `SAMLAssertion` and `OAUTH2_SAML_BEARER_ASSERTION`.
+  The certificates are no longer unnecessarily parsed when obtaining the destination.
 - Dependency Updates:
   - Update `org.apache.olingo` from `4.10.0` to `5.0.0`
   - Update `io.github.resilience4j` from `1.7.1` to `2.2.0`
