@@ -74,7 +74,7 @@ jobs:
           fi
           
           STATUS_CHECKS=$(echo "$PR" | jq -r '.statusCheckRollup')
-          FAILED_CHECK_RUNS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")')
+          FAILED_CHECK_RUNS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "CheckRun" and .workflowName != "Perform Release" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")')
           if [[ -n "$FAILED_CHECK_RUNS" ]]; then
             echo "Code PR (#$NUMBER) has failed check runs:"
             echo "$FAILED_CHECK_RUNS"
