@@ -21,8 +21,8 @@ jobs:
   prerequisites:
     name: "Prerequisites"
     outputs:
-      release-version: ${{ steps.determine-release-version.outputs.RELEASE_VERSION }}
-      release-tag: ${{ steps.determine-release-version.outputs.RELEASE_TAG }}
+      release-version: ${{ steps.determine-branch-names.outputs.RELEASE_VERSION }}
+      release-tag: ${{ steps.determine-branch-names.outputs.RELEASE_TAG }}
       code-branch: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
       docs-branch: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
       release-notes-branch: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: "Check Whether Code PR Can Be Merged"
         run: |
-          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --json number,mergeable)
+          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --repo "${{ github.repository }}" --json number,mergeable)
           NUMBER=$(echo "$PR" | jq -r '.number')
           MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
           if [[ "$MERGEABLE" == "MERGEABLE" ]]; then
