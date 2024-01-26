@@ -38,7 +38,7 @@ jobs:
             BRANCH_NAME=${{ github.event.pull_request.head.ref }}
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "[DEBUG] Taking branch name from workflow dispatch event"
-            BRANCH_NAME=$(gh pr view ${{ github.event.inputs.release_pr_number }} --json headRefName | jq -r '.headRefName')
+            BRANCH_NAME=$(gh pr view ${{ github.event.inputs.release_pr_number }} --repo "${{ github.repository }}" --json headRefName | jq -r '.headRefName')
           else
             echo "Cannot determine branch name from event '${{ github.event_name }}'"
             exit 1
