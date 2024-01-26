@@ -16,6 +16,7 @@
 
 ### 📈 Improvements
 
+- The destination property `HTML5.ForwardAuthToken` is now evaluated and forwards the current AuthToken to the target system.
 - Improve how certificates are evaluated for the authentication types `SAMLAssertion` and `OAUTH2_SAML_BEARER_ASSERTION`.
   The certificates are no longer unnecessarily parsed when obtaining the destination.
 - Dependency Updates:
