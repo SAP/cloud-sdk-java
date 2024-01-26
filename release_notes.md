@@ -16,6 +16,8 @@
 
 ### 📈 Improvements
 
+- Improve how certificates are evaluated for the authentication types `SAMLAssertion` and `OAUTH2_SAML_BEARER_ASSERTION`.
+  The certificates are no longer unnecessarily parsed when obtaining the destination.
 - Dependency Updates:
   - SAP dependency updates:
     - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
