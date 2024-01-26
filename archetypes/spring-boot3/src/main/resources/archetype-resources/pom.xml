@@ -60,7 +60,6 @@
 
     <modules>
         <module>application</module>
-        <module>integration-tests</module>
     </modules>
 
     <build>

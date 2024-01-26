@@ -52,21 +52,8 @@
                 <include>**</include>
             </includes>
         </fileSet>
-
         <fileSet filtered="true">
-            <directory>integration-tests</directory>
-            <includes>
-                <include>pom.xml</include>
-            </includes>
-        </fileSet>
-        <fileSet filtered="true">
-            <directory>integration-tests/src/test/java</directory>
-            <includes>
-                <include>**/*.java</include>
-            </includes>
-        </fileSet>
-        <fileSet filtered="true">
-            <directory>integration-tests/src/test/resources</directory>
+            <directory>application/src/test/resources</directory>
             <includes>
                 <include>**</include>
             </includes>
