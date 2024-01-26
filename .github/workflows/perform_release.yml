@@ -164,7 +164,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: "Merge Docs PR"
-        run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "{{ env.DOCS_REPO }}"
+        run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
