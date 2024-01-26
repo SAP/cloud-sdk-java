@@ -14,24 +14,97 @@ on:
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
+  # TODO: replace this with the actual docs repo
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
+
 jobs:
-  context:
-    name: "Collect Context"
+  prerequisites:
+    name: "Prerequisites"
+    outputs:
+      release-version: ${{ steps.determine-release-version.outputs.RELEASE_VERSION }}
+      release-tag: ${{ steps.determine-release-version.outputs.RELEASE_TAG }}
+      code-branch: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
+      docs-branch: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
+      release-notes-branch: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
+    permissions:
+      pull-requests: read
     runs-on: ubuntu-latest
     steps:
-      - name: "Print Context"
+      - name: "Determine Branch Names"
+        id: determine-branch-names
         run: |
-          echo "${{ toJson(github) }}"
+          if [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
+            echo "[DEBUG] Taking branch name from pull request event"
+            BRANCH_NAME=${{ github.event.pull_request.head.ref }}
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "[DEBUG] Taking branch name from workflow dispatch event"
+            BRANCH_NAME=$(gh pr view ${{ github.event.inputs.release_pr_number }} --json headRefName | jq -r '.headRefName')
+          else
+            echo "Cannot determine branch name from event '${{ github.event_name }}'"
+            exit 1
+          fi
+          
+          RELEASE_VERSION=$(echo "$BRANCH_NAME" | cut -d '-' -f2) 
+          DOCS_BRANCH=java/release-docs-$RELEASE_VERSION
+          RELEASE_NOTES_BRANCH=java/release-notes-$RELEASE_VERSION
+          
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "RELEASE_TAG=rel/$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "CODE_BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "DOCS_BRANCH_NAME=$DOCS_BRANCH" >> $GITHUB_OUTPUT
+          echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: "Check Whether Code PR Can Be Merged"
+        run: |
+          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --json number,mergeable)
+          NUMBER=$(echo "$PR" | jq -r '.number')
+          MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
+          if [[ "$MERGEABLE" == "MERGEABLE" ]]; then
+            echo "[DEBUG] Code PR (#$NUMBER) can be merged."
+          else
+            echo "Code PR (#$NUMBER) cannot be merged."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: "Check Whether Docs PR Can Be Merged"
+        run: |
+          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,mergeable)
+          NUMBER=$(echo "$PR" | jq -r '.number')
+          MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
+          if [[ "$MERGEABLE" == "MERGEABLE" ]]; then
+            echo "[DEBUG] Docs PR (#$NUMBER) can be merged."
+          else
+            echo "Docs PR (#$NUMBER) cannot be merged."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: "Check Whether Release Notes PR Can Be Merged"
+        run: |
+          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,mergeable)
+          NUMBER=$(echo "$PR" | jq -r '.number')
+          MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
+          if [[ "$MERGEABLE" == "MERGEABLE" ]]; then
+            echo "[DEBUG] Release Notes PR (#$NUMBER) can be merged."
+          else
+            echo "Release Notes PR (#$NUMBER) cannot be merged."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
   release:
     name: "Release"
-    if: ${{ github.event.review.state == 'APPROVED' }}
+    needs: [ prerequisites ]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-    outputs:
-      branch_name: ${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}
+      contents: write # needed to modify the release draft
+      pull-requests: write # needed to merge the release PR
     steps:
       - name: "Setup java"
         uses: actions/setup-java@v3
@@ -42,33 +115,10 @@ jobs:
           server-username: MAVEN_CENTRAL_USER # env variable for username in deploy
           server-password: MAVEN_CENTRAL_PASSWORD # env variable for token in deploy
 
-      - name: "Get PR branch names"
-        id: branch-names
-        run: |
-          RELEASE_BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          echo Release Branch Name "$RELEASE_BRANCH_NAME"
-          echo "RELEASE_BRANCH_NAME=$RELEASE_BRANCH_NAME" >> $GITHUB_OUTPUT
-
-          VERSION=$(echo "$RELEASE_BRANCH_NAME" | cut -d'-' -f2)
-          echo Version "$VERSION"
-
-          JAVADOC_BRANCH_NAME=java/release-docs-$VERSION
-          echo Javadoc Branch Name "$JAVADOC_BRANCH_NAME"
-          echo "JAVADOC_BRANCH_NAME=$JAVADOC_BRANCH_NAME" >> $GITHUB_OUTPUT
-
-          RELEASE_NOTES_BRANCH_NAME=java/release-notes-$VERSION
-          echo Release Notes Branch Name "$RELEASE_NOTES_BRANCH_NAME"
-          echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
-
-          GIT_TAG=rel/$VERSION
-          echo Git Tag "$GIT_TAG"
-          echo "GIT_TAG=$GIT_TAG" >> $GITHUB_OUTPUT
-
       - name: "Download Release Asset"
         id: download-asset
-        # TODO: replace the fork repo with the code repo
         run: |
-          gh release download ${{ steps.branch-names.outputs.GIT_TAG }} --dir ./ --repo "Johannes-Schneider/cloud-sdk-java"
+          gh release download ${{ needs.prerequisites.outputs.release-tag }} --dir ./ --repo "${{ github.repository }}"
           # x=extract v=verbose z=decompress f=file C=destination directory
           tar -xvzf apidocs-*.tar.gz -C .
           tar -xvzf release-*.tar.gz -C .
@@ -108,20 +158,17 @@ jobs:
           MAVEN_CENTRAL_PROFILE_ID: ${{ secrets.MAVEN_CENTRAL_PROFILE_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: "Merge Release PR if Approved"
-        # TODO: replace the fork repo with the code repo
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk-java"
+      - name: "Merge Code PR"
+        run: gh pr merge --squash "${{ needs.prerequisites.outputs.code-branch }}" --delete-branch --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: "Merge Javadoc PR if Approved"
-        # TODO: replace the fork repo with the docs repo
-        run: gh pr merge --squash "${{ steps.branch-names.outputs.JAVADOC_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"
+      - name: "Merge Docs PR"
+        run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "{{ env.DOCS_REPO }}"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
-      - name: "Merge Release Notes PR if Approved"
-        # TODO: replace the fork repo with the docs repo
+      - name: "Merge Release Notes PR"
         run: |
           # https://github.com/cli/cli/issues/8092#issuecomment-1814439651
           # The Release Notes mergeability computation hasn't completed yet
@@ -129,33 +176,30 @@ jobs:
           # Sleep and retry to work around "Base branch was modified." error.
           for i in {1..3}; do
             sleep 5
-            if gh pr merge --squash "${{ steps.branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo "Johannes-Schneider/cloud-sdk"; then
-              break
-            fi
-            if [[ $i -eq 3 ]]; then
-              exit 1
+            if gh pr merge --squash "${{ needs.prerequisites.outputs.release-notes-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"; then
+              exit 0
             fi
           done
+          exit 1
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Publish the Draft Release"
-        # TODO: replace the fork repo with the code repo
-        run: gh release edit ${{ steps.branch-names.outputs.GIT_TAG }} --draft=false --repo "Johannes-Schneider/cloud-sdk-java"
+        run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
   notify-job:
     runs-on: ubuntu-latest
-    needs: [release]
+    needs: [ prerequisites, release ]
     if: ${{ failure() }}
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: "Notify"
         run: python .pipeline/scripts/notify.py
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           WORKFLOW: ${{ github.workflow }}
           WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ needs.release.outputs.branch_name }}
+          BRANCH_NAME: ${{ needs.prerequisites.outputs.code-branch }}
