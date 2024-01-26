@@ -16,7 +16,8 @@ env:
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
 
-  DOCS_REPO: SAP/cloud-sdk
+  # TODO: use production repo
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
 
 jobs:
   bump-version:
@@ -95,12 +96,11 @@ jobs:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
           commit-sha: ${{ needs.bump-version.outputs.release-commit }}
+          # TODO: re-enable blackduck and security rating
           parameters: >
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-blackduck-scan=true
-            -f run-security-rating=true
 
       - name: "Await CI Workflow"
         uses: ./.github/actions/await-workflow
