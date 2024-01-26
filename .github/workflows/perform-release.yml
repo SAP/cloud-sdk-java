@@ -14,8 +14,7 @@ on:
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
-  # TODO: use production repo
-  DOCS_REPO: Johannes-Schneider/cloud-sdk
+  DOCS_REPO: SAP/cloud-sdk
 
 jobs:
   prerequisites:
@@ -199,25 +198,22 @@ jobs:
 
       - name: "Perform Release"
         run: >
-          echo "Hello"
-#          mvn
-#          $MVN_CLI_ARGS
-#          -DrepositoryId=local
-#          -Durl=file:./temp_local_repo
-#          -Dmaven.install.skip=true
-#          -Dgpg.passphrase="$GPG_PASSPHRASE"
-#          -Dgpg.keyname="$MAVEN_CENTRAL_USER"
-#          deploy
-#
-#          mvn
-#          $MVN_CLI_ARGS
-#          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
-#          -DserverId=ossrh
-#          -DnexusUrl=https://oss.sonatype.org
-#          -DrepositoryDirectory=./temp_local_repo
-#          -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
-#          -DautoReleaseAfterClose=true
+          mvn
+          $MVN_CLI_ARGS
+          -DrepositoryId=local
+          -Durl=file:./temp_local_repo
+          -Dmaven.install.skip=true
+          -Dgpg.passphrase="$GPG_PASSPHRASE"
+          -Dgpg.keyname="$MAVEN_CENTRAL_USER"
+          deploy
 
+          mvn
+          $MVN_CLI_ARGS
+          org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
+          -DserverId=ossrh
+          -DnexusUrl=https://oss.sonatype.org
+          -DrepositoryDirectory=./temp_local_repo
+          -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
         env:
           MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
