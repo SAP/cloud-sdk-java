@@ -353,8 +353,8 @@ jobs:
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
           - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
-          - [ ] Review **and approve** this PR"
-          - [ ] Once the `Perform Release` action is through, head over to the [OSS Repository](https://oss.sonatype.org/#stagingRepositories) and log in with the credentials in the Team Password Safe. There should be a staged release. Check whether everything looks good and, if so, publish the release.)
+          - [ ] Review **and approve** this PR
+          - [ ] Once the `Perform Release` action is through, head over to the [OSS Repository](https://oss.sonatype.org/#stagingRepositories) and log in with the credentials in the Team Password Safe. There should be a staged release. Check whether everything looks good and, if so, publish the release.)"
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
