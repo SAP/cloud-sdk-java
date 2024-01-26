@@ -15,6 +15,7 @@ class _CommentedTreeBuilder(ElementTree.TreeBuilder):
 
 def _update_readme(sdk_version):
     _update_file("README.md", r'(maven_central-)(.+)(-blue\.svg)', r'\g<1>%s\g<3>' % sdk_version)
+    _update_file("README.md", r'(a:sdk-core%20AND%20v:)(.+)', r'\g<1>%s' % sdk_version)
 
 def _update_pom_files(sdk_version):
     _update_version_tags(sdk_version)
