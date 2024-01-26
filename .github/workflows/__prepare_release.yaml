@@ -5,7 +5,8 @@ on:
     inputs:
       branch:
         description: "The Branch to Release From"
-        required: true
+        required: false
+        default: "main"
       release-version:
         description: "The Version to Release"
         required: false
@@ -45,12 +46,10 @@ jobs:
       - run: "echo Current Version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}"
       - run: "echo New Version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}"
 
-      # TODO: Could we replace noreply+s4hana-cloud-sdk@sap.com with cloudsdk@sap.com everywhere
-      # TODO: Could we have a central git config using env: GIT_CONFIG_PARAMETERS:
       - name: "Prepare git"
         run: |
-          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
-          git config --global user.name "Maven Central Release Script"
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Set Release Version to ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
         id: prepare-release
@@ -140,10 +139,11 @@ jobs:
           github-token: ${{ github.token }}
           run-id: ${{ needs.run-ci.outputs.ci-run-id }}
           path: .targets/
+
       - name: "Prepare git"
         run: |
-          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
-          git config --global user.name "Maven Central Release Script"
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Create Release"
         id: create-release
@@ -204,7 +204,6 @@ jobs:
 
       - name: "Replace JavaDoc"
         id: replace-javadoc
-        # TODO: rename branch to java/release-docs-${{ needs.bump-version.outputs.release-version }}
         run: |
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
@@ -269,24 +268,24 @@ jobs:
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
 
-      - name: "Create docs repo branch java/release-notes-${{ needs.bump-version.outputs.release-version }}"
+      - name: "Create Release Notes Branch"
         working-directory: ./.cloud-sdk-docs
         run: git checkout -B java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
-      - name: "Copy docs repo release notes"
+      - name: "Create Release Notes"
         run: python .pipeline/scripts/release_notes_automation.py --version ${{ needs.bump-version.outputs.release-version }} --folder ".cloud-sdk-docs/docs-java/release-notes"
 
-      - name: "Commit docs repo release notes"
+      - name: "Commit Release Notes"
         working-directory: ./.cloud-sdk-docs
         run: |
           git add .
           git commit -m "Add new release notes"
 
-      - name: "Push docs repo release notes"
+      - name: "Push Release Notes"
         working-directory: ./.cloud-sdk-docs
         run: git push origin java/release-notes-${{ needs.bump-version.outputs.release-version }}
 
-      - name: "Create docs repo pull request"
+      - name: "Create Release Notes PR"
         id: create-release-notes-pr
         working-directory: ./.cloud-sdk-docs
         run: |
@@ -307,7 +306,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
-      - name: "Reset and push code repo release notes"
+      - name: "Reset Release Notes for Next Version"
         run: |
           rm -rf .cloud-sdk-docs
 
@@ -336,8 +335,8 @@ jobs:
           ref: ${{ needs.bump-version.outputs.release-branch }}
       - name: "Prepare Git"
         run: |
-          git config --global user.email "noreply+s4hana-cloud-sdk@sap.com"
-          git config --global user.name "Maven Central Release Script"
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Set New Version"
         run: |
@@ -348,7 +347,10 @@ jobs:
 
       - name: "Create Code PR"
         run: |
+          COMMIT_URL=${{ github.event.repository.html_url }}/commit/${{ needs.bump-version.outputs.release-commit }}
+          
           PR_URL=$(gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
+          - [ ] Review the changes in [the release commit]($COMMIT_URL)
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
           - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})

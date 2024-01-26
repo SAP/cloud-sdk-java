@@ -4,14 +4,28 @@ on:
   pull_request_review:
     types: [submitted]
     branches: [RELEASE-*]
-# TODO: Manual trigger
+
+  workflow_dispatch:
+    inputs:
+      release_pr_number:
+        description: "The PR number of the release PR"
+        required: true
+
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
 jobs:
+  context:
+    name: "Collect Context"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Print Context"
+        run: |
+          echo "${{ toJson(github) }}"
+
   release:
     name: "Release"
-    if: github.event.review.state == 'APPROVED'
+    if: ${{ github.event.review.state == 'APPROVED' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
