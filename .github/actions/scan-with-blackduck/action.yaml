@@ -19,7 +19,7 @@ runs:
       shell: bash
 
     - name: BlackDuck Scan
-      uses: SAP/project-piper-action@f17ad180226247ef7f45e40bcb5b20b222b8c04c
+      uses: SAP/project-piper-action@master
       with:
         command: detectExecuteScan
         flags: \
@@ -28,7 +28,7 @@ runs:
         PIPER_token: ${{ secrets.BLACKDUCK_TOKEN }}
         DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }}
         DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }}
-        DETECT_TIMEOUT: 7200
+        DETECT_TIMEOUT: "7200"
         PROJECT_VERSION: ${{ steps.get-major-version.outputs.MAJOR_VERSION }}
 
     - name: Print Action End

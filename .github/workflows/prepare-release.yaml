@@ -16,8 +16,7 @@ env:
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
 
-  # TODO: replace this with the actual docs repo
-  DOCS_REPO: Johannes-Schneider/cloud-sdk
+  DOCS_REPO: SAP/cloud-sdk
 
 jobs:
   bump-version:
@@ -96,12 +95,12 @@ jobs:
           workflow: ${{ env.CI_BUILD_WORKFLOW }}
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
           commit-sha: ${{ needs.bump-version.outputs.release-commit }}
-          # TODO: re-enable blackduck scan
-          # TODO: re-enable security rating
           parameters: >
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
+            -f run-blackduck-scan=true
+            -f run-security-rating=true
 
       - name: "Await CI Workflow"
         uses: ./.github/actions/await-workflow
@@ -354,7 +353,8 @@ jobs:
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
           - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
-          - [ ] Review **and approve** this PR")
+          - [ ] Review **and approve** this PR"
+          - [ ] Once the `Perform Release` action is through, head over to the [OSS Repository](https://oss.sonatype.org/#stagingRepositories) and log in with the credentials in the Team Password Safe. There should be a staged release. Check whether everything looks good and, if so, publish the release.)
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
