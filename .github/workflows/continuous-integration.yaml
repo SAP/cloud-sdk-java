@@ -362,17 +362,12 @@ jobs:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
-      - name: "Determine Version"
-        id: get-version
-        run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
-
       - name: "Generate ${{ matrix.task.archetype }}"
         run: >
           mvn archetype:generate -B
           -DarchetypeCatalog=local
           -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
           -DarchetypeArtifactId=${{ matrix.task.archetype }}
-          -DarchetypeVersion=${{ steps.get-version.outputs.VERSION }}
           -DgroupId=com.sap.test
           -DartifactId=example-${{ matrix.task.archetype }}
           -Dversion=1.0-SNAPSHOT
