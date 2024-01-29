@@ -225,6 +225,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: "Publish the Draft Release"
+        run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: "Merge Docs PR"
         run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"
         env:
@@ -245,11 +250,6 @@ jobs:
           exit 1
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      - name: "Publish the Draft Release"
-        run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
-        env:
-          GH_TOKEN: ${{ github.token }}
 
   notify-job:
     runs-on: ubuntu-latest
