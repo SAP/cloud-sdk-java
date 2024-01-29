@@ -28,7 +28,7 @@
 	</developers>
 	<modules>
 		<module>archetypes</module>
-		<module>bom</module>
+		<module>dependency-bundles/bom</module>
 		<module>cloudplatform</module>
 		<module>datamodel</module>
 		<module>dependency-bundles/modules-bom</module>
