@@ -173,9 +173,6 @@ class SSLContextFactory
         if( !maybeKeyStore.isDefined() ) {
             return;
         }
-        if( !authTypeRequiresLoadingKeyMaterial(destination.getAuthenticationType()) ) {
-            return;
-        }
 
         final KeyStore keyStore = maybeKeyStore.get();
         if( log.isDebugEnabled() ) {
@@ -190,12 +187,6 @@ class SSLContextFactory
                 .getOrElse(() -> new char[0]);
 
         sslContextBuilder.loadKeyMaterial(keyStore, keyStorePassword);
-    }
-
-    private boolean authTypeRequiresLoadingKeyMaterial( final AuthenticationType authenticationType )
-    {
-        return authenticationType != AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION
-            && authenticationType != AuthenticationType.SAML_ASSERTION;
     }
 
     @Value

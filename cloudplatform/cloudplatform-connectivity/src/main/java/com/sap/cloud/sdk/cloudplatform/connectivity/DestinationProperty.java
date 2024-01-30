@@ -170,6 +170,16 @@ public class DestinationProperty
         createProperty("forwardAuthToken", Boolean.class, Boolean::valueOf);
 
     /**
+     * Value of ForwardAuthToken property of destination. Denotes forwarding of the authentication token provided to the
+     * request execution to the destination target. This results in the same behavior as {@link #FORWARD_AUTH_TOKEN}.
+     * <p>
+     * This variant is supported by the SAP Approuter. To be able to use destinations consumed by the Approuter, this
+     * property is also supported by the SAP Cloud SDK.
+     */
+    public static final DestinationPropertyKey<Boolean> APPROUTER_FORWARD_AUTH_TOKEN =
+        createProperty("HTML5.ForwardAuthToken", Boolean.class, Boolean::valueOf);
+
+    /**
      * If the destination with authentication type "OAuth2SAMLBearerAssertion" contains this property this user will be
      * used by the destination service to retrieve a authTokens from the bound XSUAA. This means no user propagation is
      * needed.
