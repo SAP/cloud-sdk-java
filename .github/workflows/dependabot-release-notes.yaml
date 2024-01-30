@@ -22,9 +22,6 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-latest
     steps:
-      - name: "Print Context"
-        run: echo "${{ toJson(github) }}"
-
       - name: "Determine PR Info"
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
