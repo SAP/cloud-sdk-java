@@ -29,8 +29,9 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             PR_NUMBER=${{ github.event.inputs.pr-number }}
-            PR_BRANCH=$(gh pr view $PR_NUMBER -- repo ${{ env.REPO }} --json headRefName | jq -r '.headRefName')
-            PR_BODY=$(gh pr view $PR_NUMBER -- repo ${{ env.REPO }} --json body | jq -r '.body')
+            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json headRefName,body)
+            PR_BRANCH=$(jq -r '.headRefName' <<< "$PR_JSON")
+            PR_BODY=$(jq -r '.body' <<< "$PR_JSON")
           
             echo "[DEBUG] Using PR number (#$PR_NUMBER from $PR_BRANCH) provided by workflow_dispatch event"
             echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
@@ -50,8 +51,9 @@ jobs:
           
             PR_NUMBER=${{ github.event.pull_request.number }}
             PR_BRANCH=${{ github.head_ref }}
-            PR_AUTHOR=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json author | jq -r '.author | select(.is_bot == true and .login == "app/dependabot")')
-            PR_BODY=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json body | jq -r '.body')
+            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json author,body)
+            PR_AUTHOR=$(jq -r '.author | select(.is_bot == true and .login == "app/dependabot")' <<< "$PR_JSON")
+            PR_BODY=$(jq -r '.body' <<< "$PR_JSON")
           
             if [[ -n "$PR_AUTHOR" ]]; then
               echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has been created by Dependabot. Continuing the workflow."
