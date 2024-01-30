@@ -50,7 +50,7 @@ jobs:
           
             PR_NUMBER=${{ github.event.pull_request.number }}
             PR_BRANCH=${{ github.head_ref }}
-            PR_AUTHOR=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json author | jq -r '.author | select(.is_bot == true and .login == "app/dependabot"')
+            PR_AUTHOR=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json author | jq -r '.author | select(.is_bot == true and .login == "app/dependabot")')
             PR_BODY=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json body | jq -r '.body')
           
             if [[ -n "$PR_AUTHOR" ]]; then
