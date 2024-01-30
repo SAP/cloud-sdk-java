@@ -39,7 +39,7 @@ jobs:
           
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "synchronize" ]]; then
-              EVENT_SENDER=$(echo ${{ toJson(github.event.sender) }}) | jq -r 'select(.is_bot == true and .login == "app/github-actions"')
+              EVENT_SENDER=$(echo ${{ toJson(github.event.sender) }} | jq -r 'select(.is_bot == true and .login == "app/github-actions"')
               if [[ -n "$EVENT_SENDER" ]]; then
                 echo "[DEBUG] The current workflow has been triggered by GitHub actions itself - most probably by this workflow."
                 echo "[DEBUG] Therefore, we can abort this new workflow run."
