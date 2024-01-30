@@ -37,10 +37,7 @@ class PreprocessingStepOrchestrator
 
     @Setter( AccessLevel.PACKAGE )
     private List<Supplier<PreprocessingStep>> steps =
-        Arrays
-            .asList(
-                ApiClassNameFieldPreprocessor::new,
-                MethodNameFieldPreprocessor::new);
+        Arrays.asList(ApiClassNameFieldPreprocessor::new, MethodNameFieldPreprocessor::new);
 
     PreprocessingStepOrchestrator( @Nonnull final Path originalInputSpec )
     {
