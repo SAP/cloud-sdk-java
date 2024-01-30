@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sample Cloud SDK Test API",
+    "version": "0.0.1",
+    "description": "This is a sample API to test the Cloud SDK's OpenAPI generator."
+  },
+  "paths": {
+    "/any/of/endpoint": {
+      "get": {
+        "description": "Return an anyOf response.",
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOfProperty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/all/of/endpoint": {
+      "get": {
+        "description": "Return an allOf response.",
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllOfProperty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/one/of/endpoint": {
+      "get": {
+        "description": "Return an oneOf response.",
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OneOfProperty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/some/endpoint": {
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Object1"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Object2"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Object1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Object2"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "destination"
+      }
+    },
+    "/other/endpoint": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RootObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Something was created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RootObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request was invalid."
+          },
+          "401": {
+            "description": "Authentication Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OneOfProperty": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "AnyOfProperty": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "AllOfProperty": {
+        "allOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "Object1": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Age": {
+            "type": "integer"
+          }
+        }
+      },
+      "Object2": {
+        "type": "string"
+      },
+      "RootObject": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ChildObject1"
+                },
+                {
+                  "$ref": "#/components/schemas/ChildObject2"
+                },
+                {
+                  "$ref": "#/components/schemas/ChildObject3"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ChildObject1": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NestedChildObject"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "ChildObject2": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/NestedChildObject"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "ChildObject3": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/NestedChildObject"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "NestedChildObject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

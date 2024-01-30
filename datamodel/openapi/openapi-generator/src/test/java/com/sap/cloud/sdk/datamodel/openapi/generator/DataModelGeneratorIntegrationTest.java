@@ -48,7 +48,21 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.uppercasefileextension.api",
             "com.sap.cloud.sdk.services.uppercasefileextension.model",
             ApiMaturity.RELEASED,
-            6);
+            6),
+        KEYWORD_AGGREGATOR_JSON(
+            "keyword-aggregator-json",
+            "keywordAggregator.json",
+            "com.sap.cloud.sdk.services.keywordAggregator.api",
+            "com.sap.cloud.sdk.services.keywordAggregator.model",
+            ApiMaturity.RELEASED,
+            12),
+        SODASTORE_ALLOF_YAML(
+            "sodastore-allOf-yaml",
+            "sodastore-allOf.yaml",
+            "com.sap.cloud.sdk.services.sodastore.api",
+            "com.sap.cloud.sdk.services.sodastore.model",
+            ApiMaturity.RELEASED,
+            5);
 
         final String testCaseName;
         final String inputSpecFileName;
