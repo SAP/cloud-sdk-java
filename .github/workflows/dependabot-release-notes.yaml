@@ -1,0 +1,101 @@
+name: "Dependabot Release Notes"
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ main ]
+
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull Request Number"
+        required: true
+
+jobs:
+  context:
+    name: "Collect Context"
+    outputs:
+      pr-number: ${{ steps.determine-pr-info.outputs.PR_NUMBER }}
+      pr-branch: ${{ steps.determine-pr-info.outputs.PR_BRANCH }}
+      pr-body: ${{ steps.determine-pr-info.outputs.PR_BODY }}
+    permissions:
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Print Context"
+        run: echo "${{ toJson(github) }}"
+
+      - name: "Determine PR Info"
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            PR_NUMBER=${{ github.event.inputs.pr-number }}
+            PR_JSON=$(gh pr view $PR_NUMBER --json headRefName,body)
+            PR_BRANCH=$(echo $PR_JSON | jq -r '.headRefName')
+            PR_BODY=$(echo $PR_JSON | jq -r '.body')
+          
+            echo "[DEBUG] Using PR number (#$PR_NUMBER from $PR_BRANCH) provided by workflow_dispatch event"
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "PR_BRANCH=$PR_BRANCH" >> GITHUB_OUTPUT
+            echo "PR_BODY=$PR_BODY" >> GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            if [[ "${{ github.event.action }}" == "synchronize" ]]; then
+              EVENT_SENDER=$(echo ${{ github.event.sender }} | jq -r 'select(.is_bot == true and .login == "app/github-actions"')
+              if [[ -n "$EVENT_SENDER" ]]; then
+                echo "[DEBUG] The current workflow has been triggered by GitHub actions itself - most probably by this workflow."
+                echo "[DEBUG] Therefore, we can abort this new workflow run."
+                exit 0
+              fi
+            fi
+          
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            PR_BRANCH=${{ github.event.head_ref }}
+            PR_JSON=$(gh pr view $PR_NUMBER --json author,body)
+            PR_AUTHOR=$(echo $PR_JSON | jq -r '.author | select(.is_bot == true and .login == "app/dependabot"')
+            PR_BODY=$(echo $PR_JSON | jq -r '.body')
+          
+            if [[ -n "$PR_AUTHOR" ]]; then
+              echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has been created by Dependabot. Continuing the workflow."
+              echo "PR_NUMBER=$PR_NUMBER" >> GITHUB_OUTPUT
+              echo "PR_BRANCH=$PR_BRANCH" >> GITHUB_OUTPUT
+              echo "PR_BODY=$PR_BODY" >> GITHUB_OUTPUT
+            else
+              echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has not been created by Dependabot. Aborting workflow."
+              # we are "aborting" the workflow by NOT setting the `PR_NUMBER` output
+            fi
+          fi
+        id: determine-pr-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  update-release-notes:
+    name: "Update Release Notes"
+    needs: [ context ]
+    if: ${{ needs.context.outputs.pr-number != '' }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.pr-branch }}
+
+      - name: "Run Python Script"
+        run: |
+          echo "${{ needs.context.outputs.pr-body }}" > $HOME/.pr-body.txt
+          python ./.pipeline/scripts/dependabot-release-notes.py --pr-body-file "~/.pr-body.txt"
+
+      - name: "Push Release Notes Updates"
+        run: |
+          git add release_notes.md
+          CHANGED_FILES="$(git status -s)"
+          if [[ -z "$CHANGED_FILES" ]]; then
+              echo "[DEBUG] No changes to release_notes.md detected, skipping push."
+              exit 0
+          fi
+
+          git commit -m "chore: add release notes"
+          git push
