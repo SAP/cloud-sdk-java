@@ -11,6 +11,9 @@ on:
         description: "Pull Request Number"
         required: true
 
+env:
+  REPO: sap/cloud-sdk-java
+
 jobs:
   context:
     name: "Collect Context"
@@ -26,7 +29,7 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             PR_NUMBER=${{ github.event.inputs.pr-number }}
-            PR_JSON=$(gh pr view $PR_NUMBER --json headRefName,body)
+            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json headRefName,body)
             PR_BRANCH=$(echo $PR_JSON | jq -r '.headRefName')
             PR_BODY=$(echo $PR_JSON | jq -r '.body')
           
@@ -39,7 +42,7 @@ jobs:
           
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "synchronize" ]]; then
-              if [[ "${{ github.event.sender.is_bot }}" == "true" && "${{ github.event.sender.login }}" == "app/github-actions" ]]; then
+              if [[ "${{ github.event.sender.is_bot }}" == "true" ]] && [[ "${{ github.event.sender.login }}" == "app/github-actions" ]]; then
                 echo "[DEBUG] The current workflow has been triggered by GitHub actions itself - most probably by this workflow."
                 echo "[DEBUG] Therefore, we can abort this new workflow run."
                 exit 0
@@ -48,7 +51,7 @@ jobs:
           
             PR_NUMBER=${{ github.event.pull_request.number }}
             PR_BRANCH=${{ github.event.head_ref }}
-            PR_JSON=$(gh pr view $PR_NUMBER --json author,body)
+            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ env.REPO }} --json author,body)
             PR_AUTHOR=$(echo $PR_JSON | jq -r '.author | select(.is_bot == true and .login == "app/dependabot"')
             PR_BODY=$(echo $PR_JSON | jq -r '.body')
           
