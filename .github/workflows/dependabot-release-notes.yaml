@@ -101,7 +101,7 @@ jobs:
         run: |
           gh pr comment ${{ needs.context.outputs.pr-number }} --body "Release notes have been created automatically upon opening this PR.
           
-          To re-create them, trigger the [Dependabot Release Notes](${{ github.repository }}/actions/workflows/dependabot-release-notes.yaml) action manually.
+          To re-create them, trigger the [Dependabot Release Notes](${{ github.event.repository.html_url }}/actions/workflows/dependabot-release-notes.yaml) action manually.
           
           Yours truly,
           The Dependabot Release Notes Automation 🤖
