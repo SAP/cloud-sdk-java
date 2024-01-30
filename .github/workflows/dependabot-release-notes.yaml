@@ -32,8 +32,8 @@ jobs:
           
             echo "[DEBUG] Using PR number (#$PR_NUMBER from $PR_BRANCH) provided by workflow_dispatch event"
             echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-            echo "PR_BRANCH=$PR_BRANCH" >> GITHUB_OUTPUT
-            echo "PR_BODY=$PR_BODY" >> GITHUB_OUTPUT
+            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_OUTPUT
+            echo "PR_BODY=$PR_BODY" >> $GITHUB_OUTPUT
             exit 0
           fi
           
@@ -46,9 +46,9 @@ jobs:
           
             if [[ -n "$PR_AUTHOR" ]]; then
               echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has been created by Dependabot. Continuing the workflow."
-              echo "PR_NUMBER=$PR_NUMBER" >> GITHUB_OUTPUT
-              echo "PR_BRANCH=$PR_BRANCH" >> GITHUB_OUTPUT
-              echo "PR_BODY=$PR_BODY" >> GITHUB_OUTPUT
+              echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+              echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_OUTPUT
+              echo "PR_BODY=$PR_BODY" >> $GITHUB_OUTPUT
             else
               echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has not been created by Dependabot. Aborting workflow."
               # we are "aborting" the workflow by NOT setting the `PR_NUMBER` output
