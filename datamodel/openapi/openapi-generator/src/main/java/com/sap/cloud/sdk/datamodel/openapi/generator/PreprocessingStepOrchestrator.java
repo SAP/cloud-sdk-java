@@ -39,7 +39,6 @@ class PreprocessingStepOrchestrator
     private List<Supplier<PreprocessingStep>> steps =
         Arrays
             .asList(
-                ValidationKeywordsPreprocessor::new,
                 ApiClassNameFieldPreprocessor::new,
                 MethodNameFieldPreprocessor::new);
 
