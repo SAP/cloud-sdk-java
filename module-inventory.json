@@ -522,7 +522,7 @@
     "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
-    "pomFile": "bom/pom.xml",
+    "pomFile": "dependency-bundles/bom/pom.xml",
     "parentGroupId": "",
     "parentArtifactId": "",
     "excludeFromBlackDuckScan": false
@@ -544,7 +544,7 @@
     "packaging": "pom",
     "releaseAudience": "Public",
     "releaseMaturity": "Stable",
-    "pomFile": "modules-bom/pom.xml",
+    "pomFile": "dependency-bundles/modules-bom/pom.xml",
     "parentGroupId": "",
     "parentArtifactId": "",
     "excludeFromBlackDuckScan": false
