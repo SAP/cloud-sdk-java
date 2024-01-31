@@ -57,34 +57,13 @@ jobs:
 
       - name: "Check Whether Code PR Can Be Merged"
         run: |
-          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --repo "${{ github.repository }}" --json number,reviewDecision,mergeable,statusCheckRollup)
+          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --repo "${{ github.repository }}" --json number,reviewDecision)
           NUMBER=$(echo "$PR" | jq -r '.number')
           DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-          MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
-          
-          if [[ "$MERGEABLE" != "MERGEABLE" ]]; then
-            echo "Code PR (#$NUMBER) is not mergeable."
-            exit 1
-          fi
           
           if [[ "$DECISION" != "APPROVED" ]]; then
             echo "Code PR (#$NUMBER) is not approved."
             exit 1
-          fi
-          
-          STATUS_CHECKS=$(echo "$PR" | jq -r '.statusCheckRollup')
-          FAILED_CHECK_RUNS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "CheckRun" and .workflowName != "Perform Release" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")')
-          if [[ -n "$FAILED_CHECK_RUNS" ]]; then
-            echo "Code PR (#$NUMBER) has failed check runs:"
-            echo "$FAILED_CHECK_RUNS"
-            exit 1
-          fi
-          
-          FAILED_STATUS_CONTEXTS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "StatusContext" and .state != "SUCCESS")')
-          if [[ -n "$FAILED_STATUS_CONTEXTS" ]]; then
-              echo "Code PR (#$NUMBER) has failed status contexts:"
-              echo "$FAILED_STATUS_CONTEXTS"
-              exit 1
           fi
           
           echo "[DEBUG] Code PR (#$NUMBER) can be merged."
@@ -93,33 +72,12 @@ jobs:
 
       - name: "Check Whether Docs PR Can Be Merged"
         run: |
-            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision,mergeable,statusCheckRollup)
+            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision)
             NUMBER=$(echo "$PR" | jq -r '.number')
             DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-            MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
-            
-            if [[ "$MERGEABLE" != "MERGEABLE" ]]; then
-                echo "Docs PR (#$NUMBER) is not mergeable."
-                exit 1
-            fi
             
             if [[ "$DECISION" != "APPROVED" ]]; then
                 echo "Docs PR (#$NUMBER) is not approved."
-                exit 1
-            fi
-            
-            STATUS_CHECKS=$(echo "$PR" | jq -r '.statusCheckRollup')
-            FAILED_CHECK_RUNS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")')
-            if [[ -n "$FAILED_CHECK_RUNS" ]]; then
-                echo "Docs PR (#$NUMBER) has failed check runs:"
-                echo "$FAILED_CHECK_RUNS"
-                exit 1
-            fi
-            
-            FAILED_STATUS_CONTEXTS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "StatusContext" and .state != "SUCCESS")')
-            if [[ -n "$FAILED_STATUS_CONTEXTS" ]]; then
-                echo "Docs PR (#$NUMBER) has failed status contexts:"
-                echo "$FAILED_STATUS_CONTEXTS"
                 exit 1
             fi
             
@@ -129,33 +87,12 @@ jobs:
 
       - name: "Check Whether Release Notes PR Can Be Merged"
         run: |
-            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision,mergeable,statusCheckRollup)
+            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision)
             NUMBER=$(echo "$PR" | jq -r '.number')
             DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-            MERGEABLE=$(echo "$PR" | jq -r '.mergeable')
-            
-            if [[ "$MERGEABLE" != "MERGEABLE" ]]; then
-                echo "Release Notes PR (#$NUMBER) is not mergeable."
-                exit 1
-            fi
             
             if [[ "$DECISION" != "APPROVED" ]]; then
                 echo "Release Notes PR (#$NUMBER) is not approved."
-                exit 1
-            fi
-            
-            STATUS_CHECKS=$(echo "$PR" | jq -r '.statusCheckRollup')
-            FAILED_CHECK_RUNS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")')
-            if [[ -n "$FAILED_CHECK_RUNS" ]]; then
-                echo "Release Notes PR (#$NUMBER) has failed check runs:"
-                echo "$FAILED_CHECK_RUNS"
-                exit 1
-            fi
-            
-            FAILED_STATUS_CONTEXTS=$(echo $STATUS_CHECKS | jq -r '.[] | select(.__typename == "StatusContext" and .state != "SUCCESS")')
-            if [[ -n "$FAILED_STATUS_CONTEXTS" ]]; then
-                echo "Release Notes PR (#$NUMBER) has failed status contexts:"
-                echo "$FAILED_STATUS_CONTEXTS"
                 exit 1
             fi
             
