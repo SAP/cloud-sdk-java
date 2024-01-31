@@ -19,6 +19,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOp
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 
 import io.vavr.control.Try;
 
@@ -141,7 +142,7 @@ class BtpServicePropertySuppliers
                     .map(TenantWithSubdomain.class::cast)
                     .map(TenantWithSubdomain::getSubdomain)
                     // TODO: this somewhat feels very fragile. Is there a better way?
-                    .map(subdomain -> "https://" + subdomain + "." + domain + "/oauth2/authorize")
+                    .map(subdomain -> "https://" + subdomain + "." + domain)
                     .map(URI::create);
 
             if( maybeTokenUri.isSuccess() ) {
@@ -152,6 +153,13 @@ class BtpServicePropertySuppliers
                 null,
                 "Unable to determine the IAS token URI.",
                 maybeTokenUri.getCause());
+        }
+
+        @Nonnull
+        @Override
+        public OAuth2ServiceEndpointsProvider getTokenEndpoints()
+        {
+            return DefaultTokenEndpoints.fromIasUri(getTokenUri());
         }
     }
 }

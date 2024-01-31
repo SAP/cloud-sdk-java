@@ -20,6 +20,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -133,11 +134,11 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         }
 
         final URI serviceUri;
-        final URI tokenUri;
+        final OAuth2ServiceEndpointsProvider tokenEndpoints;
         final ClientIdentity clientIdentity;
         try {
             serviceUri = propertySupplier.getServiceUri();
-            tokenUri = propertySupplier.getTokenUri();
+            tokenEndpoints = propertySupplier.getTokenEndpoints();
             clientIdentity = propertySupplier.getClientIdentity();
         }
         catch( final DestinationAccessException e ) {
@@ -159,12 +160,17 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 log.debug(msg, identifier, destinationToBeProxied.get());
 
                 final HttpDestination dest =
-                    toProxiedDestination(destinationToBeProxied.get(), serviceUri, tokenUri, clientIdentity, behalfOf);
+                    toProxiedDestination(
+                        destinationToBeProxied.get(),
+                        serviceUri,
+                        tokenEndpoints,
+                        clientIdentity,
+                        behalfOf);
                 return Try.success(dest);
             }
 
             // continue without proxied destination
-            return Try.success(toDestination(serviceUri, tokenUri, clientIdentity, behalfOf, identifier));
+            return Try.success(toDestination(serviceUri, tokenEndpoints, clientIdentity, behalfOf, identifier));
         }
         catch( final Exception e ) {
             // might happen in case of invalid certificate
@@ -207,14 +213,14 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     @Nonnull
     HttpDestination toDestination(
         @Nonnull final URI serviceUri,
-        @Nonnull final URI tokenUri,
+        @Nonnull final OAuth2ServiceEndpointsProvider tokenEndpoints,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
+            createHeaderProvider(tokenEndpoints, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
         // use a hash code of the client id to not unnecessarily expose the client id
         // (as the destination name is included in the toString() method of the destination
         // this should be optional, as the client id is technically not a secret, but using a hash here doesn't hurt
@@ -229,12 +235,12 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     HttpDestination toProxiedDestination(
         @Nonnull final HttpDestination destinationToBeProxied,
         @Nonnull final URI proxyUrl,
-        @Nonnull final URI tokenUrl,
+        @Nonnull final OAuth2ServiceEndpointsProvider tokenEndpoints,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf )
     {
         final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUrl, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION);
+            createHeaderProvider(tokenEndpoints, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION);
 
         return DefaultHttpDestination
             .fromDestination(destinationToBeProxied)
@@ -244,14 +250,14 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     }
 
     DestinationHeaderProvider createHeaderProvider(
-        @Nonnull final URI tokenUrl,
+        @Nonnull final OAuth2ServiceEndpointsProvider tokenEndpoints,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
         @Nonnull final String authHeader )
     {
         log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
 
-        final OAuth2Service oAuth2Service = new OAuth2Service(tokenUrl.toString(), clientIdentity, behalf);
+        final OAuth2Service oAuth2Service = new OAuth2Service(tokenEndpoints, clientIdentity, behalf);
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }
 }

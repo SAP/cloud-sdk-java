@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOp
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.security.config.CredentialType;
 
 import io.vavr.control.Try;
 
@@ -278,7 +280,6 @@ class BtpServicePropertySuppliersTest
         private final ServiceBinding binding =
             bindingWithCredentials(
                 ServiceIdentifier.of("identity"),
-                entry("credential-type", "X509_GENERATED"),
                 entry("domain", "ias.domain.com"),
                 entry("url", "https://provider.ias.domain.com"));
 
@@ -291,10 +292,10 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
             assertThat(sut).isNotNull();
             TenantAccessor.executeWithTenant(new DefaultTenant("a", "tenant-a"), () -> {
-                assertThat(sut.getTokenUri()).hasToString("https://tenant-a.ias.domain.com/oauth2/authorize");
+                assertThat(sut.getTokenUri()).hasToString("https://tenant-a.ias.domain.com");
             });
             TenantAccessor.executeWithTenant(new DefaultTenant("b", "tenant-b"), () -> {
-                assertThat(sut.getTokenUri()).hasToString("https://tenant-b.ias.domain.com/oauth2/authorize");
+                assertThat(sut.getTokenUri()).hasToString("https://tenant-b.ias.domain.com");
             });
         }
 
@@ -308,15 +309,12 @@ class BtpServicePropertySuppliersTest
             assertThat(sut).isNotNull();
 
             assertThat(TenantAccessor.tryGetCurrentTenant().isFailure()).isTrue(); // sanity: there is no current tenant
+            // TODO: should we fallback to the provider tenant id instead of throwing an exception?
             assertThatThrownBy(sut::getTokenUri).isExactlyInstanceOf(DestinationAccessException.class);
         }
 
-        // The `credential-type: X509_GENERATED` is taken from one of our E2E tests (`scp-cf-spring-ias-java-17`) - so
-        // it's an actual use case.
-        // Unfortunately, this credential type is not yet supported by the Security Library.
-        // check their `CredentialType` enum: https://github.com/SAP/cloud-security-services-integration-library/blob/main/java-api/src/main/java/com/sap/cloud/security/config/CredentialType.java
         @Test
-        void testX509GeneratedCredentialTypeIsNotSupported()
+        void testTokenServiceEndpoints()
         {
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions.forService(binding).build();
@@ -324,7 +322,26 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
             assertThat(sut).isNotNull();
 
-            assertThatThrownBy(sut::getClientIdentity).isExactlyInstanceOf(DestinationAccessException.class);
+            TenantAccessor.executeWithTenant(new DefaultTenant("a", "tenant-a"), () -> {
+                final URI expectedUri = URI.create("https://tenant-a.ias.domain.com");
+                assertThat(sut.getTokenEndpoints())
+                    .isEqualTo(OAuth2PropertySupplier.DefaultTokenEndpoints.fromIasUri(expectedUri));
+            });
+        }
+
+        // The `credential-type: X509_GENERATED` is taken from one of our E2E tests (`scp-cf-spring-ias-java-17`) - so
+        // it's an actual use case.
+        // Unfortunately, this credential type is not yet supported by the Security Library.
+        // check their `CredentialType` enum: https://github.com/SAP/cloud-security-services-integration-library/blob/main/java-api/src/main/java/com/sap/cloud/security/config/CredentialType.java
+        @Test
+        @DisplayName( "Security Lib Workaround is still needed." )
+        void regressionTestX509GeneratedCredentialTypeIsNotSupported()
+        {
+            assertThat(CredentialType.from("X509_GENERATED"))
+                .withFailMessage(
+                    "The Security Library provided supported for the 'X509_GENERATED' credential type. "
+                        + "This means we can get rid of our workaround logic! 🥳")
+                .isNull();
         }
     }
 }

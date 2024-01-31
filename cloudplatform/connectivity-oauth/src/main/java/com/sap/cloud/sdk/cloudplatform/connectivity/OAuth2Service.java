@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
-
 import java.net.URI;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +39,6 @@ import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -78,7 +75,15 @@ class OAuth2Service
 
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
-        endpoints = Endpoints.fromBaseUri(URI.create(uri));
+        this(OAuth2PropertySupplier.DefaultTokenEndpoints.fromXsuaaUri(URI.create(uri)), identity, onBehalfOf);
+    }
+
+    OAuth2Service(
+        @Nonnull final OAuth2ServiceEndpointsProvider endpoints,
+        @Nonnull final ClientIdentity identity,
+        @Nonnull final OnBehalfOf onBehalfOf )
+    {
+        this.endpoints = endpoints;
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
         /*
@@ -198,31 +203,5 @@ class OAuth2Service
         return Try
             .of(flow::execute)
             .getOrElseThrow(e -> new TokenRequestFailedException("Failed to resolve access token.", e));
-    }
-
-    @Value
-    static class Endpoints implements OAuth2ServiceEndpointsProvider
-    {
-        private static final String TOKEN_PATH = "/oauth/token";
-        private static final String AUTHORIZE_PATH = "/oauth/authorize";
-        private static final String KEYSET_PATH = "/token_keys";
-
-        @Nonnull
-        URI tokenEndpoint;
-
-        @Nullable
-        URI authorizeEndpoint;
-
-        @Nullable
-        URI jwksUri;
-
-        @Nonnull
-        static Endpoints fromBaseUri( final URI baseUri )
-        {
-            final URI tokenEndpoint = expandPath(baseUri, TOKEN_PATH);
-            final URI authorizeEndpoint = expandPath(baseUri, AUTHORIZE_PATH);
-            final URI jwksUri = expandPath(baseUri, KEYSET_PATH);
-            return new Endpoints(tokenEndpoint, authorizeEndpoint, jwksUri);
-        }
     }
 }

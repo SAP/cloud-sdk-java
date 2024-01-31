@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 
 import io.vavr.control.Try;
 
@@ -45,6 +46,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
 {
     private static final URI baseUrl = URI.create("baseUrl");
     private static final URI tokenUrl = URI.create("tokenUrl");
+    private static final OAuth2ServiceEndpointsProvider xsuaaTokenEndpoints =
+        OAuth2PropertySupplier.DefaultTokenEndpoints.fromXsuaaUri(tokenUrl);
     public static final ClientIdentity credentials = new ClientCredentials("id", "sec");
 
     private static final ServiceIdentifier TEST_SERVICE = ServiceIdentifier.of("TEST_SERVICE_IDENTIFIER");
@@ -193,6 +196,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
         when(mock.isOAuth2Binding()).thenReturn(true);
         when(mock.getServiceUri()).thenReturn(baseUrl);
         when(mock.getTokenUri()).thenReturn(tokenUrl);
+        when(mock.getTokenEndpoints()).thenReturn(xsuaaTokenEndpoints);
         when(mock.getClientIdentity()).thenReturn(credentials);
 
         sut = mockLoader(mock);
@@ -213,7 +217,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
         verify(sut, times(3))
             .toDestination(
                 eq(baseUrl),
-                eq(tokenUrl),
+                eq(xsuaaTokenEndpoints),
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
                 eq(TEST_SERVICE));
@@ -228,6 +232,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
         when(mock.isOAuth2Binding()).thenReturn(true);
         when(mock.getServiceUri()).thenReturn(baseUrl);
         when(mock.getTokenUri()).thenReturn(tokenUrl);
+        when(mock.getTokenEndpoints()).thenReturn(xsuaaTokenEndpoints);
         when(mock.getClientIdentity()).thenReturn(certificate);
 
         sut = mockLoader(mock);
@@ -361,7 +366,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 .toProxiedDestination(
                     baseDestination,
                     proxyUrl,
-                    tokenUrl,
+                    xsuaaTokenEndpoints,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
@@ -377,7 +382,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 .toProxiedDestination(
                     baseDestination,
                     proxyUrl,
-                    tokenUrl,
+                    xsuaaTokenEndpoints,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
@@ -390,7 +395,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
 
         verify(sut, times(2))
             .createHeaderProvider(
-                eq(tokenUrl),
+                eq(xsuaaTokenEndpoints),
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
                 eq(HttpHeaders.PROXY_AUTHORIZATION));
