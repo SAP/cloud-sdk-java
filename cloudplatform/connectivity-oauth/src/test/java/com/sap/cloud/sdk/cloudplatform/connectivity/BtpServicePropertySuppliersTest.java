@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_RULES;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHORIZATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +32,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLo
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Try;
 
@@ -265,6 +268,63 @@ class BtpServicePropertySuppliersTest
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
+        }
+    }
+
+    @Nested
+    @DisplayName( "Identity Authorization (IAS)" )
+    class IdentityAuthorizationTest
+    {
+        private final ServiceBinding binding =
+            bindingWithCredentials(
+                ServiceIdentifier.of("identity"),
+                entry("credential-type", "X509_GENERATED"),
+                entry("domain", "ias.domain.com"),
+                entry("url", "https://provider.ias.domain.com"));
+
+        @Test
+        void testTokenUriWithTenant()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
+            assertThat(sut).isNotNull();
+            TenantAccessor.executeWithTenant(new DefaultTenant("a", "tenant-a"), () -> {
+                assertThat(sut.getTokenUri()).hasToString("https://tenant-a.ias.domain.com/oauth2/authorize");
+            });
+            TenantAccessor.executeWithTenant(new DefaultTenant("b", "tenant-b"), () -> {
+                assertThat(sut.getTokenUri()).hasToString("https://tenant-b.ias.domain.com/oauth2/authorize");
+            });
+        }
+
+        @Test
+        void testTokenUriWithoutTenantThrows()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
+            assertThat(sut).isNotNull();
+
+            assertThat(TenantAccessor.tryGetCurrentTenant().isFailure()).isTrue(); // sanity: there is no current tenant
+            assertThatThrownBy(sut::getTokenUri).isExactlyInstanceOf(DestinationAccessException.class);
+        }
+
+        // The `credential-type: X509_GENERATED` is taken from one of our E2E tests (`scp-cf-spring-ias-java-17`) - so
+        // it's an actual use case.
+        // Unfortunately, this credential type is not yet supported by the Security Library.
+        // check their `CredentialType` enum: https://github.com/SAP/cloud-security-services-integration-library/blob/main/java-api/src/main/java/com/sap/cloud/security/config/CredentialType.java
+        @Test
+        void testX509GeneratedCredentialTypeIsNotSupported()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
+            assertThat(sut).isNotNull();
+
+            assertThatThrownBy(sut::getClientIdentity).isExactlyInstanceOf(DestinationAccessException.class);
         }
     }
 }

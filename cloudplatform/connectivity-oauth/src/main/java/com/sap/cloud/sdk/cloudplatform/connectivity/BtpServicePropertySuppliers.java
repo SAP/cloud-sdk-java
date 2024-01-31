@@ -17,6 +17,10 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLo
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
+
+import io.vavr.control.Try;
 
 class BtpServicePropertySuppliers
 {
@@ -25,6 +29,10 @@ class BtpServicePropertySuppliers
 
     static final OAuth2PropertySupplierResolver CONNECTIVITY =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.CONNECTIVITY, ConnectivityProxy::new);
+
+    static final OAuth2PropertySupplierResolver IDENTITY_AUTHORIZATION =
+        OAuth2PropertySupplierResolver
+            .forServiceIdentifier(ServiceIdentifier.of("identity"), IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
@@ -59,9 +67,11 @@ class BtpServicePropertySuppliers
                     .factory());
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
+
     static {
         DEFAULT_SERVICE_RESOLVERS.add(DESTINATION);
         DEFAULT_SERVICE_RESOLVERS.add(CONNECTIVITY);
+        DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHORIZATION);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_RULES);
         DEFAULT_SERVICE_RESOLVERS.add(WORKFLOW);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_LOGGING);
@@ -108,6 +118,40 @@ class BtpServicePropertySuppliers
             catch( final URISyntaxException e ) {
                 throw new DestinationAccessException("Failed to construct proxy URL", e);
             }
+        }
+    }
+
+    private static class IdentityAuthentication extends DefaultOAuth2PropertySupplier
+    {
+        IdentityAuthentication( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, Collections.emptyList());
+        }
+
+        @Nonnull
+        @Override
+        public URI getTokenUri()
+        {
+            final String domain = getCredentialOrThrow(String.class, "domain");
+
+            final Try<URI> maybeTokenUri =
+                TenantAccessor
+                    .tryGetCurrentTenant()
+                    .filter(TenantWithSubdomain.class::isInstance)
+                    .map(TenantWithSubdomain.class::cast)
+                    .map(TenantWithSubdomain::getSubdomain)
+                    // TODO: this somewhat feels very fragile. Is there a better way?
+                    .map(subdomain -> "https://" + subdomain + "." + domain + "/oauth2/authorize")
+                    .map(URI::create);
+
+            if( maybeTokenUri.isSuccess() ) {
+                return maybeTokenUri.get();
+            }
+
+            throw new DestinationAccessException(
+                null,
+                "Unable to determine the IAS token URI.",
+                maybeTokenUri.getCause());
         }
     }
 }
