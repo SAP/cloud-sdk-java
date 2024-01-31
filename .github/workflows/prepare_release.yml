@@ -199,7 +199,6 @@ jobs:
       #        working-directory: ./example-${{ matrix.task.archetype }}
       #        run: >
       #          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
-      #          -pl !integration-tests
       #          -Dhttp.keepAlive=false
       #          -Dmaven.wagon.http.pool=false
       #
