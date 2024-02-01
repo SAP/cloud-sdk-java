@@ -45,10 +45,8 @@ runs:
         PR_NUMBER=$(jq -r '.number' <<< "$PR_JSON")
         PR_MERGEABLE=$(jq -r '.mergeable' <<< "$PR_JSON")
         PR_DECISION=$(jq -r '.reviewDecision' <<< "$PR_JSON")
-        PR_ROLLUP=$(jq -r '.statusCheckRollup' <<< "$PR_JSON")
         
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-        
         echo "[DEBUG] PR #$PR_NUMBER (in ${{ inputs.repo }}) is mergeable: $PR_MERGEABLE with decision $PR_DECISION"
         
         if [[ "$PR_DECISION" != "APPROVED" ]]; then
@@ -64,7 +62,7 @@ runs:
         fi
         
         # check runs are things like our CI pipeline
-        FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_ROLLUP")
+        FAILED_CHECK_RUNS=$(jq -r '.statusCheckRollup.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_JSON")
         IFS=',' read -ra EXCLUDED_WORKFLOWS <<< "${{ inputs.excluded-check-runs }}"
         for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
           FAILED_CHECK_RUNS=$(jq -r '.[] | select(.workflowName != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
@@ -78,7 +76,7 @@ runs:
         fi
         
         # context checks are things like the license agreement check
-        FAILED_CONTEXT_CHECKS=$(jq -r '.[] | select(.__typename == "StatusContext" and .state != "SUCCESS" and .state != "NEUTRAL")' <<< "$PR_ROLLUP")
+        FAILED_CONTEXT_CHECKS=$(jq -r '.statusCheckRollup.[] | select(.__typename == "StatusContext" and .state != "SUCCESS" and .state != "NEUTRAL")' <<< "$PR_JSON")
         if [[ -n "$FAILED_CONTEXT_CHECKS" ]]; then
           echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) contains failed context checks: "
           echo "$FAILED_CONTEXT_CHECKS"
