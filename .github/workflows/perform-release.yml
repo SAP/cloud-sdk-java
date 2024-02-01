@@ -86,13 +86,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.prerequisites.outputs.code-branch }}
-#      - name: "Check Whether ${{ matrix.task.name }} Can Be Merged"
-#        uses: ./.github/actions/pr-is-mergeable
-#        with:
-#          pr-ref: ${{ matrix.task.branch }}
-#          repo: ${{ matrix.task.repo }}
-#          token: ${{ matrix.task.token }}
-#          fail-on-unmergeable: "true"
+      - name: "Check Whether ${{ matrix.task.name }} Can Be Merged"
+        uses: ./.github/actions/pr-is-mergeable
+        with:
+          pr-ref: ${{ matrix.task.branch }}
+          repo: ${{ matrix.task.repo }}
+          token: ${{ matrix.task.token }}
+          fail-on-unmergeable: "true"
 
   release:
     name: "Release"
