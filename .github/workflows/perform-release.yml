@@ -58,24 +58,24 @@ jobs:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.determine-branch-names.outputs.CODE_BRANCH_NAME }}
+          ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
 
       - name: "Check Whether Code PR Can Be Merged"
         uses: ./.github/actions/pr-is-mergeable
         with:
-          pr-ref: ${{ needs.determine-branch-names.outputs.CODE_BRANCH_NAME }}
+          pr-ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
 
       - name: "Check Whether Docs PR Can Be Merged"
         uses: ./.github/actions/pr-is-mergeable
         with:
-          pr-ref: ${{ needs.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
+          pr-ref: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
           repo: ${{ env.DOCS_REPO }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Check Whether Release Notes PR Can Be Merged"
         uses: ./.github/actions/pr-is-mergeable
         with:
-          pr-ref: ${{ needs.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
+          pr-ref: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
           repo: ${{ env.DOCS_REPO }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
