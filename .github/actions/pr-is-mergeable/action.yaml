@@ -49,6 +49,8 @@ runs:
         
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
         
+        echo "[DEBUG] PR #$PR_NUMBER (in ${{ inputs.repo }}) is mergeable: $PR_MERGEABLE with decision $PR_DECISION"
+        
         if [[ "$PR_DECISION" != "APPROVED" ]]; then
           echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) has not been approved."
           echo "RESULT=false" >> $GITHUB_OUTPUT
