@@ -14,6 +14,7 @@ on:
 jobs:
   update-release-notes:
     name: "Update Release Notes"
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.user.login == 'app/dependabot') }}
     permissions:
       pull-requests: read
       contents: write
@@ -40,19 +41,10 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             PR_NUMBER=${{ github.event.pull_request.number }}
             PR_BRANCH=${{ github.head_ref }}
-            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json author,body)
-            PR_AUTHOR=$(jq -r '.author | select(.is_bot == true and .login == "app/dependabot")' <<< "$PR_JSON")
+            gh pr view $PR_NUMBER --repo ${{ github.repository }} --json body > $PR_BODY_FILE
           
-            jq -r '.body' <<< "$PR_JSON" > $PR_BODY_FILE
-          
-            if [[ -n "$PR_AUTHOR" ]]; then
-              echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has been created by Dependabot. Continuing the workflow."
-              echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-              echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
-            else
-              echo "[DEBUG] PR #$PR_NUMBER (from $PR_BRANCH) has not been created by Dependabot. Aborting workflow."
-              # we are "aborting" the workflow by NOT setting the `PR_NUMBER` output
-            fi
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
           fi
         id: determine-pr-info
         env:
