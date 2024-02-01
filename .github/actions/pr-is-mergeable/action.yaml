@@ -61,8 +61,10 @@ runs:
           exit 0
         fi
         
+        PR_CHECKS=$(jq -r '.statusCheckRollup' <<< "$PR_JSON")
+        
         # check runs are things like our CI pipeline
-        FAILED_CHECK_RUNS=$(jq -r '.statusCheckRollup.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_JSON")
+        FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_CHECKS")
         IFS=',' read -ra EXCLUDED_WORKFLOWS <<< "${{ inputs.excluded-check-runs }}"
         for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
           FAILED_CHECK_RUNS=$(jq -r '.[] | select(.workflowName != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
@@ -76,7 +78,7 @@ runs:
         fi
         
         # context checks are things like the license agreement check
-        FAILED_CONTEXT_CHECKS=$(jq -r '.statusCheckRollup.[] | select(.__typename == "StatusContext" and .state != "SUCCESS" and .state != "NEUTRAL")' <<< "$PR_JSON")
+        FAILED_CONTEXT_CHECKS=$(jq -r '.[] | select(.__typename == "StatusContext" and .state != "SUCCESS" and .state != "NEUTRAL")' <<< "$PR_CHECKS")
         if [[ -n "$FAILED_CONTEXT_CHECKS" ]]; then
           echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) contains failed context checks: "
           echo "$FAILED_CONTEXT_CHECKS"
