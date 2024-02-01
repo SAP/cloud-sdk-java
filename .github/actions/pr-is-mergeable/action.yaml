@@ -67,7 +67,7 @@ runs:
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_ROLLUP")
         IFS=',' read -ra EXCLUDED_WORKFLOWS <<< "${{ inputs.excluded-check-runs }}"
         for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
-          FAILED_CHECK_RUNS=$(jq -r '.[] | select(.name != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
+          FAILED_CHECK_RUNS=$(jq -r '.[] | select(.workflowName != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
         done
         
         if [[ -n "$FAILED_CHECK_RUNS" ]]; then
