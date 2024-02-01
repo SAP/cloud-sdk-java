@@ -39,14 +39,14 @@ jobs:
     name: ${{ matrix.task.name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository
           key: maven
@@ -65,17 +65,17 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Determine Version
         run: echo "VERSION=$(cat latest.json | jq -r .version)" >> $GITHUB_OUTPUT
         id: get-version
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
@@ -103,7 +103,7 @@ jobs:
               exit 1
           fi
       - name: Upload release package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cloud-sdk-package
           path: sap-cloud-sdk-java-${{ steps.get-version.outputs.VERSION }}.zip
@@ -114,13 +114,13 @@ jobs:
           cd $HOME/.m2/repository/com/sap/cloud/sdk
           zip -r m2-sdk.zip .
       - name: Upload M2 SDK Directory
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: m2-sdk
           path: ~/.m2/repository/com/sap/cloud/sdk/m2-sdk.zip
           retention-days: 1
       - name: Upload Archetype Catalog
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: archetype-catalog
           path: ~/.m2/repository/archetype-catalog.xml
@@ -130,7 +130,7 @@ jobs:
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
         continue-on-error: true
       - name: Save Maven Repository
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
@@ -141,7 +141,7 @@ jobs:
         run: |
           zip -r target.zip $(find . -path '**/target/*')
       - name: Upload Target Dirs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: target-dirs
           path: target.zip
@@ -156,14 +156,14 @@ jobs:
       contents: read
     name: Test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
@@ -171,7 +171,7 @@ jobs:
 
       # M2
       - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: m2-sdk
           path: .
@@ -181,7 +181,7 @@ jobs:
 
       # Target
       - name: Download Target Dirs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: target-dirs
           path: .
@@ -205,21 +205,21 @@ jobs:
     runs-on: ubuntu-latest
     name: Checkstyle
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       # M2
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
           key: maven
       - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: m2-sdk
           path: .
@@ -229,7 +229,7 @@ jobs:
 
       # Target
       - name: Download Target Dirs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: target-dirs
           path: .
@@ -248,21 +248,21 @@ jobs:
     runs-on: ubuntu-latest
     name: PMD
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       # M2
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
           key: maven
       - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: m2-sdk
           path: .
@@ -272,7 +272,7 @@ jobs:
 
       # Target
       - name: Download Target Dirs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: target-dirs
           path: .
@@ -295,21 +295,21 @@ jobs:
       contents: read
     name: Spotbugs
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       # M2
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
           key: maven
       - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: m2-sdk
           path: .
@@ -319,7 +319,7 @@ jobs:
 
       # Target
       - name: Download Target Dirs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: target-dirs
           path: .
@@ -345,34 +345,34 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: "java"
           queries: security-extended
 
       # M2
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
           key: maven
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:java"
 
@@ -393,18 +393,18 @@ jobs:
     name: Test Archetype ${{ matrix.task.archetype }}
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: ${{ matrix.task.javaVersion }}
       - name: Load Maven Repository
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-cache
         with:
           path: ~/.m2/repository
           key: maven-central
       - name: Download M2 SDK Directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: m2-sdk
           path: .
@@ -414,7 +414,7 @@ jobs:
           unzip m2-sdk.zip -d ~/.m2/repository/com/sap/cloud/sdk
 
       - name: Download Archetype Catalog
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: archetype-catalog
           path: ~/.m2/repository/archetype-catalog.xml
@@ -485,7 +485,7 @@ jobs:
           rm -rf $HOME/.m2/repository/com/sap/cloud/sdk/
           rm -rf $HOME/.m2/repository/archetype-catalog.xml
       - name: Save Maven Repository
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         if: steps.restore-cache.outputs.cache-hit != 'true'
         id: save-cache
         with:
@@ -500,9 +500,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
@@ -511,7 +511,7 @@ jobs:
           server-password: ARTIFACTORY_TOKEN # env variable for token in deploy
 
       - name: Download Release ZIP
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: cloud-sdk-package
           path: .
@@ -551,7 +551,7 @@ jobs:
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Notify
         run: python .pipeline/scripts/notify.py
         env:
