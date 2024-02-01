@@ -66,21 +66,21 @@ jobs:
         task:
           - {
             "name": "Code PR",
-            "branch": ${{ needs.prerequisites.outputs.code-branch }},
-            "repo": ${{ github.repository }},
-            "token": ${{ github.token }}
+            "branch": "${{ needs.prerequisites.outputs.code-branch }}",
+            "repo": "${{ github.repository }}",
+            "token": "${{ github.token }}"
           }
           - {
             "name": "Docs PR",
-            "branch": ${{ needs.prerequisites.outputs.docs-branch }},
-            "repo": ${{ env.DOCS_REPO }},
-            "token": ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+            "branch": "${{ needs.prerequisites.outputs.docs-branch }}",
+            "repo": "${{ env.DOCS_REPO }}",
+            "token": "${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}"
           }
           - {
             "name": "Release Notes PR",
-            "branch": ${{ needs.prerequisites.outputs.release-notes-branch }},
-            "repo": ${{ env.DOCS_REPO }},
-            "token": ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+            "branch": "${{ needs.prerequisites.outputs.release-notes-branch }}",
+            "repo": "${{ env.DOCS_REPO }}",
+            "token": "${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}"
           }
     steps:
       - uses: actions/checkout@v4
