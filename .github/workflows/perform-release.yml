@@ -55,54 +55,48 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: "Check Whether Code PR Can Be Merged"
-        run: |
-          PR=$(gh pr view "${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}" --repo "${{ github.repository }}" --json number,reviewDecision)
-          NUMBER=$(echo "$PR" | jq -r '.number')
-          DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-          
-          if [[ "$DECISION" != "APPROVED" ]]; then
-            echo "Code PR (#$NUMBER) is not approved."
-            exit 1
-          fi
-          
-          echo "[DEBUG] Code PR (#$NUMBER) can be merged."
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: "Check Whether Docs PR Can Be Merged"
-        run: |
-            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision)
-            NUMBER=$(echo "$PR" | jq -r '.number')
-            DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-            
-            if [[ "$DECISION" != "APPROVED" ]]; then
-                echo "Docs PR (#$NUMBER) is not approved."
-                exit 1
-            fi
-            
-            echo "[DEBUG] Docs PR (#$NUMBER) can be merged."
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      - name: "Check Whether Release Notes PR Can Be Merged"
-        run: |
-            PR=$(gh pr view "${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}" --repo ${{ env.DOCS_REPO }} --json number,reviewDecision)
-            NUMBER=$(echo "$PR" | jq -r '.number')
-            DECISION=$(echo "$PR" | jq -r '.reviewDecision')
-            
-            if [[ "$DECISION" != "APPROVED" ]]; then
-                echo "Release Notes PR (#$NUMBER) is not approved."
-                exit 1
-            fi
-            
-            echo "[DEBUG] Release Notes PR (#$NUMBER) can be merged."
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+  check-prs:
+    name: "Check PRs"
+    runs-on: ubuntu-latest
+    needs: [ prerequisites ]
+    permissions:
+      pull-requests: read
+    strategy:
+      matrix:
+        task:
+          - {
+              "name": "Code PR",
+              "branch": ${{ needs.prerequisites.outputs.code-branch }},
+              "repo": ${{ github.repository }},
+              "token": ${{ github.token }}
+          }
+          - {
+              "name": "Docs PR",
+              "branch": ${{ needs.prerequisites.outputs.docs-branch }},
+              "repo": ${{ env.DOCS_REPO }},
+              "token": ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          }
+          - {
+              "name": "Release Notes PR",
+              "branch": ${{ needs.prerequisites.outputs.release-notes-branch }},
+              "repo": ${{ env.DOCS_REPO }},
+              "token": ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prerequisites.outputs.code-branch }}
+      - name: "Check Whether ${{ matrix.task.name }} Can Be Merged"
+        uses: ./.github/actions/pr-is-mergeable
+        with:
+          pr-ref: ${{ matrix.task.branch }}
+          repo: ${{ matrix.task.repo }}
+          token: ${{ matrix.task.token }}
+          fail-on-unmergeable: "true"
 
   release:
     name: "Release"
-    needs: [ prerequisites ]
+    needs: [ prerequisites, check-prs ]
     runs-on: ubuntu-latest
     permissions:
       contents: write # needed to modify the release draft
