@@ -13,6 +13,6 @@ jobs:
       - uses: SAP/fosstars-rating-core-action@v1.14.0
         with:
           report-branch: main
-          report-file: fosstars/fosstars_report.md
-          badge-file: fosstars/fosstars_badge.svg
+          report-file: .github/fosstars/fosstars_report.md
+          badge-file: .github/fosstars/fosstars_badge.svg
           token: "${{ secrets.GITHUB_TOKEN }}"
