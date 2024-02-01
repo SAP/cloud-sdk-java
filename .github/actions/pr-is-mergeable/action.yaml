@@ -91,13 +91,8 @@ runs:
 
     - name: "Fail If PR Is Not Mergeable"
       if: ${{ inputs.fail-on-unmergeable == 'true' && steps.check.outputs.RESULT != 'true' }}
-      run: |
-        echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) is not mergeable."
-        exit 1
+      run: exit 1
       shell: bash
-      env:
-        PR_NUMBER: ${{ steps.check.outputs.PR_NUMBER }}
-
 
     - name: "Print Action End"
       if: always()
