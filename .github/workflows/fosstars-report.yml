@@ -12,5 +12,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: SAP/fosstars-rating-core-action@v1.14.0
         with:
-          report-branch: fosstars-report
+          report-branch: main
+          report-file: fosstars/fosstars_report.md
+          badge-file: fosstars/fosstars_badge.svg
           token: "${{ secrets.GITHUB_TOKEN }}"
