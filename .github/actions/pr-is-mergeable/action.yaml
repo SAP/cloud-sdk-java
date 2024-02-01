@@ -17,6 +17,10 @@ inputs:
     description: "The GitHub access token (with PR read permissions) to access the PR"
     required: false
     default: ${{ github.token }}
+  excluded-check-runs:
+    description: "A comma-separated list of workflow names that are excluded from the Check Runs check"
+    required: false
+    default: "${{ github.workflow }}"
 
 outputs:
   pr-number:
@@ -59,6 +63,11 @@ runs:
         
         # check runs are things like our CI pipeline
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_ROLLUP")
+        IFS=',' read -ra EXCLUDED_WORKFLOWS <<< "${{ inputs.excluded-check-runs }}"
+        for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
+          FAILED_CHECK_RUNS=$(jq -r '.[] | select(.name != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
+        done
+        
         if [[ -n "$FAILED_CHECK_RUNS" ]]; then
           echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) contains failed check runs: "
           echo "$FAILED_CHECK_RUNS"
