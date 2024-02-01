@@ -14,7 +14,7 @@ on:
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
 
-  DOCS_REPO: SAP/cloud-sdk
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
 
 jobs:
   prerequisites:

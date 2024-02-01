@@ -16,7 +16,7 @@ env:
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
 
-  DOCS_REPO: SAP/cloud-sdk
+  DOCS_REPO: Johannes-Schneider/cloud-sdk
 
 jobs:
   bump-version:
