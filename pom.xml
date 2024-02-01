@@ -82,7 +82,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.67.12</jco-api.version>
+		<jco-api.version>4.68.9</jco-api.version>
 		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -96,9 +96,9 @@
 		<spring.version>6.1.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.11</slf4j.version>
-		<assertj-core.version>3.25.1</assertj-core.version>
+		<assertj-core.version>3.25.2</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.9.0</mockito.version>
+		<mockito.version>5.10.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -115,7 +115,7 @@
 		<bouncycastle.version>1.77</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
-		<qdox.version>2.0.3</qdox.version>
+		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.3.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.22</kotlin.version>

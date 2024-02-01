@@ -27,6 +27,8 @@
   - [com.sap.cloud.environment.servicebinding](https://github.com/SAP/btp-environment-variable-access) from `0.10.1` to `0.10.2` 
   - `org.slf4j:slf4j-api` from `2.0.9` to `2.0.11`
   - `commons-io:commons-io` from `2.15.0` to `2.15.1`
+  - Update `com.sap.cloud:neo-java-web-api` from `4.67.12` to `4.68.9`
+  - Update [`org.apache.httpcomponents.client5:httpclient5`](https://github.com/apache/httpcomponents-client) from `5.3` to `5.3.1`
 
 ### 🐛 Fixed Issues
 
