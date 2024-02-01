@@ -20,7 +20,7 @@ inputs:
   excluded-check-runs:
     description: "A comma-separated list of workflow names that are excluded from the Check Runs check"
     required: false
-    default: "${{ github.workflow }}"
+    default: ${{ github.workflow }}
 
 outputs:
   pr-number:
@@ -34,7 +34,7 @@ runs:
   using: composite
   steps:
     - name: "Print Action Start"
-      run: echo ">>>>> Starting PR Is Mergeable Action"
+      run: echo ">>>>> Starting PR Is Mergeable Action; inputs = ${{ toJson(inputs) }}"
       shell: bash
 
     - name: "Check Whether PR Is Mergeable"
