@@ -17,7 +17,7 @@ final class SecurityLibWorkarounds
     @Nullable
     static CredentialType getCredentialType( @Nonnull final String rawType )
     {
-        if( rawType.equalsIgnoreCase(X509_GENERATED) ) {
+        if( rawType.equals(X509_GENERATED) ) {
             // this particular credential type is currently (2024-01-31) NOT supported by the Security Client Lib.
             return CredentialType.X509;
         }

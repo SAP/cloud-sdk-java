@@ -159,7 +159,7 @@ class BtpServicePropertySuppliers
         @Override
         public OAuth2ServiceEndpointsProvider getTokenEndpoints()
         {
-            return DefaultTokenEndpoints.fromIasUri(getTokenUri());
+            return DefaultTokenEndpoints.forIas(getTokenUri());
         }
     }
 }

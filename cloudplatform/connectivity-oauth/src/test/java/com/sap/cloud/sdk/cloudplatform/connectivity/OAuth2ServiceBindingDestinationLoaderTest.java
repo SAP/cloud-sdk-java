@@ -47,7 +47,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     private static final URI baseUrl = URI.create("baseUrl");
     private static final URI tokenUrl = URI.create("tokenUrl");
     private static final OAuth2ServiceEndpointsProvider xsuaaTokenEndpoints =
-        OAuth2PropertySupplier.DefaultTokenEndpoints.fromXsuaaUri(tokenUrl);
+        OAuth2PropertySupplier.DefaultTokenEndpoints.forXsuaa(tokenUrl);
     public static final ClientIdentity credentials = new ClientCredentials("id", "sec");
 
     private static final ServiceIdentifier TEST_SERVICE = ServiceIdentifier.of("TEST_SERVICE_IDENTIFIER");

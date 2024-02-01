@@ -15,7 +15,7 @@ class OAuth2PropertySupplierTest
     void testXsuaaTokenEndpoints()
     {
         final OAuth2ServiceEndpointsProvider sut =
-            OAuth2PropertySupplier.DefaultTokenEndpoints.fromXsuaaUri(URI.create("https://foo.bar/baz"));
+            OAuth2PropertySupplier.DefaultTokenEndpoints.forXsuaa(URI.create("https://foo.bar/baz"));
 
         assertThat(sut.getTokenEndpoint()).hasToString("https://foo.bar/baz/oauth/token");
         assertThat(sut.getAuthorizeEndpoint()).hasToString("https://foo.bar/baz/oauth/authorize");
@@ -26,7 +26,7 @@ class OAuth2PropertySupplierTest
     void testIasTokenEndpoints()
     {
         final OAuth2ServiceEndpointsProvider sut =
-            OAuth2PropertySupplier.DefaultTokenEndpoints.fromIasUri(URI.create("https://foo.bar/baz"));
+            OAuth2PropertySupplier.DefaultTokenEndpoints.forIas(URI.create("https://foo.bar/baz"));
 
         assertThat(sut.getTokenEndpoint()).hasToString("https://foo.bar/baz/oauth2/token");
         assertThat(sut.getAuthorizeEndpoint()).hasToString("https://foo.bar/baz/oauth2/authorize");

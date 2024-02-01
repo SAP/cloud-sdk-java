@@ -68,7 +68,7 @@ public interface OAuth2PropertySupplier
          * @return A new {@link OAuth2ServiceEndpointsProvider}.
          */
         @Nonnull
-        static OAuth2ServiceEndpointsProvider fromXsuaaUri( final URI baseUri )
+        static OAuth2ServiceEndpointsProvider forXsuaa( @Nonnull final URI baseUri )
         {
             final URI tokenEndpoint = expandPath(baseUri, Xsuaa.TOKEN_PATH);
             final URI authorizeEndpoint = expandPath(baseUri, Xsuaa.AUTHORIZE_PATH);
@@ -85,7 +85,7 @@ public interface OAuth2PropertySupplier
          * @return A new {@link OAuth2ServiceEndpointsProvider}.
          */
         @Nonnull
-        static OAuth2ServiceEndpointsProvider fromIasUri( final URI baseUri )
+        static OAuth2ServiceEndpointsProvider forIas( @Nonnull final URI baseUri )
         {
             final URI tokenEndpoint = expandPath(baseUri, Ias.TOKEN_PATH);
             final URI authorizeEndpoint = expandPath(baseUri, Ias.AUTHORIZE_PATH);
@@ -130,7 +130,7 @@ public interface OAuth2PropertySupplier
     @Nonnull
     default OAuth2ServiceEndpointsProvider getTokenEndpoints()
     {
-        return DefaultTokenEndpoints.fromXsuaaUri(getTokenUri());
+        return DefaultTokenEndpoints.forXsuaa(getTokenUri());
     }
 
     /**

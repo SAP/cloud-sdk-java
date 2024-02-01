@@ -325,7 +325,7 @@ class BtpServicePropertySuppliersTest
             TenantAccessor.executeWithTenant(new DefaultTenant("a", "tenant-a"), () -> {
                 final URI expectedUri = URI.create("https://tenant-a.ias.domain.com");
                 assertThat(sut.getTokenEndpoints())
-                    .isEqualTo(OAuth2PropertySupplier.DefaultTokenEndpoints.fromIasUri(expectedUri));
+                    .isEqualTo(OAuth2PropertySupplier.DefaultTokenEndpoints.forIas(expectedUri));
             });
         }
 

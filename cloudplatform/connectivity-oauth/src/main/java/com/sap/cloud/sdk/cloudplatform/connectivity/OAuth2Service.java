@@ -75,7 +75,7 @@ class OAuth2Service
 
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
-        this(OAuth2PropertySupplier.DefaultTokenEndpoints.fromXsuaaUri(URI.create(uri)), identity, onBehalfOf);
+        this(OAuth2PropertySupplier.DefaultTokenEndpoints.forXsuaa(URI.create(uri)), identity, onBehalfOf);
     }
 
     OAuth2Service(
