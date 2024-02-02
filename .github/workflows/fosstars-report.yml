@@ -16,3 +16,18 @@ jobs:
           report-file: .github/fosstars/fosstars_report.md
           badge-file: .github/fosstars/fosstars_badge.svg
           token: "${{ secrets.GITHUB_TOKEN }}"
+
+  move_json_to_fosstars_folder:
+    runs-on: ubuntu-latest
+    needs: create_fosstars_report
+    name: "Move JSON to Fosstars folder"
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Move JSON to Fosstars folder"
+        run: |
+          if [ -e fosstars_rating.json ]; then
+            echo "File exists."
+            mv fosstars_rating.json .github/fosstars/
+          else
+            echo "File does not exist."
+          fi
