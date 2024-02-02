@@ -58,7 +58,9 @@ class PrBodyParser:
 
         updates: list[DependencyUpdate] = []
         for row in rows[2:]:
-            updates.append(PrBodyParser._parse_table_row(row))
+            update: Optional[DependencyUpdate] = PrBodyParser._parse_table_row(row)
+            if update is not None:
+                updates.append(update)
 
         return updates
 
@@ -72,21 +74,24 @@ class PrBodyParser:
         return None
 
     @staticmethod
-    def _parse_table_row(row: str) -> DependencyUpdate:
+    def _parse_table_row(row: str) -> Optional[DependencyUpdate]:
         items: list[str] = row.split("|")
         if len(items) != 5:
             raise Exception(
                 f"Dependabot table row has unexpected format. "
                 f"Expected to find 3 columns (separated by '|') in '{row}'.")
 
-        group_id, artifact_id = PrBodyParser._extract_dependency_group_and_artifact(items[1].strip())
+        group_and_artifact_id: Optional[tuple[str, str]] = PrBodyParser._extract_dependency_group_and_artifact(items[1].strip())
+        if group_and_artifact_id is None:
+            return None
+
         old_version: str = PrBodyParser._extract_version(items[2].strip())
         new_version: str = PrBodyParser._extract_version(items[3].strip())
 
-        return DependencyUpdate(group_id, artifact_id, old_version, new_version)
+        return DependencyUpdate(group_and_artifact_id[0], group_and_artifact_id[1], old_version, new_version)
 
     @staticmethod
-    def _extract_dependency_group_and_artifact(raw: str) -> tuple[str, str]:
+    def _extract_dependency_group_and_artifact(raw: str) -> Optional[tuple[str, str]]:
         link_match: re.Match = _MARKDOWN_LINK_PATTERN.match(raw.strip())
         if link_match:
             full_name: str = link_match.group(1)
@@ -95,7 +100,7 @@ class PrBodyParser:
 
         items: list[str] = full_name.split(":")
         if len(items) != 2:
-            raise Exception(f"Unable to extract group and artifact from '{full_name}'.")
+            return None
 
         return items[0], items[1]
 
@@ -337,6 +342,10 @@ def main():
     old_release_notes: str = release_notes_file.read_text()
 
     new_updates: list[DependencyUpdate] = PrBodyParser.parse(pr_body)
+    if len(new_updates) < 1:
+        print(f"There seem to be no dependency updates.")
+        exit(0)
+
     old_updates: list[DependencyUpdate] = ReleaseNotesParser.parse(old_release_notes)
     merged_updates: list[DependencyUpdate] = merge_updates(old_updates, new_updates)
 
@@ -371,6 +380,23 @@ Bumps the production-minor-patch group with 5 updates:
 Updates `com.sap.cloud:neo-java-web-api` from 4.67.12 to 4.68.9
 
 Updates `org.assertj:assertj-core` from 3.25.1 to 3.25.2"""
+
+        updates: list[DependencyUpdate] = PrBodyParser.parse(data)
+        self.assertEqual([], updates)
+
+    def test_parse_github_actions_updates_table(self):
+        data = """
+Bumps the github-actions group with 7 updates:
+
+| Package | From | To |
+| --- | --- | --- |
+| [actions/checkout](https://github.com/actions/checkout) | `3` | `4` |
+| [actions/setup-java](https://github.com/actions/setup-java) | `3` | `4` |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `3` | `4` |
+| [actions/cache](https://github.com/actions/cache) | `3` | `4` |
+| [actions/download-artifact](https://github.com/actions/download-artifact) | `3` | `4` |
+| [github/codeql-action](https://github.com/github/codeql-action) | `2` | `3` |
+| [fsfe/reuse-action](https://github.com/fsfe/reuse-action) | `1.2.0` | `2.0.0` |"""
 
         updates: list[DependencyUpdate] = PrBodyParser.parse(data)
         self.assertEqual([], updates)
