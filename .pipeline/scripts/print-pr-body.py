@@ -8,7 +8,9 @@ def print_pr_body(commit_url, release_url):
           f"- [ ] Check diff of [version update commit]({commit_url})\n"
           f"- [ ] Approve this PR if appropriate\n"
           f"- [ ] Check release notes, **edit** the [release]({release_url}) and **Publish** it (triggers workflow)\n\n"
-          f"The `perform_release` workflow will automatically merge this PR once the release is published."
+          f"The `perform_release` workflow will automatically merge this PR once the release notes are published.\n"
+          f"If the release doesn't appear on Maven Central after some time, have a look into the Sonatype OSS "
+          f"repository: <https://oss.sonatype.org/#stagingRepositories> (Credentials can be found in our password safe)"
           )
 
 def main():
