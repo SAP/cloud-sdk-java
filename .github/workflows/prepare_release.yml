@@ -336,9 +336,24 @@ jobs:
           DETECT_TIMEOUT: 7200
           PROJECT_VERSION: "5"
 
+  create_fosstars_report:
+    name: "Security rating"
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prepare-release.outputs.branch_name }}
+      - uses: SAP/fosstars-rating-core-action@v1.14.0
+        with:
+          report-branch: main
+          report-file: .github/fosstars/fosstars_report.md
+          badge-file: github/fosstars/fosstars_badge.svg
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
   create-release:
     runs-on: ubuntu-latest
-    needs: [archetypes, codeql, prepare-release, scan]
+    needs: [archetypes, codeql, prepare-release, scan, create_fosstars_report]
     name: Create Draft Release
     permissions:
       contents: write
@@ -415,6 +430,7 @@ jobs:
         codeql,
         create-release,
         scan,
+        create_fosstars_report,
       ]
     if: ${{ failure() }}
     steps:
