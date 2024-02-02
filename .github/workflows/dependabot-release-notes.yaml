@@ -66,6 +66,8 @@ jobs:
             echo "[DEBUG] Found changed POM: $POM_PATH"
             python ./.pipeline/scripts/dependabot-release-notes.py --pr-body-file "${{ env.PR_BODY_FILE }}" --pom "$POM_PATH"
           done
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: "Push Release Notes Updates"
         if: ${{ env.PR_NUMBER != '' }}
