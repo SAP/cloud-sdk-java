@@ -1,6 +1,7 @@
 import argparse
 import re
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from typing import ClassVar, Optional
 from unittest import TestCase
@@ -28,6 +29,24 @@ class DependencyUpdate:
     artifact_id: str
     old_version: str
     new_version: str
+
+
+class DependencyScope(Enum):
+    COMPILE = "compile"
+    PROVIDED = "provided"
+    RUNTIME = "runtime"
+    TEST = "test"
+    SYSTEM = "system"
+    IMPORT = "import"
+
+    @classmethod
+    def of(cls, raw: str) -> "DependencyScope":
+        raw = raw.strip().lower()
+        for scope in cls:
+            if scope.value.lower() == raw:
+                return scope
+
+        raise Exception(f"Unknown dependency scope: '{raw}'.")
 
 
 # Expected PR Body Format:
@@ -81,7 +100,8 @@ class PrBodyParser:
                 f"Dependabot table row has unexpected format. "
                 f"Expected to find 3 columns (separated by '|') in '{row}'.")
 
-        group_and_artifact_id: Optional[tuple[str, str]] = PrBodyParser._extract_dependency_group_and_artifact(items[1].strip())
+        group_and_artifact_id: Optional[tuple[str, str]] = PrBodyParser._extract_dependency_group_and_artifact(
+            items[1].strip())
         if group_and_artifact_id is None:
             return None
 
@@ -113,6 +133,175 @@ class PrBodyParser:
             raw = raw[:-1]
 
         return raw
+
+
+class PomFileParser:
+
+    def __init__(self, file_content: str):
+        lines: list[str] = file_content.splitlines()
+        management_section: Optional[range] = PomFileParser._find_dependency_management(lines)
+        dependencies_section: Optional[range] = PomFileParser._find_dependencies(lines, management_section)
+
+        self._management_section: list[str] = []
+        if management_section is not None:
+            self._management_section = lines[management_section.start:management_section.stop]
+
+        self._dependencies_section: list[str] = []
+        if dependencies_section is not None:
+            self._dependencies_section = lines[dependencies_section.start:dependencies_section.stop]
+
+    @staticmethod
+    def _find_dependency_management(lines: list[str]) -> Optional[range]:
+        start_line: str = "<dependencyManagement>".lower()
+        end_line: str = "</dependencyManagement>".lower()
+
+        start: int = -1
+        for i, line in enumerate(lines):
+            if line.strip().lower() == start_line:
+                start = i + 1  # we want to exclude the start line
+                break
+
+        if start < 0:
+            return None
+
+        end: int = -1
+        for i in range(start, len(lines)):
+            if lines[i].strip().lower() == end_line:
+                end = i
+                break
+
+        if end < 0:
+            raise Exception("Unable to find end of dependency management section.")
+
+        return range(start, end)
+
+    @staticmethod
+    def _find_dependencies(lines: list[str], management_section: Optional[range]) -> Optional[range]:
+        start_line: str = "<dependencies>".lower()
+        end_line: str = "</dependencies>".lower()
+
+        exclude: range = range(-1, -1) if management_section is None else management_section
+
+        start: int = -1
+        for i, line in enumerate(lines):
+            if i in exclude:
+                continue
+
+            if line.strip().lower() == start_line:
+                start = i + 1  # we want to exclude the start line
+                break
+
+        if start < 0:
+            return None
+
+        end: int = -1
+        for i in range(start, len(lines)):
+            if lines[i].strip().lower() == end_line:
+                end = i
+                break
+
+        if end < 0:
+            raise Exception("Unable to find end of dependencies section.")
+
+        return range(start, end)
+
+    def get_scope(self, update: DependencyUpdate) -> Optional[DependencyScope]:
+        dependency_declaration: Optional[list[str]] = self._find_dependency_declaration(self._dependencies_section,
+                                                                                        update.group_id,
+                                                                                        update.artifact_id)
+        dependency_scope: Optional[DependencyScope] = None
+        if dependency_declaration is not None:
+            dependency_scope = PomFileParser._extract_scope(dependency_declaration)
+
+        if dependency_scope is not None:
+            return dependency_scope
+
+        management_declaration: Optional[list[str]] = self._find_dependency_declaration(self._management_section,
+                                                                                        update.group_id,
+                                                                                        update.artifact_id)
+        management_scope: Optional[DependencyScope] = None
+        if management_declaration is not None:
+            management_scope = PomFileParser._extract_scope(management_declaration)
+
+        if dependency_declaration is None and management_declaration is None:
+            return None
+
+        if management_scope is not None:
+            return management_scope
+
+        return DependencyScope.COMPILE
+
+    @staticmethod
+    def _find_dependency_declaration(lines: list[str], group_id: str, artifact_id: str) -> Optional[list[str]]:
+        expected_group_id: str = f"<groupId>{group_id}</groupId>".lower()
+
+        for i, line in enumerate(lines):
+            actual: str = line.strip().lower()
+            if actual != expected_group_id:
+                continue
+
+            dependency_declaration: Optional[list[str]] = PomFileParser._get_dependency_declaration(lines, i)
+            if dependency_declaration is None:
+                continue
+
+            actual_artifact_id: str = PomFileParser._extract_artifact_id(dependency_declaration)
+            if actual_artifact_id != artifact_id:
+                continue
+
+            return dependency_declaration
+
+        return None
+
+    @staticmethod
+    def _get_dependency_declaration(lines: list[str], group_id_index: int) -> Optional[list[str]]:
+        dependency_start_line: str = "<dependency>".lower()
+        exclusion_start_line: str = "<exclusion>".lower()
+        dependency_end_line: str = "</dependency>".lower()
+
+        start: int = -1
+        for i in range(group_id_index, -1, -1):  # the end index is EXCLUDED
+            actual: str = lines[i].strip().lower()
+            if actual == dependency_start_line:
+                start = i + 1  # we want to include the dependency start line
+                break
+
+            if actual == exclusion_start_line:
+                return None
+
+        if start < 0:
+            return None
+
+        end: int = -1
+        for i in range(group_id_index, len(lines)):
+            actual: str = lines[i].strip().lower()
+            if actual == dependency_end_line:
+                end = i
+                break
+
+        if end <= start:
+            raise Exception("Unable to find end of dependency declaration.")
+
+        return lines[start:end]
+
+    @staticmethod
+    def _extract_artifact_id(lines: list[str]) -> str:
+        pattern: re.Pattern = re.compile(r"^\s*<artifactId>([^<]+)</artifactId>\s*$", re.IGNORECASE)
+        for line in lines:
+            match: re.Match = pattern.match(line)
+            if match:
+                return match.group(1)
+
+        raise Exception("Unable to find the artifact id in the dependency declaration.")
+
+    @staticmethod
+    def _extract_scope(lines: list[str]) -> Optional[DependencyScope]:
+        pattern: re.Pattern = re.compile(r"^\s*<scope>([^<]+)</scope>\s*$", re.IGNORECASE)
+        for line in lines:
+            match: re.Match = pattern.match(line)
+            if match:
+                return DependencyScope.of(match.group(1))
+
+        return None
 
 
 # Expected format of the Release Notes:
@@ -292,6 +481,22 @@ class ReleaseNotesUpdater:
         return "\n".join(new_lines)
 
 
+def filter_updates(updates: list[DependencyUpdate], pom: PomFileParser) -> list[DependencyUpdate]:
+    result: list[DependencyUpdate] = []
+
+    for update in updates:
+        scope: Optional[DependencyScope] = pom.get_scope(update)
+        if scope is None:
+            continue
+
+        if scope == DependencyScope.TEST or scope == DependencyScope.SYSTEM:
+            continue
+
+        result.append(update)
+
+    return result
+
+
 def merge_updates(old_updates: list[DependencyUpdate], new_updates: list[DependencyUpdate]) -> list[DependencyUpdate]:
     result: list[DependencyUpdate] = []
     included_names: set[str] = set()
@@ -322,6 +527,9 @@ def main():
     parser.add_argument("--pr-body",
                         help="File that contains the PR body.",
                         required=True)
+    parser.add_argument("--pom",
+                        help="Path to the 'pom.xml' file that (might) contain the dependency scopes.",
+                        required=True)
     parser.add_argument("--release-notes",
                         help="Path to our 'release_notes.md' file.",
                         default="release_notes.md",
@@ -335,6 +543,13 @@ def main():
 
     pr_body: str = pr_body_file.read_text()
 
+    pom_file: Path = Path(args.pom)
+    if not pom_file.is_file():
+        raise Exception(f"'{args.pom}' does not exist.")
+
+    pom_content: str = pom_file.read_text()
+    pom: PomFileParser = PomFileParser(pom_content)
+
     release_notes_file: Path = Path(args.release_notes)
     if not release_notes_file.is_file():
         raise Exception(f"'{args.release_notes}' does not exist.")
@@ -342,6 +557,7 @@ def main():
     old_release_notes: str = release_notes_file.read_text()
 
     new_updates: list[DependencyUpdate] = PrBodyParser.parse(pr_body)
+    new_updates = filter_updates(new_updates, pom)
     if len(new_updates) < 1:
         print(f"There seem to be no dependency updates.")
         exit(0)
@@ -419,6 +635,199 @@ Updates `org.assertj:assertj-core` from 3.25.1 to 3.25.2"""
 
         self.assertEqual(DependencyUpdate("plain.group.id", "artifact-id", "first-old", "first-new"), updates[0])
         self.assertEqual(DependencyUpdate("linked.group.id", "artifact-id", "second-old", "second-new"), updates[1])
+
+
+class PomFileParserTest(TestCase):
+
+    def test_get_scope_from_dependency_only_with_explicit_scope(self):
+        data = """
+<dependencies>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+        <version>2.3.4</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.TEST, scope)
+
+    def test_get_scope_from_dependency_only_with_implicit_scope(self):
+        data = """
+<dependencies>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+        <version>2.3.4</version>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.COMPILE, scope)
+
+    def test_get_scope_from_dependency_management_only_with_explicit_scope(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>some.group</groupId>
+            <artifactId>some-artifact</artifactId>
+            <version>2.3.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.TEST, scope)
+
+    def test_get_scope_from_dependency_management_only_with_implicit_scope(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>some.group</groupId>
+            <artifactId>some-artifact</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.COMPILE, scope)
+
+    def test_get_scope_from_dependency_management_and_dependencies_with_explicit_scope_01(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>some.group</groupId>
+            <artifactId>some-artifact</artifactId>
+            <version>2.3.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.TEST, scope)
+
+    def test_get_scope_from_dependency_management_and_dependencies_with_explicit_scope_02(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>some.group</groupId>
+            <artifactId>some-artifact</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.TEST, scope)
+
+    def test_get_scope_from_dependency_management_and_dependencies_with_implicit_scope(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>some.group</groupId>
+            <artifactId>some-artifact</artifactId>
+            <version>2.3.4</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: DependencyScope = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.COMPILE, scope)
+
+    def test_get_scope_but_no_dependency_declaration(self):
+        data = """
+<dependencyManagement>
+    <dependencies>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: Optional[DependencyScope] = parser.get_scope(update)
+
+        self.assertIsNone(scope)
+
+    def test_get_scope_with_exclusion_present(self):
+        data = """
+<dependencies>
+    <dependency>
+        <groupId>foo.group</groupId>
+        <artifactId>foo-artifacts</artifactId>
+        <version>foo.bar.baz</version>
+        <exclusions>
+            <exclusion>
+                <groupId>some.group</groupId>
+                <artifactId>some-artifact</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>some.group</groupId>
+        <artifactId>some-artifact</artifactId>
+        <version>2.3.4</version>
+    </dependency>
+</dependencies>"""
+
+        parser: PomFileParser = PomFileParser(data)
+        update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        scope: Optional[DependencyScope] = parser.get_scope(update)
+
+        self.assertEqual(DependencyScope.COMPILE, scope)
 
 
 class ReleaseNotesParserTest(TestCase):

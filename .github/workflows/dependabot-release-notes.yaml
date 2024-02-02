@@ -59,7 +59,13 @@ jobs:
       - name: "Run Python Script"
         if: ${{ env.PR_NUMBER != '' }}
         run: |
-          python ./.pipeline/scripts/dependabot-release-notes.py --pr-body-file "${{ env.PR_BODY_FILE }}"
+          CHANGED_FILES=$(gh pr view ${{ env.PR_NUMBER }} --repo ${{ github.repository }} --json files)
+          CHANGED_POMS=$(jq -r '.files.[] | select(.path | endswith("pom.xml")) | .path' <<< "$CHANGED_FILES")
+          
+          for POM_PATH in "${CHANGED_POMS[@]}"; do
+            echo "[DEBUG] Found changed POM: $POM_PATH"
+            python ./.pipeline/scripts/dependabot-release-notes.py --pr-body-file "${{ env.PR_BODY_FILE }}" --pom "$POM_PATH"
+          done
 
       - name: "Push Release Notes Updates"
         if: ${{ env.PR_NUMBER != '' }}
