@@ -421,7 +421,7 @@ class ReleaseNotesUpdater:
         rows: list[str] = []
 
         for update in updates:
-            search_link: str = f"https://search.maven.org/search?q=g:{update.group_id}%20AND%20a:%20{update.artifact_id}"
+            search_link: str = f"https://search.maven.org/search?q=g%3A{update.group_id}%2Ba%3A{update.artifact_id}"
             rows.append(
                 f"| [{update.artifact_id}]({search_link}) (`{update.group_id}`) | `{update.old_version}` | `{update.new_version}` |")
 
@@ -459,7 +459,7 @@ class ReleaseNotesUpdater:
         if start_and_end is None:
             return None
 
-        new_lines: list[str] = old_lines[0:start_and_end[1]] + [""] + updated_lines + old_lines[start_and_end[1]:]
+        new_lines: list[str] = old_lines[0:start_and_end[1]] + [""] + updated_lines + [""] + old_lines[start_and_end[1]:]
         return "\n".join(new_lines)
 
     @staticmethod
@@ -482,7 +482,7 @@ class ReleaseNotesUpdater:
 
     @staticmethod
     def _add_improvements_section(old_lines: list[str], updated_lines: list[str]) -> str:
-        new_lines: list[str] = old_lines + ["", "### 📈 Improvements", ""] + updated_lines
+        new_lines: list[str] = old_lines + ["", "### 📈 Improvements", ""] + updated_lines + [""]
         return "\n".join(new_lines)
 
 
@@ -901,8 +901,7 @@ class ReleaseNotesUpdaterTest(TestCase):
 | --- | --- | --- |
 | [artifact-id](https://foo.bar) (`group.id`) | `from` | `to` |
 
-</details>
-"""
+</details>"""
 
         updates: list[DependencyUpdate] = [DependencyUpdate("new.group.id", "new-artifact-id", "new-from", "new-to")]
         result: str = ReleaseNotesUpdater.update(data, updates)
@@ -917,7 +916,7 @@ class ReleaseNotesUpdaterTest(TestCase):
 
 | Dependency | From | To |
 | --- | --- | --- |
-| [new-artifact-id](https://search.maven.org/search?q=g:new.group.id%20AND%20a:%20new-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
+| [new-artifact-id](https://search.maven.org/search?q=g%3Anew.group.id%2Ba%3Anew-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
 
 </details>""")
 
@@ -942,9 +941,10 @@ class ReleaseNotesUpdaterTest(TestCase):
 
 | Dependency | From | To |
 | --- | --- | --- |
-| [new-artifact-id](https://search.maven.org/search?q=g:new.group.id%20AND%20a:%20new-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
+| [new-artifact-id](https://search.maven.org/search?q=g%3Anew.group.id%2Ba%3Anew-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
 
-</details>""")
+</details>
+""")
 
     def test_update_but_no_improvements_section(self):
         data = """
@@ -966,6 +966,7 @@ class ReleaseNotesUpdaterTest(TestCase):
 
 | Dependency | From | To |
 | --- | --- | --- |
-| [new-artifact-id](https://search.maven.org/search?q=g:new.group.id%20AND%20a:%20new-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
+| [new-artifact-id](https://search.maven.org/search?q=g%3Anew.group.id%2Ba%3Anew-artifact-id) (`new.group.id`) | `new-from` | `new-to` |
 
-</details>""")
+</details>
+""")
