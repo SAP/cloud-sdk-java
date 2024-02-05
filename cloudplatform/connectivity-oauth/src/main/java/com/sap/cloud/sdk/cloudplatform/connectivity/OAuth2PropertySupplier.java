@@ -28,27 +28,16 @@ public interface OAuth2PropertySupplier
 {
     /**
      * A default implementation of the {@link OAuth2ServiceEndpointsProvider} interface that provides convenient access
-     * to the default endpoints of either the XSUAA or the IAS service.
+     * to the default endpoints of the XSUAA service.
      *
      * @since 5.2.1
      */
     @Value
     class DefaultTokenEndpoints implements OAuth2ServiceEndpointsProvider
     {
-        private static class Xsuaa
-        {
-            private static final String TOKEN_PATH = "/oauth/token";
-            private static final String AUTHORIZE_PATH = "/oauth/authorize";
-            private static final String KEYSET_PATH = "/token_keys";
-        }
-
-        private static class Ias
-        {
-            private static final String TOKEN_PATH = "/oauth2/token";
-            private static final String AUTHORIZE_PATH = "/oauth2/authorize";
-            // TODO: is this actually correct?
-            private static final String KEYSET_PATH = "/token_keys";
-        }
+        private static final String TOKEN_PATH = "/oauth/token";
+        private static final String AUTHORIZE_PATH = "/oauth/authorize";
+        private static final String KEYSET_PATH = "/token_keys";
 
         @Nonnull
         URI tokenEndpoint;
@@ -70,26 +59,9 @@ public interface OAuth2PropertySupplier
         @Nonnull
         static OAuth2ServiceEndpointsProvider forXsuaa( @Nonnull final URI baseUri )
         {
-            final URI tokenEndpoint = expandPath(baseUri, Xsuaa.TOKEN_PATH);
-            final URI authorizeEndpoint = expandPath(baseUri, Xsuaa.AUTHORIZE_PATH);
-            final URI jwksUri = expandPath(baseUri, Xsuaa.KEYSET_PATH);
-            return new DefaultTokenEndpoints(tokenEndpoint, authorizeEndpoint, jwksUri);
-        }
-
-        /**
-         * Returns a new {@link OAuth2ServiceEndpointsProvider} that points to the default IAS endpoints, based on the
-         * provided {@code baseUri}.
-         *
-         * @param baseUri
-         *            The token service uri.
-         * @return A new {@link OAuth2ServiceEndpointsProvider}.
-         */
-        @Nonnull
-        static OAuth2ServiceEndpointsProvider forIas( @Nonnull final URI baseUri )
-        {
-            final URI tokenEndpoint = expandPath(baseUri, Ias.TOKEN_PATH);
-            final URI authorizeEndpoint = expandPath(baseUri, Ias.AUTHORIZE_PATH);
-            final URI jwksUri = expandPath(baseUri, Ias.KEYSET_PATH);
+            final URI tokenEndpoint = expandPath(baseUri, TOKEN_PATH);
+            final URI authorizeEndpoint = expandPath(baseUri, AUTHORIZE_PATH);
+            final URI jwksUri = expandPath(baseUri, KEYSET_PATH);
             return new DefaultTokenEndpoints(tokenEndpoint, authorizeEndpoint, jwksUri);
         }
     }

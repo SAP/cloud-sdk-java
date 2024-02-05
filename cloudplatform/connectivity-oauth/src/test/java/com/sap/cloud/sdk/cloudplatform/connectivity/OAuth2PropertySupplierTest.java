@@ -21,15 +21,4 @@ class OAuth2PropertySupplierTest
         assertThat(sut.getAuthorizeEndpoint()).hasToString("https://foo.bar/baz/oauth/authorize");
         assertThat(sut.getJwksUri()).hasToString("https://foo.bar/baz/token_keys");
     }
-
-    @Test
-    void testIasTokenEndpoints()
-    {
-        final OAuth2ServiceEndpointsProvider sut =
-            OAuth2PropertySupplier.DefaultTokenEndpoints.forIas(URI.create("https://foo.bar/baz"));
-
-        assertThat(sut.getTokenEndpoint()).hasToString("https://foo.bar/baz/oauth2/token");
-        assertThat(sut.getAuthorizeEndpoint()).hasToString("https://foo.bar/baz/oauth2/authorize");
-        assertThat(sut.getJwksUri()).hasToString("https://foo.bar/baz/token_keys");
-    }
 }

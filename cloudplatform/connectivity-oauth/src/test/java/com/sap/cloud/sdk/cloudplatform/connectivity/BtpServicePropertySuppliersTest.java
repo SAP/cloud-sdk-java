@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 import java.lang.reflect.Modifier;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.CredentialType;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 
 import io.vavr.control.Try;
 
@@ -300,7 +300,7 @@ class BtpServicePropertySuppliersTest
         }
 
         @Test
-        void testTokenUriWithoutTenantThrows()
+        void testTokenUriWithoutTenantUsesUrlCredential()
         {
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions.forService(binding).build();
@@ -309,8 +309,7 @@ class BtpServicePropertySuppliersTest
             assertThat(sut).isNotNull();
 
             assertThat(TenantAccessor.tryGetCurrentTenant().isFailure()).isTrue(); // sanity: there is no current tenant
-            // TODO: should we fallback to the provider tenant id instead of throwing an exception?
-            assertThatThrownBy(sut::getTokenUri).isExactlyInstanceOf(DestinationAccessException.class);
+            assertThat(sut.getTokenUri()).hasToString("https://provider.ias.domain.com");
         }
 
         @Test
@@ -321,12 +320,30 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
             assertThat(sut).isNotNull();
+            final OAuth2ServiceEndpointsProvider endpoints = sut.getTokenEndpoints();
 
-            TenantAccessor.executeWithTenant(new DefaultTenant("a", "tenant-a"), () -> {
-                final URI expectedUri = URI.create("https://tenant-a.ias.domain.com");
-                assertThat(sut.getTokenEndpoints())
-                    .isEqualTo(OAuth2PropertySupplier.DefaultTokenEndpoints.forIas(expectedUri));
-            });
+            // no tenant = provider test
+            assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
+
+            assertThat(endpoints.getTokenEndpoint()).hasToString("https://provider.ias.domain.com/oauth2/token");
+            assertThat(endpoints.getAuthorizeEndpoint())
+                .hasToString("https://provider.ias.domain.com/oauth2/authorize");
+            assertThat(endpoints.getJwksUri()).hasToString("https://provider.ias.domain.com/token_keys");
+            final int noTenantHashCode = endpoints.hashCode();
+
+            // explicit tenant
+            final Integer tenantHashCode =
+                TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
+                    assertThat(endpoints.getTokenEndpoint())
+                        .hasToString("https://subscriber.ias.domain.com/oauth2/token");
+                    assertThat(endpoints.getAuthorizeEndpoint())
+                        .hasToString("https://subscriber.ias.domain.com/oauth2/authorize");
+                    assertThat(endpoints.getJwksUri()).hasToString("https://subscriber.ias.domain.com/token_keys");
+
+                    return endpoints.hashCode();
+                });
+
+            assertThat(noTenantHashCode).isNotEqualTo(tenantHashCode);
         }
 
         // The `credential-type: X509_GENERATED` is taken from one of our E2E tests (`scp-cf-spring-ias-java-17`) - so

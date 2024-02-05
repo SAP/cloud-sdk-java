@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +22,8 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceEndpointsProvider;
 
-import io.vavr.control.Try;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 class BtpServicePropertySuppliers
 {
@@ -133,33 +135,58 @@ class BtpServicePropertySuppliers
         @Override
         public URI getTokenUri()
         {
+            final URI providerUrl = getCredentialOrThrow(URI.class, "url");
             final String domain = getCredentialOrThrow(String.class, "domain");
 
-            final Try<URI> maybeTokenUri =
-                TenantAccessor
-                    .tryGetCurrentTenant()
-                    .filter(TenantWithSubdomain.class::isInstance)
-                    .map(TenantWithSubdomain.class::cast)
-                    .map(TenantWithSubdomain::getSubdomain)
-                    // TODO: this somewhat feels very fragile. Is there a better way?
-                    .map(subdomain -> "https://" + subdomain + "." + domain)
-                    .map(URI::create);
-
-            if( maybeTokenUri.isSuccess() ) {
-                return maybeTokenUri.get();
-            }
-
-            throw new DestinationAccessException(
-                null,
-                "Unable to determine the IAS token URI.",
-                maybeTokenUri.getCause());
+            return TenantAccessor
+                .tryGetCurrentTenant()
+                .filter(TenantWithSubdomain.class::isInstance)
+                .map(TenantWithSubdomain.class::cast)
+                .map(TenantWithSubdomain::getSubdomain)
+                // TODO: this somewhat feels very fragile. Is there a better way?
+                .map(subdomain -> providerUrl.getScheme() + "://" + subdomain + "." + domain)
+                .map(URI::create)
+                .getOrElse(providerUrl);
         }
 
         @Nonnull
         @Override
         public OAuth2ServiceEndpointsProvider getTokenEndpoints()
         {
-            return DefaultTokenEndpoints.forIas(getTokenUri());
+            return new Endpoints(this::getTokenUri);
+        }
+
+        @RequiredArgsConstructor
+        @EqualsAndHashCode( doNotUseGetters = true )
+        private static class Endpoints implements OAuth2ServiceEndpointsProvider
+        {
+            @Nonnull
+            private final Supplier<URI> baseUriSupplier;
+
+            @Nonnull
+            @EqualsAndHashCode.Include
+            private URI getBaseUri()
+            {
+                return baseUriSupplier.get();
+            }
+
+            @Override
+            public URI getTokenEndpoint()
+            {
+                return getBaseUri().resolve("/oauth2/token");
+            }
+
+            @Override
+            public URI getAuthorizeEndpoint()
+            {
+                return getBaseUri().resolve("/oauth2/authorize");
+            }
+
+            @Override
+            public URI getJwksUri()
+            {
+                return getBaseUri().resolve("/token_keys");
+            }
         }
     }
 }
