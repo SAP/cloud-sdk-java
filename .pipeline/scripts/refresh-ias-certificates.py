@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import subprocess
+from dataclasses import dataclass
 
-
+@dataclass
 class Binding:
-    def __init__(self, app_name, service_name, app_identifier):
-        self.app_name = app_name
-        self.service_name = service_name
-        self.app_identifier = app_identifier
+    app_name: str
+    service_name: str
+    app_identifier: str
 
 # This script is used to refresh the IAS certificates for the following service bindings:
 bindings = [
