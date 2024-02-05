@@ -159,7 +159,13 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 log.debug(msg, identifier, destinationToBeProxied.get());
 
                 final HttpDestination dest =
-                    toProxiedDestination(destinationToBeProxied.get(), serviceUri, tokenUri, clientIdentity, behalfOf);
+                    toProxiedDestination(
+                        destinationToBeProxied.get(),
+                        serviceUri,
+                        tokenUri,
+                        clientIdentity,
+                        behalfOf,
+                        identifier);
                 return Try.success(dest);
             }
 
@@ -213,8 +219,16 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
         log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
+        final OAuth2Service.TenantPropagationStrategy tenantPropagationStrategy =
+            OAuth2Service.TenantPropagationStrategy.fromServiceIdentifier(serviceIdentifier);
+
         final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION);
+            createHeaderProvider(
+                tokenUri,
+                clientIdentity,
+                behalf,
+                HttpHeaders.AUTHORIZATION,
+                tenantPropagationStrategy);
         // use a hash code of the client id to not unnecessarily expose the client id
         // (as the destination name is included in the toString() method of the destination
         // this should be optional, as the client id is technically not a secret, but using a hash here doesn't hurt
@@ -231,10 +245,18 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final URI proxyUrl,
         @Nonnull final URI tokenUrl,
         @Nonnull final ClientIdentity clientIdentity,
-        @Nonnull final OnBehalfOf behalf )
+        @Nonnull final OnBehalfOf behalf,
+        @Nullable final ServiceIdentifier serviceIdentifier )
     {
+        final OAuth2Service.TenantPropagationStrategy tenantPropagationStrategy =
+            OAuth2Service.TenantPropagationStrategy.fromServiceIdentifier(serviceIdentifier);
         final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUrl, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION);
+            createHeaderProvider(
+                tokenUrl,
+                clientIdentity,
+                behalf,
+                HttpHeaders.PROXY_AUTHORIZATION,
+                tenantPropagationStrategy);
 
         return DefaultHttpDestination
             .fromDestination(destinationToBeProxied)
@@ -247,11 +269,13 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final URI tokenUrl,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
-        @Nonnull final String authHeader )
+        @Nonnull final String authHeader,
+        @Nonnull final OAuth2Service.TenantPropagationStrategy tenantPropagationStrategy )
     {
         log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
 
-        final OAuth2Service oAuth2Service = new OAuth2Service(tokenUrl.toString(), clientIdentity, behalf);
+        final OAuth2Service oAuth2Service =
+            new OAuth2Service(tokenUrl.toString(), clientIdentity, behalf, tenantPropagationStrategy);
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }
 }

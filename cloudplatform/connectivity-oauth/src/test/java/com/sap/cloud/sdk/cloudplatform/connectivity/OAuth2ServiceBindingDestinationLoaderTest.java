@@ -354,7 +354,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
         when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
 
         sut = spy(new OAuth2ServiceBindingDestinationLoader());
-        doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any());
+        doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any(), any());
 
         final HttpDestination result =
             sut
@@ -363,7 +363,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     proxyUrl,
                     tokenUrl,
                     credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
+                    TEST_SERVICE);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
         assertThat(result)
@@ -379,7 +380,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     proxyUrl,
                     tokenUrl,
                     credentials,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
+                    TEST_SERVICE);
 
         assertThat(secondInvocationResult)
             .as("There should not be a cache in place for proxied destinations.")
@@ -393,7 +395,8 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 eq(tokenUrl),
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
-                eq(HttpHeaders.PROXY_AUTHORIZATION));
+                eq(HttpHeaders.PROXY_AUTHORIZATION),
+                eq(OAuth2Service.TenantPropagationStrategy.XSUAA_ZID_HEADER));
     }
 
     @Test

@@ -9,6 +9,7 @@ import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 import java.net.URI;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,7 +17,9 @@ import javax.annotation.Nullable;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -27,6 +30,7 @@ import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedException;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.token.Token;
@@ -73,14 +77,25 @@ class OAuth2Service
     private final OAuth2ServiceEndpointsProvider endpoints;
     private final ClientIdentity identity;
     private final OnBehalfOf onBehalfOf;
+    private final TenantPropagationStrategy tenantPropagationStrategy;
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfig;
 
     OAuth2Service( final String uri, final ClientIdentity identity, final OnBehalfOf onBehalfOf )
     {
+        this(uri, identity, onBehalfOf, TenantPropagationStrategy.XSUAA_ZID_HEADER);
+    }
+
+    OAuth2Service(
+        @Nonnull final String uri,
+        @Nonnull final ClientIdentity identity,
+        @Nonnull final OnBehalfOf onBehalfOf,
+        @Nonnull final TenantPropagationStrategy tenantPropagationStrategy )
+    {
         endpoints = Endpoints.fromBaseUri(URI.create(uri));
         this.identity = identity;
         this.onBehalfOf = onBehalfOf;
+        this.tenantPropagationStrategy = tenantPropagationStrategy;
         /*
          * Reasoning for always using ResilienceIsolationMode.TENANT_OPTIONAL, regardless of onBehalfOf:
          * - for TECHNICAL_USER_CURRENT_TENANT this is trivially correct
@@ -94,6 +109,7 @@ class OAuth2Service
                 .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
                 .timeLimiterConfiguration(
                     ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TOKEN_RETRIEVAL_TIMEOUT));
+
     }
 
     static void clearCache()
@@ -122,12 +138,12 @@ class OAuth2Service
                     return executeClientCredentialsFlow(null);
 
                 case TECHNICAL_USER_CURRENT_TENANT:
-                    final String zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
-                    if( zoneId == null ) {
+                    final Tenant tenant = TenantAccessor.tryGetCurrentTenant().getOrNull();
+                    if( tenant == null ) {
                         log.debug("No current tenant/zone available.");
                         log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
                     }
-                    return executeClientCredentialsFlow(zoneId);
+                    return executeClientCredentialsFlow(tenant);
 
                 case NAMED_USER_CURRENT_TENANT:
                     return executeUserExchangeFlow();
@@ -153,11 +169,19 @@ class OAuth2Service
     }
 
     @Nullable
-    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final String zoneId )
+    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final Tenant tenant )
     {
+        final String zoneId = tenant != null ? tenant.getTenantId() : null;
         final ClientCredentialsTokenFlow flow = getTokenFlowFactory(zoneId).clientCredentialsTokenFlow();
-        if( zoneId != null ) {
-            flow.zoneId(zoneId);
+        switch( tenantPropagationStrategy ) {
+            case XSUAA_ZID_HEADER -> {
+                if( zoneId != null ) {
+                    flow.zoneId(zoneId);
+                }
+            }
+            case IAS_SUBDOMAIN -> attachSubdomain(tenant, flow::subdomain);
+            default -> throw new DestinationAccessException(
+                "Unknown tenant propagation strategy: " + tenantPropagationStrategy);
         }
 
         return Try
@@ -169,7 +193,7 @@ class OAuth2Service
     private OAuth2TokenResponse executeUserExchangeFlow()
     {
         final Try<DecodedJWT> maybeToken = AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt);
-        final Try<String> maybeTenant = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId);
+        final Try<Tenant> maybeTenant = TenantAccessor.tryGetCurrentTenant();
 
         if( maybeToken.isFailure() ) {
             throw new CloudPlatformException("Failed to get the current user token.", maybeToken.getCause());
@@ -183,7 +207,7 @@ class OAuth2Service
                 Proceeding with tenant {} defined in the current token.\
                 """, token.getAppTid());
             log.debug("The following token is used for the JwtBearerTokenFlow: {}", token);
-        } else if( !maybeTenant.get().equals(token.getAppTid()) ) {
+        } else if( !maybeTenant.get().getTenantId().equals(token.getAppTid()) ) {
             throw new CloudPlatformException(
                 "Unexpected state: Auth Token and tenant of the current context have different tenant IDs."
                     + "AuthTokenAccessor returned a token containing tenant ID "
@@ -195,17 +219,52 @@ class OAuth2Service
         final JwtBearerTokenFlow flow = getTokenFlowFactory(token.getAppTid()).jwtBearerTokenFlow();
         flow.token(token);
 
+        if( tenantPropagationStrategy == TenantPropagationStrategy.IAS_SUBDOMAIN ) {
+            attachSubdomain(maybeTenant.getOrNull(), flow::subdomain);
+        }
+
         return Try
             .of(flow::execute)
             .getOrElseThrow(e -> new TokenRequestFailedException("Failed to resolve access token.", e));
+    }
+
+    private void attachSubdomain( @Nullable final Tenant tenant, @Nonnull final Consumer<String> subdomainSetter )
+    {
+        if( tenant == null ) {
+            return;
+        }
+
+        if( !(tenant instanceof TenantWithSubdomain) ) {
+            throw new DestinationAccessException("Tenant is not a subdomain tenant: " + tenant);
+        }
+
+        final String subdomain = ((TenantWithSubdomain) tenant).getSubdomain();
+        if( subdomain == null ) {
+            throw new DestinationAccessException("Subdomain is null for tenant: " + tenant);
+        }
+
+        subdomainSetter.accept(subdomain);
+    }
+
+    enum TenantPropagationStrategy
+    {
+        XSUAA_ZID_HEADER,
+        IAS_SUBDOMAIN;
+
+        static TenantPropagationStrategy fromServiceIdentifier( @Nullable final ServiceIdentifier identifier )
+        {
+            if( ServiceBindingLibWorkarounds.IAS_IDENTIFIER.equals(identifier) ) {
+                return IAS_SUBDOMAIN;
+            }
+
+            return XSUAA_ZID_HEADER;
+        }
     }
 
     @Value
     static class Endpoints implements OAuth2ServiceEndpointsProvider
     {
         private static final String TOKEN_PATH = "/oauth/token";
-        private static final String AUTHORIZE_PATH = "/oauth/authorize";
-        private static final String KEYSET_PATH = "/token_keys";
 
         @Nonnull
         URI tokenEndpoint;
@@ -219,10 +278,14 @@ class OAuth2Service
         @Nonnull
         static Endpoints fromBaseUri( final URI baseUri )
         {
-            final URI tokenEndpoint = expandPath(baseUri, TOKEN_PATH);
-            final URI authorizeEndpoint = expandPath(baseUri, AUTHORIZE_PATH);
-            final URI jwksUri = expandPath(baseUri, KEYSET_PATH);
-            return new Endpoints(tokenEndpoint, authorizeEndpoint, jwksUri);
+            final URI tokenEndpoint;
+            if( baseUri.getPath() == null || baseUri.getPath().isBlank() ) {
+                tokenEndpoint = expandPath(baseUri, TOKEN_PATH);
+            } else {
+                tokenEndpoint = baseUri;
+            }
+
+            return new Endpoints(tokenEndpoint, null, null);
         }
     }
 }
