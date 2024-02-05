@@ -7,18 +7,21 @@ from typing import ClassVar, Optional
 from unittest import TestCase
 
 _MARKDOWN_LINK_PATTERN: re.Pattern = re.compile(r"^\[([^]]+)]\(([^)]+)\)$")
+_MAVEN_ARTIFACT_PATTERN: re.Pattern = re.compile(r"^([a-zA-Z][a-zA-Z0-9._\-]*):([a-zA-Z][a-zA-Z0-9._\-]*)$")
 
 
-def parse_markdown_link(value: str) -> tuple[str, str]:
-    """
-    Extracts the text and the hyperlink from the provided markdown link.
-    :param value: The raw markdown link in the form of "`[text](link)`".
-    :return: The text and the link from the markdown link.
-    """
-
+def parse_markdown_link(value: str) -> Optional[tuple[str, str]]:
     match: re.Match = _MARKDOWN_LINK_PATTERN.match(value.strip())
     if not match:
-        raise Exception(f"'{value}' is not a valid markdown link.")
+        return None
+
+    return match.group(1), match.group(2)
+
+
+def parse_maven_artifact(value: str) -> Optional[tuple[str, str]]:
+    match: re.Match = _MAVEN_ARTIFACT_PATTERN.match(value.strip())
+    if not match:
+        return None
 
     return match.group(1), match.group(2)
 
@@ -112,17 +115,16 @@ class PrBodyParser:
 
     @staticmethod
     def _extract_dependency_group_and_artifact(raw: str) -> Optional[tuple[str, str]]:
-        link_match: re.Match = _MARKDOWN_LINK_PATTERN.match(raw.strip())
-        if link_match:
-            full_name: str = link_match.group(1)
-        else:
-            full_name: str = raw
+        link_match: Optional[tuple[str, str]] = parse_markdown_link(raw)
+        full_name: str = raw
+        if link_match is not None:
+            full_name = link_match[0]
 
-        items: list[str] = full_name.split(":")
-        if len(items) != 2:
+        group_and_artifact: Optional[tuple[str, str]] = parse_maven_artifact(full_name)
+        if group_and_artifact is None:
             return None
 
-        return items[0], items[1]
+        return group_and_artifact[0], group_and_artifact[1]
 
     @staticmethod
     def _extract_version(raw: str) -> str:
@@ -367,13 +369,16 @@ class ReleaseNotesParser:
         if len(items) != 2:
             raise Exception(f"Expected to find occurrences of ' ' in '{cell}', but found {len(items)} instead.")
 
-        artifact_id, _ = parse_markdown_link(items[0].strip())
+        link_match: Optional[tuple[str, str]] = parse_markdown_link(items[0].strip())
+        if link_match is None:
+            raise Exception(f"Release note cell ('{cell}') does not contain the group and artifact id in the expected "
+                            f"format.")
 
         group_id_match: re.Match = ReleaseNotesParser._GROUP_ID_PATTERN.match(items[1].strip())
         if not group_id_match:
             raise Exception(f"Unable to extract the group id from '{cell}'.")
 
-        return artifact_id, group_id_match.group(1)
+        return link_match[0], group_id_match.group(1)
 
     @staticmethod
     def _extract_version(cell: str) -> str:
@@ -607,12 +612,7 @@ Bumps the github-actions group with 7 updates:
 | Package | From | To |
 | --- | --- | --- |
 | [actions/checkout](https://github.com/actions/checkout) | `3` | `4` |
-| [actions/setup-java](https://github.com/actions/setup-java) | `3` | `4` |
-| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `3` | `4` |
-| [actions/cache](https://github.com/actions/cache) | `3` | `4` |
-| [actions/download-artifact](https://github.com/actions/download-artifact) | `3` | `4` |
-| [github/codeql-action](https://github.com/github/codeql-action) | `2` | `3` |
-| [fsfe/reuse-action](https://github.com/fsfe/reuse-action) | `1.2.0` | `2.0.0` |"""
+| [actions/that.almost.looks:like-a-maven-module](https://github.com/actions/action) | `3` | `4` |"""
 
         updates: list[DependencyUpdate] = PrBodyParser.parse(data)
         self.assertEqual([], updates)
