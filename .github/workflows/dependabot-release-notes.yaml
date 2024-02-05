@@ -76,14 +76,16 @@ jobs:
           CHANGED_FILES="$(git status -s)"
           if [[ -z "$CHANGED_FILES" ]]; then
             echo "[DEBUG] No changes to release_notes.md detected, skipping push."
+            echo "NOTES_CREATED=false" >> $GITHUB_ENV
             exit 0
           fi
 
+          echo "NOTES_CREATED=true" >> $GITHUB_ENV
           git commit -m "chore: add release notes"
           git push
 
       - name: "Add PR Comment"
-        if: ${{ env.PR_NUMBER != '' && github.event_name == 'pull_request' && github.event.action == 'opened' }}
+        if: ${{ env.PR_NUMBER != '' && env.NOTES_CREATED == 'true' && github.event_name == 'pull_request' && github.event.action == 'opened' }}
         run: |
           gh pr comment ${{ needs.context.outputs.pr-number }} --body "Release notes have been created automatically upon opening this PR.
           
