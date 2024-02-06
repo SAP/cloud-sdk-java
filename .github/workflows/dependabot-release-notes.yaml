@@ -69,6 +69,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: "Setup Git"
+        if: ${{ env.PR_NUMBER != '' }}
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
+
       - name: "Push Release Notes Updates"
         if: ${{ env.PR_NUMBER != '' }}
         run: |
