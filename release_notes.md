@@ -30,18 +30,6 @@
   - Update `com.sap.cloud:neo-java-web-api` from `4.67.12` to `4.68.9`
   - Update [`org.apache.httpcomponents.client5:httpclient5`](https://github.com/apache/httpcomponents-client) from `5.3` to `5.3.1`
 
-
-<details><summary>Dependency Updates</summary>
-
-| Dependency | From | To |
-| --- | --- | --- |
-| [jcl-over-slf4j](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Ajcl-over-slf4j) (`org.slf4j`) | `2.0.11` | `2.0.12` |
-| [joda-time](https://search.maven.org/search?q=g%3Ajoda-time%2Ba%3Ajoda-time) (`joda-time`) | `2.12.6` | `2.12.7` |
-| [slf4j-api](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-api) (`org.slf4j`) | `2.0.11` | `2.0.12` |
-| [slf4j-ext](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-ext) (`org.slf4j`) | `2.0.11` | `2.0.12` |
-
-</details>
-
 ### 🐛 Fixed Issues
 
 - 
