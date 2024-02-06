@@ -35,11 +35,11 @@ env:
   RELEASE_ARTIFACT_NAME: "release-artifacts"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
-    ~/.m2/repository/com/sap/cloud/sdk/
+    ~/.m2/repository/com/sap/cloud/sdk/**
     ~/.m2/archetype-catalog.xml
   SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
   SDK_TARGETS_PATH: |
-    ./**/target/
+    ./**/target/**
   DEPENDENCIES_CACHE_KEY: "dependencies"
   DEPENDENCIES_PATH: |
     ~/.m2/repository/**
