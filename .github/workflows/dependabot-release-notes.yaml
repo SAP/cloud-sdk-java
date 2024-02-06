@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ env.PR_BRANCH }}
-          token: ${{ secrets.BOT_SDK_ALL_ACCESS }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
 
       - name: "Run Python Script"
         if: ${{ env.PR_NUMBER != '' }}
