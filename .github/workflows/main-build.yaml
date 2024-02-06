@@ -49,32 +49,17 @@ jobs:
     permissions:
       actions: read # needed to download the artifacts from the ci-build workflow
     steps:
-      - name: "Setup java"
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          server-id: artifactory-snapshots
-          server-username: ${{ secrets.ARTIFACTORY_USER }}
-          server-password: ${{ secrets.ARTIFACTORY_TOKEN }}
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
 
-      - name: "Download Release Artifacts"
-        uses: actions/download-artifact@v4
+      - name: "Deploy Snapshot"
+        uses: ./.github/actions/deploy-snapshot
         with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-
-      - name: "Publish Snapshot"
-        run: >
-          mvn ${{ env.MVN_CLI_ARGS }}
-          -Durl=https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk
-          -DrepositoryId=artifactory-snapshots
-          -Dmaven.install.skip=true
-          -Dmaven.test.skip
-          -Dmaven.compiler.showCompilationChanges
-          -Dhttp.keepAlive=false
-          deploy
+          ci-run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          repository-url: "https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk"
+          repository-username: ${{ secrets.ARTIFACTORY_USER }}
+          repository-password: ${{ secrets.ARTIFACTORY_TOKEN }}
+          release-artifact-name: ${{ env.RELEASE_ARTIFACT_NAME }}
 
   notify-job:
     runs-on: ubuntu-latest

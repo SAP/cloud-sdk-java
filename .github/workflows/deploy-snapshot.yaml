@@ -58,36 +58,17 @@ jobs:
     permissions:
       actions: read # needed to download the artifacts from the ci-build workflow
     steps:
-      - name: "Setup Java"
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          server-id: artifactory-snapshots
-          server-username: MAVEN_CENTRAL_USER # env variable for username in deploy
-          server-password: MAVEN_CENTRAL_PASSWORD # env variable for token in deploy
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
 
-      - name: "Download Release Artifacts"
-        uses: actions/download-artifact@v4
+      - name: "Deploy Snapshot"
+        uses: ./.github/actions/deploy-snapshot
         with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-
-      - name: "Publish Snapshot"
-        run: >
-          mvn
-          $MVN_CLI_ARGS
-          -Durl=https://oss.sonatype.org/content/repositories/snapshots
-          -DrepositoryId=artifactory-snapshots
-          -Dmaven.install.skip=true
-          -Dmaven.test.skip
-          -Dmaven.compiler.showCompilationChanges
-          -Dhttp.keepAlive=false
-          deploy
-        env:
-          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ci-run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          repository-url: "https://oss.sonatype.org/content/repositories/snapshots"
+          repository-username: ${{ secrets.MAVEN_CENTRAL_USER }}
+          repository-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          release-artifact-name: ${{ env.RELEASE_ARTIFACT_NAME }}
 
   notify-job:
     runs-on: ubuntu-latest
