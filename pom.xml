@@ -95,7 +95,7 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.1.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.11</slf4j.version>
+		<slf4j.version>2.0.12</slf4j.version>
 		<assertj-core.version>3.25.2</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.10.0</mockito.version>
