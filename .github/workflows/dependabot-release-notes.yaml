@@ -1,0 +1,101 @@
+name: "Dependabot Release Notes"
+
+on:
+  pull_request:
+    types: [ opened ]
+    branches: [ main ]
+
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull Request Number"
+        required: true
+
+jobs:
+  update-release-notes:
+    name: "Update Release Notes"
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.user.login == 'app/dependabot') }}
+    permissions:
+      pull-requests: read
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Determine PR Info"
+        run: |
+          PR_BODY_FILE=~/.pr-body.txt
+          echo "PR_BODY_FILE=$PR_BODY_FILE" >> $GITHUB_ENV
+          
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            PR_NUMBER=${{ github.event.inputs.pr-number }}
+            PR_JSON=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName,body)
+            PR_BRANCH=$(jq -r '.headRefName' <<< "$PR_JSON")
+            
+            jq -r '.body' <<< "$PR_JSON" > $PR_BODY_FILE
+          
+            echo "[DEBUG] Using PR number (#$PR_NUMBER from $PR_BRANCH) provided by workflow_dispatch event"
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
+            exit 0
+          fi
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            PR_BRANCH=${{ github.head_ref }}
+            gh pr view $PR_NUMBER --repo ${{ github.repository }} --json body > $PR_BODY_FILE
+          
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
+          fi
+        id: determine-pr-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: "Checkout Repository"
+        if: ${{ env.PR_NUMBER != '' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.PR_BRANCH }}
+
+      - name: "Run Python Script"
+        if: ${{ env.PR_NUMBER != '' }}
+        run: |
+          CHANGED_FILES=$(gh pr view ${{ env.PR_NUMBER }} --repo ${{ github.repository }} --json files)
+          CHANGED_POMS=$(jq -r '.files.[] | select(.path | endswith("pom.xml")) | .path' <<< "$CHANGED_FILES")
+          
+          for POM_PATH in "${CHANGED_POMS[@]}"; do
+            echo "[DEBUG] Found changed POM: $POM_PATH"
+            python ./.pipeline/scripts/dependabot-release-notes.py --pr-body-file "${{ env.PR_BODY_FILE }}" --pom "$POM_PATH"
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: "Push Release Notes Updates"
+        if: ${{ env.PR_NUMBER != '' }}
+        run: |
+          git add release_notes.md
+          CHANGED_FILES="$(git status -s)"
+          if [[ -z "$CHANGED_FILES" ]]; then
+            echo "[DEBUG] No changes to release_notes.md detected, skipping push."
+            echo "NOTES_CREATED=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          echo "NOTES_CREATED=true" >> $GITHUB_ENV
+          git commit -m "chore: add release notes"
+          git push
+
+      - name: "Add PR Comment"
+        if: ${{ env.PR_NUMBER != '' && env.NOTES_CREATED == 'true' && github.event_name == 'pull_request' && github.event.action == 'opened' }}
+        run: |
+          gh pr comment ${{ needs.context.outputs.pr-number }} --body "Release notes have been created automatically upon opening this PR.
+          
+          To re-create them, trigger the [Dependabot Release Notes](${{ github.event.repository.html_url }}/actions/workflows/dependabot-release-notes.yaml) action manually.
+          
+          Yours truly,
+          The Dependabot Release Notes Automation 🤖
+          
+          **PS:** 
+          Keep in mind that dependency updates are derived **solely** from the table in the PR description.
+          So remember to update that table in case of any changes."
+        env:
+          GH_TOKEN: ${{ github.token }}

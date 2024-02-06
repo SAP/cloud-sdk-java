@@ -31,6 +31,13 @@ class ForwardAuthTokenTest
                 TestCaseBuilder
                     .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "true")
                     .expectTokenForwarding(),
+                // forwardAuthToken = true && other authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.BASIC_AUTHENTICATION)
+                    .and(DestinationProperty.BASIC_AUTH_USERNAME.getKeyName(), "username")
+                    .and(DestinationProperty.BASIC_AUTH_PASSWORD.getKeyName(), "securePassword")
+                    .expectNoTokenForwarding(),
                 // forwardAuthToken = false && authType = NoAuthentication
                 TestCaseBuilder
                     .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
@@ -40,6 +47,47 @@ class ForwardAuthTokenTest
                 TestCaseBuilder
                     .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
                     .expectNoTokenForwarding(),
+                // forwardAuthToken = false && other authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.BASIC_AUTHENTICATION)
+                    .and(DestinationProperty.BASIC_AUTH_USERNAME.getKeyName(), "username")
+                    .and(DestinationProperty.BASIC_AUTH_PASSWORD.getKeyName(), "securePassword")
+                    .expectNoTokenForwarding(),
+
+                // HTML5.ForwardAuthToken = true && authType = NoAuthentication
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectTokenForwarding(),
+                // HTML5.ForwardAuthToken = true && unset authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .expectTokenForwarding(),
+                // HTML5.forwardAuthToken = true && other authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "true")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.BASIC_AUTHENTICATION)
+                    .and(DestinationProperty.BASIC_AUTH_USERNAME.getKeyName(), "username")
+                    .and(DestinationProperty.BASIC_AUTH_PASSWORD.getKeyName(), "securePassword")
+                    .expectNoTokenForwarding(),
+                // HTML5.ForwardAuthToken = false && authType = NoAuthentication
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
+                    .expectNoTokenForwarding(),
+                // HTML5.ForwardAuthToken = false && unset authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .expectNoTokenForwarding(),
+                // HTML5.ForwardAuthToken = false && other authType
+                TestCaseBuilder
+                    .forProperty(DestinationProperty.APPROUTER_FORWARD_AUTH_TOKEN.getKeyName(), "false")
+                    .and(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.BASIC_AUTHENTICATION)
+                    .and(DestinationProperty.BASIC_AUTH_USERNAME.getKeyName(), "username")
+                    .and(DestinationProperty.BASIC_AUTH_PASSWORD.getKeyName(), "securePassword")
+                    .expectNoTokenForwarding(),
+
                 // unset forwardAuthToken && authType = NoAuthentication
                 TestCaseBuilder
                     .forProperty(DestinationProperty.AUTH_TYPE.getKeyName(), AuthenticationType.NO_AUTHENTICATION)
@@ -126,7 +174,7 @@ class ForwardAuthTokenTest
             RequestHeaderAccessor
                 .executeWithHeaderContainer(Map.of(HttpHeaders.AUTHORIZATION, "token"), () -> destination.getHeaders());
 
-        assertThat(headers).isEmpty();
+        assertThat(headers).doesNotContain(new Header(HttpHeaders.AUTHORIZATION, "token"));
     }
 
     private static void assertThatTokenIsForwarded( final HttpDestination destination )

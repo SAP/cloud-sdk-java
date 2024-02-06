@@ -3,6 +3,10 @@
  */
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.KEY_STORE_LOCATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.KEY_STORE_PASSWORD;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.TRUST_STORE_LOCATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.TRUST_STORE_PASSWORD;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationCertificate;
 
 import java.io.ByteArrayInputStream;
@@ -87,15 +91,7 @@ class DestinationKeyStoreExtractor
     Option<KeyStore> getTrustStore()
         throws DestinationAccessException
     {
-        return getTrustStore(DestinationProperty.TRUST_STORE_LOCATION, DestinationProperty.TRUST_STORE_PASSWORD);
-    }
-
-    @Nonnull
-    Option<KeyStore> getTrustStore(
-        @Nonnull final DestinationPropertyKey<String> locationKey,
-        @Nonnull final DestinationPropertyKey<String> passwordKey )
-    {
-        if( !destination.get(locationKey).isDefined() ) {
+        if( destination.get(TRUST_STORE_LOCATION).isEmpty() ) {
             return Option.none();
         }
 
@@ -103,13 +99,13 @@ class DestinationKeyStoreExtractor
             log
                 .debug(
                     "Properties {} and {} found for destination {}",
-                    locationKey.getKeyName(),
-                    passwordKey.getKeyName(),
+                    TRUST_STORE_LOCATION.getKeyName(),
+                    TRUST_STORE_PASSWORD.getKeyName(),
                     destination.get(DestinationProperty.NAME).getOrElse("without name"));
         }
 
-        final DestinationCertificate cert = getDestinationCertificateFromProperty(locationKey);
-        final String keyStorePassword = destination.get(passwordKey).getOrNull();
+        final DestinationCertificate cert = getDestinationCertificateFromProperty(TRUST_STORE_LOCATION);
+        final String keyStorePassword = destination.get(TRUST_STORE_PASSWORD).getOrNull();
         final String fileExtension = FilenameUtils.getExtension(cert.getName().toLowerCase());
 
         // happy path: existing key-store:
@@ -139,15 +135,7 @@ class DestinationKeyStoreExtractor
     Option<KeyStore> getKeyStore()
         throws DestinationAccessException
     {
-        return getKeyStore(DestinationProperty.KEY_STORE_LOCATION, DestinationProperty.KEY_STORE_PASSWORD);
-    }
-
-    @Nonnull
-    Option<KeyStore> getKeyStore(
-        @Nonnull final DestinationPropertyKey<String> locationKey,
-        @Nonnull final DestinationPropertyKey<String> passwordKey )
-    {
-        if( !destination.get(locationKey).isDefined() ) {
+        if( destination.get(KEY_STORE_LOCATION).isEmpty() || !authTypeRequiresLoadingKeyMaterial(destination) ) {
             return Option.none();
         }
 
@@ -155,16 +143,16 @@ class DestinationKeyStoreExtractor
             log
                 .debug(
                     "Properties {} and {} found for destination {}",
-                    locationKey.getKeyName(),
-                    passwordKey.getKeyName(),
+                    KEY_STORE_LOCATION.getKeyName(),
+                    KEY_STORE_PASSWORD.getKeyName(),
                     destination.get(DestinationProperty.NAME).getOrElse("without name"));
         }
 
-        final DestinationCertificate certificate = getDestinationCertificateFromProperty(locationKey);
+        final DestinationCertificate certificate = getDestinationCertificateFromProperty(KEY_STORE_LOCATION);
 
         final BiFunction<String, String, KeyStore> storeTransformer =
             getKeyStoreTransformerByFileName(certificate.getName());
-        final String storePassword = destination.get(passwordKey).getOrNull();
+        final String storePassword = destination.get(KEY_STORE_PASSWORD).getOrNull();
         return Option.some(storeTransformer.apply(certificate.getContent(), storePassword));
     }
 
@@ -190,7 +178,7 @@ class DestinationKeyStoreExtractor
                 .filter(cert -> hasCertificateContent(cert.getContent()))
                 .findFirst();
 
-        if( !certificate.isPresent() ) {
+        if( certificate.isEmpty() ) {
             throw new DestinationAccessException(
                 String
                     .format(
@@ -300,5 +288,15 @@ class DestinationKeyStoreExtractor
     private static boolean hasCertificateContent( @Nullable final String content )
     {
         return content != null;
+    }
+
+    private static boolean authTypeRequiresLoadingKeyMaterial( @Nonnull final PropertyKeyExtractor destination )
+    {
+        final AuthenticationType authenticationType =
+            destination.get(DestinationProperty.AUTH_TYPE).getOrElse(AuthenticationType.NO_AUTHENTICATION);
+        return switch( authenticationType ) {
+            case OAUTH2_SAML_BEARER_ASSERTION, SAML_ASSERTION -> false;
+            default -> true;
+        };
     }
 }
