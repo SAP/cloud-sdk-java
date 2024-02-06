@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -20,6 +21,7 @@ import com.sap.cloud.security.token.Token;
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultTenantFacadeIasTest
 {
     private static final String TENANT_ID = "a89ea924-d9c2-4eab-84fb-3ffcaadf5d24";

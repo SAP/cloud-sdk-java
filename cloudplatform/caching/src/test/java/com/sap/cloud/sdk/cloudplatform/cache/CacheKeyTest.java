@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
@@ -22,6 +23,7 @@ import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+@Isolated
 class CacheKeyTest
 {
     @BeforeAll

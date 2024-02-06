@@ -16,6 +16,7 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessException;
@@ -23,6 +24,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionEx
 
 import io.vavr.control.Try;
 
+@Isolated
 class RequestHeaderAccessorTest
 {
     @BeforeEach

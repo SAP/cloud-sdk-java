@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -18,6 +19,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
+@Isolated
 class Resilience4jThreadContextTest
 {
     private static final Tenant TENANT_GLOBAL = () -> "global-tenant";

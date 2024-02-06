@@ -24,6 +24,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
@@ -40,6 +41,7 @@ import com.sap.cloud.security.xsuaa.tokenflows.XsuaaTokenFlows;
 
 import lombok.SneakyThrows;
 
+@Isolated
 class OAuth2ServiceTest
 {
     private static final String RESPONSE_TEMPLATE = """

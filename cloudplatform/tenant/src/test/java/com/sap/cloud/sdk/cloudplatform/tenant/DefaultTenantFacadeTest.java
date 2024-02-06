@@ -20,6 +20,7 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -41,6 +42,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextFacade;
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultTenantFacadeTest
 {
     private static final AuthToken JWT_WITHOUT_TENANT = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));

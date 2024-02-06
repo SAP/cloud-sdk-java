@@ -31,10 +31,8 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
@@ -44,20 +42,18 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
-import io.vavr.control.Try;
 
+@Isolated // required due to implicit behavior of TokenRule
 @SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
 {
     private static final Tenant providerT = new DefaultTenant("provider");
     private static final Tenant subscriberT = new DefaultTenant("subscriber");
+    private static final DestinationOptions EMPTY_OPTIONS = DestinationOptions.builder().build();
     private DestinationRetrievalStrategyResolver sut;
 
     private Function<Strategy, DestinationServiceV1Response> destinationRetriever;
     private Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
-
-    @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
 
     @SuppressWarnings( "unchecked" )
     @BeforeEach
@@ -183,9 +179,11 @@ class DestinationRetrievalStrategyResolverTest
     @DisplayName( "Test default strategies are set correctly" )
     void testDefaultStrategies()
     {
-        // subscriber tenant is implied
-        sut.prepareSupplier(DestinationOptions.builder().build());
-        sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
+        final AuthToken token = TokenRule.createXsuaa().getAuthToken();
+
+        AuthTokenAccessor.executeWithAuthToken(token, () -> sut.prepareSupplier(EMPTY_OPTIONS));
+
+        sut.prepareSupplierAllDestinations(EMPTY_OPTIONS);
 
         verify(sut).prepareSupplier(CURRENT_TENANT, FORWARD_USER_TOKEN);
         verify(sut).prepareSupplierAllDestinations(CURRENT_TENANT);
@@ -195,10 +193,10 @@ class DestinationRetrievalStrategyResolverTest
     @DisplayName( "Test default strategy for non-XSUAA tokens is set correctly" )
     void testDefaultNonXsuaaTokenStrategy()
     {
-        final AuthToken nonXsuaaToken = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(nonXsuaaToken));
+        final AuthToken token = TokenRule.createIas().getAuthToken();
 
-        sut.prepareSupplier(DestinationOptions.builder().build());
+        AuthTokenAccessor.executeWithAuthToken(token, () -> sut.prepareSupplier(EMPTY_OPTIONS));
+
         verify(sut).prepareSupplier(CURRENT_TENANT, DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
     }
 }

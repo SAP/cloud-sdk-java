@@ -14,6 +14,7 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.Mockito;
 
 import com.auth0.jwt.JWT;
@@ -32,6 +33,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
 
 import lombok.SneakyThrows;
 
+@Isolated
 class AuthTokenTenantResolvingTest
 {
     // Header:

@@ -21,6 +21,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -32,6 +33,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 
+@Isolated
 class DefaultHttpClientCacheTest
 {
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();

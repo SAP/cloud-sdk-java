@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.Answers;
 import org.mockito.Mockito;
 
@@ -30,6 +31,7 @@ import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultHttpDestinationBuilderProxyHandlerTest
 {
     private static final AuthToken token1 = mock(AuthToken.class, Answers.RETURNS_DEEP_STUBS);

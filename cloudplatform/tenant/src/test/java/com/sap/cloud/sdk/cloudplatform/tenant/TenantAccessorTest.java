@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
@@ -27,6 +28,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
+@Isolated
 class TenantAccessorTest
 {
     @BeforeEach

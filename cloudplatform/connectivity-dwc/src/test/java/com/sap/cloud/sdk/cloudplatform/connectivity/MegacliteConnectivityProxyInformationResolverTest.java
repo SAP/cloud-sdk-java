@@ -29,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.base.Charsets;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
@@ -39,9 +40,9 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
 import lombok.SneakyThrows;
 
+@Isolated
 class MegacliteConnectivityProxyInformationResolverTest
 {
-
     private static final HttpResponse successResponse;
     private static final HttpResponse failureResponse;
 

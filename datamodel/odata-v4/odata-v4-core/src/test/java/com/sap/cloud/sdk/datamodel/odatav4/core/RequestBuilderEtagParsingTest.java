@@ -27,6 +27,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -39,6 +40,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+@Isolated
 class RequestBuilderEtagParsingTest
 {
     private static final String SERVICE_PATH = "/service";

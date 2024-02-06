@@ -25,6 +25,7 @@ import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -43,6 +44,7 @@ import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 
+@Isolated
 class MegacliteServiceBindingDestinationLoaderTest
 {
     @Nonnull

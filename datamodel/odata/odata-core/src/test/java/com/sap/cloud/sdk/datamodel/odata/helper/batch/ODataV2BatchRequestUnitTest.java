@@ -39,6 +39,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
@@ -58,6 +59,7 @@ import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
 import lombok.SneakyThrows;
 import lombok.Value;
 
+@Isolated
 class ODataV2BatchRequestUnitTest
 {
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();

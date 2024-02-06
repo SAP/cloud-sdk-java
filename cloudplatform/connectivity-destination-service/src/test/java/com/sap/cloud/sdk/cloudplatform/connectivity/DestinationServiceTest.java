@@ -57,6 +57,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.stubbing.Answer;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -79,6 +80,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
+@Isolated
 class DestinationServiceTest
 {
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes

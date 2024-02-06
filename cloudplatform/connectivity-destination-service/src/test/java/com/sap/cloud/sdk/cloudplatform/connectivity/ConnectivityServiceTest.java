@@ -21,10 +21,10 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -38,7 +38,6 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
@@ -46,6 +45,7 @@ import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import io.vavr.control.Try;
 
 @WireMockTest
+@Isolated
 class ConnectivityServiceTest
 {
     private static final String XSUAA_SERVICE_ROOT = "/xsuaa";
@@ -84,10 +84,10 @@ class ConnectivityServiceTest
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
     }
 
-    @AfterAll
-    static void resetFacades()
+    @AfterEach
+    void resetFacades()
     {
-        TenantAccessor.setTenantFacade(null);
+        AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test

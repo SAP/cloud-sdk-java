@@ -13,9 +13,11 @@ import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
 
+@Isolated
 class ErpDestinationHeaderProviderTest
 {
     private static final URI testUri = URI.create("https://sap.com");

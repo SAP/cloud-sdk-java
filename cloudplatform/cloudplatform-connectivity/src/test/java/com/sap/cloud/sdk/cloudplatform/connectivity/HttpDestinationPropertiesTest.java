@@ -15,6 +15,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.exception.RequestHeadersAccessException;
@@ -24,6 +25,7 @@ import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
 import io.vavr.control.Try;
 
+@Isolated
 class HttpDestinationPropertiesTest
 {
     @AfterEach

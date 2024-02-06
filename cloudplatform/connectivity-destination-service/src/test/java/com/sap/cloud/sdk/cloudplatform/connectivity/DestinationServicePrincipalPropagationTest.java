@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -59,6 +60,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantFacade;
 import io.vavr.control.Try;
 import lombok.Value;
 
+@Isolated
 @WireMockTest
 class DestinationServicePrincipalPropagationTest
 {

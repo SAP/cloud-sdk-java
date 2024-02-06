@@ -28,6 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -41,6 +42,7 @@ import com.sap.cloud.security.test.JwtGenerator;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
+@Isolated
 @WireMockTest
 class OAuth2DestinationBuilderTest
 {

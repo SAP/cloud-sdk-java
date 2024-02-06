@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -42,6 +43,7 @@ import com.sap.cloud.sdk.datamodel.odata.helper.TestVdmEntity;
 
 import lombok.SneakyThrows;
 
+@Isolated
 @WireMockTest
 class ODatav2BatchConnectionTest
 {

@@ -15,6 +15,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -23,6 +24,7 @@ import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
 
+@Isolated
 class AuthTokenAccessorTest
 {
     @BeforeEach

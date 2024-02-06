@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAcc
 
 import io.vavr.control.Try;
 
+@Isolated
 class OidcAuthTokenPrincipalExtractorTest
 {
     @AfterEach

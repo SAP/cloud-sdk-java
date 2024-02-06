@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.exception.RequestHeadersAccessException;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextAccessExcep
 
 import io.vavr.control.Try;
 
+@Isolated
 class RequestHeaderThreadContextListenerTest
 {
     private static final RequestHeaderContainer PARENT_HEADERS =

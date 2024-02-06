@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -22,6 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultTenantFacadeXsuaaTest
 {
     @AfterEach

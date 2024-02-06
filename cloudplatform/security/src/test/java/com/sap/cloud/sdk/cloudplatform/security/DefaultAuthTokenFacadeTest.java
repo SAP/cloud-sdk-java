@@ -22,6 +22,7 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
@@ -40,6 +41,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyNot
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultAuthTokenFacadeTest
 {
     @BeforeEach

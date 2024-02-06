@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -33,6 +34,7 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAcc
 import io.vavr.control.Try;
 import lombok.Value;
 
+@Isolated
 class OAuth2AuthTokenPrincipalExtractorTest
 {
     private static final String CLIENT_ID = "someId";

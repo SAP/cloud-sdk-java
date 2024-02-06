@@ -57,6 +57,11 @@ class TokenRule implements AfterEachCallback, BeforeEachCallback
         return new TokenRule(JWT.create().withClaim(DestinationRetrievalStrategyResolver.JWT_ATTR_EXT, attrEnhancer));
     }
 
+    static TokenRule createIas()
+    {
+        return new TokenRule(JWT.create());
+    }
+
     @Override
     public void afterEach( @Nullable final ExtensionContext extensionContext )
     {
@@ -66,7 +71,12 @@ class TokenRule implements AfterEachCallback, BeforeEachCallback
     @Override
     public void beforeEach( @Nullable final ExtensionContext extensionContext )
     {
-        final AuthToken token = new AuthToken(JWT.decode(tokenBuilder.sign(Algorithm.none())));
+        final AuthToken token = getAuthToken();
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(token));
+    }
+
+    AuthToken getAuthToken()
+    {
+        return new AuthToken(JWT.decode(tokenBuilder.sign(Algorithm.none())));
     }
 }

@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderFacade;
 
 import io.vavr.control.Try;
 
+@Isolated
 class DefaultLocaleFacadeTest
 {
     private static final RequestHeaderFacade NO_HEADER_FACADE = () -> Try.failure(new NoSuchElementException());

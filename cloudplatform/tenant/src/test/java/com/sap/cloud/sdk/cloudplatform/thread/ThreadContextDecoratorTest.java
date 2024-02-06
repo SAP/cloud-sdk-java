@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * approach, where data is set on the CDS RequestContext
  */
 @Slf4j
+@Isolated
 class ThreadContextDecoratorTest
 {
     private static final ThreadContextDecorator customDecorator = new CustomThreadContextDecorator();

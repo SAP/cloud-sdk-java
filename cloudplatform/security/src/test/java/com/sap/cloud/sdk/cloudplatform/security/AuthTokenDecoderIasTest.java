@@ -20,6 +20,7 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -37,6 +38,7 @@ import com.sap.cloud.security.token.TokenHeader;
 
 import io.vavr.control.Try;
 
+@Isolated
 @WireMockTest
 class AuthTokenDecoderIasTest
 {

@@ -39,6 +39,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.Mockito;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -54,6 +55,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultip
 
 import lombok.SneakyThrows;
 
+@Isolated
 @WireMockTest
 class ODataV4BatchRequestUnitTest
 {
