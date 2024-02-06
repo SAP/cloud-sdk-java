@@ -129,7 +129,7 @@ public final class CacheManager
      * Invalidates all caches of the given tenant.
      *
      * @param tenantId
-     *            The tenant or zone to invalidate all caches for.
+     *            The tenant to invalidate all caches for.
      * @return The number of invalidated cache entries.
      */
     public static long invalidateTenantCaches( @Nullable final String tenantId )
@@ -178,7 +178,7 @@ public final class CacheManager
      * Invalidates all caches of the given principal.
      *
      * @param tenantId
-     *            The identifier of the tenant or zone for which all principal caches should be invalidated.
+     *            The identifier of the tenant for which all principal caches should be invalidated.
      * @param principalId
      *            The identifier of the principal for which all caches should be invalidated.
      * @return The number of invalidated cache entries.
@@ -226,7 +226,7 @@ public final class CacheManager
      * Invalidates all cache entries of the given tenant-specific principal.
      *
      * @param tenantId
-     *            The identifier of the tenant or zone for which all principal cache entries should be invalidated.
+     *            The identifier of the tenant for which all principal cache entries should be invalidated.
      * @param principalId
      *            The identifier of the principal for which all cache entries should be invalidated.
      * @param cache

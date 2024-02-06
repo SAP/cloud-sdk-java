@@ -13,7 +13,6 @@ public interface Tenant
 {
     /**
      * Getter for the id of a tenant. <br>
-     * In a zone enabled context this represents the zone id.
      *
      * @return The identifier of the tenant (or zone, if applicable).
      */
