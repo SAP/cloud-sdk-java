@@ -6,6 +6,11 @@ on:
       release_pr_number:
         description: "The PR number of the release PR"
         required: true
+      skip-pr-merge:
+        description: "Whether to skip merging the PRs"
+        required: false
+        default: false
+        type: boolean
 
 env:
   MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
@@ -57,11 +62,13 @@ jobs:
           ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
 
       - name: "Check Whether Code PR Can Be Merged"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         uses: ./.github/actions/pr-is-mergeable
         with:
           pr-ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
 
       - name: "Check Whether Docs PR Can Be Merged"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         uses: ./.github/actions/pr-is-mergeable
         with:
           pr-ref: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
@@ -69,6 +76,7 @@ jobs:
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Check Whether Release Notes PR Can Be Merged"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         uses: ./.github/actions/pr-is-mergeable
         with:
           pr-ref: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
@@ -133,6 +141,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: "Merge Code PR"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         run: gh pr merge --squash "${{ needs.prerequisites.outputs.code-branch }}" --delete-branch --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ github.token }}
@@ -143,11 +152,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: "Merge Docs PR"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Merge Release Notes PR"
+        if: ${{ inputs.skip-pr-merge == 'true' }}
         run: |
           # https://github.com/cli/cli/issues/8092#issuecomment-1814439651
           # The Release Notes mergeability computation hasn't completed yet
