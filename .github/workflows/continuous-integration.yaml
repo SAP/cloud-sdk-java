@@ -31,7 +31,7 @@ on:
         default: false
 
 env:
-  M2_ROOT: ~/.m2/
+  M2_ROOT: ~/.m2/repository
   RELEASE_ARTIFACT_NAME: "release-artifacts"
   SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
   SDK_M2_PATH: |
