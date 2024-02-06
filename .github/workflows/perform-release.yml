@@ -144,12 +144,12 @@ jobs:
         if: ${{ inputs.skip-pr-merge == 'true' }}
         run: gh pr merge --squash "${{ needs.prerequisites.outputs.code-branch }}" --delete-branch --repo "${{ github.repository }}"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Publish the Draft Release"
         run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: "Merge Docs PR"
         if: ${{ inputs.skip-pr-merge == 'true' }}
