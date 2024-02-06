@@ -1,9 +1,6 @@
 name: "Perform Release"
 
 on:
-  pull_request_review:
-    types: [submitted]
-
   workflow_dispatch:
     inputs:
       release_pr_number:
@@ -18,7 +15,6 @@ env:
 jobs:
   prerequisites:
     name: "Prerequisites"
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request_review' && github.event.review.state == 'approved' && startsWith(github.event.pull_request.head.ref, 'RELEASE-')) }}
     outputs:
       release-version: ${{ steps.determine-branch-names.outputs.RELEASE_VERSION }}
       release-tag: ${{ steps.determine-branch-names.outputs.RELEASE_TAG }}

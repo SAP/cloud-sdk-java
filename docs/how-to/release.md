@@ -18,8 +18,7 @@ All of these things will be linked in the Code PR, so that they can be found eas
 
 **Follow the steps outlined in the PR description _in order_**.
 
-As the second to last step, you should approve the Code PR (after you have reviewed, adjusted, and approved the other PRs).
-This will trigger the [Perform Release](https://github.com/SAP/cloud-sdk-java/actions/workflows/perform-release.yml) workflow.
+As the second to last step, you will trigger the [Perform Release Workflow](https://github.com/SAP/cloud-sdk-java/actions/workflows/perform-release.yml).
 
 This workflow will take care of merging the PRs and creates a **staging release** in [Sonatype](https://oss.sonatype.org/).
 As the very last step, once the _Perform Release_ workflow has finished successfully, you need to log into _Sonatype_ and publish the staging release.
