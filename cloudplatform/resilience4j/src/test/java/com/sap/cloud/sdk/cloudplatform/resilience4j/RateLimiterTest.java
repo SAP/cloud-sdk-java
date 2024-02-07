@@ -17,29 +17,39 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
+@Isolated
 class RateLimiterTest
 {
-    @SuppressWarnings( "deprecation" )
     private final MockUtil mockUtil = new MockUtil();
 
-    @SuppressWarnings( "deprecation" )
     @BeforeEach
     void setup()
     {
         mockUtil.mockDefaults();
+    }
+
+    @AfterEach
+    void afterEach()
+    {
+        TenantAccessor.setTenantFacade(null);
+        PrincipalAccessor.setPrincipalFacade(null);
     }
 
     @Test

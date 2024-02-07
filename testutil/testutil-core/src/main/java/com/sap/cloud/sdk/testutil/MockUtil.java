@@ -5,11 +5,9 @@
 package com.sap.cloud.sdk.testutil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
@@ -38,8 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker
 {
-    static final List<String> CONFIG_FILE_EXTENSIONS = ImmutableList.of(".yml", ".yaml", ".json");
-
     static final String MOCKED_TENANT = "00000000-0000-0000-0000-000000000000";
     static final String MOCKED_PRINCIPAL = "MockedUser";
 

@@ -15,10 +15,12 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 
+@Isolated
 class CustomResilienceStrategyTest
 {
     private static final ThreadLocal<String> storage = new ThreadLocal<>();
@@ -26,13 +28,13 @@ class CustomResilienceStrategyTest
     @AfterEach
     void resetDecorationStrategy()
     {
-        ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
+        ResilienceDecorator.resetDecorationStrategy();
     }
 
     @BeforeEach
     void resetStorage()
     {
-        storage.set(null);
+        storage.remove();
     }
 
     @Test

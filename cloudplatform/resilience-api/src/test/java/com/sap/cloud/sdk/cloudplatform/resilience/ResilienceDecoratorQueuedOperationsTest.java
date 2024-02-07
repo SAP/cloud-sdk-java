@@ -17,10 +17,12 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContextExecutorService;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
+@Isolated
 class ResilienceDecoratorQueuedOperationsTest
 {
     private static final ResilienceConfiguration CONFIG =

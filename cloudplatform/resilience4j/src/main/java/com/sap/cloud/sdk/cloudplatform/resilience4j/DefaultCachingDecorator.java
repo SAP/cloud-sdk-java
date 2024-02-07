@@ -82,6 +82,11 @@ public class DefaultCachingDecorator implements GenericDecorator
         return decorateCallableWithCache(callable, configuration);
     }
 
+    CachingProvider getCachingProvider()
+    {
+        return Caching.getCachingProvider();
+    }
+
     /**
      * Identifies whether a given value is still valid and should stay part of the cache.
      * <p>
@@ -105,8 +110,7 @@ public class DefaultCachingDecorator implements GenericDecorator
         @Nonnull final Callable<T> callable,
         @Nonnull final ResilienceConfiguration configuration )
     {
-        final CachingProvider cachingProvider = Caching.getCachingProvider();
-        final CacheManager cacheManager = cachingProvider.getCacheManager();
+        final CacheManager cacheManager = getCachingProvider().getCacheManager();
 
         final ResilienceConfiguration.CacheConfiguration cacheConfig = configuration.cacheConfiguration();
         final String cacheName = configuration.identifier();

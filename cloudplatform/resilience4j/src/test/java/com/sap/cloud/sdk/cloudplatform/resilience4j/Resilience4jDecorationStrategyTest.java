@@ -16,9 +16,11 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CacheConfiguration;
@@ -27,11 +29,13 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.resilience4j.Resilience4jCachingDefaultProviderTest.TestCallable;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
+@Isolated
 class Resilience4jDecorationStrategyTest
 {
-    @SuppressWarnings( "deprecation" )
     @Nonnull
     private static final MockUtil mockUtil = new MockUtil();
 
@@ -42,10 +46,11 @@ class Resilience4jDecorationStrategyTest
     }
 
     @BeforeEach
-    void beforeEach()
+    @AfterEach
+    void resetFacades()
     {
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+        TenantAccessor.setTenantFacade(null);
+        PrincipalAccessor.setPrincipalFacade(null);
     }
 
     @Test

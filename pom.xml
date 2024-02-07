@@ -63,13 +63,12 @@
 		<enforcer.skipEnforceScopeJavaEE>false</enforcer.skipEnforceScopeJavaEE>
 		<enforcer.skipEnforceScopeLombok>false</enforcer.skipEnforceScopeLombok>
 		<enforcer.skipBanGeneratedModulesReference>false</enforcer.skipBanGeneratedModulesReference>
-		<surefire.forkCount>4</surefire.forkCount>
 		<surefire.include>*</surefire.include>
 		<surefire.exclude />
 		<surefire.groups />
 		<surefire.excludedGroups />
 		<surefire.maxMemorySize>1024m</surefire.maxMemorySize>
-		<surefire.logLevel>warn</surefire.logLevel>
+		<surefire.logLevel>error</surefire.logLevel>
 		<!--
                 Use the argLine property to define the arguments for the JVMs that are forked by the surefire plugin.
                 This avoids the need to use late property evaluation for configuring the jacoco plugin.
@@ -864,13 +863,14 @@
 						<excludes>
 							<exclude>${surefire.exclude}</exclude>
 						</excludes>
-						<forkCount>${surefire.forkCount}</forkCount>
-						<reuseForks>false</reuseForks>
+						<forkCount>4</forkCount>
+						<reuseForks>true</reuseForks>
 						<groups>${surefire.groups}</groups>
 						<excludedGroups>${surefire.excludedGroups}</excludedGroups>
 						<systemPropertyVariables>
 							<surefire.forkDir>${project.build.directory}/surefire-fork/${surefire.forkNumber}/</surefire.forkDir>
 						</systemPropertyVariables>
+						<parallel>classes</parallel>
 					</configuration>
 				</plugin>
 				<plugin>

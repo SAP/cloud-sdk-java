@@ -20,10 +20,12 @@ import javax.cache.Cache;
 import javax.cache.Caching;
 
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.GenericCacheKey;
@@ -31,8 +33,11 @@ import com.sap.cloud.sdk.cloudplatform.resilience.CacheFilter;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
+import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -44,13 +49,12 @@ import lombok.SneakyThrows;
 /**
  * Executing the tests in the same thread to circumvent a race condition when creating caches in parallel.
  */
+@Isolated
 @Execution( ExecutionMode.SAME_THREAD )
 class CacheFilterTest
 {
-    @SuppressWarnings( "deprecation" )
-    @Nonnull
-    private static final MockUtil mockUtil = new MockUtil();
-
+    private static final Tenant TENANT_1 = new DefaultTenant("tenant_1");
+    private static final Tenant TENANT_2 = new DefaultTenant("tenant_2");
     private static List<CacheFilter> invokedFilters;
 
     private static TestCallable callable;
@@ -68,16 +72,23 @@ class CacheFilterTest
         callable = new TestCallable();
     }
 
+    @AfterEach
+    void afterEach()
+    {
+        TenantAccessor.setTenantFacade(null);
+        PrincipalAccessor.setPrincipalFacade(null);
+    }
+
     @Test
     void testCacheFilterAppliedToTheCache()
     {
-        final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
+        final Try<Integer> initialValue = tryGetInitialValue(callable);
 
         final CacheFilter clearAllFilter = ( configuration, cacheKey, cacheEntry ) -> true;
 
         ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, clearAllFilter);
 
-        final int followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        final int followUpValue = getFollowUpValue(callable);
 
         assertThat(initialValue.get()).isEqualTo(1);
         assertThat(followUpValue).isEqualTo(2);
@@ -86,7 +97,7 @@ class CacheFilterTest
     @Test
     void testAllCacheFiltersInvokedUntilOneMatches()
     {
-        tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
+        tryGetInitialValue(callable);
 
         final NeverMatchingCacheFilter firstFilter = new NeverMatchingCacheFilter();
         final NeverMatchingCacheFilter secondFilter = new NeverMatchingCacheFilter();
@@ -107,38 +118,32 @@ class CacheFilterTest
     @Test
     void testClearCacheMethodAppliesDefaultFiltersAsConjunction()
     {
-        mockUtil.setOrMockCurrentTenant("tenant1");
-
         //cache miss, hence cache entry added with (tenant1, parameter 1) -> 1
-        final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
-
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        final Try<Integer> initialValue =
+            TenantAccessor.executeWithTenant(TENANT_1, () -> tryGetInitialValue(callable));
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss, entry added with (tenant2, parameter 2) -> 2
         //cache consists of (tenant1, parameter 1) -> 1 and (tenant2, parameter 1) -> 2
-        Integer followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        Integer followUpValue = TenantAccessor.executeWithTenant(TENANT_2, () -> getFollowUpValue(callable));
 
-        assertThat(initialValue.get()).isEqualTo(1);
+        assertThat(initialValue).contains(1);
         assertThat(followUpValue).isEqualTo(2);
 
         //cache consists of (tenant1, parameter 1) -> 1 and (tenant2, parameter 1) -> 2
         //clearing cache with cache filter (tenant 2, parameter 1)
         //cache then consists of (tenant1, parameter 1) -> 1
-        ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION);
-
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        TenantAccessor.executeWithTenant(TENANT_2, () -> ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION));
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache hit, no entry added
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
-        assertThat(followUpValue).isEqualTo(1);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_1, () -> getFollowUpValue(callable));
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        assertThat(followUpValue).isEqualTo(1);
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss, entry with (tenant 2, parameter 1) -> 3 added
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_2, () -> getFollowUpValue(callable));
         assertThat(followUpValue).isEqualTo(3);
     }
 
@@ -187,33 +192,27 @@ class CacheFilterTest
     @Test
     void testFilterCacheByTenantAndThenByParameter()
     {
-        mockUtil.setOrMockCurrentTenant("tenant1");
-
         //cache miss, hence cache entry added with (tenant1, parameter 1) -> 1
-        final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
-
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        final Try<Integer> initialValue =
+            TenantAccessor.executeWithTenant(TENANT_1, () -> tryGetInitialValue(callable));
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss and (tenant 2, parameter 1) -> 2 added to the cache
-        int followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        Integer followUpValue = TenantAccessor.executeWithTenant(TENANT_2, () -> getFollowUpValue(callable));
 
-        assertThat(initialValue.get()).isEqualTo(1);
+        assertThat(initialValue).contains(1);
         assertThat(followUpValue).isEqualTo(2);
 
         final CacheFilter tenantFilter =
-            (( configuration, cacheKey, cacheEntry ) -> cacheKey.getTenantId().get().equals("tenant1"));
+            (( configuration, cacheKey, cacheEntry ) -> cacheKey.getTenantId().contains(TENANT_1.getTenantId()));
 
-        ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, tenantFilter);
+        TenantAccessor
+            .executeWithTenant(TENANT_2, () -> ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, tenantFilter));
 
-        mockUtil.setOrMockCurrentTenant("tenant1");
-
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_1, () -> getFollowUpValue(callable));
         assertThat(followUpValue).isEqualTo(3);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
-
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_2, () -> getFollowUpValue(callable));
         assertThat(followUpValue).isEqualTo(2);
 
         //cache consists of (tenant2, parameter 1) -> 2 and (tenant1, parameter 1) -> 3
@@ -222,49 +221,43 @@ class CacheFilterTest
 
         ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, CacheFilter.or(tenantFilter, parameterFilter));
 
-        mockUtil.setOrMockCurrentTenant("tenant1");
-
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_1, () -> getFollowUpValue(callable));
         assertThat(followUpValue).isEqualTo(4);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
-
-        followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
+        followUpValue = TenantAccessor.executeWithTenant(TENANT_2, () -> getFollowUpValue(callable));
         assertThat(followUpValue).isEqualTo(5);
     }
 
     @Test
     void testCacheFilterFactoryMethodsForTenant()
     {
-        final String tenantId = "tenant";
-        mockUtil.setOrMockCurrentTenant(tenantId);
-
         final GenericCacheKey<?, ?> cacheKey = mock(GenericCacheKey.class);
-        when(cacheKey.getTenantId()).thenReturn(Option.of(tenantId));
+        when(cacheKey.getTenantId()).thenReturn(Option.of(TENANT_1.getTenantId()));
 
-        final CacheFilter currentTenantFilter = CacheFilter.keyMatchesTenant();
-        assertThat(currentTenantFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
+        TenantAccessor.executeWithTenant(TENANT_1, () -> {
+            assertThat(CacheFilter.keyMatchesTenant().matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
+        });
 
-        CacheFilter specificTenantFilter = CacheFilter.keyMatchesTenant(new DefaultTenant(tenantId));
+        CacheFilter specificTenantFilter = CacheFilter.keyMatchesTenant(TENANT_1);
         assertThat(specificTenantFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
 
-        specificTenantFilter = CacheFilter.keyMatchesTenant(new DefaultTenant("other-tenant"));
+        specificTenantFilter = CacheFilter.keyMatchesTenant(TENANT_2);
         assertThat(specificTenantFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isFalse();
     }
 
     @Test
     void testCacheFilterFactoryMethodsForPrincipal()
     {
-        final String principalId = "principal";
-        mockUtil.setOrMockCurrentPrincipal(principalId);
+        final Principal principal = new DefaultPrincipal("principal");
 
         final GenericCacheKey<?, ?> cacheKey = mock(GenericCacheKey.class);
-        when(cacheKey.getPrincipalId()).thenReturn(Option.of(principalId));
+        when(cacheKey.getPrincipalId()).thenReturn(Option.of(principal.getPrincipalId()));
 
-        final CacheFilter currentPrincipalFilter = CacheFilter.keyMatchesPrincipal();
-        assertThat(currentPrincipalFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
+        PrincipalAccessor.executeWithPrincipal(principal, () -> {
+            assertThat(CacheFilter.keyMatchesPrincipal().matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
+        });
 
-        CacheFilter specificPrincipalFilter = CacheFilter.keyMatchesPrincipal(new DefaultPrincipal(principalId));
+        CacheFilter specificPrincipalFilter = CacheFilter.keyMatchesPrincipal(principal);
         assertThat(specificPrincipalFilter.matches(RESILIENCE_CONFIGURATION, cacheKey, null)).isTrue();
 
         specificPrincipalFilter = CacheFilter.keyMatchesPrincipal(new DefaultPrincipal("other-principal"));
@@ -295,26 +288,24 @@ class CacheFilterTest
 
     @Nonnull
     @SneakyThrows
-    private static Try<Integer> tryGetInitialValue(
-        @Nonnull final ResilienceConfiguration configuration,
-        @Nonnull final Callable<Integer> callable )
+    private static Try<Integer> tryGetInitialValue( @Nonnull final Callable<Integer> callable )
     {
-        final Cache<?, ?> cache = Caching.getCachingProvider().getCacheManager().getCache(configuration.identifier());
+        final Cache<?, ?> cache =
+            Caching
+                .getCachingProvider()
+                .getCacheManager()
+                .getCache(CacheFilterTest.RESILIENCE_CONFIGURATION.identifier());
         if( cache != null ) {
             cache.clear();
         }
 
-        return Try.of(() -> {
-            return ResilienceDecorator.executeCallable(callable, configuration);
-        });
+        return Try.of(() -> ResilienceDecorator.executeCallable(callable, CacheFilterTest.RESILIENCE_CONFIGURATION));
     }
 
     @SneakyThrows
-    private static int getFollowUpValue(
-        @Nonnull final ResilienceConfiguration configuration,
-        @Nonnull final Callable<Integer> callable )
+    private static Integer getFollowUpValue( @Nonnull final Callable<Integer> callable )
     {
-        return ResilienceDecorator.executeCallable(callable, configuration);
+        return ResilienceDecorator.executeCallable(callable, CacheFilterTest.RESILIENCE_CONFIGURATION);
     }
 
     private static class TestCallable implements Callable<Integer>

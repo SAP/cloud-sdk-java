@@ -7,15 +7,13 @@ package com.sap.cloud.sdk.cloudplatform.resilience4j;
 import static com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CacheConfiguration;
 import static com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.RetryConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,15 +33,16 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import javax.cache.Caching;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -51,29 +50,32 @@ import com.sap.cloud.sdk.cloudplatform.cache.SerializableCacheKey;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
+import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
+@Isolated
+@Execution( SAME_THREAD )
 class Resilience4jCachingDefaultProviderTest
 {
-    private static final MockUtil mockUtil = new MockUtil();
-
-    @BeforeAll
-    static void beforeClass()
-    {
-        ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
-    }
-
     @BeforeEach
     @AfterEach
     void cleanupAroundTests()
     {
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+        TenantAccessor.setTenantFacade(null);
+        PrincipalAccessor.setPrincipalFacade(null);
         DefaultCachingDecorator.lockCache.invalidateAll();
+    }
+
+    @Test
+    void testJCacheProviderIsLoaded()
+    {
+        assertThat(new DefaultCachingDecorator().getCachingProvider()).isSameAs(Caching.getCachingProvider());
     }
 
     @Test
@@ -243,27 +245,6 @@ class Resilience4jCachingDefaultProviderTest
     }
 
     @Test
-    void testCachingWithoutProvider()
-    {
-        // resilient configuration with cache
-        final ResilienceConfiguration configuration =
-            ResilienceConfiguration
-                .of("test.caching.provider.none")
-                .isolationMode(ResilienceIsolationMode.NO_ISOLATION)
-                .cacheConfiguration(CacheConfiguration.of(Duration.ofHours(1)).withoutParameters());
-
-        // wrap execution of cached call into empty class loader
-        final ThrowingCallable failingCall =
-            () -> ClassLoaderUtil
-                .runWithEmptyClassLoader(() -> ResilienceDecorator.executeSupplier(LocalDate::now, configuration));
-
-        // test assertion for matching "No CachingProviders..." exception
-        assertThatCode(failingCall)
-            .isInstanceOf(javax.cache.CacheException.class)
-            .hasMessageContaining("No CachingProviders have been configured");
-    }
-
-    @Test
     void testFallbackResultIsNotCached()
         throws Exception
     {
@@ -278,7 +259,7 @@ class Resilience4jCachingDefaultProviderTest
                 .cacheConfiguration(CacheConfiguration.of(Duration.ofDays(1)).withoutParameters())
                 .retryConfiguration(RetryConfiguration.of(numberOfRetries, Duration.ZERO));
 
-        final Callable<String> testLogic = new Callable<String>()
+        final Callable<String> testLogic = new Callable<>()
         {
             private int attemptCounter = 0;
 
@@ -500,9 +481,9 @@ class Resilience4jCachingDefaultProviderTest
         }
     }
 
-    private static void mockTenantAndPrincipal( @Nullable final String tenantId, @Nullable final String principalId )
+    private static void mockTenantAndPrincipal( @Nonnull final String tenantId, @Nonnull final String principalId )
     {
-        mockUtil.setOrMockCurrentTenant(tenantId);
-        mockUtil.setOrMockCurrentPrincipal(principalId);
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant(tenantId)));
+        PrincipalAccessor.setPrincipalFacade(() -> Try.success(new DefaultPrincipal(principalId)));
     }
 }

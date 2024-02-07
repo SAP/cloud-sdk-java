@@ -19,16 +19,20 @@ import javax.annotation.Nonnull;
 import javax.cache.Cache;
 import javax.cache.Caching;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.vavr.control.Try;
@@ -36,11 +40,18 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+@Isolated
 class Resilience4jDecorationStrategyClearCacheTest
 {
-    @SuppressWarnings( "deprecation" )
     @Nonnull
     private static final MockUtil mockUtil = new MockUtil();
+
+    @AfterEach
+    void afterEach()
+    {
+        TenantAccessor.setTenantFacade(null);
+        PrincipalAccessor.setPrincipalFacade(null);
+    }
 
     @RequiredArgsConstructor
     private enum TestCaseConfiguration

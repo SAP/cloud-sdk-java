@@ -22,6 +22,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -29,6 +30,7 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
+@Isolated
 class DestinationServiceAuthenticationTest
 {
     private static final String OAUTH_TOKEN =

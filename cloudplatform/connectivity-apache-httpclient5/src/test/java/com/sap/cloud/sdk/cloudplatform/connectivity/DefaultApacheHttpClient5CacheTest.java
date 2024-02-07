@@ -18,10 +18,12 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.testutil.MockUtil;
 
+@Isolated
 class DefaultApacheHttpClient5CacheTest
 {
     private static final MockUtil mockUtil = new MockUtil();
