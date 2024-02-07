@@ -27,10 +27,10 @@ public interface TenantFacade
      * <tr>
      * <td><strong>SAP Business Technology Platform Cloud Foundry</strong></td>
      * <td>A request is present with an "Authorization" header that contains a valid JWT bearer with field "app_tid",
-     * "zid" (legacy), or "zone_uuid" (legacy).<br>
+     * "zid", or "zone_uuid" (legacy).<br>
      * As a fallback a JWT will be retrieved from a bound XSUAA instance.</td>
      * <td>A request is not available, no "Authorization" header is present in the current request, the JWT bearer does
-     * not hold a field "app_tid", "zid" (legacy), or "zone_uuid" (legacy), or there is no XSUAA service bound to this
+     * not hold a field "app_tid", "zid", or "zone_uuid" (legacy), or there is no XSUAA service bound to this
      * application.</td>
      * </tr>
      * </table>
