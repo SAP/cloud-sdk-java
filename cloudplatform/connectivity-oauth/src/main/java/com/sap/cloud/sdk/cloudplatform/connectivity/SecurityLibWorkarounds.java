@@ -8,7 +8,6 @@ import com.sap.cloud.security.config.CredentialType;
 final class SecurityLibWorkarounds
 {
     private static final String X509_GENERATED = "X509_GENERATED";
-    private static final String X509_ATTESTED = "X509_ATTESTED";
 
     private SecurityLibWorkarounds()
     {
@@ -20,10 +19,6 @@ final class SecurityLibWorkarounds
     {
         if( rawType.equals(X509_GENERATED) ) {
             // this particular credential type is currently (2024-01-31) NOT supported by the Security Client Lib.
-            return CredentialType.X509;
-        }
-
-        if( rawType.equals(X509_ATTESTED) ) {
             return CredentialType.X509;
         }
 
