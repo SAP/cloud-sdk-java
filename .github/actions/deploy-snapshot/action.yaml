@@ -23,7 +23,7 @@ runs:
   using: composite
   steps:
     - name: "Print Action Start"
-      run: echo ">>>>> Starting Deploy Snapshot Action"
+      run: echo ">>>>> Starting Deploy Snapshot Action; Not printing inputs as they may contain sensitive information."
       shell: bash
 
     - name: "Setup java"
