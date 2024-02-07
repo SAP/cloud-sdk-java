@@ -66,8 +66,8 @@ jobs:
         with:
           ci-run-id: ${{ needs.run-ci.outputs.ci-run-id }}
           repository-url: "https://oss.sonatype.org/content/repositories/snapshots"
-          repository-username: MAVEN_CENTRAL_USER
-          repository-password: MAVEN_CENTRAL_PASSWORD
+          repository-username: ${{ secrets.MAVEN_CENTRAL_USER }}
+          repository-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           release-artifact-name: ${{ env.RELEASE_ARTIFACT_NAME }}
 
   notify-job:
