@@ -140,20 +140,20 @@ public final class CacheManager
             final List<CacheKey> keysToInvalidate = new ArrayList<>();
 
             for( final CacheKey cacheKey : cache.asMap().keySet() ) {
-                log.debug("Checking cache invalidation for tenant/zone '{}': {}.", tenantId, cacheKey);
+                log.debug("Checking cache invalidation for tenant '{}': {}.", tenantId, cacheKey);
 
                 if( Objects.equals(tenantId, cacheKey.getTenantId().getOrNull()) ) {
                     keysToInvalidate.add(cacheKey);
                 }
             }
 
-            log.debug("Invalidating caches of tenant/zone '{}': {}.", tenantId, keysToInvalidate);
+            log.debug("Invalidating caches of tenant '{}': {}.", tenantId, keysToInvalidate);
 
             size += keysToInvalidate.size();
             cache.invalidateAll(keysToInvalidate);
         }
 
-        log.info("Successfully invalidated caches of tenant/zone '{}': {}.", tenantId, size);
+        log.info("Successfully invalidated caches of tenant '{}': {}.", tenantId, size);
         return size;
     }
 
@@ -192,7 +192,7 @@ public final class CacheManager
             size += invalidatePrincipalEntries(tenantId, principalId, cache);
         }
 
-        final String msg = "Successfully invalidated caches of principal {} within tenant/zone {}: {}";
+        final String msg = "Successfully invalidated caches of principal {} within tenant {}: {}";
         log.info(msg, principalId, tenantId, size);
         return size;
     }
@@ -241,7 +241,7 @@ public final class CacheManager
         final List<CacheKey> keysToInvalidate = new ArrayList<>();
 
         for( final CacheKey cacheKey : cache.asMap().keySet() ) {
-            final String msg = "Checking invalidation for principal {} within tenant/zone {}: {}";
+            final String msg = "Checking invalidation for principal {} within tenant {}: {}";
             log.debug(msg, principalId, tenantId, cacheKey);
 
             final boolean isEqualTenantId = Objects.equals(tenantId, cacheKey.getTenantId().getOrNull());
@@ -252,7 +252,7 @@ public final class CacheManager
             }
         }
 
-        final String msg = "Invalidating caches of principal '{}' within tenant/zone '{}': {}";
+        final String msg = "Invalidating caches of principal '{}' within tenant '{}': {}";
         log.debug(msg, principalId, tenantId, keysToInvalidate);
 
         final long size = keysToInvalidate.size();

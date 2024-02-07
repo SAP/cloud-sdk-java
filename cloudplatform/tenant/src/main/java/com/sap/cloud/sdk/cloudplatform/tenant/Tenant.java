@@ -14,7 +14,7 @@ public interface Tenant
     /**
      * Getter for the id of a tenant. <br>
      *
-     * @return The identifier of the tenant (or zone, if applicable).
+     * @return The identifier of the tenant.
      */
     @Nonnull
     String getTenantId();
