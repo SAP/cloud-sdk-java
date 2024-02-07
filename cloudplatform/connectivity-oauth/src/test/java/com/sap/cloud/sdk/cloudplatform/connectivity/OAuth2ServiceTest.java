@@ -5,6 +5,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.Endpoints;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.TenantPropagationStrategy;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +22,8 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +31,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
@@ -225,5 +230,32 @@ class OAuth2ServiceTest
         assertThat(config.identifier()).isEqualTo(URI.create(SERVER_1.baseUrl()).getHost() + "-" + IDENTITY_1.getId());
         assertThat(config.isolationMode()).isEqualTo(ResilienceIsolationMode.TENANT_OPTIONAL);
         assertThat(config.timeLimiterConfiguration().timeoutDuration()).isGreaterThan(Duration.ZERO);
+    }
+
+    @Test
+    void testTenantPropagationStrategy()
+    {
+        assertThat(TenantPropagationStrategy.fromServiceIdentifier(ServiceIdentifier.of("identity")))
+            .isEqualTo(TenantPropagationStrategy.IAS_SUBDOMAIN);
+        assertThat(TenantPropagationStrategy.fromServiceIdentifier(ServiceIdentifier.of("IDENTITY")))
+            .isEqualTo(TenantPropagationStrategy.IAS_SUBDOMAIN);
+        assertThat(TenantPropagationStrategy.fromServiceIdentifier(ServiceIdentifier.of("service")))
+            .isEqualTo(TenantPropagationStrategy.XSUAA_ZID_HEADER);
+    }
+
+    @Test
+    void testEndpointsBehavior()
+    {
+        // this first case is covered to keep compatibility with our old behavior where we always assumed that we were using XSUAA
+        assertThat(endpointsOf("https://foo.bar").getTokenEndpoint()).hasToString("https://foo.bar/oauth/token");
+
+        // the second case covers our IAS support where the `OAuth2PropertySupplier` already provides the full URL.
+        // in this case, we are NOT adding the default path.
+        assertThat(endpointsOf("https://foo.bar/baz").getTokenEndpoint()).hasToString("https://foo.bar/baz");
+    }
+
+    private static Endpoints endpointsOf( @Nonnull final String baseUri )
+    {
+        return OAuth2Service.Endpoints.fromBaseUri(URI.create(baseUri));
     }
 }

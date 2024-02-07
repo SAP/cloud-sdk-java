@@ -70,8 +70,7 @@ class OAuth2IntegrationTest
                 entry("credential-type", "binding-secret"),
                 entry("clientid", "myClientId"),
                 entry("clientsecret", "myClientSecret"),
-                entry("url", "http://provider.ias.domain"),
-                entry("domain", "ias.domain"));
+                entry("url", "http://provider.ias.domain"));
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
         final Try<HttpDestination> maybeDestination =

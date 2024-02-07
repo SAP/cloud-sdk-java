@@ -119,7 +119,7 @@ class BtpServicePropertySuppliers
     private static class IdentityAuthorization extends DefaultOAuth2PropertySupplier
     {
 
-        IdentityAuthorization( @Nonnull ServiceBindingDestinationOptions options )
+        IdentityAuthorization( @Nonnull final ServiceBindingDestinationOptions options )
         {
             super(options, List.of());
         }
@@ -128,7 +128,12 @@ class BtpServicePropertySuppliers
         @Override
         public URI getTokenUri()
         {
-            return super.getTokenUri().resolve("oauth2/token");
+            String providerUrl = getCredentialOrThrow(String.class, "url");
+            if( providerUrl.endsWith("/") ) {
+                providerUrl = providerUrl.substring(0, providerUrl.length() - 1);
+            }
+
+            return URI.create(providerUrl + "/oauth2/token");
         }
     }
 }

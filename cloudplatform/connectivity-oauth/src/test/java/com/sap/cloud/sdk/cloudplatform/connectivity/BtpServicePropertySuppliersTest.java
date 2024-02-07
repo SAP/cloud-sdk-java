@@ -276,7 +276,8 @@ class BtpServicePropertySuppliersTest
         private final ServiceBinding binding =
             bindingWithCredentials(
                 ServiceBindingLibWorkarounds.IAS_IDENTIFIER,
-                entry("url", "https://provider.ias.domain.com/v1/"));
+                entry("credential-type", "X509_GENERATED"),
+                entry("url", "https://provider.ias.domain"));
 
         @Test
         void testTokenUri()
@@ -287,7 +288,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = IDENTITY_AUTHORIZATION.resolve(options);
             assertThat(sut).isNotNull();
 
-            assertThat(sut.getTokenUri()).hasToString("https://provider.ias.domain.com/v1/oauth2/token");
+            assertThat(sut.getTokenUri()).hasToString("https://provider.ias.domain/oauth2/token");
         }
     }
 }
