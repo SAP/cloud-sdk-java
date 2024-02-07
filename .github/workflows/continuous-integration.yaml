@@ -83,7 +83,7 @@ jobs:
         with:
           ref: ${{ needs.context.outputs.commit }}
       - name: "Setup Java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
@@ -109,13 +109,13 @@ jobs:
         with:
           ref: ${{ needs.context.outputs.commit }}
       - name: "Setup java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
@@ -151,7 +151,7 @@ jobs:
 
       - name: "Cache Dependencies"
         if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
@@ -204,13 +204,13 @@ jobs:
         with:
           ref: ${{ needs.context.outputs.commit }}
       - name: "Setup java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
@@ -265,13 +265,13 @@ jobs:
         with:
           ref: ${{ needs.context.outputs.commit }}
       - name: "Setup java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
@@ -304,13 +304,13 @@ jobs:
         with:
           ref: ${{ needs.context.outputs.commit }}
       - name: "Setup java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
@@ -347,13 +347,13 @@ jobs:
     name: "Test ${{ matrix.task.archetype }} Archetype"
     steps:
       - name: "Setup java"
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: ${{ env.DEPENDENCIES_CACHE_KEY }}
           path: ${{ env.DEPENDENCIES_PATH }}
