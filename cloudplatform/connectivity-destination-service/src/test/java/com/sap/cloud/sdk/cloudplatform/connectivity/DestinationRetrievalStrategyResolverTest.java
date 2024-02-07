@@ -43,7 +43,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
 
-@Isolated // required due to implicit behavior of TokenRule
+@Isolated
 @SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
 {
