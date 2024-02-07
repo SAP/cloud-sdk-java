@@ -7,27 +7,60 @@ on:
 jobs:
   create_fosstars_report:
     runs-on: ubuntu-latest
-    name: "Security rating"
+    outputs:
+      json_file: ${{ steps.fosstars_rating.outputs.json_file }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: SAP/fosstars-rating-core-action@v1.14.0
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Create Fosstars report
+        id: fosstars_rating
+        uses: SAP/fosstars-rating-core-action@v1.14.0
         with:
           report-branch: main
           report-file: .github/fosstars/fosstars_report.md
           badge-file: .github/fosstars/fosstars_badge.svg
           token: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: json_report
+          path: fosstars_rating.json
+
   move_json_to_fosstars_folder:
     runs-on: ubuntu-latest
     needs: create_fosstars_report
-    name: "Move JSON to Fosstars folder"
     steps:
-      - uses: actions/checkout@v3
-      - name: "Move JSON to Fosstars folder"
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          ref: main
+
+      - name: Prepare git
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: json_report
+
+      - name: Move fosstars_rating.json
         run: |
           if [ -e fosstars_rating.json ]; then
             echo "File exists."
+            git pull origin main
             mv fosstars_rating.json .github/fosstars/
+          
+            git add .github/fosstars/fosstars_rating.json fosstars_rating.json
+            git commit -m "Move fosstars_rating.json to .github/fosstars/"
+
+            git push origin main
           else
             echo "File does not exist."
           fi
