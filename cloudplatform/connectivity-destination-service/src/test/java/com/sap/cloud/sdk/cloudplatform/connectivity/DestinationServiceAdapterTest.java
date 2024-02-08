@@ -30,11 +30,11 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -55,7 +55,7 @@ import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 
@@ -64,8 +64,8 @@ import io.vavr.control.Try;
 @WireMockTest
 class DestinationServiceAdapterTest
 {
-    private static final MockUtil mockutil = new MockUtil();
-
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
     private static final String SERVICE_NAME = "destination";
     private static final ClientCredentials CLIENT_CREDENTIALS =
         new ClientCredentials("destination-client-id", "destination-client-secret");
@@ -84,8 +84,8 @@ class DestinationServiceAdapterTest
     @BeforeAll
     static void setupSession()
     {
-        mockutil.mockCurrentPrincipal();
-        mockutil.mockCurrentTenant();
+        context.setPrincipal();
+        context.setTenant();
     }
 
     @BeforeEach
@@ -98,13 +98,6 @@ class DestinationServiceAdapterTest
                 "http://localhost:" + wm.getHttpPort() + DESTINATION_SERVICE_ROOT + "/",
                 "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/",
                 PROVIDER_TENANT_ID);
-    }
-
-    @AfterAll
-    static void resetFacades()
-    {
-        TenantAccessor.setTenantFacade(null);
-        PrincipalAccessor.setPrincipalFacade(null);
     }
 
     @AfterEach

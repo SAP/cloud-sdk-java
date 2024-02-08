@@ -52,14 +52,16 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class Resilience4jCachingDefaultProviderTest
 {
-    private static final MockUtil mockUtil = new MockUtil();
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
 
     @BeforeAll
     static void beforeClass()
@@ -71,8 +73,8 @@ class Resilience4jCachingDefaultProviderTest
     @AfterEach
     void cleanupAroundTests()
     {
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+        context.clearTenant();
+        context.clearPrincipal();
         DefaultCachingDecorator.lockCache.invalidateAll();
     }
 
@@ -502,7 +504,7 @@ class Resilience4jCachingDefaultProviderTest
 
     private static void mockTenantAndPrincipal( @Nullable final String tenantId, @Nullable final String principalId )
     {
-        mockUtil.setOrMockCurrentTenant(tenantId);
-        mockUtil.setOrMockCurrentPrincipal(principalId);
+        context.setTenant(tenantId);
+        context.setPrincipal(principalId);
     }
 }
