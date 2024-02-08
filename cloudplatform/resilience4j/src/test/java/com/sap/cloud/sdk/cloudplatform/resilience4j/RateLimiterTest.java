@@ -210,7 +210,7 @@ class RateLimiterTest
 
         {
             // sanity check: Not tenant leads to exception during decoration
-            context.setTenant(null);
+            context.clearTenant();
 
             assertThatThrownBy(() -> ResilienceDecorator.decorateSupplier(() -> 42, resilienceConfiguration))
                 .isExactlyInstanceOf(ResilienceRuntimeException.class)

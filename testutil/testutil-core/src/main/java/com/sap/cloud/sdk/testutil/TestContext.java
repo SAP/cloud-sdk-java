@@ -19,8 +19,11 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @RequiredArgsConstructor
-public class TestContext implements AfterEachCallback, InvocationInterceptor, TenantContextApi, PrincipalContextApi
+public class TestContext implements AfterEachCallback, InvocationInterceptor, TenantContextApi, PrincipalContextApi, AuthTokenContextApi
 {
     private final ThreadContext context = new DefaultThreadContext();
 
@@ -39,7 +42,7 @@ public class TestContext implements AfterEachCallback, InvocationInterceptor, Te
     }
 
     @Override
-    public void setProperty( String key, Object value )
+    public void setProperty(@Nonnull final String key, @Nullable final Object value )
     {
         final ThreadContext ctx = ThreadContextAccessor.tryGetCurrentContext().getOrElse(context);
         if( value != null ) {

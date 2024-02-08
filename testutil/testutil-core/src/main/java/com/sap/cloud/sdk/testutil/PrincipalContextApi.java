@@ -21,4 +21,8 @@ public interface PrincipalContextApi extends TestContextApi
         setProperty(PrincipalThreadContextListener.PROPERTY_PRINCIPAL, principal);
         return principal;
     }
+    default void clearPrincipal()
+    {
+        setPrincipal( (Principal) null);
+    }
 }
