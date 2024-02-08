@@ -13,6 +13,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTok
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,31 +34,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
-import io.vavr.control.Try;
 
 @SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
 {
     private static final Tenant providerT = new DefaultTenant("provider");
     private static final Tenant subscriberT = new DefaultTenant("subscriber");
+
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
+
     private DestinationRetrievalStrategyResolver sut;
 
     private Function<Strategy, DestinationServiceV1Response> destinationRetriever;
     private Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
-
-    @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
 
     @SuppressWarnings( "unchecked" )
     @BeforeEach
@@ -183,7 +181,8 @@ class DestinationRetrievalStrategyResolverTest
     @DisplayName( "Test default strategies are set correctly" )
     void testDefaultStrategies()
     {
-        // subscriber tenant is implied
+        context.setAuthToken(mockXsuaaToken());
+
         sut.prepareSupplier(DestinationOptions.builder().build());
         sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
 
@@ -195,10 +194,12 @@ class DestinationRetrievalStrategyResolverTest
     @DisplayName( "Test default strategy for non-XSUAA tokens is set correctly" )
     void testDefaultNonXsuaaTokenStrategy()
     {
-        final AuthToken nonXsuaaToken = new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(nonXsuaaToken));
+        context.setAuthToken();
 
         sut.prepareSupplier(DestinationOptions.builder().build());
+        sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
+
         verify(sut).prepareSupplier(CURRENT_TENANT, DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
+        verify(sut).prepareSupplierAllDestinations(CURRENT_TENANT);
     }
 }

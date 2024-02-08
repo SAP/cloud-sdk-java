@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -56,7 +57,6 @@ import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 class Resilience4jCachingDefaultProviderTest
 {

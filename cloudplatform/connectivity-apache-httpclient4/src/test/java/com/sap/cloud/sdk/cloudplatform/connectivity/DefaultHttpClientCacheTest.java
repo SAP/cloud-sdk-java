@@ -18,19 +18,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-
-import io.vavr.control.Option;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 class DefaultHttpClientCacheTest
 {
@@ -43,31 +39,12 @@ class DefaultHttpClientCacheTest
 
     private static final HttpClientFactory FACTORY = new DefaultHttpClientFactory();
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
+    private static final List<Tenant> tenants = Arrays.asList(new DefaultTenant("T#1"), new DefaultTenant("T#2"), null);
+    private static final List<Principal> principals =
+        Arrays.asList(new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), null);
 
-    private static final Principal PRINCIPAL = new DefaultPrincipal("P");
-    private static final Principal PRINCIPAL_NONE = null;
-
-    private static final Tenant TENANT = new DefaultTenant("T");
-    private static final Tenant TENANT_NONE = null;
-
-    private Principal mockedPrincipal = PRINCIPAL;
-    private Tenant mockedTenant = TENANT;
-
-    @BeforeEach
-    void setup()
-    {
-        CacheManager.invalidateAll();
-        PrincipalAccessor.setPrincipalFacade(() -> Option.of(mockedPrincipal).toTry());
-        TenantAccessor.setTenantFacade(() -> Option.of(mockedTenant).toTry());
-    }
-
-    @AfterEach
-    void tearDown()
-    {
-        CacheManager.invalidateAll();
-        PrincipalAccessor.setPrincipalFacade(null);
-        TenantAccessor.setTenantFacade(null);
-    }
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
 
     @Test
     void testGetClientExpiresAfterWrite()
@@ -104,15 +81,12 @@ class DefaultHttpClientCacheTest
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final Tenant[] tenantsToTest = { new DefaultTenant("T#1"), new DefaultTenant("T#2"), TENANT_NONE };
-        final Principal[] principalsToTest =
-            { new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), PRINCIPAL_NONE };
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final Tenant tenantToTest : tenantsToTest ) {
-            for( final Principal principalToTest : principalsToTest ) {
-                mockedTenant = tenantToTest;
-                mockedPrincipal = principalToTest;
+        for( final Tenant tenantToTest : tenants ) {
+            for( final Principal principalToTest : principals ) {
+                context.setTenant(tenantToTest);
+                context.setPrincipal(principalToTest);
 
                 final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
 
@@ -130,17 +104,14 @@ class DefaultHttpClientCacheTest
     @Test
     void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
+        final HttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final Tenant[] tenantsToTest = { new DefaultTenant("T#1"), new DefaultTenant("T#2"), TENANT_NONE };
-        final Principal[] principalsToTest =
-            { new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), PRINCIPAL_NONE };
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final Tenant tenantToTest : tenantsToTest ) {
-            for( final Principal principalToTest : principalsToTest ) {
-                mockedTenant = tenantToTest;
-                mockedPrincipal = principalToTest;
+        for( final Tenant tenantToTest : tenants ) {
+            for( final Principal principalToTest : principals ) {
+                context.setTenant(tenantToTest);
+                context.setPrincipal(principalToTest);
 
                 final HttpClient clientWithDestination =
                     sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -160,18 +131,15 @@ class DefaultHttpClientCacheTest
     @Test
     void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
-        final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
+        final HttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final Tenant[] tenantsToTest = { new DefaultTenant("T#1"), new DefaultTenant("T#2"), TENANT_NONE };
-        final Principal[] principalsToTest =
-            { new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), PRINCIPAL_NONE };
         final List<HttpClient> clients = new ArrayList<>();
         final Set<HttpClient> tenantClients = new HashSet<>();
 
-        for( final Tenant tenantToTest : tenantsToTest ) {
-            for( final Principal principalToTest : principalsToTest ) {
-                mockedTenant = tenantToTest;
-                mockedPrincipal = principalToTest;
+        for( final Tenant tenantToTest : tenants ) {
+            for( final Principal principalToTest : principals ) {
+                context.setTenant(tenantToTest);
+                context.setPrincipal(principalToTest);
 
                 final HttpClient clientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
 
@@ -230,17 +198,14 @@ class DefaultHttpClientCacheTest
     @Test
     void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
+        final HttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final Tenant[] tenantsToTest = { new DefaultTenant("T#1"), new DefaultTenant("T#2"), TENANT_NONE };
-        final Principal[] principalsToTest =
-            { new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), PRINCIPAL_NONE };
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final Tenant tenantToTest : tenantsToTest ) {
-            for( final Principal principalToTest : principalsToTest ) {
-                mockedTenant = tenantToTest;
-                mockedPrincipal = principalToTest;
+        for( final Tenant tenantToTest : tenants ) {
+            for( final Principal principalToTest : principals ) {
+                context.setTenant(tenantToTest);
+                context.setPrincipal(principalToTest);
 
                 final HttpClient clientWithDestination =
                     sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -270,10 +235,9 @@ class DefaultHttpClientCacheTest
     @Test
     void testInvalidateTenantCacheEntries()
     {
-        final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
+        final HttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final String untestedTenantId = "some-tenant";
-        mockedTenant = new DefaultTenant(untestedTenantId);
+        context.setTenant("some-tenant");
 
         final HttpClient unclearedClientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
         assertThat(unclearedClientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -281,9 +245,8 @@ class DefaultHttpClientCacheTest
         final HttpClient unclearedClientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        final List<String> tenantsToTest = Arrays.asList("tenant#1", null);
-        for( final String tenantId : tenantsToTest ) {
-            mockedTenant = tenantId != null ? new DefaultTenant(tenantId) : TENANT_NONE;
+        for( final Tenant tenant : tenants ) {
+            context.setTenant(tenant);
 
             final HttpClient clientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
             assertThat(clientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -291,14 +254,14 @@ class DefaultHttpClientCacheTest
             final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
             assertThat(clientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-            assertThat(CacheManager.invalidateTenantCaches(tenantId)).isEqualTo(2);
+            assertThat(CacheManager.invalidateTenantCaches(tenant != null ? tenant.getTenantId() : null)).isEqualTo(2);
 
             assertThat(clientWithDestination).isNotSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
             assertThat(clientWithoutDestination).isNotSameAs(sut.tryGetHttpClient(FACTORY).get());
         }
 
         // make sure the cache entries for the untested tenant were not invalidated
-        mockedTenant = new DefaultTenant(untestedTenantId);
+        context.setTenant("some-tenant");
         assertThat(unclearedClientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
@@ -308,30 +271,26 @@ class DefaultHttpClientCacheTest
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final String tenantId = "tenant#1";
-        mockedTenant = new DefaultTenant(tenantId);
-
-        final String untestedPrincipalId = "some-principal";
-        mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);
+        context.setPrincipal("some-principal");
 
         final HttpClient unclearedClientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        final List<String> principalsToTest = Arrays.asList("principal#1", null);
-
-        for( final String principalId : principalsToTest ) {
-            mockedPrincipal = principalId != null ? new DefaultPrincipal(principalId) : PRINCIPAL_NONE;
+        for( final Principal principal : principals ) {
+            context.setPrincipal(principal);
 
             final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
             assertThat(clientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
             //Only clientWithoutDestination is cached with the cache key containing principal
-            assertThat(CacheManager.invalidatePrincipalCaches(tenantId, principalId)).isEqualTo(1);
+            assertThat(
+                CacheManager.invalidatePrincipalCaches(null, principal != null ? principal.getPrincipalId() : null))
+                .isEqualTo(1);
 
             assertThat(clientWithoutDestination).isNotSameAs(sut.tryGetHttpClient(FACTORY).get());
         }
         // make sure the cache entries for the untested principal were not invalidated
-        mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);
+        context.setPrincipal("some-principal");
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
 
@@ -340,12 +299,7 @@ class DefaultHttpClientCacheTest
     {
         final DefaultHttpClientCache sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES);
 
-        final String tenantId = "tenant#1";
-        mockedTenant = new DefaultTenant(tenantId);
-
-        final String untestedPrincipalId = "some-principal";
-        mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);
-
+        context.setPrincipal("some-principal");
         final HttpClient unclearedClientWithDestination =
             sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
         assertThat(unclearedClientWithDestination)
@@ -357,7 +311,7 @@ class DefaultHttpClientCacheTest
         final List<String> principalsToTest = Arrays.asList("principal#1", null);
 
         for( final String principalId : principalsToTest ) {
-            mockedPrincipal = principalId != null ? new DefaultPrincipal(principalId) : PRINCIPAL_NONE;
+            context.setPrincipal(principalId);
 
             final HttpClient clientWithDestination =
                 sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -368,7 +322,7 @@ class DefaultHttpClientCacheTest
             assertThat(clientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
             //Both clientWithoutDestination and clientWithDestination are cached with the cache key containing principal
-            assertThat(CacheManager.invalidatePrincipalCaches(tenantId, principalId)).isEqualTo(2);
+            assertThat(CacheManager.invalidatePrincipalCaches(null, principalId)).isEqualTo(2);
 
             assertThat(clientWithDestination)
                 .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
@@ -376,7 +330,7 @@ class DefaultHttpClientCacheTest
         }
 
         // make sure the cache entries for the untested principal were not invalidated
-        mockedPrincipal = new DefaultPrincipal(untestedPrincipalId);
+        context.setPrincipal("some-principal");
         assertThat(unclearedClientWithDestination)
             .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());

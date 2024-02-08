@@ -96,5 +96,4 @@ public class TestContext
             PrincipalAccessor.setFallbackPrincipal(null);
         }
     }
-
 }

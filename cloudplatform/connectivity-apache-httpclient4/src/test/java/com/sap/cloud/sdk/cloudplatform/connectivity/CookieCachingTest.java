@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
@@ -70,8 +69,6 @@ class CookieCachingTest
 
         final Tenant t1 = () -> tenantOrZoneId1;
         final Tenant t2 = () -> tenantOrZoneId2;
-
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
         // sanity check: No tenant present
         VavrAssertions.assertThat(TenantAccessor.tryGetCurrentTenant()).isFailure();
