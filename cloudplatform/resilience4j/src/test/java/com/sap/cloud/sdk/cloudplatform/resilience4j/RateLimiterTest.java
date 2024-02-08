@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import com.sap.cloud.sdk.testutil.TestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,20 +27,18 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
-import com.sap.cloud.sdk.testutil.MockUtil;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class RateLimiterTest
 {
-    @SuppressWarnings( "deprecation" )
-    private final MockUtil mockUtil = new MockUtil();
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
 
-    @SuppressWarnings( "deprecation" )
     @BeforeEach
-    void setup()
-    {
-        mockUtil.mockDefaults();
+    void mockTenant(){
+        context.setTenant("tenant");
     }
 
     @Test
@@ -210,7 +209,7 @@ class RateLimiterTest
 
         {
             // sanity check: Not tenant leads to exception during decoration
-            mockUtil.clearTenants();
+            context.setTenant(null);
 
             assertThatThrownBy(() -> ResilienceDecorator.decorateSupplier(() -> 42, resilienceConfiguration))
                 .isExactlyInstanceOf(ResilienceRuntimeException.class)
@@ -221,8 +220,7 @@ class RateLimiterTest
 
         {
             // tenant A
-            mockUtil.clearTenants();
-            mockUtil.mockCurrentTenant("tenantA");
+            context.setTenant("tenantA");
 
             final Supplier<Integer> supplier =
                 () -> ResilienceDecorator.executeSupplier(() -> 42, resilienceConfiguration);
@@ -238,8 +236,7 @@ class RateLimiterTest
 
         {
             // tenant B
-            mockUtil.clearTenants();
-            mockUtil.mockCurrentTenant("tenantB");
+            context.setTenant("tenantB");
 
             // use the same resilience configuration
             final Supplier<Integer> supplier =

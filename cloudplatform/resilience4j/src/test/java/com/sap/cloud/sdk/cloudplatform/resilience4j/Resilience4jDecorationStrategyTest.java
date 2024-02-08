@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.testutil.TestContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,24 +29,15 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.resilience4j.Resilience4jCachingDefaultProviderTest.TestCallable;
 import com.sap.cloud.sdk.testutil.MockUtil;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class Resilience4jDecorationStrategyTest
 {
-    @SuppressWarnings( "deprecation" )
-    @Nonnull
-    private static final MockUtil mockUtil = new MockUtil();
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
 
-    @BeforeAll
-    static void beforeClass()
-    {
-        ResilienceDecorator.setDecorationStrategy(new Resilience4jDecorationStrategy());
-    }
-
-    @BeforeEach
-    void beforeEach()
-    {
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+    static {
+        context.setTenant("tenant_1");
     }
 
     @Test
@@ -145,14 +137,14 @@ class Resilience4jDecorationStrategyTest
                 .isolationMode(ResilienceIsolationMode.TENANT_REQUIRED)
                 .cacheConfiguration(CacheConfiguration.of(Duration.ofMinutes(5)).withoutParameters());
 
-        mockTenantAndPrincipal(tenant_id_1, null);
+        context.setTenant(tenant_id_1);
 
         final Callable<Integer> callable = ResilienceDecorator.decorateCallable(testCallable, configuration);
 
         assertThat(callable.call()).isEqualTo(1);
         assertThat(callable.call()).isEqualTo(1);
 
-        mockTenantAndPrincipal(tenant_id_2, null);
+        context.setTenant(tenant_id_2);
         assertThat(callable.call()).isEqualTo(2);
         assertThat(callable.call()).isEqualTo(2);
 
@@ -160,7 +152,7 @@ class Resilience4jDecorationStrategyTest
         assertThat(callable.call()).isEqualTo(3);
         assertThat(callable.call()).isEqualTo(3);
 
-        mockTenantAndPrincipal(tenant_id_1, null);
+        context.setTenant(tenant_id_1);
         assertThat(callable.call()).isEqualTo(4);
         assertThat(callable.call()).isEqualTo(4);
     }
@@ -180,11 +172,5 @@ class Resilience4jDecorationStrategyTest
                     null);
         final String threadName = threadNameCallable.call();
         assertThat(threadName.matches(String.valueOf(Pattern.compile("cloudsdk-resilience-\\d+"))));
-    }
-
-    private static void mockTenantAndPrincipal( @Nullable String tenantId, @Nullable String principalId )
-    {
-        mockUtil.setOrMockCurrentTenant(tenantId);
-        mockUtil.setOrMockCurrentPrincipal(principalId);
     }
 }
