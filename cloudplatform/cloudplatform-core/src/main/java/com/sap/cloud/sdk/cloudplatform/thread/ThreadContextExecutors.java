@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.cloudplatform.thread;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 public class ThreadContextExecutors
 {
     private static ThreadContextExecutorService executor = newDefaultThreadContextExecutorService();
+    private static ThreadContextExecutorService executorVirtual = newDefaultThreadContextExecutorServiceVirtual();
 
     private static ThreadContextExecutorService newDefaultThreadContextExecutorService()
     {
@@ -44,6 +46,12 @@ public class ThreadContextExecutors
                             .build()));
     }
 
+    private static ThreadContextExecutorService newDefaultThreadContextExecutorServiceVirtual()
+    {
+        final ThreadFactory factory = Thread.ofVirtual().name("sdk-executor-virtual-", 0).factory();
+        return DefaultThreadContextExecutorService.of(Executors.newThreadPerTaskExecutor(factory));
+    }
+
     /**
      * Get the unique executor of this class.
      *
@@ -53,6 +61,17 @@ public class ThreadContextExecutors
     public static ThreadContextExecutorService getExecutor()
     {
         return executor;
+    }
+
+    /**
+     * Get the unique executor of this class. It serves virtual threads.
+     *
+     * @return The unique customized executor instance.
+     */
+    @Nonnull
+    public static ThreadContextExecutorService getExecutorVirtual()
+    {
+        return executorVirtual;
     }
 
     /**

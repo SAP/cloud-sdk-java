@@ -46,7 +46,7 @@
 		<!--  do not modify the following line, it is updated by the versioning script  -->
 		<sdk.version>5.4.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
 		<java.compilerArgument />
 		<javadoc.opts />
