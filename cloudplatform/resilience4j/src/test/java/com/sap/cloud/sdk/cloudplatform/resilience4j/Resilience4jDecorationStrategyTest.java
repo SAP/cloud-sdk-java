@@ -13,13 +13,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.sap.cloud.sdk.testutil.TestContext;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CacheConfiguration;
@@ -28,8 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.resilience4j.Resilience4jCachingDefaultProviderTest.TestCallable;
-import com.sap.cloud.sdk.testutil.MockUtil;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 class Resilience4jDecorationStrategyTest
 {

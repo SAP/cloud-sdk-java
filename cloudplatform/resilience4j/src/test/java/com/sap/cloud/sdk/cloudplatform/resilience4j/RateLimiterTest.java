@@ -17,19 +17,19 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.testutil.TestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 class RateLimiterTest
 {
@@ -37,7 +37,8 @@ class RateLimiterTest
     static TestContext context = TestContext.withThreadContext();
 
     @BeforeEach
-    void mockTenant(){
+    void mockTenant()
+    {
         context.setTenant("tenant");
     }
 
