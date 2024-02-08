@@ -5,5 +5,5 @@ import javax.annotation.Nullable;
 
 public interface TestContextApi
 {
-    void setProperty(@Nonnull final String key, @Nullable final Object value );
+    void setProperty( @Nonnull final String key, @Nullable final Object value );
 }

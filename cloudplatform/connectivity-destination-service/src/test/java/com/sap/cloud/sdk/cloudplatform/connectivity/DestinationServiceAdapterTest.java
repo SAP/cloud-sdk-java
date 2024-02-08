@@ -30,7 +30,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,8 +84,8 @@ class DestinationServiceAdapterTest
     @BeforeAll
     static void setupSession()
     {
-        context.setPrincipal("principal");
-        context.setTenant("tenant");
+        context.setPrincipal();
+        context.setTenant();
     }
 
     @BeforeEach
