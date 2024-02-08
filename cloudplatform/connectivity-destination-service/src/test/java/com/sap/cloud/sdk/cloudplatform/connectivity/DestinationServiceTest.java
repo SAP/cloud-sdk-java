@@ -33,7 +33,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -50,7 +52,6 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,22 +60,23 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.stubbing.Answer;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
-import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
@@ -316,7 +318,7 @@ class DestinationServiceTest
     // endregion
 
     @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
+    static final TestContext context = TestContext.withThreadContext();
 
     private DestinationServiceAdapter scpCfDestinationServiceAdapter;
     private DestinationService loader;
@@ -328,17 +330,16 @@ class DestinationServiceTest
     @BeforeEach
     void setup()
     {
-        // IMPORTANT: Do not remove or move mock() calls up to the class fields!  Mocks need to be reset for each test
-        // to reset execution counters. Remember that all test methods are executed in parallel.
-        CacheManager.invalidateAll();
-
         providerTenant = new DefaultTenant("provider-tenant");
         subscriberTenant = new DefaultTenant("subscriber-tenant");
-        TenantAccessor.setTenantFacade(() -> Try.success(subscriberTenant));
+        context.setTenant(subscriberTenant);
 
         principal1 = new DefaultPrincipal("principal-1");
         principal2 = new DefaultPrincipal("principal-2");
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
+        context.setPrincipal(principal1);
+
+        final DecodedJWT xsuaaJwt = createXsuaaJwt();
+        context.setAuthToken(xsuaaJwt);
 
         scpCfDestinationServiceAdapter =
             spy(
@@ -382,18 +383,10 @@ class DestinationServiceTest
             .getConfigurationAsJsonWithUserToken(destinationPath, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
     }
 
-    @BeforeEach
     @AfterEach
     void resetDestinationCache()
     {
         DestinationService.Cache.reset();
-    }
-
-    @AfterAll
-    static void resetFacades()
-    {
-        TenantAccessor.setTenantFacade(null);
-        PrincipalAccessor.setPrincipalFacade(null);
     }
 
     @Test
@@ -582,10 +575,8 @@ class DestinationServiceTest
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
         // set current tenant to be the provider tenant
-        TenantAccessor.setTenantFacade(null);
+        context.clearTenant();
 
-        // set current tenant to be the provider tenant
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         final Try<Iterable<Destination>> result =
             TenantAccessor.executeWithTenant(providerTenant, () -> loader.tryGetAllDestinations(options));
 
@@ -626,7 +617,7 @@ class DestinationServiceTest
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
 
         // set current tenant to be the provider tenant
-        TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
+        context.setTenant(providerTenant);
 
         assertThat(loader.tryGetDestination(destinationName, options).getCause())
             .isInstanceOf(DestinationAccessException.class);
@@ -1046,9 +1037,8 @@ class DestinationServiceTest
     @SneakyThrows
     void testConcurrentFetchSameDestination()
     {
-        // mock tenant and principal
-        TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
+        context.setTenant(providerTenant);
+        context.setPrincipal(principal1);
 
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
@@ -1209,9 +1199,6 @@ class DestinationServiceTest
                 .augmentBuilder(augmenter().tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY))
                 .build();
 
-        final DefaultTenantFacade mockedTenantFacade = spy(DefaultTenantFacade.class);
-        TenantAccessor.setTenantFacade(mockedTenantFacade);
-
         final CompletableFuture<Void> firstThread =
             CompletableFuture
                 .runAsync(
@@ -1262,11 +1249,12 @@ class DestinationServiceTest
                 "/destinations/" + destinationName,
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        TenantAccessor.setTenantFacade(() -> Try.success(providerTenant));
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
+        context.setTenant(providerTenant);
+        context.setPrincipal(principal1);
+
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName);
 
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal2));
+        context.setPrincipal(principal2);
         final Try<Destination> secondDestination = loader.tryGetDestination(destinationName);
 
         assertThat(firstDestination).isNotEmpty();
@@ -1289,12 +1277,9 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final Tenant tenant = new DefaultTenant("tenant");
-        TenantAccessor.setTenantFacade(() -> Try.success(tenant));
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
 
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal2));
+        context.setPrincipal(principal2);
         final Try<Destination> secondDestination = loader.tryGetDestination(destinationName, options);
 
         assertThat(firstDestination).isNotEmpty();
@@ -1303,14 +1288,14 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.isolationLocks().asMap())
             .containsOnlyKeys(
-                CacheKey.of(tenant, principal1).append(destinationName, options),
-                CacheKey.of(tenant, principal2).append(destinationName, options),
-                CacheKey.of(tenant, null).append(options));
+                CacheKey.of(subscriberTenant, principal1).append(destinationName, options),
+                CacheKey.of(subscriberTenant, principal2).append(destinationName, options),
+                CacheKey.of(subscriberTenant, null).append(options));
 
         assertThat(DestinationService.Cache.instanceSingle().asMap())
             .containsOnlyKeys(
-                CacheKey.of(tenant, principal1).append(destinationName, options),
-                CacheKey.of(tenant, principal2).append(destinationName, options));
+                CacheKey.of(subscriberTenant, principal1).append(destinationName, options),
+                CacheKey.of(subscriberTenant, principal2).append(destinationName, options));
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
@@ -1337,12 +1322,9 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        final Tenant tenant = new DefaultTenant("tenant");
-        TenantAccessor.setTenantFacade(() -> Try.success(tenant));
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal1));
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
 
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal2));
+        context.setPrincipal(principal2);
         final Try<Destination> secondDestination = loader.tryGetDestination(destinationName, options);
 
         assertThat(firstDestination).isNotEmpty();
@@ -1351,13 +1333,13 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.isolationLocks().asMap())
             .containsOnlyKeys(
-                CacheKey.of(tenant, null).append(destinationName, options),
-                CacheKey.of(tenant, null).append(options));
+                CacheKey.of(subscriberTenant, null).append(destinationName, options),
+                CacheKey.of(subscriberTenant, null).append(options));
 
         assertThat(DestinationService.Cache.instanceSingle().asMap())
             .containsOnlyKeys(
-                CacheKey.of(tenant, principal1).append(destinationName, options),
-                CacheKey.of(tenant, principal2).append(destinationName, options));
+                CacheKey.of(subscriberTenant, principal1).append(destinationName, options),
+                CacheKey.of(subscriberTenant, principal2).append(destinationName, options));
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
@@ -1386,14 +1368,11 @@ class DestinationServiceTest
                 "/destinations/CC8-HTTP-BASIC",
                 OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
 
-        final Tenant tenant = new DefaultTenant("tenant");
-        TenantAccessor.setTenantFacade(() -> Try.success(tenant));
-
         final AtomicReference<Destination> destination = new AtomicReference<>();
 
         for( int i = 0; i < 10; ++i ) {
             final Principal principal = new DefaultPrincipal("principal-" + i);
-            PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal));
+            context.setPrincipal(principal);
             final Try<Destination> tryDestination = loader.tryGetDestination("CC8-HTTP-BASIC");
 
             assertThat(tryDestination.isSuccess()).isTrue();
@@ -1490,12 +1469,6 @@ class DestinationServiceTest
     @SneakyThrows
     void testConcurrentFetchSameDestinationSameTenantButDifferentPrincipal()
     {
-        // mock tenant and principal
-        final Principal principalA = new DefaultPrincipal("PrincipalA");
-        final Principal principalB = new DefaultPrincipal("PrincipalB");
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(principalB));
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("tenant")));
-
         // setup destination options
         final String destinationName = "CC8-HTTP-OAUTH";
         @SuppressWarnings( "deprecation" )
@@ -1523,11 +1496,10 @@ class DestinationServiceTest
             .when(scpCfDestinationServiceAdapter)
             .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
 
-        PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
         final Future<Try<Destination>> firstThread = ThreadContextExecutors.submit(() -> {
             softly.assertThat(TenantAccessor.tryGetCurrentTenant()).isNotEmpty();
             return PrincipalAccessor
-                .executeWithPrincipal(principalA, () -> loader.tryGetDestination(destinationName, options));
+                .executeWithPrincipal(principal1, () -> loader.tryGetDestination(destinationName, options));
         });
 
         destinationRetrievalLatch.await();
@@ -1549,7 +1521,7 @@ class DestinationServiceTest
             softly.assertThat(TenantAccessor.tryGetCurrentTenant()).isNotEmpty();
 
             return PrincipalAccessor
-                .executeWithPrincipal(principalB, () -> loader.tryGetDestination(destinationName, options));
+                .executeWithPrincipal(principal2, () -> loader.tryGetDestination(destinationName, options));
         });
 
         softly.assertThat(firstThread.get()).isNotEmpty();
@@ -1565,8 +1537,8 @@ class DestinationServiceTest
         softly
             .assertThat(DestinationService.Cache.instanceSingle().asMap())
             .containsOnlyKeys(
-                CacheKey.fromIds("tenant", "PrincipalA").append(destinationName, options),
-                CacheKey.fromIds("tenant", "PrincipalB").append(destinationName, options));
+                CacheKey.of(subscriberTenant, principal1).append(destinationName, options),
+                CacheKey.of(subscriberTenant, principal2).append(destinationName, options));
         softly.assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
         softly.assertAll();
@@ -1699,13 +1671,12 @@ class DestinationServiceTest
         for( int i = 1; i <= iterations; i++ ) {
             final String name = "any";
             final Principal principal = new DefaultPrincipal("principal-" + i);
-            PrincipalAccessor.setPrincipalFacade(() -> Try.success(principal));
+            context.setPrincipal(principal);
             assertThat(PrincipalAccessor.getCurrentPrincipal().getPrincipalId()).isEqualTo("principal-" + i);
             destination = loader.tryGetDestination(name, DestinationOptions.builder().build()).get().asHttp();
 
             httpClient = HttpClientAccessor.getHttpClient(destination);
             System.out.println("[" + LocalDateTime.now() + "] Got " + name);
-            PrincipalAccessor.setPrincipalFacade(null);
         }
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
         assertThat(httpClient).isSameAs(HttpClientAccessor.getHttpClient(destination));
@@ -1729,5 +1700,20 @@ class DestinationServiceTest
                 }
             }
             """, name, url);
+    }
+
+    static DecodedJWT createXsuaaJwt()
+    {
+        final Map<String, String> attrEnhancer =
+            Collections
+                .singletonMap(
+                    DestinationRetrievalStrategyResolver.JWT_ATTR_ENHANCER,
+                    DestinationRetrievalStrategyResolver.JWT_ATTR_XSUAA);
+        final String jwt =
+            JWT
+                .create()
+                .withClaim(DestinationRetrievalStrategyResolver.JWT_ATTR_EXT, attrEnhancer)
+                .sign(Algorithm.none());
+        return JWT.decode(jwt);
     }
 }

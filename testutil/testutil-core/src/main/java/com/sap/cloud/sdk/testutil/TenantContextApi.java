@@ -21,8 +21,9 @@ public interface TenantContextApi extends TestContextApi
         setProperty(TenantThreadContextListener.PROPERTY_TENANT, tenant);
         return tenant;
     }
+
     default void clearTenant()
     {
-        setTenant( (Tenant) null);
+        setTenant((Tenant) null);
     }
 }

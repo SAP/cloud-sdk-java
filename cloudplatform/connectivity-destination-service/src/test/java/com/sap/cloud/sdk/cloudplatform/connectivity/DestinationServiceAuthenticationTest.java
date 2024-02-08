@@ -21,7 +21,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -49,9 +48,6 @@ class DestinationServiceAuthenticationTest
             .build();
 
     private static final MockUtil mockUtil = new MockUtil();
-
-    @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
 
     @BeforeEach
     @AfterEach

@@ -21,11 +21,10 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.testutil.TestContext;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -39,13 +38,12 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 
 import io.vavr.control.Try;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 @WireMockTest
 class ConnectivityServiceTest
@@ -112,7 +110,7 @@ class ConnectivityServiceTest
                             .build())));
 
         // mock AuthTokenFacade for current user token
-       context.setAuthToken(mockUserAuthToken(currentUserToken));
+        context.setAuthToken(mockUserAuthToken(currentUserToken));
 
         // actual request
         final DefaultHttpDestination.Builder builder =

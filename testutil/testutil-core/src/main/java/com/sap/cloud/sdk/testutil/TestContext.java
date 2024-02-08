@@ -2,6 +2,9 @@ package com.sap.cloud.sdk.testutil;
 
 import java.lang.reflect.Method;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
@@ -19,11 +22,14 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 
 import lombok.RequiredArgsConstructor;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 @RequiredArgsConstructor
-public class TestContext implements AfterEachCallback, InvocationInterceptor, TenantContextApi, PrincipalContextApi, AuthTokenContextApi
+public class TestContext
+    implements
+    AfterEachCallback,
+    InvocationInterceptor,
+    TenantContextApi,
+    PrincipalContextApi,
+    AuthTokenContextApi
 {
     private final ThreadContext context = new DefaultThreadContext();
 
@@ -42,7 +48,7 @@ public class TestContext implements AfterEachCallback, InvocationInterceptor, Te
     }
 
     @Override
-    public void setProperty(@Nonnull final String key, @Nullable final Object value )
+    public void setProperty( @Nonnull final String key, @Nullable final Object value )
     {
         final ThreadContext ctx = ThreadContextAccessor.tryGetCurrentContext().getOrElse(context);
         if( value != null ) {
@@ -90,5 +96,4 @@ public class TestContext implements AfterEachCallback, InvocationInterceptor, Te
             PrincipalAccessor.setFallbackPrincipal(null);
         }
     }
-
 }

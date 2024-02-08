@@ -31,7 +31,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -55,9 +54,6 @@ class DestinationRetrievalStrategyResolverTest
 
     private Function<Strategy, DestinationServiceV1Response> destinationRetriever;
     private Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
-
-    @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
 
     @SuppressWarnings( "unchecked" )
     @BeforeEach
