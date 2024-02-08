@@ -283,10 +283,11 @@ class OAuth2Service
 
         @Nonnull
         OptionalParametersBuilder
-        withTenantPropagationStrategy(@Nonnull final TenantPropagationStrategy tenantPropagationStrategy );
+            withTenantPropagationStrategy( @Nonnull final TenantPropagationStrategy tenantPropagationStrategy );
 
         @Nonnull
-        OptionalParametersBuilder withTenantPropagationStrategyFrom(@Nullable final ServiceIdentifier serviceIdentifier );
+        OptionalParametersBuilder
+            withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier );
 
         @Nonnull
         OptionalParametersBuilder withAdditionalParameter( @Nonnull final String key, @Nonnull final String value );
