@@ -32,8 +32,8 @@ runs:
         distribution: "temurin"
         java-version: "17"
         server-id: artifactory-snapshots
-        server-username: ${{ inputs.repository-username }}
-        server-password: ${{ inputs.repository-password }}
+        server-username: DEPLOYMENT_USER
+        server-password: DEPLOYMENT_PASS
 
     - name: "Download Release Artifacts"
       uses: actions/download-artifact@v4
@@ -57,6 +57,9 @@ runs:
         -Dhttp.keepAlive=false
         deploy
       shell: bash
+      env:
+        DEPLOYMENT_USER: ${{ inputs.repository-username }}
+        DEPLOYMENT_PASS: ${{ inputs.repository-password }}
 
     - name: "Print Action End"
       if: always()
