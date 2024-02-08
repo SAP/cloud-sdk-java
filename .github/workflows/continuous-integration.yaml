@@ -1,0 +1,458 @@
+name: "Continuous Integration"
+on:
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+    inputs:
+      commit:
+        # this commit is what is actually going to be checked out
+        description: "Commit SHA of the code to be built"
+        required: true
+      build-release-artifacts:
+        description: "Build Release Artifacts"
+        required: false
+        type: boolean
+        default: false
+      sign-release-artifacts:
+        description: "Sign Release Artifacts"
+        required: false
+        type: boolean
+        default: false
+      run-blackduck-scan:
+        description: "Run BlackDuck Scan"
+        required: false
+        type: boolean
+        default: false
+      run-security-rating:
+        description: "Run Security Rating"
+        required: false
+        type: boolean
+        default: false
+
+env:
+  M2_ROOT: ~/.m2/repository
+  RELEASE_ARTIFACT_NAME: "release-artifacts"
+  SDK_M2_NAME: "sdk-m2" # used for the installed SDK modules within the runner's maven repository
+  SDK_M2_PATH: |
+    ~/.m2/repository/com/sap/cloud/sdk/**
+    ~/.m2/repository/archetype-catalog.xml
+  SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
+  SDK_TARGETS_PATH: |
+    ./**/target/**
+  DEPENDENCIES_CACHE_KEY: "dependencies"
+  DEPENDENCIES_PATH: |
+    ~/.m2/repository/**
+    !~/.m2/repository/archetype-catalog.xml
+    !~/.m2/repository/com/sap/cloud/sdk/**
+
+  MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
+  MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
+  MVN_SKIP_CI_PLUGINS: -DskipFormatting -Denforcer.skip -Djacoco.skip -Dmdep.analyze.skip
+
+jobs:
+  context:
+    name: "Collect Context"
+    outputs:
+      commit: ${{ steps.calculate-commit-sha.outputs.COMMIT }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Calculate Commit SHA"
+        id: calculate-commit-sha
+        run: |
+          if [[ -n "${{ github.event.inputs.commit }}" ]]; then
+            echo "COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "COMMIT=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "Unable to determine commit SHA as the workflow was not triggered by a pull request and the commit input was not provided"
+          exit 1
+
+  check-formatting:
+    name: "Check Formatting"
+    needs: [ context ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+      - name: "Setup Java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: "Run Maven Plugins"
+        run: |
+          MVN_GOALS="\
+          net.revelc.code.formatter:formatter-maven-plugin:validate \
+          net.revelc.code:impsort-maven-plugin:check \
+          com.github.ekryd.sortpom:sortpom-maven-plugin:verify"
+          
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} $MVN_GOALS"
+          echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+  build:
+    name: "Build"
+    needs: [ context, check-formatting ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.DEPENDENCIES_PATH }}
+
+      - name: "Build SDK"
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -DskipTests -DskipFormatting"
+          
+          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
+            echo "[DEBUG] Building release artifacts"
+          
+            python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
+            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Pdocs"
+          fi
+          
+          echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+          
+          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
+            VERSION=$(cat latest.json | jq -r .version)
+            mkdir -p $HOME/.sdk-release
+          
+            PYTHON_ARGS="--version $VERSION --path-prefix $HOME/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}"
+            if [[ "${{ github.event.inputs.sign-release-artifacts }}" == "true" ]]; then
+              echo "[DEBUG] Signing release artifacts"
+              PYTHON_ARGS="$PYTHON_ARGS --with-signing"
+            fi
+          
+            python .pipeline/scripts/generate-release-artifacts.py $PYTHON_ARGS
+          else
+            echo "[DEBUG] Skipping release artifact generation"
+          fi
+
+      - name: "Cache Dependencies"
+        if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.DEPENDENCIES_PATH }}
+
+      - name: "Build Module Inventory"
+        run: >
+          python ./scripts/create_module_inventory_file.py 
+          --sdk-root-directory ./ 
+          --output-file ./module-inventory.json 
+          --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
+
+      - name: "Verify Local Changes"
+        run: |
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [[ ! -z "$CHANGED_FILES" ]]; then
+              echo "There are local changes in the following files:"
+              echo "$CHANGED_FILES"
+              echo "Printing the git diff:"
+              git --no-pager diff
+              exit 1
+          fi
+
+      - name: "Upload Release Artifacts"
+        if: ${{ github.event.inputs.build-release-artifacts == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.RELEASE_ARTIFACT_NAME }}
+          path: ~/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}
+          retention-days: 1
+      - name: "Upload SDK M2"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.SDK_M2_PATH }}
+          retention-days: 1
+      - name: "Upload SDK Targets"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+          path: ${{ env.SDK_TARGETS_PATH }}
+          retention-days: 1
+
+  test:
+    name: "Test"
+    needs: [ context, build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK Targets"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+
+      - name: "Run Unit Tests"
+        run: |
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report"
+
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+      - name: "Test Report"
+        if: github.event.pull_request.head.repo.full_name == 'SAP/cloud-sdk-java'
+        uses: scacap/action-surefire-report@v1
+      - name: Coverage Report
+        run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
+
+  static-code-analysis:
+    needs: [ context, build ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task:
+          - {
+            "name": "Checkstyle",
+            "mvn_goal": "-P!build-test-modules org.apache.maven.plugins:maven-checkstyle-plugin:checkstyle",
+            "report": ".pipeline/scripts/print-checkstyle.py"
+          }
+          - {
+            "name": "PMD",
+            "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
+            "report": ".pipeline/scripts/print-pmd.py"
+          }
+          - {
+            "name": "Spotbugs",
+            "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
+            "report": ".pipeline/scripts/print-spotbugs.py"
+          }
+    name: "Run ${{ matrix.task.name }} Analysis"
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
+      - name: "Restore SDK Targets"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+
+      - name: "Run ${{ matrix.task.name }} Analysis"
+        run: |
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
+
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+          python ${{ matrix.task.report }}
+
+  code-ql:
+    name: "Run CodeQL Analysis"
+    needs: [ context ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.DEPENDENCIES_PATH }}
+
+      - name: "Initialize CodeQL"
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "java"
+          queries: security-extended
+
+      - name: "Build SDK"
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true ${{ env.MVN_SKIP_CI_PLUGINS }}"
+
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+      - name: "Perform CodeQL Analysis"
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:java"
+
+  test-archetypes:
+    runs-on: ubuntu-latest
+    needs: [ context, build ]
+    strategy:
+      matrix:
+        task:
+          - {
+            "archetype": "spring-boot3",
+            "javaVersion": 17,
+            "startCommand": "mvn spring-boot:run -B",
+          }
+    name: "Test ${{ matrix.task.archetype }} Archetype"
+    steps:
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          path: ${{ env.DEPENDENCIES_PATH }}
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
+
+      - name: "Generate ${{ matrix.task.archetype }}"
+        run: >
+          mvn archetype:generate -B
+          -DarchetypeCatalog=local
+          -DarchetypeGroupId=com.sap.cloud.sdk.archetypes
+          -DarchetypeArtifactId=${{ matrix.task.archetype }}
+          -DgroupId=com.sap.test
+          -DartifactId=example-${{ matrix.task.archetype }}
+          -Dversion=1.0-SNAPSHOT
+          -Dpackage=com.sap.test
+          -Dhttp.keepAlive=false
+
+      - name: "Verify ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: >
+          mvn clean verify -B
+          -Dhttp.keepAlive=false
+          -Dmaven.test.skip=true
+
+      - name: "Test ${{ matrix.task.name }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: mvn test -B -Dsurefire.logLevel='error'
+
+      - name: "Spotbugs ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: >
+          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
+          -Dhttp.keepAlive=false
+          -Dmaven.wagon.http.pool=false
+
+      - name: "Start ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}/application
+        run: |
+          logFilePath=log.txt
+          ${{ matrix.task.startCommand }} > $logFilePath 2>&1 &
+
+          if ! curl -s --retry 60 --retry-delay 3 --retry-all-errors http://127.0.0.1:8080/hello ; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' failed to start locally."
+            cat $logFilePath
+            exit 1
+          fi
+
+          if ! grep -q "I am running!" $logFilePath; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but did not contain the expected log output."
+            cat $logFilePath
+            exit 1
+          fi
+
+          if grep -iq "caused by" $logFilePath; then
+            echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but an unexpected error occurred."
+            cat $logFilePath
+            exit 1
+          fi
+
+      - name: "Verify .gitignore ${{ matrix.task.archetype }}"
+        working-directory: ./example-${{ matrix.task.archetype }}
+        run: |
+          if [[ ! -f .gitignore ]]; then
+              ls -lah
+              echo "Project generated from archetype '${{ matrix.task.archetype }}' does not contain a .gitignore file."
+              exit 1
+          fi
+
+  blackduck:
+    name: "Run BlackDuck Scan"
+    if: ${{ github.event.inputs.run-blackduck-scan == 'true' }}
+    needs: [ context ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+
+      - name: "Scan With Black Duck"
+        uses: ./.github/actions/scan-with-blackduck
+
+  security-rating:
+    name: "Run Security Rating"
+    if: ${{ github.event.inputs.run-security-rating == 'true' }}
+    needs: [ context ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.context.outputs.commit }}
+
+      - name: "Run FOSStars Rating"
+        uses: SAP/fosstars-rating-core-action@v1.14.0
+        with:
+          report-branch: fosstars-report
+          token: ${{ github.token }}
