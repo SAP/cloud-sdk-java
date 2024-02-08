@@ -303,7 +303,8 @@ class OAuth2Service
         OAuth2Service build();
     }
 
-    private static class Builder implements UriBuilder, IdentityBuilder, OptionalParametersBuilder
+    @Getter( AccessLevel.PACKAGE )
+    static class Builder implements UriBuilder, IdentityBuilder, OptionalParametersBuilder
     {
         private static final String XSUAA_TOKEN_PATH = "/oauth/token";
         private static final Duration DEFAULT_TIME_OUT = Duration.ofSeconds(10);

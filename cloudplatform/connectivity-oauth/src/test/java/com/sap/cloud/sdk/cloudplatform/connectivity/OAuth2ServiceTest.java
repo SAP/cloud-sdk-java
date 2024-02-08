@@ -19,12 +19,14 @@ import static org.mockito.Mockito.spy;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
@@ -246,5 +248,31 @@ class OAuth2ServiceTest
         assertThat(config.identifier()).isEqualTo(URI.create(SERVER_1.baseUrl()).getHost() + "-" + IDENTITY_1.getId());
         assertThat(config.isolationMode()).isEqualTo(ResilienceIsolationMode.TENANT_OPTIONAL);
         assertThat(config.timeLimiterConfiguration().timeoutDuration()).isGreaterThan(Duration.ZERO);
+    }
+
+    @Test
+    void testAdditionalParametersAreSent()
+    {
+        final OAuth2Service service =
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withAdditionalParameter("arg1", "val1")
+                .withAdditionalParameters(Map.of("arg2", "val2"))
+                .build();
+
+        final String token = service.retrieveAccessToken();
+        assertThat(token).isEqualTo(TOKEN_1);
+
+        final List<ServeEvent> allEvents = SERVER_1.getAllServeEvents();
+        assertThat(allEvents).hasSize(1);
+
+        final ServeEvent event = allEvents.get(0);
+        assertThat(event.getRequest().getMethod()).isEqualTo(RequestMethod.POST);
+
+        final String requestBody = event.getRequest().getBodyAsString();
+        assertThat(requestBody).contains("arg1=val1");
+        assertThat(requestBody).contains("arg2=val2");
     }
 }
