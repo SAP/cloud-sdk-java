@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
+import com.sap.cloud.sdk.testutil.TestContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,7 @@ import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 
 import io.vavr.control.Try;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @WireMockTest
 class ConnectivityServiceTest
@@ -56,6 +58,9 @@ class ConnectivityServiceTest
 
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
 
     @BeforeEach
     void setupServiceBinding( @Nonnull final WireMockRuntimeInfo wm )
@@ -84,12 +89,6 @@ class ConnectivityServiceTest
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
     }
 
-    @AfterAll
-    static void resetFacades()
-    {
-        TenantAccessor.setTenantFacade(null);
-    }
-
     @Test
     void testConnectivityServiceWithStrategyCompatibility()
     {
@@ -113,7 +112,7 @@ class ConnectivityServiceTest
                             .build())));
 
         // mock AuthTokenFacade for current user token
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
+       context.setAuthToken(mockUserAuthToken(currentUserToken));
 
         // actual request
         final DefaultHttpDestination.Builder builder =
