@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -94,6 +95,9 @@ public class TestContext
 
             PrincipalAccessor.setPrincipalFacade(null);
             PrincipalAccessor.setFallbackPrincipal(null);
+
+            RequestHeaderAccessor.setHeaderFacade(null);
+            RequestHeaderAccessor.setFallbackHeaderContainer(null);
         }
     }
 }

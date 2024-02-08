@@ -31,7 +31,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTo
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
@@ -67,8 +66,6 @@ class OAuth2ServiceTest
     @BeforeEach
     void setUp()
     {
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
-
         SERVER_1.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_1))));
         SERVER_2.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_2))));
     }
@@ -76,7 +73,6 @@ class OAuth2ServiceTest
     @AfterEach
     void tearDown()
     {
-        TenantAccessor.setTenantFacade(null);
         OAuth2Service.clearCache();
     }
 

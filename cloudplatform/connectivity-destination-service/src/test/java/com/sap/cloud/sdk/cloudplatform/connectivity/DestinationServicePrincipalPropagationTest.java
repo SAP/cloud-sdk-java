@@ -18,7 +18,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -32,9 +31,8 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -43,18 +41,10 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenFacade;
 import com.sap.cloud.sdk.cloudplatform.security.exception.AuthTokenAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantFacade;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Try;
 import lombok.Value;
@@ -62,16 +52,9 @@ import lombok.Value;
 @WireMockTest
 class DestinationServicePrincipalPropagationTest
 {
-    private static final Try<AuthToken> NO_AUTH_TOKEN = Try.failure(new IllegalStateException());
-    private static final Try<AuthToken> SOME_AUTH_TOKEN =
-        Try.success(new AuthToken(JWT.decode(JWT.create().sign(Algorithm.none()))));
-
-    private static final Try<Tenant> NO_TENANT = Try.failure(new IllegalStateException());
-    private static final Try<Tenant> SOME_TENANT_1 = Try.success(new DefaultTenant("foo"));
-    private static final Try<Tenant> SOME_TENANT_2 = Try.success(new DefaultTenant("bar"));
-
-    private static final Try<Principal> SOME_PRINCIPAL = Try.success(new DefaultPrincipal("p"));
-
+    private static final Tenant NO_TENANT = null;
+    private static final Tenant SOME_TENANT_1 = new DefaultTenant("foo");
+    private static final Tenant SOME_TENANT_2 = new DefaultTenant("bar");
     private static final String DESTINATION = """
         {
           "destinationConfiguration": {
@@ -85,9 +68,9 @@ class DestinationServicePrincipalPropagationTest
         }
         """;
 
-    private final AuthTokenFacade authTokenFacade = mock(AuthTokenFacade.class);
-    private final TenantFacade tenantFacade = mock(TenantFacade.class);
-    private final PrincipalFacade principalFacade = mock(PrincipalFacade.class);
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
+
     private final DestinationServiceAdapter destinationServiceAdapter = mock(DestinationServiceAdapter.class);
 
     @BeforeEach
@@ -109,17 +92,8 @@ class DestinationServicePrincipalPropagationTest
                 .withCredentials(credentials)
                 .build();
 
-        OAuth2Service.clearCache();
-
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-        DestinationService.Cache.reset();
-        AuthTokenAccessor.setAuthTokenFacade(authTokenFacade);
-        TenantAccessor.setTenantFacade(tenantFacade);
-        PrincipalAccessor.setPrincipalFacade(principalFacade);
 
-        doReturn(NO_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
-        doReturn(NO_TENANT).when(tenantFacade).tryGetCurrentTenant();
-        doReturn(SOME_PRINCIPAL).when(principalFacade).tryGetCurrentPrincipal();
         doReturn(DESTINATION)
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(anyString(), any(OnBehalfOf.class));
@@ -135,10 +109,8 @@ class DestinationServicePrincipalPropagationTest
     void tearDownConnectivity()
     {
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
-        AuthTokenAccessor.setAuthTokenFacade(null);
-        TenantAccessor.setTenantFacade(null);
-        PrincipalAccessor.setPrincipalFacade(null);
         OAuth2Service.clearCache();
+        DestinationService.Cache.reset();
     }
 
     @Test
@@ -156,14 +128,12 @@ class DestinationServicePrincipalPropagationTest
         // assert mocks
         verify(destinationServiceAdapter)
             .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
-        verify(authTokenFacade, atLeast(1)).tryGetCurrentToken();
-        verify(tenantFacade, atLeast(1)).tryGetCurrentTenant();
     }
 
     @Test
     void testSuccessWithOnlyToken()
     {
-        doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
+        context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -195,21 +165,19 @@ class DestinationServicePrincipalPropagationTest
         // assert mocks
         verify(destinationServiceAdapter)
             .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
-        verify(authTokenFacade, atLeast(1)).tryGetCurrentToken();
-        verify(tenantFacade, atLeast(1)).tryGetCurrentTenant();
     }
 
     @Test
     void testFailingHeadersWithProviderDestinationAndSubscriberTenant()
     {
-        doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
+        context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
         final Destination result = sut.tryGetDestination("test").get();
 
         // change tenant to subscriber
-        doReturn(Try.success(new DefaultTenant("subscriber"))).when(tenantFacade).tryGetCurrentTenant();
+        context.setTenant("subscriber");
 
         // assertion
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
@@ -221,18 +189,16 @@ class DestinationServicePrincipalPropagationTest
         // assert mocks
         verify(destinationServiceAdapter)
             .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
-        verify(authTokenFacade, atLeast(1)).tryGetCurrentToken();
-        verify(tenantFacade, atLeast(1)).tryGetCurrentTenant();
     }
 
     @Test
     void testDestinationOptions()
     {
-        doReturn(SOME_AUTH_TOKEN).when(authTokenFacade).tryGetCurrentToken();
+        context.setAuthToken();
 
         final DestinationServiceRetrievalStrategy NO_STRATEGY = null;
         final Case[] cases =
-            new Case[] {
+            {
                 //  TEST        TENANT GET   TENANT GET   RETRIEVAL
                 //  ASSERTION   DESTINATION  HEADERS      STRATEGY
                 // =========== ============ ============ ============
@@ -266,7 +232,7 @@ class DestinationServicePrincipalPropagationTest
 
         for( final Case c : cases ) {
             // set initial tenant
-            doReturn(c.destinationTenant).when(tenantFacade).tryGetCurrentTenant();
+            context.setTenant(c.destinationTenant);
 
             // test
             final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -276,7 +242,7 @@ class DestinationServicePrincipalPropagationTest
             c.assertRetrieval.accept(tryGetDestination);
 
             // change runtime tenant
-            doReturn(c.runtimeTenant).when(tenantFacade).tryGetCurrentTenant();
+            context.setTenant(c.runtimeTenant);
 
             // assertion headers
             final Try<Collection<Header>> tryGetHeaders =
@@ -288,16 +254,16 @@ class DestinationServicePrincipalPropagationTest
     @Value
     static class Case
     {
-        Try<Tenant> destinationTenant;
-        Try<Tenant> runtimeTenant;
+        Tenant destinationTenant;
+        Tenant runtimeTenant;
         DestinationOptions options;
         Consumer<Try<Destination>> assertRetrieval;
         Consumer<Try<Collection<Header>>> assertHeaders;
 
         // test case: successfully get destination and on-premise headers
         static Case successful(
-            final Try<Tenant> destinationTenant,
-            final Try<Tenant> runtimeTenant,
+            final Tenant destinationTenant,
+            final Tenant runtimeTenant,
             final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
@@ -314,8 +280,8 @@ class DestinationServicePrincipalPropagationTest
 
         // test case: successfully get destination, but failing to get on-premise headers
         static Case failHeader(
-            final Try<Tenant> destinationTenant,
-            final Try<Tenant> runtimeTenant,
+            final Tenant destinationTenant,
+            final Tenant runtimeTenant,
             final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
@@ -335,9 +301,7 @@ class DestinationServicePrincipalPropagationTest
         }
 
         // test case: failing to get destination
-        static
-            Case
-            failRetrie( final Try<Tenant> destinationTenant, final DestinationServiceRetrievalStrategy strategy )
+        static Case failRetrie( final Tenant destinationTenant, final DestinationServiceRetrievalStrategy strategy )
         {
             final DestinationOptions.Builder options = DestinationOptions.builder();
             if( strategy != null ) {
