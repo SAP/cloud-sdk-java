@@ -36,14 +36,11 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
-
-import io.vavr.control.Try;
 
 @WireMockTest
 class ConnectivityServiceTest
