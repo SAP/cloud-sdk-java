@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,10 +21,10 @@ import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-
 import com.sap.cloud.sdk.testutil.TestContext;
 
 class DestinationServiceAuthenticationTest
@@ -60,6 +61,7 @@ class DestinationServiceAuthenticationTest
     {
         context.setPrincipal();
         context.setTenant();
+        context.setAuthToken(mockXsuaaToken());
     }
 
     @Test

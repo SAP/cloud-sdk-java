@@ -11,6 +11,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRet
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,9 +34,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -60,8 +59,6 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.stubbing.Answer;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
@@ -338,7 +335,7 @@ class DestinationServiceTest
         principal2 = new DefaultPrincipal("principal-2");
         context.setPrincipal(principal1);
 
-        final DecodedJWT xsuaaJwt = createXsuaaJwt();
+        final DecodedJWT xsuaaJwt = mockXsuaaToken();
         context.setAuthToken(xsuaaJwt);
 
         scpCfDestinationServiceAdapter =
@@ -1700,20 +1697,5 @@ class DestinationServiceTest
                 }
             }
             """, name, url);
-    }
-
-    static DecodedJWT createXsuaaJwt()
-    {
-        final Map<String, String> attrEnhancer =
-            Collections
-                .singletonMap(
-                    DestinationRetrievalStrategyResolver.JWT_ATTR_ENHANCER,
-                    DestinationRetrievalStrategyResolver.JWT_ATTR_XSUAA);
-        final String jwt =
-            JWT
-                .create()
-                .withClaim(DestinationRetrievalStrategyResolver.JWT_ATTR_EXT, attrEnhancer)
-                .sign(Algorithm.none());
-        return JWT.decode(jwt);
     }
 }
