@@ -318,7 +318,7 @@ class OAuth2Service
 
         @Nonnull
         @Override
-        public IdentityBuilder withTokenUri( @Nonnull String tokenUri )
+        public IdentityBuilder withTokenUri( @Nonnull final String tokenUri )
         {
             return withTokenUri(URI.create(tokenUri));
         }
@@ -401,7 +401,7 @@ class OAuth2Service
         @Nonnull
         @Override
         public OptionalParametersBuilder withTimeLimiter(
-            @Nonnull ResilienceConfiguration.TimeLimiterConfiguration timeLimiter )
+            @Nonnull final ResilienceConfiguration.TimeLimiterConfiguration timeLimiter )
         {
             this.timeLimiter = timeLimiter;
             return this;
