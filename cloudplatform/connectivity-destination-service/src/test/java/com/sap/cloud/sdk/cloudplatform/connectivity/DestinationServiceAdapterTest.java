@@ -30,6 +30,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.auth0.jwt.JWT;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,16 +50,11 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
-
-import io.vavr.control.Try;
 
 @WireMockTest
 class DestinationServiceAdapterTest
@@ -165,9 +161,7 @@ class DestinationServiceAdapterTest
         final String xsuaaServiceRequest = XSUAA_SERVICE_ROOT + XSUAA_SERVICE_PATH;
 
         // mock AuthTokenFacade for current user token
-        final DecodedJWT decodedJwt = mock(DecodedJWT.class);
-        doReturn(currentUserToken).when(decodedJwt).getToken();
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(new AuthToken(decodedJwt)));
+        context.setAuthToken(JWT.decode(currentUserToken));
 
         // mock XSUAA service responses
         stubFor(
@@ -190,7 +184,6 @@ class DestinationServiceAdapterTest
                 .withHeader("Authorization", equalTo("Bearer " + oauthAccessToken))
                 .willReturn(ok(destinationServiceResponse)));
 
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         // actual request, ensure that the tenant matches the one in the User JWT
         final String destinationResponse =
             TenantAccessor

@@ -193,7 +193,7 @@ class ConnectivityServiceTest
                             .build())));
 
         // mock AuthTokenFacade for current user token
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
+        context.setAuthToken(mockUserAuthToken(currentUserToken));
 
         // actual request
         final DefaultHttpDestination.Builder builder =
