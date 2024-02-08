@@ -16,7 +16,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nonnull;
 
@@ -190,6 +193,22 @@ class ThreadContextExecutorTest
         ThreadContextExecutor.fromNewContext().withListeners(new MyThreadContextListener(property)).execute(() -> {
 
             final ExecutorService executor = ThreadContextExecutors.getExecutor();
+
+            executor.submit(() -> assertCurrentContextContains(softly, property)).get(TIMEOUT, TimeUnit.SECONDS);
+        });
+
+        softly.assertAll();
+    }
+
+    @Test
+    void testExecutorServiceVirtualPropagatedContext()
+    {
+        final SoftAssertions softly = new SoftAssertions();
+        final Property<?> property = Property.of("value");
+
+        ThreadContextExecutor.fromNewContext().withListeners(new MyThreadContextListener(property)).execute(() -> {
+
+            final ExecutorService executor = ThreadContextExecutors.getExecutorVirtual();
 
             executor.submit(() -> assertCurrentContextContains(softly, property)).get(TIMEOUT, TimeUnit.SECONDS);
         });
