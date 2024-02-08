@@ -8,34 +8,22 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 class AccessorTest
 {
-    @BeforeEach
-    @AfterEach
-    void resetAccessors()
-    {
-        // reset the facades
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
-        PrincipalAccessor.setPrincipalFacade(new DefaultPrincipalFacade());
-
-        // make sure that there are no global fallbacks between tests
-        TenantAccessor.setFallbackTenant(null);
-        PrincipalAccessor.setFallbackPrincipal(null);
-    }
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
 
     private void assertNoTenantAvailable()
     {
