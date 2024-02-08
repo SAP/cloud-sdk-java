@@ -396,7 +396,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
                 eq(HttpHeaders.PROXY_AUTHORIZATION),
-                eq(OAuth2Service.TenantPropagationStrategy.XSUAA_ZID_HEADER));
+                eq(TEST_SERVICE));
     }
 
     @Test
