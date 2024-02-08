@@ -14,7 +14,7 @@ on:
 jobs:
   update-release-notes:
     name: "Update Release Notes"
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.user.login == 'app/dependabot') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.user.login == 'apps/dependabot') }}
     permissions:
       pull-requests: read
       contents: write
