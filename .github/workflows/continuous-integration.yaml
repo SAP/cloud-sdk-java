@@ -439,6 +439,8 @@ jobs:
 
       - name: "Scan With Black Duck"
         uses: ./.github/actions/scan-with-blackduck
+        with:
+          token: ${{ secrets.BLACKDUCK_TOKEN }}
 
   security-rating:
     name: "Run Security Rating"
