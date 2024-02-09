@@ -80,7 +80,8 @@ public class OAuth2DestinationBuilder
     public static BuilderWithTargetUrl forTargetUrl( @Nonnull final String targetUrl )
     {
         return ( tokenUrl ) -> ( client, behalf ) -> {
-            final OAuth2Service oauth2service = new OAuth2Service(tokenUrl, client, behalf);
+            final OAuth2Service oauth2service =
+                OAuth2Service.builder().withTokenUri(tokenUrl).withIdentity(client).withOnBehalfOf(behalf).build();
             final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(targetUrl);
 
             destinationBuilder.name(String.valueOf(client.getId().hashCode()));
