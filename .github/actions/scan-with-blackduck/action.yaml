@@ -1,0 +1,42 @@
+name: "Scan with BlackDuck"
+description: "Scans the project with BlackDuck"
+
+inputs:
+  token:
+    description: "The token to use for BlackDuck authentication"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Print Action Start
+      run: echo ">>>>> Starting Scan with BlackDuck Action; Not printing inputs as they might contain sensitive information."
+      shell: bash
+
+    - name: Get Major Version
+      id: get-major-version
+      run: echo "MAJOR_VERSION=$(cat latest.json | jq -r .version | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Determine Maven Excludes
+      id: get-maven-excludes-for-blackduck
+      run: python .pipeline/scripts/get-maven-excludes.py --filter-key excludeFromBlackDuckScan --filter-value True
+      shell: bash
+
+    - name: BlackDuck Scan
+      uses: SAP/project-piper-action@master
+      with:
+        command: detectExecuteScan
+        flags: \
+          --version=$PROJECT_VERSION \
+      env:
+        PIPER_token: ${{ inputs.token }}
+        DETECT_MAVEN_EXCLUDED_MODULES: ${{ steps.get-maven-excludes-for-blackduck.outputs.EXCLUDES }}
+        DETECT_MAVEN_BUILD_COMMAND: -pl ${{ steps.get-maven-excludes-for-blackduck.outputs.PREFIXED_EXCLUDES }}
+        DETECT_TIMEOUT: "7200"
+        PROJECT_VERSION: ${{ steps.get-major-version.outputs.MAJOR_VERSION }}
+
+    - name: Print Action End
+      if: always()
+      run: echo "<<<<< Finished Scan with BlackDuck Action"
+      shell: bash

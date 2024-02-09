@@ -1,0 +1,67 @@
+name: "Deploy Snapshot"
+description: "Deploys release artifacts produced by a given 'Continuous Integration' workflow to a provided SNAPSHOT repository."
+
+inputs:
+  ci-run-id:
+    description: "The run ID of the 'Continuous Integration' workflow that produced the release artifacts."
+    required: true
+  repository-url:
+    description: "The URL of the repository to which the release artifacts should be deployed."
+    required: true
+  repository-username:
+    description: "The username to use when authenticating with the repository."
+    required: true
+  repository-password:
+    description: "The password to use when authenticating with the repository."
+    required: true
+  release-artifact-name:
+    description: "The name of the artifact to download from the 'Continuous Integration' workflow."
+    required: false
+    default: "release-artifacts"
+
+runs:
+  using: composite
+  steps:
+    - name: "Print Action Start"
+      run: echo ">>>>> Starting Deploy Snapshot Action; Not printing inputs as they may contain sensitive information."
+      shell: bash
+
+    - name: "Setup java"
+      uses: actions/setup-java@v4
+      with:
+        distribution: "temurin"
+        java-version: "17"
+        server-id: artifactory-snapshots
+        server-username: DEPLOYMENT_USER
+        server-password: DEPLOYMENT_PASS
+
+    - name: "Download Release Artifacts"
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.release-artifact-name }}
+        github-token: ${{ github.token }}
+        run-id: ${{ inputs.ci-run-id }}
+
+    - name: "Publish Snapshot"
+      run: >
+        mvn 
+        --batch-mode
+        --no-transfer-progress
+        --fail-at-end
+        --threads 1C
+        -Durl=${{ inputs.repository-url }}
+        -DrepositoryId=artifactory-snapshots
+        -Dmaven.install.skip=true
+        -Dmaven.test.skip
+        -Dmaven.compiler.showCompilationChanges
+        -Dhttp.keepAlive=false
+        deploy
+      shell: bash
+      env:
+        DEPLOYMENT_USER: ${{ inputs.repository-username }}
+        DEPLOYMENT_PASS: ${{ inputs.repository-password }}
+
+    - name: "Print Action End"
+      if: always()
+      run: echo ">>>>> Finished Deploy Snapshot Action"
+      shell: bash
