@@ -30,9 +30,9 @@ public interface GenericCacheKey<ClassT, ComponentT>
     List<ComponentT> getComponents();
 
     /**
-     * Getter for the Id of the tenant or zone for which the key is used.
+     * Getter for the Id of the tenant for which the key is used.
      *
-     * @return The tenant or zone identifier.
+     * @return The tenant identifier.
      */
     @Nonnull
     Option<String> getTenantId();

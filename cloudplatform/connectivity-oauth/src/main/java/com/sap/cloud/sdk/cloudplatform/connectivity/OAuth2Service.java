@@ -65,7 +65,7 @@ class OAuth2Service
      * <p>
      * The cache key is composed of the following parts:
      * <ul>
-     * <li>{@code zoneId}, that way flow is tenant isolated, especially for the HttpClient used against the OAuth2
+     * <li>{@code tenantId}, that way flow is tenant isolated, especially for the HttpClient used against the OAuth2
      * service.</li>
      * <li>{@code ClientIdentity}, to separate by the credentials used against the OAuth2 service.</li>
      * </ul>
