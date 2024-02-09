@@ -91,6 +91,7 @@ public class TestContext
         }
     }
 
+    @SuppressWarnings( { "ProhibitedExceptionThrown", "checkstyle:IllegalCatch" } )
     @Override
     public void interceptTestMethod(
         Invocation<Void> invocation,
@@ -106,7 +107,7 @@ public class TestContext
             try {
                 invocation.proceed();
             }
-            catch( Throwable e ) {
+            catch( final Throwable e ) {
                 throw new RuntimeException(e);
             }
         });
