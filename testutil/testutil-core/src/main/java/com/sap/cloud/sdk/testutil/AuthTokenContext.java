@@ -19,6 +19,7 @@ public interface AuthTokenContext extends TestContextApi
      *
      * @return the given {@link AuthToken}
      */
+    @Nonnull
     default AuthToken setAuthToken()
     {
         return setAuthToken(JWT.decode(JWT.create().sign(Algorithm.none())));
@@ -31,6 +32,7 @@ public interface AuthTokenContext extends TestContextApi
      *            the JWT to set.
      * @return the given {@link AuthToken}
      */
+    @Nonnull
     default AuthToken setAuthToken( @Nonnull final DecodedJWT decodedJWT )
     {
         return setAuthToken(new AuthToken(decodedJWT));
@@ -43,6 +45,7 @@ public interface AuthTokenContext extends TestContextApi
      *            the token to set. If {@code null}, the current token will be cleared.
      * @return the given {@link AuthToken}
      */
+    @Nullable
     default AuthToken setAuthToken( @Nullable final AuthToken authToken )
     {
         setProperty(AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN, authToken);

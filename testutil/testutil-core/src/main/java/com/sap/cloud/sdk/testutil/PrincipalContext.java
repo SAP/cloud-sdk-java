@@ -17,6 +17,7 @@ public interface PrincipalContext extends TestContextApi
      *
      * @return the principal
      */
+    @Nonnull
     default Principal setPrincipal()
     {
         return setPrincipal("default-test-principal");
@@ -29,6 +30,7 @@ public interface PrincipalContext extends TestContextApi
      *            the principal to use
      * @return the principal
      */
+    @Nonnull
     default Principal setPrincipal( @Nonnull final String principal )
     {
         return setPrincipal(new DefaultPrincipal(principal));
@@ -41,6 +43,7 @@ public interface PrincipalContext extends TestContextApi
      *            the principal to use. If {@code null}, the principal will be cleared.
      * @return the principal
      */
+    @Nullable
     default Principal setPrincipal( @Nullable final Principal principal )
     {
         setProperty(PrincipalThreadContextListener.PROPERTY_PRINCIPAL, principal);

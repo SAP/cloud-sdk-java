@@ -54,6 +54,7 @@ public final class TestContext
      *
      * @return a new TestContext.
      */
+    @Nonnull
     public static TestContext withThreadContext()
     {
         return new TestContext(true);
@@ -68,6 +69,7 @@ public final class TestContext
      *
      * @return this context
      */
+    @Nonnull
     public TestContext resetCaches()
     {
         resetCaches = true;
@@ -84,6 +86,7 @@ public final class TestContext
      *
      * @return this context
      */
+    @Nonnull
     public TestContext resetFacades()
     {
         resetFacades = true;
@@ -103,9 +106,9 @@ public final class TestContext
 
     @Override
     public void interceptTestMethod(
-        Invocation<Void> invocation,
-        ReflectiveInvocationContext<Method> invocationContext,
-        ExtensionContext extensionContext )
+        @Nonnull final Invocation<Void> invocation,
+        @Nonnull final ReflectiveInvocationContext<Method> invocationContext,
+        @Nonnull final ExtensionContext extensionContext )
         throws Throwable
     {
         if( !withThreadContext ) {
@@ -116,17 +119,18 @@ public final class TestContext
             try {
                 invocation.proceed();
             }
+            catch( final RuntimeException e ) {
+                throw e;
+            }
             catch( final Throwable e ) { // ALLOW CATCH THROWABLE
-                if( e instanceof RuntimeException ) {
-                    throw (RuntimeException) e;
-                }
                 throw new ThreadContextExecutionException(e);
             }
         });
     }
 
     @Override
-    public void afterEach( final ExtensionContext extensionContext )
+    @SuppressWarnings( "PMD.EmptyCatchBlock" )
+    public void afterEach( @Nonnull final ExtensionContext extensionContext )
     {
         if( resetCaches ) {
             try {

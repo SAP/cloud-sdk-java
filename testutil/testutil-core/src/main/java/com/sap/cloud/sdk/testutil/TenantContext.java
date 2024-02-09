@@ -17,6 +17,7 @@ public interface TenantContext extends TestContextApi
      *
      * @return the tenant
      */
+    @Nonnull
     default Tenant setTenant()
     {
         return setTenant("default-test-tenant");
@@ -29,6 +30,7 @@ public interface TenantContext extends TestContextApi
      *            the tenant ID to use
      * @return the tenant
      */
+    @Nonnull
     default Tenant setTenant( @Nonnull final String tenant )
     {
         return setTenant(new DefaultTenant(tenant));
@@ -41,6 +43,7 @@ public interface TenantContext extends TestContextApi
      *            the tenant to use. If {@code null}, the tenant will be cleared.
      * @return the tenant
      */
+    @Nullable
     default Tenant setTenant( @Nullable final Tenant tenant )
     {
         setProperty(TenantThreadContextListener.PROPERTY_TENANT, tenant);
