@@ -55,7 +55,7 @@ class BtpServicePropertySuppliers
                     .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice")
                     .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice")
                     .withUrlKey(BusinessLoggingOptions.READ_API, "readservice")
-                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice")
+                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice","buslogs/log")
                     .factory());
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();

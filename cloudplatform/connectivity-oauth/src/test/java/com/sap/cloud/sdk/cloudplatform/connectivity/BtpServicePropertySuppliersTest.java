@@ -240,7 +240,7 @@ class BtpServicePropertySuppliersTest
                 entry("endpoints.configservice", "https://business-logging.config_api.example.com"),
                 entry("endpoints.readservice", "https://business-logging.read_api.example.com"),
                 entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com"),
-                entry("endpoints.writeservice", "https://business-logging.write_api.example.com"));
+                entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
 
         @ParameterizedTest
         @EnumSource( BusinessLoggingOptions.class )

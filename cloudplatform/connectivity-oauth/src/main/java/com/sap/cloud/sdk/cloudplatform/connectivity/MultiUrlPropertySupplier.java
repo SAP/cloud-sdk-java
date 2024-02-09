@@ -7,16 +7,20 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 
 /**
  * A property supplier that selects between different URLs from a
@@ -30,12 +34,15 @@ import lombok.extern.slf4j.Slf4j;
 final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
     private final Class<T> enhancerClass;
-    private final Map<OptionsEnhancer<T>, String> urlKeys;
+    private final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys;
+
+    private static final String URL_KEY = "urlKey";
+    private static final String REDUNDANTH_PATH = "redundantPath";
 
     private MultiUrlPropertySupplier(
         @Nonnull final ServiceBindingDestinationOptions options,
         @Nonnull final Class<T> enhancerClass,
-        @Nonnull final Map<OptionsEnhancer<T>, String> urlKeys )
+        @Nonnull final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys )
     {
         super(options);
         this.enhancerClass = enhancerClass;
@@ -55,7 +62,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         }
 
         final T option = maybeOption.get();
-        final String bindingKey = urlKeys.get(option);
+        final String bindingKey = urlKeys.get(option).get(URL_KEY);
         if( bindingKey == null ) {
             throw new IllegalStateException(
                 "Found option value "
@@ -65,7 +72,11 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
                     + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
         }
         log.debug("Option {} selected, using binding key {}.", option, bindingKey);
-        return getCredential(URI.class, "endpoints", bindingKey).get();
+        final URI endPointUrl = getCredential(URI.class, "endpoints", bindingKey).get();
+        //Todo: Remove redundant path from url
+        //final Option<URI> cleanedURI = Option.of(urlKeys.get(option).get(REDUNDANTH_PATH)).map(path -> endPointUrl.resolve(".").resolve(path));
+        //return cleanedURI.getOrElse(endPointUrl);
+        return endPointUrl;
     }
 
     /**
@@ -95,7 +106,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
     static final class Builder<T extends OptionsEnhancer<T>>
     {
         private final Class<T> enhancerClass;
-        private final Map<OptionsEnhancer<T>, String> urlKeys = new HashMap<>();
+        private final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys = new HashMap<>();
 
         /**
          * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
@@ -114,7 +125,34 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            urlKeys.put(enhancer, urlKey);
+            return withUrlKey(enhancer,urlKey,null);
+        }
+
+        /**
+         * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
+         * {@code enhancer} should be an enum, and you should add a key for each enum value.
+         *
+         * @param enhancer
+         *            An instance of the {@link OptionsEnhancer} that represents one possible option choice. It will be
+         *            used to select the URL and compared to the instance that is eventually passed in the
+         *            {@link ServiceBindingDestinationOptions} via {@code hashCode()}. This should typically be an enum
+         *            value.
+         * @param urlKey
+         *            The key under which the URL is to be found in a service binding. It will be looked up in the
+         *            {@code endpoints} property of the {@code credentials} section of the service binding.
+         * @param redundantPath
+         *            The redundantPath that is provided in a service binding in {@code endpoints} property,
+         *            A base path gets added when OpenAPI/OData clients get generated and doesn't have to be included in destination built from the binding.
+         * @return This builder.
+         */
+        @Nonnull
+        Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey, @Nullable final String redundantPath )
+        {
+            final Map<String, String> keysHashMap = new HashMap<>();
+            keysHashMap.put(URL_KEY,urlKey);
+            Option.of(redundantPath).map(val->keysHashMap.put(REDUNDANTH_PATH,val));
+
+            urlKeys.put(enhancer,keysHashMap);
             return this;
         }
 
