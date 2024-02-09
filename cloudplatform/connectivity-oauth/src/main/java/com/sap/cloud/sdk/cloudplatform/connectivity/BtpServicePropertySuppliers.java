@@ -26,9 +26,9 @@ class BtpServicePropertySuppliers
     static final OAuth2PropertySupplierResolver CONNECTIVITY =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.CONNECTIVITY, ConnectivityProxy::new);
 
-    static final OAuth2PropertySupplierResolver IDENTITY_AUTHORIZATION =
+    static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceBindingLibWorkarounds.IAS_IDENTIFIER, IdentityAuthorization::new);
+            .forServiceIdentifier(ServiceBindingLibWorkarounds.IAS_IDENTIFIER, IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
@@ -69,7 +69,7 @@ class BtpServicePropertySuppliers
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_RULES);
         DEFAULT_SERVICE_RESOLVERS.add(WORKFLOW);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_LOGGING);
-        DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHORIZATION);
+        DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHENTICATION);
     }
 
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
@@ -116,10 +116,10 @@ class BtpServicePropertySuppliers
         }
     }
 
-    private static class IdentityAuthorization extends DefaultOAuth2PropertySupplier
+    private static class IdentityAuthentication extends DefaultOAuth2PropertySupplier
     {
 
-        IdentityAuthorization( @Nonnull final ServiceBindingDestinationOptions options )
+        IdentityAuthentication( @Nonnull final ServiceBindingDestinationOptions options )
         {
             super(options, List.of());
         }
