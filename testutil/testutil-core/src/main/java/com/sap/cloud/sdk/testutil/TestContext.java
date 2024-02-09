@@ -21,17 +21,22 @@ import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
+import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class TestContext
+/**
+ * A JUnit 5 extension that provides a thread context for each test method.
+ */
+@RequiredArgsConstructor( access = AccessLevel.PRIVATE )
+public final class TestContext
     implements
     AfterEachCallback,
     InvocationInterceptor,
-    TenantContextApi,
-    PrincipalContextApi,
-    AuthTokenContextApi
+    TenantContext,
+    PrincipalContext,
+    AuthTokenContext
 {
     private final ThreadContext context = new DefaultThreadContext();
 
@@ -40,7 +45,12 @@ public class TestContext
     private boolean resetFacades = false;
 
     /**
-     * Create a new TestContext that will automatically create a new thread context for each test method.
+     * Create a new TestContext that will automatically create a new thread context for each test method. Note:
+     * <ul>
+     * <li>Setting values <strong>before</strong> test execution will affect all test methods.</li>
+     * <li>Setting values <strong>during</strong> a test execution will only affect the reminder of the test
+     * method.</li>
+     * </ul>
      *
      * @return a new TestContext.
      */
@@ -91,7 +101,6 @@ public class TestContext
         }
     }
 
-    @SuppressWarnings( { "ProhibitedExceptionThrown", "checkstyle:IllegalCatch" } )
     @Override
     public void interceptTestMethod(
         Invocation<Void> invocation,
@@ -107,8 +116,11 @@ public class TestContext
             try {
                 invocation.proceed();
             }
-            catch( final Throwable e ) {
-                throw new RuntimeException(e);
+            catch( final Throwable e ) { // ALLOW CATCH THROWABLE
+                if( e instanceof RuntimeException ) {
+                    throw (RuntimeException) e;
+                }
+                throw new ThreadContextExecutionException(e);
             }
         });
     }

@@ -9,7 +9,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenThreadContextListener;
 
-public interface AuthTokenContextApi extends TestContextApi
+/**
+ * API for setting and clearing the {@link AuthToken} for the current thread.
+ */
+public interface AuthTokenContext extends TestContextApi
 {
     /**
      * Set an empty JWT token as the current {@link AuthToken} in the thread context.

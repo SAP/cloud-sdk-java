@@ -3,6 +3,9 @@ package com.sap.cloud.sdk.testutil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Baseline interface for the {@code TestContext} interfaces.
+ */
 public interface TestContextApi
 {
     /**

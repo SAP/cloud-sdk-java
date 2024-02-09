@@ -7,7 +7,10 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantThreadContextListener;
 
-public interface TenantContextApi extends TestContextApi
+/**
+ * API for setting and clearing the tenant for the current thread.
+ */
+public interface TenantContext extends TestContextApi
 {
     /**
      * Set {@code default-test-tenant} as value for the tenant for the current thread.

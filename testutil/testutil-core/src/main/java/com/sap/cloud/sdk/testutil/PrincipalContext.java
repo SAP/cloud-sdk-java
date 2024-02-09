@@ -7,7 +7,10 @@ import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalThreadContextListener;
 
-public interface PrincipalContextApi extends TestContextApi
+/**
+ * API for setting and clearing the principal for the current thread.
+ */
+public interface PrincipalContext extends TestContextApi
 {
     /**
      * Set {@code default-test-principal} as value for the principal for the current thread.
