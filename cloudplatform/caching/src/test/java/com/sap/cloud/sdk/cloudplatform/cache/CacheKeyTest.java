@@ -85,20 +85,20 @@ class CacheKeyTest
     @Test
     void testOf()
     {
-        final String tenantOrZoneId = "tenantOrZoneId";
-        final Tenant tenant = new DefaultTenant(tenantOrZoneId);
+        final String tenantId = "tenantId";
+        final Tenant tenant = new DefaultTenant(tenantId);
         final Principal principal = new DefaultPrincipal("user");
 
         assertThat(CacheKey.of(null, null).getTenantId()).isEmpty();
         assertThat(CacheKey.of(null, null).getPrincipalId()).isEmpty();
 
-        assertThat(CacheKey.of(tenant, null).getTenantId()).contains(tenantOrZoneId);
+        assertThat(CacheKey.of(tenant, null).getTenantId()).contains(tenantId);
         assertThat(CacheKey.of(tenant, null).getPrincipalId()).isEmpty();
 
         assertThat(CacheKey.of(null, principal).getTenantId()).isEmpty();
         assertThat(CacheKey.of(null, principal).getPrincipalId()).contains("user");
 
-        assertThat(CacheKey.of(tenant, principal).getTenantId()).contains(tenantOrZoneId);
+        assertThat(CacheKey.of(tenant, principal).getTenantId()).contains(tenantId);
         assertThat(CacheKey.of(tenant, principal).getPrincipalId()).contains("user");
     }
 

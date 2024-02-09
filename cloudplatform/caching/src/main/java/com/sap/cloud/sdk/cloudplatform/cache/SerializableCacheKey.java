@@ -70,12 +70,11 @@ public final class SerializableCacheKey implements GenericCacheKey<SerializableC
     }
 
     /**
-     * Constructs a {@link SerializableCacheKey} for the given tenant/zone and principal identifier, independent of
-     * whether they are {@code null} or not. This provides the highest flexibility for defining different levels of
-     * isolation.
+     * Constructs a {@link SerializableCacheKey} for the given tenant and principal identifier, independent of whether
+     * they are {@code null} or not. This provides the highest flexibility for defining different levels of isolation.
      *
      * @param tenantId
-     *            The identifier of the tenant or zone. If {@code null}, there is no tenant isolation.
+     *            The identifier of the tenant. If {@code null}, there is no tenant isolation.
      * @param principalId
      *            The identifier of the principal. If {@code null}, there is no principal isolation.
      *

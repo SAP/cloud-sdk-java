@@ -54,7 +54,7 @@ public class DefaultTenantFacade implements TenantFacade
 
         if( !maybeTenantId.isPresent() ) {
             throw new TenantAccessException(
-                "No tenant/zone identifier (one of these elements [" + TENANT_ID_CLAIMS + "]) found in JWT.");
+                "No tenant identifier (one of these elements [" + TENANT_ID_CLAIMS + "]) found in JWT.");
         }
 
         return maybeTenantId.get();

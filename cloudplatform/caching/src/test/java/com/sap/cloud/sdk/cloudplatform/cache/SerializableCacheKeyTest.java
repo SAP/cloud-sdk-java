@@ -22,7 +22,7 @@ class SerializableCacheKeyTest
     @Test
     void testSerializableCacheKey()
     {
-        final String tenant = "tenantOrZone1";
+        final String tenant = "tenant1";
         final String principal = "principal1";
 
         final SerializableCacheKey key = SerializableCacheKey.of(tenant, principal);

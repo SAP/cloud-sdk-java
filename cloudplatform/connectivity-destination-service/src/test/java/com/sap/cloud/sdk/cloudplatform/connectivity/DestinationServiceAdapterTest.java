@@ -151,7 +151,11 @@ class DestinationServiceAdapterTest
         final String destinationServiceResponse = "{ response }";
 
         final String currentUserToken =
-            JwtGenerator.getInstance(Service.XSUAA, "client-id").createToken().getTokenValue();
+            JwtGenerator
+                .getInstance(Service.XSUAA, "client-id")
+                .withClaimValue("zid", "tenant-id")
+                .createToken()
+                .getTokenValue();
         final String oauthAccessToken = "EXCHANGED-USER-ACCESS-TOKEN";
 
         // mocked request
@@ -186,7 +190,7 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             TenantAccessor
                 .executeWithTenant(
-                    () -> "the-zone-id",
+                    () -> "tenant-id",
                     () -> adapterToTest.getConfigurationAsJson(servicePath, OnBehalfOf.NAMED_USER_CURRENT_TENANT));
 
         assertThat(destinationResponse).isEqualTo(destinationServiceResponse);
