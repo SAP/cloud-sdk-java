@@ -18,12 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -237,14 +241,24 @@ class BtpServicePropertySuppliersTest
         private final ServiceBinding binding =
             bindingWithCredentials(
                 ServiceIdentifier.of("business-logging"),
-                entry("endpoints.configservice", "https://business-logging.config_api.example.com"),
+                entry("endpoints.configservice", "https://business-logging.config_api.example.com/buslogs/configs"),
                 entry("endpoints.readservice", "https://business-logging.read_api.example.com"),
-                entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com"),
+                entry(
+                    "endpoints.textresourceservice",
+                    "https://business-logging.text_api.example.com/buslogs/configs/textresource"),
                 entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
 
+        private static final List<String> cleanedEndpoints =
+            Arrays
+                .asList(
+                    "https://business-logging.config_api.example.com",
+                    "https://business-logging.text_api.example.com",
+                    "https://business-logging.read_api.example.com",
+                    "https://business-logging.write_api.example.com");
+
         @ParameterizedTest
-        @EnumSource( BusinessLoggingOptions.class )
-        void testApiSelection( final BusinessLoggingOptions api )
+        @MethodSource( "provideArguments" )
+        void testApiSelection( final BusinessLoggingOptions api, String cleanedEndpoint )
         {
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions.forService(binding).withOption(api).build();
@@ -252,6 +266,15 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BUSINESS_LOGGING.resolve(options);
 
             assertThat(sut.getServiceUri().toString()).contains(api.name().toLowerCase());
+            assertThat(sut.getServiceUri().toString()).isEqualTo(cleanedEndpoint);
+        }
+
+        static Stream<Arguments> provideArguments()
+        {
+            List<BusinessLoggingOptions> enumValues = Arrays.asList(BusinessLoggingOptions.values());
+            return IntStream
+                .range(0, enumValues.size())
+                .mapToObj(i -> Arguments.of(enumValues.get(i), cleanedEndpoints.get(i)));
         }
 
         @Test

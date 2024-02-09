@@ -5,9 +5,9 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -17,10 +17,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import io.vavr.control.Option;
-import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
 
 /**
  * A property supplier that selects between different URLs from a
@@ -34,15 +32,15 @@ import org.apache.http.client.utils.URIBuilder;
 final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
     private final Class<T> enhancerClass;
-    private final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys;
+    private final Map<OptionsEnhancer<T>, Map<String, String>> urlKeys;
 
     private static final String URL_KEY = "urlKey";
-    private static final String REDUNDANTH_PATH = "redundantPath";
+    private static final String REDUNDANT_PATH = "redundantPath";
 
     private MultiUrlPropertySupplier(
         @Nonnull final ServiceBindingDestinationOptions options,
         @Nonnull final Class<T> enhancerClass,
-        @Nonnull final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys )
+        @Nonnull final Map<OptionsEnhancer<T>, Map<String, String>> urlKeys )
     {
         super(options);
         this.enhancerClass = enhancerClass;
@@ -72,11 +70,40 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
                     + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
         }
         log.debug("Option {} selected, using binding key {}.", option, bindingKey);
+
         final URI endPointUrl = getCredential(URI.class, "endpoints", bindingKey).get();
-        //Todo: Remove redundant path from url
-        //final Option<URI> cleanedURI = Option.of(urlKeys.get(option).get(REDUNDANTH_PATH)).map(path -> endPointUrl.resolve(".").resolve(path));
-        //return cleanedURI.getOrElse(endPointUrl);
-        return endPointUrl;
+
+        final Option<URI> processedURI =
+            Option
+                .of(urlKeys.get(option).get(REDUNDANT_PATH))
+                .map(path -> removeProvidedPathFromURI(endPointUrl, path));
+        return processedURI.getOrElse(endPointUrl);
+    }
+
+    private URI removeProvidedPathFromURI( @Nonnull final URI endpointUrl, @Nonnull String redundantPath )
+    {
+        final String originalPath = endpointUrl.getPath();
+        if( !redundantPath.startsWith("/") && !redundantPath.isEmpty() ) {
+            redundantPath = "/" + redundantPath;
+        }
+        // Remove the specified path from the original path
+        final String newPath = originalPath.replaceFirst(redundantPath, "");
+        final URI newUri;
+        try {
+            newUri =
+                new URI(
+                    endpointUrl.getScheme(),
+                    endpointUrl.getAuthority(),
+                    newPath,
+                    endpointUrl.getQuery(),
+                    endpointUrl.getFragment());
+        }
+        catch( URISyntaxException e ) {
+            throw new DestinationAccessException(
+                "Unable to create a URI from '" + endpointUrl + "' by removing path '" + redundantPath + "'",
+                e);
+        }
+        return newUri;
     }
 
     /**
@@ -106,7 +133,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
     static final class Builder<T extends OptionsEnhancer<T>>
     {
         private final Class<T> enhancerClass;
-        private final Map<OptionsEnhancer<T>, Map<String,String>> urlKeys = new HashMap<>();
+        private final Map<OptionsEnhancer<T>, Map<String, String>> urlKeys = new HashMap<>();
 
         /**
          * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
@@ -125,7 +152,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            return withUrlKey(enhancer,urlKey,null);
+            return withUrlKey(enhancer, urlKey, null);
         }
 
         /**
@@ -141,18 +168,22 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
          *            The key under which the URL is to be found in a service binding. It will be looked up in the
          *            {@code endpoints} property of the {@code credentials} section of the service binding.
          * @param redundantPath
-         *            The redundantPath that is provided in a service binding in {@code endpoints} property,
-         *            A base path gets added when OpenAPI/OData clients get generated and doesn't have to be included in destination built from the binding.
+         *            The redundantPath that is provided in a service binding in {@code endpoints} property, A base path
+         *            gets added when OpenAPI/OData clients get generated and doesn't have to be included in destination
+         *            built from the binding.
          * @return This builder.
          */
         @Nonnull
-        Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey, @Nullable final String redundantPath )
+        Builder<T> withUrlKey(
+            @Nonnull final OptionsEnhancer<T> enhancer,
+            @Nonnull final String urlKey,
+            @Nullable final String redundantPath )
         {
             final Map<String, String> keysHashMap = new HashMap<>();
-            keysHashMap.put(URL_KEY,urlKey);
-            Option.of(redundantPath).map(val->keysHashMap.put(REDUNDANTH_PATH,val));
+            keysHashMap.put(URL_KEY, urlKey);
+            Option.of(redundantPath).map(val -> keysHashMap.put(REDUNDANT_PATH, val));
 
-            urlKeys.put(enhancer,keysHashMap);
+            urlKeys.put(enhancer, keysHashMap);
             return this;
         }
 
