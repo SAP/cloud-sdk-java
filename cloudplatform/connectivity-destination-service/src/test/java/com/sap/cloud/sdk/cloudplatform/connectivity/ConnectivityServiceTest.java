@@ -68,7 +68,7 @@ class ConnectivityServiceTest
                         .<String, Object> builder()
                         .put("clientid", CLIENT_CREDENTIALS.getClientId())
                         .put("clientsecret", CLIENT_CREDENTIALS.getClientSecret())
-                        .put("url", "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT)
+                        .put("url", "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/oauth/token")
                         .put("uri", "http://foobar/")
                         .put("onpremise_proxy_host", "localhost")
                         .put("onpremise_proxy_port", "1234")

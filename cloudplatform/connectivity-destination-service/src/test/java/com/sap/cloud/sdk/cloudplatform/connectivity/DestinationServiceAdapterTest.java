@@ -89,7 +89,7 @@ class DestinationServiceAdapterTest
                 CLIENT_CREDENTIALS.getClientId(),
                 CLIENT_CREDENTIALS.getClientSecret(),
                 "http://localhost:" + wm.getHttpPort() + DESTINATION_SERVICE_ROOT + "/",
-                "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/",
+                "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/oauth/token",
                 PROVIDER_TENANT_ID);
     }
 
