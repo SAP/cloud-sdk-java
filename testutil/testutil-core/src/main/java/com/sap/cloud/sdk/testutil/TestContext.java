@@ -39,6 +39,11 @@ public class TestContext
     private boolean resetCaches = false;
     private boolean resetFacades = false;
 
+    /**
+     * Create a new TestContext that will automatically create a new thread context for each test method.
+     *
+     * @return a new TestContext.
+     */
     public static TestContext withThreadContext()
     {
         return new TestContext(true);
