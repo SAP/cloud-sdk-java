@@ -102,27 +102,37 @@ class OAuth2Service
     }
 
     @Nonnull
-    String retrieveAccessToken() {
-        log.debug("Retrieving Access Token from '{}' on behalf of {} with client id '{}'.", tokenUri, onBehalfOf, identity.getId());
+    String retrieveAccessToken()
+    {
+        log
+            .debug(
+                "Retrieving Access Token from '{}' on behalf of {} with client id '{}'.",
+                tokenUri,
+                onBehalfOf,
+                identity.getId());
 
-        final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> switch (onBehalfOf) {
-            case TECHNICAL_USER_PROVIDER -> executeClientCredentialsFlow(null);
-            case TECHNICAL_USER_CURRENT_TENANT -> {
-                final Tenant tenant = TenantAccessor.tryGetCurrentTenant().getOrNull();
-                yield executeClientCredentialsFlow(tenant);
+        final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
+            switch( onBehalfOf ) {
+                case TECHNICAL_USER_PROVIDER:
+                    return executeClientCredentialsFlow(null);
+                case TECHNICAL_USER_CURRENT_TENANT:
+                    final Tenant tenant = TenantAccessor.tryGetCurrentTenant().getOrNull();
+                    return executeClientCredentialsFlow(tenant);
+                case NAMED_USER_CURRENT_TENANT:
+                    return executeUserExchangeFlow();
+                default:
+                    throw new IllegalStateException("Unknown behalf " + onBehalfOf);
             }
-            case NAMED_USER_CURRENT_TENANT -> executeUserExchangeFlow();
-            default -> throw new IllegalStateException("Unknown behalf " + onBehalfOf);
         }, resilienceConfiguration);
 
-        if (tokenResponse == null) {
+        if( tokenResponse == null ) {
             final String message = "OAuth2 token request failed";
             log.debug(message);
             throw new DestinationOAuthTokenException(null, message);
         }
 
         final String accessToken = tokenResponse.getAccessToken();
-        if (accessToken == null) {
+        if( accessToken == null ) {
             final String message = "OAuth2 token request succeeded but the response did not contain an access token";
             log.debug(message + ": {}", tokenResponse);
             throw new DestinationOAuthTokenException(null, message);
