@@ -62,7 +62,7 @@ class OAuth2Service
      * <p>
      * The cache key is composed of the following parts:
      * <ul>
-     * <li>{@code zoneId}, that way flow is tenant isolated, especially for the HttpClient used against the OAuth2
+     * <li>{@code tenantId}, that way flow is tenant isolated, especially for the HttpClient used against the OAuth2
      * service.</li>
      * <li>{@code ClientIdentity}, to separate by the credentials used against the OAuth2 service.</li>
      * </ul>
@@ -102,9 +102,9 @@ class OAuth2Service
         tokenServiceCache.invalidateAll();
     }
 
-    XsuaaTokenFlows getTokenFlowFactory( final String zoneId )
+    XsuaaTokenFlows getTokenFlowFactory( final String tenantId )
     {
-        final CacheKey cacheKey = CacheKey.fromIds(zoneId, null).append(identity);
+        final CacheKey cacheKey = CacheKey.fromIds(tenantId, null).append(identity);
         final OAuth2TokenService tokenService =
             tokenServiceCache.get(cacheKey, key -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
         return new XsuaaTokenFlows(tokenService, endpoints, identity);
@@ -122,12 +122,12 @@ class OAuth2Service
                     return executeClientCredentialsFlow(null);
 
                 case TECHNICAL_USER_CURRENT_TENANT:
-                    final String zoneId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
-                    if( zoneId == null ) {
-                        log.debug("No current tenant/zone available.");
-                        log.debug("Falling back to provider tenant/zone using the provider UAA subdomain.");
+                    final String tenantId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
+                    if( tenantId == null ) {
+                        log.debug("No current tenant available.");
+                        log.debug("Falling back to provider tenant using the provider UAA subdomain.");
                     }
-                    return executeClientCredentialsFlow(zoneId);
+                    return executeClientCredentialsFlow(tenantId);
 
                 case NAMED_USER_CURRENT_TENANT:
                     return executeUserExchangeFlow();
@@ -153,11 +153,11 @@ class OAuth2Service
     }
 
     @Nullable
-    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final String zoneId )
+    private OAuth2TokenResponse executeClientCredentialsFlow( @Nullable final String tenantId )
     {
-        final ClientCredentialsTokenFlow flow = getTokenFlowFactory(zoneId).clientCredentialsTokenFlow();
-        if( zoneId != null ) {
-            flow.zoneId(zoneId);
+        final ClientCredentialsTokenFlow flow = getTokenFlowFactory(tenantId).clientCredentialsTokenFlow();
+        if( tenantId != null ) {
+            flow.zoneId(tenantId);
         }
 
         return Try
