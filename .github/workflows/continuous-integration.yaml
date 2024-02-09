@@ -316,7 +316,7 @@ jobs:
           path: ${{ env.DEPENDENCIES_PATH }}
 
       - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: "java"
           queries: security-extended
@@ -329,7 +329,7 @@ jobs:
           mvn $MVN_ARGS
 
       - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:java"
 
