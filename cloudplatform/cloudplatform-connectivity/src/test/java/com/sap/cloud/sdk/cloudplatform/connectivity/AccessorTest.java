@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -20,10 +21,11 @@ import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+@Isolated
 class AccessorTest
 {
     @RegisterExtension
-    static final TestContext context = TestContext.withThreadContext();
+    static final TestContext context = TestContext.withThreadContext().resetFacades();
 
     private void assertNoTenantAvailable()
     {

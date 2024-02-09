@@ -7,35 +7,29 @@ package com.sap.cloud.sdk.cloudplatform.cache;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 
-import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 class CacheKeyTest
 {
-    @BeforeAll
-    static void setupAccessors()
-    {
-        PrincipalAccessor.setPrincipalFacade(() -> Try.success(new DefaultPrincipal("P")));
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant("T")));
-    }
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
 
-    @AfterAll
-    static void tearDownAccessors()
+    @BeforeEach
+    void setup()
     {
-        PrincipalAccessor.setPrincipalFacade(null);
-        TenantAccessor.setTenantFacade(null);
+        context.setTenant();
+        context.setPrincipal();
     }
 
     @RequiredArgsConstructor

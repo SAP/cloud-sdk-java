@@ -69,7 +69,7 @@ class DestinationServicePrincipalPropagationTest
         """;
 
     @RegisterExtension
-    static TestContext context = TestContext.withThreadContext();
+    static TestContext context = TestContext.withThreadContext().resetCaches();
 
     private final DestinationServiceAdapter destinationServiceAdapter = mock(DestinationServiceAdapter.class);
 

@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
@@ -28,6 +29,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+@Isolated
 class DefaultHttpClientCacheTest
 {
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
@@ -44,7 +46,7 @@ class DefaultHttpClientCacheTest
         Arrays.asList(new DefaultPrincipal("P#1"), new DefaultPrincipal("P#2"), null);
 
     @RegisterExtension
-    static TestContext context = TestContext.withThreadContext();
+    static TestContext context = TestContext.withThreadContext().resetCaches();
 
     @Test
     void testGetClientExpiresAfterWrite()

@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.testutil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.annotation.Nonnull;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
-import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
@@ -35,17 +36,43 @@ public class TestContext
     private final ThreadContext context = new DefaultThreadContext();
 
     private final boolean withThreadContext;
-    private final boolean resetCaches = true;
-    private final boolean resetFacades = true;
+    private boolean resetCaches = false;
+    private boolean resetFacades = false;
 
     public static TestContext withThreadContext()
     {
         return new TestContext(true);
     }
 
-    public static TestContext withoutThreadContext()
+    /**
+     * Also clear any caches registered with the CacheManager.
+     * <p>
+     * <strong>WARNING:</strong> This method should only be used in tests that are not executed in parallel. Make sure
+     * to annotate your test class with {@code @Isolated} when using this, since this might impact other tests running
+     * in parallel.
+     *
+     * @return this context
+     */
+    public TestContext resetCaches()
     {
-        return new TestContext(false);
+        resetCaches = true;
+        return this;
+    }
+
+    /**
+     * Also resets the facades for {@link AuthTokenAccessor}, {@link TenantAccessor}, {@link PrincipalAccessor} and
+     * {@link RequestHeaderAccessor}.
+     * <p>
+     * <strong>WARNING:</strong> This method should only be used in tests that are not executed in parallel. Make sure
+     * to annotate your test class with {@code @Isolated} when using this, since this might impact other tests running
+     * in parallel.
+     *
+     * @return this context
+     */
+    public TestContext resetFacades()
+    {
+        resetFacades = true;
+        return this;
     }
 
     @Override
@@ -84,7 +111,21 @@ public class TestContext
     public void afterEach( final ExtensionContext extensionContext )
     {
         if( resetCaches ) {
-            CacheManager.invalidateAll();
+            try {
+                final Class<?> clazz =
+                    getClass().getClassLoader().loadClass("com.sap.cloud.sdk.cloudplatform.cache.CacheManager");
+                // use reflection to invoke invalidateAll
+                final Method method = clazz.getMethod("invalidateAll");
+                method.invoke(null);
+            }
+            catch( final ClassNotFoundException e ) {
+                // CacheManager is not available, no need to reset caches
+            }
+            catch( final NoSuchMethodException | IllegalAccessException | InvocationTargetException e ) {
+                throw new ShouldNotHappenException(
+                    "You changed the CacheManager but didn't update this code, didn't ya?",
+                    e);
+            }
         }
         if( resetFacades ) {
             AuthTokenAccessor.setAuthTokenFacade(null);

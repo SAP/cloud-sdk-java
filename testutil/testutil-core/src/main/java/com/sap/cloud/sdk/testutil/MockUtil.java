@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
-import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalFacade;
@@ -60,28 +59,6 @@ public class MockUtil implements LocaleMocker, TenantMocker, PrincipalMocker
 
     @Delegate
     private final DefaultPrincipalMocker principalMocker = new DefaultPrincipalMocker(this::resetPrincipalFacade);
-
-    /**
-     * Instantiates a new instance of {@link MockUtil}, invalidates caches.
-     * <p>
-     * Note: To avoid potential side effects, only one instance of MockUtil should exist within a test class. It is
-     * therefore recommended to maintain an instance of this class as a static member of the test class. Example usage:
-     * <code>
-     * <pre>
-     * private static final MockUtil mockUtil = new MockUtil();
-     *
-     * {@literal @}BeforeClass
-     * public static void beforeClass()
-     * {
-     *     mockUtil.mockDefaults();
-     * }
-     * </pre>
-     * </code>
-     */
-    public MockUtil()
-    {
-        CacheManager.invalidateAll();
-    }
 
     /**
      * Mocks common defaults for testing, in particular:
