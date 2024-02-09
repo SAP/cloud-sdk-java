@@ -97,7 +97,7 @@ class OAuth2Service
     @Nonnull
     OAuth2TokenService getTokenService( @Nullable final String tenantId )
     {
-        final var key = CacheKey.fromIds(tenantId, null).append(identity);
+        final CacheKey key = CacheKey.fromIds(tenantId, null).append(identity);
         return tokenServiceCache.get(key, x -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
     }
 
@@ -186,7 +186,7 @@ class OAuth2Service
         }
 
         if( !(tenant instanceof TenantWithSubdomain) ) {
-            final var msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
+            final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
             throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
         }
 
@@ -423,14 +423,14 @@ class OAuth2Service
              * - for TECHNICAL_USER_PROVIDER && current tenant != provider the isolation is stronger than it needs to be,
              *   but the downside is arguably not worth keeping a second configuration for this case only
              */
-            final var resilienceConfig =
+            final ResilienceConfiguration resilienceConfig =
                 ResilienceConfiguration
                     .of(tokenUri.getHost() + "-" + identity.getId())
                     .isolationMode(ResilienceIsolationMode.TENANT_OPTIONAL)
                     .timeLimiterConfiguration(timeLimiter);
 
             // copy the additional parameters to prevent accidental manipulation after the `OAuth2Service` instance has been created.
-            final var additionalParameters = new HashMap<>(this.additionalParameters);
+            final Map<String, String> additionalParameters = new HashMap<>(this.additionalParameters);
             return new OAuth2Service(
                 tokenUri,
                 identity,

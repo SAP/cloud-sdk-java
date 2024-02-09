@@ -15,7 +15,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testTokenUri()
     {
-        final var sut = new OAuth2Service.Builder();
+        final OAuth2Service.Builder sut = new OAuth2Service.Builder();
 
         final Function<String, URI> getActual =
             input -> ((OAuth2Service.Builder) sut.withTokenUri(URI.create(input))).getTokenUri();
@@ -27,7 +27,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testTokenUriFromString()
     {
-        final var sut = new OAuth2Service.Builder();
+        final OAuth2Service.Builder sut = new OAuth2Service.Builder();
 
         final Function<String, URI> getActual =
             input -> ((OAuth2Service.Builder) sut.withTokenUri(input)).getTokenUri();
@@ -39,7 +39,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testTenantPropagationStrategyFrom()
     {
-        final var sut = new OAuth2Service.Builder();
+        final OAuth2Service.Builder sut = new OAuth2Service.Builder();
 
         final Function<String, OAuth2Service.TenantPropagationStrategy> getActual =
             input -> ((OAuth2Service.Builder) sut.withTenantPropagationStrategyFrom(ServiceIdentifier.of(input)))
@@ -53,7 +53,8 @@ class OAuth2ServiceBuilderTest
     @Test
     void testTenantPropagationStrategyFromNull()
     {
-        final var sut = (OAuth2Service.Builder) new OAuth2Service.Builder().withTenantPropagationStrategyFrom(null);
+        final OAuth2Service.Builder sut =
+            (OAuth2Service.Builder) new OAuth2Service.Builder().withTenantPropagationStrategyFrom(null);
 
         assertThat(sut.getTenantPropagationStrategy()).isEqualTo(OAuth2Service.TenantPropagationStrategy.ZID_HEADER);
     }
@@ -61,7 +62,8 @@ class OAuth2ServiceBuilderTest
     @Test
     void testAdditionalParameter()
     {
-        final var sut = (OAuth2Service.Builder) new OAuth2Service.Builder().withAdditionalParameter("key", "val");
+        final OAuth2Service.Builder sut =
+            (OAuth2Service.Builder) new OAuth2Service.Builder().withAdditionalParameter("key", "val");
 
         assertThat(sut.getAdditionalParameters()).isEqualTo(Map.of("key", "val"));
     }
@@ -69,7 +71,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testAdditionalParametersAreAdded()
     {
-        final var sut =
+        final OAuth2Service.Builder sut =
             (OAuth2Service.Builder) new OAuth2Service.Builder()
                 .withAdditionalParameter("key1", "val1")
                 .withAdditionalParameters(Map.of("key2", "val2"));
@@ -80,7 +82,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testAdditionalParameterOverridesExistingValue()
     {
-        final var sut =
+        final OAuth2Service.Builder sut =
             (OAuth2Service.Builder) new OAuth2Service.Builder()
                 .withAdditionalParameter("key", "foo")
                 .withAdditionalParameter("key", "bar");
@@ -91,7 +93,7 @@ class OAuth2ServiceBuilderTest
     @Test
     void testAdditionalParametersOverrideExistingValues()
     {
-        final var sut =
+        final OAuth2Service.Builder sut =
             (OAuth2Service.Builder) new OAuth2Service.Builder()
                 .withAdditionalParameter("key1", "foo")
                 .withAdditionalParameters(Map.of("key1", "bar", "key2", "val2"));
