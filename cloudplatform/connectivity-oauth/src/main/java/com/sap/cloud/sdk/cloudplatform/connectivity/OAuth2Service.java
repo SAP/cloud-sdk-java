@@ -151,7 +151,7 @@ class OAuth2Service
                 tenant);
 
         final String tenantId = getTenantId(tenant);
-        final String zidHeaderValue = getTenantZoneId(tenantId);
+        final String zidHeaderValue = getTenantHeader(tenantId);
         final String tenantSubdomain = getTenantSubdomain(tenant);
         final OAuth2TokenService tokenService = getTokenService(tenantId);
 
@@ -175,7 +175,7 @@ class OAuth2Service
     }
 
     @Nullable
-    private String getTenantZoneId( @Nullable final String tenantId )
+    private String getTenantHeader( @Nullable final String tenantId )
     {
         if( tenantPropagationStrategy != OAuth2Service.TenantPropagationStrategy.ZID_HEADER ) {
             return null;
@@ -265,56 +265,13 @@ class OAuth2Service
     }
 
     @Nonnull
-    static UriBuilder builder()
+    static Builder builder()
     {
         return new Builder();
     }
 
-    interface UriBuilder
-    {
-        @Nonnull
-        IdentityBuilder withTokenUri( @Nonnull final URI tokenUri );
-
-        @Nonnull
-        IdentityBuilder withTokenUri( @Nonnull final String tokenUri );
-    }
-
-    @FunctionalInterface
-    interface IdentityBuilder
-    {
-        @Nonnull
-        OptionalParametersBuilder withIdentity( @Nonnull final ClientIdentity identity );
-    }
-
-    interface OptionalParametersBuilder
-    {
-        @Nonnull
-        OptionalParametersBuilder withOnBehalfOf( @Nonnull final OnBehalfOf onBehalfOf );
-
-        @Nonnull
-        OptionalParametersBuilder
-            withTenantPropagationStrategy( @Nonnull final TenantPropagationStrategy tenantPropagationStrategy );
-
-        @Nonnull
-        OptionalParametersBuilder
-            withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier );
-
-        @Nonnull
-        OptionalParametersBuilder withAdditionalParameter( @Nonnull final String key, @Nonnull final String value );
-
-        @Nonnull
-        OptionalParametersBuilder withAdditionalParameters( @Nonnull final Map<String, String> additionalParameters );
-
-        @Nonnull
-        OptionalParametersBuilder
-            withTimeLimiter( @Nonnull final ResilienceConfiguration.TimeLimiterConfiguration timeLimiter );
-
-        @Nonnull
-        OAuth2Service build();
-    }
-
     @Getter( AccessLevel.PACKAGE )
-    static class Builder implements UriBuilder, IdentityBuilder, OptionalParametersBuilder
+    static class Builder
     {
         private static final String XSUAA_TOKEN_PATH = "/oauth/token";
         private static final Duration DEFAULT_TIME_OUT = Duration.ofSeconds(10);
@@ -328,15 +285,13 @@ class OAuth2Service
             ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TIME_OUT);
 
         @Nonnull
-        @Override
-        public IdentityBuilder withTokenUri( @Nonnull final String tokenUri )
+        Builder withTokenUri( @Nonnull final String tokenUri )
         {
             return withTokenUri(URI.create(tokenUri));
         }
 
         @Nonnull
-        @Override
-        public IdentityBuilder withTokenUri( @Nonnull final URI tokenUri )
+        Builder withTokenUri( @Nonnull final URI tokenUri )
         {
             final URI uri;
             if( tokenUri.getPath() == null || tokenUri.getPath().isBlank() ) {
@@ -350,34 +305,28 @@ class OAuth2Service
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withIdentity( @Nonnull final ClientIdentity identity )
+        Builder withIdentity( @Nonnull final ClientIdentity identity )
         {
             this.identity = identity;
             return this;
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withOnBehalfOf( @Nonnull final OnBehalfOf onBehalfOf )
+        Builder withOnBehalfOf( @Nonnull final OnBehalfOf onBehalfOf )
         {
             this.onBehalfOf = onBehalfOf;
             return this;
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withTenantPropagationStrategy(
-            @Nonnull final TenantPropagationStrategy tenantPropagationStrategy )
+        Builder withTenantPropagationStrategy( @Nonnull final TenantPropagationStrategy tenantPropagationStrategy )
         {
             this.tenantPropagationStrategy = tenantPropagationStrategy;
             return this;
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withTenantPropagationStrategyFrom(
-            @Nullable final ServiceIdentifier serviceIdentifier )
+        Builder withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier )
         {
             final TenantPropagationStrategy tenantPropagationStrategy;
             if( ServiceBindingLibWorkarounds.IAS_IDENTIFIER.equals(serviceIdentifier) ) {
@@ -391,36 +340,28 @@ class OAuth2Service
         }
 
         @Nonnull
-        @Override
-        public
-            OptionalParametersBuilder
-            withAdditionalParameter( @Nonnull final String key, @Nonnull final String value )
+        Builder withAdditionalParameter( @Nonnull final String key, @Nonnull final String value )
         {
             additionalParameters.put(key, value);
             return this;
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withAdditionalParameters(
-            @Nonnull final Map<String, String> additionalParameters )
+        Builder withAdditionalParameters( @Nonnull final Map<String, String> additionalParameters )
         {
             this.additionalParameters.putAll(additionalParameters);
             return this;
         }
 
         @Nonnull
-        @Override
-        public OptionalParametersBuilder withTimeLimiter(
-            @Nonnull final ResilienceConfiguration.TimeLimiterConfiguration timeLimiter )
+        Builder withTimeLimiter( @Nonnull final ResilienceConfiguration.TimeLimiterConfiguration timeLimiter )
         {
             this.timeLimiter = timeLimiter;
             return this;
         }
 
         @Nonnull
-        @Override
-        public OAuth2Service build()
+        OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
                 throw new ShouldNotHappenException("Some required parameters for the OAuth2Service are null.");
