@@ -72,9 +72,9 @@ class DefaultTenantMocker implements TenantMocker
 
             if( tenant == null ) {
                 throw new TestConfigurationError(
-                    "No tenant/zone mocked with id "
+                    "No tenant mocked with id "
                         + tenantId
-                        + ". Make sure to mock the respective tenant/zone before calling this method.");
+                        + ". Make sure to mock the respective tenant before calling this method.");
             }
 
             currentTenant = tenant;
