@@ -150,9 +150,9 @@ class OAuth2Service
                 onBehalfOf,
                 tenant);
 
-        final String tenantId = getTenantId(tenant);
-        final String zidHeaderValue = getTenantHeader(tenantId);
-        final String tenantSubdomain = getTenantSubdomain(tenant);
+        final String tenantId = getTenantIdOrNull(tenant);
+        final String zidHeaderValue = getTenantHeaderOrNull(tenantId);
+        final String tenantSubdomain = getTenantSubdomainOrNull(tenant);
         final OAuth2TokenService tokenService = getTokenService(tenantId);
 
         return Try
@@ -169,13 +169,13 @@ class OAuth2Service
     }
 
     @Nullable
-    private String getTenantId( @Nullable final Tenant tenant )
+    private String getTenantIdOrNull( @Nullable final Tenant tenant )
     {
         return tenant == null ? null : tenant.getTenantId();
     }
 
     @Nullable
-    private String getTenantHeader( @Nullable final String tenantId )
+    private String getTenantHeaderOrNull( @Nullable final String tenantId )
     {
         if( tenantPropagationStrategy != OAuth2Service.TenantPropagationStrategy.ZID_HEADER ) {
             return null;
@@ -185,7 +185,7 @@ class OAuth2Service
     }
 
     @Nullable
-    private String getTenantSubdomain( @Nullable final Tenant tenant )
+    private String getTenantSubdomainOrNull( @Nullable final Tenant tenant )
     {
         if( tenantPropagationStrategy != OAuth2Service.TenantPropagationStrategy.TENANT_SUBDOMAIN ) {
             return null;
@@ -235,7 +235,7 @@ class OAuth2Service
 
         final String tenantId = token.getAppTid();
         final OAuth2TokenService tokenService = getTokenService(tenantId);
-        final String tenantSubdomain = getTenantSubdomain(maybeTenant.getOrNull());
+        final String tenantSubdomain = getTenantSubdomainOrNull(maybeTenant.getOrNull());
 
         final CheckedFunction0<OAuth2TokenResponse> flow;
         switch( tenantPropagationStrategy ) {
