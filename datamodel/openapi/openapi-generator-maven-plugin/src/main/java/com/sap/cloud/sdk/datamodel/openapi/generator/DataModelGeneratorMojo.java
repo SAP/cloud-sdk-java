@@ -178,7 +178,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
                     .copyrightHeader(copyrightHeader)
                     .deleteOutputDirectory(deleteOutputDirectory)
                     .additionalProperties(additionalProperties)
-                    .oneOfAnyOfGenerationEnabled(enableOneofAnyofGeneration)
+                    .oneOfAnyOfGenerationEnabled(enableOneOfAnyOfGeneration)
                     .build());
     }
 
