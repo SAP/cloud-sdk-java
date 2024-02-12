@@ -43,13 +43,13 @@ class TenantAccessorTest
     @Test
     void testGetCurrentTenant()
     {
-        final String tenantOrZoneId = "tenantOrZoneId";
+        final String tenantId = "tenantId";
 
-        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant(tenantOrZoneId)));
+        TenantAccessor.setTenantFacade(() -> Try.success(new DefaultTenant(tenantId)));
 
         final Tenant currentTenant = TenantAccessor.getCurrentTenant();
 
-        assertThat(currentTenant.getTenantId()).isEqualTo(tenantOrZoneId);
+        assertThat(currentTenant.getTenantId()).isEqualTo(tenantId);
     }
 
     @Test
@@ -152,12 +152,12 @@ class TenantAccessorTest
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
         assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
 
-        final String tenantOrZoneId = "tenantOrZoneId";
-        TenantAccessor.executeWithTenant(() -> tenantOrZoneId, () -> {
+        final String tenantId = "tenantId";
+        TenantAccessor.executeWithTenant(() -> tenantId, () -> {
 
             // check if IllegalArgumentException is wrapped
             assertThatThrownBy(() -> TenantAccessor.executeWithFallbackTenant(() -> () -> "fallback", () -> {
-                assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantOrZoneId);
+                assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantId);
                 throw new IllegalArgumentException();
 
             }))
@@ -166,7 +166,7 @@ class TenantAccessorTest
 
             // check if ThreadContextExecutionException is not wrapped
             assertThatThrownBy(() -> TenantAccessor.executeWithFallbackTenant(() -> () -> "fallback", () -> {
-                assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantOrZoneId);
+                assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantId);
                 throw new ThreadContextExecutionException();
             })).isExactlyInstanceOf(ThreadContextExecutionException.class).hasNoCause();
 
@@ -188,9 +188,9 @@ class TenantAccessorTest
             assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo("globalFallback");
         });
 
-        final String tenantOrZoneId = "tenantOrZoneId";
-        TenantAccessor.executeWithTenant(() -> tenantOrZoneId, () -> {
-            assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantOrZoneId);
+        final String tenantId = "tenantId";
+        TenantAccessor.executeWithTenant(() -> tenantId, () -> {
+            assertThat(TenantAccessor.getCurrentTenant().getTenantId()).isEqualTo(tenantId);
         });
     }
 
