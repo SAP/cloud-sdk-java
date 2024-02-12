@@ -14,7 +14,6 @@ import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
@@ -134,10 +133,8 @@ class TestContextTest
         void testPrefilledPropertiesCanBeOverriden()
         {
             assertThat(TenantAccessor.tryGetCurrentTenant()).contains(tenant);
-            sut.setTenant("newTenant");
-            assertThat(TenantAccessor.tryGetCurrentTenant())
-                .doesNotContain(tenant)
-                .contains(new DefaultTenant("newTenant"));
+            final Tenant newTenant = sut.setTenant("newTenant");
+            assertThat(TenantAccessor.tryGetCurrentTenant()).doesNotContain(tenant).contains(newTenant);
             sut.clearTenant();
             assertThat(TenantAccessor.tryGetCurrentTenant()).isEmpty();
         }
