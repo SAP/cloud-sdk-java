@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -48,13 +47,6 @@ class DestinationServiceAuthenticationTest
 
     @RegisterExtension
     static final TestContext context = TestContext.withThreadContext();
-
-    @BeforeEach
-    @AfterEach
-    void resetDestinationCache()
-    {
-        DestinationService.Cache.reset();
-    }
 
     @BeforeEach
     void mockUser()

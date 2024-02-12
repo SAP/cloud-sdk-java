@@ -40,6 +40,10 @@
 		<project.rootdir>${project.basedir}/../</project.rootdir>
 	</properties>
 	<dependencies>
+		<!-- Please note: One can **not** use this module within any of the Cloud SDK modules listed below, as that would lead to circular dependencies.
+		 To make sure the TestContext is as useful as possible, consider using reflection instead of adding more modules here.
+		 For an example check how the CacheManager is loaded via reflection on-demand in TestContext (instead of adding caching here as a dependency).
+		 -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-core</artifactId>
