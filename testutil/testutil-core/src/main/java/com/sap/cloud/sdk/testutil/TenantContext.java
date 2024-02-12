@@ -33,7 +33,7 @@ public interface TenantContext extends TestContextApi
     @Nonnull
     default Tenant setTenant( @Nonnull final String tenant )
     {
-        return setTenant(new DefaultTenant(tenant));
+        return setTenant(new DefaultTenant(tenant, "default-test-subdomain"));
     }
 
     /**
