@@ -496,17 +496,6 @@
   },
   {
     "groupId": "com.sap.cloud.sdk",
-    "artifactId": "testutil",
-    "packaging": "jar",
-    "releaseAudience": "None",
-    "releaseMaturity": "Stable",
-    "pomFile": "testutil/pom.xml",
-    "parentGroupId": "com.sap.cloud.sdk",
-    "parentArtifactId": "sdk-parent",
-    "excludeFromBlackDuckScan": true
-  },
-  {
-    "groupId": "com.sap.cloud.sdk",
     "artifactId": "sdk-bom",
     "packaging": "pom",
     "releaseAudience": "Public",
@@ -548,5 +537,16 @@
     "parentGroupId": "",
     "parentArtifactId": "",
     "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk",
+    "artifactId": "testutil",
+    "packaging": "jar",
+    "releaseAudience": "None",
+    "releaseMaturity": "Stable",
+    "pomFile": "testutil/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk",
+    "parentArtifactId": "sdk-parent",
+    "excludeFromBlackDuckScan": true
   }
 ]
