@@ -19,6 +19,7 @@
                     <apiMaturity>released</apiMaturity>
 					<outputDirectory>output-directory</outputDirectory>
 					<verbose>false</verbose>
+					<enableOneofAnyofGeneration>true</enableOneofAnyofGeneration>
 					<additionalProperties>
 						<param1>val1</param1>
 						<param2>val2</param2>
