@@ -26,7 +26,7 @@ def parse_maven_artifact(value: str) -> Optional[tuple[str, str]]:
     return match.group(1), match.group(2)
 
 
-@dataclass
+@dataclass(frozen=True, eq=True)
 class DependencyUpdate:
     group_id: str
     artifact_id: str
@@ -459,7 +459,8 @@ class ReleaseNotesUpdater:
         if start_and_end is None:
             return None
 
-        new_lines: list[str] = old_lines[0:start_and_end[1]] + [""] + updated_lines + [""] + old_lines[start_and_end[1]:]
+        new_lines: list[str] = old_lines[0:start_and_end[1]] + [""] + updated_lines + [""] + old_lines[
+                                                                                             start_and_end[1]:]
         return "\n".join(new_lines)
 
     @staticmethod
@@ -484,6 +485,14 @@ class ReleaseNotesUpdater:
     def _add_improvements_section(old_lines: list[str], updated_lines: list[str]) -> str:
         new_lines: list[str] = old_lines + ["", "### 📈 Improvements", ""] + updated_lines + [""]
         return "\n".join(new_lines)
+
+
+def deduplicate_updates(updates: list[DependencyUpdate]) -> list[DependencyUpdate]:
+    result: set[DependencyUpdate] = set()
+    for update in updates:
+        result.add(update)
+
+    return list(result)
 
 
 def filter_updates(updates: list[DependencyUpdate], pom: PomFileParser) -> list[DependencyUpdate]:
@@ -562,6 +571,7 @@ def main():
     old_release_notes: str = release_notes_file.read_text()
 
     new_updates: list[DependencyUpdate] = PrBodyParser.parse(pr_body)
+    new_updates = deduplicate_updates(new_updates)
     new_updates = filter_updates(new_updates, pom)
     if len(new_updates) < 1:
         print(f"There seem to be no dependency updates.")
@@ -576,6 +586,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+class Test(TestCase):
+
+    def test_deduplicate_updates(self):
+        first_update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        second_update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "1.2.3", "2.3.4")
+        third_update: DependencyUpdate = DependencyUpdate("some.group", "some-artifact", "2.3.4", "3.4.5")
+
+        all_updates: list[DependencyUpdate] = [first_update, second_update, third_update]
+        actual: list[DependencyUpdate] = deduplicate_updates(all_updates)
+
+        self.assertEqual([first_update, third_update], actual)
 
 
 class PrBodyParserTest(TestCase):

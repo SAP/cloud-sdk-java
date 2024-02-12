@@ -52,24 +52,24 @@ class CookieCachingTest
     void testCachingWithDifferentTenants()
         throws IOException
     {
-        final String tenantOrZoneId1 = "t1";
-        final String tenantOrZoneId2 = "t2";
+        final String tenantId1 = "t1";
+        final String tenantId2 = "t2";
         stubFor(
             get(urlPathEqualTo("/getCookies"))
                 .withQueryParam("tenant", absent())
                 .willReturn(ok().withHeader("Set-Cookie", "cookie1=val1", "tenant=none")));
         stubFor(
             get(urlPathEqualTo("/getCookies"))
-                .withQueryParam("tenant", equalTo(tenantOrZoneId1))
+                .withQueryParam("tenant", equalTo(tenantId1))
                 .willReturn(ok().withHeader("Set-Cookie", "cookie1=val1", "tenant=t1")));
         stubFor(
             get(urlPathEqualTo("/getCookies"))
-                .withQueryParam("tenant", equalTo(tenantOrZoneId2))
+                .withQueryParam("tenant", equalTo(tenantId2))
                 .willReturn(ok().withHeader("Set-Cookie", "cookie1=val1", "tenant=t2")));
         stubFor(get(urlPathEqualTo("/testCookies")).willReturn(ok()));
 
-        final Tenant t1 = () -> tenantOrZoneId1;
-        final Tenant t2 = () -> tenantOrZoneId2;
+        final Tenant t1 = () -> tenantId1;
+        final Tenant t2 = () -> tenantId2;
 
         TenantAccessor.setTenantFacade(new DefaultTenantFacade());
 
@@ -109,13 +109,13 @@ class CookieCachingTest
             1,
             getRequestedFor(urlPathEqualTo("/testCookies"))
                 .withCookie("cookie1", equalTo("val1"))
-                .withCookie("tenant", equalTo(tenantOrZoneId1))
+                .withCookie("tenant", equalTo(tenantId1))
                 .withQueryParam("tenant", equalTo(t1.getTenantId())));
         verify(
             1,
             getRequestedFor(urlPathEqualTo("/testCookies"))
                 .withCookie("cookie1", equalTo("val1"))
-                .withCookie("tenant", equalTo(tenantOrZoneId2))
+                .withCookie("tenant", equalTo(tenantId2))
                 .withQueryParam("tenant", equalTo(t2.getTenantId())));
     }
 

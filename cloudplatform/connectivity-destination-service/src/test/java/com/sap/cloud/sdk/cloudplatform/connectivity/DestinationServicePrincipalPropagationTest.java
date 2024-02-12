@@ -98,7 +98,7 @@ class DestinationServicePrincipalPropagationTest
                 .<String, Object> builder()
                 .put("clientid", "CLIENT_ID")
                 .put("clientsecret", "CLIENT_SECRET")
-                .put("url", "http://localhost:" + wm.getHttpPort() + "/xsuaa")
+                .put("url", "http://localhost:" + wm.getHttpPort() + "/xsuaa/oauth/token")
                 .put("onpremise_proxy_host", "localhost")
                 .put("onpremise_proxy_port", "8888")
                 .build();

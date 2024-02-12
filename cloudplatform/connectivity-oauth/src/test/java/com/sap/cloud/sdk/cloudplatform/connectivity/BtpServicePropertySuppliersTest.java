@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_RULES;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -265,6 +266,29 @@ class BtpServicePropertySuppliersTest
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
+        }
+    }
+
+    @Nested
+    @DisplayName( "Identity Authorization" )
+    class IdentityAuthenticationTest
+    {
+        private final ServiceBinding binding =
+            bindingWithCredentials(
+                ServiceBindingLibWorkarounds.IAS_IDENTIFIER,
+                entry("credential-type", "X509_GENERATED"),
+                entry("url", "https://provider.ias.domain"));
+
+        @Test
+        void testTokenUri()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            assertThat(sut).isNotNull();
+
+            assertThat(sut.getTokenUri()).hasToString("https://provider.ias.domain/oauth2/token");
         }
     }
 }

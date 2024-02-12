@@ -12,19 +12,19 @@ import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 interface TenantMocker
 {
     /**
-     * Mocks a {@link Tenant} with the given tenant/zone identifier.
+     * Mocks a {@link Tenant} with the given tenant identifier.
      */
     @Nonnull
     Tenant mockTenant( @Nonnull final String tenantId );
 
     /**
-     * Mocks the current {@link Tenant} with tenant/zone identifier {@link MockUtil#MOCKED_TENANT}.
+     * Mocks the current {@link Tenant} with tenant identifier {@link MockUtil#MOCKED_TENANT}.
      */
     @Nonnull
     Tenant mockCurrentTenant();
 
     /**
-     * Mocks a {@link Tenant} with the given tenant/zone identifier.
+     * Mocks a {@link Tenant} with the given tenant identifier.
      */
     @Nonnull
     Tenant mockCurrentTenant( @Nonnull final String tenantId );
