@@ -26,6 +26,10 @@ class BtpServicePropertySuppliers
     static final OAuth2PropertySupplierResolver CONNECTIVITY =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.CONNECTIVITY, ConnectivityProxy::new);
 
+    static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
+        OAuth2PropertySupplierResolver
+            .forServiceIdentifier(ServiceBindingLibWorkarounds.IAS_IDENTIFIER, IdentityAuthentication::new);
+
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
             .forServiceIdentifier(
@@ -65,6 +69,7 @@ class BtpServicePropertySuppliers
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_RULES);
         DEFAULT_SERVICE_RESOLVERS.add(WORKFLOW);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_LOGGING);
+        DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHENTICATION);
     }
 
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
@@ -108,6 +113,27 @@ class BtpServicePropertySuppliers
             catch( final URISyntaxException e ) {
                 throw new DestinationAccessException("Failed to construct proxy URL", e);
             }
+        }
+    }
+
+    private static class IdentityAuthentication extends DefaultOAuth2PropertySupplier
+    {
+
+        IdentityAuthentication( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, List.of());
+        }
+
+        @Nonnull
+        @Override
+        public URI getTokenUri()
+        {
+            String providerUrl = getCredentialOrThrow(String.class, "url");
+            if( providerUrl.endsWith("/") ) {
+                providerUrl = providerUrl.substring(0, providerUrl.length() - 1);
+            }
+
+            return URI.create(providerUrl + "/oauth2/token");
         }
     }
 }
