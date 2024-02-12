@@ -156,7 +156,9 @@ public class DataModelGeneratorMojoUnitTest
         throws Exception
     {
         final URL resource =
-            getClass().getClassLoader().getResource("DataModelGeneratorMojoUnitTest/testAdditionalPropertiesAndEnablingAnyOfOneOf");
+            getClass()
+                .getClassLoader()
+                .getResource("DataModelGeneratorMojoUnitTest/testAdditionalPropertiesAndEnablingAnyOfOneOf");
         assertThat(resource).isNotNull();
 
         final File pomFile = new File(resource.getFile());
