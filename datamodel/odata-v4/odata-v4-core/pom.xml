@@ -120,8 +120,8 @@
 		</dependency>
 		<!-- scope "test" -->
 		<dependency>
-			<groupId>com.sap.cloud.sdk.testutil</groupId>
-			<artifactId>testutil-core</artifactId>
+			<groupId>com.sap.cloud.sdk</groupId>
+			<artifactId>testutil</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

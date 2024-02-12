@@ -6,10 +6,8 @@
 		<artifactId>sdk-parent</artifactId>
 		<version>5.4.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.sap.cloud.sdk.testutil</groupId>
-	<artifactId>testutil-parent</artifactId>
-	<packaging>pom</packaging>
-	<name>Test Utilities - Parent POM</name>
+	<artifactId>testutil</artifactId>
+	<name>(Internal) Test Utilities</name>
 	<description>Convenience utilities for testing.</description>
 	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
 	<organization>
@@ -30,9 +28,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<modules>
-		<module>testutil-core</module>
-	</modules>
 	<scm>
 		<connection />
 		<url />
@@ -41,6 +36,70 @@
 		<x-sap-release-audience>None</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<x-sap-exclude-from-blackduck-scan>true</x-sap-exclude-from-blackduck-scan>
-		<project.rootdir>${project.basedir}/../../</project.rootdir>
+		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
+		<project.rootdir>${project.basedir}/../</project.rootdir>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>cloudplatform-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>tenant</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+		</dependency>
+		<!-- test dependencies with scope "compile" -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<!-- scope "provided" -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>
+						<!-- ignore cast warnings since Lombok's @Builder has a redundant cast for Java 9 -->
+						<!-- see here: https://github.com/rzwitserloot/lombok/issues/1363 -->
+						<arg>-Xlint:-cast</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

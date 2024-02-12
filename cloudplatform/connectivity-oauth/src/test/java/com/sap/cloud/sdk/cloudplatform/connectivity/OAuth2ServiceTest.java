@@ -21,25 +21,28 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 
 import lombok.SneakyThrows;
 
+@Isolated( "Tests and resets the global OAuth2Service cache" )
 class OAuth2ServiceTest
 {
     private static final String RESPONSE_TEMPLATE = """
@@ -63,18 +66,14 @@ class OAuth2ServiceTest
     @RegisterExtension
     static final WireMockExtension SERVER_2 =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext().resetCaches();
 
     @BeforeEach
     void setUp()
     {
         SERVER_1.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_1))));
         SERVER_2.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_2))));
-    }
-
-    @AfterEach
-    void tearDown()
-    {
-        OAuth2Service.clearCache();
     }
 
     @Test
@@ -270,5 +269,14 @@ class OAuth2ServiceTest
         final String requestBody = event.getRequest().getBodyAsString();
         assertThat(requestBody).contains("arg1=val1");
         assertThat(requestBody).contains("arg2=val2");
+    }
+
+    @Test
+    void testCacheIsRegistered()
+    {
+        // create an instance to ensure the cache is initialised before we assert on the CacheManager
+        OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(IDENTITY_1).build();
+
+        assertThat(CacheManager.getCacheList()).contains(OAuth2Service.tokenServiceCache);
     }
 }
