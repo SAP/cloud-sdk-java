@@ -87,19 +87,4 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<compilerArgs>
-						<!-- ignore cast warnings since Lombok's @Builder has a redundant cast for Java 9 -->
-						<!-- see here: https://github.com/rzwitserloot/lombok/issues/1363 -->
-						<arg>-Xlint:-cast</arg>
-					</compilerArgs>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
