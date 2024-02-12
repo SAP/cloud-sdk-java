@@ -54,7 +54,7 @@ class PreprocessingStepOrchestrator
      *
      * @return this
      */
-    PreprocessingStepOrchestrator enableAnyOfOneOfGeneration( @Nonnull boolean anyOfOneOfGenerationEnabled )
+    PreprocessingStepOrchestrator enableAnyOfOneOfGeneration( @Nonnull final boolean anyOfOneOfGenerationEnabled )
     {
         if( !anyOfOneOfGenerationEnabled ) {
             steps.add(ValidationKeywordsPreprocessor::new);
