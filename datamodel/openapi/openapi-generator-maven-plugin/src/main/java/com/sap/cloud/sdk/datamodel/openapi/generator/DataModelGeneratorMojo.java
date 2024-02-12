@@ -116,7 +116,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
      * Defines whether to delete the output directory prior to the generation.
      */
     @Parameter( property = "openapi.generate.enableOneofAnyofGeneration", defaultValue = "false" )
-    private boolean enableOneofAnyofGeneration;
+    private boolean enableOneOfAnyOfGeneration;
 
     /**
      * Defines a list of additional properties that will be passed to the Java generator.
