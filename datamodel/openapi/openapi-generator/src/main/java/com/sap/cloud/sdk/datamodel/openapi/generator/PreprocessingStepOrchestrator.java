@@ -69,7 +69,6 @@ class PreprocessingStepOrchestrator
     @Nonnull
     OpenApiSpec performPreprocessingSteps()
     {
-
         final ObjectMapper objectMapper = fileFormat.getObjectMapperSupplier().get();
 
         final JsonNode rootNode;
