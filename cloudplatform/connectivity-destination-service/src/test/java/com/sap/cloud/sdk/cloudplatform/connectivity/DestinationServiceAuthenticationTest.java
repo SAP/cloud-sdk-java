@@ -18,15 +18,16 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+@Isolated( "Test interacts with global destination cache" )
 class DestinationServiceAuthenticationTest
 {
     private static final String OAUTH_TOKEN =
@@ -47,14 +48,7 @@ class DestinationServiceAuthenticationTest
             .build();
 
     @RegisterExtension
-    static final TestContext context = TestContext.withThreadContext();
-
-    @BeforeEach
-    @AfterEach
-    void resetDestinationCache()
-    {
-        DestinationService.Cache.reset();
-    }
+    static final TestContext context = TestContext.withThreadContext().resetCaches();
 
     @BeforeEach
     void mockUser()
