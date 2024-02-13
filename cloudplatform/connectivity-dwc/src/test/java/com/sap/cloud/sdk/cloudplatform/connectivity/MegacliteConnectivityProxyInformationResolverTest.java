@@ -25,7 +25,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.Timeout;
 import com.google.common.base.Charsets;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenantFacade;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
@@ -41,7 +39,6 @@ import lombok.SneakyThrows;
 
 class MegacliteConnectivityProxyInformationResolverTest
 {
-
     private static final HttpResponse successResponse;
     private static final HttpResponse failureResponse;
 
@@ -66,13 +63,6 @@ class MegacliteConnectivityProxyInformationResolverTest
     void setup()
     {
         sut = createSut();
-        TenantAccessor.setTenantFacade(new DefaultTenantFacade());
-    }
-
-    @AfterEach
-    void reset()
-    {
-        TenantAccessor.setTenantFacade(null);
     }
 
     @SneakyThrows

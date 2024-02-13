@@ -13,24 +13,19 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.google.common.net.HttpHeaders;
-import com.sap.cloud.sdk.cloudplatform.exception.RequestHeadersAccessException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
-
-import io.vavr.control.Try;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 class HttpDestinationPropertiesTest
 {
-    @AfterEach
-    void resetRequestContext()
-    {
-        RequestHeaderAccessor.setHeaderFacade(null);
-    }
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
 
     @Test
     void tokenForwardingShouldTakeTokenFromCurrentRequestHeaders()
@@ -39,37 +34,37 @@ class HttpDestinationPropertiesTest
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer.builder().withHeader(HttpHeaders.AUTHORIZATION, authHeaderValue).build();
 
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.success(headers));
-
         final DefaultHttpDestination destination =
             DefaultHttpDestination
                 .builder(URI.create("foo"))
                 .authenticationType(AuthenticationType.TOKEN_FORWARDING)
                 .build();
 
-        assertThat(destination.getHeaders()).containsExactly(new Header(HttpHeaders.AUTHORIZATION, authHeaderValue));
+        final Collection<Header> result =
+            RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> destination.getHeaders());
+
+        assertThat(result).containsExactly(new Header(HttpHeaders.AUTHORIZATION, authHeaderValue));
     }
 
     @Test
     void tokenForwardingShouldNotForwardOnNonGivenRequestHeader()
     {
-        // no headers present
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.success(RequestHeaderContainer.EMPTY));
-
         final DefaultHttpDestination destination =
             DefaultHttpDestination
                 .builder(URI.create("foo"))
                 .authenticationType(AuthenticationType.TOKEN_FORWARDING)
                 .build();
 
-        assertThat(destination.getHeaders()).isEmpty();
+        final Collection<Header> result =
+            RequestHeaderAccessor
+                .executeWithHeaderContainer(RequestHeaderContainer.EMPTY, () -> destination.getHeaders());
+
+        assertThat(result).isEmpty();
     }
 
     @Test
     void tokenForwardingShouldNotForwardOnNonExistingRequestHeaders()
     {
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.failure(new RequestHeadersAccessException()));
-
         final DefaultHttpDestination destination =
             DefaultHttpDestination
                 .builder(URI.create("foo"))
@@ -89,17 +84,17 @@ class HttpDestinationPropertiesTest
         }
         final RequestHeaderContainer headers = headerBuilder.build();
 
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.success(headers));
-
         final DefaultHttpDestination destination =
             DefaultHttpDestination
                 .builder(URI.create("foo"))
                 .authenticationType(AuthenticationType.TOKEN_FORWARDING)
                 .build();
 
-        final Collection<Header> createdHeaders = destination.getHeaders();
-        assertThat(createdHeaders).map(Header::getName).hasSize(2).containsOnly(HttpHeaders.AUTHORIZATION);
-        assertThat(createdHeaders).map(Header::getValue).containsExactly(headerValues);
+        final Collection<Header> result =
+            RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> destination.getHeaders());
+
+        assertThat(result).map(Header::getName).hasSize(2).containsOnly(HttpHeaders.AUTHORIZATION);
+        assertThat(result).map(Header::getValue).containsExactly(headerValues);
     }
 
     @Test
@@ -107,8 +102,6 @@ class HttpDestinationPropertiesTest
     {
         final RequestHeaderContainer headers = mock(RequestHeaderContainer.class);
         when(headers.getHeaderValues(eq(HttpHeaders.AUTHORIZATION))).thenReturn(Collections.singletonList(null));
-
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.success(headers));
 
         final DefaultHttpDestination destination =
             DefaultHttpDestination
@@ -124,7 +117,6 @@ class HttpDestinationPropertiesTest
     {
         final RequestHeaderContainer headers =
             DefaultRequestHeaderContainer.builder().withHeader("SomeOtherKey", "Some other value").build();
-        RequestHeaderAccessor.setHeaderFacade(() -> Try.success(headers));
 
         final DefaultHttpDestination destination =
             DefaultHttpDestination
@@ -132,6 +124,8 @@ class HttpDestinationPropertiesTest
                 .authenticationType(AuthenticationType.TOKEN_FORWARDING)
                 .build();
 
-        assertThat(destination.getHeaders()).isEmpty();
+        final Collection<Header> result =
+            RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> destination.getHeaders());
+        assertThat(result).isEmpty();
     }
 }
