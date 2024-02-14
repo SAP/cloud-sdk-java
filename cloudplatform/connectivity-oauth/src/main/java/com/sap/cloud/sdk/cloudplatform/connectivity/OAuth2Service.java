@@ -20,6 +20,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
+import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -70,8 +71,12 @@ class OAuth2Service
      * <li>{@code ClientIdentity}, to separate by the credentials used against the OAuth2 service.</li>
      * </ul>
      */
-    private static final Cache<CacheKey, OAuth2TokenService> tokenServiceCache =
-        Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+    static final Cache<CacheKey, OAuth2TokenService> tokenServiceCache;
+
+    static {
+        tokenServiceCache = Caffeine.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+        CacheManager.register(tokenServiceCache);
+    }
 
     @Nonnull
     private final URI tokenUri;
@@ -86,12 +91,6 @@ class OAuth2Service
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfiguration;
-
-    static void clearCache()
-    {
-        log.warn("Resetting the TokenService cache. This should not be done outside of testing.");
-        tokenServiceCache.invalidateAll();
-    }
 
     // package-private for testing
     @Nonnull

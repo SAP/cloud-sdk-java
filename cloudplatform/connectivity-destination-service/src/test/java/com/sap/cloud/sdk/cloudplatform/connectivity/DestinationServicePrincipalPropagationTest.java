@@ -109,8 +109,6 @@ class DestinationServicePrincipalPropagationTest
     void tearDownConnectivity()
     {
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
-        OAuth2Service.clearCache();
-        DestinationService.Cache.reset();
     }
 
     @Test
