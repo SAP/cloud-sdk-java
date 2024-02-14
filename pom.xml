@@ -69,7 +69,7 @@
 		<surefire.groups />
 		<surefire.excludedGroups />
 		<surefire.maxMemorySize>1024m</surefire.maxMemorySize>
-		<surefire.logLevel>warn</surefire.logLevel>
+		<surefire.logLevel>error</surefire.logLevel>
 		<!--
                 Use the argLine property to define the arguments for the JVMs that are forked by the surefire plugin.
                 This avoids the need to use late property evaluation for configuring the jacoco plugin.
@@ -278,8 +278,8 @@
 			</dependency>
 			<!--Dependencies with test scope-->
 			<dependency>
-				<groupId>com.sap.cloud.sdk.testutil</groupId>
-				<artifactId>testutil-core</artifactId>
+				<groupId>com.sap.cloud.sdk</groupId>
+				<artifactId>testutil</artifactId>
 				<version>${sdk.version}</version>
 				<scope>test</scope>
 			</dependency>

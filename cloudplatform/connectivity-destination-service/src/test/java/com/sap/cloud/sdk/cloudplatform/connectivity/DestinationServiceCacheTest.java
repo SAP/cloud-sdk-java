@@ -11,6 +11,7 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
@@ -18,6 +19,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
 
 import io.vavr.control.Option;
 
+@Isolated( "Test interacts with global destination cache" )
 class DestinationServiceCacheTest
 {
     @AfterEach
