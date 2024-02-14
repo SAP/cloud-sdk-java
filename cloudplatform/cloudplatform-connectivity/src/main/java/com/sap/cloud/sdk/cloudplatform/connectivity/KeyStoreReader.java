@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -89,7 +88,7 @@ class KeyStoreReader
     }
 
     @Nonnull
-    static PrivateKey loadKey( @Nonnull final Reader keyReader, @Nullable final char[] password )
+    static PrivateKey loadKey( @Nonnull final Reader keyReader, @Nonnull final char[] password )
         throws IOException,
             OperatorCreationException,
             PKCSException

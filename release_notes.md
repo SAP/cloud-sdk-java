@@ -4,7 +4,7 @@
 
 ### 🚧 Known Issues
 
--
+- Destination key-stores of type _PKCS #12_ with empty (or no) password will be correctly loaded, including their certificates.
 
 ### 🔧 Compatibility Notes
 
