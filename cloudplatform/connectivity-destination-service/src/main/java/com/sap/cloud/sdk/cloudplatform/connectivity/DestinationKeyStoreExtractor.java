@@ -245,7 +245,9 @@ class DestinationKeyStoreExtractor
         final byte[] bytes = Base64.getDecoder().decode(fileContent);
 
         try( ByteArrayInputStream is = new ByteArrayInputStream(bytes) ) {
-            ks.load(is, Strings.isNullOrEmpty(keyStorePassword) ? null : keyStorePassword.toCharArray());
+            // password cannot be `null`, since PKCS#12 requires a password to access certificates (e.g. mTLS).
+            final char[] password = keyStorePassword == null ? new char[0] : keyStorePassword.toCharArray();
+            ks.load(is, password);
             return ks;
         }
         catch( final IOException | NoSuchAlgorithmException | CertificateException e ) {

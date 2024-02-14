@@ -36,6 +36,7 @@
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
+		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

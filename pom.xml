@@ -82,7 +82,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.68.9</jco-api.version>
+		<jco-api.version>4.69.7</jco-api.version>
 		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -95,19 +95,19 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.1.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.11</slf4j.version>
-		<assertj-core.version>3.25.2</assertj-core.version>
+		<slf4j.version>2.0.12</slf4j.version>
+		<assertj-core.version>3.25.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.10.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
-		<junit.jupiter.version>5.10.1</junit.jupiter.version>
+		<junit.jupiter.version>5.10.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.0</maven-plugin.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.2.0</openapi-generator.version>
+		<openapi-generator.version>7.3.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
@@ -398,7 +398,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.16.0</version>
+				<version>1.16.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -895,7 +895,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.3.0</version>
+					<version>4.8.3.1</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
