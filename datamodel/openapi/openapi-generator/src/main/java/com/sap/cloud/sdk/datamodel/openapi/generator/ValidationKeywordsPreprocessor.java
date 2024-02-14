@@ -56,7 +56,8 @@ class ValidationKeywordsPreprocessor implements PreprocessingStep
                 throw new OpenApiGeneratorException(
                     "The OpenAPI spec contains keyword "
                         + field
-                        + " inside the Paths which is not currently supported during generation. Please remove these fields for the generation to succeed");
+                        + " inside the Paths which is supported only if you explicitly enable it's processing using <enableOneofAnyofGeneration> parameter in the OpenAPI generator maven plugin."
+                        + " Please regenerate your client by including <enableOneofAnyofGeneration> parameter.");
             }
         }
     }
@@ -71,9 +72,9 @@ class ValidationKeywordsPreprocessor implements PreprocessingStep
                         throw new OpenApiGeneratorException(
                             "The OpenAPI spec contains keyword "
                                 + field
-                                + " inside schemas which is only supported if it is a direct child. "
-                                + "Occurances under additionalProperties and nesting inside a property is not currently supported during generation."
-                                + "Please remove these fields for the generation to succeed");
+                                + " inside schemas which is only supported if it is a direct child."
+                                + " Occurrences under additionalProperties and nesting inside a property is supported only if you explicitly enable it's processing using <enableOneofAnyofGeneration> parameter in the OpenAPI generator maven plugin."
+                                + " Please regenerate your client by including <enableOneofAnyofGeneration> parameter.");
 
                     }
                 }
