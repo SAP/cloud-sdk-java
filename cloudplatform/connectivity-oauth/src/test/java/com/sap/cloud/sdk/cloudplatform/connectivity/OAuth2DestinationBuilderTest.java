@@ -28,22 +28,24 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.auth0.jwt.JWT;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
 @WireMockTest
 class OAuth2DestinationBuilderTest
 {
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
+
     @BeforeEach
     void setup()
     {
@@ -98,7 +100,7 @@ class OAuth2DestinationBuilderTest
                 .build();
 
         final String token = JwtGenerator.getInstance(Service.XSUAA, "client-id").createToken().getTokenValue();
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(new AuthToken(JWT.decode(token))));
+        context.setAuthToken(JWT.decode(token));
         // direct invocation test assertion
         final Collection<Header> headers = destination.getHeaders();
         assertThat(headers).containsExactly(new Header("Authorization", "Bearer PERSONAL"));
@@ -113,7 +115,6 @@ class OAuth2DestinationBuilderTest
 
         verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing(token)));
         verify(1, getRequestedFor(urlEqualTo("/personal")).withHeader("Authorization", equalTo("Bearer PERSONAL")));
-        AuthTokenAccessor.setAuthTokenFacade(null);
     }
 
     @Test

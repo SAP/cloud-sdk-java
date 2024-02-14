@@ -15,16 +15,17 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 class DefaultApacheHttpClient5CacheTest
 {
-    private static final MockUtil mockUtil = new MockUtil();
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
 
     private static final HttpDestination DESTINATION = DefaultHttpDestination.builder("https://url1").build();
     private static final DefaultHttpDestination USER_TOKEN_EXCHANGE_DESTINATION =
@@ -42,17 +43,16 @@ class DefaultApacheHttpClient5CacheTest
     private static final Duration FIVE_MINUTES = Duration.ofMinutes(5L);
 
     @BeforeEach
-    @AfterEach
-    void clearAllCaches()
+    void setUp()
     {
         CacheManager.invalidateAll();
+        context.setPrincipal();
+        context.setTenant();
     }
 
     @Test
     void testGetClientExpiresAfterWrite()
     {
-        mockUtil.mockDefaults();
-
         final AtomicLong ticker = new AtomicLong(0);
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES, ticker::get);
 
@@ -83,7 +83,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
@@ -92,15 +91,15 @@ class DefaultApacheHttpClient5CacheTest
 
         for( final String tenantId : tenantsToTest ) {
             for( final String principalId : principalsToTest ) {
-                mockUtil.clearTenants();
-                mockUtil.clearPrincipals();
+                context.clearTenant();
+                context.clearPrincipal();
 
                 if( tenantId != null ) {
-                    mockUtil.mockCurrentTenant(tenantId);
+                    context.setTenant(tenantId);
                 }
 
                 if( principalId != null ) {
-                    mockUtil.mockCurrentPrincipal(principalId);
+                    context.setPrincipal(principalId);
                 }
 
                 final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
@@ -119,7 +118,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
@@ -128,15 +126,15 @@ class DefaultApacheHttpClient5CacheTest
 
         for( final String tenantId : tenantsToTest ) {
             for( final String principalId : principalsToTest ) {
-                mockUtil.clearTenants();
-                mockUtil.clearPrincipals();
+                context.clearTenant();
+                context.clearPrincipal();
 
                 if( tenantId != null ) {
-                    mockUtil.mockCurrentTenant(tenantId);
+                    context.setTenant(tenantId);
                 }
 
                 if( principalId != null ) {
-                    mockUtil.mockCurrentPrincipal(principalId);
+                    context.setPrincipal(principalId);
                 }
 
                 final HttpClient clientWithDestination =
@@ -157,7 +155,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
-        mockUtil.mockDefaults();
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
@@ -167,15 +164,15 @@ class DefaultApacheHttpClient5CacheTest
 
         for( final String tenantId : tenantsToTest ) {
             for( final String principalId : principalsToTest ) {
-                mockUtil.clearTenants();
-                mockUtil.clearPrincipals();
+                context.clearTenant();
+                context.clearPrincipal();
 
                 if( tenantId != null ) {
-                    mockUtil.mockCurrentTenant(tenantId);
+                    context.setTenant(tenantId);
                 }
 
                 if( principalId != null ) {
-                    mockUtil.mockCurrentPrincipal(principalId);
+                    context.setPrincipal(principalId);
                 }
 
                 final HttpClient clientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
@@ -198,8 +195,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
-        mockUtil.mockDefaults();
-
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
@@ -208,15 +203,15 @@ class DefaultApacheHttpClient5CacheTest
 
         for( final String tenantId : tenantsToTest ) {
             for( final String principalId : principalsToTest ) {
-                mockUtil.clearTenants();
-                mockUtil.clearPrincipals();
+                context.clearTenant();
+                context.clearPrincipal();
 
                 if( tenantId != null ) {
-                    mockUtil.mockCurrentTenant(tenantId);
+                    context.setTenant(tenantId);
                 }
 
                 if( principalId != null ) {
-                    mockUtil.mockCurrentPrincipal(principalId);
+                    context.setPrincipal(principalId);
                 }
 
                 final HttpClient clientWithDestination =
@@ -247,12 +242,10 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testInvalidateTenantCacheEntries()
     {
-        mockUtil.mockDefaults();
-
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final String untestedTenantId = "some-tenant";
-        mockUtil.mockCurrentTenant(untestedTenantId);
+        context.setTenant(untestedTenantId);
 
         final HttpClient unclearedClientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
         assertThat(unclearedClientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -263,10 +256,10 @@ class DefaultApacheHttpClient5CacheTest
         final List<String> tenantsToTest = Arrays.asList("tenant#1", null);
 
         for( final String tenantId : tenantsToTest ) {
-            mockUtil.clearTenants();
+            context.clearTenant();
 
             if( tenantId != null ) {
-                mockUtil.mockCurrentTenant(tenantId);
+                context.setTenant(tenantId);
             }
 
             final HttpClient clientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
@@ -282,7 +275,7 @@ class DefaultApacheHttpClient5CacheTest
         }
 
         // make sure the cache entries for the untested tenant were not invalidated
-        mockUtil.mockCurrentTenant(untestedTenantId);
+        context.setTenant(untestedTenantId);
         assertThat(unclearedClientWithDestination).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
@@ -290,15 +283,13 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testInvalidatePrincipalCacheEntries()
     {
-        mockUtil.mockDefaults();
-
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final String tenantId = "tenant#1";
-        mockUtil.mockCurrentTenant(tenantId);
+        context.setTenant(tenantId);
 
         final String untestedPrincipalId = "some-principal";
-        mockUtil.mockCurrentPrincipal(untestedPrincipalId);
+        context.setPrincipal(untestedPrincipalId);
 
         final HttpClient unclearedClientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
@@ -306,10 +297,10 @@ class DefaultApacheHttpClient5CacheTest
         final List<String> principalsToTest = Arrays.asList("principal#1", null);
 
         for( final String principalId : principalsToTest ) {
-            mockUtil.clearPrincipals();
+            context.clearPrincipal();
 
             if( principalId != null ) {
-                mockUtil.mockCurrentPrincipal(principalId);
+                context.setPrincipal(principalId);
             }
 
             final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
@@ -321,22 +312,20 @@ class DefaultApacheHttpClient5CacheTest
             assertThat(clientWithoutDestination).isNotSameAs(sut.tryGetHttpClient(FACTORY).get());
         }
         // make sure the cache entries for the untested principal were not invalidated
-        mockUtil.mockCurrentPrincipal(untestedPrincipalId);
+        context.setPrincipal(untestedPrincipalId);
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
     }
 
     @Test
     void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
     {
-        mockUtil.mockDefaults();
-
         final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
 
         final String tenantId = "tenant#1";
-        mockUtil.mockCurrentTenant(tenantId);
+        context.setTenant(tenantId);
 
         final String untestedPrincipalId = "some-principal";
-        mockUtil.mockCurrentPrincipal(untestedPrincipalId);
+        context.setPrincipal(untestedPrincipalId);
 
         final HttpClient unclearedClientWithDestination =
             sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -349,10 +338,10 @@ class DefaultApacheHttpClient5CacheTest
         final List<String> principalsToTest = Arrays.asList("principal#1", null);
 
         for( final String principalId : principalsToTest ) {
-            mockUtil.clearPrincipals();
+            context.clearPrincipal();
 
             if( principalId != null ) {
-                mockUtil.mockCurrentPrincipal(principalId);
+                context.setPrincipal(principalId);
             }
 
             final HttpClient clientWithDestination =
@@ -372,7 +361,7 @@ class DefaultApacheHttpClient5CacheTest
         }
 
         // make sure the cache entries for the untested principal were not invalidated
-        mockUtil.mockCurrentPrincipal(untestedPrincipalId);
+        context.setPrincipal(untestedPrincipalId);
         assertThat(unclearedClientWithDestination)
             .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());

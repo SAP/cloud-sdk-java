@@ -19,12 +19,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
@@ -33,14 +32,10 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
-import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
+import com.sap.cloud.sdk.testutil.TestContext;
 
-import io.vavr.control.Option;
 import io.vavr.control.Try;
 
 class MegacliteServiceBindingDestinationLoaderTest
@@ -81,6 +76,9 @@ class MegacliteServiceBindingDestinationLoaderTest
     private static final URI megacliteUrl = URI.create("https://megaclite.com");
     private static final String providerTenantId = "provider-tenant-id";
 
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
+
     private MegacliteServiceBindingDestinationLoader sut;
 
     @BeforeEach
@@ -93,13 +91,6 @@ class MegacliteServiceBindingDestinationLoaderTest
         sut.setDwcConfig(dwcConfig);
         sut.setDestinationFactory(destinationFactory);
         sut.setConnectivityResolver(new MegacliteConnectivityProxyInformationResolver(destinationFactory));
-    }
-
-    @AfterEach
-    void reset()
-    {
-        TenantAccessor.setTenantFacade(null);
-        RequestHeaderAccessor.setHeaderFacade(null);
     }
 
     @Test
@@ -117,7 +108,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     @Test
     void testSubscriberDestination()
     {
-        mockTenant();
+        context.setTenant(UUID.randomUUID().toString());
 
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_PAAS_AND_SAAS).build();
@@ -154,7 +145,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     @Test
     void testNamedUserBehalf()
     {
-        mockTenant();
+        context.setTenant(UUID.randomUUID().toString());
 
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
@@ -223,7 +214,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     void testSubscriberMandateIsMissing()
     {
         // current tenant != provider
-        mockTenant();
+        context.setTenant(UUID.randomUUID().toString());
 
         // implicitly OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT
         final ServiceBindingDestinationOptions options =
@@ -253,7 +244,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     @Test
     void testCurrentTenantIsProvider()
     {
-        mockTenant(providerTenantId);
+        context.setTenant(providerTenantId);
 
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions.forService(BINDING_PAAS_AND_SAAS).build();
@@ -355,9 +346,9 @@ class MegacliteServiceBindingDestinationLoaderTest
         when(binding.getSubscriberConfiguration()).thenReturn(subscriberConfiguration);
 
         if( expectProvider ) {
-            mockTenant(providerTenantId);
+            context.setTenant(providerTenantId);
         } else {
-            mockTenant();
+            context.setTenant(UUID.randomUUID().toString());
         }
 
         final MegacliteServiceBinding.MandateConfiguration result =
@@ -371,18 +362,5 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         verify(binding, times(expectProvider ? 1 : 0)).getProviderConfiguration();
         verify(binding, times(expectProvider ? 0 : 1)).getSubscriberConfiguration();
-    }
-
-    private static void mockTenant()
-    {
-        mockTenant(null);
-    }
-
-    private static void mockTenant( @Nullable final String id )
-    {
-        final Try<Tenant> tenant =
-            Option.of(id).toTry().recover(any -> UUID.randomUUID().toString()).map(DefaultTenant::new);
-
-        TenantAccessor.setTenantFacade(() -> tenant);
     }
 }

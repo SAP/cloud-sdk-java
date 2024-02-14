@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -17,18 +18,16 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 
 import org.apache.http.HttpHeaders;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.testutil.TestContext;
 
+@Isolated( "Test interacts with global destination cache" )
 class DestinationServiceAuthenticationTest
 {
     private static final String OAUTH_TOKEN =
@@ -48,45 +47,23 @@ class DestinationServiceAuthenticationTest
                     .tokenExchangeStrategy(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE))
             .build();
 
-    private static final MockUtil mockUtil = new MockUtil();
-
     @RegisterExtension
-    TokenRule token = TokenRule.createXsuaa();
-
-    @BeforeEach
-    @AfterEach
-    void resetDestinationCache()
-    {
-        DestinationService.Cache.reset();
-    }
+    static final TestContext context = TestContext.withThreadContext().resetCaches();
 
     @BeforeEach
     void mockUser()
     {
-        mockUtil.mockCurrentTenant();
-        mockUtil.mockCurrentPrincipal();
-    }
-
-    @AfterEach
-    void clearUser()
-    {
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
-    }
-
-    @AfterAll
-    static void resetFacades()
-    {
-        TenantAccessor.setTenantFacade(null);
-        PrincipalAccessor.setPrincipalFacade(null);
+        context.setPrincipal();
+        context.setTenant();
+        context.setAuthToken(mockXsuaaToken());
     }
 
     @Test
     void testBasic()
     {
         // basic authentication should also work without a user
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+        context.clearPrincipal();
+        context.clearTenant();
 
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
 
@@ -411,8 +388,8 @@ class DestinationServiceAuthenticationTest
     void testOAuth2Password()
     {
         // OAuth2 Password should also work without a user
-        mockUtil.clearTenants();
-        mockUtil.clearPrincipals();
+        context.clearTenant();
+        context.clearPrincipal();
 
         final DestinationServiceAdapter destinationService = mock(DestinationServiceAdapter.class);
         final String oAuthToken = "testToken";

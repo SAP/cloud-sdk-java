@@ -21,10 +21,10 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -36,14 +36,11 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
-
-import io.vavr.control.Try;
 
 @WireMockTest
 class ConnectivityServiceTest
@@ -57,6 +54,9 @@ class ConnectivityServiceTest
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
 
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
+
     @BeforeEach
     void setupServiceBinding( @Nonnull final WireMockRuntimeInfo wm )
     {
@@ -68,7 +68,7 @@ class ConnectivityServiceTest
                         .<String, Object> builder()
                         .put("clientid", CLIENT_CREDENTIALS.getClientId())
                         .put("clientsecret", CLIENT_CREDENTIALS.getClientSecret())
-                        .put("url", "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT)
+                        .put("url", "http://localhost:" + wm.getHttpPort() + XSUAA_SERVICE_ROOT + "/oauth/token")
                         .put("uri", "http://foobar/")
                         .put("onpremise_proxy_host", "localhost")
                         .put("onpremise_proxy_port", "1234")
@@ -82,12 +82,6 @@ class ConnectivityServiceTest
     void resetServiceBinding()
     {
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
-    }
-
-    @AfterAll
-    static void resetFacades()
-    {
-        TenantAccessor.setTenantFacade(null);
     }
 
     @Test
@@ -113,7 +107,7 @@ class ConnectivityServiceTest
                             .build())));
 
         // mock AuthTokenFacade for current user token
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
+        context.setAuthToken(mockUserAuthToken(currentUserToken));
 
         // actual request
         final DefaultHttpDestination.Builder builder =
@@ -196,7 +190,7 @@ class ConnectivityServiceTest
                             .build())));
 
         // mock AuthTokenFacade for current user token
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(mockUserAuthToken(currentUserToken)));
+        context.setAuthToken(mockUserAuthToken(currentUserToken));
 
         // actual request
         final DefaultHttpDestination.Builder builder =

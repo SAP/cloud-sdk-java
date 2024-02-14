@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Answers;
 import org.mockito.Mockito;
 
@@ -25,8 +26,8 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Try;
 
@@ -57,11 +58,13 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
         }
     });
 
+    @RegisterExtension
+    static TestContext context = TestContext.withThreadContext();
+
     @BeforeEach
     @AfterEach
     void clean()
     {
-        AuthTokenAccessor.setAuthTokenFacade(null);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(null);
     }
@@ -150,7 +153,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testPrincipalPropagationDefault()
     {
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(token1));
+        context.setAuthToken(token1);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 
@@ -178,7 +181,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testPrincipalPropagationCompatibility()
     {
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(token1));
+        context.setAuthToken(token1);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 
@@ -283,7 +286,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testPrincipalPropagationWithTenantId()
     {
-        AuthTokenAccessor.setAuthTokenFacade(() -> Try.success(token1));
+        context.setAuthToken(token1);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
         DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 

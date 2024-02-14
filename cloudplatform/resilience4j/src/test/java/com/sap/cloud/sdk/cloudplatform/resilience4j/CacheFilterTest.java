@@ -22,6 +22,7 @@ import javax.cache.Caching;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
@@ -32,7 +33,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
-import com.sap.cloud.sdk.testutil.MockUtil;
+import com.sap.cloud.sdk.testutil.TestContext;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -47,9 +48,8 @@ import lombok.SneakyThrows;
 @Execution( ExecutionMode.SAME_THREAD )
 class CacheFilterTest
 {
-    @SuppressWarnings( "deprecation" )
-    @Nonnull
-    private static final MockUtil mockUtil = new MockUtil();
+    @RegisterExtension
+    static final TestContext context = TestContext.withThreadContext();
 
     private static List<CacheFilter> invokedFilters;
 
@@ -107,12 +107,12 @@ class CacheFilterTest
     @Test
     void testClearCacheMethodAppliesDefaultFiltersAsConjunction()
     {
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        context.setTenant("tenant1");
 
         //cache miss, hence cache entry added with (tenant1, parameter 1) -> 1
         final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        context.setTenant("tenant2");
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss, entry added with (tenant2, parameter 2) -> 2
@@ -127,14 +127,14 @@ class CacheFilterTest
         //cache then consists of (tenant1, parameter 1) -> 1
         ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION);
 
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        context.setTenant("tenant1");
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache hit, no entry added
         followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
         assertThat(followUpValue).isEqualTo(1);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        context.setTenant("tenant2");
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss, entry with (tenant 2, parameter 1) -> 3 added
@@ -187,12 +187,12 @@ class CacheFilterTest
     @Test
     void testFilterCacheByTenantAndThenByParameter()
     {
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        context.setTenant("tenant1");
 
         //cache miss, hence cache entry added with (tenant1, parameter 1) -> 1
         final Try<Integer> initialValue = tryGetInitialValue(RESILIENCE_CONFIGURATION, callable);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        context.setTenant("tenant2");
 
         //cache consists of (tenant1, parameter 1) -> 1
         //cache miss and (tenant 2, parameter 1) -> 2 added to the cache
@@ -206,12 +206,12 @@ class CacheFilterTest
 
         ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, tenantFilter);
 
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        context.setTenant("tenant1");
 
         followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
         assertThat(followUpValue).isEqualTo(3);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        context.setTenant("tenant2");
 
         followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
         assertThat(followUpValue).isEqualTo(2);
@@ -222,12 +222,12 @@ class CacheFilterTest
 
         ResilienceDecorator.clearCache(RESILIENCE_CONFIGURATION, CacheFilter.or(tenantFilter, parameterFilter));
 
-        mockUtil.setOrMockCurrentTenant("tenant1");
+        context.setTenant("tenant1");
 
         followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
         assertThat(followUpValue).isEqualTo(4);
 
-        mockUtil.setOrMockCurrentTenant("tenant2");
+        context.setTenant("tenant2");
 
         followUpValue = getFollowUpValue(RESILIENCE_CONFIGURATION, callable);
         assertThat(followUpValue).isEqualTo(5);
@@ -237,7 +237,7 @@ class CacheFilterTest
     void testCacheFilterFactoryMethodsForTenant()
     {
         final String tenantId = "tenant";
-        mockUtil.setOrMockCurrentTenant(tenantId);
+        context.setTenant(tenantId);
 
         final GenericCacheKey<?, ?> cacheKey = mock(GenericCacheKey.class);
         when(cacheKey.getTenantId()).thenReturn(Option.of(tenantId));
@@ -256,7 +256,7 @@ class CacheFilterTest
     void testCacheFilterFactoryMethodsForPrincipal()
     {
         final String principalId = "principal";
-        mockUtil.setOrMockCurrentPrincipal(principalId);
+        context.setPrincipal(principalId);
 
         final GenericCacheKey<?, ?> cacheKey = mock(GenericCacheKey.class);
         when(cacheKey.getPrincipalId()).thenReturn(Option.of(principalId));

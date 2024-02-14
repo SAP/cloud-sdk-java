@@ -83,6 +83,11 @@
 			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk</groupId>
+			<artifactId>testutil</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
