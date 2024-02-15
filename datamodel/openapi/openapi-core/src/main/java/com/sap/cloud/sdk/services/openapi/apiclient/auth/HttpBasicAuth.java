@@ -5,11 +5,11 @@
 package com.sap.cloud.sdk.services.openapi.apiclient.auth;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.annotation.Nonnull;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.MultiValueMap;
 
 /**
@@ -73,9 +73,7 @@ public class HttpBasicAuth implements Authentication
             return;
         }
         final String str = (username == null ? "" : username) + ":" + (password == null ? "" : password);
-        headerParams
-            .add(
-                HttpHeaders.AUTHORIZATION,
-                "Basic " + Base64Utils.encodeToString(str.getBytes(StandardCharsets.UTF_8)));
+        final String strEncoded = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+        headerParams.add(HttpHeaders.AUTHORIZATION, "Basic " + strEncoded);
     }
 }
