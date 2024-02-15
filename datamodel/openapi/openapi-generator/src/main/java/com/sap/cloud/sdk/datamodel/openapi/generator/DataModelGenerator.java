@@ -125,7 +125,9 @@ public class DataModelGenerator
         this.preprocessingStepOrchestrator =
             new PreprocessingStepOrchestrator(Paths.get(generationConfiguration.getInputSpec()));
 
-        return preprocessingStepOrchestrator.performPreprocessingSteps();
+        return preprocessingStepOrchestrator
+            .enableAnyOfOneOfGeneration(generationConfiguration.isOneOfAnyOfGenerationEnabled())
+            .performPreprocessingSteps();
     }
 
     private void performPostGenerationSteps( @Nonnull final List<File> generatedFiles )

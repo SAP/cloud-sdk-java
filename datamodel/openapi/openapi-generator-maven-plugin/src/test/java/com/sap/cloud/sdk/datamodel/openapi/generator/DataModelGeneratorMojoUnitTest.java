@@ -53,6 +53,7 @@ public class DataModelGeneratorMojoUnitTest
         assertThat(configuration.getModelPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.model");
         assertThat(configuration.getApiPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.api");
         assertThat(configuration.deleteOutputDirectory()).isTrue();
+        assertThat(configuration.isOneOfAnyOfGenerationEnabled()).isFalse();
 
         mojo.setOutputDirectory(outputDirectory.newFolder("output").toString());
 
@@ -151,11 +152,13 @@ public class DataModelGeneratorMojoUnitTest
     }
 
     @Test
-    public void testAdditionalProperties()
+    public void testAdditionalPropertiesAndEnablingAnyOfOneOfGeneration()
         throws Exception
     {
         final URL resource =
-            getClass().getClassLoader().getResource("DataModelGeneratorMojoUnitTest/testAdditionalProperties");
+            getClass()
+                .getClassLoader()
+                .getResource("DataModelGeneratorMojoUnitTest/testAdditionalPropertiesAndEnablingAnyOfOneOf");
         assertThat(resource).isNotNull();
 
         final File pomFile = new File(resource.getFile());
@@ -166,5 +169,7 @@ public class DataModelGeneratorMojoUnitTest
             .containsEntry("param1", "val1")
             .containsEntry("param2", "val2")
             .containsEntry("useAbstractionForFiles", "true");
+
+        assertThat(mojo.retrieveGenerationConfiguration().get().isOneOfAnyOfGenerationEnabled()).isTrue();
     }
 }

@@ -42,6 +42,8 @@ public class GenerationConfiguration
     boolean deleteOutputDirectory = false;
     @Singular( ignoreNullCollections = true )
     Map<String, String> additionalProperties;
+    @Builder.Default
+    boolean oneOfAnyOfGenerationEnabled = false;
 
     /**
      * Indicates whether to use verbose output.

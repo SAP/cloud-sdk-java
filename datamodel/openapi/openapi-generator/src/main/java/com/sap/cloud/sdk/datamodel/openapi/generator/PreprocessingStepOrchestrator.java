@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -37,16 +38,32 @@ class PreprocessingStepOrchestrator
 
     @Setter( AccessLevel.PACKAGE )
     private List<Supplier<PreprocessingStep>> steps =
-        Arrays
-            .asList(
-                ValidationKeywordsPreprocessor::new,
-                ApiClassNameFieldPreprocessor::new,
-                MethodNameFieldPreprocessor::new);
+        new ArrayList<>(Arrays.asList(ApiClassNameFieldPreprocessor::new, MethodNameFieldPreprocessor::new));
 
     PreprocessingStepOrchestrator( @Nonnull final Path originalInputSpec )
     {
         this.originalInputSpec = originalInputSpec;
         fileFormat = OpenApiSpecUtil.getFileFormat(originalInputSpec);
+    }
+
+    /**
+     * Enable/Disable generating clients for input specification with oneOf, anyOf keywords based on
+     * {@code anyOfOneOfGenerationEnabled}
+     *
+     * @param anyOfOneOfGenerationEnabled
+     *
+     * @return this
+     */
+    PreprocessingStepOrchestrator enableAnyOfOneOfGeneration( @Nonnull final boolean anyOfOneOfGenerationEnabled )
+    {
+        if( !anyOfOneOfGenerationEnabled ) {
+            steps.add(ValidationKeywordsPreprocessor::new);
+        } else {
+            log
+                .warn(
+                    "oneOf/anyOf keywords processing is turned on, the generated client may not be feature complete and work as expected for all cases involving anyOf/oneOf");
+        }
+        return this;
     }
 
     @Nonnull
