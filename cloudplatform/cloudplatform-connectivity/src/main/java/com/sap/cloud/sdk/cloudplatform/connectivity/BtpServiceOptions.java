@@ -4,10 +4,17 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import java.net.URI;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 /**
  * Options that can be used in a {@link ServiceBindingDestinationOptions} to configure the destinations for specific
@@ -91,6 +98,74 @@ public final class BtpServiceOptions
         public BusinessLoggingOptions getValue()
         {
             return this;
+        }
+    }
+
+    public static class IasOptions
+    {
+        @Nonnull
+        public static OptionsEnhancer<?> withTargetUri( @Nonnull final String targetUri )
+        {
+            return withTargetUri(URI.create(targetUri));
+        }
+
+        @Nonnull
+        public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI targetUri )
+        {
+            return new IasTargetUrl(targetUri);
+        }
+
+        @Nonnull
+        public static OptionsEnhancer<?> withMTLSAuthenticationOnly()
+        {
+            return new IasCommunicationOptions(null, null, null, true);
+        }
+
+        @Nonnull
+        public static OptionsEnhancer<?> withApplicationProvider( @Nonnull final String applicationProviderName )
+        {
+            return new IasCommunicationOptions(applicationProviderName, null, null, false);
+        }
+
+        @Nonnull
+        public static OptionsEnhancer<?> withConsumerClient( @Nonnull final String consumerClientId )
+        {
+            return new IasCommunicationOptions(null, consumerClientId, null, false);
+        }
+
+        @Nonnull
+        public static
+            OptionsEnhancer<?>
+            withConsumerClient( @Nonnull final String consumerClientId, @Nonnull final String consumerTenantId )
+        {
+            return new IasCommunicationOptions(null, consumerClientId, consumerTenantId, false);
+        }
+
+        @Value
+        @AllArgsConstructor( access = AccessLevel.PRIVATE )
+        public static class IasTargetUrl implements OptionsEnhancer<URI>
+        {
+            URI value;
+        }
+
+        @Value
+        @AllArgsConstructor( access = AccessLevel.PRIVATE )
+        public static class IasCommunicationOptions implements OptionsEnhancer<IasCommunicationOptions>
+        {
+            @Nullable
+            String applicationProviderName;
+            @Nullable
+            String consumerClientId;
+            @Nullable
+            String consumerTenantId;
+            boolean mTLSAuthenticationOnly;
+
+            @Nonnull
+            @Override
+            public IasCommunicationOptions getValue()
+            {
+                return this;
+            }
         }
     }
 }

@@ -4,19 +4,26 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUrl;
+
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.security.config.CredentialType;
 
 class BtpServicePropertySuppliers
 {
@@ -63,6 +70,7 @@ class BtpServicePropertySuppliers
                     .factory());
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
+
     static {
         DEFAULT_SERVICE_RESOLVERS.add(DESTINATION);
         DEFAULT_SERVICE_RESOLVERS.add(CONNECTIVITY);
@@ -126,6 +134,13 @@ class BtpServicePropertySuppliers
 
         @Nonnull
         @Override
+        public URI getServiceUri()
+        {
+            return options.getOption(IasTargetUrl.class).getOrElse(super::getServiceUri);
+        }
+
+        @Nonnull
+        @Override
         public URI getTokenUri()
         {
             String providerUrl = getCredentialOrThrow(String.class, "url");
@@ -134,6 +149,96 @@ class BtpServicePropertySuppliers
             }
 
             return URI.create(providerUrl + "/oauth2/token");
+        }
+
+        @Nonnull
+        @Override
+        public OAuth2Options getOAuth2Options()
+        {
+            final OAuth2Options.Builder oAuth2OptionsBuilder = OAuth2Options.builder();
+
+            attachIasCommunicationOptions(oAuth2OptionsBuilder);
+            attachClientKeyStore(oAuth2OptionsBuilder);
+
+            return oAuth2OptionsBuilder.build();
+        }
+
+        private void attachIasCommunicationOptions( @Nonnull final OAuth2Options.Builder optionsBuilder )
+        {
+            final IasCommunicationOptions o = options.getOption(IasCommunicationOptions.class).getOrNull();
+            if( o == null ) {
+                return;
+            }
+
+            if( o.isMTLSAuthenticationOnly() ) {
+                optionsBuilder.withSkipTokenRetrieval(true);
+                return;
+            }
+
+            if( o.getApplicationProviderName() != null ) {
+                optionsBuilder
+                    .withTokenRetrievalParameter(
+                        "resource",
+                        "urn:sap:identity:application:provider:name:" + o.getApplicationProviderName());
+                return;
+            }
+
+            if( o.getConsumerClientId() != null ) {
+                String value = "urn:sap:identity:consumer:clientid:" + o.getConsumerClientId();
+                if( o.getConsumerTenantId() != null ) {
+                    value += ":apptid:" + o.getConsumerTenantId();
+                }
+
+                optionsBuilder.withTokenRetrievalParameter("resource", value);
+            }
+        }
+
+        private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )
+        {
+            final KeyStore maybeClientStore = getClientKeyStore();
+            if( maybeClientStore != null ) {
+                optionsBuilder.withClientKeyStore(maybeClientStore);
+            }
+        }
+
+        @Nullable
+        private KeyStore getClientKeyStore()
+        {
+            if( !isX509CredentialType() ) {
+                return null;
+            }
+
+            final String cert = getOAuthCredentialOrThrow(String.class, "certificate");
+            final String key = getOAuthCredentialOrThrow(String.class, "key");
+
+            try {
+                return KeyStoreReader
+                    .createKeyStore(
+                        "IAS-CERTIFICATE",
+                        "changeit".toCharArray(),
+                        new StringReader(cert),
+                        new StringReader(key));
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);
+            }
+        }
+
+        private boolean isX509CredentialType()
+        {
+            final CredentialType credentialType = getCredentialType();
+            switch( credentialType ) {
+                case X509:
+                    return true;
+                case BINDING_SECRET: // fallthrough
+                case INSTANCE_SECRET:
+                    return false;
+                default:
+                    throw new DestinationAccessException("""
+                        Unable to determine whether IAS binding uses x509 authentication: \
+                        Unhandled credential type '%s'.\
+                        """.formatted(credentialType));
+            }
         }
     }
 }

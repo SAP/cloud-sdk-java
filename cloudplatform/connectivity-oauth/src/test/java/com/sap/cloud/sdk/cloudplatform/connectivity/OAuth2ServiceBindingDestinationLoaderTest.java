@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -189,7 +190,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     {
         final ClientCredentials credentials = new ClientCredentials("id", "secret");
 
-        final OAuth2PropertySupplier mock = mock(OAuth2PropertySupplier.class);
+        final OAuth2PropertySupplier mock = spy(OAuth2PropertySupplier.class);
         when(mock.isOAuth2Binding()).thenReturn(true);
         when(mock.getServiceUri()).thenReturn(baseUrl);
         when(mock.getTokenUri()).thenReturn(tokenUrl);
@@ -216,6 +217,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 eq(tokenUrl),
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
+                eq(OAuth2Options.DEFAULT),
                 eq(TEST_SERVICE));
     }
 
@@ -224,7 +226,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     {
         final ClientCertificate certificate = new ClientCertificate("invalid cert", "invalid key", "id");
 
-        final OAuth2PropertySupplier mock = mock(OAuth2PropertySupplier.class);
+        final OAuth2PropertySupplier mock = spy(OAuth2PropertySupplier.class);
         when(mock.isOAuth2Binding()).thenReturn(true);
         when(mock.getServiceUri()).thenReturn(baseUrl);
         when(mock.getTokenUri()).thenReturn(tokenUrl);
@@ -354,7 +356,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
         when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
 
         sut = spy(new OAuth2ServiceBindingDestinationLoader());
-        doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any(), any());
+        doReturn(headerProviderMock).when(sut).createHeaderProvider(any(), any(), any(), any(), any(), any());
 
         final HttpDestination result =
             sut
@@ -364,6 +366,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     tokenUrl,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
+                    OAuth2Options.DEFAULT,
                     TEST_SERVICE);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
@@ -381,6 +384,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
                     tokenUrl,
                     credentials,
                     OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
+                    OAuth2Options.DEFAULT,
                     TEST_SERVICE);
 
         assertThat(secondInvocationResult)
@@ -396,7 +400,66 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 eq(credentials),
                 eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT),
                 eq(HttpHeaders.PROXY_AUTHORIZATION),
+                eq(OAuth2Options.DEFAULT),
                 eq(TEST_SERVICE));
+    }
+
+    @Test
+    void testSkipTokenRetrieval()
+    {
+        final ClientCredentials credentials = new ClientCredentials("id", "secret");
+
+        final OAuth2PropertySupplier mock = spy(OAuth2PropertySupplier.class);
+        when(mock.isOAuth2Binding()).thenReturn(true);
+        when(mock.getServiceUri()).thenReturn(baseUrl);
+        when(mock.getTokenUri()).thenReturn(tokenUrl);
+        when(mock.getClientIdentity()).thenReturn(credentials);
+        when(mock.getOAuth2Options()).thenReturn(OAuth2Options.builder().withSkipTokenRetrieval(true).build());
+
+        sut = mockLoader(mock);
+
+        final Try<HttpDestination> result = sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING);
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.get().getUri()).isEqualTo(baseUrl);
+        assertThat(result.get().get(DestinationProperty.NAME)).contains(TEST_SERVICE + "-" + "id".hashCode());
+
+        verify(sut, never()).createHeaderProvider(any(), any(), any(), any(), any(), any());
+        assertThat(result.get().getHeaders()).isEmpty();
+    }
+
+    @Test
+    void testSkipProxyTokenRetrieval()
+    {
+        final URI proxyUrl = URI.create("http://proxyUrl:1234");
+        final DefaultHttpDestination baseDestination =
+            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).build();
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(EMPTY_BINDING)
+                .withOption(
+                    ServiceBindingDestinationOptions.Options.ProxyOptions.destinationToBeProxied(baseDestination))
+                .build();
+
+        final OAuth2PropertySupplier mock = mock(OAuth2PropertySupplier.class);
+        when(mock.isOAuth2Binding()).thenReturn(true);
+        when(mock.getServiceUri()).thenReturn(proxyUrl);
+        when(mock.getTokenUri()).thenReturn(tokenUrl);
+        when(mock.getClientIdentity()).thenReturn(credentials);
+        when(mock.getOAuth2Options()).thenReturn(OAuth2Options.builder().withSkipTokenRetrieval(true).build());
+
+        sut = mockLoader(mock);
+
+        final HttpDestination result = sut.tryGetDestination(options).get();
+
+        assertThat(result.getUri()).isEqualTo(baseUrl);
+        assertThat(result)
+            .as("The new destination should have additional proxy properties.")
+            .isNotEqualTo(baseDestination);
+        assertThat(result.getProxyConfiguration()).contains(ProxyConfiguration.of(proxyUrl));
+
+        verify(sut, never()).createHeaderProvider(any(), any(), any(), any(), any(), any());
+        assertThat(result.getHeaders()).isEmpty();
     }
 
     @Test

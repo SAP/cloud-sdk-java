@@ -50,4 +50,17 @@ public interface OAuth2PropertySupplier
      */
     @Nonnull
     ClientIdentity getClientIdentity();
+
+    /**
+     * Returns additional configuration for the OAuth2 destination that is to be created. By default, this method
+     * returns {@link OAuth2Options#DEFAULT}.
+     *
+     * @return An instance of {@link OAuth2Options} to further customize the OAuth2 destination creation.
+     * @since 5.4.1
+     */
+    @Nonnull
+    default OAuth2Options getOAuth2Options()
+    {
+        return OAuth2Options.DEFAULT;
+    }
 }

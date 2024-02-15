@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_RULES;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,11 +14,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
+import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,6 +42,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOp
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import io.vavr.control.Try;
+import lombok.SneakyThrows;
 
 @SuppressWarnings( "unchecked" ) // suppressed for the `entry("key", value)` calls
 class BtpServicePropertySuppliersTest
@@ -270,25 +279,215 @@ class BtpServicePropertySuppliersTest
     }
 
     @Nested
-    @DisplayName( "Identity Authorization" )
+    @DisplayName( "Identity Authentication" )
     class IdentityAuthenticationTest
     {
-        private final ServiceBinding binding =
+        private static final String PROVIDER_URL = "https://provider.ias.domain";
+
+        private static final ServiceBinding BINDING =
             bindingWithCredentials(
-                ServiceBindingLibWorkarounds.IAS_IDENTIFIER,
-                entry("credential-type", "X509_GENERATED"),
-                entry("url", "https://provider.ias.domain"));
+                ServiceIdentifier.IDENTITY_AUTHENTICATION,
+                MapEntry.entry("url", PROVIDER_URL),
+                MapEntry.entry("credential-type", "X509_GENERATED"),
+                MapEntry.entry("clientid", "ias-client-id"),
+                MapEntry.entry("key", getKey()),
+                MapEntry.entry("certificate", getCert()));
 
         @Test
-        void testTokenUri()
+        void testNoParameters()
         {
             final ServiceBindingDestinationOptions options =
-                ServiceBindingDestinationOptions.forService(binding).build();
+                ServiceBindingDestinationOptions.forService(BINDING).build();
 
-            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
             assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
 
-            assertThat(sut.getTokenUri()).hasToString("https://provider.ias.domain/oauth2/token");
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testTargetUri()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(BtpServiceOptions.IasOptions.withTargetUri("https://foo.bar.baz"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString("https://foo.bar.baz");
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testApplicationLogicalName()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(BtpServiceOptions.IasOptions.withApplicationProvider("application-name"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactly(
+                    MapEntry.entry("resource", "urn:sap:identity:application:provider:name:application-name"));
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testClientIdWithoutTenantId()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(BtpServiceOptions.IasOptions.withConsumerClient("client-id"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactly(MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id"));
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testClientIdWithTenantId()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(BtpServiceOptions.IasOptions.withConsumerClient("client-id", "tenant-id"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactly(
+                    MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id"));
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testMTLSOnly()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly())
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isTrue();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
+        void testMutuallyExclusiveOptions()
+        {
+            final ServiceBindingDestinationOptions.OptionsEnhancer<?> applicationName =
+                BtpServiceOptions.IasOptions.withApplicationProvider("application-name");
+            final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientId =
+                BtpServiceOptions.IasOptions.withConsumerClient("client-id");
+            final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
+                BtpServiceOptions.IasOptions.withConsumerClient("client-id", "tenant-id");
+            final ServiceBindingDestinationOptions.OptionsEnhancer<?> mTLSOnly =
+                BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly();
+
+            final List<ServiceBindingDestinationOptions.OptionsEnhancer<?>> allOptions =
+                List.of(applicationName, clientId, clientIdAndTenantId, mTLSOnly);
+
+            for( final ServiceBindingDestinationOptions.OptionsEnhancer<?> firstOption : allOptions ) {
+                for( final ServiceBindingDestinationOptions.OptionsEnhancer<?> secondOption : allOptions ) {
+                    assertThat(firstOption.getClass()).isSameAs(secondOption.getClass());
+                    final ServiceBindingDestinationOptions.Builder builder =
+                        ServiceBindingDestinationOptions.forService(BINDING).withOption(firstOption);
+                    assertThatThrownBy(() -> builder.withOption(secondOption))
+                        .isExactlyInstanceOf(IllegalArgumentException.class);
+                }
+            }
+        }
+
+        @SneakyThrows
+        private static void assertThatClientCertificateIsContained( @Nonnull final KeyStore keyStore )
+        {
+            final Enumeration<String> aliases = keyStore.aliases();
+            assertThat(aliases.hasMoreElements()).isTrue();
+
+            final String alias = aliases.nextElement();
+            // there is only a single element contained
+            assertThat(aliases.hasMoreElements()).isFalse();
+
+            final Certificate certificate = keyStore.getCertificate(alias);
+            assertThat(certificate).isNotNull();
+            assertThat(certificate).isInstanceOf(X509Certificate.class);
+
+            final String certificateAsString = certificate.toString();
+            assertThat(certificateAsString).contains("C=DE");
+            assertThat(certificateAsString).contains("ST=Brandenburg");
+            assertThat(certificateAsString).contains("O=Potsdam");
+            assertThat(certificateAsString).contains("CN=localhost");
+        }
+
+        private static String getKey()
+        {
+            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/client-cert.key");
+        }
+
+        private static String getCert()
+        {
+            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/client-cert.crt");
+        }
+
+        @SneakyThrows
+        private static String getContentFromResource( @Nonnull final String path )
+        {
+            return Files.readString(Path.of(path));
         }
     }
 }
