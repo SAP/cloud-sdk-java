@@ -25,6 +25,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOp
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.security.config.CredentialType;
 
+import lombok.extern.slf4j.Slf4j;
+
 class BtpServicePropertySuppliers
 {
     static final OAuth2PropertySupplierResolver DESTINATION =
@@ -124,6 +126,7 @@ class BtpServicePropertySuppliers
         }
     }
 
+    @Slf4j
     private static class IdentityAuthentication extends DefaultOAuth2PropertySupplier
     {
 
@@ -170,7 +173,7 @@ class BtpServicePropertySuppliers
                 return;
             }
 
-            if( o.isMTLSAuthenticationOnly() ) {
+            if( o.isMTLSAuthenticationOnly() && mTLSOnlyIsSupported() ) {
                 optionsBuilder.withSkipTokenRetrieval(true);
                 return;
             }
@@ -191,6 +194,21 @@ class BtpServicePropertySuppliers
 
                 optionsBuilder.withTokenRetrievalParameter("resource", value);
             }
+        }
+
+        private boolean mTLSOnlyIsSupported()
+        {
+            final OnBehalfOf behalf = options.getOnBehalfOf();
+            if( behalf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
+                log.warn("""
+                    Combining {} with mTLS only authentication is not supported. \
+                    This is because mTLS only works without sending any authentication token. \
+                    But without an authentication token, user information cannot be preserved.\
+                    """, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+                return false;
+            }
+
+            return true;
         }
 
         private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )

@@ -4,9 +4,11 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_RULES;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -299,7 +301,7 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions.forService(BINDING).build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -318,10 +320,10 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(BtpServiceOptions.IasOptions.withTargetUri("https://foo.bar.baz"))
+                    .withOption(IasOptions.withTargetUri("https://foo.bar.baz"))
                     .build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -340,10 +342,10 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(BtpServiceOptions.IasOptions.withApplicationProvider("application-name"))
+                    .withOption(IasOptions.withApplicationProvider("application-name"))
                     .build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -364,10 +366,10 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(BtpServiceOptions.IasOptions.withConsumerClient("client-id"))
+                    .withOption(IasOptions.withConsumerClient("client-id"))
                     .build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -387,10 +389,10 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(BtpServiceOptions.IasOptions.withConsumerClient("client-id", "tenant-id"))
+                    .withOption(IasOptions.withConsumerClient("client-id", "tenant-id"))
                     .build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -411,10 +413,10 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly())
+                    .withOption(IasOptions.withMTLSAuthenticationOnly())
                     .build();
 
-            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
@@ -428,16 +430,40 @@ class BtpServicePropertySuppliersTest
         }
 
         @Test
+        void testMTLSOnlyIsIgnoredWithNamedUserBehalf()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(IasOptions.withMTLSAuthenticationOnly())
+                    .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            // we are still retrieving a token, even though we are setting the `withMTLSAuthenticationOnly` option
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+        }
+
+        @Test
         void testMutuallyExclusiveOptions()
         {
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> applicationName =
-                BtpServiceOptions.IasOptions.withApplicationProvider("application-name");
+                IasOptions.withApplicationProvider("application-name");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientId =
-                BtpServiceOptions.IasOptions.withConsumerClient("client-id");
+                IasOptions.withConsumerClient("client-id");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
-                BtpServiceOptions.IasOptions.withConsumerClient("client-id", "tenant-id");
+                IasOptions.withConsumerClient("client-id", "tenant-id");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> mTLSOnly =
-                BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly();
+                IasOptions.withMTLSAuthenticationOnly();
 
             final List<ServiceBindingDestinationOptions.OptionsEnhancer<?>> allOptions =
                 List.of(applicationName, clientId, clientIdAndTenantId, mTLSOnly);
