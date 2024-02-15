@@ -105,7 +105,7 @@ public final class BtpServiceOptions
      * Factory class for Identity Authentication Service
      * ({@link com.sap.cloud.environment.servicebinding.api.ServiceIdentifier#IDENTITY_AUTHENTICATION}) options.
      *
-     * @since 5.4.1
+     * @since 5.5.0
      */
     public static final class IasOptions
     {
@@ -243,7 +243,7 @@ public final class BtpServiceOptions
         public static class IasCommunicationOptions implements OptionsEnhancer<IasCommunicationOptions>
         {
             @Nullable
-            String applicationProviderName;
+            String applicationName;
             @Nullable
             String consumerClientId;
             @Nullable

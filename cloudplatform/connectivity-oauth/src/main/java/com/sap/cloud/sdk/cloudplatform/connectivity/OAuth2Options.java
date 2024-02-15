@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Represents various configuration parameters for the OAuth2 destination creation.
  *
- * @since 5.4.1
+ * @since 5.5.0
  */
 @Beta
 @AllArgsConstructor( access = AccessLevel.PRIVATE )

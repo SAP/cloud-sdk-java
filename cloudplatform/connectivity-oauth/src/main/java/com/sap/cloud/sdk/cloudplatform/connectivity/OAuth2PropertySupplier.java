@@ -56,7 +56,7 @@ public interface OAuth2PropertySupplier
      * returns {@link OAuth2Options#DEFAULT}.
      *
      * @return An instance of {@link OAuth2Options} to further customize the OAuth2 destination creation.
-     * @since 5.4.1
+     * @since 5.5.0
      */
     @Nonnull
     default OAuth2Options getOAuth2Options()

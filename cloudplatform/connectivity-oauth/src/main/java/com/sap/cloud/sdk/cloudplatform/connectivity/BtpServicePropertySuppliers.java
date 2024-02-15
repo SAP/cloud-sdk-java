@@ -179,11 +179,11 @@ class BtpServicePropertySuppliers
                 return;
             }
 
-            if( o.getApplicationProviderName() != null ) {
+            if( o.getApplicationName() != null ) {
                 optionsBuilder
                     .withTokenRetrievalParameter(
                         "resource",
-                        "urn:sap:identity:application:provider:name:" + o.getApplicationProviderName());
+                        "urn:sap:identity:application:provider:name:" + o.getApplicationName());
                 return;
             }
 
