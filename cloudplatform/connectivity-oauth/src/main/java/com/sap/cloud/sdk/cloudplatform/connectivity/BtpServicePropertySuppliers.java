@@ -5,7 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUrl;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -140,7 +140,7 @@ class BtpServicePropertySuppliers
         @Override
         public URI getServiceUri()
         {
-            return options.getOption(IasTargetUrl.class).getOrElse(super::getServiceUri);
+            return options.getOption(IasTargetUri.class).getOrElse(super::getServiceUri);
         }
 
         @Nonnull

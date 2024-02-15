@@ -138,7 +138,7 @@ public final class BtpServiceOptions
         @Nonnull
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI targetUri )
         {
-            return new IasTargetUrl(targetUri);
+            return new IasTargetUri(targetUri);
         }
 
         /**
@@ -228,7 +228,7 @@ public final class BtpServiceOptions
          */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
-        public static class IasTargetUrl implements OptionsEnhancer<URI>
+        public static class IasTargetUri implements OptionsEnhancer<URI>
         {
             URI value;
         }
