@@ -101,38 +101,119 @@ public final class BtpServiceOptions
         }
     }
 
-    public static class IasOptions
+    /**
+     * Factory class for Identity Authentication Service
+     * ({@link com.sap.cloud.environment.servicebinding.api.ServiceIdentifier#IDENTITY_AUTHENTICATION}) options.
+     *
+     * @since 5.4.1
+     */
+    public static final class IasOptions
     {
+        private IasOptions()
+        {
+            throw new IllegalStateException("This class should not be instantiated.");
+        }
+
+        /**
+         * Overwrites the target URI that is extracted from the IAS service binding.
+         *
+         * @param targetUri
+         *            The target URI to be used.
+         * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS service
+         *         binding and that contains the target URI.
+         */
         @Nonnull
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final String targetUri )
         {
             return withTargetUri(URI.create(targetUri));
         }
 
+        /**
+         * Overwrites the target URI that is extracted from the IAS service binding.
+         *
+         * @param targetUri
+         *            The target URI to be used.
+         * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS service
+         */
         @Nonnull
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI targetUri )
         {
             return new IasTargetUrl(targetUri);
         }
 
+        /**
+         * Creates an {@link OptionsEnhancer} that instructs the destination to use mTLS authentication only.
+         * <p>
+         * In the regular OAuth2 case, setting this option will skip the IAS token flow.
+         * <p>
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withApplicationProvider(String)} and
+         * {@link #withConsumerClient(String, String)}.
+         * <p>
+         * <b>Caution:</b> This option cannot be combined with {@link OnBehalfOf#NAMED_USER_CURRENT_TENANT}.
+         *
+         * @return An instance of {@link OptionsEnhancer} that will lead to mTLS authentication only.
+         */
         @Nonnull
         public static OptionsEnhancer<?> withMTLSAuthenticationOnly()
         {
             return new IasCommunicationOptions(null, null, null, true);
         }
 
+        /**
+         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given application
+         * provider name when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
+         * <p>
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * {@link #withConsumerClient(String, String)}.
+         *
+         * @param applicationProviderName
+         *            The name of the application provider to be used. This is the name that was used to register the
+         *            to-be-called application within the IAS tenant.
+         * @return An instance of {@link OptionsEnhancer} that will lead to the given application provider being used
+         *         when retrieving an authentication token from the IAS service.
+         */
         @Nonnull
         public static OptionsEnhancer<?> withApplicationProvider( @Nonnull final String applicationProviderName )
         {
             return new IasCommunicationOptions(applicationProviderName, null, null, false);
         }
 
+        /**
+         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given consumer client
+         * ID when performing token retrievals. This is needed in <i>Service-To-App</i> communication scenarios.
+         * <p>
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * {@link #withApplicationProvider(String)}.
+         *
+         * @param consumerClientId
+         *            The client ID of the consumer application. This client id is usually extracted from an incoming
+         *            IAS authentication token sent by the consumer application upon calling this application.
+         * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID being used when
+         *         retrieving an authentication token from the IAS service.
+         */
         @Nonnull
         public static OptionsEnhancer<?> withConsumerClient( @Nonnull final String consumerClientId )
         {
             return new IasCommunicationOptions(null, consumerClientId, null, false);
         }
 
+        /**
+         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given consumer client
+         * and tenant ID when performing token retrievals. This is needed in <i>Service-To-App</i> communication
+         * scenarios.
+         * <p>
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * {@link #withApplicationProvider(String)}.
+         *
+         * @param consumerClientId
+         *            The client ID of the consumer application. This client id is usually extracted from an incoming
+         *            IAS authentication token sent by the consumer application upon calling this application.
+         * @param consumerTenantId
+         *            The tenant ID of the consumer application. This tenant id is usually extracted from an incoming
+         *            IAS authentication token sent by the consumer application upon calling this application.
+         * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID and tenant ID
+         *         being used when retrieving an authentication token from the IAS service.
+         */
         @Nonnull
         public static
             OptionsEnhancer<?>
@@ -141,6 +222,10 @@ public final class BtpServiceOptions
             return new IasCommunicationOptions(null, consumerClientId, consumerTenantId, false);
         }
 
+        /**
+         * An {@link OptionsEnhancer} that contains the target URI for an IAS-based destination. Also refer to
+         * {@link #withTargetUri(String)}.
+         */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
         public static class IasTargetUrl implements OptionsEnhancer<URI>
@@ -148,6 +233,11 @@ public final class BtpServiceOptions
             URI value;
         }
 
+        /**
+         * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
+         * to {@link #withMTLSAuthenticationOnly()}, {@link #withApplicationProvider(String)}, and
+         * {@link #withConsumerClient(String, String)}.
+         */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
         public static class IasCommunicationOptions implements OptionsEnhancer<IasCommunicationOptions>
