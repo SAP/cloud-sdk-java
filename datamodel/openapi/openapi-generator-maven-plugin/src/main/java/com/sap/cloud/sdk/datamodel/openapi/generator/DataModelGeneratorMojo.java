@@ -113,6 +113,12 @@ public class DataModelGeneratorMojo extends AbstractMojo
     private boolean deleteOutputDirectory;
 
     /**
+     * Defines whether to enable processing of anyOf/oneOf keywords during client generation
+     */
+    @Parameter( property = "openapi.generate.enableOneOfAnyOfGeneration", defaultValue = "false" )
+    private boolean enableOneOfAnyOfGeneration;
+
+    /**
      * Defines a list of additional properties that will be passed to the Java generator.
      */
     @Parameter( property = "openapi.generate.additionalProperties" )
@@ -172,6 +178,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
                     .copyrightHeader(copyrightHeader)
                     .deleteOutputDirectory(deleteOutputDirectory)
                     .additionalProperties(additionalProperties)
+                    .oneOfAnyOfGenerationEnabled(enableOneOfAnyOfGeneration)
                     .build());
     }
 

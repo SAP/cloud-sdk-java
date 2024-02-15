@@ -34,6 +34,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.api",
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
+            false,
             4),
         API_CLASS_VENDOR_EXTENSION_JSON(
             "api-class-vendor-extension-json",
@@ -41,6 +42,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.api",
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
+            false,
             6),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
@@ -48,13 +50,23 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.uppercasefileextension.api",
             "com.sap.cloud.sdk.services.uppercasefileextension.model",
             ApiMaturity.RELEASED,
-            6);
+            false,
+            6),
+        INPUT_SPEC_WITH_ANYOF_ONEOF(
+            "input-spec-with-anyof-oneof",
+            "AggregatorNestedSchemaChild.json",
+            "com.sap.cloud.sdk.services.anyofoneof.api",
+            "com.sap.cloud.sdk.services.anyofoneof.model",
+            ApiMaturity.RELEASED,
+            true,
+            7);
 
         final String testCaseName;
         final String inputSpecFileName;
         final String apiPackageName;
         final String modelPackageName;
         final ApiMaturity apiMaturity;
+        final boolean anyOfOneOfGenerationEnabled;
         final int expectedNumberOfGeneratedFiles;
     }
 
@@ -82,6 +94,7 @@ class DataModelGeneratorIntegrationTest
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(tempOutputDirectory.toAbsolutePath().toString())
                 .withSapCopyrightHeader(true)
+                .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 
@@ -115,6 +128,7 @@ class DataModelGeneratorIntegrationTest
                 .outputDirectory(outputDirectory.toAbsolutePath().toString())
                 .deleteOutputDirectory(true)
                 .withSapCopyrightHeader(true)
+                .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
                 .build();
 
