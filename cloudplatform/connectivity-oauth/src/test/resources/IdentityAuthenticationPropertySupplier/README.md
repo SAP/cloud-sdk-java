@@ -5,18 +5,17 @@ The credential files are generated from command line. This process can be automa
 
 ## CREATE CLIENT CREDENTIALS
 
-* Generate key pair
-  ```bash
-  openssl req -x509 -newkey rsa:2048 -utf8 -days 3650 -nodes -config client-cert.conf -keyout client-cert.key -out client-cert.crt
-  ```
+* Generate an **RSA** private key:
+```bash
+openssl genrsa -out privatekey.pem 2048 -traditional
+```
 
-* Generate _PKCS#12_ keystore
-  ```bash
-  openssl pkcs12 -export -inkey client-cert.key -in client-cert.crt -out client-cert.p12 -password "pass:cca-password"
-  ```
-  
-* Transform to JKS
+* Generate a **C**ertificate **S**igning **R**equest:
+```bash
+openssl req -new -key privatekey.pem -out csr.pem
+```
 
-  ```bash
-  keytool -importkeystore -deststorepass "cca-password" -destkeypass "cca-password" -srckeystore client-cert.p12 -srcstorepass "cca-password" -deststoretype pkcs12 -destkeystore client-cert.pkcs12
-  ```
+* Sign the **CSR** with the **RSA** private key:
+```bash
+openssl x509 -req -days 3650 -in csr.pem -signkey privatekey.pem -out certificate.pem
+```

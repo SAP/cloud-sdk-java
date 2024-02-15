@@ -482,32 +482,38 @@ class BtpServicePropertySuppliersTest
         @SneakyThrows
         private static void assertThatClientCertificateIsContained( @Nonnull final KeyStore keyStore )
         {
-            final Enumeration<String> aliases = keyStore.aliases();
-            assertThat(aliases.hasMoreElements()).isTrue();
-
-            final String alias = aliases.nextElement();
-            // there is only a single element contained
-            assertThat(aliases.hasMoreElements()).isFalse();
-
-            final Certificate certificate = keyStore.getCertificate(alias);
-            assertThat(certificate).isNotNull();
-            assertThat(certificate).isInstanceOf(X509Certificate.class);
+            final X509Certificate certificate = extractX509Certificate(keyStore);
 
             final String certificateAsString = certificate.toString();
             assertThat(certificateAsString).contains("C=DE");
             assertThat(certificateAsString).contains("ST=Brandenburg");
-            assertThat(certificateAsString).contains("O=Potsdam");
-            assertThat(certificateAsString).contains("CN=localhost");
+            assertThat(certificateAsString).contains("L=Potsdam");
+            assertThat(certificateAsString).contains("CN=SAP Cloud SDK for Java");
+        }
+
+        @SneakyThrows
+        private static X509Certificate extractX509Certificate( @Nonnull final KeyStore keyStore )
+        {
+            final Enumeration<String> aliases = keyStore.aliases();
+            while( aliases.hasMoreElements() ) {
+                final String alias = aliases.nextElement();
+                final Certificate certificate = keyStore.getCertificate(alias);
+                if( certificate instanceof X509Certificate ) {
+                    return (X509Certificate) certificate;
+                }
+            }
+
+            throw new IllegalStateException("No X509 certificate found in the keystore");
         }
 
         private static String getKey()
         {
-            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/client-cert.key");
+            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/privatekey.pem");
         }
 
         private static String getCert()
         {
-            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/client-cert.crt");
+            return getContentFromResource("src/test/resources/IdentityAuthenticationPropertySupplier/certificate.crt");
         }
 
         @SneakyThrows
