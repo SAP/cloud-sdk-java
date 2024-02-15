@@ -33,29 +33,26 @@
   </plugin>
   ```
   But,the generated client may not be feature complete and work as expected for all cases involving `anyOf/oneOf`.
-- Dependency Updates:
-  - Update `org.apache.olingo` from `4.10.0` to `5.0.0`
-  - Update `io.github.resilience4j` from `1.7.1` to `2.2.0`
-  - [com.sap.cloud.security](https://github.com/SAP/cloud-security-xsuaa-integration) from `3.3.3` to `3.3.4`
-  - [com.sap.cloud.environment.servicebinding](https://github.com/SAP/btp-environment-variable-access) from `0.10.1` to `0.10.2` 
-  - `org.slf4j:slf4j-api` from `2.0.9` to `2.0.11`
-  - `commons-io:commons-io` from `2.15.0` to `2.15.1`
-  - Update `com.sap.cloud:neo-java-web-api` from `4.67.12` to `4.68.9`
-  - Update [`org.apache.httpcomponents.client5:httpclient5`](https://github.com/apache/httpcomponents-client) from `5.3` to `5.3.1`
-
 
 <details><summary>Dependency Updates</summary>
 
 | Dependency | From | To |
 | --- | --- | --- |
 | [commons-codec](https://search.maven.org/search?q=g%3Acommons-codec%2Ba%3Acommons-codec) (`commons-codec`) | `1.16.0` | `1.16.1` |
+| [commons-io](https://search.maven.org/search?q=g%3Acommons-io%2Ba%3Acommons-io) (`commons-io`) | `1.15.0` | `1.15.1` |
 | [java-modules-bom](https://search.maven.org/search?q=g%3Acom.sap.cloud.environment.servicebinding%2Ba%3Ajava-modules-bom) (`com.sap.cloud.environment.servicebinding`) | `0.10.2` | `0.10.3` |
 | [jcl-over-slf4j](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Ajcl-over-slf4j) (`org.slf4j`) | `2.0.11` | `2.0.12` |
 | [joda-time](https://search.maven.org/search?q=g%3Ajoda-time%2Ba%3Ajoda-time) (`joda-time`) | `2.12.6` | `2.12.7` |
-| [neo-java-web-api](https://search.maven.org/search?q=g%3Acom.sap.cloud%2Ba%3Aneo-java-web-api) (`com.sap.cloud`) | `4.68.9` | `4.69.7` |
+| [neo-java-web-api](https://search.maven.org/search?q=g%3Acom.sap.cloud%2Ba%3Aneo-java-web-api) (`com.sap.cloud`) | `4.67.12` | `4.69.7` |
 | [openapi-generator](https://search.maven.org/search?q=g%3Aorg.openapitools%2Ba%3Aopenapi-generator) (`org.openapitools`) | `7.2.0` | `7.3.0` |
-| [slf4j-api](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-api) (`org.slf4j`) | `2.0.11` | `2.0.12` |
-| [slf4j-ext](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-ext) (`org.slf4j`) | `2.0.11` | `2.0.12` |
+| [slf4j-api](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-api) (`org.slf4j`) | `2.0.9` | `2.0.12` |
+| [slf4j-ext](https://search.maven.org/search?q=g%3Aorg.slf4j%2Ba%3Aslf4j-ext) (`org.slf4j`) | `2.0.9` | `2.0.12` |
+| [json](https://search.maven.org/search?q=g%3Aorg.json%2Ba%3Ajson) (`org.json`) | `20231013` | `20240205` |
+| [odata-*](https://search.maven.org/search?q=g%3Aorg.apache.olingo%2Ba%3Aodata-client-api) (`org.apache.olingo`) | `4.10.0` | `5.0.0` |
+| [resilience4j-*](https://search.maven.org/search?q=g%3Aio.github.resilience4j%2Ba%3Aresilience4j-circuitbreaker) (`org.apache.olingo`) | `1.7.1` | `2.2.0` |
+| [java-bom](https://search.maven.org/search?q=g%3Acom.sap.cloud.security%2Ba%3Ajava-bom) (`com.sap.cloud.security`) | `3.3.3` | `3.3.4` |
+| [java-modules-bom](https://search.maven.org/search?q=g%3Acom.sap.cloud.environment.servicebinding%2Ba%3Ajava-modules-bom) (`com.sap.cloud.environment.servicebinding`) | `0.10.1` | `0.10.2` |
+| [httpclient5](https://search.maven.org/search?q=g%3Aorg.apache.httpcomponents.client5%2Ba%3Ahttpclient5) (`org.apache.httpcomponents.client5`) | `5.3` | `5.3.1` |
 
 </details>
 
