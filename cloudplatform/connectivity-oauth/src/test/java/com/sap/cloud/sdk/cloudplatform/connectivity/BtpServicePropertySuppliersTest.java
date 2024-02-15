@@ -342,7 +342,7 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(IasOptions.withApplicationProvider("application-name"))
+                    .withOption(IasOptions.withApplicationName("application-name"))
                     .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
@@ -457,7 +457,7 @@ class BtpServicePropertySuppliersTest
         void testMutuallyExclusiveOptions()
         {
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> applicationName =
-                IasOptions.withApplicationProvider("application-name");
+                IasOptions.withApplicationName("application-name");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientId =
                 IasOptions.withConsumerClient("client-id");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =

@@ -146,7 +146,7 @@ public final class BtpServiceOptions
          * <p>
          * In the regular OAuth2 case, setting this option will skip the IAS token flow.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withApplicationProvider(String)} and
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withApplicationName(String)} and
          * {@link #withConsumerClient(String, String)}.
          * <p>
          * <b>Caution:</b> This option cannot be combined with {@link OnBehalfOf#NAMED_USER_CURRENT_TENANT}.
@@ -166,16 +166,16 @@ public final class BtpServiceOptions
          * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
          * {@link #withConsumerClient(String, String)}.
          *
-         * @param applicationProviderName
+         * @param applicationName
          *            The name of the application provider to be used. This is the name that was used to register the
          *            to-be-called application within the IAS tenant.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given application provider being used
          *         when retrieving an authentication token from the IAS service.
          */
         @Nonnull
-        public static OptionsEnhancer<?> withApplicationProvider( @Nonnull final String applicationProviderName )
+        public static OptionsEnhancer<?> withApplicationName( @Nonnull final String applicationName )
         {
-            return new IasCommunicationOptions(applicationProviderName, null, null, false);
+            return new IasCommunicationOptions(applicationName, null, null, false);
         }
 
         /**
@@ -183,10 +183,10 @@ public final class BtpServiceOptions
          * ID when performing token retrievals. This is needed in <i>Service-To-App</i> communication scenarios.
          * <p>
          * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
-         * {@link #withApplicationProvider(String)}.
+         * {@link #withApplicationName(String)}.
          *
          * @param consumerClientId
-         *            The client ID of the consumer application. This client id is usually extracted from an incoming
+         *            The client ID of the consumer application. This client ID is usually extracted from an incoming
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID being used when
          *         retrieving an authentication token from the IAS service.
@@ -203,13 +203,13 @@ public final class BtpServiceOptions
          * scenarios.
          * <p>
          * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
-         * {@link #withApplicationProvider(String)}.
+         * {@link #withApplicationName(String)}.
          *
          * @param consumerClientId
-         *            The client ID of the consumer application. This client id is usually extracted from an incoming
+         *            The client ID of the consumer application. This client ID is usually extracted from an incoming
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @param consumerTenantId
-         *            The tenant ID of the consumer application. This tenant id is usually extracted from an incoming
+         *            The tenant ID of the consumer application. This tenant ID is usually extracted from an incoming
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID and tenant ID
          *         being used when retrieving an authentication token from the IAS service.
@@ -235,7 +235,7 @@ public final class BtpServiceOptions
 
         /**
          * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
-         * to {@link #withMTLSAuthenticationOnly()}, {@link #withApplicationProvider(String)}, and
+         * to {@link #withMTLSAuthenticationOnly()}, {@link #withApplicationName(String)}, and
          * {@link #withConsumerClient(String, String)}.
          */
         @Value
