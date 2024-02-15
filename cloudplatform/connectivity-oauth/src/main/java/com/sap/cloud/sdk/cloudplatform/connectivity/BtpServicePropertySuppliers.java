@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUrl;
 
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -23,7 +22,9 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLo
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.security.config.CredentialType;
+import com.sap.cloud.security.config.ClientCertificate;
+import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.mtls.SSLContextFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -222,40 +223,16 @@ class BtpServicePropertySuppliers
         @Nullable
         private KeyStore getClientKeyStore()
         {
-            if( !isX509CredentialType() ) {
+            final ClientIdentity clientIdentity = getClientIdentity();
+            if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;
             }
 
-            final String cert = getOAuthCredentialOrThrow(String.class, "certificate");
-            final String key = getOAuthCredentialOrThrow(String.class, "key");
-
             try {
-                return KeyStoreReader
-                    .createKeyStore(
-                        "IAS-CERTIFICATE",
-                        "changeit".toCharArray(),
-                        new StringReader(cert),
-                        new StringReader(key));
+                return SSLContextFactory.getInstance().createKeyStore(clientIdentity);
             }
             catch( final Exception e ) {
                 throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);
-            }
-        }
-
-        private boolean isX509CredentialType()
-        {
-            final CredentialType credentialType = getCredentialType();
-            switch( credentialType ) {
-                case X509:
-                    return true;
-                case BINDING_SECRET: // fallthrough
-                case INSTANCE_SECRET:
-                    return false;
-                default:
-                    throw new DestinationAccessException("""
-                        Unable to determine whether IAS binding uses x509 authentication: \
-                        Unhandled credential type '%s'.\
-                        """.formatted(credentialType));
             }
         }
     }
