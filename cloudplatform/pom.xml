@@ -38,6 +38,7 @@
 		<module>cloudplatform-connectivity-scp-cf</module>
 		<module>connectivity-destination-service</module>
 		<module>connectivity-dwc</module>
+		<module>connectivity-ztis</module>
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
 		<module>connectivity-apache-httpclient5</module>
