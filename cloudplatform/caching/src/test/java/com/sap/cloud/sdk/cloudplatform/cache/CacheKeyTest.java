@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.cache;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -20,7 +19,6 @@ import com.sap.cloud.sdk.testutil.TestContext;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.parallel.Isolated;
 
 class CacheKeyTest
 {
