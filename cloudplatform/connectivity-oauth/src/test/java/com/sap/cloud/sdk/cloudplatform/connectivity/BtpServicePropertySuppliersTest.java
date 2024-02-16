@@ -275,7 +275,7 @@ class BtpServicePropertySuppliersTest
     {
         private final ServiceBinding binding =
             bindingWithCredentials(
-                ServiceBindingLibWorkarounds.IAS_IDENTIFIER,
+                ServiceIdentifier.IDENTITY_AUTHENTICATION,
                 entry("credential-type", "X509_GENERATED"),
                 entry("url", "https://provider.ias.domain"));
 

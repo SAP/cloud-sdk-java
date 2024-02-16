@@ -28,7 +28,7 @@ class BtpServicePropertySuppliers
 
     static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceBindingLibWorkarounds.IAS_IDENTIFIER, IdentityAuthentication::new);
+            .forServiceIdentifier(ServiceIdentifier.IDENTITY_AUTHENTICATION, IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
