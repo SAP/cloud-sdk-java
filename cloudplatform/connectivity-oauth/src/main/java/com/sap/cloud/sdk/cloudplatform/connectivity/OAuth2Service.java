@@ -328,7 +328,7 @@ class OAuth2Service
         Builder withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier )
         {
             final TenantPropagationStrategy tenantPropagationStrategy;
-            if( ServiceBindingLibWorkarounds.IAS_IDENTIFIER.equals(serviceIdentifier) ) {
+            if( ServiceIdentifier.IDENTITY_AUTHENTICATION.equals(serviceIdentifier) ) {
                 tenantPropagationStrategy = TenantPropagationStrategy.TENANT_SUBDOMAIN;
             } else {
                 tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;

@@ -66,7 +66,7 @@ class OAuth2IntegrationTest
     {
         final ServiceBinding binding =
             bindingWithCredentials(
-                ServiceIdentifier.of("identity"),
+                ServiceIdentifier.IDENTITY_AUTHENTICATION,
                 entry("credential-type", "binding-secret"),
                 entry("clientid", "myClientId"),
                 entry("clientsecret", "myClientSecret"),
