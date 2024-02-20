@@ -12,7 +12,8 @@ import java.net.URL;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -34,7 +35,7 @@ class DataModelGeneratorMojoUnitTest
     void testInvocationWithAllParameters()
         throws Throwable
     {
-        sut = loadTestProject("testInvocationWithAllParameters");
+        sut = loadTestProject("/testInvocationWithAllParameters");
 
         final GenerationConfiguration configuration = sut.retrieveGenerationConfiguration().get();
 
@@ -57,7 +58,7 @@ class DataModelGeneratorMojoUnitTest
     void testInvocationWithMandatoryParameters()
         throws Throwable
     {
-        sut = loadTestProject("testInvocationWithMandatoryParameters");
+        sut = loadTestProject("/testInvocationWithMandatoryParameters");
 
         final GenerationConfiguration configuration = sut.retrieveGenerationConfiguration().get();
 
@@ -79,7 +80,7 @@ class DataModelGeneratorMojoUnitTest
     void testEmptyRequiredParameter()
         throws Throwable
     {
-        sut = loadTestProject("testEmptyRequiredParameter");
+        sut = loadTestProject("/testEmptyRequiredParameter");
 
         final Try<Void> mojoExecutionTry = Try.run(sut::execute);
 
@@ -98,7 +99,7 @@ class DataModelGeneratorMojoUnitTest
     void testSkipExecution()
         throws Throwable
     {
-        sut = loadTestProject("testSkipExecution");
+        sut = loadTestProject("/testSkipExecution");
 
         sut.execute();
         //no reasonable assertion possible
@@ -108,7 +109,7 @@ class DataModelGeneratorMojoUnitTest
     void testInvocationWithUnexpectedApiMaturity()
         throws Throwable
     {
-        sut = loadTestProject("testInvocationWithUnexpectedApiMaturity");
+        sut = loadTestProject("/testInvocationWithUnexpectedApiMaturity");
 
         assertThatExceptionOfType(MojoExecutionException.class)
             .isThrownBy(sut::execute)
@@ -119,7 +120,7 @@ class DataModelGeneratorMojoUnitTest
     void testAdditionalPropertiesAndEnablingAnyOfOneOf()
         throws Throwable
     {
-        sut = loadTestProject("testAdditionalPropertiesAndEnablingAnyOfOneOf");
+        sut = loadTestProject("/testAdditionalPropertiesAndEnablingAnyOfOneOf");
 
         assertThat(sut.retrieveGenerationConfiguration().get().getAdditionalProperties())
             .containsEntry("param1", "val1")
@@ -132,10 +133,7 @@ class DataModelGeneratorMojoUnitTest
     private DataModelGeneratorMojo loadTestProject( String testDir )
         throws Throwable
     {
-        final URL resource =
-            DataModelGeneratorMojoUnitTest.class
-                .getClassLoader()
-                .getResource("DataModelGeneratorMojoUnitTest/" + testDir);
+        final URL resource = getClass().getClassLoader().getResource(getClass().getSimpleName() + testDir);
         assertThat(resource).isNotNull();
 
         final File pomFile = new File(resource.getFile());
