@@ -52,7 +52,7 @@ class DataModelGeneratorMojoIntegrationTest
     }
 
     // Run this test method manually to overwrite the folder containing the expected content with the latest generator state
-    @Test
+    // @Test
     void regenerateExpectedSodastoreLibrary()
         throws Throwable
     {
