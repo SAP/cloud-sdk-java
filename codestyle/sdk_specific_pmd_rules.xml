@@ -122,6 +122,29 @@
             ]]>
         </example>
     </rule>
+    <rule name="UseOfJunit4" language="java"
+          message="Do not use JUnit 4."
+          class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+            Never use JUnit 4 to run tests. Use JUnit Jupiter instead.
+        </description>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //ImportDeclaration
+                        [starts-with(Name/@Image, 'org.junit.Test')]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+        <example>
+            <![CDATA[
+            import org.junit.Test;
+            ]]>
+        </example>
+    </rule>
     <rule name="NullAnnotationMissingOnPublicMethod" language="java"
           message="Public method is not annotated with @Nonnull or @Nullable."
           class="net.sourceforge.pmd.lang.rule.XPathRule">

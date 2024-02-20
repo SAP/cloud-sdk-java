@@ -14,9 +14,10 @@ import java.nio.file.Paths;
 import java.util.function.Predicate;
 
 import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
@@ -28,23 +29,20 @@ import lombok.SneakyThrows;
  * module. However, it was found that the OpenAPI generator behaves strange when it comes to accessing the templates as
  * resources on the classpath. This issue was not caught in the {@code DataModelGeneratorIntegrationTest}.
  */
-public class DataModelGeneratorMojoIntegrationTest
+class DataModelGeneratorMojoIntegrationTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule();
-
-    @Rule
-    public TemporaryFolder outputDirectory = TemporaryFolder.builder().assureDeletion().build();
+    @TempDir
+    File outputDirectory;
 
     private static final String FOLDER_WITH_EXPECTED_CONTENT =
         "src/test/resources/" + DataModelGeneratorMojoIntegrationTest.class.getSimpleName() + "/sodastore/output";
 
     @Test
-    public void generateAndCompareSodastoreLibrary()
-        throws Exception
+    void generateAndCompareSodastoreLibrary()
+        throws Throwable
     {
         final String outputFolderWithActualContent =
-            Paths.get(outputDirectory.getRoot().toString()).resolve("output").toString();
+            Paths.get(outputDirectory.getAbsolutePath()).resolve("output").toString();
 
         generateSodastoreLibrary(outputFolderWithActualContent);
 
@@ -54,25 +52,17 @@ public class DataModelGeneratorMojoIntegrationTest
     }
 
     // Run this test method manually to overwrite the folder containing the expected content with the latest generator state
-    //@Test
-    public void regenerateExpectedSodastoreLibrary()
-        throws Exception
+    @Test
+    void regenerateExpectedSodastoreLibrary()
+        throws Throwable
     {
         generateSodastoreLibrary(FOLDER_WITH_EXPECTED_CONTENT);
     }
 
     private void generateSodastoreLibrary( final String outputDirectory )
-        throws Exception
+        throws Throwable
     {
-        final URL resource =
-            getClass()
-                .getClassLoader()
-                .getResource(DataModelGeneratorMojoIntegrationTest.class.getSimpleName() + "/sodastore/input");
-        assertThat(resource).isNotNull();
-
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
+        final DataModelGeneratorMojo mojo = loadTestProject();
 
         final GenerationConfiguration configuration = mojo.retrieveGenerationConfiguration().get();
 
@@ -97,5 +87,29 @@ public class DataModelGeneratorMojoIntegrationTest
         final Predicate<Path> isFile = p -> p.toFile().isFile();
         Files.walk(a).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(b.resolve(a.relativize(p))));
         Files.walk(b).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(a.resolve(b.relativize(p))));
+    }
+
+    private DataModelGeneratorMojo loadTestProject()
+        throws Throwable
+    {
+        final URL resource = getClass().getClassLoader().getResource(getClass().getSimpleName() + "/sodastore/input");
+        assertThat(resource).isNotNull();
+
+        final File pomFile = new File(resource.getFile());
+
+        final MojoRule rule = new MojoRule();
+        // hacky workaround to invoke the internal call to "testCase.setUp()" inside MojoRule
+        // exploiting the fact that the setup is not teared down after "evaluate" returns
+        // this workaround is applied because "lookupConfiguredMojo" is not available on AbstractMojoTestCase
+        // and this way we can skip the effort to re-implement what is already available in MojoRule
+        rule.apply(new Statement()
+        {
+            @Override
+            public void evaluate()
+            {
+
+            }
+        }, Description.createSuiteDescription("dummy")).evaluate();
+        return (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
     }
 }
