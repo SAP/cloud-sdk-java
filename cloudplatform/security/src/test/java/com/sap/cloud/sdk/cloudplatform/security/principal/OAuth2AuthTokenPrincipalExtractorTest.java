@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -48,13 +47,6 @@ class OAuth2AuthTokenPrincipalExtractorTest
                 PREFIX + ".Equipment.View",
                 PREFIX + ".Persons.View",
                 PREFIX + ".Workplaces.View");
-
-    private static final List<String> PREFIX_STRIPPED_SCOPES =
-        SCOPES
-            .stream()
-            .filter(scope -> scope.startsWith(PREFIX + "."))
-            .map(name -> name.replace(PREFIX + ".", ""))
-            .collect(Collectors.toList());
 
     @AfterEach
     void cleanupAccessors()

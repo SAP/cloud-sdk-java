@@ -4,19 +4,29 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.security.config.ClientCertificate;
+import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.mtls.SSLContextFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 class BtpServicePropertySuppliers
 {
@@ -28,7 +38,7 @@ class BtpServicePropertySuppliers
 
     static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceBindingLibWorkarounds.IAS_IDENTIFIER, IdentityAuthentication::new);
+            .forServiceIdentifier(ServiceIdentifier.IDENTITY_AUTHENTICATION, IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
@@ -63,6 +73,7 @@ class BtpServicePropertySuppliers
                     .factory());
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
+
     static {
         DEFAULT_SERVICE_RESOLVERS.add(DESTINATION);
         DEFAULT_SERVICE_RESOLVERS.add(CONNECTIVITY);
@@ -116,12 +127,20 @@ class BtpServicePropertySuppliers
         }
     }
 
+    @Slf4j
     private static class IdentityAuthentication extends DefaultOAuth2PropertySupplier
     {
 
         IdentityAuthentication( @Nonnull final ServiceBindingDestinationOptions options )
         {
             super(options, List.of());
+        }
+
+        @Nonnull
+        @Override
+        public URI getServiceUri()
+        {
+            return options.getOption(IasTargetUri.class).getOrElse(super::getServiceUri);
         }
 
         @Nonnull
@@ -134,6 +153,87 @@ class BtpServicePropertySuppliers
             }
 
             return URI.create(providerUrl + "/oauth2/token");
+        }
+
+        @Nonnull
+        @Override
+        public OAuth2Options getOAuth2Options()
+        {
+            final OAuth2Options.Builder oAuth2OptionsBuilder = OAuth2Options.builder();
+
+            attachIasCommunicationOptions(oAuth2OptionsBuilder);
+            attachClientKeyStore(oAuth2OptionsBuilder);
+
+            return oAuth2OptionsBuilder.build();
+        }
+
+        private void attachIasCommunicationOptions( @Nonnull final OAuth2Options.Builder optionsBuilder )
+        {
+            final IasCommunicationOptions o = options.getOption(IasCommunicationOptions.class).getOrNull();
+            if( o == null ) {
+                return;
+            }
+
+            if( o.isMTLSAuthenticationOnly() && mTLSOnlyIsSupported() ) {
+                optionsBuilder.withSkipTokenRetrieval(true);
+                return;
+            }
+
+            if( o.getApplicationName() != null ) {
+                optionsBuilder
+                    .withTokenRetrievalParameter(
+                        "resource",
+                        "urn:sap:identity:application:provider:name:" + o.getApplicationName());
+                return;
+            }
+
+            if( o.getConsumerClientId() != null ) {
+                String value = "urn:sap:identity:consumer:clientid:" + o.getConsumerClientId();
+                if( o.getConsumerTenantId() != null ) {
+                    value += ":apptid:" + o.getConsumerTenantId();
+                }
+
+                optionsBuilder.withTokenRetrievalParameter("resource", value);
+            }
+        }
+
+        private boolean mTLSOnlyIsSupported()
+        {
+            final OnBehalfOf behalf = options.getOnBehalfOf();
+            if( behalf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
+                log.warn("""
+                    Combining {} with mTLS only authentication is not supported. \
+                    This is because mTLS only works without sending any authentication token. \
+                    But without an authentication token, user information cannot be preserved.\
+                    """, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )
+        {
+            final KeyStore maybeClientStore = getClientKeyStore();
+            if( maybeClientStore != null ) {
+                optionsBuilder.withClientKeyStore(maybeClientStore);
+            }
+        }
+
+        @Nullable
+        private KeyStore getClientKeyStore()
+        {
+            final ClientIdentity clientIdentity = getClientIdentity();
+            if( !(clientIdentity instanceof ClientCertificate) ) {
+                return null;
+            }
+
+            try {
+                return SSLContextFactory.getInstance().createKeyStore(clientIdentity);
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);
+            }
         }
     }
 }

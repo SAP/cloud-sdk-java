@@ -74,7 +74,6 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
      *            The {@link ServiceIdentifier service} that can be handled by the given property supplier.
      * @param propertySupplier
      *            The {@link OAuth2PropertySupplier} capable of parsing bindings for the given service.
-     *
      * @see #registerPropertySupplier(Predicate, Function)
      */
     public static void registerPropertySupplier(
@@ -135,10 +134,12 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         final URI serviceUri;
         final URI tokenUri;
         final ClientIdentity clientIdentity;
+        final OAuth2Options tokenRetrievalOptions;
         try {
             serviceUri = propertySupplier.getServiceUri();
             tokenUri = propertySupplier.getTokenUri();
             clientIdentity = propertySupplier.getClientIdentity();
+            tokenRetrievalOptions = propertySupplier.getOAuth2Options();
         }
         catch( final DestinationAccessException e ) {
             return Try.failure(e);
@@ -165,12 +166,15 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                         tokenUri,
                         clientIdentity,
                         behalfOf,
+                        tokenRetrievalOptions,
                         identifier);
                 return Try.success(dest);
             }
 
             // continue without proxied destination
-            return Try.success(toDestination(serviceUri, tokenUri, clientIdentity, behalfOf, identifier));
+            return Try
+                .success(
+                    toDestination(serviceUri, tokenUri, clientIdentity, behalfOf, tokenRetrievalOptions, identifier));
         }
         catch( final Exception e ) {
             // might happen in case of invalid certificate
@@ -216,11 +220,9 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final URI tokenUri,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
+        @Nonnull final OAuth2Options oAuth2Options,
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
-        log.debug("Creating a new OAuth2 destination for service {}.", serviceIdentifier);
-        final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUri, clientIdentity, behalf, HttpHeaders.AUTHORIZATION, serviceIdentifier);
         // use a hash code of the client id to not unnecessarily expose the client id
         // (as the destination name is included in the toString() method of the destination
         // this should be optional, as the client id is technically not a secret, but using a hash here doesn't hurt
@@ -228,7 +230,30 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             Option.of(serviceIdentifier).map(ServiceIdentifier::toString).getOrElse("unknown")
                 + "-"
                 + clientIdentity.getId().hashCode();
-        return DefaultHttpDestination.builder(serviceUri).headerProviders(headerProvider).name(idString).build();
+        log.debug("Creating a new OAuth2 destination for service {} with name '{}'.", serviceIdentifier, idString);
+
+        final DefaultHttpDestination.Builder destinationBuilder =
+            DefaultHttpDestination.builder(serviceUri).name(idString);
+        if( oAuth2Options.skipTokenRetrieval() ) {
+            log.debug("Skipping OAuth2 token retrieval for destination '{}'.", idString);
+        } else {
+            final DestinationHeaderProvider headerProvider =
+                createHeaderProvider(
+                    tokenUri,
+                    clientIdentity,
+                    behalf,
+                    HttpHeaders.AUTHORIZATION,
+                    oAuth2Options,
+                    serviceIdentifier);
+            destinationBuilder.headerProviders(headerProvider);
+        }
+
+        if( oAuth2Options.getClientKeyStore() != null ) {
+            log.debug("Securing communication to OAuth2 destination '{}' using mTLS.", idString);
+            destinationBuilder.keyStore(oAuth2Options.getClientKeyStore());
+        }
+
+        return destinationBuilder.build();
     }
 
     @Nonnull
@@ -238,16 +263,37 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final URI tokenUrl,
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
+        @Nonnull final OAuth2Options oAuth2Options,
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
-        final DestinationHeaderProvider headerProvider =
-            createHeaderProvider(tokenUrl, clientIdentity, behalf, HttpHeaders.PROXY_AUTHORIZATION, serviceIdentifier);
+        final String destinationName =
+            destinationToBeProxied.get(DestinationProperty.NAME).getOrElse("<unnamed-destination>");
+        final DefaultHttpDestination.Builder destinationBuilder =
+            DefaultHttpDestination.fromDestination(destinationToBeProxied).proxy(proxyUrl);
 
-        return DefaultHttpDestination
-            .fromDestination(destinationToBeProxied)
-            .proxy(proxyUrl)
-            .headerProviders(headerProvider)
-            .buildInternal();
+        if( oAuth2Options.skipTokenRetrieval() ) {
+            log.debug("Skipping OAuth2 token retrieval for proxied destination '{}'.", destinationName);
+        } else {
+            final DestinationHeaderProvider headerProvider =
+                createHeaderProvider(
+                    tokenUrl,
+                    clientIdentity,
+                    behalf,
+                    HttpHeaders.PROXY_AUTHORIZATION,
+                    oAuth2Options,
+                    serviceIdentifier);
+            destinationBuilder.headerProviders(headerProvider);
+        }
+
+        if( oAuth2Options.getClientKeyStore() != null ) {
+            log
+                .debug(
+                    "Securing communication to OAuth2 proxy server for proxied destination '{}' using mTLS.",
+                    destinationName);
+            destinationBuilder.keyStore(oAuth2Options.getClientKeyStore());
+        }
+
+        return destinationBuilder.buildInternal();
     }
 
     DestinationHeaderProvider createHeaderProvider(
@@ -255,6 +301,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final ClientIdentity clientIdentity,
         @Nonnull final OnBehalfOf behalf,
         @Nonnull final String authHeader,
+        @Nonnull final OAuth2Options oAuth2Options,
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
         log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
@@ -266,6 +313,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 .withIdentity(clientIdentity)
                 .withOnBehalfOf(behalf)
                 .withTenantPropagationStrategyFrom(serviceIdentifier)
+                .withAdditionalParameters(oAuth2Options.getAdditionalTokenRetrievalParameters())
                 .build();
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.4.0-SNAPSHOT</version>
+		<version>5.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-oauth</artifactId>
 	<name>OAuth2 Connectivity</name>
@@ -163,6 +163,12 @@
 			<groupId>com.sap.cloud.security</groupId>
 			<artifactId>java-security-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>junit</artifactId>
+					<groupId>junit</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>

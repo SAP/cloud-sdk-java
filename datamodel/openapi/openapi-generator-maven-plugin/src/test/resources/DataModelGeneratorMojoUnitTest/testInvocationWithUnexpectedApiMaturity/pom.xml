@@ -5,7 +5,7 @@
 
 	<groupId>com.company</groupId>
 	<artifactId>application</artifactId>
-	<version>5.4.0-SNAPSHOT</version>
+	<version>5.5.0-SNAPSHOT</version>
 
 	<build>
 		<plugins>
@@ -13,7 +13,7 @@
 				<groupId>com.sap.cloud.sdk.datamodel</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<configuration>
-					<inputSpec>DataModelGeneratorMojoUnitTest/testInvocationWithAllParameters/input/sodastore.yaml</inputSpec>
+					<inputSpec>DataModelGeneratorMojoUnitTest/testInvocationWithUnexpectedApiMaturity/input/sodastore.yaml</inputSpec>
 					<apiPackage>com.sap.cloud.sdk.datamodel.rest.test.api</apiPackage>
                     <modelPackage>com.sap.cloud.sdk.datamodel.rest.test.model</modelPackage>
                     <apiMaturity>unexpected-api-maturity</apiMaturity>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.4.0-SNAPSHOT</version>
+	<version>5.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -44,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.4.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.5.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -63,6 +63,7 @@
 		<enforcer.skipEnforceScopeJavaEE>false</enforcer.skipEnforceScopeJavaEE>
 		<enforcer.skipEnforceScopeLombok>false</enforcer.skipEnforceScopeLombok>
 		<enforcer.skipBanGeneratedModulesReference>false</enforcer.skipBanGeneratedModulesReference>
+		<enforcer.skipBanJunit4>false</enforcer.skipBanJunit4>
 		<surefire.forkCount>4</surefire.forkCount>
 		<surefire.include>*</surefire.include>
 		<surefire.exclude />
@@ -86,7 +87,7 @@
 		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20231013</json.version>
+		<json.version>20240205</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
@@ -104,7 +105,8 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.0</maven-plugin.version>
+		<maven-plugin.version>3.9.6</maven-plugin.version>
+		<maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.3.0</openapi-generator.version>
@@ -165,7 +167,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>${maven-plugin.version}</version>
+				<version>${maven-plugin-annotations.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!--Dependencies used in generators-->
@@ -600,6 +602,23 @@
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
+										</excludes>
+									</bannedDependencies>
+								</rules>
+							</configuration>
+						</execution>
+						<execution>
+							<id>ban-old-junit</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<skip>${enforcer.skipBanJunit4}</skip>
+								<rules>
+									<bannedDependencies>
+										<message>Do not use JUnit 4.X, instead exclusively use Junit Jupiter. JUnit 4 tests will (silently) simply not be executed.</message>
+										<excludes>
+											<exclude>junit:junit</exclude>
 										</excludes>
 									</bannedDependencies>
 								</rules>
