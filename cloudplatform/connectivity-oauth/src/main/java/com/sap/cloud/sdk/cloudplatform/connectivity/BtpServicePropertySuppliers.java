@@ -36,9 +36,12 @@ class BtpServicePropertySuppliers
     static final OAuth2PropertySupplierResolver CONNECTIVITY =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.CONNECTIVITY, ConnectivityProxy::new);
 
+    /**
+     * {@link ServiceIdentifier#IDENTITY_AUTHENTICATION} referenced indirectly for backwards compatibility.
+     */
     static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceIdentifier.IDENTITY_AUTHENTICATION, IdentityAuthentication::new);
+            .forServiceIdentifier(ServiceIdentifier.of("identity"), IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
