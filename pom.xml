@@ -121,7 +121,7 @@
 		<wiremock.version>3.3.1</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.22</kotlin.version>
-		<byte-buddy.version>1.14.11</byte-buddy.version>
+		<byte-buddy.version>1.14.12</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
