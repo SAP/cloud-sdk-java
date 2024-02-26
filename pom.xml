@@ -63,6 +63,7 @@
 		<enforcer.skipEnforceScopeJavaEE>false</enforcer.skipEnforceScopeJavaEE>
 		<enforcer.skipEnforceScopeLombok>false</enforcer.skipEnforceScopeLombok>
 		<enforcer.skipBanGeneratedModulesReference>false</enforcer.skipBanGeneratedModulesReference>
+		<enforcer.skipBanJunit4>false</enforcer.skipBanJunit4>
 		<surefire.forkCount>4</surefire.forkCount>
 		<surefire.include>*</surefire.include>
 		<surefire.exclude />
@@ -82,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.69.7</jco-api.version>
+		<jco-api.version>4.70.8</jco-api.version>
 		<jackson.version>2.16.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -93,7 +94,7 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.3</spring.version>
+		<spring.version>6.1.4</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.12</slf4j.version>
 		<assertj-core.version>3.25.3</assertj-core.version>
@@ -104,7 +105,8 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.0</maven-plugin.version>
+		<maven-plugin.version>3.9.6</maven-plugin.version>
+		<maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.3.0</openapi-generator.version>
@@ -116,10 +118,10 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.3.1</wiremock.version>
+		<wiremock.version>3.4.2</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.22</kotlin.version>
-		<byte-buddy.version>1.14.11</byte-buddy.version>
+		<byte-buddy.version>1.14.12</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -165,7 +167,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>${maven-plugin.version}</version>
+				<version>${maven-plugin-annotations.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!--Dependencies used in generators-->
@@ -600,6 +602,23 @@
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
+										</excludes>
+									</bannedDependencies>
+								</rules>
+							</configuration>
+						</execution>
+						<execution>
+							<id>ban-old-junit</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<skip>${enforcer.skipBanJunit4}</skip>
+								<rules>
+									<bannedDependencies>
+										<message>Do not use JUnit 4.X, instead exclusively use Junit Jupiter. JUnit 4 tests will (silently) simply not be executed.</message>
+										<excludes>
+											<exclude>junit:junit</exclude>
 										</excludes>
 									</bannedDependencies>
 								</rules>
@@ -1051,7 +1070,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.5.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
