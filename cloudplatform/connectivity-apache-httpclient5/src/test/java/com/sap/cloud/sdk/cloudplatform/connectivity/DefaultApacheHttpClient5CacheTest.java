@@ -9,12 +9,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -42,19 +45,23 @@ class DefaultApacheHttpClient5CacheTest
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
     private static final Duration FIVE_MINUTES = Duration.ofMinutes(5L);
 
+    private ApacheHttpClient5Cache sut;
+
     @BeforeEach
     void setUp()
     {
         CacheManager.invalidateAll();
         context.setPrincipal();
         context.setTenant();
+
+        sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
     }
 
     @Test
     void testGetClientExpiresAfterWrite()
     {
         final AtomicLong ticker = new AtomicLong(0);
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES, ticker::get);
+        sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES, ticker::get);
 
         final HttpClient clientWithDestination1 = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
         assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -83,8 +90,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
         final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
@@ -118,8 +123,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
         final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
@@ -155,8 +158,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
         final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
@@ -195,8 +196,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
         final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
@@ -242,8 +241,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testInvalidateTenantCacheEntries()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final String untestedTenantId = "some-tenant";
         context.setTenant(untestedTenantId);
 
@@ -283,8 +280,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testInvalidatePrincipalCacheEntries()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final String tenantId = "tenant#1";
         context.setTenant(tenantId);
 
@@ -319,8 +314,6 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testInvalidatePrincipalCacheEntriesWithUserTokenExchangeDestination()
     {
-        final ApacheHttpClient5Cache sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
-
         final String tenantId = "tenant#1";
         context.setTenant(tenantId);
 
@@ -365,5 +358,47 @@ class DefaultApacheHttpClient5CacheTest
         assertThat(unclearedClientWithDestination)
             .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
+    }
+
+    @Test
+    //This is a known limitation of excluding header providers in the equality check of destinations
+    void testGetClientReturnsSameClientForDestinationsWithOnlyDifferentHeaderProviders()
+    {
+        final Header header1 = new Header("foo", "bar");
+        final Header header2 = new Header("foo1", "bar1");
+
+        final DefaultHttpDestination firstDestination =
+            DefaultHttpDestination
+                .builder("http://some-uri")
+                .headerProviders(( any ) -> Collections.singletonList(header1))
+                .build();
+
+        final DefaultHttpDestination secondDestination =
+            DefaultHttpDestination
+                .fromDestination(firstDestination)
+                .headerProviders(( any ) -> Collections.singletonList(header2))
+                .build();
+
+        final ApacheHttpClient5Wrapper client1 =
+            (ApacheHttpClient5Wrapper) sut.tryGetHttpClient(firstDestination, FACTORY).get();
+        final ApacheHttpClient5Wrapper client2 =
+            (ApacheHttpClient5Wrapper) sut.tryGetHttpClient(secondDestination, FACTORY).get();
+
+        assertThat(client1.getDestination()).isSameAs(firstDestination);
+        assertThat(client2.getDestination()).isSameAs(secondDestination);
+
+        final ClassicHttpRequest request1 = client1.wrapRequest(new HttpGet("/"));
+        final ClassicHttpRequest request2 = client2.wrapRequest(new HttpGet("/"));
+
+        final List<org.apache.hc.core5.http.Header> headersRequest1 = new ArrayList<>();
+        final List<org.apache.hc.core5.http.Header> headersRequest2 = new ArrayList<>();
+        request1.headerIterator().forEachRemaining(headersRequest1::add);
+        request2.headerIterator().forEachRemaining(headersRequest2::add);
+        assertThat(headersRequest1)
+            .containsExactly(new ApacheHttpClient5Wrapper.HeaderWithEquals(header1.getName(), header1.getValue()));
+        assertThat(headersRequest2)
+            .containsExactly(
+                new ApacheHttpClient5Wrapper.HeaderWithEquals(header1.getName(), header1.getValue()),
+                new ApacheHttpClient5Wrapper.HeaderWithEquals(header2.getName(), header2.getValue()));
     }
 }

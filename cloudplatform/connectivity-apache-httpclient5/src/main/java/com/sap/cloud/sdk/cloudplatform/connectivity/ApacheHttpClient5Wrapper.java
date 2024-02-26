@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -19,7 +20,10 @@ import org.apache.hc.core5.io.CloseMode;
 
 import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 class ApacheHttpClient5Wrapper extends CloseableHttpClient
 {
     private final CloseableHttpClient httpClient;
+    @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
 
     @Override
@@ -70,7 +75,22 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         return httpClient.execute(target, wrapRequest(request), context);
     }
 
-    private ClassicHttpRequest wrapRequest( final ClassicHttpRequest request )
+    ApacheHttpClient5Wrapper withDestination( final HttpDestinationProperties destination )
+    {
+        // explicitly check the reference equality, since equals doesn't check header providers
+        // this is a slight improvement, avoiding unnecessary wrapper instantiation
+        // in cases where destination objects are reused / served from cache
+        if( !destination.equals(this.destination) ) {
+            throw new ShouldNotHappenException(
+                "This method must not be used outside of updating an instance of ApacheHttpClient5Wrapper for http clients served from the ApacheHttpClient5Cache.");
+        }
+        if( destination == this.destination ) {
+            return this;
+        }
+        return new ApacheHttpClient5Wrapper(httpClient, destination);
+    }
+
+    ClassicHttpRequest wrapRequest( final ClassicHttpRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
         URI requestUri;
@@ -88,7 +108,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         requestBuilder.setUri(requestUri);
 
         for( final Header header : destination.getHeaders(requestUri) ) {
-            requestBuilder.addHeader(new BasicHeader(header.getName(), header.getValue()));
+            requestBuilder.addHeader(new HeaderWithEquals(header.getName(), header.getValue()));
 
             log
                 .debug(
@@ -99,5 +119,25 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         }
 
         return requestBuilder.build();
+    }
+
+    static class HeaderWithEquals extends BasicHeader
+    {
+        @Serial
+        private static final long serialVersionUID = -4835409423484900327L;
+
+        HeaderWithEquals( String name, Object value )
+        {
+            super(name, value);
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( !(obj instanceof BasicHeader other) ) {
+                return false;
+            }
+            return getName().equals(other.getName()) && getValue().equals(other.getValue());
+        }
     }
 }
