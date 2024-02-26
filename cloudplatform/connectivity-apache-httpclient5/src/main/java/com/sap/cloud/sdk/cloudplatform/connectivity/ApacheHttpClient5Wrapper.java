@@ -5,7 +5,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -14,7 +13,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 
@@ -23,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -121,23 +120,11 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         return requestBuilder.build();
     }
 
-    static class HeaderWithEquals extends BasicHeader
+    @Data
+    static class HeaderWithEquals implements org.apache.hc.core5.http.Header
     {
-        @Serial
-        private static final long serialVersionUID = -4835409423484900327L;
-
-        HeaderWithEquals( String name, Object value )
-        {
-            super(name, value);
-        }
-
-        @Override
-        public boolean equals( Object obj )
-        {
-            if( !(obj instanceof BasicHeader other) ) {
-                return false;
-            }
-            return getName().equals(other.getName()) && getValue().equals(other.getValue());
-        }
+        private final String name;
+        private final String value;
+        boolean sensitive;
     }
 }
