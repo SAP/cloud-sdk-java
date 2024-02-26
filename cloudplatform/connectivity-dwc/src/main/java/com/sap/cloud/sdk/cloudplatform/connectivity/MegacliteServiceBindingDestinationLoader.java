@@ -3,8 +3,6 @@
  */
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import java.net.URI;
-
 import javax.annotation.Nonnull;
 
 import com.google.common.annotations.Beta;
@@ -87,27 +85,25 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
                         Please provide a base destination using the ServiceBindingDestinationOptions like so: \
                         ServiceBindingDestinationOptions.forService(BindableService.CONNECTIVITY).withOption(ServiceBindingDestinationOptions.Options.ProxyOptions.destinationToBeProxied(myDestination)).build();\
                         """))
-            .flatMap(this::toProxiedDestination);
+            .map(this::toProxiedDestination);
     }
 
-    private Try<HttpDestination> toProxiedDestination( @Nonnull final HttpDestination base )
+    private HttpDestination toProxiedDestination( @Nonnull final HttpDestination base )
     {
-        final DefaultHttpDestination.Builder builder =
-            DefaultHttpDestination
-                .fromDestination(base)
-                // be sure to use exactly this instance of connectivityResolver since it has a cache attached
-                .headerProviders(connectivityResolver);
-        // don't override the proxy URL if it has been set explicitly/manually already
-        if( base.getProxyConfiguration().isDefined() ) {
-            return Try.of(builder::buildInternal);
+        final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromDestination(base);
+
+        // only set the proxy URL if it has not been set explicitly/manually already
+        if( base.getProxyConfiguration().isEmpty() ) {
+            try {
+                builder.proxy(connectivityResolver.getProxyUrl());
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException("Failed to resolve on-premise proxy URL.", e);
+            }
         }
-        final Try<URI> proxyUrl = Try.of(connectivityResolver::getProxyUrl);
-        if( proxyUrl.isFailure() ) {
-            return Try
-                .failure(
-                    new DestinationAccessException("Failed to resolve on-premise proxy URL.", proxyUrl.getCause()));
-        }
-        return proxyUrl.map(builder::proxy).map(DefaultHttpDestination.Builder::buildInternal);
+
+        // be sure to use exactly this instance of connectivityResolver since it has a cache attached
+        return builder.headerProviders(connectivityResolver).buildInternal();
     }
 
     @Nonnull
