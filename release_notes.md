@@ -16,6 +16,7 @@
 
 ### 📈 Improvements
 
+- Improve the `DefaultHttpDestination` builder API: For destinations with proxy type `ON_PREMISE` the proxy URL can now be customized by using the `proxy` method of the builder.
 - Dependency Updates:
   - SAP dependency updates:
     - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`

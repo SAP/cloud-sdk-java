@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -402,6 +403,31 @@ class OAuth2ServiceBindingDestinationLoaderTest
                 eq(HttpHeaders.PROXY_AUTHORIZATION),
                 eq(OAuth2Options.DEFAULT),
                 eq(TEST_SERVICE));
+    }
+
+    @Test
+    @DisplayName( "An already existing proxy configuration should not be overridden." )
+    void testConnectivityWithExistingProxyConfig()
+    {
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("foo")
+                .proxy(URI.create("http://bar"))
+                .proxyType(ProxyType.ON_PREMISE)
+                .buildInternal();
+        final HttpDestination result =
+            sut
+                .toProxiedDestination(
+                    destination,
+                    URI.create("yolo"),
+                    URI.create("foo"),
+                    credentials,
+                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT,
+                    OAuth2Options.DEFAULT,
+                    TEST_SERVICE);
+
+        assertThat(result.getProxyConfiguration()).isNotEmpty();
+        assertThat(result.getProxyConfiguration().get().getUri()).isEqualTo(URI.create("http://bar"));
     }
 
     @Test
