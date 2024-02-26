@@ -13,6 +13,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 
@@ -21,7 +22,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -107,7 +107,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         requestBuilder.setUri(requestUri);
 
         for( final Header header : destination.getHeaders(requestUri) ) {
-            requestBuilder.addHeader(new HeaderWithEquals(header.getName(), header.getValue()));
+            requestBuilder.addHeader(new BasicHeader(header.getName(), header.getValue()));
 
             log
                 .debug(
@@ -118,13 +118,5 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         }
 
         return requestBuilder.build();
-    }
-
-    @Data
-    static class HeaderWithEquals implements org.apache.hc.core5.http.Header
-    {
-        private final String name;
-        private final String value;
-        boolean sensitive;
     }
 }

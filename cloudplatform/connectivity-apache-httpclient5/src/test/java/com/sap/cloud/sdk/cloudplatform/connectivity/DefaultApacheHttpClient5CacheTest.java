@@ -18,12 +18,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Wrapper.HeaderWithEquals;
 import com.sap.cloud.sdk.testutil.TestContext;
 
 class DefaultApacheHttpClient5CacheTest
@@ -395,10 +395,15 @@ class DefaultApacheHttpClient5CacheTest
         final List<org.apache.hc.core5.http.Header> headersRequest2 = new ArrayList<>();
         request1.headerIterator().forEachRemaining(headersRequest1::add);
         request2.headerIterator().forEachRemaining(headersRequest2::add);
-        assertThat(headersRequest1).containsExactly(new HeaderWithEquals(header1.getName(), header1.getValue()));
+
+        // recursive comparison because BasicHeader doesn't implement equals/hashCode
+        assertThat(headersRequest1)
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactly(new BasicHeader(header1.getName(), header1.getValue()));
         assertThat(headersRequest2)
+            .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(
-                new HeaderWithEquals(header1.getName(), header1.getValue()),
-                new HeaderWithEquals(header2.getName(), header2.getValue()));
+                new BasicHeader(header1.getName(), header1.getValue()),
+                new BasicHeader(header2.getName(), header2.getValue()));
     }
 }
