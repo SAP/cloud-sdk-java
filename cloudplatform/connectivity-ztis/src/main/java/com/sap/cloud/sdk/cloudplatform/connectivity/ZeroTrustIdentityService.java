@@ -33,8 +33,23 @@ public class ZeroTrustIdentityService
     private static final ZeroTrustIdentityService instance = new ZeroTrustIdentityService();
     private static final String DEFAULT_SOCKET_PATH = "unix:///tmp/spire-agent/public/api.sock";
     private static final Duration DEFAULT_SOCKET_TIMEOUT = Duration.ofSeconds(10);
-    private final Lazy<X509Source> source = Lazy.of(ZeroTrustIdentityService::initX509Source);
+    private final Lazy<X509Source> source;
     private KeyStoreCache keyStoreCache = null;
+
+    ZeroTrustIdentityService()
+    {
+        source = Lazy.of(this::initX509Source);
+    }
+
+    ZeroTrustIdentityService( Lazy<X509Source> source )
+    {
+        this.source = source;
+    }
+
+    public X509Svid getX509Svid()
+    {
+        return source.get().getX509Svid();
+    }
 
     @SuppressWarnings( "UseOfObsoleteDateTimeApi" ) // required by Java security API
     private record KeyStoreCache( KeyStore keyStore, Date lastUpdated )
@@ -42,7 +57,7 @@ public class ZeroTrustIdentityService
     }
 
     // implicitly synchronized via VAVR's Lazy
-    static X509Source initX509Source()
+    X509Source initX509Source()
     {
         final X509SourceOptions x509SourceOptions =
             X509SourceOptions
@@ -58,7 +73,7 @@ public class ZeroTrustIdentityService
         }
     }
 
-    private synchronized KeyStore getOrCreateKeyStore()
+    synchronized KeyStore getOrCreateKeyStore()
     {
         final X509Svid svid = getX509Svid();
         final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
@@ -66,6 +81,14 @@ public class ZeroTrustIdentityService
         if( keyStoreCache != null && !svid.getLeaf().getNotBefore().after(keyStoreCache.lastUpdated()) ) {
             return keyStoreCache.keyStore();
         }
+        final KeyStore keyStore = loadKeyStore(svid);
+        keyStoreCache = new KeyStoreCache(keyStore, Date.from(Instant.now()));
+        return keyStore;
+    }
+
+    KeyStore loadKeyStore( X509Svid svid )
+    {
+        final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
         final KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance("JKS");
@@ -75,12 +98,6 @@ public class ZeroTrustIdentityService
         catch( final KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e ) {
             throw new RuntimeException(e);
         }
-        keyStoreCache = new KeyStoreCache(keyStore, Date.from(Instant.now()));
         return keyStore;
-    }
-
-    public X509Svid getX509Svid()
-    {
-        return source.get().getX509Svid();
     }
 }

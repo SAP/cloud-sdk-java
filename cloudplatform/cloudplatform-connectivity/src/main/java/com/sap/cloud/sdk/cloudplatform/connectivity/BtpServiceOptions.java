@@ -261,9 +261,11 @@ public final class BtpServiceOptions
         }
     }
 
+    // TODO: currently only public for our E2E test
+    @Beta
     @Getter
     @RequiredArgsConstructor( staticName = "enhanceDestination" )
-    static final class ZeroTrustIdentityOptions
+    public static final class ZeroTrustIdentityOptions
         implements
         ServiceBindingDestinationOptions.OptionsEnhancer<HttpDestination>
     {

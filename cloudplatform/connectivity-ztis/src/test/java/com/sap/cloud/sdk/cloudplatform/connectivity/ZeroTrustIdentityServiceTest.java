@@ -1,28 +1,32 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import io.spiffe.workloadapi.X509Source;
+import io.vavr.Lazy;
 
 class ZeroTrustIdentityServiceTest
 {
-    private final ZeroTrustIdentityService sut = spy(new ZeroTrustIdentityService());
+    private X509Source mock;
+    private ZeroTrustIdentityService sut;
+
+    @BeforeEach
+    void setUp()
+    {
+        mock = mock(X509Source.class);
+        sut = spy(new ZeroTrustIdentityService(Lazy.of(() -> mock)));
+    }
 
     @Test
     void test()
     {
-        /*var binding = new DefaultServiceBindingBuilder().withServiceIdentifier(ZTIS_IDENTIFIER).build();
-        var d = DefaultHttpDestination.builder("foo.com").build();
-
-        var opts =
-            ServiceBindingDestinationOptions
-                .forService(binding)
-                .withOption(BtpServiceOptions.ZeroTrustIdentityOptions.enhanceDestination(d))
-                .build();
-        */
-
-        assertThat(sut).isNotNull();
+        sut = spy(new ZeroTrustIdentityService());
+        verify(sut, never()).initX509Source();
     }
-
 }

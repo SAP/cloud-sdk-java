@@ -20,6 +20,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -56,6 +58,7 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
         DEFAULT_INSTANCE = new DefaultServiceBindingDestinationLoaderChain(DEFAULT_DELEGATE_LOADERS);
     }
 
+    @Getter( AccessLevel.PACKAGE )
     @Nonnull
     private final List<ServiceBindingDestinationLoader> delegateLoaders;
 
