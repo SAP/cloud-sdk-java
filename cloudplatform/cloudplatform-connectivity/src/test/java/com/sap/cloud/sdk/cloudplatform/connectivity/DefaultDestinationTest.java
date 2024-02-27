@@ -26,7 +26,7 @@ class DefaultDestinationTest
         assertThat(destination.get(someKey)).contains(someValue);
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings( "deprecation" )
     @Test
     void testIdentity()
     {
