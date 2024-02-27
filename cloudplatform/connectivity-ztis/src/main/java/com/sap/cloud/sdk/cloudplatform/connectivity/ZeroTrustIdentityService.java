@@ -23,9 +23,12 @@ import io.spiffe.workloadapi.X509Source;
 import io.vavr.Lazy;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-@SuppressWarnings( "UnstableApiUsage" )
+import javax.annotation.Nonnull;
+
 @Beta
+@Slf4j
 public class ZeroTrustIdentityService
 {
     static final ServiceIdentifier ZTIS_IDENTIFIER = ServiceIdentifier.of("zero-trust-identity");
@@ -33,29 +36,19 @@ public class ZeroTrustIdentityService
     private static final ZeroTrustIdentityService instance = new ZeroTrustIdentityService();
     private static final String DEFAULT_SOCKET_PATH = "unix:///tmp/spire-agent/public/api.sock";
     private static final Duration DEFAULT_SOCKET_TIMEOUT = Duration.ofSeconds(10);
-    private final Lazy<X509Source> source;
+    private final Lazy<X509Source> source = Lazy.of(this::initX509Source);
     private KeyStoreCache keyStoreCache = null;
-
-    ZeroTrustIdentityService()
-    {
-        source = Lazy.of(this::initX509Source);
-    }
-
-    ZeroTrustIdentityService( Lazy<X509Source> source )
-    {
-        this.source = source;
-    }
 
     public X509Svid getX509Svid()
     {
         return source.get().getX509Svid();
     }
 
-    @SuppressWarnings( "UseOfObsoleteDateTimeApi" ) // required by Java security API
-    private record KeyStoreCache( KeyStore keyStore, Date lastUpdated )
+    private record KeyStoreCache( KeyStore keyStore, X509Svid svid )
     {
     }
 
+    // Do not evaluate this prematurely, it only works if the SPIRE agent is running and the OS specific dependencies are available at runtime
     // implicitly synchronized via VAVR's Lazy
     X509Source initX509Source()
     {
@@ -73,21 +66,36 @@ public class ZeroTrustIdentityService
         }
     }
 
-    synchronized KeyStore getOrCreateKeyStore()
+    @Nonnull
+    KeyStore getOrCreateKeyStore()
     {
         final X509Svid svid = getX509Svid();
-        final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
 
-        if( keyStoreCache != null && !svid.getLeaf().getNotBefore().after(keyStoreCache.lastUpdated()) ) {
+        if( isKeyStoreCached(svid) ) {
             return keyStoreCache.keyStore();
         }
-        final KeyStore keyStore = loadKeyStore(svid);
-        keyStoreCache = new KeyStoreCache(keyStore, Date.from(Instant.now()));
-        return keyStore;
+        // double-checked locking
+        synchronized (this) {
+            if( isKeyStoreCached(svid) ) {
+                return keyStoreCache.keyStore();
+            }
+            assertSvidNotExpired(svid);
+            final KeyStore keyStore = loadKeyStore(svid);
+            keyStoreCache = new KeyStoreCache(keyStore, svid);
+            return keyStore;
+        }
     }
 
-    KeyStore loadKeyStore( X509Svid svid )
+    private void assertSvidNotExpired(X509Svid svid) {
+        if( svid.getLeaf().getNotAfter().before(Date.from(Instant.now())) ) {
+            throw new IllegalStateException("The provided X509 SVID has expired. The expiry date was " + svid.getLeaf().getNotAfter() + ".");
+        }
+    }
+
+    @Nonnull
+    KeyStore loadKeyStore(@Nonnull final X509Svid svid)
     {
+        log.debug("Creating new KeyStore for SVID with expiration date {}", svid.getLeaf().getNotAfter());
         final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
         final KeyStore keyStore;
         try {
@@ -99,5 +107,11 @@ public class ZeroTrustIdentityService
             throw new RuntimeException(e);
         }
         return keyStore;
+    }
+
+    boolean isKeyStoreCached( @Nonnull final X509Svid svid )
+    {
+        // X509Svid does implement equals, so we don't have to manually compare the certificates
+        return keyStoreCache != null && svid.equals(keyStoreCache.svid());
     }
 }
