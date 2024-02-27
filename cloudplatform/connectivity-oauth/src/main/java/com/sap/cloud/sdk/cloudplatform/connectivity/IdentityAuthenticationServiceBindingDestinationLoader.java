@@ -51,14 +51,12 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         }
 
         final List<EndpointEntry> endpoints = EndpointEntry.allFromServiceBinding(serviceBinding);
-        // TODO: we might want to implement an Option to select the endpoint by name
-        if( endpoints.size() != 1 ) {
+        final EndpointEntry endpoint = getEndpoint(options, endpoints);
+        if( endpoint == null ) {
             final DestinationAccessException exception =
-                new DestinationAccessException("The IAS-based service binding does not contain exactly one endpoint.");
+                new DestinationAccessException("Unable to determine the endpoint for the IAS-based service binding.");
             return Try.failure(exception);
         }
-
-        final EndpointEntry endpoint = endpoints.get(0);
 
         final ServiceBindingDestinationOptions.Builder optionsBuilder =
             ServiceBindingDestinationOptions
@@ -81,6 +79,20 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         }
 
         return "identity".equalsIgnoreCase((String) rawAuthenticationService);
+    }
+
+    @Nullable
+    private static EndpointEntry getEndpoint(
+        @Nonnull final ServiceBindingDestinationOptions options,
+        @Nonnull final List<EndpointEntry> allEndpoints )
+    {
+        // TODO: implement a generic option so that users can select the endpoint they want to use
+        if( allEndpoints.size() != 1 ) {
+            log.warn("IAS-based service binding does not contain exactly one endpoint.");
+            return null;
+        }
+
+        return allEndpoints.get(0);
     }
 
     @Value
