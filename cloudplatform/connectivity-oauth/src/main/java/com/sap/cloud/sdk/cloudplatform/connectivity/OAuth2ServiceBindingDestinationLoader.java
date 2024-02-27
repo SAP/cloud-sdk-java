@@ -269,7 +269,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         final String destinationName =
             destinationToBeProxied.get(DestinationProperty.NAME).getOrElse("<unnamed-destination>");
         final DefaultHttpDestination.Builder destinationBuilder =
-            DefaultHttpDestination.fromDestination(destinationToBeProxied).proxy(proxyUrl);
+            DefaultHttpDestination.fromDestination(destinationToBeProxied);
 
         if( oAuth2Options.skipTokenRetrieval() ) {
             log.debug("Skipping OAuth2 token retrieval for proxied destination '{}'.", destinationName);
@@ -293,7 +293,11 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             destinationBuilder.keyStore(oAuth2Options.getClientKeyStore());
         }
 
-        return destinationBuilder.buildInternal();
+        // don't override the proxy URL if it has been set explicitly/manually already
+        if( destinationToBeProxied.getProxyConfiguration().isDefined() ) {
+            return destinationBuilder.buildInternal();
+        }
+        return destinationBuilder.proxy(proxyUrl).buildInternal();
     }
 
     DestinationHeaderProvider createHeaderProvider(
