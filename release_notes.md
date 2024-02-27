@@ -29,5 +29,5 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fixed an issue where adding header providers to a destination after it had already been used to obtain an Apache `HttpClient` 5 would not work as expected.
 
