@@ -47,7 +47,10 @@ public interface Destination extends DestinationProperties
      *
      * @throws IllegalArgumentException
      *             if this object cannot be converted as a {@code RfcDestination}.
+     *
+     * @deprecated Please use {@link #asHttp()} instead.
      */
+    @Deprecated
     @Nonnull
     default RfcDestination asRfc()
         throws IllegalArgumentException
@@ -63,6 +66,7 @@ public interface Destination extends DestinationProperties
      *
      * @return {@code true}, if a call to {@link #asRfc()} will succeed; {@code false} otherwise.
      */
+    @Deprecated
     default boolean isRfc()
     {
         return this instanceof RfcDestination || DefaultRfcDestination.canBeConstructedFrom(this);

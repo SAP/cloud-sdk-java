@@ -13,7 +13,10 @@ import lombok.experimental.Delegate;
 
 /**
  * Immutable default implementation of the {@link RfcDestination} interface.
+ *
+ * @deprecated Please use {@link DefaultDestination} instead.
  */
+@Deprecated
 @EqualsAndHashCode
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 public final class DefaultRfcDestination implements RfcDestination

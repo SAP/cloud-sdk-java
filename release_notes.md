@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- Deprecated `RfcDestination` and all associated usages. The replacement is `DefaultDestination`.
 
 ### ✨ New Functionality
 

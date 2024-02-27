@@ -125,6 +125,7 @@ class DefaultDestinationTest
         assertThat(httpDestination).isInstanceOf(DefaultHttpDestination.class);
     }
 
+    @Deprecated
     @Test
     void testRfcConverter()
     {
