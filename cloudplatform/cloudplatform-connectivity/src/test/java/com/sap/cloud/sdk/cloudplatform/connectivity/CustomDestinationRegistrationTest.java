@@ -18,6 +18,7 @@ class CustomDestinationRegistrationTest
     private static final HttpDestination httpDestination =
         DefaultHttpDestination.builder("foo").name("httpDestination").build();
 
+    @SuppressWarnings("deprecation")
     private static final RfcDestination rfcDestination =
         DefaultDestination.builder().name("rfcDestination").build().asRfc();
 
@@ -27,6 +28,7 @@ class CustomDestinationRegistrationTest
         DestinationAccessor.setLoader(null);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void testBasicUseCase()
     {
