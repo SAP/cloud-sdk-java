@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 class DefaultRfcDestinationTest
 {
     private static final String SOME_NAME = "Some Destination Name";

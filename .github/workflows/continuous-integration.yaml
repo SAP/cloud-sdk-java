@@ -232,9 +232,11 @@ jobs:
           mvn $MVN_ARGS
 
       - name: "Test Report"
-        if: github.event.pull_request.head.repo.full_name == 'SAP/cloud-sdk-java'
+        #Surefire reports are failing on pull requests created from forks and from GitHub Apps like dependabot
+        #https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
+        if: github.event.pull_request.head.repo.full_name == 'SAP/cloud-sdk-java' && github.actor != 'dependabot[bot]'
         uses: scacap/action-surefire-report@v1
-      - name: Coverage Report
+      - name: "Coverage Report"
         run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
   static-code-analysis:

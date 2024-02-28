@@ -7,8 +7,9 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,7 @@ class DefaultDestinationTest
         assertThat(destination.get(someKey)).contains(someValue);
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testIdentity()
     {
@@ -55,8 +57,8 @@ class DefaultDestinationTest
         final String someKey = "someKey";
         final String someValue = "someValue";
         final DestinationProperties destination = DefaultDestination.builder().property(someKey, someValue).build();
-        Iterable<String> propertiesKeysResult = destination.getPropertyNames();
-        Iterable<String> expectedKeys = Arrays.asList(someKey);
+        final Iterable<String> propertiesKeysResult = destination.getPropertyNames();
+        final Iterable<String> expectedKeys = List.of(someKey);
         assertThat(propertiesKeysResult).containsAll(expectedKeys);
     }
 
@@ -82,7 +84,7 @@ class DefaultDestinationTest
         final String someKey = "someKey";
         final String originalValue = "someValue";
 
-        final HashMap<String, Object> properties = new HashMap<>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put(someKey, originalValue);
 
         final DestinationProperties destination = DefaultDestination.fromMap(properties).build();
@@ -125,6 +127,7 @@ class DefaultDestinationTest
         assertThat(httpDestination).isInstanceOf(DefaultHttpDestination.class);
     }
 
+    @Deprecated
     @Test
     void testRfcConverter()
     {

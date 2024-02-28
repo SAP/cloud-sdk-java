@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -313,6 +314,28 @@ class MegacliteServiceBindingDestinationLoaderTest
                 .build();
 
         assertThatThrownBy(() -> sut.getDestination(options)).isInstanceOf(DestinationAccessException.class);
+    }
+
+    @Test
+    @DisplayName( "An already existing proxy configuration should not be overridden." )
+    void testConnectivityWithExistingProxyConfig()
+    {
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("foo")
+                .proxy(URI.create("http://bar"))
+                .proxyType(ProxyType.ON_PREMISE)
+                .buildInternal();
+
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING)
+                .withOption(ProxyOptions.destinationToBeProxied(destination))
+                .build();
+        final HttpDestination result = sut.getDestination(options);
+
+        assertThat(result.getProxyConfiguration()).isNotEmpty();
+        assertThat(result.getProxyConfiguration().get().getUri()).isEqualTo(URI.create("http://bar"));
     }
 
     @Test

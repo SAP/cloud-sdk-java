@@ -12,9 +12,11 @@ import java.net.URL;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
+// import org.junit.jupiter.api.Test;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.exception.OpenApiGeneratorException;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
@@ -22,31 +24,23 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 
 import io.vavr.control.Try;
 
-public class DataModelGeneratorMojoUnitTest
+class DataModelGeneratorMojoUnitTest
 {
-    @Rule
-    public MojoRule rule = new MojoRule();
+    @TempDir
+    File outputDirectory;
 
-    @Rule
-    public TemporaryFolder outputDirectory = TemporaryFolder.builder().assureDeletion().build();
+    private DataModelGeneratorMojo sut;
 
     @Test
-    public void testInvocationWithAllParameters()
-        throws Exception
+    void testInvocationWithAllParameters()
+        throws Throwable
     {
-        final URL resource =
-            getClass().getClassLoader().getResource("DataModelGeneratorMojoUnitTest/testInvocationWithAllParameters");
+        sut = loadTestProject("/testInvocationWithAllParameters");
 
-        assertThat(resource).isNotNull();
-
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-
-        final GenerationConfiguration configuration = mojo.retrieveGenerationConfiguration().get();
+        final GenerationConfiguration configuration = sut.retrieveGenerationConfiguration().get();
 
         assertThat(configuration.getApiMaturity()).isEqualTo(ApiMaturity.RELEASED);
-        assertThat(configuration.isVerbose());
+        assertThat(configuration.isVerbose()).isTrue();
         assertThat(configuration.getOutputDirectory()).isEqualTo("output-directory");
         assertThat(configuration.getInputSpec())
             .isEqualTo("DataModelGeneratorMojoUnitTest/testInvocationWithAllParameters/input/sodastore.yaml");
@@ -55,26 +49,18 @@ public class DataModelGeneratorMojoUnitTest
         assertThat(configuration.deleteOutputDirectory()).isTrue();
         assertThat(configuration.isOneOfAnyOfGenerationEnabled()).isFalse();
 
-        mojo.setOutputDirectory(outputDirectory.newFolder("output").toString());
+        sut.setOutputDirectory(outputDirectory.getAbsolutePath());
 
-        mojo.execute();
+        sut.execute();
     }
 
     @Test
-    public void testInvocationWithMandatoryParameters()
-        throws Exception
+    void testInvocationWithMandatoryParameters()
+        throws Throwable
     {
-        final URL resource =
-            getClass()
-                .getClassLoader()
-                .getResource("DataModelGeneratorMojoUnitTest/testInvocationWithMandatoryParameters");
-        assertThat(resource).isNotNull();
+        sut = loadTestProject("/testInvocationWithMandatoryParameters");
 
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-
-        final GenerationConfiguration configuration = mojo.retrieveGenerationConfiguration().get();
+        final GenerationConfiguration configuration = sut.retrieveGenerationConfiguration().get();
 
         assertThat(configuration.getApiMaturity()).isEqualTo(ApiMaturity.RELEASED);
         assertThat(configuration.isVerbose()).isFalse();
@@ -85,24 +71,18 @@ public class DataModelGeneratorMojoUnitTest
         assertThat(configuration.getApiPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.api");
         assertThat(configuration.deleteOutputDirectory()).isFalse();
 
-        mojo.setOutputDirectory(outputDirectory.newFolder("output").toString());
+        sut.setOutputDirectory(outputDirectory.getAbsolutePath());
 
-        mojo.execute();
+        sut.execute();
     }
 
     @Test
-    public void testEmptyRequiredParameter()
-        throws Exception
+    void testEmptyRequiredParameter()
+        throws Throwable
     {
-        final URL resource =
-            getClass().getClassLoader().getResource("DataModelGeneratorMojoUnitTest/testEmptyRequiredParameter");
-        assertThat(resource).isNotNull();
+        sut = loadTestProject("/testEmptyRequiredParameter");
 
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-
-        final Try<Void> mojoExecutionTry = Try.run(mojo::execute);
+        final Try<Void> mojoExecutionTry = Try.run(sut::execute);
 
         assertThat(mojoExecutionTry.isFailure()).isTrue();
 
@@ -116,60 +96,61 @@ public class DataModelGeneratorMojoUnitTest
     }
 
     @Test
-    public void testSkipExecution()
-        throws Exception
+    void testSkipExecution()
+        throws Throwable
     {
-        final URL resource =
-            getClass().getClassLoader().getResource("DataModelGeneratorMojoUnitTest/testSkipExecution");
-        assertThat(resource).isNotNull();
+        sut = loadTestProject("/testSkipExecution");
 
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-
-        mojo.execute();
-
+        sut.execute();
         //no reasonable assertion possible
     }
 
     @Test
-    public void testInvocationWithUnexpectedApiMaturity()
-        throws Exception
+    void testInvocationWithUnexpectedApiMaturity()
+        throws Throwable
     {
-        final URL resource =
-            getClass()
-                .getClassLoader()
-                .getResource("DataModelGeneratorMojoUnitTest/testInvocationWithUnexpectedApiMaturity");
-        assertThat(resource).isNotNull();
-
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
+        sut = loadTestProject("/testInvocationWithUnexpectedApiMaturity");
 
         assertThatExceptionOfType(MojoExecutionException.class)
-            .isThrownBy(mojo::execute)
+            .isThrownBy(sut::execute)
             .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAdditionalPropertiesAndEnablingAnyOfOneOfGeneration()
-        throws Exception
+    void testAdditionalPropertiesAndEnablingAnyOfOneOf()
+        throws Throwable
     {
-        final URL resource =
-            getClass()
-                .getClassLoader()
-                .getResource("DataModelGeneratorMojoUnitTest/testAdditionalPropertiesAndEnablingAnyOfOneOf");
-        assertThat(resource).isNotNull();
+        sut = loadTestProject("/testAdditionalPropertiesAndEnablingAnyOfOneOf");
 
-        final File pomFile = new File(resource.getFile());
-
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-
-        assertThat(mojo.retrieveGenerationConfiguration().get().getAdditionalProperties())
+        assertThat(sut.retrieveGenerationConfiguration().get().getAdditionalProperties())
             .containsEntry("param1", "val1")
             .containsEntry("param2", "val2")
             .containsEntry("useAbstractionForFiles", "true");
 
-        assertThat(mojo.retrieveGenerationConfiguration().get().isOneOfAnyOfGenerationEnabled()).isTrue();
+        assertThat(sut.retrieveGenerationConfiguration().get().isOneOfAnyOfGenerationEnabled()).isTrue();
+    }
+
+    private DataModelGeneratorMojo loadTestProject( String testDir )
+        throws Throwable
+    {
+        final URL resource = getClass().getClassLoader().getResource(getClass().getSimpleName() + testDir);
+        assertThat(resource).isNotNull();
+
+        final File pomFile = new File(resource.getFile());
+
+        final MojoRule rule = new MojoRule();
+        // hacky workaround to invoke the internal call to "testCase.setUp()" inside MojoRule
+        // exploiting the fact that the setup is not teared down after "evaluate" returns
+        // this workaround is applied because "lookupConfiguredMojo" is not available on AbstractMojoTestCase
+        // and this way we can skip the effort to re-implement what is already available in MojoRule
+        rule.apply(new Statement()
+        {
+            @Override
+            public void evaluate()
+            {
+
+            }
+        }, Description.createSuiteDescription("dummy")).evaluate();
+        return (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
     }
 }
