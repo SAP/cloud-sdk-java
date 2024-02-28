@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * A {@link ServiceBindingDestinationLoader} that loads destinations from service bindings backed by the Identity
  * Authentication Service (IAS).
  *
- * @since 5.5.0
+ * @since 5.6.0
  */
 @Beta
 @Slf4j
