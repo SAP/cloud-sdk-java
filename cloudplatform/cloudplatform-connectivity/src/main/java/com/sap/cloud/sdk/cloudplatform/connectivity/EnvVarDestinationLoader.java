@@ -179,6 +179,7 @@ public class EnvVarDestinationLoader implements DestinationLoader
                 + ".");
     }
 
+    @SuppressWarnings( "deprecation" )
     private Destination parseDestination( final JsonNode destinationNode )
     {
         final HashMap<String, String> map = new HashMap<>();

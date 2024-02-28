@@ -722,6 +722,7 @@ class DestinationServiceTest
         verify(scpCfDestinationServiceAdapter, times(0)).getConfigurationAsJsonWithUserToken(any(), any());
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     void testEmailDestination()
     {

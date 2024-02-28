@@ -68,6 +68,7 @@ class DestinationServiceFactoryTest
         assertThat(result.get("foo")).contains("bar");
     }
 
+    @Deprecated
     @Test
     void testRfcDestination()
     {
