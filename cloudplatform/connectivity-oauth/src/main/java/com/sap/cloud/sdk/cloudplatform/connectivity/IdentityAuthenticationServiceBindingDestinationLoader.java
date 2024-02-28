@@ -20,6 +20,9 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * A {@link ServiceBindingDestinationLoader} that loads destinations from service bindings backed by the Identity
+ * Authentication Service (IAS).
+ *
  * @since 5.5.0
  */
 @Beta
@@ -33,6 +36,9 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     @Nonnull
     private final ServiceBindingDestinationLoader delegateLoader;
 
+    /**
+     * The default constructor.
+     */
     public IdentityAuthenticationServiceBindingDestinationLoader()
     {
         this(ServiceBindingDestinationLoader.defaultLoaderChain());
