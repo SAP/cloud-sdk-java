@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
+import com.sap.cloud.environment.servicebinding.api.exception.ValueCastException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
@@ -25,6 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IdentityAuthenticationServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
+    private static final Exception NOT_AN_IAS_SERVICE_BINDING =
+        new DestinationNotFoundException("The bound service is not backed by the IAS service.");
+    private static final DestinationAccessException NO_ENDPOINTS_DEFINED =
+        new DestinationAccessException("The IAS-based service binding does not contain any HTTP endpoints.");
     @Nonnull
     private final ServiceBindingDestinationLoader delegateLoader;
 
@@ -45,17 +50,23 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceBinding serviceBinding = options.getServiceBinding();
-        if( !isIdentityAuthenticationServiceBinding(serviceBinding) ) {
-            return Try.failure(new DestinationNotFoundException("The bound service is not backed by the IAS service."));
+        final Try<IasServiceBindingView> maybeBindingView =
+            Try.of(() -> IasServiceBindingView.fromServiceBindingOrThrow(serviceBinding));
+        if( maybeBindingView.isFailure() ) {
+            return Try.failure(maybeBindingView.getCause());
         }
 
-        final List<EndpointEntry> endpoints = EndpointEntry.allFromServiceBinding(serviceBinding);
-        final EndpointEntry endpoint = getEndpoint(options, endpoints);
-        if( endpoint == null ) {
-            final DestinationAccessException exception =
-                new DestinationAccessException("Unable to determine the endpoint for the IAS-based service binding.");
-            return Try.failure(exception);
+        final IasServiceBindingView bindingView = maybeBindingView.get();
+        if( bindingView == null ) {
+            return Try.failure(NOT_AN_IAS_SERVICE_BINDING);
         }
+
+        final Try<HttpEndpointEntry> maybeEndpoint = Try.of(() -> getEndpointOrThrow(bindingView));
+        if( maybeEndpoint.isFailure() ) {
+            return Try.failure(maybeEndpoint.getCause());
+        }
+
+        final HttpEndpointEntry endpoint = maybeEndpoint.get();
 
         final ServiceBindingDestinationOptions.Builder optionsBuilder =
             ServiceBindingDestinationOptions
@@ -63,79 +74,237 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
                 .onBehalfOf(options.getOnBehalfOf())
                 .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 
-        if( endpoint.mutualTlsOnly ) {
+        if( !endpoint.requiresTokenForTechnicalAccess
+            && options.getOnBehalfOf() != OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
             optionsBuilder.withOption(BtpServiceOptions.IasOptions.withMutualTlsOnly());
+        } else if( bindingView.applicationName != null ) {
+            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withApplicationName(bindingView.applicationName));
         }
 
         return delegateLoader.tryGetDestination(optionsBuilder.build());
     }
 
-    private static boolean isIdentityAuthenticationServiceBinding( @Nonnull final ServiceBinding serviceBinding )
+    @Nonnull
+    private static HttpEndpointEntry getEndpointOrThrow( @Nonnull final IasServiceBindingView bindingView )
     {
-        final Object rawAuthenticationService = serviceBinding.getCredentials().get("authentication-service");
-        if( !(rawAuthenticationService instanceof String) ) {
-            return false;
+        if( bindingView.endpoints.isEmpty() ) {
+            throw NO_ENDPOINTS_DEFINED;
         }
 
-        return "identity".equalsIgnoreCase((String) rawAuthenticationService);
-    }
-
-    @Nullable
-    private static EndpointEntry getEndpoint(
-        @Nonnull final ServiceBindingDestinationOptions options,
-        @Nonnull final List<EndpointEntry> allEndpoints )
-    {
-        // TODO: implement a generic option so that users can select the endpoint they want to use
-        if( allEndpoints.size() != 1 ) {
-            log.warn("IAS-based service binding does not contain exactly one endpoint.");
-            return null;
+        if( bindingView.endpoints.size() > 1 ) {
+            log
+                .warn(
+                    "The IAS-based service binding for service '{}' contains multiple HTTP endpoints. Only the first one will be used.",
+                    bindingView.serviceIdentifier);
         }
 
-        return allEndpoints.get(0);
+        return bindingView.endpoints.get(0);
     }
 
     @Value
-    private static class EndpointEntry
+    private static class IasServiceBindingView
     {
-        String name;
-        URI uri;
-        boolean mutualTlsOnly;
-
         @Nonnull
-        static List<EndpointEntry> allFromServiceBinding( @Nonnull final ServiceBinding serviceBinding )
+        ServiceIdentifier serviceIdentifier;
+        @Nullable
+        String applicationName;
+        @Nonnull
+        List<HttpEndpointEntry> endpoints;
+
+        @Nullable
+        static IasServiceBindingView fromServiceBindingOrThrow( @Nonnull final ServiceBinding serviceBinding )
         {
-            final TypedMapView rootView = TypedMapView.of(serviceBinding);
-            if( !rootView.containsKey("endpoints") ) {
-                log.warn("IAS-based service binding does not contain any endpoints.");
-                return List.of();
+            final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
+            final TypedMapView authenticationService = getAuthenticationServiceOrNull(credentials);
+
+            if( authenticationService == null || !isBackedByIas(authenticationService) ) {
+                return null;
             }
-            final TypedMapView endpoints = rootView.getMapView("endpoints");
-            final List<EndpointEntry> entries = new ArrayList<>();
+
+            final String applicationName = getApplicationNameOrNull(authenticationService);
+            final List<HttpEndpointEntry> endpoints = getHttpEndpointsOrThrow(credentials);
+            return new IasServiceBindingView(
+                serviceBinding.getServiceIdentifier().orElse(ServiceIdentifier.of("unknown-service")),
+                applicationName,
+                endpoints);
+        }
+
+        private static TypedMapView getAuthenticationServiceOrNull( @Nonnull final TypedMapView credentials )
+        {
+            if( !credentials.containsKey("authentication-service") ) {
+                return null;
+            }
 
             try {
-                for( final String name : endpoints.getKeys() ) {
-                    final TypedMapView rawEntry = endpoints.getMapView(name);
-                    entries.add(of(name, rawEntry));
-                }
+                return credentials.getMapView("authentication-service");
             }
-            catch( final Exception e ) {
-                log.warn("Failed to parse IAS-based service binding endpoints.", e);
-                return List.of();
+            catch( final ValueCastException e ) {
+                // the `authentication-service` entry is not an object
+                return null;
+            }
+        }
+
+        private static boolean isBackedByIas( @Nonnull final TypedMapView authenticationService )
+        {
+            if( !authenticationService.containsKey("service-label") ) {
+                return false;
             }
 
-            return entries;
+            try {
+                return "identity".equalsIgnoreCase(authenticationService.getString("service-label"));
+            }
+            catch( final ValueCastException e ) {
+                // the `service-label` entry is not a string
+                return false;
+            }
+        }
+
+        @Nullable
+        private static String getApplicationNameOrNull( @Nonnull final TypedMapView authenticationService )
+        {
+            if( !authenticationService.containsKey("application-name") ) {
+                return null;
+            }
+
+            try {
+                return authenticationService.getString("application-name");
+            }
+            catch( final ValueCastException e ) {
+                // the `application-name` entry is not a string
+                return null;
+            }
         }
 
         @Nonnull
-        private static EndpointEntry of( @Nonnull final String name, @Nonnull final TypedMapView rawEntry )
+        private static List<HttpEndpointEntry> getHttpEndpointsOrThrow( @Nonnull final TypedMapView credentials )
         {
-            final URI uri = URI.create(rawEntry.getString("uri"));
-            boolean mutualTlsOnly = false;
-            if( rawEntry.containsKey("requires-token") ) {
-                mutualTlsOnly = !rawEntry.getBoolean("requires-token");
+            if( !credentials.containsKey("endpoints") ) {
+                throw NO_ENDPOINTS_DEFINED;
             }
 
-            return new EndpointEntry(name, uri, mutualTlsOnly);
+            final TypedMapView rawEndpoints;
+            try {
+                rawEndpoints = credentials.getMapView("endpoints");
+            }
+            catch( final ValueCastException e ) {
+                // the `endpoints` entry is not an object
+                throw new DestinationAccessException(
+                    "The IAS-based service binding does not contain a valid 'endpoints' attribute.",
+                    e);
+            }
+
+            final List<HttpEndpointEntry> endpoints = new ArrayList<>();
+            for( final String name : rawEndpoints.getKeys() ) {
+                final TypedMapView rawEntry;
+                try {
+                    rawEntry = rawEndpoints.getMapView(name);
+                }
+                catch( final ValueCastException e ) {
+                    // the entry is not an object
+                    throw new DestinationAccessException(
+                        "The IAS-based service binding contains an endpoint that is not an object.",
+                        e);
+                }
+
+                final HttpEndpointEntry endpoint = HttpEndpointEntry.fromRawEntryOrThrow(name, rawEntry);
+                if( endpoint != null ) {
+                    endpoints.add(endpoint);
+                }
+            }
+
+            return endpoints;
         }
+    }
+
+    @Value
+    private static class HttpEndpointEntry
+    {
+        @Nonnull
+        String name;
+        @Nonnull
+        URI uri;
+        boolean requiresTokenForTechnicalAccess;
+
+        boolean requiresMutualTls;
+
+        @Nullable
+        static HttpEndpointEntry fromRawEntryOrThrow( @Nonnull final String name, @Nonnull final TypedMapView rawEntry )
+        {
+            if( !isHttpEndpoint(rawEntry) ) {
+                return null;
+            }
+
+            final URI uri = getUriOrThrow(name, rawEntry);
+            final boolean requiresTokenForTechnicalAccess = getRequiresTokenForTechnicalAccessOrThrow(name, rawEntry);
+            final boolean requiresMutualTls = getRequiresMutualTlsOrThrow(name, rawEntry);
+
+            return new HttpEndpointEntry(name, uri, requiresTokenForTechnicalAccess, requiresMutualTls);
+        }
+
+        private static boolean isHttpEndpoint( @Nonnull final TypedMapView rawEntry )
+        {
+            if( !rawEntry.containsKey("protocol") ) {
+                return false;
+            }
+
+            try {
+                return "http".equalsIgnoreCase(rawEntry.getString("protocol"));
+            }
+            catch( final ValueCastException e ) {
+                // the entry is not of type `String`
+                return false;
+            }
+        }
+
+        @Nonnull
+        private static URI getUriOrThrow( @Nonnull final String endpointName, @Nonnull final TypedMapView rawEntry )
+        {
+            try {
+                return URI.create(rawEntry.getString("uri"));
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException(
+                    "The URI of the IAS-based service binding for endpoint '%s' is not a valid URI."
+                        .formatted(endpointName),
+                    e);
+            }
+        }
+
+        private static boolean getRequiresTokenForTechnicalAccessOrThrow(
+            @Nonnull final String endpointName,
+            @Nonnull final TypedMapView rawEntry )
+        {
+            try {
+                if( rawEntry.containsKey("requires-token-for-technical-access") ) {
+                    return rawEntry.getBoolean("requires-token-for-technical-access");
+                }
+                return true;
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException(
+                    "The 'requires-token-for-technical-access' attribute of the IAS-based service binding for endpoint '%s' is not a valid boolean."
+                        .formatted(endpointName),
+                    e);
+            }
+        }
+
+        private static
+            boolean
+            getRequiresMutualTlsOrThrow( @Nonnull final String endpointName, @Nonnull final TypedMapView rawEntry )
+        {
+            try {
+                if( rawEntry.containsKey("requires-mtls") ) {
+                    return rawEntry.getBoolean("requires-mtls");
+                }
+                return true;
+            }
+            catch( final Exception e ) {
+                throw new DestinationAccessException(
+                    "The 'requires-mtls' attribute of the IAS-based service binding for endpoint '%s' is not a valid boolean."
+                        .formatted(endpointName),
+                    e);
+            }
+        }
+
     }
 }

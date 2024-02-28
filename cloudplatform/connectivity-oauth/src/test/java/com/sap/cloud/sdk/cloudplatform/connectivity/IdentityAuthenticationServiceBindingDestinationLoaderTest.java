@@ -1,12 +1,12 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.nestedMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.net.URI;
@@ -53,15 +53,12 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     @Test
     void testMinimalServiceBinding()
     {
-        final DefaultServiceBinding binding =
-            DefaultServiceBinding
-                .builder()
-                .copy(nestedMap(entry("endpoints.foo.uri", "https://foo.uri")))
-                .withServiceIdentifier(SERVICE_IDENTIFIER)
-                .withCredentials(nestedMap(entry("authentication-service", "identity")))
-                .build();
-
-        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"));
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
             assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
@@ -74,26 +71,173 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
         sut.tryGetDestination(options);
 
         verify(delegate).tryGetDestination(any());
     }
 
     @Test
-    void testServiceBindingWithMTLSOnly()
+    void testEndpointWithoutTokenForTechnicalUser()
     {
-        final DefaultServiceBinding binding =
-            DefaultServiceBinding
-                .builder()
-                .copy(
-                    nestedMap(
-                        entry("endpoints.foo.uri", "https://foo.uri"),
-                        entry("endpoints.foo.requires-token", false)))
-                .withServiceIdentifier(SERVICE_IDENTIFIER)
-                .withCredentials(nestedMap(entry("authentication-service", "identity")))
-                .build();
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"),
+                entry("endpoints.foo.requires-token-for-technical-access", false));
+
+        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
+                .containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class).get())
+                .isEqualTo(BtpServiceOptions.IasOptions.withMutualTlsOnly().getValue());
+        });
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        sut.tryGetDestination(options);
+
+        verify(delegate).tryGetDestination(any());
+    }
+
+    @Test
+    void testEndpointWithoutTokenForTechnicalUserButNamedUserBehalf()
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"),
+                entry("endpoints.foo.requires-token-for-technical-access", false));
+
+        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
+                .containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class)).isEmpty();
+        });
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(binding)
+                .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                .build();
+        sut.tryGetDestination(options);
+
+        verify(delegate).tryGetDestination(any());
+    }
+
+    @Test
+    void testDelegateLoaderIsCalledForMultipleEndpoints()
+    {
+        // this test makes sure that our `IdentityAuthenticationServiceBindingDestinationLoader` is capable of dealing
+        // with multiple HTTP endpoints
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("endpoints.first.protocol", "http"),
+                entry("endpoints.first.uri", "https://first.uri"),
+                entry("endpoints.second.protocol", "http"),
+                entry("endpoints.second.uri", "https://second.uri"));
+
+        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class)).isEmpty();
+        });
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        sut.tryGetDestination(options);
+
+        verify(delegate).tryGetDestination(any());
+    }
+
+    @Test
+    void testOnBehalfIsForwarded()
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"));
+
+        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
+                .containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class)).isEmpty();
+        });
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(binding)
+                .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                .build();
+        sut.tryGetDestination(options);
+
+        verify(delegate).tryGetDestination(any());
+    }
+
+    @Test
+    void testBindingWithApplicationName()
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("authentication-service.application-name", "foo"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"));
+
+        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
+                .containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class).get())
+                .isEqualTo(BtpServiceOptions.IasOptions.withApplicationName("foo"));
+        });
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        sut.tryGetDestination(options);
+
+        verify(delegate).tryGetDestination(any());
+    }
+
+    @Test
+    void testApplicationNameIsIgnoredForMutualTlsOnly()
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("authentication-service.application-name", "foo"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"),
+                entry("endpoints.foo.requires-token-for-technical-access", false));
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
             assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
@@ -107,39 +251,41 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
         sut.tryGetDestination(options);
 
         verify(delegate).tryGetDestination(any());
     }
 
     @Test
-    void testOnBehalfIsForwarded()
+    void testApplicationNameTechnicalMutualTlsOnlyButNamedUserBehalf()
     {
-        final DefaultServiceBinding binding =
-            DefaultServiceBinding
-                .builder()
-                .copy(nestedMap(entry("endpoints.foo.uri", "https://foo.uri")))
-                .withServiceIdentifier(SERVICE_IDENTIFIER)
-                .withCredentials(nestedMap(entry("authentication-service", "identity")))
-                .build();
-
-        final ServiceBindingDestinationOptions options =
-            ServiceBindingDestinationOptions
-                .forService(binding)
-                .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
-                .build();
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                IDENTITY_AUTHENTICATION,
+                entry("authentication-service.service-label", "identity"),
+                entry("authentication-service.application-name", "foo"),
+                entry("endpoints.foo.protocol", "http"),
+                entry("endpoints.foo.uri", "https://foo.uri"),
+                entry("endpoints.foo.requires-token-for-technical-access", false));
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
             assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
             assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.NAMED_USER_CURRENT_TENANT);
             assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
                 .containsExactly(URI.create("https://foo.uri"));
-            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class)).isEmpty();
+            assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class).get())
+                .isEqualTo(BtpServiceOptions.IasOptions.withApplicationName("foo"));
         });
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(binding)
+                .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                .build();
         sut.tryGetDestination(options);
 
         verify(delegate).tryGetDestination(any());
@@ -151,54 +297,42 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final ServiceBinding binding =
             bindingWithCredentials(SERVICE_IDENTIFIER, entry("clientid", "foo"), entry("clientsecret", "bar"));
 
-        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        final ServiceBindingDestinationLoader delegate = mock(ServiceBindingDestinationLoader.class);
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
-            new IdentityAuthenticationServiceBindingDestinationLoader();
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
         final Try<HttpDestination> result = sut.tryGetDestination(options);
+
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationNotFoundException.class);
+
+        verify(delegate, never()).tryGetDestination(any());
     }
 
     @Test
     void testServiceBindingWithoutEndpoints()
     {
         final ServiceBinding binding =
-            bindingWithCredentials(SERVICE_IDENTIFIER, entry("authentication-service", "identity"));
+            bindingWithCredentials(IDENTITY_AUTHENTICATION, entry("authentication-service.service-label", "identity"));
 
-        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+        final ServiceBindingDestinationLoader delegate = mock(ServiceBindingDestinationLoader.class);
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
-            new IdentityAuthenticationServiceBindingDestinationLoader();
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
 
-        final Try<HttpDestination> result = sut.tryGetDestination(options);
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isExactlyInstanceOf(DestinationAccessException.class);
-    }
-
-    @Test
-    void testServiceBindingWithMultipleEndpoints()
-    {
-        final DefaultServiceBinding binding =
-            DefaultServiceBinding
-                .builder()
-                .copy(
-                    nestedMap(
-                        entry("endpoints.foo.uri", "https://foo.uri"),
-                        entry("endpoints.bar.uri", "https://bar.uri")))
-                .withServiceIdentifier(SERVICE_IDENTIFIER)
-                .withCredentials(nestedMap(entry("authentication-service", "identity")))
+        final ServiceBindingDestinationOptions options =
+            ServiceBindingDestinationOptions
+                .forService(binding)
+                .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
                 .build();
-
-        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
-
-        final IdentityAuthenticationServiceBindingDestinationLoader sut =
-            new IdentityAuthenticationServiceBindingDestinationLoader();
-
         final Try<HttpDestination> result = sut.tryGetDestination(options);
+
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationAccessException.class);
+
+        verify(delegate, never()).tryGetDestination(any());
     }
 
     @Nonnull
