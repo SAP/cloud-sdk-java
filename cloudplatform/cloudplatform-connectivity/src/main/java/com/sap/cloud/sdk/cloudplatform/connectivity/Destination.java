@@ -48,7 +48,7 @@ public interface Destination extends DestinationProperties
      * @throws IllegalArgumentException
      *             if this object cannot be converted as a {@code RfcDestination}.
      *
-     * @deprecated Please use {@link #asHttp()} instead.
+     * @deprecated Please use the {@link Destination} as is by removing the {@code asRfc()} conversion.
      */
     @Deprecated
     @Nonnull
