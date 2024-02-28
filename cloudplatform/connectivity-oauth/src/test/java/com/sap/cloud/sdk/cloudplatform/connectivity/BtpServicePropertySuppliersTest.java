@@ -411,10 +411,7 @@ class BtpServicePropertySuppliersTest
         void testMTLSOnly()
         {
             final ServiceBindingDestinationOptions options =
-                ServiceBindingDestinationOptions
-                    .forService(BINDING)
-                    .withOption(IasOptions.withMTLSAuthenticationOnly())
-                    .build();
+                ServiceBindingDestinationOptions.forService(BINDING).withOption(IasOptions.withMutualTlsOnly()).build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
@@ -435,7 +432,7 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(IasOptions.withMTLSAuthenticationOnly())
+                    .withOption(IasOptions.withMutualTlsOnly())
                     .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
                     .build();
 
@@ -462,8 +459,7 @@ class BtpServicePropertySuppliersTest
                 IasOptions.withConsumerClient("client-id");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
                 IasOptions.withConsumerClient("client-id", "tenant-id");
-            final ServiceBindingDestinationOptions.OptionsEnhancer<?> mTLSOnly =
-                IasOptions.withMTLSAuthenticationOnly();
+            final ServiceBindingDestinationOptions.OptionsEnhancer<?> mTLSOnly = IasOptions.withMutualTlsOnly();
 
             final List<ServiceBindingDestinationOptions.OptionsEnhancer<?>> allOptions =
                 List.of(applicationName, clientId, clientIdAndTenantId, mTLSOnly);

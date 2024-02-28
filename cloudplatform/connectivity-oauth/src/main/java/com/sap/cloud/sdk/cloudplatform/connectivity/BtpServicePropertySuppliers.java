@@ -177,7 +177,7 @@ class BtpServicePropertySuppliers
                 return;
             }
 
-            if( o.isMTLSAuthenticationOnly() && mTLSOnlyIsSupported() ) {
+            if( o.isMutualTlsOnly() && mutualTlsOnlyIsSupported() ) {
                 optionsBuilder.withSkipTokenRetrieval(true);
                 return;
             }
@@ -200,7 +200,7 @@ class BtpServicePropertySuppliers
             }
         }
 
-        private boolean mTLSOnlyIsSupported()
+        private boolean mutualTlsOnlyIsSupported()
         {
             final OnBehalfOf behalf = options.getOnBehalfOf();
             if( behalf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {

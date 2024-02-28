@@ -154,7 +154,7 @@ public final class BtpServiceOptions
          * @return An instance of {@link OptionsEnhancer} that will lead to mTLS authentication only.
          */
         @Nonnull
-        public static OptionsEnhancer<?> withMTLSAuthenticationOnly()
+        public static OptionsEnhancer<?> withMutualTlsOnly()
         {
             return new IasCommunicationOptions(null, null, null, true);
         }
@@ -163,7 +163,7 @@ public final class BtpServiceOptions
          * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given application
          * provider name when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMutualTlsOnly()} and
          * {@link #withConsumerClient(String, String)}.
          *
          * @param applicationName
@@ -182,7 +182,7 @@ public final class BtpServiceOptions
          * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given consumer client
          * ID when performing token retrievals. This is needed in <i>Service-To-App</i> communication scenarios.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMutualTlsOnly()} and
          * {@link #withApplicationName(String)}.
          *
          * @param consumerClientId
@@ -202,7 +202,7 @@ public final class BtpServiceOptions
          * and tenant ID when performing token retrievals. This is needed in <i>Service-To-App</i> communication
          * scenarios.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMTLSAuthenticationOnly()} and
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withMutualTlsOnly()} and
          * {@link #withApplicationName(String)}.
          *
          * @param consumerClientId
@@ -235,7 +235,7 @@ public final class BtpServiceOptions
 
         /**
          * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
-         * to {@link #withMTLSAuthenticationOnly()}, {@link #withApplicationName(String)}, and
+         * to {@link #withMutualTlsOnly()}, {@link #withApplicationName(String)}, and
          * {@link #withConsumerClient(String, String)}.
          */
         @Value
@@ -248,7 +248,7 @@ public final class BtpServiceOptions
             String consumerClientId;
             @Nullable
             String consumerTenantId;
-            boolean mTLSAuthenticationOnly;
+            boolean mutualTlsOnly;
 
             @Nonnull
             @Override

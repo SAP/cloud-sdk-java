@@ -30,15 +30,14 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
 
     public IdentityAuthenticationServiceBindingDestinationLoader()
     {
-        this(null);
+        this(ServiceBindingDestinationLoader.defaultLoaderChain());
     }
 
     // for testing purposes
     IdentityAuthenticationServiceBindingDestinationLoader(
-        @Nullable final ServiceBindingDestinationLoader delegateLoader )
+        @Nonnull final ServiceBindingDestinationLoader delegateLoader )
     {
-        this.delegateLoader =
-            delegateLoader != null ? delegateLoader : ServiceBindingDestinationLoader.defaultLoaderChain();
+        this.delegateLoader = delegateLoader;
     }
 
     @Nonnull
@@ -64,8 +63,8 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
                 .onBehalfOf(options.getOnBehalfOf())
                 .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 
-        if( endpoint.mTLSOnly ) {
-            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly());
+        if( endpoint.mutualTlsOnly ) {
+            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withMutualTlsOnly());
         }
 
         return delegateLoader.tryGetDestination(optionsBuilder.build());
@@ -100,7 +99,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     {
         String name;
         URI uri;
-        boolean mTLSOnly;
+        boolean mutualTlsOnly;
 
         @Nonnull
         static List<EndpointEntry> allFromServiceBinding( @Nonnull final ServiceBinding serviceBinding )
@@ -131,12 +130,12 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         private static EndpointEntry of( @Nonnull final String name, @Nonnull final TypedMapView rawEntry )
         {
             final URI uri = URI.create(rawEntry.getString("uri"));
-            boolean mTLSOnly = false;
+            boolean mutualTlsOnly = false;
             if( rawEntry.containsKey("requires-token") ) {
-                mTLSOnly = !rawEntry.getBoolean("requires-token");
+                mutualTlsOnly = !rawEntry.getBoolean("requires-token");
             }
 
-            return new EndpointEntry(name, uri, mTLSOnly);
+            return new EndpointEntry(name, uri, mutualTlsOnly);
         }
     }
 }

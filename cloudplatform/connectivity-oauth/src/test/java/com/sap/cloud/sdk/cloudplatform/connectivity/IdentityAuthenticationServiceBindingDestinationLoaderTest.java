@@ -101,7 +101,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
             assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasTargetUri.class))
                 .containsExactly(URI.create("https://foo.uri"));
             assertThat(delegateOptions.getOption(BtpServiceOptions.IasOptions.IasCommunicationOptions.class).get())
-                .isEqualTo(BtpServiceOptions.IasOptions.withMTLSAuthenticationOnly());
+                .isEqualTo(BtpServiceOptions.IasOptions.withMutualTlsOnly());
         });
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
