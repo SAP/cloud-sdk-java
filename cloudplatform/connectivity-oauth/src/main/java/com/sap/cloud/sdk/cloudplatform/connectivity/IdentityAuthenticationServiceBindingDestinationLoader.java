@@ -33,6 +33,8 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         new DestinationNotFoundException("The bound service is not backed by the IAS service.");
     private static final DestinationAccessException NO_ENDPOINTS_DEFINED =
         new DestinationAccessException("The IAS-based service binding does not contain any HTTP endpoints.");
+
+    private static final ServiceIdentifier NULL_IDENTIFIER = ServiceIdentifier.of("unknown-service");
     @Nonnull
     private final ServiceBindingDestinationLoader delegateLoader;
 
@@ -130,7 +132,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             final String applicationName = getApplicationNameOrNull(authenticationService);
             final List<HttpEndpointEntry> endpoints = getHttpEndpointsOrThrow(credentials);
             return new IasServiceBindingView(
-                serviceBinding.getServiceIdentifier().orElse(ServiceIdentifier.of("unknown-service")),
+                serviceBinding.getServiceIdentifier().orElse(NULL_IDENTIFIER),
                 applicationName,
                 endpoints);
         }
