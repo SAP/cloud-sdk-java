@@ -83,6 +83,7 @@ class DestinationServiceFactory
         }
     }
 
+    @Deprecated
     private static Destination handleRfcDestination( final DestinationProperties baseProperties )
     {
         return DefaultRfcDestination.fromProperties(baseProperties);
