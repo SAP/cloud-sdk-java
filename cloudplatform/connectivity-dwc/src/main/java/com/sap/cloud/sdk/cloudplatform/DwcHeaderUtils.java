@@ -35,6 +35,7 @@ public class DwcHeaderUtils
      * The name of the header that contains the Deploy with Confidence scopes information.
      */
     public static final String DWC_SUBDOMAIN_HEADER = "dwc-subdomain";
+    public static final String DWC_JWT_HEADER = "dwc-jwt";
 
     /**
      * This method fetches the value of the {@link #DWC_TENANT_HEADER} header or throws an
@@ -83,6 +84,20 @@ public class DwcHeaderUtils
             throw new DwcHeaderNotFoundException("Header value of " + DWC_USER_HEADER + " has no logon name.");
         }
         return logonName;
+    }
+
+    /**
+     * This method fetches the value of the {@link #DWC_JWT_HEADER} header or throws an
+     * {@link DwcHeaderNotFoundException} if the header was not found.
+     *
+     * @return The value of the {@link #DWC_JWT_HEADER} header.
+     * @throws DwcHeaderNotFoundException
+     *             if the header was not found.
+     */
+    @Nonnull
+    public static String getDwcTokenOrThrow()
+    {
+        return getNonEmptyDwcHeaderValue(DWC_JWT_HEADER);
     }
 
     @Nonnull
