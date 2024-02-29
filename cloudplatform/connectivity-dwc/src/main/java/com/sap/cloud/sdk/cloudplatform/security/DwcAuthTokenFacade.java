@@ -11,6 +11,9 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
 
 import io.vavr.control.Try;
 
+/**
+ * Auth token facade for Deploy with Confidence (DwC) environment.
+ */
 public class DwcAuthTokenFacade extends DefaultAuthTokenFacade
 {
     private static final String AUTH_TOKEN = AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN;

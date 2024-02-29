@@ -35,6 +35,9 @@ public class DwcHeaderUtils
      * The name of the header that contains the Deploy with Confidence scopes information.
      */
     public static final String DWC_SUBDOMAIN_HEADER = "dwc-subdomain";
+    /**
+     * The name of the header that contains the Deploy with Confidence JWT token.
+     */
     public static final String DWC_JWT_HEADER = "dwc-jwt";
 
     /**
