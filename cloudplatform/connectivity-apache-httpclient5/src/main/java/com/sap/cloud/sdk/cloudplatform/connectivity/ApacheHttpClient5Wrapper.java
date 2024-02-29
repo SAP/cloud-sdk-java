@@ -19,7 +19,10 @@ import org.apache.hc.core5.io.CloseMode;
 
 import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 class ApacheHttpClient5Wrapper extends CloseableHttpClient
 {
     private final CloseableHttpClient httpClient;
+    @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
 
     @Override
@@ -70,7 +74,22 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         return httpClient.execute(target, wrapRequest(request), context);
     }
 
-    private ClassicHttpRequest wrapRequest( final ClassicHttpRequest request )
+    ApacheHttpClient5Wrapper withDestination( final HttpDestinationProperties destination )
+    {
+        // explicitly check the reference equality, since equals doesn't check header providers
+        // this is a slight improvement, avoiding unnecessary wrapper instantiation
+        // in cases where destination objects are reused / served from cache
+        if( !destination.equals(this.destination) ) {
+            throw new ShouldNotHappenException(
+                "This method must not be used outside of updating an instance of ApacheHttpClient5Wrapper for http clients served from the ApacheHttpClient5Cache.");
+        }
+        if( destination == this.destination ) {
+            return this;
+        }
+        return new ApacheHttpClient5Wrapper(httpClient, destination);
+    }
+
+    ClassicHttpRequest wrapRequest( final ClassicHttpRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
         URI requestUri;

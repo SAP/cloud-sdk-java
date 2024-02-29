@@ -92,18 +92,21 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
 
     private Try<HttpDestination> toProxiedDestination( @Nonnull final HttpDestination base )
     {
+        final DefaultHttpDestination.Builder builder =
+            DefaultHttpDestination
+                .fromDestination(base)
+                // be sure to use exactly this instance of connectivityResolver since it has a cache attached
+                .headerProviders(connectivityResolver);
+        // don't override the proxy URL if it has been set explicitly/manually already
+        if( base.getProxyConfiguration().isDefined() ) {
+            return Try.of(builder::buildInternal);
+        }
         final Try<URI> proxyUrl = Try.of(connectivityResolver::getProxyUrl);
         if( proxyUrl.isFailure() ) {
             return Try
                 .failure(
                     new DestinationAccessException("Failed to resolve on-premise proxy URL.", proxyUrl.getCause()));
         }
-        final DefaultHttpDestination.Builder builder =
-            DefaultHttpDestination
-                .fromDestination(base)
-                // be sure to use exactly this instance of connectivityResolver since it has a cache attached
-                .headerProviders(connectivityResolver);
-
         return proxyUrl.map(builder::proxy).map(DefaultHttpDestination.Builder::buildInternal);
     }
 

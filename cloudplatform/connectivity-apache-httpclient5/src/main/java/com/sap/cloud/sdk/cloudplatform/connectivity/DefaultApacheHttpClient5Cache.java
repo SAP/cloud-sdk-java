@@ -94,6 +94,9 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
         catch( final RuntimeException e ) {
             return Try.failure(new HttpClientInstantiationException(e));
         }
+        if( destination != null && httpClient instanceof ApacheHttpClient5Wrapper ) {
+            return Try.success(((ApacheHttpClient5Wrapper) httpClient).withDestination(destination));
+        }
         return Try.success(httpClient);
     }
 
