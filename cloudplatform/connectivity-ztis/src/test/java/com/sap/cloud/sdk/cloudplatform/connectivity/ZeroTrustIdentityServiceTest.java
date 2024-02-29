@@ -3,26 +3,22 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import io.spiffe.svid.x509svid.X509Svid;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import io.spiffe.workloadapi.X509Source;
-import io.vavr.Lazy;
 
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Date;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import io.spiffe.svid.x509svid.X509Svid;
 
 class ZeroTrustIdentityServiceTest
 {
@@ -63,7 +59,6 @@ class ZeroTrustIdentityServiceTest
         sut.getOrCreateKeyStore();
         assertThat(sut.isKeyStoreCached(svidMock)).isTrue();
     }
-
 
     @Test
     void testCheckForInvalidCertificate()

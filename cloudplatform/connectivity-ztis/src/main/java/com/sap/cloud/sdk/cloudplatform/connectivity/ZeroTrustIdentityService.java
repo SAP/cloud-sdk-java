@@ -10,6 +10,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -24,8 +26,6 @@ import io.vavr.Lazy;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.annotation.Nonnull;
 
 @Beta
 @Slf4j
@@ -67,7 +67,7 @@ public class ZeroTrustIdentityService
     }
 
     @Nonnull
-    KeyStore getOrCreateKeyStore()
+    public KeyStore getOrCreateKeyStore()
     {
         final X509Svid svid = getX509Svid();
 
@@ -75,7 +75,7 @@ public class ZeroTrustIdentityService
             return keyStoreCache.keyStore();
         }
         // double-checked locking
-        synchronized (this) {
+        synchronized( this ) {
             if( isKeyStoreCached(svid) ) {
                 return keyStoreCache.keyStore();
             }
@@ -86,14 +86,16 @@ public class ZeroTrustIdentityService
         }
     }
 
-    private void assertSvidNotExpired(X509Svid svid) {
+    private void assertSvidNotExpired( X509Svid svid )
+    {
         if( svid.getLeaf().getNotAfter().before(Date.from(Instant.now())) ) {
-            throw new IllegalStateException("The provided X509 SVID has expired. The expiry date was " + svid.getLeaf().getNotAfter() + ".");
+            throw new IllegalStateException(
+                "The provided X509 SVID has expired. The expiry date was " + svid.getLeaf().getNotAfter() + ".");
         }
     }
 
     @Nonnull
-    KeyStore loadKeyStore(@Nonnull final X509Svid svid)
+    KeyStore loadKeyStore( @Nonnull final X509Svid svid )
     {
         log.debug("Creating new KeyStore for SVID with expiration date {}", svid.getLeaf().getNotAfter());
         final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
