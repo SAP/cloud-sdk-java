@@ -205,7 +205,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
             bindingWithCredentials(
                 IDENTITY_AUTHENTICATION,
                 entry("authentication-service.service-label", "identity"),
-                entry("authentication-service.application-name", "foo"),
+                entry("authentication-service.app-name", "foo"),
                 entry("endpoints.foo.protocol", "http"),
                 entry("endpoints.foo.uri", "https://foo.uri"));
 
@@ -234,7 +234,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
             bindingWithCredentials(
                 IDENTITY_AUTHENTICATION,
                 entry("authentication-service.service-label", "identity"),
-                entry("authentication-service.application-name", "foo"),
+                entry("authentication-service.app-name", "foo"),
                 entry("endpoints.foo.protocol", "http"),
                 entry("endpoints.foo.uri", "https://foo.uri"),
                 entry("endpoints.foo.requires-token-for-technical-access", false));
@@ -264,7 +264,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
             bindingWithCredentials(
                 IDENTITY_AUTHENTICATION,
                 entry("authentication-service.service-label", "identity"),
-                entry("authentication-service.application-name", "foo"),
+                entry("authentication-service.app-name", "foo"),
                 entry("endpoints.foo.protocol", "http"),
                 entry("endpoints.foo.uri", "https://foo.uri"),
                 entry("endpoints.foo.requires-token-for-technical-access", false));

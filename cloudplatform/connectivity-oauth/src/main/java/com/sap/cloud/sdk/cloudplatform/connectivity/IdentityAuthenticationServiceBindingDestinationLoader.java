@@ -170,12 +170,12 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         @Nullable
         private static String getApplicationNameOrNull( @Nonnull final TypedMapView authenticationService )
         {
-            if( !authenticationService.containsKey("application-name") ) {
+            if( !authenticationService.containsKey("app-name") ) {
                 return null;
             }
 
             try {
-                return authenticationService.getString("application-name");
+                return authenticationService.getString("app-name");
             }
             catch( final ValueCastException e ) {
                 // the `application-name` entry is not a string
@@ -252,7 +252,8 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         private static boolean isHttpEndpoint( @Nonnull final TypedMapView rawEntry )
         {
             if( !rawEntry.containsKey("protocol") ) {
-                return false;
+                // no `protocol` means HTTP implicitly
+                return true;
             }
 
             try {
