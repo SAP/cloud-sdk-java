@@ -32,7 +32,9 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     private static final Exception NOT_AN_IAS_SERVICE_BINDING =
         new DestinationNotFoundException("The bound service is not backed by the IAS service.");
     private static final DestinationAccessException NO_ENDPOINTS_DEFINED =
-        new DestinationAccessException("The IAS-based service binding does not contain any HTTP endpoints.");
+        new DestinationAccessException("The IAS-based service binding does not contain any endpoints.");
+    private static final DestinationAccessException NOT_EXACTLY_ONE_ENDPOINT =
+        new DestinationAccessException("The IAS-based service binding contains multiple HTTP endpoints.");
 
     private static final ServiceIdentifier NULL_IDENTIFIER = ServiceIdentifier.of("unknown-service");
     @Nonnull
@@ -69,7 +71,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             return Try.failure(NOT_AN_IAS_SERVICE_BINDING);
         }
 
-        final Try<HttpEndpointEntry> maybeEndpoint = Try.of(() -> getEndpointOrThrow(bindingView));
+        final Try<HttpEndpointEntry> maybeEndpoint = Try.of(() -> getEndpointOrThrow(options, bindingView));
         if( maybeEndpoint.isFailure() ) {
             return Try.failure(maybeEndpoint.getCause());
         }
@@ -82,28 +84,21 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
                 .onBehalfOf(options.getOnBehalfOf())
                 .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 
-        if( !endpoint.requiresTokenForTechnicalAccess
-            && options.getOnBehalfOf() != OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
-            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withMutualTlsOnly());
-        } else if( bindingView.applicationName != null ) {
-            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withApplicationName(bindingView.applicationName));
+        if( !endpoint.alwaysRequiresToken ) {
+            optionsBuilder
+                .withOption(BtpServiceOptions.IasOptions.withMutualTlsForTechnicalProviderAuthenticationOnly());
         }
 
         return delegateLoader.tryGetDestination(optionsBuilder.build());
     }
 
     @Nonnull
-    private static HttpEndpointEntry getEndpointOrThrow( @Nonnull final IasServiceBindingView bindingView )
+    private static HttpEndpointEntry getEndpointOrThrow(
+        @Nonnull final ServiceBindingDestinationOptions options,
+        @Nonnull final IasServiceBindingView bindingView )
     {
-        if( bindingView.endpoints.isEmpty() ) {
-            throw NO_ENDPOINTS_DEFINED;
-        }
-
-        if( bindingView.endpoints.size() > 1 ) {
-            log
-                .warn(
-                    "The IAS-based service binding for service '{}' contains multiple HTTP endpoints. Only the first one will be used.",
-                    bindingView.serviceIdentifier);
+        if( bindingView.endpoints.size() != 1 ) {
+            throw NOT_EXACTLY_ONE_ENDPOINT;
         }
 
         return bindingView.endpoints.get(0);
@@ -231,8 +226,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         String name;
         @Nonnull
         URI uri;
-        boolean requiresTokenForTechnicalAccess;
-
+        boolean alwaysRequiresToken;
         boolean requiresMutualTls;
 
         @Nullable
@@ -243,7 +237,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             }
 
             final URI uri = getUriOrThrow(name, rawEntry);
-            final boolean requiresTokenForTechnicalAccess = getRequiresTokenForTechnicalAccessOrThrow(name, rawEntry);
+            final boolean requiresTokenForTechnicalAccess = getAlwaysRequiresTokenOrThrow(name, rawEntry);
             final boolean requiresMutualTls = getRequiresMutualTlsOrThrow(name, rawEntry);
 
             return new HttpEndpointEntry(name, uri, requiresTokenForTechnicalAccess, requiresMutualTls);
@@ -279,19 +273,19 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             }
         }
 
-        private static boolean getRequiresTokenForTechnicalAccessOrThrow(
-            @Nonnull final String endpointName,
-            @Nonnull final TypedMapView rawEntry )
+        private static
+            boolean
+            getAlwaysRequiresTokenOrThrow( @Nonnull final String endpointName, @Nonnull final TypedMapView rawEntry )
         {
             try {
-                if( rawEntry.containsKey("requires-token-for-technical-access") ) {
-                    return rawEntry.getBoolean("requires-token-for-technical-access");
+                if( rawEntry.containsKey("always-requires-token") ) {
+                    return rawEntry.getBoolean("always-requires-token");
                 }
                 return true;
             }
             catch( final Exception e ) {
                 throw new DestinationAccessException(
-                    "The 'requires-token-for-technical-access' attribute of the IAS-based service binding for endpoint '%s' is not a valid boolean."
+                    "The 'always-requires-token' attribute of the IAS-based service binding for endpoint '%s' is not a valid boolean."
                         .formatted(endpointName),
                     e);
             }
