@@ -71,7 +71,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             return Try.failure(NOT_AN_IAS_SERVICE_BINDING);
         }
 
-        final Try<HttpEndpointEntry> maybeEndpoint = Try.of(() -> getEndpointOrThrow(options, bindingView));
+        final Try<HttpEndpointEntry> maybeEndpoint = Try.of(() -> getEndpointOrThrow(bindingView));
         if( maybeEndpoint.isFailure() ) {
             return Try.failure(maybeEndpoint.getCause());
         }
@@ -93,9 +93,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     }
 
     @Nonnull
-    private static HttpEndpointEntry getEndpointOrThrow(
-        @Nonnull final ServiceBindingDestinationOptions options,
-        @Nonnull final IasServiceBindingView bindingView )
+    private static HttpEndpointEntry getEndpointOrThrow( @Nonnull final IasServiceBindingView bindingView )
     {
         if( bindingView.endpoints.size() != 1 ) {
             throw NOT_EXACTLY_ONE_ENDPOINT;
