@@ -87,8 +87,7 @@ class DefaultMavenRepositoryAccessor implements MavenRepositoryAccessor
                     + ".");
         }
         final String latestVersion;
-        try {
-            final InputStream stream = response.getEntity().getContent();
+        try( final InputStream stream = response.getEntity().getContent() ) {
             final JsonNode tree = new XmlMapper().readTree(stream);
             latestVersion = tree.path("versioning").path("latest").asText();
         }
