@@ -498,12 +498,14 @@ public final class DefaultHttpDestination implements HttpDestination
             .getPropertyNames()
             .forEach(propertyName -> builder.property(propertyName, destination.get(propertyName).get()));
 
-        if( destination instanceof final DefaultHttpDestination httpDest ) {
-            builder.headers(httpDest.customHeaders);
-            builder.headerProviders(httpDest.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
+        if( destination instanceof DefaultHttpDestination ) {
+            final DefaultHttpDestination httpDestination = (DefaultHttpDestination) destination;
+            builder.headers(httpDestination.customHeaders);
+            builder
+                .headerProviders(httpDestination.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
 
-            httpDest.getKeyStore().map(builder::keyStore);
-            httpDest.getTrustStore().map(builder::trustStore);
+            httpDestination.getKeyStore().map(builder::keyStore);
+            httpDestination.getTrustStore().map(builder::trustStore);
         }
 
         return builder;
