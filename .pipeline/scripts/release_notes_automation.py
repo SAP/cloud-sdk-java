@@ -31,20 +31,12 @@ unchanged_sections = [
 """,
 """### 📈 Improvements
 
-- Dependency Updates:
-  - SAP dependency updates:
-    - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-  - Other dependency updates:
-    - Major version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-    - Minor version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
+- 
 
 """,
 """### 🐛 Fixed Issues
 
 - 
-
 """]
 
 def remove_unchanged_sections(file, unchanged_sections):
@@ -66,25 +58,6 @@ def link_github_release(file, version):
     return file
 
 
-def clean_up_dependency_updates(file):
-    empty_dependency_update = "- Update \[thing\]\(https://link-to-thing\) from `a.b.c` to `x.z.y`\n"
-    sap_dependency_update = "  - SAP dependency updates:\n    "+empty_dependency_update
-    major_dependency_update = "    - Major version updates:\n      "+empty_dependency_update
-    minor_dependency_update = "    - Minor version updates:\n      "+empty_dependency_update
-    other_dependency_update = "  - Other dependency updates:\n    "+major_dependency_update+"\n"+minor_dependency_update
-
-    # Dependency Updates cannot be ALL empty since we already removed the entire empty section in remove_unchanged_sections()
-    # First we remove the biggest strings, then the smaller ones
-
-    # 2 biggest strings
-    file = re.sub(sap_dependency_update, "", file)
-    file = re.sub(other_dependency_update, "", file)
-    # smaller strings
-    file = re.sub(major_dependency_update, "", file)
-    file = re.sub(minor_dependency_update, "", file)
-    # smallest leftovers
-    file = re.sub(empty_dependency_update, "", file)
-    return file
 
 releases_pattern = re.compile(r"^## ")
 def count_releases(filename):
@@ -126,7 +99,6 @@ if __name__ == '__main__':
     file = remove_unchanged_sections(file, unchanged_sections)
     file = set_header(file, args.version)
     file = link_github_release(file, args.version)
-    file = clean_up_dependency_updates(file)
 
     target_file = find_target_file(args.version)
     write_release_notes(args.folder, target_file)
