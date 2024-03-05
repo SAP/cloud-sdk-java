@@ -508,14 +508,15 @@ public final class DefaultHttpDestination implements HttpDestination
     @Override
     public boolean equals( @Nullable final Object o )
     {
-        if( this == o )
+        if( this == o ) {
             return true;
+        }
 
-        if( o == null || getClass() != o.getClass() )
+        if( o == null || getClass() != o.getClass() ) {
             return false;
+        }
 
         final DefaultHttpDestination that = (DefaultHttpDestination) o;
-
         return new EqualsBuilder()
             .append(baseProperties, that.baseProperties)
             .append(customHeaders, that.customHeaders)
