@@ -27,6 +27,7 @@ class DestinationKeyStoreComparator
      *            The KeyStore to calculate the hash code for.
      * @return The hash code, or empty in case of error or non-certificate based keystore entries.
      */
+    @Nonnull
     static OptionalInt resolveKeyStoreHashCode( @Nonnull final KeyStore ks )
     {
         final HashCodeBuilder out = new HashCodeBuilder(17, 37);
@@ -54,6 +55,7 @@ class DestinationKeyStoreComparator
      *            The KeyStore to iterate.
      * @return An array with certificates, or empty in case of error or non-certificate based keystore entries.
      */
+    @Nonnull
     static Certificate[] resolveCertificatesOnly( @Nonnull final KeyStore ks )
     {
         final ArrayList<Certificate> out = new ArrayList<>();
