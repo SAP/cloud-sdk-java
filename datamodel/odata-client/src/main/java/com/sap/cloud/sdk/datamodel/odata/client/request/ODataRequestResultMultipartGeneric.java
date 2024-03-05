@@ -44,6 +44,9 @@ public class ODataRequestResultMultipartGeneric
     private final HttpResponse httpResponse;
 
     @Nonnull
+    private final MultipartParser parser = MultipartParser.ofHttpResponse(getHttpResponse());
+
+    @Nonnull
     private final Lazy<Try<List<List<HttpResponse>>>> batchResponses = Lazy.of(this::loadBatchResponses);
 
     /**
@@ -143,12 +146,10 @@ public class ODataRequestResultMultipartGeneric
                     e));
     }
 
-    @SuppressWarnings( "resource" ) // The close method is called indirectly
     @Nonnull
     private Try<List<List<HttpResponse>>> loadBatchResponses()
     {
-        return Try
-            .of(() -> MultipartParser.ofHttpResponse(getHttpResponse()).toList(MultipartHttpResponse::ofHttpContent));
+        return Try.of(() -> parser.toList(MultipartHttpResponse::ofHttpContent));
     }
 
     /**
@@ -160,9 +161,8 @@ public class ODataRequestResultMultipartGeneric
     @Override
     public void close()
     {
-        final HttpEntity ent = getHttpResponse().getEntity();
-        if( ent != null ) {
-            Try.run(() -> EntityUtils.consume(ent)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
-        }
+        final HttpEntity entity = getHttpResponse().getEntity();
+        Try.run(() -> EntityUtils.consume(entity)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
+        parser.close();
     }
 }
