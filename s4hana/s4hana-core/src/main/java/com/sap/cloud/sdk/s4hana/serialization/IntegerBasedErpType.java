@@ -185,6 +185,7 @@ public abstract class IntegerBasedErpType<T extends IntegerBasedErpType<T>> impl
         return toErpString();
     }
 
+    @SuppressWarnings( "PMD.UselessParentheses" )
     private String toErpString()
     {
         if( value == null ) {
