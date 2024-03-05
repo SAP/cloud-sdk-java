@@ -60,6 +60,7 @@ class MultipartParser implements AutoCloseable
      *            The HTTP response to read from: content-type, input-stream and charset.
      * @return A new instance of {@link MultipartParser}.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // The attached InputStream is closed by the MultipartParser itself.
     public static MultipartParser ofHttpResponse( @Nonnull final HttpResponse httpResponse )
     {
         final HttpEntity entity = httpResponse.getEntity();
