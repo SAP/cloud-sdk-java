@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -44,10 +45,10 @@ public class ODataRequestResultMultipartGeneric
     private final HttpResponse httpResponse;
 
     @Nonnull
-    private final MultipartParser parser = MultipartParser.ofHttpResponse(getHttpResponse());
+    private final Lazy<Try<List<List<HttpResponse>>>> batchResponses = Lazy.of(this::loadBatchResponses);
 
     @Nonnull
-    private final Lazy<Try<List<List<HttpResponse>>>> batchResponses = Lazy.of(this::loadBatchResponses);
+    private final List<Runnable> closeHandlers = new ArrayList<>();
 
     /**
      * Create an instance of OData request result for multipart/mixed responses.
@@ -149,7 +150,12 @@ public class ODataRequestResultMultipartGeneric
     @Nonnull
     private Try<List<List<HttpResponse>>> loadBatchResponses()
     {
-        return Try.of(() -> parser.toList(MultipartHttpResponse::ofHttpContent));
+        return Try.of(() -> {
+            @SuppressWarnings( "resource" ) // resource will be registered in the close handlers
+            final MultipartParser parser = MultipartParser.ofHttpResponse(getHttpResponse());
+            closeHandlers.add(parser::close);
+            return parser.toList(MultipartHttpResponse::ofHttpContent);
+        });
     }
 
     /**
@@ -161,8 +167,11 @@ public class ODataRequestResultMultipartGeneric
     @Override
     public void close()
     {
+        // close HTTP entity
         final HttpEntity entity = getHttpResponse().getEntity();
         Try.run(() -> EntityUtils.consume(entity)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
-        parser.close();
+
+        // close any additional registered handler
+        closeHandlers.forEach(Runnable::run);
     }
 }

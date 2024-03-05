@@ -16,16 +16,8 @@
 
 ### 📈 Improvements
 
-- Dependency Updates:
-  - SAP dependency updates:
-    - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-  - Other dependency updates:
-    - Major version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
-    - Minor version updates:
-      - Update [thing](https://link-to-thing) from `a.b.c` to `x.z.y`
+- 
 
 ### 🐛 Fixed Issues
 
 - 
-
