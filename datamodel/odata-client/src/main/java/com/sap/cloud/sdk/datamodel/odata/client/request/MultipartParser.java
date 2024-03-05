@@ -251,7 +251,9 @@ class MultipartParser implements AutoCloseable
     }
 
     @Override
-    public void close() throws Exception {
+    public void close()
+        throws Exception
+    {
         reader.close();
     }
 }

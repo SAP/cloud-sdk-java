@@ -9,8 +9,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
@@ -26,7 +29,11 @@ import lombok.extern.slf4j.Slf4j;
  * OData request result for reading entities.
  */
 @Slf4j
-public class ODataRequestResultMultipartGeneric implements ODataRequestResultMultipart, ODataRequestResult
+public class ODataRequestResultMultipartGeneric
+    implements
+    ODataRequestResultMultipart,
+    ODataRequestResult,
+    AutoCloseable
 {
     @Getter( AccessLevel.PRIVATE )
     @Nonnull
@@ -117,6 +124,9 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
 
     /**
      * Get the multi-part segments as raw HTTP response object. Response objects of same changesets are grouped.
+     * <p>
+     * <b>Please note:</b> The returned list is lazily evaluated. The underlying HTTP response entity is being parsed,
+     * upon list access.
      *
      * @return The virtual HTTP response objects.
      */
@@ -133,10 +143,26 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
                     e));
     }
 
+    @SuppressWarnings( "resource" ) // The close method is called indirectly
     @Nonnull
     private Try<List<List<HttpResponse>>> loadBatchResponses()
     {
         return Try
             .of(() -> MultipartParser.ofHttpResponse(getHttpResponse()).toList(MultipartHttpResponse::ofHttpContent));
+    }
+
+    /**
+     * Closes the underlying HTTP response entity.
+     *
+     * @since 5.5.0
+     */
+    @Beta
+    @Override
+    public void close()
+    {
+        final HttpEntity ent = getHttpResponse().getEntity();
+        if( ent != null ) {
+            Try.run(() -> EntityUtils.consume(ent)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
+        }
     }
 }
