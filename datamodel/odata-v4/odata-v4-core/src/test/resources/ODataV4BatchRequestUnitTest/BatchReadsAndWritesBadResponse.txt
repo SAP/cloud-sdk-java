@@ -1,0 +1,24 @@
+--batchresponse_hKXEHg8m-qSXb-TCW6-dl3M-4r2H6qxgAbaG
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: 3
+
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=utf-8
+Content-Length: 258
+OData-Version: 4.0
+
+{
+   "error" : {
+      "code" : "-5002",
+      "details" : [
+         {
+            "code" : "",
+            "message" : ""
+         }
+      ],
+      "message" : "Error."
+   }
+}
+
+--batchresponse_hKXEHg8m-qSXb-TCW6-dl3M-4r2H6qxgAbaG--

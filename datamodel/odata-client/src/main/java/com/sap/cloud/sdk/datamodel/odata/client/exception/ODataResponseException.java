@@ -52,6 +52,12 @@ public class ODataResponseException extends ODataException
     private final Option<String> httpBody;
 
     /**
+     * The number of the failed OData batch request. This number is the Content-ID of the response. -1 if not found.
+     */
+    @Getter
+    private int failedBatchRequestNumber = -1;
+
+    /**
      * Default constructor.
      *
      * @param request
@@ -77,5 +83,30 @@ public class ODataResponseException extends ODataException
                 .of(() -> EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8))
                 .onFailure(this::addSuppressed)
                 .toOption();
+    }
+
+    /**
+     * Default constructor for batch requests.
+     *
+     * @param request
+     *            The original OData request reference.
+     * @param httpResponse
+     *            The {@link HttpResponse} that gave raise to this exception.
+     * @param message
+     *            The error message.
+     * @param cause
+     *            The error cause.
+     * @param failedBatchRequestNumber
+     *            The Content-ID of the failed OData batch request.
+     */
+    public ODataResponseException(
+        @Nonnull final ODataRequestGeneric request,
+        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final String message,
+        @Nullable final Throwable cause,
+        final int failedBatchRequestNumber )
+    {
+        this(request, httpResponse, message, cause);
+        this.failedBatchRequestNumber = failedBatchRequestNumber;
     }
 }

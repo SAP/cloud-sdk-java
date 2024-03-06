@@ -48,9 +48,17 @@ class ODataHealthyResponseValidator
             return;
         }
 
+        int failedBatchRequestNumber = -1;
+        try {
+            final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
+            failedBatchRequestNumber = Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
+        }
+        catch( final Exception ignored ) {
+        }
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
-        final ODataResponseException preparedException = new ODataResponseException(request, httpResponse, msg, null);
+        final ODataResponseException preparedException =
+            new ODataResponseException(request, httpResponse, msg, null, failedBatchRequestNumber);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {

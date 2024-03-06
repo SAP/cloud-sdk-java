@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.datamodel.odatav4.core;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
@@ -16,6 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.common.ContentTypes.CONTENT_TYPE;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.datamodel.odatav4.TestUtility.readResourceFileCrlf;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +51,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
+import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 
@@ -71,6 +74,8 @@ class ODataV4BatchRequestUnitTest
         readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessRequest.txt");
     private static final String RESPONSE_BODY =
         readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessResponse.txt");
+    private static final String BAD_RESPONSE_BODY =
+        readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesBadResponse.txt");
 
     private static final TestEntity ENTITY_CREATE = new TestEntity();
     private static final TestEntity ENTITY_UPDATE = TestEntity.builder().id("upd").build();
@@ -207,6 +212,25 @@ class ODataV4BatchRequestUnitTest
             1,
             headRequestedFor(urlEqualTo("/"))
                 .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalTo(X_CSRF_TOKEN_HEADER_FETCH_VALUE)));
+    }
+
+    @Test
+    void testFailedBatchRequestNumber()
+    {
+        // Override from setup
+        // Mock OData Batch response
+        final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
+        stubFor(
+            post(urlEqualTo(REQUEST_URL_BATCH))
+                .willReturn(
+                    aResponse().withHeader(CONTENT_TYPE, contentType).withBody(BAD_RESPONSE_BODY).withStatus(400)));
+
+        try( final BatchResponse badResponse = SERVICE.batch().addChangeset(CREATE).execute(destination) ) {
+            // will throw every time
+        }
+        catch( final ODataResponseException e ) {
+            assertThat(e.getFailedBatchRequestNumber()).isEqualTo(3);
+        }
     }
 
     @Test
