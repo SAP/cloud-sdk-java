@@ -29,5 +29,5 @@ stages:
       low: '0'
     pmd:
       high: '0'
-      normal: '6'
-      low: '2'
+      normal: '1'
+      low: '0'

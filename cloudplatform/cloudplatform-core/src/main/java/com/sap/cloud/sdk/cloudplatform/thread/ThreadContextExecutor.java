@@ -274,6 +274,7 @@ public final class ThreadContextExecutor
     }
 
     @Nullable
+    @SuppressWarnings( "PMD.SignatureDeclareThrowsException" ) // callable.call() throws Exception. We're not catching it here.
     private <T> T call( @Nonnull final Callable<T> callable )
         throws Exception
     {
