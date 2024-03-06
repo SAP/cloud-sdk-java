@@ -46,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
+@SuppressWarnings( "PMD.TooManyStaticImports" )
 class DestinationKeyStoreExtractor
 {
     // See the supported key store file extensions:
