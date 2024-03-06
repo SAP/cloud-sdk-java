@@ -52,10 +52,11 @@ public class ODataResponseException extends ODataException
     private final Option<String> httpBody;
 
     /**
-     * The number of the failed OData batch request. This number is the Content-ID of the response. -1 if not found.
+     * The failed OData batch request.
      */
     @Getter
-    private int failedBatchRequestNumber = -1;
+    @Nonnull
+    private Option<ODataRequestGeneric> failedBatchRequest;
 
     /**
      * Default constructor.
@@ -76,6 +77,7 @@ public class ODataResponseException extends ODataException
         @Nullable final Throwable cause )
     {
         super(request, message, cause);
+        failedBatchRequest = Option.none();
         httpCode = httpResponse.getStatusLine().getStatusCode();
         httpHeaders = Arrays.asList(httpResponse.getAllHeaders());
         httpBody =
@@ -96,17 +98,17 @@ public class ODataResponseException extends ODataException
      *            The error message.
      * @param cause
      *            The error cause.
-     * @param failedBatchRequestNumber
-     *            The Content-ID of the failed OData batch request.
+     * @param failedRequest
+     *            The failed OData batch request.
      */
     public ODataResponseException(
         @Nonnull final ODataRequestGeneric request,
         @Nonnull final HttpResponse httpResponse,
         @Nonnull final String message,
         @Nullable final Throwable cause,
-        final int failedBatchRequestNumber )
+        @Nullable final ODataRequestGeneric failedRequest )
     {
         this(request, httpResponse, message, cause);
-        this.failedBatchRequestNumber = failedBatchRequestNumber;
+        this.failedBatchRequest = Option.of(failedRequest);
     }
 }
