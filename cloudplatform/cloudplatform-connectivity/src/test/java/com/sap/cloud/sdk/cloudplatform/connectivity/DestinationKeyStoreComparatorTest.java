@@ -45,6 +45,7 @@ class DestinationKeyStoreComparatorTest
         // empty JKS, not loaded -> NO HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
+
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isEmpty();
         }
@@ -52,6 +53,7 @@ class DestinationKeyStoreComparatorTest
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
+
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).hasValue(17);
         }
@@ -60,6 +62,7 @@ class DestinationKeyStoreComparatorTest
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
             keyStore.setCertificateEntry("a", cert);
+
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
         }
@@ -67,7 +70,8 @@ class DestinationKeyStoreComparatorTest
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
-            keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
+            keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert })
+            ;
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
         }
@@ -78,8 +82,8 @@ class DestinationKeyStoreComparatorTest
             final KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection("pass".toCharArray());
             final KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(secretKey);
             keyStore.setEntry("a", entry, param);
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
 
+            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isEmpty();
         }
     }
