@@ -204,32 +204,21 @@ class BtpServicePropertySuppliers
         private boolean skipTokenRetrieval()
         {
             final OnBehalfOf behalf = options.getOnBehalfOf();
-            if( behalf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
-                // we can never skip token retrieval when we are doing user propagation
-                return false;
-            }
-
             final Boolean noTokenRequired =
                 options
                     .getOption(BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderAccess.class)
                     .getOrElse(false);
-            if( !noTokenRequired ) {
-                // no token flag is NOT set --> so we need a token
+
+            final boolean tokenIsAlwaysRequired = !noTokenRequired;
+            if( tokenIsAlwaysRequired ) {
                 return false;
             }
 
-            if( behalf == OnBehalfOf.TECHNICAL_USER_PROVIDER ) {
-                // we are doing technical provider authentication and the no token flag is set, so we can skip token retrieval
-                return true;
-            }
-
-            if( behalf == OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT ) {
-                return currentTenantIsProvider();
-            }
-
-            throw new DestinationAccessException(
-                "Unhandled OnBehalfOf ('%s') while determining whether the IAS token retrieval can be skipped."
-                    .formatted(behalf));
+            return switch( behalf ) {
+                case NAMED_USER_CURRENT_TENANT -> false;
+                case TECHNICAL_USER_PROVIDER -> true;
+                case TECHNICAL_USER_CURRENT_TENANT -> currentTenantIsProvider();
+            };
         }
 
         private boolean currentTenantIsProvider()
