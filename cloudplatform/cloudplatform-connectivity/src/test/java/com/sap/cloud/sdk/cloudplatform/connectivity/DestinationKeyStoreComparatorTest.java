@@ -36,26 +36,26 @@ class DestinationKeyStoreComparatorTest
 
     @SneakyThrows
     @Test
-    void testHashCodeEmptyKeyStore()
+    void testHashCode()
     {
         final KeyPair keyPair = generateKeyPair();
         final Certificate cert = generateCertificate(keyPair, "a");
         final SecretKey secretKey = generateSecretKey();
 
-        // empty jks, not loaded -> NO HASH
+        // empty JKS, not loaded -> NO HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isEmpty();
         }
-        // empty jks, loaded -> STATIC HASH
+        // empty JKS, loaded -> STATIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).hasValue(17);
         }
-        // jks with single certificate -> DYNAMIC HASH
+        // JKS with single certificate -> DYNAMIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
@@ -63,7 +63,7 @@ class DestinationKeyStoreComparatorTest
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
         }
-        // jks with single certificate+key -> DYNAMIC HASH
+        // JKS with single certificate+key -> DYNAMIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
@@ -71,7 +71,7 @@ class DestinationKeyStoreComparatorTest
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
         }
-        // jks with single key -> NO HASH
+        // JCEKS with single key -> NO HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JCEKS"); // JKS doesn't allow for keys without certs
             keyStore.load(null);
