@@ -35,7 +35,7 @@ class DestinationKeyStoreComparator
             final Enumeration<String> aliases = ks.aliases();
             while( aliases.hasMoreElements() ) {
                 final String alias = aliases.nextElement();
-                if( !ks.isCertificateEntry(alias) ) {
+                if( ks.getCertificate(alias) == null ) {
                     return OptionalInt.empty();
                 }
                 out.append(ks.getCertificate(alias));
@@ -63,7 +63,7 @@ class DestinationKeyStoreComparator
             final Enumeration<String> aliases = ks.aliases();
             while( aliases.hasMoreElements() ) {
                 final String alias = aliases.nextElement();
-                if( !ks.isCertificateEntry(alias) ) {
+                if( ks.getCertificate(alias) == null ) {
                     return new Certificate[0];
                 }
                 out.add(ks.getCertificate(alias));

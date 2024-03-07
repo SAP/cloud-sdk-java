@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -135,6 +136,26 @@ class DefaultHttpDestinationTest
             DefaultHttpDestination.builder(VALID_URI).header(dummyHeader).build();
         final DefaultHttpDestination secondDestination =
             DefaultHttpDestination.builder(VALID_URI).header(dummyHeader).build();
+
+        assertThat(firstDestination).isEqualTo(secondDestination).isNotSameAs(secondDestination);
+    }
+
+    @SneakyThrows
+    @Test
+    void testEqualsWithKeyStore()
+    {
+        KeyStore keystore1 = KeyStore.getInstance("JKS");
+        keystore1.load(null);
+        keystore1.setKeyEntry("a", new byte[0], new Certificate[0]);
+
+        KeyStore keystore2 = KeyStore.getInstance("JKS");
+        keystore2.load(null);
+        keystore2.setKeyEntry("a", new byte[0], new Certificate[0]);
+
+        final DefaultHttpDestination firstDestination =
+            DefaultHttpDestination.builder(VALID_URI).keyStore(keystore1).build();
+        final DefaultHttpDestination secondDestination =
+            DefaultHttpDestination.builder(VALID_URI).keyStore(keystore2).build();
 
         assertThat(firstDestination).isEqualTo(secondDestination).isNotSameAs(secondDestination);
     }
