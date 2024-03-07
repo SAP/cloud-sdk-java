@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -201,17 +202,17 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         verify(delegate, never()).tryGetDestination(any());
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "varargs" } )
     @Nonnull
     @SafeVarargs
     private static ServiceBinding enhanceMinimalBinding( @Nonnull final Map.Entry<String, Object>... additionalEntries )
     {
-        final List<Map.Entry<String, Object>> allEntries = new ArrayList<>();
+        final Collection<Map.Entry<String, Object>> allEntries = new ArrayList<>();
         allEntries.add(entry("authentication-service.service-label", "identity"));
         allEntries.add(entry("endpoints.foo.uri", "https://foo.uri"));
         allEntries.addAll(Arrays.stream(additionalEntries).toList());
 
-        return bindingWithCredentials(IDENTITY_AUTHENTICATION, allEntries.toArray(new Map.Entry[0]));
+        return bindingWithCredentials(IDENTITY_AUTHENTICATION, allEntries.toArray(Map.Entry[]::new));
     }
 
     @Nonnull
