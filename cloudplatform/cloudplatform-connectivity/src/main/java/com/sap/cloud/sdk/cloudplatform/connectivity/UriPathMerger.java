@@ -94,15 +94,10 @@ public class UriPathMerger
     private void assertSecondaryHostMatchesPrimaryHost( @Nonnull final URI primaryUri, @Nonnull final URI secondaryUri )
         throws DestinationPathsNotMergeableException
     {
-        if( secondaryUri.getRawAuthority() != null ) {
-            if( !primaryUri.getRawAuthority().equals(secondaryUri.getRawAuthority()) ) {
-                throw new DestinationPathsNotMergeableException(
-                    String
-                        .format(
-                            "URIs defined in destination '%s' and supplied by application code '%s' differ.",
-                            primaryUri,
-                            secondaryUri));
-            }
+        if( secondaryUri.getRawAuthority() != null
+            && !primaryUri.getRawAuthority().equals(secondaryUri.getRawAuthority()) ) {
+            final String msg = "URIs defined in destination '%s' and supplied by application code '%s' differ.";
+            throw new DestinationPathsNotMergeableException(String.format(msg, primaryUri, secondaryUri));
         }
     }
 
