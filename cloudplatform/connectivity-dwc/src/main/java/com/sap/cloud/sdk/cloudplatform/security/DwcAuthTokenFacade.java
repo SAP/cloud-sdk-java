@@ -13,7 +13,8 @@ import io.vavr.control.Try;
 
 /**
  * Auth token facade for Deploy with Confidence (DwC) environment.
- */
+  * @since 5.6.0
+  */
 public class DwcAuthTokenFacade extends DefaultAuthTokenFacade
 {
     private static final String AUTH_TOKEN = AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN;

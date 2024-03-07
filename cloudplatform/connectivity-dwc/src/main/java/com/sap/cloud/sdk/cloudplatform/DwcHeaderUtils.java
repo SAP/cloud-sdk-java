@@ -96,9 +96,10 @@ public class DwcHeaderUtils
      * @return The value of the {@link #DWC_JWT_HEADER} header.
      * @throws DwcHeaderNotFoundException
      *             if the header was not found.
+     * @since 5.6.0
      */
     @Nonnull
-    public static String getDwcTokenOrThrow()
+    public static String getDwcJwtOrThrow()
     {
         return getNonEmptyDwcHeaderValue(DWC_JWT_HEADER);
     }
