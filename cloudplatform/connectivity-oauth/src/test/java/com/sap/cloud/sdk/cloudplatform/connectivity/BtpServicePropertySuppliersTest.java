@@ -442,7 +442,7 @@ class BtpServicePropertySuppliersTest
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
                     .onBehalfOf(test.behalf)
-                    .withOption(IasOptions.withMutualTlsForTechnicalProviderAuthenticationOnly())
+                    .withOption(IasOptions.withoutTokenForTechnicalProviderUser())
                     .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
@@ -473,7 +473,7 @@ class BtpServicePropertySuppliersTest
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
                     .onBehalfOf(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT)
-                    .withOption(IasOptions.withMutualTlsForTechnicalProviderAuthenticationOnly())
+                    .withOption(IasOptions.withoutTokenForTechnicalProviderUser())
                     .withOption(IasOptions.withApplicationName("app-name"))
                     .build();
 

@@ -2,7 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderAccess;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.MapEntry.entry;
@@ -64,7 +64,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
             assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
             assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
             assertThat(delegateOptions.getOption(IasTargetUri.class)).containsExactly(URI.create("https://foo.uri"));
-            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderAccess.class)).isEmpty();
+            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).isEmpty();
             assertThat(delegateOptions.getOption(IasCommunicationOptions.class)).isEmpty();
         });
 
@@ -83,7 +83,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final ServiceBinding binding = enhanceMinimalBinding(entry("endpoints.foo.always-requires-token", false));
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderAccess.class)).contains(true);
+            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).contains(true);
         });
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
@@ -101,7 +101,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final ServiceBinding binding = enhanceMinimalBinding(entry("endpoints.foo.always-requires-token", true));
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderAccess.class)).isEmpty();
+            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).isEmpty();
         });
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =

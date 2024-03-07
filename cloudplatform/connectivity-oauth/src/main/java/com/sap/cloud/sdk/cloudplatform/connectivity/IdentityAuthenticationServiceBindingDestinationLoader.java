@@ -81,8 +81,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
                 .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 
         if( !endpoint.alwaysRequiresToken ) {
-            optionsBuilder
-                .withOption(BtpServiceOptions.IasOptions.withMutualTlsForTechnicalProviderAuthenticationOnly());
+            optionsBuilder.withOption(BtpServiceOptions.IasOptions.withoutTokenForTechnicalProviderUser());
         }
 
         return delegateLoader.tryGetDestination(optionsBuilder.build());

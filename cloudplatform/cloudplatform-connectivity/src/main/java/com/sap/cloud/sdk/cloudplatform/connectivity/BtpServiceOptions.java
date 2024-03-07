@@ -142,14 +142,14 @@ public final class BtpServiceOptions
         }
 
         /**
-         * Creates an instance of {@link NoTokenForTechnicalProviderAccess}.
+         * Creates an instance of {@link NoTokenForTechnicalProviderUser}.
          *
-         * @return A new {@link NoTokenForTechnicalProviderAccess} instance.
+         * @return A new {@link NoTokenForTechnicalProviderUser} instance.
          */
         @Nonnull
-        public static OptionsEnhancer<?> withMutualTlsForTechnicalProviderAuthenticationOnly()
+        public static OptionsEnhancer<?> withoutTokenForTechnicalProviderUser()
         {
-            return new NoTokenForTechnicalProviderAccess(true);
+            return new NoTokenForTechnicalProviderUser(true);
         }
 
         /**
@@ -224,25 +224,25 @@ public final class BtpServiceOptions
         }
 
         /**
-         * An {@link OptionsEnhancer} that indicates whether a token is required for authenticating at the target system
-         * <b>iff</b> the authentication happens on behalf of a <b>technical provider user</b>. In this case, retrieving
-         * a token from the IAS service is optional and, therefore, can be skipped. Instead, authentication is done via
-         * mTLS only. In every other case (i.e. <i>named user</i> for either the provider or a subscriber, or
-         * <i>technical user</i> on behalf of a subscriber), a token is always required to not lose any tenancy
-         * information at the target system.
+         * An {@link OptionsEnhancer} that indicates whether <b>no</b> token is required for authenticating at the
+         * target system <b>iff</b> the authentication happens on behalf of a <b>technical provider user</b>. In this
+         * case, retrieving a token from the IAS service is optional and, therefore, can be skipped. Instead,
+         * authentication is done via mTLS only. In every other case (i.e. <i>named user</i> for either the provider or
+         * a subscriber, or <i>technical user</i> on behalf of a subscriber), a token is always required to not lose any
+         * tenancy information at the target system.
          *
          * @since 5.6.0
          */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
-        public static class NoTokenForTechnicalProviderAccess implements OptionsEnhancer<Boolean>
+        public static class NoTokenForTechnicalProviderUser implements OptionsEnhancer<Boolean>
         {
             Boolean value;
         }
 
         /**
          * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
-         * to {@link #withMutualTlsForTechnicalProviderAuthenticationOnly()}, {@link #withApplicationName(String)}, and
+         * to {@link #withoutTokenForTechnicalProviderUser()}, {@link #withApplicationName(String)}, and
          * {@link #withConsumerClient(String, String)}.
          */
         @Value

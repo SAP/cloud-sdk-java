@@ -205,9 +205,7 @@ class BtpServicePropertySuppliers
         {
             final OnBehalfOf behalf = options.getOnBehalfOf();
             final Boolean noTokenRequired =
-                options
-                    .getOption(BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderAccess.class)
-                    .getOrElse(false);
+                options.getOption(BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser.class).getOrElse(false);
 
             final boolean tokenIsAlwaysRequired = !noTokenRequired;
             if( tokenIsAlwaysRequired ) {
