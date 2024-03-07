@@ -82,9 +82,10 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     {
         final ServiceBinding binding = enhanceMinimalBinding(entry("endpoints.foo.always-requires-token", false));
 
-        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).contains(true);
-        });
+        final ServiceBindingDestinationLoader delegate =
+            mockDelegateLoader(
+                delegateOptions -> assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class))
+                    .contains(true));
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
@@ -100,9 +101,10 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     {
         final ServiceBinding binding = enhanceMinimalBinding(entry("endpoints.foo.always-requires-token", true));
 
-        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).isEmpty();
-        });
+        final ServiceBindingDestinationLoader delegate =
+            mockDelegateLoader(
+                delegateOptions -> assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class))
+                    .isEmpty());
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
@@ -118,9 +120,10 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     {
         final ServiceBinding binding = enhanceMinimalBinding();
 
-        final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        });
+        final ServiceBindingDestinationLoader delegate =
+            mockDelegateLoader(
+                delegateOptions -> assertThat(delegateOptions.getOnBehalfOf())
+                    .isEqualTo(OnBehalfOf.NAMED_USER_CURRENT_TENANT));
 
         final IdentityAuthenticationServiceBindingDestinationLoader sut =
             new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
