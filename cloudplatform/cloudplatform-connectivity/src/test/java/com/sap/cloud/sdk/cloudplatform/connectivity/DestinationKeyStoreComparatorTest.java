@@ -16,6 +16,9 @@ import java.security.cert.Certificate;
 import java.util.Date;
 import java.util.OptionalInt;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -36,36 +39,48 @@ class DestinationKeyStoreComparatorTest
     void testHashCodeEmptyKeyStore()
     {
         final KeyPair keyPair = generateKeyPair();
+        final Certificate cert = generateCertificate(keyPair, "a");
+        final SecretKey secretKey = generateSecretKey();
 
-        // empty jks, not loaded
+        // empty jks, not loaded -> NO HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isEmpty();
         }
-        // empty jks, loaded
+        // empty jks, loaded -> STATIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).hasValue(17);
         }
-        // jks with single certificate
+        // jks with single certificate -> DYNAMIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
-            keyStore.setCertificateEntry("a", generateCertificate(keyPair, "a"));
+            keyStore.setCertificateEntry("a", cert);
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
         }
-        // jks with single certificate+key
+        // jks with single certificate+key -> DYNAMIC HASH
         {
-            final Certificate cert = generateCertificate(keyPair, "a");
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
             keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
             assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
+        }
+        // jks with single key -> NO HASH
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JCEKS"); // JKS doesn't allow for keys without certs
+            keyStore.load(null);
+            final KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection("pass".toCharArray());
+            final KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(secretKey);
+            keyStore.setEntry("a", entry, param);
+            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+
+            assertThat(result).isEmpty();
         }
     }
 
@@ -75,6 +90,14 @@ class DestinationKeyStoreComparatorTest
         final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);
         return kpg.generateKeyPair();
+    }
+
+    @SneakyThrows
+    static SecretKey generateSecretKey()
+    {
+        final KeyGenerator kg = KeyGenerator.getInstance("AES");
+        kg.init(128);
+        return kg.generateKey();
     }
 
     @SneakyThrows
