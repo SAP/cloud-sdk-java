@@ -26,13 +26,14 @@ class KeyStoreReaderTest
     private static final String CRT_PATH = RES + "/client-cert.crt";
     private static final String KEY_PATH = RES + "/client-cert.key";
     private static final String ALIAS = "1";
+    private static final char[] PASS = new char[0];
 
     @SneakyThrows
     @Test
     void testPem()
     {
         final FileReader certs = new FileReader(CRT_PATH), key = new FileReader(KEY_PATH);
-        final KeyStore createdKeystore = createKeyStore(ALIAS, new char[0], certs, key);
+        final KeyStore createdKeystore = createKeyStore(ALIAS, PASS, certs, key);
 
         assertThat(createdKeystore.getType()).isEqualTo("JKS");
         assertThat(createdKeystore.getProvider()).isNotNull();
@@ -48,18 +49,22 @@ class KeyStoreReaderTest
 
     @SneakyThrows
     @Test
-    void testEquality() // sanity check
+    void testKeyStoreSanity() // sanity checks
     {
-        final KeyStore ks1 = createKeyStore(ALIAS, new char[0], new FileReader(CRT_PATH), new FileReader(KEY_PATH));
-        final KeyStore ks2 = createKeyStore(ALIAS, new char[0], new FileReader(CRT_PATH), new FileReader(KEY_PATH));
+        final KeyStore ks1 = createKeyStore(ALIAS, PASS, new FileReader(CRT_PATH), new FileReader(KEY_PATH));
+        final KeyStore ks2 = createKeyStore(ALIAS, PASS, new FileReader(CRT_PATH), new FileReader(KEY_PATH));
 
         assertThat(ks1).isNotEqualTo(ks2); // KeyStore class does not support equals
+        assertThat(ks1).doesNotHaveSameHashCodeAs(ks2); // ... nor hashCode
         assertThat(ks1.aliases()).isNotEqualTo(ks2.aliases()); // Enumeration "aliases" does not support equals
 
         assertThat(ks1.aliases()).extracting(Collections::list, as(LIST)).containsExactly(ALIAS);
         assertThat(ks2.aliases()).extracting(Collections::list, as(LIST)).containsExactly(ALIAS);
 
         assertThat(ks1.getCertificate(ALIAS)).isEqualTo(ks2.getCertificate(ALIAS)); // certificates support equals
-        assertThat(ks1.getKey(ALIAS, new char[0])).isEqualTo(ks2.getKey(ALIAS, new char[0])); // keys support equals
+        assertThat(ks1.getCertificate(ALIAS)).hasSameHashCodeAs(ks2.getCertificate(ALIAS)); // ... and hashCode
+
+        assertThat(ks1.getKey(ALIAS, PASS)).isEqualTo(ks2.getKey(ALIAS, PASS)); // keys support equals
+        assertThat(ks1.getKey(ALIAS, PASS)).hasSameHashCodeAs(ks2.getKey(ALIAS, PASS)); // ... and hashCode
     }
 }
