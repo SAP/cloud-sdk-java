@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Collection;
@@ -144,20 +145,31 @@ class DefaultHttpDestinationTest
     @Test
     void testEqualsWithKeyStore()
     {
-        KeyStore keystore1 = KeyStore.getInstance("JKS");
+        final KeyPair keyPair = DestinationKeyStoreComparatorTest.generateKeyPair();
+        final Certificate cert = DestinationKeyStoreComparatorTest.generateCertificate(keyPair, "a");
+
+        final KeyStore keystore1 = KeyStore.getInstance("JKS");
         keystore1.load(null);
-        keystore1.setKeyEntry("a", new byte[0], new Certificate[0]);
+        keystore1.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
-        KeyStore keystore2 = KeyStore.getInstance("JKS");
+        final KeyStore keystore2 = KeyStore.getInstance("JKS");
         keystore2.load(null);
-        keystore2.setKeyEntry("a", new byte[0], new Certificate[0]);
+        keystore2.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
-        final DefaultHttpDestination firstDestination =
-            DefaultHttpDestination.builder(VALID_URI).keyStore(keystore1).build();
-        final DefaultHttpDestination secondDestination =
-            DefaultHttpDestination.builder(VALID_URI).keyStore(keystore2).build();
+        // check for destinations with comparable key-stores
+        final DefaultHttpDestination dest1 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore1).build();
+        final DefaultHttpDestination dest2 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore2).build();
 
-        assertThat(firstDestination).isEqualTo(secondDestination).isNotSameAs(secondDestination);
+        assertThat(dest1).isEqualTo(dest2);
+        assertThat(dest1).hasSameHashCodeAs(dest2);
+
+        // check for destination with empty key-store
+        final KeyStore keystore3 = KeyStore.getInstance("JKS");
+        keystore3.load(null);
+
+        final DefaultHttpDestination dest3 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore3).build();
+        assertThat(dest1).isNotEqualTo(dest3);
+        assertThat(dest1).doesNotHaveSameHashCodeAs(dest3);
     }
 
     @Test
