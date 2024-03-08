@@ -8,7 +8,6 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.OptionalInt;
 
 import javax.annotation.Nonnull;
 
@@ -22,31 +21,20 @@ class DestinationKeyStoreComparator
     static int INITIAL_HASH_CODE = 17;
 
     /**
-     * Calculate the SAP Cloud SDK compatible KeyStore hash code.
+     * Calculate the SAP Cloud SDK compatible KeyStore hash code. The method may return a static number
+     * {@link DestinationKeyStoreComparator#INITIAL_HASH_CODE} in case the key-store was not initialized or contains
+     * non-certificate based elements.
      *
      * @param ks
      *            The KeyStore to calculate the hash code for.
-     * @return The hash code, or empty in case of error or non-certificate based keystore entries.
+     * @return The key-store hash code dynamically computed on behalf of stored certificates.
      */
-    @Nonnull
-    static OptionalInt resolveKeyStoreHashCode( @Nonnull final KeyStore ks )
+    static int resolveKeyStoreHashCode( @Nonnull final KeyStore ks )
     {
         final HashCodeBuilder out = new HashCodeBuilder(INITIAL_HASH_CODE, 37);
-        try {
-            final Enumeration<String> aliases = ks.aliases();
-            while( aliases.hasMoreElements() ) {
-                final String alias = aliases.nextElement();
-                if( ks.getCertificate(alias) == null ) {
-                    return OptionalInt.empty();
-                }
-                out.append(ks.getCertificate(alias));
-            }
-        }
-        catch( final Exception e ) {
-            log.debug("Error while calculating hash code for KeyStore", e);
-            return OptionalInt.empty();
-        }
-        return OptionalInt.of(out.toHashCode());
+        final Certificate[] certificates = resolveCertificatesOnly(ks);
+        out.append(certificates);
+        return out.toHashCode();
     }
 
     /**

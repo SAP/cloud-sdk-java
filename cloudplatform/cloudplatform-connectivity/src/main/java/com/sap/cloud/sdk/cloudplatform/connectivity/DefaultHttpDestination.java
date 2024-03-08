@@ -531,8 +531,8 @@ public final class DefaultHttpDestination implements HttpDestination
         return new HashCodeBuilder(17, 37)
             .append(baseProperties)
             .append(customHeaders)
-            .append(resolveKeyStoreHashCode(keyStore).orElse(0))
-            .append(resolveKeyStoreHashCode(trustStore).orElse(0))
+            .append(resolveKeyStoreHashCode(keyStore))
+            .append(resolveKeyStoreHashCode(trustStore))
             .toHashCode();
     }
 

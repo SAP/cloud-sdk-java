@@ -15,7 +15,6 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Date;
-import java.util.OptionalInt;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -36,26 +35,26 @@ class DestinationKeyStoreComparatorTest
 {
     @SneakyThrows
     @Test
-    void testHashCode()
+    void testResolveKeyStoreHashCode()
     {
         final KeyPair keyPair = generateKeyPair();
         final Certificate cert = generateCertificate(keyPair, "a");
         final SecretKey secretKey = generateSecretKey();
 
-        // empty JKS, not loaded -> NO HASH
+        // empty JKS, not loaded -> DEFAULT HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
 
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).isEmpty();
+            final int result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            assertThat(result).isEqualTo(INITIAL_HASH_CODE);
         }
-        // empty JKS, loaded -> STATIC HASH
+        // empty JKS, loaded -> DEFAULT HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
 
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).hasValue(INITIAL_HASH_CODE);
+            final int result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            assertThat(result).isEqualTo(INITIAL_HASH_CODE);
         }
         // JKS with single certificate -> DYNAMIC HASH
         {
@@ -63,19 +62,19 @@ class DestinationKeyStoreComparatorTest
             keyStore.load(null);
             keyStore.setCertificateEntry("a", cert);
 
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(INITIAL_HASH_CODE));
+            final int result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            assertThat(result).isNotEqualTo(INITIAL_HASH_CODE);
         }
         // JKS with single certificate+key -> DYNAMIC HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null);
-            keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert })
-            ;
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(INITIAL_HASH_CODE));
+            keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
+
+            final int result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            assertThat(result).isNotEqualTo(INITIAL_HASH_CODE);
         }
-        // JCEKS with single key -> NO HASH
+        // JCEKS with single key -> DEFAULT HASH
         {
             final KeyStore keyStore = KeyStore.getInstance("JCEKS"); // JKS doesn't allow for keys without certs
             keyStore.load(null);
@@ -83,9 +82,73 @@ class DestinationKeyStoreComparatorTest
             final KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(secretKey);
             keyStore.setEntry("a", entry, param);
 
-            final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            final int result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
+            assertThat(result).isEqualTo(INITIAL_HASH_CODE);
+        }
+    }
+
+    @SneakyThrows
+    @Test
+    void testResolveCertificatesOnly()
+    {
+        final KeyPair keyPair = generateKeyPair();
+        final Certificate cert = generateCertificate(keyPair, "a");
+        final SecretKey secretKey = generateSecretKey();
+
+        // empty JKS, not loaded -> NO ELEMENTS
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JKS");
+
+            final Certificate[] result = DestinationKeyStoreComparator.resolveCertificatesOnly(keyStore);
             assertThat(result).isEmpty();
         }
+        // empty JKS, loaded -> NO ELEMENTS
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(null);
+
+            final Certificate[] result = DestinationKeyStoreComparator.resolveCertificatesOnly(keyStore);
+            assertThat(result).isEmpty();
+        }
+        // JKS with single certificate -> ONE ELEMENT
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(null);
+            keyStore.setCertificateEntry("a", cert);
+
+            final Certificate[] result = DestinationKeyStoreComparator.resolveCertificatesOnly(keyStore);
+            assertThat(result).containsExactly(cert);
+        }
+        // JKS with single certificate+key -> ONE ELEMENT
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(null);
+            keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
+
+            final Certificate[] result = DestinationKeyStoreComparator.resolveCertificatesOnly(keyStore);
+            assertThat(result).containsExactly(cert);
+        }
+        // JCEKS with single key -> NO ELEMENTS
+        {
+            final KeyStore keyStore = KeyStore.getInstance("JCEKS"); // JKS doesn't allow for keys without certs
+            keyStore.load(null);
+            final KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection("pass".toCharArray());
+            final KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(secretKey);
+            keyStore.setEntry("a", entry, param);
+
+            final Certificate[] result = DestinationKeyStoreComparator.resolveCertificatesOnly(keyStore);
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Test // sanity-check
+    void testEqualsBehavior()
+    {
+        final KeyPair keyPair = generateKeyPair();
+        final Certificate cert1 = generateCertificate(keyPair, "a");
+        final Certificate cert2 = generateCertificate(keyPair, "b");
+
+        assertThat(cert1).isNotEqualTo(cert2);
     }
 
     @SneakyThrows
