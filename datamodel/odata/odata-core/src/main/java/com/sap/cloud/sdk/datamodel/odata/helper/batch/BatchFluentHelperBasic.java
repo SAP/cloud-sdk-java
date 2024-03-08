@@ -85,8 +85,9 @@ public abstract class BatchFluentHelperBasic<FluentHelperBatchT extends FluentHe
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
         // TODO Consider allowing custom Headers
 
-        final ODataRequestBatch requestBatch = toRequest();
-        final ODataRequestResultMultipartGeneric result = requestBatch.execute(httpClient);
+        @SuppressWarnings( "PMD.CloseResource" ) // The ODataRequestResultMultipartGeneric is closed by DefaultBatchResponseResult
+        final ODataRequestResultMultipartGeneric result = toRequest().execute(httpClient);
+
         return DefaultBatchResponseResult.of(requestParts, requestMapping, result);
     }
 
