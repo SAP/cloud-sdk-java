@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationKeyStoreComparator.INITIAL_HASH_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigInteger;
@@ -33,7 +34,6 @@ import lombok.SneakyThrows;
 
 class DestinationKeyStoreComparatorTest
 {
-
     @SneakyThrows
     @Test
     void testHashCode()
@@ -55,7 +55,7 @@ class DestinationKeyStoreComparatorTest
             keyStore.load(null);
 
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).hasValue(17);
+            assertThat(result).hasValue(INITIAL_HASH_CODE);
         }
         // JKS with single certificate -> DYNAMIC HASH
         {
@@ -64,7 +64,7 @@ class DestinationKeyStoreComparatorTest
             keyStore.setCertificateEntry("a", cert);
 
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
+            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(INITIAL_HASH_CODE));
         }
         // JKS with single certificate+key -> DYNAMIC HASH
         {
@@ -73,7 +73,7 @@ class DestinationKeyStoreComparatorTest
             keyStore.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert })
             ;
             final OptionalInt result = DestinationKeyStoreComparator.resolveKeyStoreHashCode(keyStore);
-            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(17));
+            assertThat(result).isNotEmpty().isNotEqualTo(OptionalInt.of(INITIAL_HASH_CODE));
         }
         // JCEKS with single key -> NO HASH
         {

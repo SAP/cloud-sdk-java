@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class DestinationKeyStoreComparator
 {
+    static int INITIAL_HASH_CODE = 17;
 
     /**
      * Calculate the SAP Cloud SDK compatible KeyStore hash code.
@@ -30,7 +31,7 @@ class DestinationKeyStoreComparator
     @Nonnull
     static OptionalInt resolveKeyStoreHashCode( @Nonnull final KeyStore ks )
     {
-        final HashCodeBuilder out = new HashCodeBuilder(17, 37);
+        final HashCodeBuilder out = new HashCodeBuilder(INITIAL_HASH_CODE, 37);
         try {
             final Enumeration<String> aliases = ks.aliases();
             while( aliases.hasMoreElements() ) {
