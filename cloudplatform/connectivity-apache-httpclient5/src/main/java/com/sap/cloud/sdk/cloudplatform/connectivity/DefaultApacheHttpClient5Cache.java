@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
 {
-
     static final Duration DEFAULT_DURATION = Duration.ofMinutes(5L);
     static final Ticker DEFAULT_TICKER = Ticker.systemTicker();
 
