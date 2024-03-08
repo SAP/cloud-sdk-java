@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -55,7 +56,6 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 
 @WireMockTest
@@ -236,7 +236,7 @@ class ODataV4BatchRequestUnitTest
                     aResponse()
                         .withHeader(CONTENT_TYPE, responseContentType)
                         .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
-                        .withStatus(HttpServletResponse.SC_BAD_REQUEST)));
+                        .withStatus(HttpStatus.SC_BAD_REQUEST)));
 
         try(
             final BatchResponse badResponse =
