@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -217,13 +218,13 @@ class ODataV4BatchRequestUnitTest
     @Test
     void testFailedBatchChangesetResponse()
     {
-        TestEntity testEntityA = new TestEntity("a");
-        TestEntity testEntityB = new TestEntity("b");
-        TestEntity testEntityC = new TestEntity("c");
+        final TestEntity testEntityA = new TestEntity("a");
+        final TestEntity testEntityB = new TestEntity("b");
+        final TestEntity testEntityC = new TestEntity("c");
 
-        CreateRequestBuilder<TestEntity> createTestEntityA = SERVICE.createTestEntity(testEntityA);
-        CreateRequestBuilder<TestEntity> createTestEntityB = SERVICE.createTestEntity(testEntityB);
-        CreateRequestBuilder<TestEntity> createTestEntityC = SERVICE.createTestEntity(testEntityC);
+        final CreateRequestBuilder<TestEntity> createTestEntityA = SERVICE.createTestEntity(testEntityA);
+        final CreateRequestBuilder<TestEntity> createTestEntityB = SERVICE.createTestEntity(testEntityB);
+        final CreateRequestBuilder<TestEntity> createTestEntityC = SERVICE.createTestEntity(testEntityC);
 
         // Override from setup
         // Mock OData Batch response
@@ -235,7 +236,7 @@ class ODataV4BatchRequestUnitTest
                     aResponse()
                         .withHeader(CONTENT_TYPE, responseContentType)
                         .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
-                        .withStatus(400)));
+                        .withStatus(HttpServletResponse.SC_BAD_REQUEST)));
 
         try(
             final BatchResponse badResponse =

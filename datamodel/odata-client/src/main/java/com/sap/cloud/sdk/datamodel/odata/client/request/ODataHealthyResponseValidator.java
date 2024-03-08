@@ -69,7 +69,7 @@ class ODataHealthyResponseValidator
 
     private static
         ODataRequestGeneric
-        findFailedBatchRequest( final HttpResponse httpResponse, ODataRequestBatch oDataRequestBatch )
+        findFailedBatchRequest( final HttpResponse httpResponse, final ODataRequestBatch oDataRequestBatch )
     {
         try {
             final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
