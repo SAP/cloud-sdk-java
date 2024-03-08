@@ -408,4 +408,29 @@ class DefaultApacheHttpClient5CacheTest
                 new BasicHeader(header1.getName(), header1.getValue()),
                 new BasicHeader(header2.getName(), header2.getValue()));
     }
+
+    @Test
+    void testPrincipalPropagationIsPrincipalIsolated()
+    {
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("foo.com")
+                .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
+                .build();
+
+        context.setPrincipal("some-principal");
+        final HttpClient client = sut.tryGetHttpClient(destination, FACTORY).get();
+        assertThat(client).isSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+
+        context.setPrincipal("some-other-principal");
+        assertThat(client).isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+        assertThat(sut.tryGetHttpClient(destination, FACTORY).get())
+            .isSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+
+        context.clearPrincipal();
+        assertThat(client).isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+        assertThat(sut.tryGetHttpClient(destination, FACTORY).get())
+            .describedAs("Without a principal http clients should not be cached for user based destinations")
+            .isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+    }
 }
