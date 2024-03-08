@@ -122,7 +122,7 @@ public class ODataRequestResultMultipartGeneric
         }
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
-        result.disableBufferingHttpResponse(); // the HttpResponse is already evaluated
+        result.disableBufferingHttpResponse(); // the artificial HttpResponse is static, no buffer required
         ODataHealthyResponseValidator.requireHealthyResponse(result);
         return result;
     }
