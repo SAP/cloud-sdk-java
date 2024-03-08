@@ -10,7 +10,9 @@ import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyPair;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -137,6 +139,37 @@ class DefaultHttpDestinationTest
             DefaultHttpDestination.builder(VALID_URI).header(dummyHeader).build();
 
         assertThat(firstDestination).isEqualTo(secondDestination).isNotSameAs(secondDestination);
+    }
+
+    @SneakyThrows
+    @Test
+    void testEqualsWithKeyStore()
+    {
+        final KeyPair keyPair = DestinationKeyStoreComparatorTest.generateKeyPair();
+        final Certificate cert = DestinationKeyStoreComparatorTest.generateCertificate(keyPair, "a");
+
+        final KeyStore keystore1 = KeyStore.getInstance("JKS");
+        keystore1.load(null);
+        keystore1.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
+
+        final KeyStore keystore2 = KeyStore.getInstance("JKS");
+        keystore2.load(null);
+        keystore2.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
+
+        // check for destinations with comparable key-stores
+        final DefaultHttpDestination dest1 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore1).build();
+        final DefaultHttpDestination dest2 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore2).build();
+
+        assertThat(dest1).isEqualTo(dest2);
+        assertThat(dest1).hasSameHashCodeAs(dest2);
+
+        // check for destination with empty key-store
+        final KeyStore keystore3 = KeyStore.getInstance("JKS");
+        keystore3.load(null);
+
+        final DefaultHttpDestination dest3 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore3).build();
+        assertThat(dest1).isNotEqualTo(dest3);
+        assertThat(dest1).doesNotHaveSameHashCodeAs(dest3);
     }
 
     @Test
