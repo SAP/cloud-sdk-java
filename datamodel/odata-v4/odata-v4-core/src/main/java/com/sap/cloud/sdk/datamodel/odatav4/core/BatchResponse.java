@@ -9,16 +9,12 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
-
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 
-import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -273,10 +269,6 @@ public final class BatchResponse implements AutoCloseable
     @Override
     public void close()
     {
-        final HttpEntity ent = result.getHttpResponse().getEntity();
-        if( ent != null ) {
-            Try.run(() -> EntityUtils.consume(ent)).onFailure(e -> log.warn("Failed to consume the HTTP entity.", e));
-        }
+        result.close();
     }
-
 }
