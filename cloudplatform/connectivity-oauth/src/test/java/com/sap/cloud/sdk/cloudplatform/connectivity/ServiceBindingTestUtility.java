@@ -24,11 +24,7 @@ class ServiceBindingTestUtility
         @Nonnull final ServiceIdentifier identifier,
         @Nonnull final Map.Entry<String, Object>... entries )
     {
-        final Map<String, Object> credentials = new HashMap<>();
-        for( final Map.Entry<String, Object> entry : entries ) {
-            final List<String> keyPath = Arrays.asList(entry.getKey().split("\\."));
-            addNestedEntry(credentials, keyPath, entry.getValue());
-        }
+        final Map<String, Object> credentials = nestedMap(entries);
 
         return DefaultServiceBinding
             .builder()
@@ -36,6 +32,19 @@ class ServiceBindingTestUtility
             .withCredentials(credentials)
             .withServiceIdentifier(identifier)
             .build();
+    }
+
+    @SafeVarargs
+    @Nonnull
+    static Map<String, Object> nestedMap( @Nonnull final Map.Entry<String, Object>... entries )
+    {
+        final Map<String, Object> map = new HashMap<>();
+        for( final Map.Entry<String, Object> entry : entries ) {
+            final List<String> keyPath = Arrays.asList(entry.getKey().split("\\."));
+            addNestedEntry(map, keyPath, entry.getValue());
+        }
+
+        return map;
     }
 
     @SuppressWarnings( "unchecked" )
