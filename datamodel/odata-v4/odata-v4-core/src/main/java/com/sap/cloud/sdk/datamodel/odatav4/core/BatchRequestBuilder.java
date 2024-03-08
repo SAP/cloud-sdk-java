@@ -153,7 +153,10 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
     public BatchResponse execute( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
+        @SuppressWarnings( "PMD.CloseResource" ) // The ODataRequestResultMultipartGeneric is closed by BatchResponse
         final ODataRequestResultMultipartGeneric response = toRequest().execute(httpClient);
+
         return BatchResponse.of(response, requestMapping);
     }
 }
