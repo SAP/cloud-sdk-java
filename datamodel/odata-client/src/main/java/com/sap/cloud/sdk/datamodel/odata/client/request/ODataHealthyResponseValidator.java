@@ -48,9 +48,14 @@ class ODataHealthyResponseValidator
             return;
         }
 
+        final Integer contentId =
+            httpResponse instanceof MultipartHttpResponse
+                ? ((MultipartHttpResponse) httpResponse).getContentId()
+                : null;
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
-        final ODataResponseException preparedException = new ODataResponseException(request, httpResponse, msg, null);
+        final ODataResponseException preparedException =
+            new ODataResponseException(request, httpResponse, msg, null, contentId);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {

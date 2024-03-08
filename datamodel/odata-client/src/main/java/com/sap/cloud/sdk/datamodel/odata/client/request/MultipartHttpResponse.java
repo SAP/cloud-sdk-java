@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -29,6 +30,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.BasicStatusLine;
 
 import io.vavr.control.Try;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,25 +43,36 @@ class MultipartHttpResponse extends BasicHttpResponse
     private static final Pattern PATTERN_STATUS_LINE = Pattern.compile("^HTTP/(\\d).(\\d) (\\d+) (.*)");
     private static final Pattern PATTERN_NEW_LINE = Pattern.compile("\\R");
 
-    private MultipartHttpResponse( final StatusLine statusLine, final List<Header> headers, final HttpEntity entity )
+    @Nullable
+    @Getter
+    private final Integer contentId;
+
+    private MultipartHttpResponse(
+        @Nonnull final StatusLine statusLine,
+        @Nonnull final List<Header> headers,
+        @Nonnull final HttpEntity entity,
+        @Nullable final Integer contentId )
     {
         super(statusLine);
         headers.forEach(this::addHeader);
         setEntity(entity);
+        this.contentId = contentId;
     }
 
     /**
      * Factory method to construct an {@link MultipartHttpResponse} on behalf of serialized HTTP protocol content: First
      * line is the status line, the following lines are headers, the optional body is introduced with an empty line.
      *
-     * @param httpContent
+     * @param entry
      *            The HTTP protocol content, consisting of status line, headers, (emptyline) and payload.
      * @return A new HTTP response instance.
      */
     @Nonnull
-    public static MultipartHttpResponse ofHttpContent( @Nonnull final String httpContent )
+    public static MultipartHttpResponse ofHttpContent( @Nonnull final MultipartParser.Entry entry )
     {
-        final String[] lines = PATTERN_NEW_LINE.split(httpContent);
+        final Matcher contentIdMatcher = Pattern.compile("Content-ID: (\\d+)").matcher(entry.getMeta());
+        final Integer contentId = contentIdMatcher.find() ? Integer.parseInt(contentIdMatcher.group(1)) : null;
+        final String[] lines = PATTERN_NEW_LINE.split(entry.getPayload());
 
         final StatusLine statusLine = getStatusLine(lines[0]);
 
@@ -82,7 +95,8 @@ class MultipartHttpResponse extends BasicHttpResponse
         final List<Header> headers = getHeadersFromString(header.toString());
         final ContentType contentType = getContentType(headers).orElse(ContentType.APPLICATION_JSON);
         final ContentType contentTypeCharset = withFallbackCharset(contentType, DEFAULT_CHARSET);
-        return new MultipartHttpResponse(statusLine, headers, new StringEntity(payload.toString(), contentTypeCharset));
+        final StringEntity httpEntity = new StringEntity(payload.toString(), contentTypeCharset);
+        return new MultipartHttpResponse(statusLine, headers, httpEntity, contentId);
     }
 
     @Nonnull

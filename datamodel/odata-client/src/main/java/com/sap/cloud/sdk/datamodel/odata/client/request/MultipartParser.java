@@ -32,6 +32,7 @@ import org.apache.http.entity.ContentType;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
-class MultipartParser
+class MultipartParser implements AutoCloseable
 {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String MULTIPART_MIXED_MIME_TYPE = "multipart/mixed";
@@ -59,6 +60,7 @@ class MultipartParser
      *            The HTTP response to read from: content-type, input-stream and charset.
      * @return A new instance of {@link MultipartParser}.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // The attached InputStream is closed by the MultipartParser itself.
     public static MultipartParser ofHttpResponse( @Nonnull final HttpResponse httpResponse )
     {
         final HttpEntity entity = httpResponse.getEntity();
@@ -121,7 +123,7 @@ class MultipartParser
      * @return An iterable multi-part response.
      */
     @Nonnull
-    public List<List<String>> toList()
+    public List<List<Entry>> toList()
     {
         return toList(Function.identity());
     }
@@ -139,7 +141,7 @@ class MultipartParser
      * @return An iterable multi-part response, with custom deserialization.
      */
     @Nonnull
-    public <T> List<List<T>> toList( @Nonnull final Function<String, T> transformation )
+    public <T> List<List<T>> toList( @Nonnull final Function<Entry, T> transformation )
     {
         return toStream()
             .map(segments -> segments.map(transformation).collect(Collectors.toList()))
@@ -154,14 +156,14 @@ class MultipartParser
      * @return An iterable multi-part response.
      */
     @Nonnull
-    public Stream<Stream<String>> toStream()
+    public Stream<Stream<Entry>> toStream()
     {
         // Create a stream from a spliterator but only retrieve the spliterator upon terminal operation of stream.
-        final Stream<Spliterator<String>> result =
+        final Stream<Spliterator<Entry>> result =
             StreamSupport.stream(this::createSpliterator, MultipartSpliterator.CHARACTERISTICS, false);
 
         // Translate stream of spliterators to stream of stream. Make sure all previous spliterators were fully consumed.
-        final AtomicReference<Spliterator<String>> previous = new AtomicReference<>(Spliterators.emptySpliterator());
+        final AtomicReference<Spliterator<Entry>> previous = new AtomicReference<>(Spliterators.emptySpliterator());
 
         return result.map(currentSpliterator -> {
             // if previous spliterator was not yet fully consumed, do so with the remaining elements
@@ -172,7 +174,7 @@ class MultipartParser
         });
     }
 
-    private Spliterator<Spliterator<String>> createSpliterator()
+    private Spliterator<Spliterator<Entry>> createSpliterator() // Response
     {
         final MultipartParserReader batchRead = new MultipartParserReader(reader, delimiter);
 
@@ -191,14 +193,14 @@ class MultipartParser
                 return getChangeset(maybeChangesetBoundary.get(), batchRead);
             } else { // single response
                 final String content = batchRead.untilDelimiter();
-                return Collections.singleton(content).spliterator();
+                return Collections.singleton(new Entry(segmentHead, content)).spliterator();
             }
         });
     }
 
     @Nonnull
     private
-        Spliterator<String>
+        Spliterator<Entry>
         getChangeset( @Nonnull final String changesetDelimiter, final MultipartParserReader batchRead )
     {
         final MultipartParserReader changesetRead = new MultipartParserReader(reader, changesetDelimiter);
@@ -217,7 +219,7 @@ class MultipartParser
             if( changesetRead.isFinished() ) {
                 batchRead.untilDelimiter(); // position reader to next batch delimiter
             }
-            return content;
+            return new Entry(subSegmentHead, content);
         });
     }
 
@@ -248,5 +250,18 @@ class MultipartParser
             log.debug("Unexpected value in HTTP header \"Content-Type\" of OData batch response: {}", contentType);
         }
         return getDelimiterFromContentType(contentType);
+    }
+
+    @Override
+    public void close()
+    {
+        Try.run(reader::close).onFailure(e -> log.warn("Failed to close HTTP entity multi-part parser.", e));
+    }
+
+    @Value
+    static class Entry
+    {
+        String meta;
+        String payload;
     }
 }

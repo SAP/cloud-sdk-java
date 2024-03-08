@@ -111,6 +111,7 @@ public class ODataRequestResultMultipartGeneric implements ODataRequestResultMul
         }
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        result.disableBufferingHttpResponse(); // the HttpResponse is already evaluated
         ODataHealthyResponseValidator.requireHealthyResponse(result);
         return result;
     }
