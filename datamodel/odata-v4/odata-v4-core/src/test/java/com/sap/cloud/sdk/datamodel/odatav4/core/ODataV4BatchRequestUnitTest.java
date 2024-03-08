@@ -69,13 +69,13 @@ class ODataV4BatchRequestUnitTest
     private static final String X_CSRF_TOKEN_HEADER_FETCH_VALUE = "fetch";
     private static final String X_CSRF_TOKEN_HEADER_VALUE = "awesome-csrf-token";
     private static final String REQUEST_URL_BATCH = "/$batch";
-
-    private static final String REQUEST_BODY =
-        readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessRequest.txt");
     private static final String RESPONSE_BODY =
         readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessResponse.txt");
-    private static final String BAD_RESPONSE_BODY =
-        readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesBadResponse.txt");
+
+    private static final String REQUEST_BODY =
+            readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessRequest.txt");
+    private static final String BATCH_BAD_CHANGESET_RESPONSE_BODY =
+        readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchBadChangesetResponse.txt");
 
     private static final TestEntity ENTITY_CREATE = new TestEntity();
     private static final TestEntity ENTITY_UPDATE = TestEntity.builder().id("upd").build();
@@ -215,21 +215,33 @@ class ODataV4BatchRequestUnitTest
     }
 
     @Test
-    void testFailedBatchRequestNumber()
+    void testFailedBatchChangesetResponse()
     {
+        TestEntity testEntityA = new TestEntity("a");
+        TestEntity testEntityB = new TestEntity("b");
+        TestEntity testEntityC = new TestEntity("c");
+
+        CreateRequestBuilder<TestEntity> createTestEntityA = SERVICE.createTestEntity(testEntityA);
+        CreateRequestBuilder<TestEntity> createTestEntityB = SERVICE.createTestEntity(testEntityB);
+        CreateRequestBuilder<TestEntity> createTestEntityC = SERVICE.createTestEntity(testEntityC);
+
         // Override from setup
         // Mock OData Batch response
-        final String contentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
+        final String responseContentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
         stubFor(
-            post(urlEqualTo(REQUEST_URL_BATCH))
-                .willReturn(
-                    aResponse().withHeader(CONTENT_TYPE, contentType).withBody(BAD_RESPONSE_BODY).withStatus(400)));
+                post(urlEqualTo(REQUEST_URL_BATCH))
+                        .willReturn(
+                                aResponse()
+                                        .withHeader(CONTENT_TYPE, responseContentType)
+                                        .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
+                                        .withStatus(400)));
 
-        try( final BatchResponse badResponse = SERVICE.batch().addChangeset(CREATE).execute(destination) ) {
+
+        try( final BatchResponse badResponse = SERVICE.batch().addChangeset(createTestEntityA, createTestEntityB, createTestEntityC).execute(destination) ) {
             // will throw every time
         }
         catch( final ODataResponseException e ) {
-            assertThat(e.getFailedBatchRequestNumber()).isEqualTo(3);
+            assertThat(e.getFailedBatchRequest().get().equals(createTestEntityC.toRequest()));
         }
     }
 

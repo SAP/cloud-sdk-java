@@ -4,12 +4,6 @@
 
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import javax.annotation.Nonnull;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-
 import com.google.gson.JsonObject;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
@@ -18,8 +12,12 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorExcep
 import com.sap.cloud.sdk.result.GsonResultElementFactory;
 import com.sap.cloud.sdk.result.GsonResultObject;
 import com.sap.cloud.sdk.result.ResultObject;
-
 import io.vavr.control.Try;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+
+import javax.annotation.Nonnull;
 
 /**
  * Utility class to enable a healthy response validation.
@@ -48,17 +46,29 @@ class ODataHealthyResponseValidator
             return;
         }
 
-        int failedBatchRequestNumber = -1;
-        try {
-            final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
-            failedBatchRequestNumber = Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
+        ODataRequestGeneric batchFailedRequest = null;
+        if(request instanceof ODataRequestBatch oDataRequestBatch) {
+
+            int failedBatchRequestNumber = -1;
+            try {
+                final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
+                failedBatchRequestNumber = Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
+            }
+            catch( final Exception ignored ) {
+            }
+
+            if(oDataRequestBatch.getContentIdMap().containsKey(failedBatchRequestNumber)){
+                batchFailedRequest = oDataRequestBatch.getContentIdMap().get(failedBatchRequestNumber)
+                                                        .getRequest();
+            }
         }
-        catch( final Exception ignored ) {
-        }
+
+
+
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
         final ODataResponseException preparedException =
-            new ODataResponseException(request, httpResponse, msg, null, failedBatchRequestNumber);
+            new ODataResponseException(request, httpResponse, msg, null, batchFailedRequest);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {
