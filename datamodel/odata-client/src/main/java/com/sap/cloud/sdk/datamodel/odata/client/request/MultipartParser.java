@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
-class MultipartParser
+class MultipartParser implements AutoCloseable
 {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String MULTIPART_MIXED_MIME_TYPE = "multipart/mixed";
@@ -59,6 +59,7 @@ class MultipartParser
      *            The HTTP response to read from: content-type, input-stream and charset.
      * @return A new instance of {@link MultipartParser}.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // The attached InputStream is closed by the MultipartParser itself.
     public static MultipartParser ofHttpResponse( @Nonnull final HttpResponse httpResponse )
     {
         final HttpEntity entity = httpResponse.getEntity();
@@ -248,5 +249,11 @@ class MultipartParser
             log.debug("Unexpected value in HTTP header \"Content-Type\" of OData batch response: {}", contentType);
         }
         return getDelimiterFromContentType(contentType);
+    }
+
+    @Override
+    public void close()
+    {
+        Try.run(reader::close).onFailure(e -> log.warn("Failed to close HTTP entity multi-part parser.", e));
     }
 }
