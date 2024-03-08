@@ -200,7 +200,7 @@ class DefaultApacheHttpClient5CacheTest
     void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
     {
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2");
+        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
 
         for( final String tenantId : tenantsToTest ) {
@@ -214,6 +214,9 @@ class DefaultApacheHttpClient5CacheTest
 
                 if( principalId != null ) {
                     context.setPrincipal(principalId);
+                } else {
+                    // covered by the last assertion
+                    continue;
                 }
 
                 final HttpClient clientWithDestination =
@@ -239,6 +242,10 @@ class DefaultApacheHttpClient5CacheTest
 
                 clients.add(clientWithoutDestination);
             }
+            context.clearPrincipal();
+            assertThat(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
+                .describedAs("Without a principal http clients should not be cached for user based destinations")
+                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         }
     }
 

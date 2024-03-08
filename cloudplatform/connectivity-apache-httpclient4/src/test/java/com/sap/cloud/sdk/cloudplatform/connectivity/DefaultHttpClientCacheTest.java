@@ -113,7 +113,7 @@ class DefaultHttpClientCacheTest
         for( final Tenant tenantToTest : tenants ) {
             for( final Principal principalToTest : principals ) {
                 if( principalToTest == null ) {
-                    // covered by the assertion in line 133
+                    // covered by the last assertion
                     continue;
                 }
                 context.setTenant(tenantToTest);
@@ -215,7 +215,7 @@ class DefaultHttpClientCacheTest
         for( final Tenant tenantToTest : tenants ) {
             for( final Principal principalToTest : principals ) {
                 if( principalToTest == null ) {
-                    // covered by the assertion in line 240
+                    // covered by the last assertion
                     continue;
                 }
                 context.setTenant(tenantToTest);
