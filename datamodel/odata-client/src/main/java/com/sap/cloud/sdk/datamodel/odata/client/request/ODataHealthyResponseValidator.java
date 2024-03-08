@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.annotation.Nonnull;
 
 import org.apache.http.HttpResponse;
@@ -74,7 +76,7 @@ class ODataHealthyResponseValidator
         try {
             final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
             final int failedBatchRequestNumber =
-                Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
+                Integer.parseInt(new String(content, StandardCharsets.UTF_8).split("Content-ID: ")[1].split("\r\n")[0]);
             for( final ODataRequestBatch.BatchItem requestGeneric : oDataRequestBatch.getRequests() ) {
                 if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
                     for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
