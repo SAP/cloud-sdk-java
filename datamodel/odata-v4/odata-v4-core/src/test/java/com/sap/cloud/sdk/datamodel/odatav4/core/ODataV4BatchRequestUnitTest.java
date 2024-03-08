@@ -242,8 +242,8 @@ class ODataV4BatchRequestUnitTest
                 SERVICE
                     .batch()
                     .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
-                    .execute(destination) ) {
-            // will throw every time
+                    .execute(destination) ) {// will throw every time
+            badResponse.getResponseStatusCode();// suppress compiler warning
         }
         catch( final ODataResponseException e ) {
             // The http response says the 3rd request fails, meaning the entityC
@@ -256,8 +256,8 @@ class ODataV4BatchRequestUnitTest
                     .batch()
                     .addReadOperations(READ_ALL, READ_BY_KEY)
                     .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
-                    .execute(destination) ) {
-            // will throw every time
+                    .execute(destination) ) {// will throw every time
+            badResponse.getResponseStatusCode();// suppress compiler warning
         }
         catch( final ODataResponseException e ) {
             // The http response says the 3rd request fails, meaning the entityA
