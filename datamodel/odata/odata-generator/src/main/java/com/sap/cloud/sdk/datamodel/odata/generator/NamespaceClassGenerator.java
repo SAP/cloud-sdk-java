@@ -60,6 +60,7 @@ import lombok.Data;
 /**
  * For internal use only.
  */
+@SuppressWarnings( "PMD.TooManyStaticImports" )
 class NamespaceClassGenerator
 {
     private static final Logger logger = MessageCollector.getLogger(NamespaceClassGenerator.class);
