@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -56,6 +55,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestBatch;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 
 @WireMockTest
