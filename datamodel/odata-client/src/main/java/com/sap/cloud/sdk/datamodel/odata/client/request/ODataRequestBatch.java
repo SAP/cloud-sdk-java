@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.UUID;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -55,8 +54,6 @@ public class ODataRequestBatch extends ODataRequestGeneric
 
     @Nonnull
     private final List<BatchItem> requests = new ArrayList<>();
-
-    private final Map<Integer, BatchItemSingle> contentIdMap = new HashMap<>();
 
     private final AtomicInteger contentId = new AtomicInteger(1);
 
@@ -367,7 +364,6 @@ public class ODataRequestBatch extends ODataRequestGeneric
                 encodedServicePathBatchRequest);
 
             this.contentId = requestBatch.contentId.getAndIncrement();
-            requestBatch.contentIdMap.put(this.contentId, this);
             this.request = requestSingle;
             this.resourcePath =
                 StringUtils.removeStart(encodedRelativeUriSingleRequest, encodedServicePathBatchRequest);

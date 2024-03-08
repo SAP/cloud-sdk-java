@@ -73,7 +73,7 @@ class ODataV4BatchRequestUnitTest
         readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessResponse.txt");
 
     private static final String REQUEST_BODY =
-            readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessRequest.txt");
+        readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchReadsAndWritesSuccessRequest.txt");
     private static final String BATCH_BAD_CHANGESET_RESPONSE_BODY =
         readResourceFileCrlf(ODataV4BatchRequestUnitTest.class, "BatchBadChangesetResponse.txt");
 
@@ -227,21 +227,41 @@ class ODataV4BatchRequestUnitTest
 
         // Override from setup
         // Mock OData Batch response
-        final String responseContentType = "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
+        final String responseContentType =
+            "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
         stubFor(
-                post(urlEqualTo(REQUEST_URL_BATCH))
-                        .willReturn(
-                                aResponse()
-                                        .withHeader(CONTENT_TYPE, responseContentType)
-                                        .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
-                                        .withStatus(400)));
+            post(urlEqualTo(REQUEST_URL_BATCH))
+                .willReturn(
+                    aResponse()
+                        .withHeader(CONTENT_TYPE, responseContentType)
+                        .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
+                        .withStatus(400)));
 
-
-        try( final BatchResponse badResponse = SERVICE.batch().addChangeset(createTestEntityA, createTestEntityB, createTestEntityC).execute(destination) ) {
+        try(
+            final BatchResponse badResponse =
+                SERVICE
+                    .batch()
+                    .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
+                    .execute(destination) ) {
             // will throw every time
         }
         catch( final ODataResponseException e ) {
-            assertThat(e.getFailedBatchRequest().get().equals(createTestEntityC.toRequest()));
+            // The http response says the 3rd request fails, meaning the entityC
+            assertThat(e.getFailedBatchRequest().get()).isEqualTo(createTestEntityC.toRequest());
+        }
+
+        try(
+            final BatchResponse badResponse =
+                SERVICE
+                    .batch()
+                    .addReadOperations(READ_ALL, READ_BY_KEY)
+                    .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
+                    .execute(destination) ) {
+            // will throw every time
+        }
+        catch( final ODataResponseException e ) {
+            // The http response says the 3rd request fails, meaning the entityA
+            assertThat(e.getFailedBatchRequest().get()).isEqualTo(createTestEntityA.toRequest());
         }
     }
 

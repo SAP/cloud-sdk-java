@@ -4,6 +4,12 @@
 
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import javax.annotation.Nonnull;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+
 import com.google.gson.JsonObject;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
@@ -12,12 +18,8 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorExcep
 import com.sap.cloud.sdk.result.GsonResultElementFactory;
 import com.sap.cloud.sdk.result.GsonResultObject;
 import com.sap.cloud.sdk.result.ResultObject;
-import io.vavr.control.Try;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
 
-import javax.annotation.Nonnull;
+import io.vavr.control.Try;
 
 /**
  * Utility class to enable a healthy response validation.
@@ -47,23 +49,9 @@ class ODataHealthyResponseValidator
         }
 
         ODataRequestGeneric batchFailedRequest = null;
-        if(request instanceof ODataRequestBatch oDataRequestBatch) {
-
-            int failedBatchRequestNumber = -1;
-            try {
-                final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
-                failedBatchRequestNumber = Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
-            }
-            catch( final Exception ignored ) {
-            }
-
-            if(oDataRequestBatch.getContentIdMap().containsKey(failedBatchRequestNumber)){
-                batchFailedRequest = oDataRequestBatch.getContentIdMap().get(failedBatchRequestNumber)
-                                                        .getRequest();
-            }
+        if( request instanceof ODataRequestBatch oDataRequestBatch ) {
+            batchFailedRequest = findFailedBatchRequest(httpResponse, oDataRequestBatch);
         }
-
-
 
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
@@ -77,6 +65,33 @@ class ODataHealthyResponseValidator
         }
 
         throw preparedException;
+    }
+
+    private static
+        ODataRequestGeneric
+        findFailedBatchRequest( final HttpResponse httpResponse, ODataRequestBatch oDataRequestBatch )
+    {
+        try {
+            final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
+            final int failedBatchRequestNumber =
+                Integer.parseInt(new String(content).split("Content-ID: ")[1].split("\r\n")[0]);
+            for( final ODataRequestBatch.BatchItem requestGeneric : oDataRequestBatch.getRequests() ) {
+                if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
+                    for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
+                        if( single.getContentId() == failedBatchRequestNumber ) {
+                            return single.getRequest();
+                        }
+                    }
+                } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single ) {
+                    if( single.getContentId() == failedBatchRequestNumber ) {
+                        return single.getRequest();
+                    }
+                }
+            }
+        }
+        catch( final Exception ignored ) {
+        }
+        return null;
     }
 
     @Nonnull
