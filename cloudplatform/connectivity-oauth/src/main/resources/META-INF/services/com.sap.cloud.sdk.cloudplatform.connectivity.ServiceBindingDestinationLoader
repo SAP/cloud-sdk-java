@@ -1,1 +1,2 @@
 com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2ServiceBindingDestinationLoader
+com.sap.cloud.sdk.cloudplatform.connectivity.IdentityAuthenticationServiceBindingDestinationLoader
