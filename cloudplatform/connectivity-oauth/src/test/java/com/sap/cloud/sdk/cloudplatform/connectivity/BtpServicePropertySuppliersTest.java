@@ -259,12 +259,14 @@ class BtpServicePropertySuppliersTest
                 entry("endpoints.writeservice", "https://business-logging.write_api.example.com"));
 
         private final ServiceBinding bindingWithRedundantPaths =
-                bindingWithCredentials(
-                        ServiceIdentifier.of("business-logging"),
-                        entry("endpoints.configservice", "https://business-logging.config_api.example.com/buslogs/configs"),
-                        entry("endpoints.readservice", "https://business-logging.read_api.example.com"),
-                        entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com/buslogs/configs/textresources"),
-                        entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
+            bindingWithCredentials(
+                ServiceIdentifier.of("business-logging"),
+                entry("endpoints.configservice", "https://business-logging.config_api.example.com/buslogs/configs"),
+                entry("endpoints.readservice", "https://business-logging.read_api.example.com"),
+                entry(
+                    "endpoints.textresourceservice",
+                    "https://business-logging.text_api.example.com/buslogs/configs/textresources"),
+                entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
 
         @ParameterizedTest
         @EnumSource( BusinessLoggingOptions.class )
@@ -276,7 +278,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BUSINESS_LOGGING.resolve(options);
 
             final ServiceBindingDestinationOptions redundantOptions =
-                    ServiceBindingDestinationOptions.forService(bindingWithRedundantPaths).withOption(api).build();
+                ServiceBindingDestinationOptions.forService(bindingWithRedundantPaths).withOption(api).build();
 
             final OAuth2PropertySupplier redundantSut = BUSINESS_LOGGING.resolve(redundantOptions);
 

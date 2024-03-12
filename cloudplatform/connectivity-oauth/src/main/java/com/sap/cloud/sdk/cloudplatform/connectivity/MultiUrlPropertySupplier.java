@@ -61,11 +61,11 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         final Optional<String> maybeBindingKey = urlKeys.get(option).keySet().stream().findFirst();
         if( maybeBindingKey.isEmpty() ) {
             throw new IllegalStateException(
-                    "Found option value "
-                            + option
-                            + " for "
-                            + enhancerClass.getName()
-                            + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
+                "Found option value "
+                    + option
+                    + " for "
+                    + enhancerClass.getName()
+                    + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
         }
 
         final String bindingKey = maybeBindingKey.get();
@@ -77,15 +77,17 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
             final String path = endpointUrl.getPath();
             try {
                 endpointUrl =
-                        new URI(
-                                endpointUrl.getScheme(),
-                                endpointUrl.getAuthority(),
-                                null,
-                                endpointUrl.getQuery(),
-                                endpointUrl.getFragment());
-            } catch ( URISyntaxException e ) {
+                    new URI(
+                        endpointUrl.getScheme(),
+                        endpointUrl.getAuthority(),
+                        null,
+                        endpointUrl.getQuery(),
+                        endpointUrl.getFragment());
+            }
+            catch( URISyntaxException e ) {
                 throw new DestinationAccessException(
-                        "Unable to create a URI from '" + endpointUrl + "' by removing path '" + path + "'", e);
+                    "Unable to create a URI from '" + endpointUrl + "' by removing path '" + path + "'",
+                    e);
             }
         }
         return endpointUrl;
@@ -137,10 +139,14 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            return withUrlKey(enhancer,urlKey, () -> enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class);
+            return withUrlKey(enhancer, urlKey, () -> enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class);
         }
+
         @Nonnull
-        private Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey, @Nonnull final Supplier<Boolean> isPathless )
+        private Builder<T> withUrlKey(
+            @Nonnull final OptionsEnhancer<T> enhancer,
+            @Nonnull final String urlKey,
+            @Nonnull final Supplier<Boolean> isPathless )
         {
             final Map<String, Supplier<Boolean>> keyPathMap = new HashMap<>();
             keyPathMap.put(urlKey, isPathless);
