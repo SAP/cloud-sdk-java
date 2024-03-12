@@ -137,28 +137,10 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            return withUrlKey(enhancer,urlKey, () -> false);
+            return withUrlKey(enhancer,urlKey, () -> enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class);
         }
-
-        /**
-         * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
-         * {@code enhancer} should be an enum, and you should add a key for each enum value.
-         *
-         * @param enhancer
-         *          An instance of the {@link OptionsEnhancer} that represents one possible option choice. It will be
-         *          used to select the URL and compared to the instance that is eventually passed in the
-         *          {@link ServiceBindingDestinationOptions} via {@code hashCode()}. This should typically be an enum value.
-         * @param urlKey
-         *          The key under which the URL is to be found in a service binding. It will be looked up in the
-         *          {@code endpoints} property of the {@code credentials} section of the service binding.
-         * @param isPathless
-         *          A supplier that returns true if the URL should be pathless, e.g. if the path will be appended during
-         *          OpenAPI/OData client generation and thus is redundant for the destination.
-         *          on {@code MultiUrlPropertySupplier#getServiceUri()}.
-         * @return This builder.
-         */
         @Nonnull
-        Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey, @Nonnull final Supplier<Boolean> isPathless )
+        private Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey, @Nonnull final Supplier<Boolean> isPathless )
         {
             final Map<String, Supplier<Boolean>> keyPathMap = new HashMap<>();
             keyPathMap.put(urlKey, isPathless);
