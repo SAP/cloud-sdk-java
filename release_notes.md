@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix an issue where the `AuthTokenAccessor` would not recognise JWT tokens passed in via the `dwc-jwt` header.

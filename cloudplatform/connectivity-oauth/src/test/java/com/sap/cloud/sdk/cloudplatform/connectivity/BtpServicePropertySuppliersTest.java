@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.DisplayName;
@@ -42,8 +43,11 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLo
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Try;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
 @SuppressWarnings( "unchecked" ) // suppressed for the `entry("key", value)` calls
@@ -302,15 +306,17 @@ class BtpServicePropertySuppliersTest
     class IdentityAuthenticationTest
     {
         private static final String PROVIDER_URL = "https://provider.ias.domain";
-
+        private static final String PROVIDER_TENANT_ID = "test-provider-tenant";
+        private static final String SUBSCRIBER_TENANT_ID = "test-subscriber-tenant";
         private static final ServiceBinding BINDING =
             bindingWithCredentials(
                 ServiceIdentifier.IDENTITY_AUTHENTICATION,
-                MapEntry.entry("url", PROVIDER_URL),
-                MapEntry.entry("credential-type", "X509_GENERATED"),
-                MapEntry.entry("clientid", "ias-client-id"),
-                MapEntry.entry("key", getKey()),
-                MapEntry.entry("certificate", getCert()));
+                entry("app_tid", PROVIDER_TENANT_ID),
+                entry("url", PROVIDER_URL),
+                entry("credential-type", "X509_GENERATED"),
+                entry("clientid", "ias-client-id"),
+                entry("key", getKey()),
+                entry("certificate", getCert()));
 
         @Test
         void testNoParameters()
@@ -424,13 +430,36 @@ class BtpServicePropertySuppliersTest
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
         }
 
-        @Test
-        void testMTLSOnly()
+        @AllArgsConstructor
+        private enum MutualTlsForTechnicalProviderAuthenticationTest
+        {
+            TECHNICAL_PROVIDER_NO_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, null, true),
+            TECHNICAL_PROVIDER_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, SUBSCRIBER_TENANT_ID, true),
+            TECHNICAL_PROVIDER(OnBehalfOf.TECHNICAL_USER_PROVIDER, PROVIDER_TENANT_ID, true),
+            TECHNICAL_CURRENT_NO_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, null, true),
+            TECHNICAL_CURRENT_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, SUBSCRIBER_TENANT_ID, false),
+            TECHNICAL_CURRENT_PROVIDER_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, PROVIDER_TENANT_ID, true),
+            NAMED_USER_NO_TENANT(OnBehalfOf.NAMED_USER_CURRENT_TENANT, null, false),
+            NAMED_USER_SOME_TENANT(OnBehalfOf.NAMED_USER_CURRENT_TENANT, SUBSCRIBER_TENANT_ID, false),
+            NAMED_USER_PROVIDER_TENANT(OnBehalfOf.NAMED_USER_CURRENT_TENANT, PROVIDER_TENANT_ID, false),;
+
+            @Nonnull
+            private final OnBehalfOf behalf;
+            @Nullable
+            private final String currentTenantId;
+            private final boolean expectedSkipTokenRetrieval;
+        }
+
+        @ParameterizedTest
+        @EnumSource( MutualTlsForTechnicalProviderAuthenticationTest.class )
+        void testMutualTlsForTechnicalProviderAuthenticationOnly(
+            @Nonnull final MutualTlsForTechnicalProviderAuthenticationTest test )
         {
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(IasOptions.withMTLSAuthenticationOnly())
+                    .onBehalfOf(test.behalf)
+                    .withOption(IasOptions.withoutTokenForTechnicalProviderUser())
                     .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
@@ -439,35 +468,48 @@ class BtpServicePropertySuppliersTest
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
             assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
 
-            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
-            assertThat(oAuth2Options.skipTokenRetrieval()).isTrue();
+            final OAuth2Options oAuth2Options;
+            if( test.currentTenantId != null ) {
+                oAuth2Options =
+                    TenantAccessor.executeWithTenant(new DefaultTenant(test.currentTenantId), sut::getOAuth2Options);
+                assertThat(oAuth2Options).isNotNull();
+            } else {
+                oAuth2Options = sut.getOAuth2Options();
+            }
+
+            assertThat(oAuth2Options.skipTokenRetrieval()).isEqualTo(test.expectedSkipTokenRetrieval);
             assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
         }
 
         @Test
-        void testMTLSOnlyIsIgnoredWithNamedUserBehalf()
+        void testMutualTlsCanBeCombinedWithTokenRetrievalOptions()
         {
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(IasOptions.withMTLSAuthenticationOnly())
-                    .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .onBehalfOf(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT)
+                    .withOption(IasOptions.withoutTokenForTechnicalProviderUser())
+                    .withOption(IasOptions.withApplicationName("app-name"))
                     .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
-
             assertThat(sut).isNotNull();
-            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
-            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
 
-            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
-            // we are still retrieving a token, even though we are setting the `withMTLSAuthenticationOnly` option
-            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
-            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
-            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            final OAuth2Options noTokenRetrievalOptions =
+                TenantAccessor.executeWithTenant(() -> PROVIDER_TENANT_ID, sut::getOAuth2Options);
+            final OAuth2Options tokenRetrievalOptions =
+                TenantAccessor.executeWithTenant(() -> SUBSCRIBER_TENANT_ID, sut::getOAuth2Options);
+
+            assertThat(noTokenRetrievalOptions).isNotNull();
+            assertThat(tokenRetrievalOptions).isNotNull();
+
+            assertThat(noTokenRetrievalOptions.skipTokenRetrieval()).isTrue();
+            assertThat(noTokenRetrievalOptions.getAdditionalTokenRetrievalParameters()).isEmpty();
+
+            assertThat(tokenRetrievalOptions.skipTokenRetrieval()).isFalse();
+            assertThat(tokenRetrievalOptions.getAdditionalTokenRetrievalParameters()).isNotEmpty();
         }
 
         @Test
@@ -479,11 +521,9 @@ class BtpServicePropertySuppliersTest
                 IasOptions.withConsumerClient("client-id");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
                 IasOptions.withConsumerClient("client-id", "tenant-id");
-            final ServiceBindingDestinationOptions.OptionsEnhancer<?> mTLSOnly =
-                IasOptions.withMTLSAuthenticationOnly();
 
             final List<ServiceBindingDestinationOptions.OptionsEnhancer<?>> allOptions =
-                List.of(applicationName, clientId, clientIdAndTenantId, mTLSOnly);
+                List.of(applicationName, clientId, clientIdAndTenantId);
 
             for( final ServiceBindingDestinationOptions.OptionsEnhancer<?> firstOption : allOptions ) {
                 for( final ServiceBindingDestinationOptions.OptionsEnhancer<?> secondOption : allOptions ) {

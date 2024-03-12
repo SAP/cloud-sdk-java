@@ -126,6 +126,7 @@ public abstract class DecimalBasedErpType<T extends DecimalBasedErpType<T>> impl
         return new BigDecimal(str);
     }
 
+    @SuppressWarnings( "PMD.UselessParentheses" )
     private String toErpString()
     {
         if( value == null ) {

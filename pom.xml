@@ -83,11 +83,11 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.70.8</jco-api.version>
-		<jackson.version>2.16.1</jackson.version>
+		<jco-api.version>4.71.11</jco-api.version>
+		<jackson.version>2.16.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20240205</json.version>
+		<json.version>20240303</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
@@ -99,7 +99,7 @@
 		<slf4j.version>2.0.12</slf4j.version>
 		<assertj-core.version>3.25.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.10.0</mockito.version>
+		<mockito.version>5.11.0</mockito.version>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<junit.jupiter.version>5.10.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -116,11 +116,11 @@
 		<stax2-api.version>4.2.2</stax2-api.version>
 		<bouncycastle.version>1.77</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
-		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
+		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.4.2</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.22</kotlin.version>
+		<kotlin.version>1.9.23</kotlin.version>
 		<byte-buddy.version>1.14.12</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
