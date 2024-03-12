@@ -69,10 +69,10 @@ class BtpServicePropertySuppliers
                 ServiceIdentifier.of("business-logging"),
                 MultiUrlPropertySupplier
                     .of(BusinessLoggingOptions.class)
-                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice")
-                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice")
+                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice", () -> true)
+                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice", () -> true)
                     .withUrlKey(BusinessLoggingOptions.READ_API, "readservice")
-                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice")
+                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice", () -> true)
                     .factory());
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();

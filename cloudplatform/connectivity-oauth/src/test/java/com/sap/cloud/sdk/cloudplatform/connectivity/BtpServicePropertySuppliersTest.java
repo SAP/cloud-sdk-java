@@ -254,6 +254,14 @@ class BtpServicePropertySuppliersTest
                 entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com"),
                 entry("endpoints.writeservice", "https://business-logging.write_api.example.com"));
 
+        private final ServiceBinding bindingWithRedundantPaths =
+                bindingWithCredentials(
+                        ServiceIdentifier.of("business-logging"),
+                        entry("endpoints.configservice", "https://business-logging.config_api.example.com/buslogs/configs"),
+                        entry("endpoints.readservice", "https://business-logging.read_api.example.com"),
+                        entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com/buslogs/configs/textresources"),
+                        entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
+
         @ParameterizedTest
         @EnumSource( BusinessLoggingOptions.class )
         void testApiSelection( final BusinessLoggingOptions api )
@@ -263,7 +271,16 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = BUSINESS_LOGGING.resolve(options);
 
-            assertThat(sut.getServiceUri().toString()).contains(api.name().toLowerCase());
+            final ServiceBindingDestinationOptions redundantOptions =
+                    ServiceBindingDestinationOptions.forService(bindingWithRedundantPaths).withOption(api).build();
+
+            final OAuth2PropertySupplier redundantSut = BUSINESS_LOGGING.resolve(redundantOptions);
+
+            final String uriString = sut.getServiceUri().toString();
+
+            assertThat(uriString).contains(api.name().toLowerCase());
+
+            assertThat(redundantSut.getServiceUri().toString()).isEqualTo(uriString);
         }
 
         @Test
