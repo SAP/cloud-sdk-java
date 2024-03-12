@@ -46,6 +46,25 @@ class DwcTenantFacadeTest
     }
 
     @Test
+    void testSuccessfulTenantWithoutSubdomainRetrieval()
+    {
+        final Map<String, String> headers = Map.of(DWC_TENANT_HEADER, "tenant-value");
+
+        final DefaultTenant expectedTenant = new DefaultTenant("tenant-value", null);
+
+        RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> {
+            final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
+            final DefaultTenant currentTenant = (DefaultTenant) TenantAccessor.getCurrentTenant();
+            final Try<Tenant> shouldBeSuccess =
+                currentContext.getPropertyValue(TenantThreadContextListener.PROPERTY_TENANT);
+
+            assertThat(currentTenant).isEqualTo(expectedTenant);
+            assertThat(shouldBeSuccess.isSuccess()).isTrue();
+            assertThat(shouldBeSuccess.get()).isEqualTo(expectedTenant);
+        });
+    }
+
+    @Test
     void testUnsuccessfulTenantRetrieval()
     {
         RequestHeaderAccessor.executeWithHeaderContainer(Collections.emptyMap(), () -> {
