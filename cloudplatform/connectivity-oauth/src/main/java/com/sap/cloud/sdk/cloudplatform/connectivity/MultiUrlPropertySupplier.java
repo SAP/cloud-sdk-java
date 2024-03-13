@@ -72,8 +72,8 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         log.debug("Option {} selected, using binding key {}.", option, bindingKey);
 
         URI endpointUrl = getCredential(URI.class, "endpoints", bindingKey).get();
-        final boolean isPathless = urlKeys.get(option).get(bindingKey).get();
-        if( isPathless ) {
+        final boolean removePath = urlKeys.get(option).get(bindingKey).get();
+        if( removePath ) {
             final String path = endpointUrl.getPath();
             try {
                 endpointUrl =
