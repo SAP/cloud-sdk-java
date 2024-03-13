@@ -52,13 +52,6 @@ public class ODataResponseException extends ODataException
     private final Option<String> httpBody;
 
     /**
-     * The failed OData batch request.
-     */
-    @Getter
-    @Nonnull
-    private Option<ODataRequestGeneric> failedBatchRequest;
-
-    /**
      * Default constructor.
      *
      * @param request
@@ -69,50 +62,20 @@ public class ODataResponseException extends ODataException
      *            The error message.
      * @param cause
      *            The error cause.
-     * @param causeRequestContentId
-     *            The error causing request content-id.
      */
     public ODataResponseException(
         @Nonnull final ODataRequestGeneric request,
         @Nonnull final HttpResponse httpResponse,
         @Nonnull final String message,
-        @Nullable final Throwable cause,
-        @Nullable final Integer causeRequestContentId )
+        @Nullable final Throwable cause )
     {
         super(request, message, cause);
-        failedBatchRequest = Option.none();
         httpCode = httpResponse.getStatusLine().getStatusCode();
         httpHeaders = Arrays.asList(httpResponse.getAllHeaders());
-        contentId = Option.of(causeRequestContentId);
         httpBody =
             Try
                 .of(() -> EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8))
                 .onFailure(this::addSuppressed)
                 .toOption();
-    }
-
-    /**
-     * Default constructor for batch requests.
-     *
-     * @param request
-     *            The original OData request reference.
-     * @param httpResponse
-     *            The {@link HttpResponse} that gave raise to this exception.
-     * @param message
-     *            The error message.
-     * @param cause
-     *            The error cause.
-     * @param failedRequest
-     *            The failed OData batch request.
-     */
-    public ODataResponseException(
-        @Nonnull final ODataRequestGeneric request,
-        @Nonnull final HttpResponse httpResponse,
-        @Nonnull final String message,
-        @Nullable final Throwable cause,
-        @Nullable final ODataRequestGeneric failedRequest )
-    {
-        this(request, httpResponse, message, cause);
-        this.failedBatchRequest = Option.of(failedRequest);
     }
 }

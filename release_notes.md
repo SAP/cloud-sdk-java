@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- Failed OData v4 Batch requests now return the specific failed request from the exception: `ODataResponseException.getFailedBatchRequest()`. 
+- Failed OData v4 Batch requests now return the specific failed request from the exception: `ODataResponseException.getRequest()`. 
 
 ### 📈 Improvements
 

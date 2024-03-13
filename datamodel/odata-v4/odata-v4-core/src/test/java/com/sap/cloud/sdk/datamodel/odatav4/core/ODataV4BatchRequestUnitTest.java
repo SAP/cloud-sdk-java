@@ -21,6 +21,8 @@ import static com.github.tomakehurst.wiremock.common.ContentTypes.CONTENT_TYPE;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.sap.cloud.sdk.datamodel.odatav4.TestUtility.readResourceFileCrlf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -236,33 +238,18 @@ class ODataV4BatchRequestUnitTest
                     aResponse()
                         .withHeader(CONTENT_TYPE, responseContentType)
                         .withBody(BATCH_BAD_CHANGESET_RESPONSE_BODY)
-                        .withStatus(HttpStatus.SC_BAD_REQUEST)));
+                        .withStatus(HttpStatus.SC_OK)));
 
         try(
-            final BatchResponse badResponse =
+            final BatchResponse response =
                 SERVICE
                     .batch()
                     .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
-                    .execute(destination) ) {// will throw every time
-            badResponse.getResponseStatusCode();// suppress compiler warning
-        }
-        catch( final ODataResponseException e ) {
-            // The http response says the 3rd request fails, meaning the entityC
-            assertThat(e.getFailedBatchRequest().get()).isEqualTo(createTestEntityC.toRequest());
-        }
+                    .execute(destination) ) {
 
-        try(
-            final BatchResponse badResponse =
-                SERVICE
-                    .batch()
-                    .addReadOperations(READ_ALL, READ_BY_KEY)
-                    .addChangeset(createTestEntityA, createTestEntityB, createTestEntityC)
-                    .execute(destination) ) {// will throw every time
-            badResponse.getResponseStatusCode();// suppress compiler warning
-        }
-        catch( final ODataResponseException e ) {
-            // The http response says the 3rd request fails, meaning the entityA
-            assertThat(e.getFailedBatchRequest().get()).isEqualTo(createTestEntityA.toRequest());
+            assertThatExceptionOfType(ODataResponseException.class)
+                    .isThrownBy(() -> response.getModificationResult(createTestEntityA))
+                    .satisfies(e -> assertThat(e.getRequest()).isEqualTo(createTestEntityC.toRequest()));
         }
     }
 
