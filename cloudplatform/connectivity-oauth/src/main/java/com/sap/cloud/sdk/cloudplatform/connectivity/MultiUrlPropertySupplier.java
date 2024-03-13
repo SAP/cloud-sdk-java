@@ -74,21 +74,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         URI endpointUrl = getCredential(URI.class, "endpoints", bindingKey).get();
         final boolean removePath = urlKeys.get(option).get(bindingKey).get();
         if( removePath ) {
-            final String path = endpointUrl.getPath();
-            try {
-                endpointUrl =
-                    new URI(
-                        endpointUrl.getScheme(),
-                        endpointUrl.getAuthority(),
-                        null,
-                        endpointUrl.getQuery(),
-                        endpointUrl.getFragment());
-            }
-            catch( URISyntaxException e ) {
-                throw new DestinationAccessException(
-                    "Unable to create a URI from '" + endpointUrl + "' by removing path '" + path + "'",
-                    e);
-            }
+            endpointUrl = endpointUrl.resolve("/");
         }
         return endpointUrl;
     }
