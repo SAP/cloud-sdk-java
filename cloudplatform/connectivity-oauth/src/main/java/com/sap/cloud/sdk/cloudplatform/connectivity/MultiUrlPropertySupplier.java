@@ -5,12 +5,10 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -30,15 +28,15 @@ import lombok.extern.slf4j.Slf4j;
  *            The class of the {@link OptionsEnhancer}.
  */
 @Slf4j
-final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
+class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
     private final Class<T> enhancerClass;
-    private final Map<OptionsEnhancer<T>, Map<String, Supplier<Boolean>>> urlKeys;
+    private final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys;
 
-    private MultiUrlPropertySupplier(
+    MultiUrlPropertySupplier(
         @Nonnull final ServiceBindingDestinationOptions options,
         @Nonnull final Class<T> enhancerClass,
-        @Nonnull final Map<OptionsEnhancer<T>, Map<String, Supplier<Boolean>>> urlKeys )
+        @Nonnull final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys )
     {
         super(options);
         this.enhancerClass = enhancerClass;
@@ -70,13 +68,9 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
 
         final String bindingKey = maybeBindingKey.get();
         log.debug("Option {} selected, using binding key {}.", option, bindingKey);
+        final Function<URI, URI> uriTransformation = urlKeys.get(option).get(bindingKey);
 
-        URI endpointUrl = getCredential(URI.class, "endpoints", bindingKey).get();
-        final boolean removePath = urlKeys.get(option).get(bindingKey).get();
-        if( removePath ) {
-            endpointUrl = endpointUrl.resolve("/");
-        }
-        return endpointUrl;
+        return uriTransformation.apply(getCredential(URI.class, "endpoints", bindingKey).get());
     }
 
     /**
@@ -106,7 +100,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
     static final class Builder<T extends OptionsEnhancer<T>>
     {
         private final Class<T> enhancerClass;
-        private final Map<OptionsEnhancer<T>, Map<String, Supplier<Boolean>>> urlKeys = new HashMap<>();
+        private final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys = new HashMap<>();
 
         /**
          * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
@@ -125,17 +119,22 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            return withUrlKey(enhancer, urlKey, () -> enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class);
+            return withUrlKey(
+                enhancer,
+                urlKey,
+                (enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class)
+                    ? uri -> uri.resolve("/")
+                    : uri -> uri);
         }
 
         @Nonnull
         private Builder<T> withUrlKey(
             @Nonnull final OptionsEnhancer<T> enhancer,
             @Nonnull final String urlKey,
-            @Nonnull final Supplier<Boolean> isPathless )
+            @Nonnull final Function<URI, URI> uriTransformation )
         {
-            final Map<String, Supplier<Boolean>> keyPathMap = new HashMap<>();
-            keyPathMap.put(urlKey, isPathless);
+            final Map<String, Function<URI, URI>> keyPathMap = new HashMap<>();
+            keyPathMap.put(urlKey, uriTransformation);
             urlKeys.put(enhancer, keyPathMap);
             return this;
         }
