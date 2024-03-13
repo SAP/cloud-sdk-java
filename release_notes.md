@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Support service bindings to the [SAP BTP AI Core Service](https://api.sap.com/api/AI_CORE_API) by default in the `ServiceBindingDestinationLoader` API. 
 
 ### 📈 Improvements
 
