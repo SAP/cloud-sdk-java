@@ -267,6 +267,7 @@ class ODataClientBatchResponseParsingUnitTest
             .satisfies(e -> {
                 assertThat(e.getHttpCode()).isEqualTo(400);
                 assertThat(e.getHttpBody().get()).contains("The FirstName field is required");
+                assertThat(e.getContentId()).containsExactly(2);
             });
 
         assertThatExceptionOfType(ODataResponseException.class)
@@ -274,6 +275,7 @@ class ODataClientBatchResponseParsingUnitTest
             .satisfies(e -> {
                 assertThat(e.getHttpCode()).isEqualTo(400);
                 assertThat(e.getHttpBody().get()).contains("The FirstName field is required");
+                assertThat(e.getContentId()).containsExactly(2);
             });
 
         final ODataRequestResultGeneric resultReadByKey = batchResponse.getResult(readByKey);

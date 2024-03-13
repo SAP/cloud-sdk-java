@@ -69,17 +69,21 @@ public class ODataResponseException extends ODataException
      *            The error message.
      * @param cause
      *            The error cause.
+     * @param causeRequestContentId
+     *            The error causing request content-id.
      */
     public ODataResponseException(
         @Nonnull final ODataRequestGeneric request,
         @Nonnull final HttpResponse httpResponse,
         @Nonnull final String message,
-        @Nullable final Throwable cause )
+        @Nullable final Throwable cause,
+        @Nullable final Integer causeRequestContentId )
     {
         super(request, message, cause);
         failedBatchRequest = Option.none();
         httpCode = httpResponse.getStatusLine().getStatusCode();
         httpHeaders = Arrays.asList(httpResponse.getAllHeaders());
+        contentId = Option.of(causeRequestContentId);
         httpBody =
             Try
                 .of(() -> EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8))
