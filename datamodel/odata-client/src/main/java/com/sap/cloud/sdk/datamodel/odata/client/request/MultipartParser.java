@@ -174,7 +174,7 @@ class MultipartParser implements AutoCloseable
         });
     }
 
-    private Spliterator<Spliterator<Entry>> createSpliterator() // Response
+    private Spliterator<Spliterator<Entry>> createSpliterator()
     {
         final MultipartParserReader batchRead = new MultipartParserReader(reader, delimiter);
 

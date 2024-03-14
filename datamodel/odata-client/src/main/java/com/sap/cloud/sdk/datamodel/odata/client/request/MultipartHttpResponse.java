@@ -70,7 +70,10 @@ class MultipartHttpResponse extends BasicHttpResponse
     @Nonnull
     public static MultipartHttpResponse ofHttpContent( @Nonnull final MultipartParser.Entry entry )
     {
-        final Matcher contentIdMatcher = Pattern.compile("Content-ID: (\\d+)").matcher(entry.getMeta());
+        final Matcher contentIdMatcher =
+            Pattern
+                .compile("^Content-ID:\\s*(\\d+)\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE)
+                .matcher(entry.getMeta());
         final Integer contentId = contentIdMatcher.find() ? Integer.parseInt(contentIdMatcher.group(1)) : null;
         final String[] lines = PATTERN_NEW_LINE.split(entry.getPayload());
 
