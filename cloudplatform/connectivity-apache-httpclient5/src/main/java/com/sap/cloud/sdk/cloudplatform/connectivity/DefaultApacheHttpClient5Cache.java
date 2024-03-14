@@ -84,7 +84,7 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
                 "Failed to create cache key for HttpClient. Falling back to creating a new http client instance."
                     + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
                     + " Please analyze the attached stack trace and resolve the issue.";
-            log.warn(msg, e);
+            log.error(msg, e);
             return Try.ofSupplier(createHttpClient);
         }
 
@@ -129,7 +129,7 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
                 "Tenant and Principal accessors are returning inconsistent results: A principal is defined, but no tenant is defined in the current context."
                     + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
                     + " Please analyze the attached stack trace and resolve the issue.";
-            log.warn(msg, maybeTenant.getCause());
+            log.error(msg, maybeTenant.getCause());
         }
         return CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination);
     }

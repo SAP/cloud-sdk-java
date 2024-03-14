@@ -100,7 +100,7 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
                 "Tenant and Principal accessors are returning inconsistent results: A principal is defined, but no tenant is defined in the current context."
                     + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
                     + " Please analyze the attached stack trace and resolve the issue.";
-            log.warn(msg, maybeTenant.getCause());
+            log.error(msg, maybeTenant.getCause());
         }
         return Try.success(CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination));
     }
