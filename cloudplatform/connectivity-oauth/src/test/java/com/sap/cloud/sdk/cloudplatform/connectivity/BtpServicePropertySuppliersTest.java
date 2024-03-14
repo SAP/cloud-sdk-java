@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.AI_CORE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_RULES;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
@@ -243,6 +245,35 @@ class BtpServicePropertySuppliersTest
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
+        }
+    }
+
+    @Nested
+    @DisplayName( "AiCore" )
+    class AiCoreTest
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                ServiceIdentifier.of("aicore"),
+                entry("serviceurls.AI_API_URL", "https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com"),
+                entry("clientid", "client-id"),
+                entry("clientsecret", "client-secret"),
+                entry("url", "https://subaccount.authentication.sap.hana.ondemand.com"));
+
+        @Test
+        void testAiCore()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = AI_CORE.resolve(options);
+
+            assertThat(sut.getServiceUri())
+                .isEqualTo(URI.create("https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com"));
+            assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
+            assertThat(sut.getClientIdentity().getSecret()).isEqualTo("client-secret");
+            assertThat(sut.getTokenUri())
+                .isEqualTo(URI.create("https://subaccount.authentication.sap.hana.ondemand.com"));
         }
     }
 
