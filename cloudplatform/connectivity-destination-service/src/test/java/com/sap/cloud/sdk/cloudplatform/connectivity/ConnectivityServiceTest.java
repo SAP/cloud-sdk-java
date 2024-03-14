@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -57,9 +57,12 @@ class ConnectivityServiceTest
     @RegisterExtension
     static final TestContext context = TestContext.withThreadContext();
 
+    private DefaultHttpDestinationBuilderProxyHandler sut;
+
     @BeforeEach
     void setupServiceBinding( @Nonnull final WireMockRuntimeInfo wm )
     {
+        sut = new DefaultHttpDestinationBuilderProxyHandler();
         final ServiceBinding connectivityService =
             new DefaultServiceBindingBuilder()
                 .withServiceIdentifier(ServiceIdentifier.CONNECTIVITY)
@@ -74,14 +77,7 @@ class ConnectivityServiceTest
                         .put("onpremise_proxy_port", "1234")
                         .build())
                 .build();
-
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-    }
-
-    @AfterEach
-    void resetServiceBinding()
-    {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
+        when(sut.getServiceBindingConnectivity()).thenReturn(connectivityService);
     }
 
     @Test
@@ -118,7 +114,7 @@ class ConnectivityServiceTest
                 .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_FORWARDING)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination dest = sut.handle(builder);
 
         assertThat(dest).isNotNull();
         assertThat(dest.getHeaders())
@@ -158,7 +154,7 @@ class ConnectivityServiceTest
                 .proxyType(ProxyType.ON_PREMISE)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination dest = sut.handle(builder);
 
         assertThat(dest).isNotNull();
         assertThat(dest.getHeaders()).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
@@ -201,7 +197,7 @@ class ConnectivityServiceTest
                 .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_EXCHANGE)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination dest = sut.handle(builder);
 
         assertThat(dest).isNotNull();
         assertThat(dest.getHeaders()).containsOnly(new Header("Proxy-Authorization", "Bearer " + proxyAccessToken));
@@ -229,7 +225,7 @@ class ConnectivityServiceTest
                 .proxyType(ProxyType.ON_PREMISE)
                 .property(DestinationProperty.TENANT_ID, providerTenantId);
 
-        final DefaultHttpDestination dest = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination dest = sut.handle(builder);
         assertThat(dest).isNotNull();
 
         assertThatCode(dest::getHeaders)

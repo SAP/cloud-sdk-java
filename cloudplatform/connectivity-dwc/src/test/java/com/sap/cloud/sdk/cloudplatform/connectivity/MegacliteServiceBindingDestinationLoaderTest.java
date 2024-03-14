@@ -4,10 +4,12 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -270,19 +272,21 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         sut.setConnectivityResolver(mock);
 
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(sut);
-        DefaultHttpDestinationBuilderProxyHandler
-            .setServiceBindingConnectivity(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING);
+        final DefaultHttpDestinationBuilderProxyHandler proxyHandler =
+            spy(new DefaultHttpDestinationBuilderProxyHandler());
+        when(proxyHandler.getServiceBindingDestinationLoader()).thenReturn(sut);
+        when(proxyHandler.getServiceBindingConnectivity()).thenReturn(CONNECTIVITY_BINDING);
 
-        final DefaultHttpDestination result =
+        final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination
                 .builder(baseUrl)
                 .name("foo")
                 .header(HttpHeaders.AUTHORIZATION, "some-auth")
                 .headerProviders(( any ) -> Collections.singletonList(new Header("foo", "bar")))
                 .property(DestinationProperty.SAP_LANGUAGE.getKeyName(), "en")
-                .proxyType(ProxyType.ON_PREMISE)
-                .build();
+                .proxyType(ProxyType.ON_PREMISE);
+
+        final DefaultHttpDestination result = proxyHandler.handle(builder);
 
         assertThat(result.getUri()).isEqualTo(baseUrl);
         assertThat(result.get(DestinationProperty.PROXY_URI).get()).isEqualTo(proxyUrl);
@@ -298,7 +302,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     void testMissingDestinationToBeProxied()
     {
         final ServiceBindingDestinationOptions options =
-            ServiceBindingDestinationOptions.forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING).build();
+            ServiceBindingDestinationOptions.forService(CONNECTIVITY_BINDING).build();
 
         assertThatThrownBy(() -> sut.getDestination(options)).isInstanceOf(DestinationAccessException.class);
     }
@@ -308,7 +312,7 @@ class MegacliteServiceBindingDestinationLoaderTest
     {
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
-                .forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING)
+                .forService(CONNECTIVITY_BINDING)
                 .onBehalfOf(OnBehalfOf.TECHNICAL_USER_PROVIDER)
                 .withOption(ProxyOptions.destinationToBeProxied(mock(HttpDestination.class)))
                 .build();
@@ -329,7 +333,7 @@ class MegacliteServiceBindingDestinationLoaderTest
 
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
-                .forService(MegacliteServiceBindingAccessor.CONNECTIVITY_BINDING)
+                .forService(CONNECTIVITY_BINDING)
                 .withOption(ProxyOptions.destinationToBeProxied(destination))
                 .build();
         final HttpDestination result = sut.getDestination(options);

@@ -224,7 +224,7 @@ public final class DefaultHttpDestination implements HttpDestination
                         .stream()
                         .filter(Objects::nonNull)
                         .map(value -> new Header(HttpHeaders.AUTHORIZATION, value))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if( headersToAdd.isEmpty() ) {
                     final String msg =
@@ -972,10 +972,10 @@ public final class DefaultHttpDestination implements HttpDestination
                 throw new IllegalArgumentException("Cannot build a HttpDestination without a URL.");
             }
 
-            // NOT using the typed property here since this would break change detection in our ScpCfDestinationLoader
-            property(DestinationProperty.TYPE.getKeyName(), DestinationType.HTTP.toString());
+            if( get(DestinationProperty.TYPE).isEmpty() ) {
+                property(DestinationProperty.TYPE, DestinationType.HTTP);
+            }
 
-            // handle proxy type == OnPremise
             if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
                 try {
                     return proxyHandler.handle(this);
@@ -986,7 +986,6 @@ public final class DefaultHttpDestination implements HttpDestination
                     log.error(msg, e);
                 }
             }
-
             return buildInternal();
         }
 

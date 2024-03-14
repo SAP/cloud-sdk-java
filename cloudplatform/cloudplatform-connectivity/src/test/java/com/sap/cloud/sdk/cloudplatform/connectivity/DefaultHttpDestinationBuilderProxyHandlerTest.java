@@ -4,17 +4,19 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestina
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Answers;
@@ -25,6 +27,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 import com.sap.cloud.sdk.testutil.TestContext;
@@ -61,61 +64,65 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @RegisterExtension
     static TestContext context = TestContext.withThreadContext();
 
+    private DefaultHttpDestinationBuilderProxyHandler sut;
+
     @BeforeEach
-    @AfterEach
-    void clean()
+    void setUp()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(null);
+        sut = spy(new DefaultHttpDestinationBuilderProxyHandler());
+        doReturn(destinationLoader).when(sut).getServiceBindingDestinationLoader();
+        doReturn(connectivityService).when(sut).getServiceBindingConnectivity();
     }
 
     @Test
-    void testNoProxy()
+    @DisplayName( "Handler should only be invoked for destinations with proxy type ON_PREMISE" )
+    void testProxyTypeNotOnpremise()
     {
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.builder("http://foo");
 
-        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
-            .isExactlyInstanceOf(DestinationAccessException.class)
-            .hasMessage("Unable to resolve connectivity service binding.");
+        assertThatThrownBy(() -> sut.handle(builder)).isExactlyInstanceOf(ShouldNotHappenException.class);
         verifyNoInteractions(destinationLoader);
     }
 
     @Test
     void testNoOnProxy()
     {
+        when(sut.getServiceBindingDestinationLoader()).thenCallRealMethod();
+        when(sut.getServiceBindingConnectivity()).thenCallRealMethod();
+
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder("http://foo").proxyType(ProxyType.INTERNET);
 
-        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+        assertThatThrownBy(() -> sut.handle(builder))
             .isExactlyInstanceOf(DestinationAccessException.class)
-            .hasMessage("Unable to resolve connectivity service binding.");
+            .hasMessageContaining("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
     @Test
     void testNoConnectivity()
     {
+        when(sut.getServiceBindingDestinationLoader()).thenCallRealMethod();
+        when(sut.getServiceBindingConnectivity()).thenCallRealMethod();
+
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder("http://foo").proxyType(ProxyType.ON_PREMISE);
 
-        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+        assertThatThrownBy(() -> sut.handle(builder))
             .isExactlyInstanceOf(DestinationAccessException.class)
-            .hasMessage("Unable to resolve connectivity service binding.");
+            .hasMessageContaining("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
     @Test
     void testNoAuth()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-
         final URI uri = URI.create("http://foo");
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder(uri).proxyType(ProxyType.ON_PREMISE);
 
         // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination result = sut.handle(builder);
 
         assertThat(result).isNotNull();
         verify(destinationLoader).tryGetDestination(argThat(options -> {
@@ -129,16 +136,13 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testNotPrincipalPropagation()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-
         final URI uri = URI.create("http://foo");
         final BasicCredentials basicCredentials = new BasicCredentials("foo", "bar");
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination.builder(uri).proxyType(ProxyType.ON_PREMISE).basicCredentials(basicCredentials);
 
         // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination result = sut.handle(builder);
 
         assertThat(result).isNotNull();
         verify(destinationLoader).tryGetDestination(argThat(options -> {
@@ -154,8 +158,6 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     void testPrincipalPropagationDefault()
     {
         context.setAuthToken(token1);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 
         final URI uri = URI.create("http://foo");
         final DefaultHttpDestination.Builder builder =
@@ -165,7 +167,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
                 .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION);
 
         // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination result = sut.handle(builder);
 
         assertThat(result).isNotNull();
         verify(destinationLoader).tryGetDestination(argThat(options -> {
@@ -182,8 +184,6 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     void testPrincipalPropagationCompatibility()
     {
         context.setAuthToken(token1);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 
         final URI uri = URI.create("http://foo");
         final DefaultHttpDestination.Builder builder =
@@ -194,7 +194,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
                 .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_FORWARDING);
 
         // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination result = sut.handle(builder);
 
         assertThat(result).isNotNull();
         verify(destinationLoader).tryGetDestination(argThat(options -> {
@@ -210,9 +210,6 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testPrincipalPropagationRecommended()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-
         final URI uri = URI.create("http://foo");
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination
@@ -222,7 +219,7 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
                 .property(DestinationProperty.PRINCIPAL_PROPAGATION_MODE, PrincipalPropagationMode.TOKEN_EXCHANGE);
 
         // test
-        final DefaultHttpDestination result = new DefaultHttpDestinationBuilderProxyHandler().handle(builder);
+        final DefaultHttpDestination result = sut.handle(builder);
 
         assertThat(result).isNotNull();
         verify(destinationLoader).tryGetDestination(argThat(options -> {
@@ -236,9 +233,6 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testNoAuthWithTenantId()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
-
         final URI uri = URI.create("http://foo");
         final DefaultHttpDestinationBuilderProxyHandler sut = new DefaultHttpDestinationBuilderProxyHandler();
 
@@ -287,11 +281,8 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     void testPrincipalPropagationWithTenantId()
     {
         context.setAuthToken(token1);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingDestinationLoader(destinationLoader);
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
 
         final URI uri = URI.create("http://foo");
-        final DefaultHttpDestinationBuilderProxyHandler sut = new DefaultHttpDestinationBuilderProxyHandler();
 
         // provider tenant
         {
@@ -339,12 +330,15 @@ class DefaultHttpDestinationBuilderProxyHandlerTest
     @Test
     void testNotProxyTheProxy()
     {
+        when(sut.getServiceBindingDestinationLoader()).thenCallRealMethod();
+        when(sut.getServiceBindingConnectivity()).thenCallRealMethod();
+
         final DefaultHttpDestination.Builder builder1 = DefaultHttpDestination.builder("http://foo");
         final DefaultHttpDestination.Builder builder = DefaultHttpDestination.fromDestination(builder1.build());
 
-        assertThatThrownBy(() -> new DefaultHttpDestinationBuilderProxyHandler().handle(builder))
+        assertThatThrownBy(() -> sut.handle(builder))
             .isExactlyInstanceOf(DestinationAccessException.class)
-            .hasMessage("Unable to resolve connectivity service binding.");
+            .hasMessageContaining("Unable to resolve connectivity service binding.");
         verifyNoInteractions(destinationLoader);
     }
 
