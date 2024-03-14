@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -20,8 +21,6 @@ import com.sap.cloud.sdk.result.GsonResultObject;
 import com.sap.cloud.sdk.result.ResultObject;
 
 import io.vavr.control.Try;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * Utility class to enable a healthy response validation.
@@ -46,25 +45,23 @@ class ODataHealthyResponseValidator
         final HttpResponse httpResponse = result.getHttpResponse();
         final StatusLine statusLine = httpResponse.getStatusLine();
 
-        // WIP
-        final Integer contentId =
-                httpResponse instanceof MultipartHttpResponse
-                        ? ((MultipartHttpResponse) httpResponse).getContentId()
-                        : null;
-        Integer failedBatchRequestNumber = null;
-        try
-        {
-            final byte[] content = httpResponse.getEntity().getContent().readAllBytes();
-            failedBatchRequestNumber =
-                    Integer.parseInt(new String(content, StandardCharsets.UTF_8).split("Content-ID: ")[1].split("\r\n")[0]);
-        } catch(Exception ignored) {
-        }
         if( statusLine != null && statusLine.getStatusCode() < HttpStatus.SC_BAD_REQUEST ) { // code < 400
             return;
         }
+
+        ODataRequestGeneric batchFailedRequest = null;
+        if( request instanceof ODataRequestBatch oDataRequestBatch ) {
+            batchFailedRequest = findFailedBatchRequest(httpResponse, oDataRequestBatch);
+        }
+
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
-        final ODataResponseException preparedException = new ODataResponseException(request, httpResponse, msg, null);
+        final ODataResponseException preparedException =
+            new ODataResponseException(
+                batchFailedRequest == null ? request : batchFailedRequest,
+                httpResponse,
+                msg,
+                null);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {
@@ -73,6 +70,35 @@ class ODataHealthyResponseValidator
         }
 
         throw preparedException;
+    }
+
+    @Nullable
+    private static
+        ODataRequestGeneric
+        findFailedBatchRequest( final HttpResponse httpResponse, final ODataRequestBatch oDataRequestBatch )
+    {
+        final Integer failedBatchRequestNumber =
+            httpResponse instanceof MultipartHttpResponse
+                ? ((MultipartHttpResponse) httpResponse).getContentId()
+                : null;
+        if( failedBatchRequestNumber == null ) {
+            return null;
+        }
+
+        for( final ODataRequestBatch.BatchItem requestGeneric : oDataRequestBatch.getRequests() ) {
+            if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
+                for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
+                    if( single.getContentId() == failedBatchRequestNumber ) {
+                        return single.getRequest();
+                    }
+                }
+            } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single ) {
+                if( single.getContentId() == failedBatchRequestNumber ) {
+                    return single.getRequest();
+                }
+            }
+        }
+        return null;
     }
 
     @Nonnull

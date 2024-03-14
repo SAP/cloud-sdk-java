@@ -194,7 +194,7 @@ public class ODataRequestBatch extends ODataRequestGeneric
 
         return Try
             .of(request::requestPost)
-            .map(response -> new ODataRequestResultMultipartGeneric(this, response))// we need to save this HttpResponse to get the contentId
+            .map(response -> new ODataRequestResultMultipartGeneric(this, response))
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
 

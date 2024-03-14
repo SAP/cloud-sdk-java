@@ -109,15 +109,7 @@ public class ODataRequestResultMultipartGeneric
         if( responsePosition._1() >= batchResponseItems.size() ) {
             String msg = "Unable to extract batch response item at position %s. The response contains only %s items.";
             msg = String.format(msg, responsePosition._1() + 1, batchResponseItems.size());
-
-            // WIP
-            final List<HttpResponse> subResponses = batchResponseItems.get(responsePosition._1());
-
-            final boolean isSingleResponse = responsePosition._2() == null || responsePosition._2() >= subResponses.size();
-            final HttpResponse response = subResponses.get(isSingleResponse ? 0 : responsePosition._2());
-            final ODataRequestGeneric failedRequest = findFailedBatchRequest(request, response);
-
-            throw new ODataResponseException(failedRequest != null ? failedRequest : request, httpResponse, msg, null);
+            throw new ODataResponseException(batchRequest, httpResponse, msg, null);
         }
         final List<HttpResponse> subResponses = batchResponseItems.get(responsePosition._1());
 
@@ -129,7 +121,7 @@ public class ODataRequestResultMultipartGeneric
             throw new ODataDeserializationException(batchRequest, httpResponse, msg, null);
         }
 
-        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(batchRequest, response);
         result.disableBufferingHttpResponse(); // the artificial HttpResponse is static, no buffer required
         ODataHealthyResponseValidator.requireHealthyResponse(result);
         return result;
@@ -154,33 +146,6 @@ public class ODataRequestResultMultipartGeneric
                     getHttpResponse(),
                     "Failed to read " + batchRequest.getProtocol() + " batch response.",
                     e));
-    }
-
-    @Nullable
-    private ODataRequestGeneric findFailedBatchRequest(final ODataRequestGeneric request, final HttpResponse response)
-    {
-        final Integer failedBatchRequestNumber =
-                response instanceof MultipartHttpResponse
-                        ? ((MultipartHttpResponse) response).getContentId()
-                        : null;
-        if( failedBatchRequestNumber == null ) {
-            return null;
-        }
-
-        for( final ODataRequestBatch.BatchItem requestGeneric : getODataRequest().getRequests() ) {
-            if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
-                for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
-                    if( single.getContentId() == failedBatchRequestNumber ) {
-                        return single.getRequest();
-                    }
-                }
-            } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single ) {
-                if( single.getContentId() == failedBatchRequestNumber ) {
-                    return single.getRequest();
-                }
-            }
-        }
-        return null;
     }
 
     @Nonnull
