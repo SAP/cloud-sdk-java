@@ -16,7 +16,6 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
-import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 
 import io.vavr.control.Option;
@@ -41,10 +40,10 @@ class DefaultHttpDestinationBuilderProxyHandler
             DestinationNotFoundException
     {
         if( !builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
-            throw new ShouldNotHappenException(
-                "Proxy handler was invoked for destination "
+            throw new IllegalStateException(
+                "Proxy handler was invoked unexpectedly for destination "
                     + builder.get(DestinationProperty.NAME).getOrElse("unnamed-destination")
-                    + " that is not supposed to be proxied.");
+                    + " which does not have proxy type 'ON_PREMISE'.");
         }
         // add location id header provider, useful to identify one of multiple cloud connectors
         builder.headerProviders(new SapConnectivityLocationIdHeaderProvider());
@@ -113,7 +112,7 @@ class DefaultHttpDestinationBuilderProxyHandler
     @Nonnull
     ServiceBinding getServiceBindingConnectivity()
     {
-        final ServiceBindingAccessor serviceBindingAccessor = DefaultServiceBindingAccessor.getInstance();
+        final ServiceBindingAccessor serviceBindingAccessor = getServiceBindingAccessor();
 
         final Predicate<ServiceBinding> predicate =
             b -> ServiceIdentifier.CONNECTIVITY.equals(b.getServiceIdentifier().orElse(null));
@@ -130,6 +129,12 @@ class DefaultHttpDestinationBuilderProxyHandler
         } else {
             return serviceBindings.get(0);
         }
+    }
+
+    @Nonnull
+    ServiceBindingAccessor getServiceBindingAccessor()
+    {
+        return DefaultServiceBindingAccessor.getInstance();
     }
 
     /**
