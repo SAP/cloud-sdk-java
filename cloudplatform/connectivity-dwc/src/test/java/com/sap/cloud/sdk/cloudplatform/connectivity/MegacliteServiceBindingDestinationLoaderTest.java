@@ -275,7 +275,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         final DefaultHttpDestinationBuilderProxyHandler proxyHandler =
             spy(new DefaultHttpDestinationBuilderProxyHandler());
         when(proxyHandler.getServiceBindingDestinationLoader()).thenReturn(sut);
-        when(proxyHandler.getServiceBindingConnectivity()).thenReturn(CONNECTIVITY_BINDING);
+        when(proxyHandler.getServiceBindingAccessor()).thenReturn(() -> List.of(CONNECTIVITY_BINDING));
 
         final DefaultHttpDestination.Builder builder =
             DefaultHttpDestination

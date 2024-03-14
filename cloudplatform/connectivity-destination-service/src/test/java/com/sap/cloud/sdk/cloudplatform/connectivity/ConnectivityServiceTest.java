@@ -16,9 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -62,7 +64,7 @@ class ConnectivityServiceTest
     @BeforeEach
     void setupServiceBinding( @Nonnull final WireMockRuntimeInfo wm )
     {
-        sut = new DefaultHttpDestinationBuilderProxyHandler();
+        sut = spy(new DefaultHttpDestinationBuilderProxyHandler());
         final ServiceBinding connectivityService =
             new DefaultServiceBindingBuilder()
                 .withServiceIdentifier(ServiceIdentifier.CONNECTIVITY)
@@ -77,7 +79,7 @@ class ConnectivityServiceTest
                         .put("onpremise_proxy_port", "1234")
                         .build())
                 .build();
-        when(sut.getServiceBindingConnectivity()).thenReturn(connectivityService);
+        when(sut.getServiceBindingAccessor()).thenReturn(() -> List.of(connectivityService));
     }
 
     @Test

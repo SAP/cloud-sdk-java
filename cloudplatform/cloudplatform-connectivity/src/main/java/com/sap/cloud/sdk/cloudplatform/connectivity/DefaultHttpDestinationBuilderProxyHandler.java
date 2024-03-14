@@ -110,7 +110,7 @@ class DefaultHttpDestinationBuilderProxyHandler
      *         found.
      */
     @Nonnull
-    ServiceBinding getServiceBindingConnectivity()
+    private ServiceBinding getServiceBindingConnectivity()
     {
         final ServiceBindingAccessor serviceBindingAccessor = getServiceBindingAccessor();
 
