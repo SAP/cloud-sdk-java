@@ -126,9 +126,8 @@ class DefaultHttpDestinationBuilderProxyHandler
         } else if( serviceBindings.size() > 1 ) {
             throw new DestinationAccessException(
                 "Unable to resolve connectivity service binding. More than one service bindings found that match Connectivity.");
-        } else {
-            return serviceBindings.get(0);
         }
+        return serviceBindings.get(0);
     }
 
     @Nonnull
