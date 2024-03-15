@@ -1,6 +1,7 @@
 --batchresponse_2e5e59e3-ef58-493c-b947-638f445896aa
 Content-Type: application/http
 Content-Transfer-Encoding: binary
+Content-ID: 2
 
 HTTP/1.1 400 Bad Request
 Content-Type: application/json; charset=utf-8

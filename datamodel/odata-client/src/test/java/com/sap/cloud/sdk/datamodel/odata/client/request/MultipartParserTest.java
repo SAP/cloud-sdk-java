@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import static com.sap.cloud.sdk.datamodel.odata.client.request.MultipartParser.Entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
@@ -60,12 +61,12 @@ class MultipartParserTest
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
 
         // user code
-        final List<List<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
+        final List<List<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
         final MultipartHttpResponse httpResponse = MultipartHttpResponse.ofHttpContent(result.get(0).get(0));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).hasSize(1);
-        assertThat(result.get(0).get(0)).startsWith("HTTP/1.1 200 OK");
+        assertThat(result.get(0).get(0).getPayload()).startsWith("HTTP/1.1 200 OK");
 
         assertThat(httpResponse.getAllHeaders()).satisfiesExactly(header -> {
             assertThat(header.getName()).isEqualTo("Content-Type");
@@ -93,7 +94,7 @@ class MultipartParserTest
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
 
         // user code
-        final List<List<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
+        final List<List<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
         assertThat(result).isEmpty();
     }
 
@@ -106,7 +107,7 @@ class MultipartParserTest
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
 
         // user code
-        final List<List<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
+        final List<List<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
         assertThat(result).isEmpty();
     }
 
@@ -120,7 +121,7 @@ class MultipartParserTest
         final String delimiter = "--some-delimiter";
 
         // user code
-        final List<List<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
+        final List<List<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
         assertThat(result).isEmpty();
     }
 
@@ -134,7 +135,7 @@ class MultipartParserTest
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
 
         // user code
-        final List<List<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
+        final List<List<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toList();
         assertThat(result).isEmpty();
     }
 
@@ -184,7 +185,7 @@ class MultipartParserTest
         final String delimiter = "--batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef";
 
         // user code
-        final Stream<Stream<String>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toStream();
+        final Stream<Stream<Entry>> result = MultipartParser.ofInputStream(response, UTF_8, delimiter).toStream();
 
         // assert behavior
         assertThat(result.count()).isEqualTo(2); // first access successful
@@ -204,7 +205,7 @@ class MultipartParserTest
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
         // user code
-        final Stream<Stream<String>> result = MultipartParser.ofHttpResponse(resp).toStream();
+        final Stream<Stream<Entry>> result = MultipartParser.ofHttpResponse(resp).toStream();
 
         // assert behavior
         assertThat(result.count()).isEqualTo(2); // first access successful
@@ -224,13 +225,13 @@ class MultipartParserTest
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
         // user code
-        final List<List<String>> result = MultipartParser.ofHttpResponse(resp).toList();
+        final List<List<Entry>> result = MultipartParser.ofHttpResponse(resp).toList();
 
         // assert behavior
         assertThat(result).isNotEmpty();
 
-        for( final List<String> segments : result ) {
-            for( final String segment : segments ) {
+        for( final List<Entry> segments : result ) {
+            for( final Entry segment : segments ) {
                 // ignore
             }
         }
@@ -240,10 +241,10 @@ class MultipartParserTest
             .satisfiesExactly(
                 segments1 -> assertThat(segments1)
                     .satisfiesExactly(
-                        payload1 -> assertThat(payload1).contains("HTTP/1.1 201 Created"),
-                        payload2 -> assertThat(payload2).contains("HTTP/1.1 201 Created")),
+                        entry1 -> assertThat(entry1.getPayload()).contains("HTTP/1.1 201 Created"),
+                        entry2 -> assertThat(entry2.getPayload()).contains("HTTP/1.1 201 Created")),
                 segments2 -> assertThat(segments2)
-                    .satisfiesExactly(payload1 -> assertThat(payload1).contains("HTTP/1.1 404 Not Found")));
+                    .satisfiesExactly(entry1 -> assertThat(entry1.getPayload()).contains("HTTP/1.1 404 Not Found")));
     }
 
     @SneakyThrows

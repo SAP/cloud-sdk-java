@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
@@ -15,6 +16,7 @@ import com.sap.cloud.sdk.cloudplatform.exception.DwcHeaderNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
+import io.vavr.control.Try;
 import lombok.Value;
 
 /**
@@ -66,6 +68,20 @@ public class DwcHeaderUtils
     public static String getDwCSubdomainOrThrow()
     {
         return getNonEmptyDwcHeaderValue(DWC_SUBDOMAIN_HEADER);
+    }
+
+    /**
+     * This method fetches the value of the {@link #DWC_SUBDOMAIN_HEADER} header. If the header is not present,
+     * {@code null} will be returned instead.
+     *
+     * @return Either the value of the {@link #DWC_SUBDOMAIN_HEADER} header, or {@code null} if the header is not
+     *         present.
+     * @since 5.6.0
+     */
+    @Nullable
+    public static String getDwCSubdomainOrNull()
+    {
+        return Try.of(() -> getNonEmptyDwcHeaderValue(DWC_SUBDOMAIN_HEADER)).getOrNull();
     }
 
     /**

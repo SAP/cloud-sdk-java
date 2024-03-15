@@ -76,6 +76,8 @@ class BtpServicePropertySuppliers
                     .withUrlKey(BusinessLoggingOptions.READ_API, "readservice")
                     .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice")
                     .factory());
+    static final OAuth2PropertySupplierResolver AI_CORE =
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("aicore"), AiCore::new);
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
@@ -86,6 +88,7 @@ class BtpServicePropertySuppliers
         DEFAULT_SERVICE_RESOLVERS.add(WORKFLOW);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_LOGGING);
         DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHENTICATION);
+        DEFAULT_SERVICE_RESOLVERS.add(AI_CORE);
     }
 
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
@@ -253,6 +256,21 @@ class BtpServicePropertySuppliers
             catch( final Exception e ) {
                 throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);
             }
+        }
+    }
+
+    private static class AiCore extends DefaultOAuth2PropertySupplier
+    {
+        AiCore( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, Collections.emptyList());
+        }
+
+        @Nonnull
+        @Override
+        public URI getServiceUri()
+        {
+            return getCredentialOrThrow(URI.class, "serviceurls", "AI_API_URL");
         }
     }
 }
