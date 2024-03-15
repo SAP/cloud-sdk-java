@@ -113,8 +113,7 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
         if( destination == null ) {
             return CacheKey.ofTenantAndPrincipalOptionalIsolation();
         }
-        if( !DestinationUtility.requiresUserTokenExchange(destination)
-            && destination.getAuthenticationType() != AuthenticationType.PRINCIPAL_PROPAGATION ) {
+        if( !requiresPrincipalIsolation(destination) ) {
             return CacheKey.ofTenantOptionalIsolation().append(destination);
         }
         final Try<Tenant> maybeTenant = TenantAccessor.tryGetCurrentTenant();
@@ -132,5 +131,11 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
             log.error(msg, maybeTenant.getCause());
         }
         return CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination);
+    }
+
+    private static boolean requiresPrincipalIsolation( @Nonnull final HttpDestinationProperties destination )
+    {
+        return DestinationUtility.requiresUserTokenExchange(destination)
+            || destination.getAuthenticationType() == AuthenticationType.PRINCIPAL_PROPAGATION;
     }
 }

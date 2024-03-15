@@ -82,8 +82,7 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
     @Override
     protected Try<CacheKey> getCacheKey( @Nonnull final HttpDestinationProperties destination )
     {
-        if( !DestinationUtility.requiresUserTokenExchange(destination)
-            && destination.getAuthenticationType() != AuthenticationType.PRINCIPAL_PROPAGATION ) {
+        if( !requiresPrincipalIsolation(destination) ) {
             return Try.success(CacheKey.ofTenantOptionalIsolation().append(destination));
         }
         final Try<Tenant> maybeTenant = TenantAccessor.tryGetCurrentTenant();
@@ -103,6 +102,12 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
             log.error(msg, maybeTenant.getCause());
         }
         return Try.success(CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination));
+    }
+
+    static boolean requiresPrincipalIsolation( @Nonnull final HttpDestinationProperties destination )
+    {
+        return DestinationUtility.requiresUserTokenExchange(destination)
+            || destination.getAuthenticationType() == AuthenticationType.PRINCIPAL_PROPAGATION;
     }
 
     @Nonnull
