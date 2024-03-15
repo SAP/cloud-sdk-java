@@ -121,7 +121,8 @@ public class ODataRequestResultMultipartGeneric
             throw new ODataDeserializationException(batchRequest, httpResponse, msg, null);
         }
 
-        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(batchRequest, response);
+        result.disableBufferingHttpResponse(); // the artificial HttpResponse is static, no buffer required
         ODataHealthyResponseValidator.requireHealthyResponse(result);
         return result;
     }
