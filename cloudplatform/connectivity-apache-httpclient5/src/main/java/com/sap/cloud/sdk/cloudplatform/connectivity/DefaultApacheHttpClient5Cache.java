@@ -19,6 +19,12 @@ import com.github.benmanes.caffeine.cache.Ticker;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
+import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
+import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
+import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAccessException;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
 {
-
     static final Duration DEFAULT_DURATION = Duration.ofMinutes(5L);
     static final Ticker DEFAULT_TICKER = Ticker.systemTicker();
 
@@ -70,15 +75,18 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
                 ? httpClientFactory.createHttpClient(destination)
                 : httpClientFactory.createHttpClient();
         };
-
-        final Try<CacheKey> maybeKey = destination != null ? getCacheKey(destination) : getCacheKey();
-        maybeKey.onFailure(cause -> logCachePropagationFailure("Could not get HttpClient cache key.", cause));
-
-        if( maybeKey.isFailure() ) {
+        final CacheKey cacheKey;
+        try {
+            cacheKey = getCacheKey(destination);
+        }
+        catch( final TenantAccessException | PrincipalAccessException | IllegalStateException e ) {
+            final String msg =
+                "Failed to create cache key for HttpClient. Falling back to creating a new http client instance."
+                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
+                    + " Please analyze the attached stack trace and resolve the issue.";
+            log.error(msg, e);
             return Try.ofSupplier(createHttpClient);
         }
-
-        final CacheKey cacheKey = maybeKey.get();
 
         final HttpClient httpClient;
         try {
@@ -100,24 +108,34 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
         return Try.success(httpClient);
     }
 
-    private void logCachePropagationFailure( @Nonnull final String message, @Nonnull final Throwable cause )
+    private CacheKey getCacheKey( @Nullable final HttpDestinationProperties destination )
     {
-        log.info(message);
-        log.debug(message, cause);
-    }
-
-    private Try<CacheKey> getCacheKey( @Nonnull final HttpDestinationProperties destination )
-    {
-        return Try.of(() -> {
-            if( DestinationUtility.requiresUserTokenExchange(destination) ) {
-                return CacheKey.ofTenantAndPrincipalOptionalIsolation().append(destination);
-            }
+        if( destination == null ) {
+            return CacheKey.ofTenantAndPrincipalOptionalIsolation();
+        }
+        if( !requiresPrincipalIsolation(destination) ) {
             return CacheKey.ofTenantOptionalIsolation().append(destination);
-        });
+        }
+        final Try<Tenant> maybeTenant = TenantAccessor.tryGetCurrentTenant();
+        final Try<Principal> principal = PrincipalAccessor.tryGetCurrentPrincipal();
+        if( principal.isFailure() ) {
+            throw new IllegalStateException(
+                "The destination requires a principal, but none was found in the current context.",
+                principal.getCause());
+        }
+        if( maybeTenant.isFailure() ) {
+            final String msg =
+                "Tenant and Principal accessors are returning inconsistent results: A principal is defined, but no tenant is defined in the current context."
+                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
+                    + " Please analyze the attached stack trace and resolve the issue.";
+            log.error(msg, maybeTenant.getCause());
+        }
+        return CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination);
     }
 
-    private Try<CacheKey> getCacheKey()
+    private static boolean requiresPrincipalIsolation( @Nonnull final HttpDestinationProperties destination )
     {
-        return Try.of(CacheKey::ofTenantAndPrincipalOptionalIsolation);
+        return DestinationUtility.requiresUserTokenExchange(destination)
+            || destination.getAuthenticationType() == AuthenticationType.PRINCIPAL_PROPAGATION;
     }
 }

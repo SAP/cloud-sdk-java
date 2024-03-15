@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.testutil;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,6 +37,7 @@ public interface AuthTokenContext extends TestContextApi
     @Nonnull
     default AuthToken setAuthToken( @Nonnull final DecodedJWT decodedJWT )
     {
+        Objects.requireNonNull(decodedJWT, "Decoded JWT must not be null.");
         return setAuthToken(new AuthToken(decodedJWT));
     }
 

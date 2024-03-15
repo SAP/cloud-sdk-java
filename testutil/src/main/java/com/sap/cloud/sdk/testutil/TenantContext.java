@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.testutil;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,6 +35,7 @@ public interface TenantContext extends TestContextApi
     @Nonnull
     default Tenant setTenant( @Nonnull final String tenant )
     {
+        Objects.requireNonNull(tenant, "Tenant ID must not be null.");
         return setTenant(new DefaultTenant(tenant, "default-test-subdomain"));
     }
 

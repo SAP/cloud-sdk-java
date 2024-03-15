@@ -21,5 +21,6 @@
 
 ### 🐛 Fixed Issues
 
+- Fix an issue where the same `HttpClient` would be used for different users when using `PrincipalPropagation` and thus could potentially share the same (session) cookies.
 - [DwC] Fix an issue where the `AuthTokenAccessor` would not recognise JWT tokens passed in via the `dwc-jwt` header.
-- [DwC] Fix an issue where the current tenant would not be resolved if the `dwc-subdomain` header was missing. 
+- [DwC] Fix an issue where the current tenant would not be resolved if the `dwc-subdomain` header was missing.
