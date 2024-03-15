@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -48,9 +49,19 @@ class ODataHealthyResponseValidator
             return;
         }
 
+        ODataRequestGeneric batchFailedRequest = null;
+        if( request instanceof ODataRequestBatch oDataRequestBatch ) {
+            batchFailedRequest = findFailedBatchRequest(httpResponse, oDataRequestBatch);
+        }
+
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
-        final ODataResponseException preparedException = new ODataResponseException(request, httpResponse, msg, null);
+        final ODataResponseException preparedException =
+            new ODataResponseException(
+                batchFailedRequest == null ? request : batchFailedRequest,
+                httpResponse,
+                msg,
+                null);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {
@@ -59,6 +70,35 @@ class ODataHealthyResponseValidator
         }
 
         throw preparedException;
+    }
+
+    @Nullable
+    private static
+        ODataRequestGeneric
+        findFailedBatchRequest( final HttpResponse httpResponse, final ODataRequestBatch oDataRequestBatch )
+    {
+        final Integer failedBatchRequestNumber =
+            httpResponse instanceof MultipartHttpResponse
+                ? ((MultipartHttpResponse) httpResponse).getContentId()
+                : null;
+        if( failedBatchRequestNumber == null ) {
+            return null;
+        }
+
+        for( final ODataRequestBatch.BatchItem requestGeneric : oDataRequestBatch.getRequests() ) {
+            if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
+                for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
+                    if( single.getContentId() == failedBatchRequestNumber ) {
+                        return single.getRequest();
+                    }
+                }
+            } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single ) {
+                if( single.getContentId() == failedBatchRequestNumber ) {
+                    return single.getRequest();
+                }
+            }
+        }
+        return null;
     }
 
     @Nonnull
