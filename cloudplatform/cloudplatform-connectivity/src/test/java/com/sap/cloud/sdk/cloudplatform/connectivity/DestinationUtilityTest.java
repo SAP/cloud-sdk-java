@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -50,7 +51,7 @@ class DestinationUtilityTest
     {
         mockDestinationProperty(AUTH_TYPE, BASIC_AUTHENTICATION);
 
-        DestinationUtility.requiresUserTokenExchange(destination);
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
 
         verify(destination, times(1)).get(eq(AUTH_TYPE));
     }
@@ -60,7 +61,7 @@ class DestinationUtilityTest
     {
         mockDestinationProperty(AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
 
-        DestinationUtility.requiresUserTokenExchange(destination);
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
 
         verify(destination, times(1)).get(eq(AUTH_TYPE));
         verify(destination, times(1)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
@@ -72,10 +73,10 @@ class DestinationUtilityTest
         mockDestinationProperty(AUTH_TYPE, BASIC_AUTHENTICATION);
         mockDestinationProperty(AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
 
-        DestinationUtility.requiresUserTokenExchange(destination);
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
 
         verify(destination, times(1)).get(eq(AUTH_TYPE));
-        verify(destination, times(0)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
+        verify(destination, never()).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
     }
 
     @Test
@@ -96,9 +97,6 @@ class DestinationUtilityTest
         mockDestinationProperty(AUTH_TYPE, PRINCIPAL_PROPAGATION);
 
         assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
-
-        verify(destination, times(1)).get(eq(AUTH_TYPE));
-        verify(destination, times(1)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
     }
 
     @Test
