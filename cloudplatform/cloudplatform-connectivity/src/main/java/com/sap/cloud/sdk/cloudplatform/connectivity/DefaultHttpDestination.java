@@ -224,7 +224,7 @@ public final class DefaultHttpDestination implements HttpDestination
                         .stream()
                         .filter(Objects::nonNull)
                         .map(value -> new Header(HttpHeaders.AUTHORIZATION, value))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if( headersToAdd.isEmpty() ) {
                     final String msg =
@@ -972,21 +972,26 @@ public final class DefaultHttpDestination implements HttpDestination
                 throw new IllegalArgumentException("Cannot build a HttpDestination without a URL.");
             }
 
-            // NOT using the typed property here since this would break change detection in our ScpCfDestinationLoader
-            property(DestinationProperty.TYPE.getKeyName(), DestinationType.HTTP.toString());
+            if( get(DestinationProperty.TYPE).isEmpty() ) {
+                property(DestinationProperty.TYPE, DestinationType.HTTP);
+            }
 
-            // handle proxy type == OnPremise
             if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
                 try {
                     return proxyHandler.handle(this);
                 }
                 catch( final Exception e ) {
                     final String msg =
-                        "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.";
+                        """
+                            Unable to resolve proxy configuration for destination. \\
+                            This destination cannot be used for anything other than reading its properties. \\
+                            This is unexpected and will be changed to fail instead in a future version of Cloud SDK. \\
+                            Please analyze the attached stack trace and resolve the issue. \\
+                            In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.\\
+                            """;
                     log.error(msg, e);
                 }
             }
-
             return buildInternal();
         }
 
