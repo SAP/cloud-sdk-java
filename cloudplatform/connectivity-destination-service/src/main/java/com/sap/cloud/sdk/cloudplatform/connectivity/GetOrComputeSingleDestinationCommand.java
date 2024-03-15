@@ -167,7 +167,7 @@ class GetOrComputeSingleDestinationCommand
                     break;
                 case LOOKUP_THEN_EXCHANGE:
                 case FORWARD_USER_TOKEN:
-                    if( !DestinationUtility.requiresUserTokenExchange(result) ) {
+                    if( !requiresPrincipalForDestinationRetrieval(result) ) {
                         destinationCache.put(cacheKey, result);
                     } else {
                         if( additionalKeyWithTenantAndPrincipal.getPrincipalId().isEmpty() ) {
@@ -189,13 +189,18 @@ class GetOrComputeSingleDestinationCommand
         }
     }
 
+    private static boolean requiresPrincipalForDestinationRetrieval( @Nonnull final DestinationProperties destination )
+    {
+        return DestinationUtility.requiresUserTokenExchange(destination);
+    }
+
     @SuppressWarnings( "deprecation" )
     private void logErroneousCombinations(
         @Nonnull final DestinationProperties result,
         @Nonnull final String destinationName,
         @Nonnull final DestinationServiceTokenExchangeStrategy exchangeStrategy )
     {
-        if( DestinationUtility.requiresUserTokenExchange(result)
+        if( requiresPrincipalForDestinationRetrieval(result)
             && exchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY ) {
             log
                 .debug(
@@ -209,7 +214,7 @@ class GetOrComputeSingleDestinationCommand
                     DestinationServiceTokenExchangeStrategy.class.getSimpleName());
         }
 
-        if( !DestinationUtility.requiresUserTokenExchange(result) && exchangeStrategy == EXCHANGE_ONLY ) {
+        if( !requiresPrincipalForDestinationRetrieval(result) && exchangeStrategy == EXCHANGE_ONLY ) {
             log
                 .warn(
                     """

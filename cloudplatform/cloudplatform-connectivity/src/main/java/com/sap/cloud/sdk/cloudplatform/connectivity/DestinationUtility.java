@@ -74,16 +74,13 @@ public final class DestinationUtility
             return false;
         }
 
-        switch( authType ) {
-            case OAUTH2_JWT_BEARER:
-            case OAUTH2_SAML_BEARER_ASSERTION:
-            case SAP_ASSERTION_SSO:
-            case OAUTH2_USER_TOKEN_EXCHANGE:
-            case SAML_ASSERTION:
-                return true;
-            default:
-                return false;
-        }
+        return switch( authType ) {
+            case NO_AUTHENTICATION, BASIC_AUTHENTICATION, PRINCIPAL_PROPAGATION, CLIENT_CERTIFICATE_AUTHENTICATION,
+                OAUTH2_CLIENT_CREDENTIALS, OAUTH2_PASSWORD, OAUTH2_TECHNICAL_USER_PROPAGATION, TOKEN_FORWARDING ->
+                false;
+            case OAUTH2_JWT_BEARER, OAUTH2_SAML_BEARER_ASSERTION, SAP_ASSERTION_SSO, OAUTH2_USER_TOKEN_EXCHANGE,
+                SAML_ASSERTION -> true;
+        };
     }
 
     private DestinationUtility()
