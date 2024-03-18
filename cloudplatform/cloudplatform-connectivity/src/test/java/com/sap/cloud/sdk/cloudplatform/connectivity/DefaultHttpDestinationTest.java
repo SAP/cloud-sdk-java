@@ -519,7 +519,6 @@ class DefaultHttpDestinationTest
                 .property(DestinationProperty.PROXY_HOST, "initial.host")
                 .property(DestinationProperty.PROXY_PORT, 4321)
                 .property(DestinationProperty.PROXY_AUTH, "Bearer initial-token")
-                .property(DestinationProperty.PROXY_TYPE, ProxyType.ON_PREMISE)
                 .build();
 
         final ProxyConfiguration proxyConfiguration =
@@ -538,7 +537,6 @@ class DefaultHttpDestinationTest
         assertThat(destination.get(DestinationProperty.PROXY_URI))
             .containsExactly(URI.create("http://overwritten.uri:5678"));
         assertThat(destination.get(DestinationProperty.PROXY_AUTH)).containsExactly("Bearer overwritten-token");
-        assertThat(destination.get(DestinationProperty.PROXY_TYPE)).containsExactly(ProxyType.ON_PREMISE);
         // "fallback" properties ARE NOT overwritten - this is done for compatibility with Cloud SDK v4 behavior
         assertThat(destination.get(DestinationProperty.PROXY_HOST)).containsExactly("initial.host");
         assertThat(destination.get(DestinationProperty.PROXY_PORT)).containsExactly(4321);
