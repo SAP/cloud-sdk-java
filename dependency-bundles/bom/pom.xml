@@ -54,7 +54,7 @@
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
 		<vavr.version>0.10.4</vavr.version>
-		<guava.version>33.0.0-jre</guava.version>
+		<guava.version>33.1.0-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
 		<commons-io.version>2.15.1</commons-io.version>
 		<!-- Apache file utils -->
@@ -68,7 +68,7 @@
 		<resilience4j.version>2.2.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
 		<gson.version>2.10.1</gson.version>
-		<jackson.version>2.16.2</jackson.version>
+		<jackson.version>2.17.0</jackson.version>
 		<owasp-json-sanitizer.version>1.2.3</owasp-json-sanitizer.version>
 		<!-- end of essential versions -->
 	</properties>
