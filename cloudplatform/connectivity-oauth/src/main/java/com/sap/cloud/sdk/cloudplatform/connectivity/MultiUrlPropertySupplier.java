@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  *            The class of the {@link OptionsEnhancer}.
  */
 @Slf4j
-class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
+final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
     /**
      * A URL transformation function that removes the entire path of the provided URL. Can be used with
@@ -162,7 +162,7 @@ class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAut
     }
 
     @RequiredArgsConstructor
-    static class UrlExtractor
+    static final class UrlExtractor
     {
         private static final Function<URI, URI> NO_TRANSFORMATION = url -> url;
 
