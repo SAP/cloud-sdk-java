@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -30,17 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
+    /**
+     * A URL transformation function that removes the entire path of the provided URL. Can be used with
+     * {@link Builder#withUrlKey(OptionsEnhancer, String, Function)}.
+     */
+    static final Function<URI, URI> REMOVE_PATH = uri -> uri.resolve("/");
+
     private final Class<T> enhancerClass;
-    private final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys;
+    private final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors;
 
     MultiUrlPropertySupplier(
         @Nonnull final ServiceBindingDestinationOptions options,
         @Nonnull final Class<T> enhancerClass,
-        @Nonnull final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys )
+        @Nonnull final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors )
     {
         super(options);
         this.enhancerClass = enhancerClass;
-        this.urlKeys = urlKeys;
+        this.urlExtractors = urlExtractors;
     }
 
     @Nonnull
@@ -56,8 +61,8 @@ class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAut
         }
 
         final T option = maybeOption.get();
-        final Optional<String> maybeBindingKey = urlKeys.get(option).keySet().stream().findFirst();
-        if( maybeBindingKey.isEmpty() ) {
+        final UrlExtractor urlExtractor = urlExtractors.get(option);
+        if( urlExtractor == null ) {
             throw new IllegalStateException(
                 "Found option value "
                     + option
@@ -66,11 +71,10 @@ class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAut
                     + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
         }
 
-        final String bindingKey = maybeBindingKey.get();
-        log.debug("Option {} selected, using binding key {}.", option, bindingKey);
-        final Function<URI, URI> uriTransformation = urlKeys.get(option).get(bindingKey);
-
-        return uriTransformation.apply(getCredential(URI.class, "endpoints", bindingKey).get());
+        return urlExtractor.getUrl(key -> {
+            log.debug("Option {} selected, using binding key {}.", option, key);
+            return getCredentialOrThrow(URI.class, "endpoints", key);
+        });
     }
 
     /**
@@ -100,7 +104,7 @@ class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAut
     static final class Builder<T extends OptionsEnhancer<T>>
     {
         private final Class<T> enhancerClass;
-        private final Map<OptionsEnhancer<T>, Map<String, Function<URI, URI>>> urlKeys = new HashMap<>();
+        private final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors = new HashMap<>();
 
         /**
          * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
@@ -119,30 +123,64 @@ class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAut
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            return withUrlKey(
-                enhancer,
-                urlKey,
-                (enhancerClass == BtpServiceOptions.BusinessLoggingOptions.class)
-                    ? uri -> uri.resolve("/")
-                    : uri -> uri);
+            urlExtractors.put(enhancer, new UrlExtractor(urlKey));
+            return this;
         }
 
+        /**
+         * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
+         * {@code enhancer} should be an enum, and you should add a key for each enum value. Upon extracting the URL,
+         * apply the provided transformation.
+         *
+         * @param enhancer
+         *            An instance of the {@link OptionsEnhancer} that represents one possible option choice. It will be
+         *            used to select the URL and compared to the instance that is eventually passed in the
+         *            {@link ServiceBindingDestinationOptions} via {@code hashCode()}. This should typically be an enum
+         *            value.
+         * @param urlKey
+         *            The key under which the URL is to be found in a service binding. It will be looked up in the
+         *            {@code endpoints} property of the {@code credentials} section of the service binding.
+         * @param urlTransformation
+         *            A transformation to apply to the extract service URL.
+         * @return This builder.
+         */
         @Nonnull
-        private Builder<T> withUrlKey(
+        Builder<T> withUrlKey(
             @Nonnull final OptionsEnhancer<T> enhancer,
             @Nonnull final String urlKey,
-            @Nonnull final Function<URI, URI> uriTransformation )
+            @Nonnull final Function<URI, URI> urlTransformation )
         {
-            final Map<String, Function<URI, URI>> keyPathMap = new HashMap<>();
-            keyPathMap.put(urlKey, uriTransformation);
-            urlKeys.put(enhancer, keyPathMap);
+            urlExtractors.put(enhancer, new UrlExtractor(urlKey, urlTransformation));
             return this;
         }
 
         @Nonnull
         Function<ServiceBindingDestinationOptions, OAuth2PropertySupplier> factory()
         {
-            return options -> new MultiUrlPropertySupplier<>(options, enhancerClass, urlKeys);
+            return options -> new MultiUrlPropertySupplier<>(options, enhancerClass, urlExtractors);
+        }
+    }
+
+    @RequiredArgsConstructor
+    static class UrlExtractor
+    {
+        private static final Function<URI, URI> NO_TRANSFORMATION = url -> url;
+
+        @Nonnull
+        private final String urlKey;
+        @Nonnull
+        private final Function<URI, URI> urlTransformation;
+
+        UrlExtractor( @Nonnull final String urlKey )
+        {
+            this(urlKey, NO_TRANSFORMATION);
+        }
+
+        @Nonnull
+        URI getUrl( @Nonnull final Function<String, URI> urlReader )
+        {
+            final URI rawUri = urlReader.apply(urlKey);
+            return urlTransformation.apply(rawUri);
         }
     }
 }
