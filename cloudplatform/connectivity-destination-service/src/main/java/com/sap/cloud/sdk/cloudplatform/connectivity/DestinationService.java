@@ -308,7 +308,7 @@ public class DestinationService implements DestinationLoader
     @SuppressWarnings( "unchecked" )
     @Nonnull
     private
-        List<Destination>
+        List<DestinationProperties>
         getAndDeserializeDestinations( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
             throws DestinationAccessException
     {
@@ -323,6 +323,10 @@ public class DestinationService implements DestinationLoader
                         "Found a destination without name. A name is required for destinations defined in the destination service.");
                 }
             })
+            // it's important that we build the generic default destination here
+            // if we were to build HttpDestinations via DefaultHttpDestination.Builder#build we would trigger on-premise proxy header auth flows
+            // which we don't want for only computing the destination properties
+            // since we return DestinationProperties (and not Destination) we don't have to worry about .asHttp() (which intern would trigger the build() method) being invoked on the result
             .map(DefaultDestination.Builder::build)
             .collect(Collectors.toList());
     }

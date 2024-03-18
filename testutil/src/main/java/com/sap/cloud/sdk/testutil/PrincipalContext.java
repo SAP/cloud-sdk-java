@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.testutil;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,6 +35,7 @@ public interface PrincipalContext extends TestContextApi
     @Nonnull
     default Principal setPrincipal( @Nonnull final String principal )
     {
+        Objects.requireNonNull(principal, "Principal ID must not be null.");
         return setPrincipal(new DefaultPrincipal(principal));
     }
 

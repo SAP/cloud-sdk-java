@@ -61,6 +61,8 @@ public class OAuth2DestinationBuilder
          * @param behalf
          *            The OAuth2 token representative.
          * @return The same builder instance.
+         * @see com.sap.cloud.security.config.ClientCertificate
+         * @see com.sap.cloud.security.config.ClientCredentials
          * @since 4.10.0
          */
         @Nonnull

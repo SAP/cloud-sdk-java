@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.BA
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_JWT_BEARER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_USER_TOKEN_EXCHANGE;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.PRINCIPAL_PROPAGATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.SAML_ASSERTION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.SAP_ASSERTION_SSO;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.AUTH_TYPE;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -27,19 +29,29 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vavr.control.Option;
 
 class DestinationUtilityTest
 {
+    private DestinationProperties destination;
+
+    @SuppressWarnings( "unchecked" )
+    @BeforeEach
+    void setUp()
+    {
+        destination = mock(DestinationProperties.class);
+        when(destination.get((DestinationPropertyKey<Object>) any())).thenReturn(Option.none());
+    }
+
     @Test
     void testAuthenticationTypeIsExtractedFromAuthTypeProperty()
     {
-        final DestinationProperties destination = mockDestination();
-        mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
+        mockDestinationProperty(AUTH_TYPE, BASIC_AUTHENTICATION);
 
-        DestinationUtility.requiresUserTokenExchange(destination);
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
 
         verify(destination, times(1)).get(eq(AUTH_TYPE));
     }
@@ -47,32 +59,7 @@ class DestinationUtilityTest
     @Test
     void testAuthenticationTypeIsExtractedFromAuthTypeFallbackProperty()
     {
-        final DestinationProperties destination = mockDestination();
-        mockDestinationProperty(destination, AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
-
-        DestinationUtility.requiresUserTokenExchange(destination);
-
-        verify(destination, times(1)).get(eq(AUTH_TYPE));
-        verify(destination, times(1)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
-    }
-
-    @Test
-    void testAuthenticationTypeIsExtractedFromAuthTypePropertyEvenIfFallbackExists()
-    {
-        final DestinationProperties destination = mockDestination();
-        mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
-        mockDestinationProperty(destination, AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
-
-        DestinationUtility.requiresUserTokenExchange(destination);
-
-        verify(destination, times(1)).get(eq(AUTH_TYPE));
-        verify(destination, times(0)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
-    }
-
-    @Test
-    void testNoUserTokenExchangeRequiredWithoutAuthenticationType()
-    {
-        final DestinationProperties destination = mockDestination();
+        mockDestinationProperty(AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
 
         assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
 
@@ -81,11 +68,42 @@ class DestinationUtilityTest
     }
 
     @Test
+    void testAuthenticationTypeIsExtractedFromAuthTypePropertyEvenIfFallbackExists()
+    {
+        mockDestinationProperty(AUTH_TYPE, BASIC_AUTHENTICATION);
+        mockDestinationProperty(AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
+
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
+
+        verify(destination, times(1)).get(eq(AUTH_TYPE));
+        verify(destination, never()).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
+    }
+
+    @Test
+    void testNoUserTokenExchangeRequiredWithoutAuthenticationType()
+    {
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
+
+        verify(destination, times(1)).get(eq(AUTH_TYPE));
+        verify(destination, times(1)).get(eq(DestinationProperty.AUTH_TYPE_FALLBACK));
+    }
+
+    /*
+     * PRINCIPAL_PROPAGATION is a special case, as it does not require user token exchange for the destination service itself, but only for the connectivity proxy.
+     */
+    @Test
+    void testNoUserTokenExchangeRequiredForPrincipalPropagation()
+    {
+        mockDestinationProperty(AUTH_TYPE, PRINCIPAL_PROPAGATION);
+
+        assertThat(DestinationUtility.requiresUserTokenExchange(destination)).isFalse();
+    }
+
+    @Test
     void testSystemUserIsExtracted()
     {
-        final DestinationProperties destination = mockDestination();
-        mockDestinationProperty(destination, AUTH_TYPE, BASIC_AUTHENTICATION);
-        mockDestinationProperty(destination, SYSTEM_USER, "user");
+        mockDestinationProperty(AUTH_TYPE, BASIC_AUTHENTICATION);
+        mockDestinationProperty(SYSTEM_USER, "user");
 
         DestinationUtility.requiresUserTokenExchange(destination);
 
@@ -96,10 +114,8 @@ class DestinationUtilityTest
     void testDetectPropertyExtractionRegressions()
     {
         // if this test ever fails, chances are we updated our implementation without also updating this test class
-
-        final DestinationProperties destination = mockDestination();
-        mockDestinationProperty(destination, AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
-        mockDestinationProperty(destination, SYSTEM_USER, "user");
+        mockDestinationProperty(AUTH_TYPE_FALLBACK, BASIC_AUTHENTICATION);
+        mockDestinationProperty(SYSTEM_USER, "user");
 
         DestinationUtility.requiresUserTokenExchange(destination);
 
@@ -155,17 +171,7 @@ class DestinationUtilityTest
         }
     }
 
-    @Nonnull
-    @SuppressWarnings( "unchecked" )
-    private static DestinationProperties mockDestination()
-    {
-        final DestinationProperties destinationProperties = mock(DestinationProperties.class);
-        when(destinationProperties.get((DestinationPropertyKey<Object>) any())).thenReturn(Option.none());
-
-        return destinationProperties;
-    }
-
-    private static <T> void mockDestinationProperty(@Nonnull final DestinationProperties destination, @Nonnull final DestinationPropertyKey<T> propertyKey, @Nonnull final T propertyValue) {
+    private <T> void mockDestinationProperty(@Nonnull final DestinationPropertyKey<T> propertyKey, @Nonnull final T propertyValue) {
         when(destination.get(eq(propertyKey))).thenReturn(Option.of(propertyValue));
     }
 }

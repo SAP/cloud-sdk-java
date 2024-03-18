@@ -74,13 +74,24 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
                 : httpClientFactory.createHttpClient();
         };
 
-        final Try<Cache<CacheKey, HttpClient>> maybeCache =
-            getCache().onFailure(cause -> logCachePropagationFailure("Could not get HttpClient cache.", cause));
+        final Try<Cache<CacheKey, HttpClient>> maybeCache = getCache();
+        if( maybeCache.isFailure() ) {
+            final String msg =
+                "Failed to get HttpClientCache. Falling back to creating a new http client instance."
+                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
+                    + " Please analyze the attached stack trace and resolve the issue.";
+            log.error(msg, maybeCache.getCause());
+            return Try.ofSupplier(createHttpClient);
+        }
 
         final Try<CacheKey> maybeKey = destination != null ? getCacheKey(destination) : getCacheKey();
-        maybeKey.onFailure(cause -> logCachePropagationFailure("Could not get HttpClient cache key.", cause));
 
-        if( maybeCache.isFailure() || maybeKey.isFailure() ) {
+        if( maybeKey.isFailure() ) {
+            final String msg =
+                "Failed to create cache key for HttpClient. Falling back to creating a new http client instance."
+                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
+                    + " Please analyze the attached stack trace and resolve the issue.";
+            log.error(msg, maybeKey.getCause());
             return Try.ofSupplier(createHttpClient);
         }
 
@@ -105,12 +116,6 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
             return Try.success(((HttpClientWrapper) httpClient).withDestination(destination));
         }
         return Try.success(httpClient);
-    }
-
-    private void logCachePropagationFailure( @Nonnull final String message, @Nonnull final Throwable cause )
-    {
-        log.info(message);
-        log.debug(message, cause);
     }
 
     /**

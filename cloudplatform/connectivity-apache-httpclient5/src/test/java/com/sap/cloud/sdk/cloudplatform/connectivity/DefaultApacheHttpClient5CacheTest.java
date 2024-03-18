@@ -122,24 +122,21 @@ class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    void testGetClientWithUserTokenExchangeDestinationUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientWithUserTokenExchangeDestinationUsesPrincipalRequiredForIsolation()
     {
         final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
+        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2");
         final List<HttpClient> clients = new ArrayList<>();
 
         for( final String tenantId : tenantsToTest ) {
             for( final String principalId : principalsToTest ) {
                 context.clearTenant();
-                context.clearPrincipal();
 
                 if( tenantId != null ) {
                     context.setTenant(tenantId);
                 }
 
-                if( principalId != null ) {
-                    context.setPrincipal(principalId);
-                }
+                context.setPrincipal(principalId);
 
                 final HttpClient clientWithDestination =
                     sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -153,7 +150,12 @@ class DefaultApacheHttpClient5CacheTest
 
                 clients.add(clientWithDestination);
             }
+            context.clearPrincipal();
+            assertThat(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
+                .describedAs("Without a principal http clients should not be cached for user based destinations")
+                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         }
+
     }
 
     @Test
@@ -212,6 +214,9 @@ class DefaultApacheHttpClient5CacheTest
 
                 if( principalId != null ) {
                     context.setPrincipal(principalId);
+                } else {
+                    // covered by the last assertion
+                    continue;
                 }
 
                 final HttpClient clientWithDestination =
@@ -219,6 +224,7 @@ class DefaultApacheHttpClient5CacheTest
 
                 // caching works: Requesting a second client with the same parameters yields the exact same instance
                 assertThat(clientWithDestination)
+                    .describedAs("Cache should hit for tenantId: %s, principalId: %s", tenantId, principalId)
                     .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
 
                 // isolation works: None of the previously created clients is the same instance
@@ -236,6 +242,10 @@ class DefaultApacheHttpClient5CacheTest
 
                 clients.add(clientWithoutDestination);
             }
+            context.clearPrincipal();
+            assertThat(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
+                .describedAs("Without a principal http clients should not be cached for user based destinations")
+                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         }
     }
 
@@ -329,30 +339,22 @@ class DefaultApacheHttpClient5CacheTest
         final HttpClient unclearedClientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        final List<String> principalsToTest = Arrays.asList("principal#1", null);
+        final String principalId = "principal#1";
+        context.setPrincipal(principalId);
 
-        for( final String principalId : principalsToTest ) {
-            context.clearPrincipal();
+        final HttpClient clientWithDestination = sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
+        assertThat(clientWithDestination)
+            .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
 
-            if( principalId != null ) {
-                context.setPrincipal(principalId);
-            }
+        final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
+        assertThat(clientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-            final HttpClient clientWithDestination =
-                sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
-            assertThat(clientWithDestination)
-                .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
+        //Both clientWithoutDestination and clientWithDestination are cached with the cache key containing principal
+        assertThat(CacheManager.invalidatePrincipalCaches(tenantId, principalId)).isEqualTo(2);
 
-            final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
-            assertThat(clientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
-
-            //Both clientWithoutDestination and clientWithDestination are cached with the cache key containing principal
-            assertThat(CacheManager.invalidatePrincipalCaches(tenantId, principalId)).isEqualTo(2);
-
-            assertThat(clientWithDestination)
-                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
-            assertThat(clientWithoutDestination).isNotSameAs(sut.tryGetHttpClient(FACTORY).get());
-        }
+        assertThat(clientWithDestination)
+            .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
+        assertThat(clientWithoutDestination).isNotSameAs(sut.tryGetHttpClient(FACTORY).get());
 
         // make sure the cache entries for the untested principal were not invalidated
         context.setPrincipal(untestedPrincipalId);
@@ -405,5 +407,30 @@ class DefaultApacheHttpClient5CacheTest
             .containsExactly(
                 new BasicHeader(header1.getName(), header1.getValue()),
                 new BasicHeader(header2.getName(), header2.getValue()));
+    }
+
+    @Test
+    void testPrincipalPropagationIsPrincipalIsolated()
+    {
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder("foo.com")
+                .authenticationType(AuthenticationType.PRINCIPAL_PROPAGATION)
+                .build();
+
+        context.setPrincipal("some-principal");
+        final HttpClient client = sut.tryGetHttpClient(destination, FACTORY).get();
+        assertThat(client).isSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+
+        context.setPrincipal("some-other-principal");
+        assertThat(client).isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+        assertThat(sut.tryGetHttpClient(destination, FACTORY).get())
+            .isSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+
+        context.clearPrincipal();
+        assertThat(client).isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+        assertThat(sut.tryGetHttpClient(destination, FACTORY).get())
+            .describedAs("Without a principal http clients should not be cached for user based destinations")
+            .isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
     }
 }
