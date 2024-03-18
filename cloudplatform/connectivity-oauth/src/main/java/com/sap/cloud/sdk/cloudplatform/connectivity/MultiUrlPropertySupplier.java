@@ -29,17 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends DefaultOAuth2PropertySupplier
 {
-    private final Class<T> enhancerClass;
-    private final Map<OptionsEnhancer<T>, String> urlKeys;
+    /**
+     * A URL transformation function that removes the entire path of the provided URL. Can be used with
+     * {@link Builder#withUrlKey(OptionsEnhancer, String, Function)}.
+     */
+    static final Function<URI, URI> REMOVE_PATH = uri -> uri.resolve("/");
 
-    private MultiUrlPropertySupplier(
+    private final Class<T> enhancerClass;
+    private final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors;
+
+    MultiUrlPropertySupplier(
         @Nonnull final ServiceBindingDestinationOptions options,
         @Nonnull final Class<T> enhancerClass,
-        @Nonnull final Map<OptionsEnhancer<T>, String> urlKeys )
+        @Nonnull final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors )
     {
         super(options);
         this.enhancerClass = enhancerClass;
-        this.urlKeys = urlKeys;
+        this.urlExtractors = urlExtractors;
     }
 
     @Nonnull
@@ -55,8 +61,8 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         }
 
         final T option = maybeOption.get();
-        final String bindingKey = urlKeys.get(option);
-        if( bindingKey == null ) {
+        final UrlExtractor urlExtractor = urlExtractors.get(option);
+        if( urlExtractor == null ) {
             throw new IllegalStateException(
                 "Found option value "
                     + option
@@ -64,8 +70,11 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
                     + enhancerClass.getName()
                     + ", but no URL key was registered for this value. Please ensure that for each possible choice a URL key is registered.");
         }
-        log.debug("Option {} selected, using binding key {}.", option, bindingKey);
-        return getCredential(URI.class, "endpoints", bindingKey).get();
+
+        return urlExtractor.getUrl(key -> {
+            log.debug("Option {} selected, using binding key {}.", option, key);
+            return getCredentialOrThrow(URI.class, "endpoints", key);
+        });
     }
 
     /**
@@ -95,7 +104,7 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
     static final class Builder<T extends OptionsEnhancer<T>>
     {
         private final Class<T> enhancerClass;
-        private final Map<OptionsEnhancer<T>, String> urlKeys = new HashMap<>();
+        private final Map<OptionsEnhancer<T>, UrlExtractor> urlExtractors = new HashMap<>();
 
         /**
          * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
@@ -114,14 +123,64 @@ final class MultiUrlPropertySupplier<T extends OptionsEnhancer<T>> extends Defau
         @Nonnull
         Builder<T> withUrlKey( @Nonnull final OptionsEnhancer<T> enhancer, @Nonnull final String urlKey )
         {
-            urlKeys.put(enhancer, urlKey);
+            urlExtractors.put(enhancer, new UrlExtractor(urlKey));
+            return this;
+        }
+
+        /**
+         * Add a key under which the URL is to be found in a service binding for the given option. Typically, the
+         * {@code enhancer} should be an enum, and you should add a key for each enum value. Upon extracting the URL,
+         * apply the provided transformation.
+         *
+         * @param enhancer
+         *            An instance of the {@link OptionsEnhancer} that represents one possible option choice. It will be
+         *            used to select the URL and compared to the instance that is eventually passed in the
+         *            {@link ServiceBindingDestinationOptions} via {@code hashCode()}. This should typically be an enum
+         *            value.
+         * @param urlKey
+         *            The key under which the URL is to be found in a service binding. It will be looked up in the
+         *            {@code endpoints} property of the {@code credentials} section of the service binding.
+         * @param urlTransformation
+         *            A transformation to apply to the extract service URL.
+         * @return This builder.
+         */
+        @Nonnull
+        Builder<T> withUrlKey(
+            @Nonnull final OptionsEnhancer<T> enhancer,
+            @Nonnull final String urlKey,
+            @Nonnull final Function<URI, URI> urlTransformation )
+        {
+            urlExtractors.put(enhancer, new UrlExtractor(urlKey, urlTransformation));
             return this;
         }
 
         @Nonnull
         Function<ServiceBindingDestinationOptions, OAuth2PropertySupplier> factory()
         {
-            return options -> new MultiUrlPropertySupplier<>(options, enhancerClass, urlKeys);
+            return options -> new MultiUrlPropertySupplier<>(options, enhancerClass, urlExtractors);
+        }
+    }
+
+    @RequiredArgsConstructor
+    static final class UrlExtractor
+    {
+        private static final Function<URI, URI> NO_TRANSFORMATION = url -> url;
+
+        @Nonnull
+        private final String urlKey;
+        @Nonnull
+        private final Function<URI, URI> urlTransformation;
+
+        UrlExtractor( @Nonnull final String urlKey )
+        {
+            this(urlKey, NO_TRANSFORMATION);
+        }
+
+        @Nonnull
+        URI getUrl( @Nonnull final Function<String, URI> urlReader )
+        {
+            final URI rawUri = urlReader.apply(urlKey);
+            return urlTransformation.apply(rawUri);
         }
     }
 }

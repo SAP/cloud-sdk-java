@@ -6,6 +6,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -71,10 +72,10 @@ class BtpServicePropertySuppliers
                 ServiceIdentifier.of("business-logging"),
                 MultiUrlPropertySupplier
                     .of(BusinessLoggingOptions.class)
-                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice")
-                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice")
-                    .withUrlKey(BusinessLoggingOptions.READ_API, "readservice")
-                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice")
+                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.READ_API, "readservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice", REMOVE_PATH)
                     .factory());
     static final OAuth2PropertySupplierResolver AI_CORE =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("aicore"), AiCore::new);
