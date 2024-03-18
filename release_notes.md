@@ -8,8 +8,9 @@
 
 ### 🔧 Compatibility Notes
 
-- 
-
+- Change the default implementations of `HttpClientCache` and `ApacheHttpClient5Cache` to throw an exception in cases where previously only an error was logged.
+  The previous behavior of logging an error and falling back to creating a new http client granted a grace period to fix the underlying issue.
+  
 ### ✨ New Functionality
 
 - Support service bindings to the [SAP BTP AI Core Service](https://api.sap.com/api/AI_CORE_API) by default in the `ServiceBindingDestinationLoader` API.
