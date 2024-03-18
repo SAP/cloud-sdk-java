@@ -36,7 +36,7 @@
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- do not modify the following line, it is updated by the versioning script -->
 		<sdk.version>5.6.0-SNAPSHOT</sdk.version>
-		<service-binding.version>0.10.3</service-binding.version>
+		<service-binding.version>0.10.4</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.2.4</httpcore5.version>
@@ -68,7 +68,7 @@
 		<resilience4j.version>2.2.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
 		<gson.version>2.10.1</gson.version>
-		<jackson.version>2.16.2</jackson.version>
+		<jackson.version>2.17.0</jackson.version>
 		<owasp-json-sanitizer.version>1.2.3</owasp-json-sanitizer.version>
 		<!-- end of essential versions -->
 	</properties>
@@ -270,7 +270,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.25.0</version>
+				<version>2.26.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
