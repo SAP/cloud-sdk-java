@@ -289,6 +289,18 @@ class BtpServicePropertySuppliersTest
                 entry("endpoints.textresourceservice", "https://business-logging.text_api.example.com"),
                 entry("endpoints.writeservice", "https://business-logging.write_api.example.com"));
 
+        private final ServiceBinding bindingWithRedundantPaths =
+            bindingWithCredentials(
+                ServiceIdentifier.of("business-logging"),
+                entry("endpoints.configservice", "https://business-logging.config_api.example.com/buslogs/configs"),
+                entry(
+                    "endpoints.readservice",
+                    "https://business-logging.read_api.example.com/odata/v2/com.sap.bs.businesslogging.DisplayMessage"),
+                entry(
+                    "endpoints.textresourceservice",
+                    "https://business-logging.text_api.example.com/buslogs/configs/textresources"),
+                entry("endpoints.writeservice", "https://business-logging.write_api.example.com/buslogs/log"));
+
         @ParameterizedTest
         @EnumSource( BusinessLoggingOptions.class )
         void testApiSelection( final BusinessLoggingOptions api )
@@ -297,8 +309,21 @@ class BtpServicePropertySuppliersTest
                 ServiceBindingDestinationOptions.forService(binding).withOption(api).build();
 
             final OAuth2PropertySupplier sut = BUSINESS_LOGGING.resolve(options);
+            assertThat(sut).isNotNull();
 
-            assertThat(sut.getServiceUri().toString()).contains(api.name().toLowerCase());
+            final ServiceBindingDestinationOptions redundantOptions =
+                ServiceBindingDestinationOptions.forService(bindingWithRedundantPaths).withOption(api).build();
+
+            final OAuth2PropertySupplier redundantSut = BUSINESS_LOGGING.resolve(redundantOptions);
+            assertThat(redundantSut).isNotNull();
+
+            final URI uri = sut.getServiceUri();
+            assertThat(uri).hasPath("/");
+            assertThat(uri.toString()).contains(api.name().toLowerCase());
+
+            final URI redundantUri = redundantSut.getServiceUri();
+            assertThat(redundantUri).hasPath("/");
+            assertThat(redundantUri).isEqualTo(uri);
         }
 
         @Test
