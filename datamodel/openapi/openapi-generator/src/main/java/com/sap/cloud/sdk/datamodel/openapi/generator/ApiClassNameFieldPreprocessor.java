@@ -55,7 +55,7 @@ class ApiClassNameFieldPreprocessor implements PreprocessingStep
         }
 
         String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText();
-        if( extensionFieldValue != null && !extensionFieldValue.isEmpty() ) {
+        if( extensionFieldValue == null || extensionFieldValue.isEmpty() ) {
             extensionFieldValue = rootLevelValue;
         }
 
@@ -74,7 +74,7 @@ class ApiClassNameFieldPreprocessor implements PreprocessingStep
         }
 
         String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText();
-        if( extensionFieldValue != null && !extensionFieldValue.isEmpty() ) {
+        if( extensionFieldValue == null || extensionFieldValue.isEmpty() ) {
             extensionFieldValue = pathLevelValue;
         }
 
