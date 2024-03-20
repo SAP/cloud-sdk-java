@@ -76,7 +76,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
 
         final ServiceBindingDestinationOptions.Builder optionsBuilder =
             ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.of("identity"))
+                .forService(ServiceIdentifier.IDENTITY_AUTHENTICATION)
                 .onBehalfOf(options.getOnBehalfOf())
                 .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 

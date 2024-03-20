@@ -254,7 +254,7 @@ class BtpServicePropertySuppliersTest
     {
         final ServiceBinding binding =
             bindingWithCredentials(
-                ServiceIdentifier.of("aicore"),
+                ServiceIdentifier.AI_CORE,
                 entry("serviceurls.AI_API_URL", "https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com"),
                 entry("clientid", "client-id"),
                 entry("clientsecret", "client-secret"),

@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser;
@@ -40,7 +41,6 @@ import io.vavr.control.Try;
 class IdentityAuthenticationServiceBindingDestinationLoaderTest
 {
     private static final ServiceIdentifier SERVICE_IDENTIFIER = ServiceIdentifier.of("test-service");
-    private static final ServiceIdentifier IDENTITY_AUTHENTICATION = ServiceIdentifier.of("identity");
     private static final DefaultServiceBinding IDENTITY_BINDING =
         DefaultServiceBinding.builder().copy(Map.of()).withServiceIdentifier(IDENTITY_AUTHENTICATION).build();
 

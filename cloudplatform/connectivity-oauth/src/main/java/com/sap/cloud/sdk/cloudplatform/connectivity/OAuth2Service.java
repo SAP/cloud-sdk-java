@@ -275,11 +275,6 @@ class OAuth2Service
         private static final String XSUAA_TOKEN_PATH = "/oauth/token";
         private static final Duration DEFAULT_TIME_OUT = Duration.ofSeconds(10);
 
-        /**
-         * {@link ServiceIdentifier#IDENTITY_AUTHENTICATION} referenced indirectly for backwards compatibility.
-         */
-        private static final ServiceIdentifier IDENTITY_AUTHENTICATION = ServiceIdentifier.of("identity");
-
         private URI tokenUri;
         private ClientIdentity identity;
         private OnBehalfOf onBehalfOf = OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
@@ -333,7 +328,7 @@ class OAuth2Service
         Builder withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier )
         {
             final TenantPropagationStrategy tenantPropagationStrategy;
-            if( IDENTITY_AUTHENTICATION.equals(serviceIdentifier) ) {
+            if( ServiceIdentifier.IDENTITY_AUTHENTICATION.equals(serviceIdentifier) ) {
                 tenantPropagationStrategy = TenantPropagationStrategy.TENANT_SUBDOMAIN;
             } else {
                 tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;

@@ -44,7 +44,7 @@ class BtpServicePropertySuppliers
      */
     static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceIdentifier.of("identity"), IdentityAuthentication::new);
+            .forServiceIdentifier(ServiceIdentifier.IDENTITY_AUTHENTICATION, IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
@@ -78,7 +78,7 @@ class BtpServicePropertySuppliers
                     .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice", REMOVE_PATH)
                     .factory());
     static final OAuth2PropertySupplierResolver AI_CORE =
-        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("aicore"), AiCore::new);
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.AI_CORE, AiCore::new);
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
