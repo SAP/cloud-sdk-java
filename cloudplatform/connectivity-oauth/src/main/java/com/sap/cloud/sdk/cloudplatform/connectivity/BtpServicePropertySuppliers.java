@@ -6,6 +6,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,6 +23,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLo
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.mtls.SSLContextFactory;
@@ -69,11 +72,13 @@ class BtpServicePropertySuppliers
                 ServiceIdentifier.of("business-logging"),
                 MultiUrlPropertySupplier
                     .of(BusinessLoggingOptions.class)
-                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice")
-                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice")
-                    .withUrlKey(BusinessLoggingOptions.READ_API, "readservice")
-                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice")
+                    .withUrlKey(BusinessLoggingOptions.CONFIG_API, "configservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.TEXT_API, "textresourceservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.READ_API, "readservice", REMOVE_PATH)
+                    .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice", REMOVE_PATH)
                     .factory());
+    static final OAuth2PropertySupplierResolver AI_CORE =
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("aicore"), AiCore::new);
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
@@ -84,6 +89,7 @@ class BtpServicePropertySuppliers
         DEFAULT_SERVICE_RESOLVERS.add(WORKFLOW);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_LOGGING);
         DEFAULT_SERVICE_RESOLVERS.add(IDENTITY_AUTHENTICATION);
+        DEFAULT_SERVICE_RESOLVERS.add(AI_CORE);
     }
 
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
@@ -164,7 +170,11 @@ class BtpServicePropertySuppliers
         {
             final OAuth2Options.Builder oAuth2OptionsBuilder = OAuth2Options.builder();
 
-            attachIasCommunicationOptions(oAuth2OptionsBuilder);
+            if( skipTokenRetrieval() ) {
+                oAuth2OptionsBuilder.withSkipTokenRetrieval(true);
+            } else {
+                attachIasCommunicationOptions(oAuth2OptionsBuilder);
+            }
             attachClientKeyStore(oAuth2OptionsBuilder);
 
             return oAuth2OptionsBuilder.build();
@@ -174,11 +184,6 @@ class BtpServicePropertySuppliers
         {
             final IasCommunicationOptions o = options.getOption(IasCommunicationOptions.class).getOrNull();
             if( o == null ) {
-                return;
-            }
-
-            if( o.isMTLSAuthenticationOnly() && mTLSOnlyIsSupported() ) {
-                optionsBuilder.withSkipTokenRetrieval(true);
                 return;
             }
 
@@ -200,19 +205,34 @@ class BtpServicePropertySuppliers
             }
         }
 
-        private boolean mTLSOnlyIsSupported()
+        private boolean skipTokenRetrieval()
         {
             final OnBehalfOf behalf = options.getOnBehalfOf();
-            if( behalf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
-                log.warn("""
-                    Combining {} with mTLS only authentication is not supported. \
-                    This is because mTLS only works without sending any authentication token. \
-                    But without an authentication token, user information cannot be preserved.\
-                    """, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            final Boolean noTokenRequired =
+                options.getOption(BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser.class).getOrElse(false);
+
+            final boolean tokenIsAlwaysRequired = !noTokenRequired;
+            if( tokenIsAlwaysRequired ) {
                 return false;
             }
 
-            return true;
+            return switch( behalf ) {
+                case NAMED_USER_CURRENT_TENANT -> false;
+                case TECHNICAL_USER_PROVIDER -> true;
+                case TECHNICAL_USER_CURRENT_TENANT -> currentTenantIsProvider();
+            };
+        }
+
+        private boolean currentTenantIsProvider()
+        {
+            final String maybeTenantId = TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull();
+            if( maybeTenantId == null ) {
+                // there is no current tenant --> assume we are running in the provider context
+                return true;
+            }
+
+            final String providerTenantId = getCredentialOrThrow(String.class, "app_tid");
+            return maybeTenantId.equalsIgnoreCase(providerTenantId);
         }
 
         private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )
@@ -237,6 +257,21 @@ class BtpServicePropertySuppliers
             catch( final Exception e ) {
                 throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);
             }
+        }
+    }
+
+    private static class AiCore extends DefaultOAuth2PropertySupplier
+    {
+        AiCore( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, Collections.emptyList());
+        }
+
+        @Nonnull
+        @Override
+        public URI getServiceUri()
+        {
+            return getCredentialOrThrow(URI.class, "serviceurls", "AI_API_URL");
         }
     }
 }

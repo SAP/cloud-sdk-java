@@ -4,6 +4,9 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationKeyStoreComparator.resolveCertificatesOnly;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationKeyStoreComparator.resolveKeyStoreHashCode;
+
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.ArrayList;
@@ -19,6 +22,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -36,7 +42,6 @@ import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -44,16 +49,13 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Immutable default implementation of the {@link HttpDestination} interface.
  */
-@EqualsAndHashCode
 @Slf4j
 public final class DefaultHttpDestination implements HttpDestination
 {
     @Delegate
     private final DestinationProperties baseProperties;
 
-    @EqualsAndHashCode.Exclude
     private final KeyStore keyStore;
-    @EqualsAndHashCode.Exclude
     private final KeyStore trustStore;
 
     @Nonnull
@@ -61,11 +63,9 @@ public final class DefaultHttpDestination implements HttpDestination
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
-    @EqualsAndHashCode.Exclude
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
 
     // the following 'cached' fields are ALWAYS derived from the baseProperties and stored in the corresponding fields
@@ -77,27 +77,21 @@ public final class DefaultHttpDestination implements HttpDestination
     // furthermore, it is safe to exclude these fields from the equals and hashCode methods because their values are
     // purely derived from the baseProperties, which are included in the equals and hashCode methods.
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final Option<ProxyConfiguration> cachedProxyConfiguration;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final Option<ProxyType> cachedProxyType;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final Option<BasicCredentials> cachedBasicCredentials;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final AuthenticationType cachedAuthenticationType;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final ImmutableList<Header> cachedHeadersFromProperties;
 
     @Nonnull
-    @EqualsAndHashCode.Exclude
     private final ImmutableList<Header> cachedProxyAuthorizationHeaders;
 
     private DefaultHttpDestination(
@@ -230,7 +224,7 @@ public final class DefaultHttpDestination implements HttpDestination
                         .stream()
                         .filter(Objects::nonNull)
                         .map(value -> new Header(HttpHeaders.AUTHORIZATION, value))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if( headersToAdd.isEmpty() ) {
                     final String msg =
@@ -509,6 +503,37 @@ public final class DefaultHttpDestination implements HttpDestination
         }
 
         return builder;
+    }
+
+    @Override
+    public boolean equals( @Nullable final Object o )
+    {
+        if( this == o ) {
+            return true;
+        }
+
+        if( o == null || getClass() != o.getClass() ) {
+            return false;
+        }
+
+        final DefaultHttpDestination that = (DefaultHttpDestination) o;
+        return new EqualsBuilder()
+            .append(baseProperties, that.baseProperties)
+            .append(customHeaders, that.customHeaders)
+            .append(resolveCertificatesOnly(keyStore), resolveCertificatesOnly(that.keyStore))
+            .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(17, 37)
+            .append(baseProperties)
+            .append(customHeaders)
+            .append(resolveKeyStoreHashCode(keyStore))
+            .append(resolveKeyStoreHashCode(trustStore))
+            .toHashCode();
     }
 
     /**
@@ -947,21 +972,26 @@ public final class DefaultHttpDestination implements HttpDestination
                 throw new IllegalArgumentException("Cannot build a HttpDestination without a URL.");
             }
 
-            // NOT using the typed property here since this would break change detection in our ScpCfDestinationLoader
-            property(DestinationProperty.TYPE.getKeyName(), DestinationType.HTTP.toString());
+            if( get(DestinationProperty.TYPE).isEmpty() ) {
+                property(DestinationProperty.TYPE, DestinationType.HTTP);
+            }
 
-            // handle proxy type == OnPremise
             if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
                 try {
                     return proxyHandler.handle(this);
                 }
                 catch( final Exception e ) {
                     final String msg =
-                        "Unable to resolve proxy configuration for destination. This destination cannot be used for anything other than reading its properties.";
+                        """
+                            Unable to resolve proxy configuration for destination. \\
+                            This destination cannot be used for anything other than reading its properties. \\
+                            This is unexpected and will be changed to fail instead in a future version of Cloud SDK. \\
+                            Please analyze the attached stack trace and resolve the issue. \\
+                            In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.\\
+                            """;
                     log.error(msg, e);
                 }
             }
-
             return buildInternal();
         }
 

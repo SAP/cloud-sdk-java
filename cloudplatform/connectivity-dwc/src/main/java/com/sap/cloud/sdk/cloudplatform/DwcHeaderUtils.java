@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
@@ -15,6 +16,7 @@ import com.sap.cloud.sdk.cloudplatform.exception.DwcHeaderNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 
+import io.vavr.control.Try;
 import lombok.Value;
 
 /**
@@ -35,6 +37,10 @@ public class DwcHeaderUtils
      * The name of the header that contains the Deploy with Confidence scopes information.
      */
     public static final String DWC_SUBDOMAIN_HEADER = "dwc-subdomain";
+    /**
+     * The name of the header that contains the Deploy with Confidence JWT token.
+     */
+    public static final String DWC_JWT_HEADER = "dwc-jwt";
 
     /**
      * This method fetches the value of the {@link #DWC_TENANT_HEADER} header or throws an
@@ -65,6 +71,20 @@ public class DwcHeaderUtils
     }
 
     /**
+     * This method fetches the value of the {@link #DWC_SUBDOMAIN_HEADER} header. If the header is not present,
+     * {@code null} will be returned instead.
+     *
+     * @return Either the value of the {@link #DWC_SUBDOMAIN_HEADER} header, or {@code null} if the header is not
+     *         present.
+     * @since 5.6.0
+     */
+    @Nullable
+    public static String getDwCSubdomainOrNull()
+    {
+        return Try.of(() -> getNonEmptyDwcHeaderValue(DWC_SUBDOMAIN_HEADER)).getOrNull();
+    }
+
+    /**
      * This method fetches the value of the {@link #DWC_USER_HEADER} header or throws an
      * {@link DwcHeaderNotFoundException} if the header was not found.
      *
@@ -83,6 +103,21 @@ public class DwcHeaderUtils
             throw new DwcHeaderNotFoundException("Header value of " + DWC_USER_HEADER + " has no logon name.");
         }
         return logonName;
+    }
+
+    /**
+     * This method fetches the value of the {@link #DWC_JWT_HEADER} header or throws an
+     * {@link DwcHeaderNotFoundException} if the header was not found.
+     *
+     * @return The value of the {@link #DWC_JWT_HEADER} header.
+     * @throws DwcHeaderNotFoundException
+     *             if the header was not found.
+     * @since 5.6.0
+     */
+    @Nonnull
+    public static String getDwcJwtOrThrow()
+    {
+        return getNonEmptyDwcHeaderValue(DWC_JWT_HEADER);
     }
 
     @Nonnull

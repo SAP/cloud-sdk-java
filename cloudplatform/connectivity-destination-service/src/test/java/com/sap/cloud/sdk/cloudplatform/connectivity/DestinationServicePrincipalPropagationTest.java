@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -32,11 +33,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -49,6 +52,7 @@ import com.sap.cloud.sdk.testutil.TestContext;
 import io.vavr.control.Try;
 import lombok.Value;
 
+@Isolated( "Test modifies global service bindings" )
 @WireMockTest
 class DestinationServicePrincipalPropagationTest
 {
@@ -92,7 +96,7 @@ class DestinationServicePrincipalPropagationTest
                 .withCredentials(credentials)
                 .build();
 
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(connectivityService);
+        DefaultServiceBindingAccessor.setInstance(() -> List.of(connectivityService));
 
         doReturn(DESTINATION)
             .when(destinationServiceAdapter)
@@ -108,7 +112,7 @@ class DestinationServicePrincipalPropagationTest
     @AfterEach
     void tearDownConnectivity()
     {
-        DefaultHttpDestinationBuilderProxyHandler.setServiceBindingConnectivity(null);
+        DefaultServiceBindingAccessor.setInstance(null);
     }
 
     @Test

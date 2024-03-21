@@ -18,6 +18,10 @@ jobs:
         uses: dependabot/fetch-metadata@v1.6.0
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: "Prepare git"
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
       - name: comment major updates
         if : ${{steps.metadata.outputs.update-type == 'version-update:semver-major' }}
         run: |
@@ -25,7 +29,7 @@ jobs:
           gh pr edit $PR_URL --add-label "please review"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR}}
       - name: approve and merge
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
@@ -34,4 +38,4 @@ jobs:
           gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR}}
