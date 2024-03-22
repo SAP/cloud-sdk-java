@@ -30,4 +30,4 @@ stages:
     pmd:
       high: '0'
       normal: '1'
-      low: '0'
+      low: '669'
