@@ -169,7 +169,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
             keyStore = ztis.getOrCreateKeyStore();
         }
         catch( final Exception e ) {
-            throw new CloudPlatformException("Failed to load X509 SVID from Zero Trust Identity Service.", e);
+            throw new CloudPlatformException("Failed to load X509 certificate for credential type X509_ATTESTED.", e);
         }
         return new ZtisClientIdentity(clientid, keyStore);
     }
