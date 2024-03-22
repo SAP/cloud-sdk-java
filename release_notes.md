@@ -16,7 +16,8 @@
 
 ### 📈 Improvements
 
-- 
+- Close CSRF Token Retrieval response `HttpEntity` and underlying `InputStream` manually.
+  In case of an error the connection will be closed eagerly.
 
 ### 🐛 Fixed Issues
 
