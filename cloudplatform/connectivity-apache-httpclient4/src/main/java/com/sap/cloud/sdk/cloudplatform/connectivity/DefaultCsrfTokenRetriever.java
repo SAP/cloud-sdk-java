@@ -18,6 +18,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.util.EntityUtils;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.CsrfTokenRetrievalException;
 
@@ -91,6 +92,10 @@ public class DefaultCsrfTokenRetriever implements CsrfTokenRetriever
         //The service path gets appended to the destination URI inside the execute request
         final HttpResponse csrfResponse = httpClient.execute(csrfTokenRequest);
         final Header header = csrfResponse.getFirstHeader(X_CSRF_TOKEN_HEADER_KEY);
+
+        // consume and close HTTP input stream
+        EntityUtils.consume(csrfResponse.getEntity());
+
         if( header == null || header.getValue() == null ) {
             throw new NoSuchElementException("No CSRF token could be found in the response header.");
         }
