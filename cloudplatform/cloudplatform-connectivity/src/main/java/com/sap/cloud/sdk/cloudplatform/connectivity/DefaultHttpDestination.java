@@ -55,7 +55,10 @@ public final class DefaultHttpDestination implements HttpDestination
     @Delegate
     private final DestinationProperties baseProperties;
 
+    @Nullable
     private final KeyStore keyStore;
+
+    @Nullable
     private final KeyStore trustStore;
 
     @Nonnull
