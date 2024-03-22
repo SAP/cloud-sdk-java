@@ -89,11 +89,11 @@ public class DefaultCsrfTokenRetriever implements CsrfTokenRetriever
         // Additional headers
         headers.forEach(( k, values ) -> values.forEach(v -> csrfTokenRequest.addHeader(k, v)));
 
-        //The service path gets appended to the destination URI inside the execute request
+        // The service path gets appended to the destination URI inside the execute request
         final HttpResponse csrfResponse = httpClient.execute(csrfTokenRequest);
         final Header header = csrfResponse.getFirstHeader(X_CSRF_TOKEN_HEADER_KEY);
 
-        // consume and close HTTP input stream
+        // Consume the HttpEntity and close the connection
         EntityUtils.consume(csrfResponse.getEntity());
 
         if( header == null || header.getValue() == null ) {

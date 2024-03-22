@@ -16,8 +16,8 @@
 
 ### 📈 Improvements
 
-- Close CSRF Token Retrieval response `HttpEntity` and underlying `InputStream` manually.
-  In case of an error the connection will be closed eagerly.
+- Consume CSRF Token Retrieval response `HttpEntity` manually, thus closing underlying `InputStream` eagerly.
+  In case of an error the connection will not be left open, waiting to be closed by connection manager.
 
 ### 🐛 Fixed Issues
 
