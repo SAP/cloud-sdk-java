@@ -40,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation to access X.509 certificates provided by the Zero Trust Identity Service (ZTIS).
+ *
+ * @since 5.7.0
  */
 @Beta
 @Slf4j
@@ -137,6 +139,7 @@ public class ZeroTrustIdentityService
      * equivalent to calling {@link #getX509Svid()} with {@link X509Svid#getSpiffeId()}.
      *
      * @return The SPIFFE ID.
+     * @since 5.7.0
      */
     @Nonnull
     public String getSpiffeId()
@@ -148,6 +151,7 @@ public class ZeroTrustIdentityService
      * Returns the app identifier assigned to the app via the Zero Trust Identity service binding.
      *
      * @return The app identifier.
+     * @since 5.7.0
      */
     @Nonnull
     public Option<String> getAppIdentifier()
@@ -167,6 +171,7 @@ public class ZeroTrustIdentityService
      * KeyStore is cached and will be reloaded if the certificate expires.
      *
      * @return a KeyStore containing the X.509 certificate and key.
+     * @since 5.7.0
      */
     @Nonnull
     public KeyStore getOrCreateKeyStore()
