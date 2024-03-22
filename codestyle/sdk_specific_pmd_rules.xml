@@ -458,9 +458,10 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //ClassOrInterfaceDeclaration[@Visibility="public"]/ClassOrInterfaceBody/FieldDeclaration[
-                          not(VariableDeclarator[@Initializer="true" and VariableDeclaratorId[@Final="true"]]) and
-                          not(ModifierList/Annotation[@SimpleName="Nonnull" or @SimpleName="Nullable"])
+                        //ClassOrInterfaceDeclaration[@Public=true()]/ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration[
+                          @Kind='FIELD' and
+                          not(FieldDeclaration[@Final=true() and VariableDeclarator/VariableInitializer]) and
+                          not(./Annotation/MarkerAnnotation/Name[@Image='Nullable' or @Image='Nonnull'])
                         ]
                     ]]>
                 </value>
