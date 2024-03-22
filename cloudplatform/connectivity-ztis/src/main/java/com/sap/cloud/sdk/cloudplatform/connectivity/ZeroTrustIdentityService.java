@@ -38,6 +38,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Implementation to access X.509 certificates provided by the Zero Trust Identity Service (ZTIS).
+ */
 @Beta
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
