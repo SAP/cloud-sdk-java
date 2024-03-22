@@ -51,7 +51,7 @@ final class SecurityLibWorkarounds
 
     // The identity will be used as cache key, so it's important we correctly implement equals/hashCode
     @Override
-    public boolean equals( Object obj )
+    public boolean equals( final Object obj )
     {
         if( this == obj ) {
             return true;

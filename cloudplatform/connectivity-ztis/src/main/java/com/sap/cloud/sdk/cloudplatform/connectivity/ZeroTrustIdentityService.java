@@ -34,7 +34,6 @@ import io.vavr.Lazy;
 import io.vavr.NotImplementedError;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +63,7 @@ public class ZeroTrustIdentityService
         credentials = Lazy.of(ZeroTrustIdentityService::loadBinding);
     }
 
-    ZeroTrustIdentityService( ServiceBinding binding )
+    ZeroTrustIdentityService( @Nonnull final ServiceBinding binding )
     {
         credentials = Lazy.of(() -> TypedMapView.ofCredentials(binding));
     }
@@ -97,7 +96,7 @@ public class ZeroTrustIdentityService
 
         // for local testing the certificate can be provided on the file system
         if( mapView.containsKey("certPath") && mapView.containsKey("keyPath") ) {
-            String message =
+            final String message =
                 """
                     Found 'certPath' and 'keyPath' in Zero Trust Identity Service binding. Loading X509 SVID from the given file system location. \
                     This is intended for local testing only, since the certificates will not be rotated automatically.\
@@ -181,7 +180,7 @@ public class ZeroTrustIdentityService
         }
     }
 
-    private void assertSvidNotExpired( X509Svid svid )
+    private void assertSvidNotExpired( @Nonnull final X509Svid svid )
     {
         if( svid.getLeaf().getNotAfter().before(Date.from(Instant.now())) ) {
             throw new IllegalStateException(
@@ -201,7 +200,9 @@ public class ZeroTrustIdentityService
             keyStore.setEntry("spiffe", privateKeyEntry, new KeyStore.PasswordProtection(new char[0]));
         }
         catch( final KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e ) {
-            throw new RuntimeException(e);
+            throw new CloudPlatformException(
+                "Failed to load private key entry with X.509 certificate into a KeyStore.",
+                e);
         }
         return keyStore;
     }
@@ -239,7 +240,7 @@ public class ZeroTrustIdentityService
 
         @Nonnull
         @Override
-        public X509Bundle getBundleForTrustDomain( @NonNull TrustDomain trustDomain )
+        public X509Bundle getBundleForTrustDomain( @Nonnull final TrustDomain trustDomain )
         {
             throw new NotImplementedError();
         }

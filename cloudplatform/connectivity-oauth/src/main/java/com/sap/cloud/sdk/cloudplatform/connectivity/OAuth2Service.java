@@ -117,7 +117,7 @@ class OAuth2Service
                 .build();
         final CloseableHttpClient httpClient;
         try {
-            httpClient = ((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
+            httpClient = (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination);
         }
         catch( final ClassCastException e ) {
             throw new DestinationAccessException(
