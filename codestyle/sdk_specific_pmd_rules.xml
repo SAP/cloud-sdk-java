@@ -461,7 +461,7 @@
                         //ClassOrInterfaceDeclaration[@Public=true()]/ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration[
                           @Kind='FIELD' and
                           not(FieldDeclaration[@Final=true() and VariableDeclarator/VariableInitializer]) and
-                          not(./Annotation/MarkerAnnotation/Name[@Image='Nullable' or @Image='Nonnull'])
+                          not(Annotation/MarkerAnnotation/Name[@Image='Nullable' or @Image='Nonnull'])
                         ]
                     ]]>
                 </value>
