@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.CredentialType;
 
@@ -148,6 +150,25 @@ class DefaultOAuth2PropertySupplierTest
             assertThat(cc.getCertificate()).isEqualTo("cert");
             assertThat(cc.getKey()).isEqualTo("key");
         });
+    }
+
+    @Test
+    void testCredentialTypeX509_ATTESTED()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.of("testX509_attested"))
+                .with("credentials.uaa.credential-type", "X509_ATTESTED")
+                .with("credentials.uaa.clientid", "id")
+                .build();
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509);
+        assertThatThrownBy(sut::getClientIdentity)
+            .isInstanceOf(CloudPlatformException.class)
+            .describedAs("We are not mocking the Zero Trust Identity Service here, so this should be a failure")
+            .hasCauseInstanceOf(ServiceBindingAccessException.class);
     }
 
     @RequiredArgsConstructor

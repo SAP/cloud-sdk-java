@@ -14,8 +14,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 /**
@@ -265,17 +263,5 @@ public final class BtpServiceOptions
                 return this;
             }
         }
-    }
-
-    // TODO: currently only public for our E2E test
-    @Beta
-    @Getter
-    @RequiredArgsConstructor( staticName = "enhanceDestination" )
-    public static final class ZeroTrustIdentityOptions
-        implements
-        ServiceBindingDestinationOptions.OptionsEnhancer<HttpDestination>
-    {
-        @Nonnull
-        final HttpDestination value;
     }
 }

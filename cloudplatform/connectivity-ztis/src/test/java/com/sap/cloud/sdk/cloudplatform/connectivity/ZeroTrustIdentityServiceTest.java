@@ -17,36 +17,39 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
-import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
+import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 
 import io.spiffe.svid.x509svid.X509Svid;
 
-class ZeroTrustIdentityServiceTest {
+class ZeroTrustIdentityServiceTest
+{
     private static final ServiceBinding binding = mockBinding();
 
     private ZeroTrustIdentityService sut;
     private X509Svid svidMock;
 
     @BeforeEach
-    void setUp() {
+    void setUp()
+    {
         sut = spy(new ZeroTrustIdentityService(binding));
         mockSvid(Instant.now().plusSeconds(300));
         doReturn(mock(KeyStore.class)).when(sut).loadKeyStore(any());
     }
 
     @Test
-    void testLazyInitialization() {
+    void testLazyInitialization()
+    {
         verify(sut, never()).initX509Source();
     }
 
     @Test
-    void testKeyStoreCache() {
+    void testKeyStoreCache()
+    {
         assertThat(sut.isKeyStoreCached(svidMock)).isFalse();
 
         sut.getOrCreateKeyStore();
@@ -65,32 +68,46 @@ class ZeroTrustIdentityServiceTest {
         assertThat(sut.isKeyStoreCached(svidMock)).isTrue();
     }
 
-
     @Test
-    void testThrowsWithoutBinding() {
-        assertThatThrownBy(ZeroTrustIdentityService.getInstance()::getX509Svid).isInstanceOf(ServiceBindingAccessException.class);
+    void testThrowsWithoutBinding()
+    {
+        assertThatThrownBy(ZeroTrustIdentityService.getInstance()::getX509Svid)
+            .isInstanceOf(ServiceBindingAccessException.class);
     }
 
     @Test
-    void testCheckForInvalidCertificate() {
+    void testCheckForInvalidCertificate()
+    {
         mockSvid(Instant.now().minusSeconds(20));
         assertThatThrownBy(sut::getOrCreateKeyStore).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void testSpiffeId() {
+    void testSpiffeId()
+    {
         assertThat(sut.getSpiffeId()).isEqualTo("spiffe://example.org");
     }
 
     @Test
-    void testAppIdentifier() {
+    void testAppIdentifier()
+    {
         assertThat(sut.getAppIdentifier()).isEqualTo("test-app");
     }
 
     @Test
-    void testCertOnFileSystem() {
-        final ServiceBinding binding = new DefaultServiceBindingBuilder().withServiceIdentifier(ZTIS_IDENTIFIER)
-                .withCredentials(Map.of("certPath", "src/test/resources/ZeroTrustIdentityServiceTest/cert.pem", "keyPath", "src/test/resources/ZeroTrustIdentityServiceTest/key.pem")).build();
+    void testCertOnFileSystem()
+    {
+        final ServiceBinding binding =
+            new DefaultServiceBindingBuilder()
+                .withServiceIdentifier(ZTIS_IDENTIFIER)
+                .withCredentials(
+                    Map
+                        .of(
+                            "certPath",
+                            "src/test/resources/ZeroTrustIdentityServiceTest/cert.pem",
+                            "keyPath",
+                            "src/test/resources/ZeroTrustIdentityServiceTest/key.pem"))
+                .build();
 
         final ZeroTrustIdentityService sut = new ZeroTrustIdentityService(binding);
         final X509Svid svid = sut.getX509Svid();
@@ -100,15 +117,16 @@ class ZeroTrustIdentityServiceTest {
         assertThat(svid.getSpiffeId().getTrustDomain().getName()).isEqualTo("0trust.net.sap");
 
         assertThat(svid)
-                .describedAs("Our cache relies on the equals implementation of SVIDs")
-                .isEqualTo(sut.getX509Svid());
+            .describedAs("Our cache relies on the equals implementation of SVIDs")
+            .isEqualTo(sut.getX509Svid());
 
         assertThatThrownBy(sut::getOrCreateKeyStore)
-                .describedAs("KeyStore creation should fail since the cert has expired")
-                .isInstanceOf(IllegalStateException.class);
+            .describedAs("KeyStore creation should fail since the cert has expired")
+            .isInstanceOf(IllegalStateException.class);
     }
 
-    private void mockSvid(Instant notAfter) {
+    private void mockSvid( Instant notAfter )
+    {
         final X509Svid svid = mock(X509Svid.class);
         final X509Certificate certificate = mock(X509Certificate.class);
         doReturn(Date.from(notAfter)).when(certificate).getNotAfter();
@@ -117,7 +135,17 @@ class ZeroTrustIdentityServiceTest {
         svidMock = svid;
     }
 
-    private static ServiceBinding mockBinding() {
-        return new DefaultServiceBindingBuilder().withServiceIdentifier(ZTIS_IDENTIFIER).withCredentials(Map.of("workload", Map.of("spiffeID", "spiffe://example.org"), "parameters", Map.of("app-identifier", "test-app"))).build();
+    private static ServiceBinding mockBinding()
+    {
+        return new DefaultServiceBindingBuilder()
+            .withServiceIdentifier(ZTIS_IDENTIFIER)
+            .withCredentials(
+                Map
+                    .of(
+                        "workload",
+                        Map.of("spiffeID", "spiffe://example.org"),
+                        "parameters",
+                        Map.of("app-identifier", "test-app")))
+            .build();
     }
 }
