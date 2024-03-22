@@ -20,6 +20,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
@@ -91,7 +92,22 @@ class ZeroTrustIdentityServiceTest
     @Test
     void testAppIdentifier()
     {
-        assertThat(sut.getAppIdentifier()).isEqualTo("test-app");
+        assertThat(sut.getAppIdentifier()).contains("test-app");
+
+        final DefaultServiceBinding emptyBinding =
+            new DefaultServiceBindingBuilder().withServiceIdentifier(ZTIS_IDENTIFIER).build();
+
+        sut = new ZeroTrustIdentityService(emptyBinding);
+        assertThat(sut.getAppIdentifier()).isEmpty();
+
+        final DefaultServiceBinding emptyValue =
+            new DefaultServiceBindingBuilder()
+                .withServiceIdentifier(ZTIS_IDENTIFIER)
+                .withCredentials(Map.of("parameters", Map.of("app-identifier", "")))
+                .build();
+
+        sut = new ZeroTrustIdentityService(emptyValue);
+        assertThat(sut.getAppIdentifier()).isEmpty();
     }
 
     @Test

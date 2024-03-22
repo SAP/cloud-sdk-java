@@ -32,6 +32,7 @@ import io.spiffe.workloadapi.DefaultX509Source.X509SourceOptions;
 import io.spiffe.workloadapi.X509Source;
 import io.vavr.Lazy;
 import io.vavr.NotImplementedError;
+import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -149,9 +150,16 @@ public class ZeroTrustIdentityService
      * @return The app identifier.
      */
     @Nonnull
-    public String getAppIdentifier()
+    public Option<String> getAppIdentifier()
     {
-        return credentials.get().getMapView("parameters").getString("app-identifier");
+        final TypedMapView mapView = credentials.get();
+        return Option
+            .some(mapView)
+            .filter(m -> m.containsKey("parameters"))
+            .map(m -> m.getMapView("parameters"))
+            .filter(m -> m.containsKey("app-identifier"))
+            .map(m -> m.getString("app-identifier"))
+            .filter(s -> !s.isBlank());
     }
 
     /**
