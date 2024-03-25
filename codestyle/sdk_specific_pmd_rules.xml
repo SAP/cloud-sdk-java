@@ -447,6 +447,35 @@
         </example>
     </rule>
 
+    <rule name="MissingNonnullNullableAnnotationOnPublicTypes" language="java"
+          message="Do not forget to provide a @Nonnull or @Nullable hint on variable declarations for public types."
+          class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+            Do not forget to provide a @Nonnull or @Nullable hint on variable declarations for public types.
+        </description>
+        <priority>5</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                        //ClassOrInterfaceDeclaration[@Public=true()]/ClassOrInterfaceBody/ClassOrInterfaceBodyDeclaration[
+                          @Kind='FIELD' and
+                          not(FieldDeclaration[@Final=true() and VariableDeclarator/VariableInitializer]) and
+                          not(Annotation/MarkerAnnotation/Name[@Image='Nullable' or @Image='Nonnull'])
+                        ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+        <example>
+            <![CDATA[
+            public Foo {
+              public String bar;
+            }
+            ]]>
+        </example>
+    </rule>
+
     <rule ref="category/java/errorprone.xml/CloseResource" />
     <rule ref="category/java/bestpractices.xml/UseTryWithResources" />
 </ruleset>
