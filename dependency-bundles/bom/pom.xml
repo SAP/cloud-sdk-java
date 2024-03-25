@@ -50,7 +50,7 @@
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.12</slf4j.version>
-		<lombok.version>1.18.30</lombok.version>
+		<lombok.version>1.18.32</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
 		<vavr.version>0.10.4</vavr.version>
