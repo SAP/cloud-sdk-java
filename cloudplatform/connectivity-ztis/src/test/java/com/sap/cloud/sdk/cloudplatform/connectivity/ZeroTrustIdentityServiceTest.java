@@ -24,6 +24,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.spiffe.svid.x509svid.X509Svid;
 
@@ -45,7 +46,16 @@ class ZeroTrustIdentityServiceTest
     @Test
     void testLazyInitialization()
     {
+        // it's important here to spy using the class, not on an already existing instance
+        // otherwise the method reference stored in Lazy.of(this::initX509Source) would not point to the mock
+        sut = spy(ZeroTrustIdentityService.class);
         verify(sut, never()).initX509Source();
+
+        assertThatThrownBy(sut::getOrCreateKeyStore).isInstanceOf(CloudPlatformException.class);
+        assertThatThrownBy(sut::getOrCreateKeyStore).isInstanceOf(CloudPlatformException.class);
+
+        // an initialization failure must not be cached
+        verify(sut, times(2)).initX509Source();
     }
 
     @Test
@@ -73,7 +83,8 @@ class ZeroTrustIdentityServiceTest
     void testThrowsWithoutBinding()
     {
         assertThatThrownBy(ZeroTrustIdentityService.getInstance()::getX509Svid)
-            .isInstanceOf(ServiceBindingAccessException.class);
+            .isInstanceOf(CloudPlatformException.class)
+            .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
     }
 
     @Test

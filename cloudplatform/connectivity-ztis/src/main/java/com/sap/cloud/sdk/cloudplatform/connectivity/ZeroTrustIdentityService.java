@@ -22,8 +22,6 @@ import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAcce
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 
 import io.spiffe.bundle.x509bundle.X509Bundle;
-import io.spiffe.exception.SocketEndpointAddressException;
-import io.spiffe.exception.X509SourceException;
 import io.spiffe.exception.X509SvidException;
 import io.spiffe.spiffeid.TrustDomain;
 import io.spiffe.svid.x509svid.X509Svid;
@@ -117,21 +115,24 @@ public class ZeroTrustIdentityService
         try {
             return DefaultX509Source.newSource(x509SourceOptions);
         }
-        catch( final SocketEndpointAddressException | X509SourceException e ) {
-            final String msg =
-                """
-                    Failed to initialize the Zero Trust Identity Service X509 source. \
-                    Double-check that the SPIRE agent is running and the io.spiffe dependencies required for your operating system are present. \
-                    For Cloud Foundry, the agent is typically provided by the zero_trust_sidecar_buildpack and the required dependencies are io.spiffe:grpc-netty-linux. \
-                    """;
-            throw new CloudPlatformException(msg, e);
+        catch( final Exception e ) {
+            throw new CloudPlatformException("Failed to load the certificate from the default unix socket.", e);
         }
     }
 
     @Nonnull
     X509Svid getX509Svid()
     {
-        return source.get().getX509Svid();
+        try {
+            return source.get().getX509Svid();
+        }
+        catch( Exception e ) {
+            final String message =
+                "Failed to load a certificate using the Zero Trust Identity service. "
+                    + "Please ensure your application is configured correctly according to: "
+                    + "https://sap.github.io/cloud-sdk/docs/java/features/connectivity/mtls";
+            throw new CloudPlatformException(message, e);
+        }
     }
 
     /**
