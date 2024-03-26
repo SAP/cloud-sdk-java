@@ -15,12 +15,15 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -55,7 +58,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class OAuth2Service
 {
-
     /**
      * Cache to reuse OAuth2TokenService and with that reuse the underlying response cache.
      * <p>
@@ -97,7 +99,30 @@ class OAuth2Service
     OAuth2TokenService getTokenService( @Nullable final String tenantId )
     {
         final CacheKey key = CacheKey.fromIds(tenantId, null).append(identity);
-        return tokenServiceCache.get(key, x -> new DefaultOAuth2TokenService(HttpClientFactory.create(identity)));
+        return tokenServiceCache.get(key, this::createTokenService);
+    }
+
+    @Nonnull
+    private OAuth2TokenService createTokenService( @Nonnull final CacheKey ignored )
+    {
+        if( !(identity instanceof ZtisClientIdentity) ) {
+            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
+        }
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination
+                .builder(tokenUri)
+                .name("oauth-destination-ztis-" + identity.getId().hashCode())
+                .keyStore(((ZtisClientIdentity) identity).getKeyStore())
+                .build();
+        try {
+            return new DefaultOAuth2TokenService((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
+        }
+        catch( final ClassCastException e ) {
+            final String msg =
+                "For the X509_ATTESTED credential type the 'HttpClientAccessor' must return instances of 'CloseableHttpClient'";
+            throw new DestinationAccessException(msg, e);
+        }
     }
 
     @Nonnull

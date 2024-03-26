@@ -22,6 +22,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -247,6 +248,9 @@ class BtpServicePropertySuppliers
         private KeyStore getClientKeyStore()
         {
             final ClientIdentity clientIdentity = getClientIdentity();
+            if( clientIdentity instanceof ZtisClientIdentity ) {
+                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
+            }
             if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;
             }

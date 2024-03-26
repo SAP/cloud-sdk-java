@@ -4,8 +4,11 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.X509_ATTESTED;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +19,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
@@ -132,9 +137,41 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     ClientIdentity getCertificateIdentity()
     {
         final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
+
+        final Option<String> exactCredentialType = getOAuthCredential(String.class, "credential-type");
+        if( exactCredentialType.contains(X509_ATTESTED) ) {
+            return getZtisClientIdentity(clientid);
+        }
+
         final String cert = getOAuthCredentialOrThrow(String.class, "certificate");
         final String key = getOAuthCredentialOrThrow(String.class, "key");
         return new ClientCertificate(cert, key, clientid);
+    }
+
+    @Nonnull
+    private ZtisClientIdentity getZtisClientIdentity( @Nonnull final String clientid )
+    {
+        try {
+            // sanity check: assert the connectivity-ztis module is present
+            getClass()
+                .getClassLoader()
+                .loadClass("com.sap.cloud.sdk.cloudplatform.connectivity.ZeroTrustIdentityService");
+        }
+        catch( final ClassNotFoundException e ) {
+            throw new CloudPlatformException(
+                "Failed to load implementation for credential type X509_ATTESTED. Please ensure the 'connectivity-ztis' module is present.",
+                e);
+        }
+        final ZeroTrustIdentityService ztis = ZeroTrustIdentityService.getInstance();
+
+        final KeyStore keyStore;
+        try {
+            keyStore = ztis.getOrCreateKeyStore();
+        }
+        catch( final Exception e ) {
+            throw new CloudPlatformException("Failed to load X509 certificate for credential type X509_ATTESTED.", e);
+        }
+        return new ZtisClientIdentity(clientid, keyStore);
     }
 
     @Nonnull

@@ -730,6 +730,7 @@
 						<failOnWarning>true</failOnWarning>
 						<failBuild>true</failBuild>
 						<ignoreNonCompile>false</ignoreNonCompile>
+						<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
 						<ignoredUnusedDeclaredDependencies combine.children="append">
 							<!--  ignore annotations that are not visible on bytecode level  -->
 							<ignoredUnusedDeclaredDependency>com.google.code.findbugs:jsr305</ignoredUnusedDeclaredDependency>
