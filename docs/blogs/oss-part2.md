@@ -12,15 +12,19 @@ Finally, [part three](./oss-part3.md) will cover the transformation of the CI/CD
 ## The Overall Strategy
 
 Right from the get-go it was clear that we would release a new major version of the SDK once the open source migration was complete.
-As explained in part 1 of this blog post series, the open source version would come with significant changes to the module structure and also a change in license.
+As outlined in part 1 of this blog post series, the open source version would come with a new license and significant changes to the feature scope, dropping support for some legacy features and platforms.
 With the current version being 4.X at the time we set the goal to release version 5.0.0 as the first open source version of the SDK.
 
-It was also clear that we would have to continue developing the current version 4 for some time, at least up until a few weeks before the release of version 5.
+Still, we would have to continue developing the current version 4 for some time, at least up until a few weeks before the release of version 5.
 And even after that, we would have to maintain version 4 and provide bug fixes and security updates for some time.
+
+Next, we had decided to replace our existing (Jenkins) pipelines and related tooling (e.g. for static code checks, dependency updates etc.) in favor of more modern alternatives that are more suitable for open source projects.
+We decided to completely switch to GitHub Actions for our pipelines and automations, and also use other tools provided by GitHub for code quality and security checks (e.g. CodeQL, Dependabot). 
+This would require some time to set up and test. 
 
 Finally, we wanted to have a smooth transition with as little downtime to the development process as possible.
 Ideally, we copy over the code to the new repository and have all the CI/CD tooling and automations in place and working,
-guaranteeing the same or even better quality compared to the internal repository.
+guaranteeing the same or even better code quality compared to the internal repository.
 
 ## How We Moved the Code Base
 
@@ -36,20 +40,13 @@ Also, it allowed us to split the code base as late as possible to reduce the amo
 
 ## Creating a Representative Sample
 
-Once we had created the empty repository on GitHub we moved around 5-10 modules or roughly 10 % of the code base over to the open source repository.
+Once we had created the empty repository on GitHub we copied around 5-10 modules or roughly 10 % of the code base over to the open source repository.
 We carefully chose a subset of the code that we knew would change relatively little in the near future and that would be representative of the whole code base.
 The code sample was representative in the sense that it included various different kinds of Maven modules:
 Typical modules that would get shipped as JAR, parent and BOM modules that are used for dependency management, modules that would get shipped as a Maven plugin or Maven archetype and test modules that wouldn't get shipped.
 
 This allowed us to implement our CI/CD pipelines on a subset of the code that would be representative of the whole code base.
 Also, this meant this work can be done in parallel and completely independent of the development on the internal repository.
-
-It is important to note here that for the internal repository we were using an internal Jenkins server to run most of our automations.
-But for the open source repository we had decided to completely refactor the pipelines and switch to GitHub Actions instead.
-So the move to open source also came with a complete refactoring of our CI/CD pipelines.
-
-But not only the CI/CD server changed, we also migrated some of our tooling.
-For example, we switched to CodeQL, GitHub Security and Dependabot.
 
 In the end, the sample code allowed us to fully prepare all CI/CD tooling with a high degree of confidence that once we move over the rest of the code base everything would work as expected.
 
@@ -60,7 +57,7 @@ We also set up an automation right away that would merge any changes done to v4 
 
 //TODO add an image here
 
-That way we could continue developing the current version 4 without the risk of forgetting to port the changes to v5.
+That way we could continue developing the current version 4 without the risk of forgetting to port relevant changes to the v5 branch.
 Still, maintaining two branches is additional work, so we pushed creating the v5 branch back as far as possible.
 
 Finally, once all changes required for the open source migration on the v5 branch were complete and the open source repository was set up with all required CI/CD tooling we moved over the v5 branch to the open source repository.
