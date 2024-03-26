@@ -168,7 +168,7 @@ class DefaultOAuth2PropertySupplierTest
         assertThatThrownBy(sut::getClientIdentity)
             .isInstanceOf(CloudPlatformException.class)
             .describedAs("We are not mocking the Zero Trust Identity Service here, so this should be a failure")
-            .hasCauseInstanceOf(ServiceBindingAccessException.class);
+            .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
     }
 
     @RequiredArgsConstructor

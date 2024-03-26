@@ -575,7 +575,7 @@ class BtpServicePropertySuppliersTest
             assertThatThrownBy(sut::getClientIdentity)
                 .isInstanceOf(CloudPlatformException.class)
                 .describedAs("We are not mocking the ZTIS service here so this should fail")
-                .hasCauseInstanceOf(ServiceBindingAccessException.class);
+                .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
         }
 
         @Test
