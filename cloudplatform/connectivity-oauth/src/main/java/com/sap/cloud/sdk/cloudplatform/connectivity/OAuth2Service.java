@@ -113,19 +113,16 @@ class OAuth2Service
             DefaultHttpDestination
                 .builder(tokenUri)
                 .name("oauth-destination-ztis-" + identity.getId().hashCode())
-                .keyStore(((ZtisClientIdentity) identity).keyStore())
+                .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
-        final CloseableHttpClient httpClient;
         try {
-            httpClient = (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination);
+            return new DefaultOAuth2TokenService((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
         }
         catch( final ClassCastException e ) {
-            throw new DestinationAccessException(
-                "For the X509_ATTESTED credential type the 'HttpClientAccessor' must return instances of 'CloseableHttpClient'.",
-                e);
+            final String msg =
+                "For the X509_ATTESTED credential type the 'HttpClientAccessor' must return instances of 'CloseableHttpClient'";
+            throw new DestinationAccessException(msg, e);
         }
-
-        return new DefaultOAuth2TokenService(httpClient);
     }
 
     @Nonnull

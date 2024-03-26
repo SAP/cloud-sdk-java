@@ -14,6 +14,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.config.CredentialType;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 final class SecurityLibWorkarounds
 {
     private static final String X509_GENERATED = "X509_GENERATED";
@@ -35,42 +38,44 @@ final class SecurityLibWorkarounds
         return CredentialType.from(rawType);
     }
 
-    record ZtisClientIdentity( @Nonnull String id, @Nonnull KeyStore keyStore) implements ClientIdentity {
-
-    @Override
-    public String getId()
+    @Getter
+    @AllArgsConstructor
+    static class ZtisClientIdentity implements ClientIdentity
     {
-        return id;
-    }
+        @Nonnull
+        private final String id;
+        @Nonnull
+        private final KeyStore keyStore;
 
-    @Override
-    public boolean isCertificateBased()
-    {
-        return true;
-    }
-
-    // The identity will be used as cache key, so it's important we correctly implement equals/hashCode
-    @Override
-    public boolean equals( final Object obj )
-    {
-        if( this == obj ) {
+        @Override
+        public boolean isCertificateBased()
+        {
             return true;
         }
 
-        if( obj == null || getClass() != obj.getClass() ) {
-            return false;
+        // The identity will be used as cache key, so it's important we correctly implement equals/hashCode
+        @Override
+        public boolean equals( final Object obj )
+        {
+            if( this == obj ) {
+                return true;
+            }
+
+            if( obj == null || getClass() != obj.getClass() ) {
+                return false;
+            }
+
+            final ZtisClientIdentity that = (ZtisClientIdentity) obj;
+            return new EqualsBuilder()
+                .append(id, that.id)
+                .append(resolveCertificatesOnly(keyStore), resolveCertificatesOnly(that.keyStore))
+                .isEquals();
         }
 
-        final ZtisClientIdentity that = (ZtisClientIdentity) obj;
-        return new EqualsBuilder()
-            .append(id, that.id)
-            .append(resolveCertificatesOnly(keyStore), resolveCertificatesOnly(that.keyStore))
-            .isEquals();
+        @Override
+        public int hashCode()
+        {
+            return new HashCodeBuilder(41, 71).append(id).append(resolveKeyStoreHashCode(keyStore)).build();
+        }
     }
-
-    @Override
-    public int hashCode()
-    {
-        return new HashCodeBuilder(41, 71).append(id).append(resolveKeyStoreHashCode(keyStore)).build();
-    }
-}}
+}

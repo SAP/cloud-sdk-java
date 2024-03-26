@@ -249,7 +249,7 @@ class BtpServicePropertySuppliers
         {
             final ClientIdentity clientIdentity = getClientIdentity();
             if( clientIdentity instanceof ZtisClientIdentity ) {
-                return ((ZtisClientIdentity) clientIdentity).keyStore();
+                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
             }
             if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;
