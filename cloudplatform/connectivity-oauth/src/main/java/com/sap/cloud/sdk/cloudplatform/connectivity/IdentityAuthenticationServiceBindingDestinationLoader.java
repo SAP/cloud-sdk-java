@@ -40,7 +40,6 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     private static final String PROPERTY_TYPE_MISMATCH_WITH_FALLBACK_TEMPLATE =
         "The '{}' attribute of the IAS-based service binding is expected to be an instance of {}, which is not the case. The fallback value will be used instead.";
 
-    private static final ServiceIdentifier NULL_IDENTIFIER = ServiceIdentifier.of("unknown-service");
     @Nonnull
     private final ServiceBindingDestinationLoader delegateLoader;
 
