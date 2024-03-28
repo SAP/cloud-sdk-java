@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -124,7 +125,8 @@ public class ZeroTrustIdentityService
     X509Svid getX509Svid()
     {
         try {
-            return source.get().getX509Svid();
+            final X509Svid svid = source.get().getX509Svid();
+            return Objects.requireNonNull(svid, "X.509 certificate must not be null.");
         }
         catch( Exception e ) {
             final String message =
