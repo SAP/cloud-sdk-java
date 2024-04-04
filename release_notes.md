@@ -18,7 +18,8 @@
 
 ### 📈 Improvements
 
-- 
+- Improve the efficiency of HTTP clients: The default cache duration for HTTP clients have been increased to expire one hour after last access (was 5 minutes after creation).
+  Aside from a performance improvement, this improves the handling of cookies, as they are retained for much longer.
 
 ### 🐛 Fixed Issues
 
