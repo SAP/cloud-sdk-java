@@ -118,7 +118,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.4.2</wiremock.version>
+		<wiremock.version>3.5.2</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.23</kotlin.version>
 		<byte-buddy.version>1.14.13</byte-buddy.version>

@@ -56,7 +56,7 @@
 		<vavr.version>0.10.4</vavr.version>
 		<guava.version>33.1.0-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
-		<commons-io.version>2.15.1</commons-io.version>
+		<commons-io.version>2.16.0</commons-io.version>
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
