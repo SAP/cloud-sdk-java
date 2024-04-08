@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk</groupId>
 		<artifactId>sdk-parent</artifactId>
-		<version>5.7.0-SNAPSHOT</version>
+		<version>5.8.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 	<artifactId>cloudplatform-parent</artifactId>
@@ -38,6 +38,7 @@
 		<module>cloudplatform-connectivity-scp-cf</module>
 		<module>connectivity-destination-service</module>
 		<module>connectivity-dwc</module>
+		<module>connectivity-ztis</module>
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
 		<module>connectivity-apache-httpclient5</module>
