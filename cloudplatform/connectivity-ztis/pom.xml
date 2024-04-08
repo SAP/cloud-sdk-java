@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+		<artifactId>cloudplatform-parent</artifactId>
+		<version>5.8.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>connectivity-ztis</artifactId>
+	<name>Connectivity - Zero Trust Identity Service</name>
+	<description>Capabilities for loading and using certificates provided by Zero Trust Identity Service</description>
+	<url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+	<organization>
+		<name>SAP SE</name>
+		<url>https://www.sap.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>SAP</name>
+			<email>cloudsdk@sap.com</email>
+			<organization>SAP SE</organization>
+			<organizationUrl>https://www.sap.com</organizationUrl>
+		</developer>
+	</developers>
+	<scm>
+		<connection />
+		<url />
+	</scm>
+	<properties>
+		<x-sap-release-audience>Public</x-sap-release-audience>
+		<x-sap-release-maturity>Beta</x-sap-release-maturity>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>3.21.7</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-bom</artifactId>
+				<version>1.62.2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>cloudplatform-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-core-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-consumption-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
+			<artifactId>java-access-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.spiffe</groupId>
+			<artifactId>java-spiffe-core</artifactId>
+			<version>0.8.6</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.spiffe</groupId>
+			<artifactId>grpc-netty-linux</artifactId>
+			<version>0.8.6</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
