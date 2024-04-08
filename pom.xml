@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.7.0-SNAPSHOT</version>
+	<version>5.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -44,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.7.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.8.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.71.11</jco-api.version>
+		<jco-api.version>4.72.6</jco-api.version>
 		<jackson.version>2.17.0</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -109,7 +109,7 @@
 		<maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.3.0</openapi-generator.version>
+		<openapi-generator.version>7.4.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
@@ -118,10 +118,10 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.4.2</wiremock.version>
+		<wiremock.version>3.5.2</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.23</kotlin.version>
-		<byte-buddy.version>1.14.12</byte-buddy.version>
+		<byte-buddy.version>1.14.13</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -730,6 +730,7 @@
 						<failOnWarning>true</failOnWarning>
 						<failBuild>true</failBuild>
 						<ignoreNonCompile>false</ignoreNonCompile>
+						<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
 						<ignoredUnusedDeclaredDependencies combine.children="append">
 							<!--  ignore annotations that are not visible on bytecode level  -->
 							<ignoredUnusedDeclaredDependency>com.google.code.findbugs:jsr305</ignoredUnusedDeclaredDependency>
@@ -752,7 +753,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.13.0</version>
 					<configuration>
 						<release>${java.version}</release>
 						<showWarnings>true</showWarnings>
@@ -836,7 +837,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.11</version>
+					<version>0.8.12</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -975,7 +976,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.30</version>
+							<version>1.18.32</version>
 						</dependency>
 					</dependencies>
 					<configuration>

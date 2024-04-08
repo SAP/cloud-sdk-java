@@ -21,4 +21,4 @@
 
 ### 🐛 Fixed Issues
 
-- Stop unnecessarily throwing and catching `NullPointerException` when interacting with `DefaultHttpDestination#equals(...)` and `#hashCode()`.
+- 
