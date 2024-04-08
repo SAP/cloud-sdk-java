@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.72.6</jco-api.version>
+		<jco-api.version>4.73.10</jco-api.version>
 		<jackson.version>2.17.0</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -106,7 +106,7 @@
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.6</maven-plugin.version>
-		<maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
+		<maven-plugin-annotations.version>3.12.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.4.0</openapi-generator.version>
@@ -114,7 +114,7 @@
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.77</bouncycastle.version>
+		<bouncycastle.version>1.78</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
