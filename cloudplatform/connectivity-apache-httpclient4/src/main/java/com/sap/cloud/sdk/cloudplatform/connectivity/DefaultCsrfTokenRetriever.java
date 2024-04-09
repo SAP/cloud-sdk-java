@@ -93,8 +93,11 @@ public class DefaultCsrfTokenRetriever implements CsrfTokenRetriever
         final HttpResponse csrfResponse = httpClient.execute(csrfTokenRequest);
         final Header header = csrfResponse.getFirstHeader(X_CSRF_TOKEN_HEADER_KEY);
 
-        // Consume the HttpEntity and close the connection
-        EntityUtils.consume(csrfResponse.getEntity());
+        // The response entity is expected to be null. Otherwise, ensure the connection is closed.
+        if( csrfResponse.getEntity() != null ) {
+            log.warn("The HTTP HEAD request for CSRF token retrieval resulted in an unexpected response payload.");
+            EntityUtils.consume(csrfResponse.getEntity());
+        }
 
         if( header == null || header.getValue() == null ) {
             throw new NoSuchElementException("No CSRF token could be found in the response header.");
