@@ -176,7 +176,7 @@ public class DataModelGenerator
         final String swaggerApiModelImport = "import io.swagger.annotations.ApiModel;";
         final String swaggerApiModelPropertyImport = "import io.swagger.annotations.ApiModelProperty;";
         final String generatedAnnotation =
-            "@javax.annotation.Generated(value = \"org.openapitools.codegen.languages.JavaClientCodegen\")";
+            "@javax.annotation.Generated(value = \"org.openapitools.codegen.languages.JavaClientCodegen\"";
 
         for( final File sourceFile : generatedFiles ) {
             final File tempFile = new File(sourceFile.getParent() + "/temp." + sourceFile.getName());
@@ -188,7 +188,7 @@ public class DataModelGenerator
                 while( (line = reader.readLine()) != null ) {
                     if( line.equals(swaggerApiModelImport)
                         || line.equals(swaggerApiModelPropertyImport)
-                        || line.equals(generatedAnnotation) ) {
+                        || line.startsWith(generatedAnnotation) ) {
                         continue;
                     }
 
