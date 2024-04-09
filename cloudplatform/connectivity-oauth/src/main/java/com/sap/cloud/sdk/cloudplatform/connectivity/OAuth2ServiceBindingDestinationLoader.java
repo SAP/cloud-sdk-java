@@ -127,7 +127,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         final OAuth2PropertySupplier propertySupplier = getOAuth2PropertySupplier(options);
         if( propertySupplier == null ) {
             final String msg =
-                "No property mapping for the provided service %s found. You may provide your own mapping by using the static `registerPropertySupplier` method.";
+                "No property mapping for the provided service '%s' found. You may provide your own mapping by using the static `registerPropertySupplier` method.";
             return Try.failure(new DestinationNotFoundException(null, String.format(msg, identifier)));
         }
 

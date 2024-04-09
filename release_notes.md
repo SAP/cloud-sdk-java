@@ -21,4 +21,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix an issue that would cause a NPE when using bound services backed by IAS via the [dedicated service binding format](/docs/java/features/connectivity/service-bindings#service-binding-format).

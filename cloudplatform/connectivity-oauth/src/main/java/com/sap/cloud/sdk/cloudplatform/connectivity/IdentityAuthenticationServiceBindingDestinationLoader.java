@@ -14,6 +14,7 @@ import com.sap.cloud.environment.servicebinding.api.TypedMapView;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
+import io.vavr.Lazy;
 import io.vavr.control.Try;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class IdentityAuthenticationServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
     private static final DestinationNotFoundException NOT_AN_IAS_SERVICE_BINDING =
-        new DestinationNotFoundException("The bound service is not backed by the IAS service.");
+        new DestinationNotFoundException(null, "The bound service is not backed by the IAS service.");
     private static final DestinationAccessException NOT_EXACTLY_ONE_ENDPOINT =
         new DestinationAccessException("The IAS-based service binding contains multiple HTTP endpoints.");
 
@@ -40,22 +41,38 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     private static final String PROPERTY_TYPE_MISMATCH_WITH_FALLBACK_TEMPLATE =
         "The '{}' attribute of the IAS-based service binding is expected to be an instance of {}, which is not the case. The fallback value will be used instead.";
 
+    // We have a sort of circular reference here:
+    // ServiceBindingDestinationLoader
+    //   -> DefaultServiceBindingDestinationLoaderChain
+    //      -> DEFAULT_INSTANCE
+    //       -> DEFAULT_DELEGATE_LOADERS
+    //          -> IdentityAuthenticationServiceBindingDestinationLoader
+    //            -> delegateLoader
+    //               -> DefaultServiceBindingDestinationLoaderChain
+    //                  -> DEFAULT_INSTANCE
+    //                      -> ...
+    // So this needs to be lazy, as otherwise it will reference DefaultServiceBindingDestinationLoaderChain#DEFAULT_INSTANCE before it is initialized and cause an NPE.
     @Nonnull
-    private final ServiceBindingDestinationLoader delegateLoader;
+    private final Lazy<ServiceBindingDestinationLoader> delegateLoader;
 
     /**
      * The default constructor.
      */
     public IdentityAuthenticationServiceBindingDestinationLoader()
     {
-        this(ServiceBindingDestinationLoader.defaultLoaderChain());
+        delegateLoader = Lazy.of(ServiceBindingDestinationLoader::defaultLoaderChain);
     }
 
     // for testing purposes
     IdentityAuthenticationServiceBindingDestinationLoader(
         @Nonnull final ServiceBindingDestinationLoader delegateLoader )
     {
-        this.delegateLoader = delegateLoader;
+        this.delegateLoader = Lazy.of(() -> delegateLoader);
+    }
+
+    ServiceBindingDestinationLoader getDelegateLoader()
+    {
+        return delegateLoader.get();
     }
 
     @Nonnull
@@ -83,7 +100,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
             optionsBuilder.withOption(BtpServiceOptions.IasOptions.withoutTokenForTechnicalProviderUser());
         }
 
-        return delegateLoader.tryGetDestination(optionsBuilder.build());
+        return getDelegateLoader().tryGetDestination(optionsBuilder.build());
     }
 
     @Nonnull
