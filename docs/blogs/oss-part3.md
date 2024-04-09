@@ -75,6 +75,7 @@ This is how it looks like when triggered on the main branch:
 
 As you can see, the main build triggers the CI workflow and runs the deployment afterward.
 When triggering the CI workflow it passes a parameter to inform the workflow it should also run the BlackDuck scan.
+Finally, in case the workflow fails it also sends a Slack notification to the development team.
 
 ### The Release Workflow
 

@@ -24,7 +24,7 @@ These were some of the reasons that ultimately motivated us to take on the chall
 
 ## Finding a Starting Point
 
-At SAP, we have a dedicated team that helps other teams within SAP open source their projects: The Open Source Program Office of SAP (OSPO).
+At SAP, we have a dedicated team that helps other teams within SAP open-source their projects: The Open Source Program Office of SAP (OSPO).
 You can read more about them in this blog post from Michael: [Managing Open Source Software with an Open Source Program Office](https://community.sap.com/t5/open-source-blogs/managing-open-source-software-with-an-open-source-program-office/ba-p/13516761).
 
 So, the first step was to get in touch with the OSPO and discuss our plans.
@@ -103,6 +103,7 @@ This included a comprehensive test suite, but also code scanning tools (e.g. For
 This made identifying internal dependencies or finding license issues relatively easy.
 
 And, of course, we had experience from moving the JavaScript variant of the project into open source.
+We could also refer to other closely related open source projects such as the [SAP BTP Security Services Integration Libraries](https://github.com/SAP/cloud-security-services-integration-library) or the [SAP BTP Environment Service Binding Access Library](https://github.com/sap/btp-environment-variable-access/).
 Together with the help and tools provided by the OSPO team this made the process of moving the Java variant into open source significantly easier.
 
 ## Conclusion
