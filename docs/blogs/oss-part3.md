@@ -48,6 +48,38 @@ I'll go through them step by step and explain how we use them to fully automate 
 At the heart of our CI/CD automation is the [continuous-integration](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/continuous-integration.yaml) workflow.
 It is triggered on every pull request and comprises multiple jobs, from building the code to running tests and quality checks.
 
+Here is a simplified excerpt from the [`build` job](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/continuous-integration.yaml#L102):
+
+```yaml title=".github/workflows/continuous-integration.yaml"
+build:
+  name: "Build"
+  needs: [ context, check-formatting ]
+  runs-on: ubuntu-latest
+  steps:
+    - name: "Checkout repository"
+      uses: actions/checkout@v4
+      # ...
+    - name: "Setup java"
+      uses: actions/setup-java@v4
+      # ...
+    - name: "Restore Dependencies"
+      id: restore-dependencies
+      uses: actions/cache/restore@v4
+      # ...
+
+    - name: "Build SDK"
+      run: |
+        MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -DskipTests -DskipFormatting"
+        # ...
+        echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
+        mvn $MVN_ARGS
+    - name: "Cache Dependencies"
+      if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      # ...
+    # ...
+```
+
 This is how it looks like when triggered on a pull request:
 
 ![img.png](img/part3-pr-build.png)
@@ -84,6 +116,7 @@ Both workflows are triggered manually and are designed to provide as much automa
 
 The `prepare-release` workflow first creates a branch for the release and increments the projects version to the desired release version.
 Then it triggers the CI workflow on the commit with the release version set and with additional parameters to sign the produced artifacts with a GPG key and enable JavaDoc generation.
+
 Once the CI build completes, it creates a release tag, a draft release and pull requests for the release notes and JavaDocs.
 Finally, if all steps succeeded, it increases the version number again to the next snapshot version and raises a pull request on the code base.
 If any of the steps failed the workflow will roll back the changes.
