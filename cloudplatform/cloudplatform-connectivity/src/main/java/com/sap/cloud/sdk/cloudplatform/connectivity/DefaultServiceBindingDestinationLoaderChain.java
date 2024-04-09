@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +18,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,11 +51,11 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
     static final DefaultServiceBindingDestinationLoaderChain DEFAULT_INSTANCE;
 
     static {
-        DEFAULT_DELEGATE_LOADERS =
-            FacadeLocator.getFacades(ServiceBindingDestinationLoader.class).stream().collect(toList());
+        DEFAULT_DELEGATE_LOADERS = new ArrayList<>(FacadeLocator.getFacades(ServiceBindingDestinationLoader.class));
         DEFAULT_INSTANCE = new DefaultServiceBindingDestinationLoaderChain(DEFAULT_DELEGATE_LOADERS);
     }
 
+    @Getter( AccessLevel.PACKAGE )
     @Nonnull
     private final List<ServiceBindingDestinationLoader> delegateLoaders;
 

@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser;
@@ -40,9 +41,12 @@ import io.vavr.control.Try;
 class IdentityAuthenticationServiceBindingDestinationLoaderTest
 {
     private static final ServiceIdentifier SERVICE_IDENTIFIER = ServiceIdentifier.of("test-service");
-    private static final ServiceIdentifier IDENTITY_AUTHENTICATION = ServiceIdentifier.of("identity");
     private static final DefaultServiceBinding IDENTITY_BINDING =
-        DefaultServiceBinding.builder().copy(Map.of()).withServiceIdentifier(IDENTITY_AUTHENTICATION).build();
+        DefaultServiceBinding
+            .builder()
+            .copy(Map.of("clientid", "foo", "clientsecret", "bar"))
+            .withServiceIdentifier(IDENTITY_AUTHENTICATION)
+            .build();
 
     @BeforeAll
     static void mockIasBinding()
@@ -54,6 +58,31 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     static void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
+    }
+
+    @Test
+    void testChainPicksUpIdentityLoader()
+    {
+        // sanity check
+        final ServiceBindingDestinationLoader chain = ServiceBindingDestinationLoader.defaultLoaderChain();
+        assertThat(chain).isInstanceOf(DefaultServiceBindingDestinationLoaderChain.class);
+
+        final List<ServiceBindingDestinationLoader> loaders =
+            ((DefaultServiceBindingDestinationLoaderChain) chain).getDelegateLoaders();
+        assertThat(loaders)
+            .describedAs("Expect the IAS loader to be present")
+            .hasAtLeastOneElementOfType(IdentityAuthenticationServiceBindingDestinationLoader.class);
+
+        final IdentityAuthenticationServiceBindingDestinationLoader loader =
+            loaders
+                .stream()
+                .filter(IdentityAuthenticationServiceBindingDestinationLoader.class::isInstance)
+                .map(IdentityAuthenticationServiceBindingDestinationLoader.class::cast)
+                .findAny()
+                .get();
+        assertThat(loader.getDelegateLoader())
+            .describedAs("The IAS loader should itself reference the chain")
+            .isSameAs(chain);
     }
 
     @Test
@@ -212,7 +241,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         allEntries.add(entry("endpoints.foo.uri", "https://foo.uri"));
         allEntries.addAll(Arrays.stream(additionalEntries).toList());
 
-        return bindingWithCredentials(IDENTITY_AUTHENTICATION, allEntries.toArray(Map.Entry[]::new));
+        return bindingWithCredentials(SERVICE_IDENTIFIER, allEntries.toArray(Map.Entry[]::new));
     }
 
     @Nonnull
