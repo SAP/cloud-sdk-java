@@ -29,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IdentityAuthenticationServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
-    private static final DestinationNotFoundException NOT_AN_IAS_SERVICE_BINDING =
-        new DestinationNotFoundException(null, "The bound service is not backed by the IAS service.");
     private static final DestinationAccessException NOT_EXACTLY_ONE_ENDPOINT =
         new DestinationAccessException("The IAS-based service binding contains multiple HTTP endpoints.");
 
@@ -80,9 +78,21 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceBinding serviceBinding = options.getServiceBinding();
+        final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
+
+        final String preparedMessage =
+            "Failed to create a destination for service '%s' using IAS OAuth credentials:"
+                .formatted(serviceBinding.getServiceIdentifier().orElse(null));
+
+        if( !IasServiceBindingView.isBackedByIas(credentials) ) {
+            return Try
+                .failure(
+                    new DestinationNotFoundException(null, preparedMessage + " The service is not backed by IAS."));
+        }
+
         final Try<HttpEndpointEntry> maybeEndpoint =
             IasServiceBindingView
-                .tryFromServiceBinding(serviceBinding)
+                .tryFromCredentials(credentials)
                 .flatMapTry(IdentityAuthenticationServiceBindingDestinationLoader::tryGetEndpoint);
         if( maybeEndpoint.isFailure() ) {
             return Try.failure(maybeEndpoint.getCause());
@@ -90,17 +100,32 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
 
         final HttpEndpointEntry endpoint = maybeEndpoint.get();
 
-        final ServiceBindingDestinationOptions.Builder optionsBuilder =
-            ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.of("identity"))
-                .onBehalfOf(options.getOnBehalfOf())
-                .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
+        final ServiceBindingDestinationOptions.Builder optionsBuilder;
+        try {
+            optionsBuilder = ServiceBindingDestinationOptions.forService(ServiceIdentifier.of("identity"));
+        }
+        catch( final DestinationAccessException e ) {
+            return Try.failure(new DestinationAccessException(preparedMessage, e));
+        }
+        optionsBuilder
+            .onBehalfOf(options.getOnBehalfOf())
+            .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
 
         if( !endpoint.alwaysRequiresToken ) {
             optionsBuilder.withOption(BtpServiceOptions.IasOptions.withoutTokenForTechnicalProviderUser());
         }
 
-        return getDelegateLoader().tryGetDestination(optionsBuilder.build());
+        final Try<HttpDestination> maybeDestination = getDelegateLoader().tryGetDestination(optionsBuilder.build());
+        if( maybeDestination.isSuccess() ) {
+            return maybeDestination;
+        }
+
+        if( maybeDestination.getCause() instanceof DestinationNotFoundException ) {
+            // Having a DestinationNotFoundException here is always unexpected and likely means the IAS service binding is malformed
+            // Thus transforming this into a DestinationAccessException
+            return Try.failure(new DestinationAccessException(null, preparedMessage, maybeDestination.getCause()));
+        }
+        return maybeDestination;
     }
 
     @Nonnull
@@ -120,24 +145,21 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         List<HttpEndpointEntry> endpoints;
 
         @Nonnull
-        static Try<IasServiceBindingView> tryFromServiceBinding( @Nonnull final ServiceBinding serviceBinding )
+        static Try<IasServiceBindingView> tryFromCredentials( @Nonnull final TypedMapView credentials )
         {
-            final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
-            final TypedMapView authenticationService = getAuthenticationServiceOrNull(credentials);
-
-            if( authenticationService == null || !isBackedByIas(authenticationService) ) {
-                return Try.failure(NOT_AN_IAS_SERVICE_BINDING);
-            }
             return Try.of(() -> getHttpEndpointsOrThrow(credentials)).map(IasServiceBindingView::new);
         }
 
-        private static TypedMapView getAuthenticationServiceOrNull( @Nonnull final TypedMapView credentials )
+        private static boolean isBackedByIas( @Nonnull final TypedMapView credentials )
         {
-            return getWithFallback(TypedMapView.class, credentials, "authentication-service", null);
-        }
+            @Nullable
+            final TypedMapView authenticationService =
+                getWithFallback(TypedMapView.class, credentials, "authentication-service", null);
+            if( authenticationService == null ) {
+                return false;
+            }
 
-        private static boolean isBackedByIas( @Nonnull final TypedMapView authenticationService )
-        {
+            @Nullable
             final String serviceLabel = getWithFallback(String.class, authenticationService, "service-label", null);
             return "identity".equalsIgnoreCase(serviceLabel);
         }

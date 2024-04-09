@@ -117,10 +117,11 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
 
             suppressedExceptions.add(cause);
         }
+        final String msg =
+            "None of the %s loaders could transform the given service binding into a destination. "
+                + "Check the suppressed exceptions and logs for further details.";
         final DestinationNotFoundException destinationNotFoundException =
-            new DestinationNotFoundException(
-                null,
-                "Destination could not be found in any of the existing loaders. Check the suppressed exceptions and logs for further details.");
+            new DestinationNotFoundException(null, msg.formatted(delegateLoaders.size()));
         suppressedExceptions.forEach(destinationNotFoundException::addSuppressed);
 
         return Try.failure(destinationNotFoundException);

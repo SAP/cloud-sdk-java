@@ -122,14 +122,17 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceIdentifier identifier = options.getServiceBinding().getServiceIdentifier().orElse(null);
-        log.debug("Creating an OAuth2 destination for service {}.", identifier);
 
         final OAuth2PropertySupplier propertySupplier = getOAuth2PropertySupplier(options);
         if( propertySupplier == null ) {
             final String msg =
-                "No property mapping for the provided service '%s' found. You may provide your own mapping by using the static `registerPropertySupplier` method.";
-            return Try.failure(new DestinationNotFoundException(null, String.format(msg, identifier)));
+                "Could not transform service binding with identifier '%s' into a destination: None of the %s implementations matched the service binding format. "
+                    + "If the binding contains OAuth credentials and is expected to be handled by this loader please inspect the log output. "
+                    + "In case the service binding is not supported by default you may provide your own implementation by using the static `registerPropertySupplier` method.";
+            return Try
+                .failure(new DestinationNotFoundException(null, String.format(msg, identifier, resolvers.size())));
         }
+        log.debug("Creating an OAuth2 destination for service {}.", identifier);
 
         final URI serviceUri;
         final URI tokenUri;
