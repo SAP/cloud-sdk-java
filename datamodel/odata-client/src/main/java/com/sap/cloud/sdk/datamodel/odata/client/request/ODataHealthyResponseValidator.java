@@ -92,10 +92,9 @@ class ODataHealthyResponseValidator
                         return single.getRequest();
                     }
                 }
-            } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single ) {
-                if( single.getContentId() == failedBatchRequestNumber ) {
-                    return single.getRequest();
-                }
+            } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single
+                && single.getContentId() == failedBatchRequestNumber ) {
+                return single.getRequest();
             }
         }
         return null;
