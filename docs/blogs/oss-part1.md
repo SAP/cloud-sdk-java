@@ -51,9 +51,9 @@ To make up for this, we instead improved the OData generator which was used to g
 
 ![release-notes-vdm-deprecation.png](img/part1-release-notes-vdm-deprecation.png)
 
-In other cases, we decided to remove modules, but ensure the existing modules of version 4 would be compatible with the new version 5 of the SDK.   
-So existing users could upgrade to the new version while keeping a select few modules of the old version.
-But this approach has some challenges (one has to keep maintaining the old modules and continuously ensure compatibility with the new version), we only did this for a few select cases that were small but important enough to justify the effort.
+In other cases, we decided to remove modules, but ensure the existing modules of version 4 would be compatible with the new version 5 of the SDK.
+That way existing users could upgrade to the new version while keeping a select few modules of the old version.
+But since this approach has some challenges (one has to keep maintaining the old modules and continuously ensure compatibility with the new version), we only applied this for a few select cases that were small but important enough to justify the effort.
 
 Overall, we had to evaluate each impacted feature case by case.
 That meant getting feedback from existing stakeholders, finding and evaluating any potential alternatives and ultimately making a decision.
@@ -80,10 +80,10 @@ But after a few weeks and a good bit of search and replace, we were confident th
 ## Setting up an Open Source Repository
 
 Now it was time to set up the open source repository.
-That meant creating a new repository within the SAP organization GitHub.
+That meant creating a new repository within the [SAP organization on GitHub](https://github.com/SAP).
 For this process the OSPO team has a [repository template](https://github.com/SAP/repository-template) prepared from which new repositories are created.
 
-Within this process we added the documents and information: We set the new license to be Apache-2.0, added the main readme file, drafted our contribution guidelines and linked the code of conduct.
+As part of the process we added the necessary documents and links: We set the new license to be Apache-2.0, added the main readme file, drafted our contribution guidelines and linked the code of conduct.
 The OSPO template navigates you through this process and provides you with a comprehensive checklist as well as any SAP-specific standard texts or references that need to be used.
 
 ![ospo-repo-template](img/part1-ospo-template.png)

@@ -4,9 +4,6 @@ The [SAP Cloud SDK for Java](https://sap.github.io/cloud-sdk/docs/java/overview-
 While its [sister-version for JavaScript](https://github.com/sap/cloud-sdk-js/) has been open source since 2020, the [Java version](https://github.com/SAP/cloud-sdk-java) has been open sourced only recently with the [release of version 5.0.0](https://community.sap.com/t5/technology-blogs-by-sap/released-sap-cloud-sdk-for-java-version-5/ba-p/13576668).
 
 This blog post is the final one in a series where I go over the process of how we moved the SAP Cloud SDK for Java from an internal code base and development ecosystem to an open source project on GitHub.
-This has been a journey that spun across 10 months and involved a lot of planning, coordination and technical work.
-We started planning the process in the beginning of 2023 and finally released version 5.0.0 as the first open source version of the project on December 5th, 2023.
-Of course, during this time we also worked on other features and improvements for the SDK, but the open source migration was a significant part of our work.
 
 Part one covered the non-technical preparations and planning that were necessary to open source the project.
 Part two goes into the details of how we moved the code base over from an internal repository to the open source repository on GitHub.
@@ -53,7 +50,7 @@ It is triggered on every pull request and comprises multiple jobs, from building
 
 This is how it looks like when triggered on a pull request:
 
-![img.png](img.png)
+![img.png](img/part3-pr-build.png)
 
 Aside from the typical `build` and `test` jobs you can see some of the tools we use to ensure code quality, such as CodeQL, Checkstyle, PMD and SpotBugs.
 Some other tools such as BlackDuck are shown but disabled for pull request builds.
@@ -74,7 +71,7 @@ In addition to running the same checks as on pull requests, it should also run a
 
 This is how it looks like when triggered on the main branch:
 
-![img.png](img.png)
+![img.png](img/part3-main-build.png)
 
 As you can see, the main build triggers the CI workflow and runs the deployment afterward.
 When triggering the CI workflow it passes a parameter to inform the workflow it should also run the BlackDuck scan.
@@ -90,7 +87,7 @@ Once the CI build completes, it creates a release tag, a draft release and pull 
 Finally, if all steps succeeded, it increases the version number again to the next snapshot version and raises a pull request on the code base.
 If any of the steps failed the workflow will roll back the changes.
 
-![img.png](img.png)
+![img.png](img/part3-prepare-release.png)
 
 If everything looks good we trigger the `perform-release` workflow which will deploy the artifacts to Maven Central and merge the open pull requests.
 
@@ -140,6 +137,8 @@ To solve this, we are invoking the plugins explicitly in their dedicated jobs (e
 For the `build` job we run `mvn install` and exclude tests as well as any plugins that run elsewhere via specific properties.
 Finally, the `test` stage invokes the Maven surefire plugin and the code coverage plugin directly to avoid recompiling the code.
 
+![img.png](img/part3-test.png)
+
 While saving a few minutes of build time, this also gives us the flexibility to turn individual checks on or off.
 Last, but not least, splitting the build process into individual jobs makes it much easier to see where a build failed and why.
 
@@ -163,6 +162,8 @@ It contains a list of all modules, their intended release scope as well as furth
 This information is explicitly declared via properties in each module's `pom.xml` file and thus immediately visible to anyone working on the project.
 Any changes would be detected by the CI pipeline and the build would fail if the `module-inventory.json` has not been updated accordingly.
 
+![img](img/part3-module-inventory.png)
+
 Finally, the release pipeline uses the `module-inventory.json` to determine which modules to release and deploys exactly those artifacts.
 
 ## Challenges and Learnings
@@ -180,7 +181,7 @@ When merging we squashed everything into a single commit to not clutter the vers
 Also, we limited pipeline steps to only a few lines of shell commands per step.
 For anything more complex (e.g. generating a JSON file, generating a test report XML file, etc.) we created [Python scripts](https://github.com/SAP/cloud-sdk-java/tree/main/.pipeline/scripts) that could be tested independently on a local machine.
 
-Finally, we tested our release automation by deploying snapshots to the [Sonatype Snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/).
+Finally, we tested our release automation by deploying snapshots to the [Sonatype snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/).
 This also allowed us to give SAP-external developers access to a release candidate for testing.
 
 ## Conclusion
@@ -189,5 +190,9 @@ After several iterations and a lot of testing we now have a fully automated CI/C
 Using GitHub Actions we were able to replace our complex Jenkins setup with a modern and publicly accessible alternative.
 That enables also SAP-external developers to contribute to the project and accelerates the development of the SAP Cloud SDK for Java.
 
-That concludes the series on open sourcing the SAP Cloud SDK for Java.
+That concludes this series on open sourcing the SAP Cloud SDK for Java.
 Please don't hesitate to share your thoughts on the migration process or what you may have done differently.
+How do you build your Java projects with GitHub Actions?
+Do you also use multiple workflows and jobs, do you use re-usable workflows or custom actions? 
+Or do you have one large workflow that does everything?
+As usual, let me know in the comments below 😉.

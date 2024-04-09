@@ -13,7 +13,7 @@ Finally, [part three](./oss-part3.md) will cover the transformation of the CI/CD
 
 Right from the get-go it was clear that we would release a new major version of the SDK once the open source migration was complete.
 As outlined in part 1 of this blog post series, the open source version would come with a new license and significant changes to the feature scope, dropping support for some legacy features and platforms.
-With the current version being 4.X at the time we set the goal to release version 5.0.0 as the first open source version of the SDK.
+With the current version being 4.X at the time, we set the goal to release version 5.0.0 as the first open source version of the SDK.
 
 Still, we would have to continue developing the current version 4 for some time, at least up until a few weeks before the release of version 5.
 And even after that, we would have to maintain version 4 and provide bug fixes and security updates for some time.
@@ -36,7 +36,7 @@ It comprised of three steps:
 3. Move the v5 branch over to the open source repository and press the release button
 
 Copying a sample allowed us to develop the CI/CD pipeline and all related tooling in parallel to the code development.
-Also, it allowed us to split the code base as late as possible to reduce the amount of work required to maintain two branches.
+Also, it allowed us to split the code base as late as possible to reduce the amount of work required to maintain two repositories.
 
 ## Creating a Representative Sample
 
@@ -55,7 +55,7 @@ In the end, the sample code allowed us to fully prepare all CI/CD tooling with a
 We then created a v5 branch in the internal repository and started removing any code that would not be open sourced.
 We also set up an automation right away that would merge any changes done to v4 automatically into the v5 branch.
 
-//TODO add an image here
+![img](img/part2-git.png)
 
 That way we could continue developing the current version 4 without the risk of forgetting to port relevant changes to the v5 branch.
 Still, maintaining two branches is additional work, so we pushed creating the v5 branch back as far as possible.
@@ -74,17 +74,8 @@ Overall, we were quite happy with how the move of the code base went.
 Having the work on the pipelines and tooling done independent and in parallel to the development on the internal repository allowed us to not lose any time or sacrifice code quality due to lack of tooling.
 It also made it easier to get help from colleagues outside our development team who had more experience with GitHub Actions and helped us set up the pipelines.
 
-Here is a timeline of the full process:
+Here is a timeline of the overall process:
 
-//TODO convert this into an image
-
-- End of January: Start planning the open source migration
-- OSS repo created on April 13th
-- Sample code moved over on May 3rd
-- Proof of concept for CI/CD pipelines done around mid of June
-- Build on the pipeline and add further tooling between mid of August and end of September
-- Copy over the code base into a pull request on the OSS repo on Oct 2nd
-- Merge the PR on Oct 4th and archive the v5 branch on the internal repository
-- Release version 5.0.0 on December 5th
+![timeline](img/part2-timeline.png)
 
 In the final part of this series I will cover how we used GitHub Actions to implement our all our CI/CD pipelines and how we automated the release process.
