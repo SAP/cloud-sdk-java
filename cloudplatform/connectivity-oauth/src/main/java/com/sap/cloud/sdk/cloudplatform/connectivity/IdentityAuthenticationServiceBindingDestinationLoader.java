@@ -116,16 +116,9 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         }
 
         final Try<HttpDestination> maybeDestination = getDelegateLoader().tryGetDestination(optionsBuilder.build());
-        if( maybeDestination.isSuccess() ) {
-            return maybeDestination;
-        }
-
-        if( maybeDestination.getCause() instanceof DestinationNotFoundException ) {
-            // Having a DestinationNotFoundException here is always unexpected and likely means the IAS service binding is malformed
-            // Thus transforming this into a DestinationAccessException
-            return Try.failure(new DestinationAccessException(null, preparedMessage, maybeDestination.getCause()));
-        }
-        return maybeDestination;
+        return maybeDestination.isSuccess()
+            ? maybeDestination
+            : Try.failure(new DestinationAccessException(null, preparedMessage, maybeDestination.getCause()));
     }
 
     @Nonnull
