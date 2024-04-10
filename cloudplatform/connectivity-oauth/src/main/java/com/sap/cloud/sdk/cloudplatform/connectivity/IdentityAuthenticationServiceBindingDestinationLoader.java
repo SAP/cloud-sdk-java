@@ -81,13 +81,17 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
 
         final String preparedMessage =
-            "Failed to create a destination for service '%s' using IAS OAuth credentials:"
+            "Failed to create a destination for service '%s' using IAS OAuth credentials."
                 .formatted(serviceBinding.getServiceIdentifier().orElse(null));
 
+        // please note: The IAS service binding itself is not meant to be handled by this loader, but is handled by the OAuth loader
+        // this
         if( !IasServiceBindingView.isBackedByIas(credentials) ) {
             return Try
                 .failure(
-                    new DestinationNotFoundException(null, preparedMessage + " The service is not backed by IAS."));
+                    new DestinationNotFoundException(
+                        null,
+                        preparedMessage + " The service binding does not represent a re-use service backed by IAS."));
         }
 
         final Try<HttpEndpointEntry> maybeEndpoint =
@@ -95,7 +99,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
                 .tryFromCredentials(credentials)
                 .flatMapTry(IdentityAuthenticationServiceBindingDestinationLoader::tryGetEndpoint);
         if( maybeEndpoint.isFailure() ) {
-            return Try.failure(maybeEndpoint.getCause());
+            return Try.failure(new DestinationAccessException(preparedMessage, maybeEndpoint.getCause()));
         }
 
         final HttpEndpointEntry endpoint = maybeEndpoint.get();

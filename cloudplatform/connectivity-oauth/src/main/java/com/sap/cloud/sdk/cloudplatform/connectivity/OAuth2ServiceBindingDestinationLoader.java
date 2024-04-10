@@ -123,6 +123,11 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
     {
         final ServiceIdentifier identifier = options.getServiceBinding().getServiceIdentifier().orElse(null);
 
+        log
+            .debug(
+                "Checking if the service binding with identifier '{}' can be transformed into a OAuth destination.",
+                identifier);
+
         final OAuth2PropertySupplier propertySupplier = getOAuth2PropertySupplier(options);
         if( propertySupplier == null ) {
             final String msg =
@@ -132,7 +137,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             return Try
                 .failure(new DestinationNotFoundException(null, String.format(msg, identifier, resolvers.size())));
         }
-        log.debug("Creating an OAuth2 destination for service {}.", identifier);
+        log.debug("Creating an OAuth2 destination for service '{}'.", identifier);
 
         final URI serviceUri;
         final URI tokenUri;
@@ -199,20 +204,25 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
             if( !matchTry.get() ) {
                 continue;
             }
+            log.debug("A resolver matched the given options, loading the relevant property supplier.");
             final Try<OAuth2PropertySupplier> supplierTry = Try.of(() -> resolver.resolve(options));
             if( supplierTry.isFailure() ) {
                 log.error("Failed to resolve the property supplier with provided options.", supplierTry.getCause());
                 continue;
             }
-            final Try<Boolean> isOAuthTry = Try.of(() -> supplierTry.get().isOAuth2Binding());
+            final OAuth2PropertySupplier supplier = supplierTry.get();
+            log.debug("Using property supplier {} for the given options.", supplier.getClass().getName());
+
+            final Try<Boolean> isOAuthTry = Try.of(supplier::isOAuth2Binding);
             if( isOAuthTry.isFailure() ) {
                 log.error("Failed to check whether the property supplier supports OAuth2.", isOAuthTry.getCause());
                 continue;
             }
             if( !isOAuthTry.get() ) {
+                log.debug("Supplier {} was applied but claims the binding is not an OAuth2 binding.", supplier);
                 continue;
             }
-            return supplierTry.get();
+            return supplier;
         }
         return null;
     }
@@ -311,7 +321,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
         @Nonnull final OAuth2Options oAuth2Options,
         @Nullable final ServiceIdentifier serviceIdentifier )
     {
-        log.debug("Creating a new OAuth2 header provider for client id {}.", clientIdentity.getId());
+        log.debug("Creating a new OAuth2 header provider for client id '{}'.", clientIdentity.getId());
 
         final OAuth2Service oAuth2Service =
             OAuth2Service
