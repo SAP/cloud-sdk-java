@@ -17,7 +17,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v2.0.0
         with:
-          github-token: '${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}'
+          github-token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
       - name: "Prepare git"
         run: |
           git config --global user.email "cloudsdk@sap.com"
