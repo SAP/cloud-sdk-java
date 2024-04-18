@@ -58,10 +58,10 @@ class DefaultHttpClientCacheTest
     }
 
     @Test
-    void testGetClientExpiresAfterWrite()
+    void testGetClientExpiresAfterAccess()
     {
         final AtomicLong ticker = new AtomicLong(0);
-        sut = new DefaultHttpClientCache(5L, TimeUnit.MINUTES, ticker::get);
+        sut = new DefaultHttpClientCache(10L, TimeUnit.MINUTES, ticker::get);
 
         final HttpClient clientWithDestination1 = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
         assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -69,13 +69,19 @@ class DefaultHttpClientCacheTest
         final HttpClient clientWithoutDestination1 = sut.tryGetHttpClient(FACTORY).get();
         assertThat(clientWithoutDestination1).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        ticker.updateAndGet(t -> t + 3 * NANOSECONDS_IN_MINUTE);
+        ticker.updateAndGet(t -> t + 5 * NANOSECONDS_IN_MINUTE);
 
         // cache is still valid
         assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
         assertThat(clientWithoutDestination1).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        ticker.updateAndGet(t -> t + 3 * NANOSECONDS_IN_MINUTE);
+        ticker.updateAndGet(t -> t + 7 * NANOSECONDS_IN_MINUTE);
+
+        // cache is still valid
+        assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
+        assertThat(clientWithoutDestination1).isSameAs(sut.tryGetHttpClient(FACTORY).get());
+
+        ticker.updateAndGet(t -> t + 11 * NANOSECONDS_IN_MINUTE);
 
         // cache has expired
         final HttpClient clientWithDestination2 = sut.tryGetHttpClient(DESTINATION, FACTORY).get();

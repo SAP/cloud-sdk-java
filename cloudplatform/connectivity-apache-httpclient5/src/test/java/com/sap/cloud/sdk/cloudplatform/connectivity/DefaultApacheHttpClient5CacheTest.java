@@ -44,7 +44,7 @@ class DefaultApacheHttpClient5CacheTest
             DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL,
             DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
-    private static final Duration FIVE_MINUTES = Duration.ofMinutes(5L);
+    private static final Duration TEN_MINUTES = Duration.ofMinutes(10L);
 
     private ApacheHttpClient5Cache sut;
 
@@ -55,14 +55,14 @@ class DefaultApacheHttpClient5CacheTest
         context.setPrincipal();
         context.setTenant();
 
-        sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES);
+        sut = new DefaultApacheHttpClient5Cache(TEN_MINUTES);
     }
 
     @Test
-    void testGetClientExpiresAfterWrite()
+    void testGetClientExpiresAfterAccess()
     {
         final AtomicLong ticker = new AtomicLong(0);
-        sut = new DefaultApacheHttpClient5Cache(FIVE_MINUTES, ticker::get);
+        sut = new DefaultApacheHttpClient5Cache(TEN_MINUTES, ticker::get);
 
         final HttpClient clientWithDestination1 = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
         assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
@@ -76,7 +76,13 @@ class DefaultApacheHttpClient5CacheTest
         assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
         assertThat(clientWithoutDestination1).isSameAs(sut.tryGetHttpClient(FACTORY).get());
 
-        ticker.updateAndGet(t -> t + 3 * NANOSECONDS_IN_MINUTE);
+        ticker.updateAndGet(t -> t + 7 * NANOSECONDS_IN_MINUTE);
+
+        // cache is still valid
+        assertThat(clientWithDestination1).isSameAs(sut.tryGetHttpClient(DESTINATION, FACTORY).get());
+        assertThat(clientWithoutDestination1).isSameAs(sut.tryGetHttpClient(FACTORY).get());
+
+        ticker.updateAndGet(t -> t + 11 * NANOSECONDS_IN_MINUTE);
 
         // cache has expired
         final HttpClient clientWithDestination2 = sut.tryGetHttpClient(DESTINATION, FACTORY).get();

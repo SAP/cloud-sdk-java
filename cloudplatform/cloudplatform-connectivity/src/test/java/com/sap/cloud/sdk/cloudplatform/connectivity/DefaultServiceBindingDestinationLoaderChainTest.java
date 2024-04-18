@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -73,9 +74,9 @@ class DefaultServiceBindingDestinationLoaderChainTest
         final DefaultServiceBindingDestinationLoaderChain sut =
             new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
 
-        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
-        assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).isSameAs(expectedCause);
+        assertThatThrownBy(() -> sut.getDestination(TEST_OPTIONS))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasCause(expectedCause);
     }
 
     @Test
@@ -95,6 +96,43 @@ class DefaultServiceBindingDestinationLoaderChainTest
             .isExactlyInstanceOf(DestinationAccessException.class)
             .cause()
             .isSameAs(expectedCause);
+    }
+
+    @Test
+    void testNestedNotFoundException()
+    {
+        final IllegalStateException expectedCause = new IllegalStateException(new DestinationNotFoundException());
+
+        final ServiceBindingDestinationLoader loader = any -> Try.failure(expectedCause);
+
+        final DefaultServiceBindingDestinationLoaderChain sut =
+            new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
+
+        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.getCause())
+            .isExactlyInstanceOf(DestinationNotFoundException.class)
+            .hasSuppressedException(expectedCause);
+    }
+
+    @Test
+    void testNestedAccessException()
+    {
+        final IllegalStateException expectedCause =
+            new IllegalStateException(new DestinationAccessException(new DestinationNotFoundException()));
+
+        final ServiceBindingDestinationLoader loader = any -> Try.failure(expectedCause);
+
+        final DefaultServiceBindingDestinationLoaderChain sut =
+            new DefaultServiceBindingDestinationLoaderChain(Collections.singletonList(loader));
+
+        final Try<HttpDestination> result = sut.tryGetDestination(TEST_OPTIONS);
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.getCause())
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasCause(expectedCause)
+            .hasNoSuppressedExceptions()
+            .hasRootCauseExactlyInstanceOf(DestinationNotFoundException.class);
     }
 
     @Test

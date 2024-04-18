@@ -12,14 +12,14 @@
 
 ### ✨ New Functionality
 
-- (Beta) Add support for the SAP-internal Zero Trust Identity Service
-  - Add a new module `connectivity-ztis`.
-  - Add support for the credential-type `X509_ATTESTED` for all OAuth2 flows.
+- 
 
 ### 📈 Improvements
 
-- 
+- Improve the efficiency of HTTP clients: The default cache duration for HTTP clients have been increased to expire one hour after last access (was 5 minutes after creation).
+  Aside from a performance improvement, this improves the handling of cookies, as they are retained for much longer.
 
 ### 🐛 Fixed Issues
 
-- Stop unnecessarily throwing and catching `NullPointerException` when interacting with `DefaultHttpDestination#equals(...)` and `#hashCode()`.
+- Fix an issue that would cause a NPE when using bound services backed by IAS via the [dedicated service binding format](/docs/java/features/connectivity/service-bindings#service-binding-format).
+- Fix an issue that would cause a NPE when using the OData `applyAction` method with a `null` parameter value.
