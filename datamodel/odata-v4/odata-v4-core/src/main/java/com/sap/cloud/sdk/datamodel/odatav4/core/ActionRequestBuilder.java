@@ -105,7 +105,7 @@ public abstract class ActionRequestBuilder<BuilderT extends ActionRequestBuilder
     private <T> JsonElement serialize( @Nullable final T parameter )
     {
         if( parameter == null ) {
-            return gson.toJsonTree(null);
+            return JsonNull.INSTANCE;
         }
 
         @SuppressWarnings( "unchecked" )
