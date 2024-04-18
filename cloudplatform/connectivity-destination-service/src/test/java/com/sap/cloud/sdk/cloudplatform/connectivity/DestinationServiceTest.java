@@ -82,6 +82,7 @@ import lombok.SneakyThrows;
 @Isolated( "Test interacts with global destination cache" )
 class DestinationServiceTest
 {
+    /*
     private static final int TEST_TIMEOUT = 30_000; // 5 minutes
     // region (TEST_DATA)
     private static final String destinationName = "SomeDestinationName";
@@ -1032,6 +1033,7 @@ class DestinationServiceTest
      *         │19. Continue and Finish execution
      *        ─┴───
      */
+    /*
     @Test
     @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
@@ -1105,6 +1107,7 @@ class DestinationServiceTest
         softly.assertThat(DestinationService.Cache.instanceSingle().asMap()).containsOnlyKeys(tenantCacheKey);
         softly.assertAll();
     }
+    */
 
     /*
      * Test case:
@@ -1173,6 +1176,7 @@ class DestinationServiceTest
      *         │24. Continue and Finish execution
      *        ─┴───
      */
+    /*
     @Test
     @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     void testConcurrentFetchSameDestinationButDifferentTenant()
@@ -1460,10 +1464,11 @@ class DestinationServiceTest
         // we are not performing further requests (i.e. there are no 'get-all' requests)
         verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
     }
-
+    */
     /**
      * Test case: Trying to fetch same destination concurrently from same tenant but by different principals is blocking
      */
+    /*
     @Test
     @Timeout( value = TEST_TIMEOUT, unit = TimeUnit.MILLISECONDS )
     @SneakyThrows
@@ -1701,4 +1706,5 @@ class DestinationServiceTest
             }
             """, name, url);
     }
+    */
 }

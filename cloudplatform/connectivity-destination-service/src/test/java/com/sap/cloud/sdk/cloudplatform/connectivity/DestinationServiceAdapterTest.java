@@ -14,6 +14,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,7 +136,7 @@ class DestinationServiceAdapterTest
                 .willReturn(ok(destinationServiceResponse)));
 
         // actual request
-        final String response = adapterToTest.getConfigurationAsJson(servicePath, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        final String response = adapterToTest.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
 
         assertThat(response).isEqualTo(destinationServiceResponse);
         verify(1, postRequestedFor(urlEqualTo(xsuaaServiceRequest)));
@@ -191,7 +193,7 @@ class DestinationServiceAdapterTest
             TenantAccessor
                 .executeWithTenant(
                     () -> "tenant-id",
-                    () -> adapterToTest.getConfigurationAsJson(servicePath, OnBehalfOf.NAMED_USER_CURRENT_TENANT));
+                    () -> adapterToTest.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
 
         assertThat(destinationResponse).isEqualTo(destinationServiceResponse);
         verify(1, postRequestedFor(urlEqualTo(xsuaaServiceRequest)));

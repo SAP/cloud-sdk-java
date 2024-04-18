@@ -96,6 +96,8 @@ class GetOrComputeSingleDestinationCommand
                     CacheKey.ofTenantAndPrincipalOptionalIsolation().append(destinationName, destinationOptions);
             }
         }
+        // in case the options contain a refresh token it will be included with the cache key
+        // that way we don't have to explicitly know if the refresh token is user-specific
         cacheKey.append(destinationName, destinationOptions);
 
         final ReentrantLock isolationLock =
