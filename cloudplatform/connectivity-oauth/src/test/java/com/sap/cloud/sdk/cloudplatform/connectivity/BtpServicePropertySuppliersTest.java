@@ -41,10 +41,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
@@ -268,6 +270,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = AI_CORE.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri())
                 .isEqualTo(URI.create("https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com"));
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
@@ -549,6 +552,30 @@ class BtpServicePropertySuppliersTest
 
             assertThat(tokenRetrievalOptions.skipTokenRetrieval()).isFalse();
             assertThat(tokenRetrievalOptions.getAdditionalTokenRetrievalParameters()).isNotEmpty();
+        }
+
+        @Test
+        @DisplayName( "Test the credential type X509_ATTESTED" )
+        void testMutualTlsWithZeroTrustIdentityService()
+        {
+            final ServiceBinding binding =
+                bindingWithCredentials(
+                    ServiceIdentifier.IDENTITY_AUTHENTICATION,
+                    entry("app_tid", PROVIDER_TENANT_ID),
+                    entry("url", PROVIDER_URL),
+                    entry("credential-type", "X509_ATTESTED"),
+                    entry("clientid", "ias-client-id"));
+
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(binding).build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            assertThat(sut).isNotNull();
+
+            assertThatThrownBy(sut::getClientIdentity)
+                .isInstanceOf(CloudPlatformException.class)
+                .describedAs("We are not mocking the ZTIS service here so this should fail")
+                .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
         }
 
         @Test

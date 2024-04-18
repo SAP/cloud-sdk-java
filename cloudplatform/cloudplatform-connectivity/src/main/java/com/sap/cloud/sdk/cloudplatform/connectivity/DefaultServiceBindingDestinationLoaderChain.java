@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +18,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 import com.sap.cloud.sdk.cloudplatform.util.FacadeLocator;
 
 import io.vavr.control.Try;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,11 +51,11 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
     static final DefaultServiceBindingDestinationLoaderChain DEFAULT_INSTANCE;
 
     static {
-        DEFAULT_DELEGATE_LOADERS =
-            FacadeLocator.getFacades(ServiceBindingDestinationLoader.class).stream().collect(toList());
+        DEFAULT_DELEGATE_LOADERS = new ArrayList<>(FacadeLocator.getFacades(ServiceBindingDestinationLoader.class));
         DEFAULT_INSTANCE = new DefaultServiceBindingDestinationLoaderChain(DEFAULT_DELEGATE_LOADERS);
     }
 
+    @Getter( AccessLevel.PACKAGE )
     @Nonnull
     private final List<ServiceBindingDestinationLoader> delegateLoaders;
 
@@ -87,9 +87,9 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
         for( final ServiceBindingDestinationLoader loader : delegateLoaders ) {
             final Try<HttpDestination> result = loader.tryGetDestination(options);
             if( log.isDebugEnabled() ) {
-                final String msg = "Transformation of service binding ({}) to an {} using an instance of {} {}.";
+                final String msg = "Transformation of service binding {} to a Destination using an instance of {} {}.";
                 final String state = result.isSuccess() ? "succeeded" : "failed";
-                log.debug(msg, serviceBindingToString(serviceBinding), HttpDestination.class, loader.getClass(), state);
+                log.debug(msg, serviceBindingToString(serviceBinding), loader.getClass().getName(), state);
             }
 
             if( result.isSuccess() ) {
@@ -98,29 +98,29 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
 
             final Throwable cause = result.getCause();
 
-            if( !hasCauseAssignableFrom(cause, DestinationNotFoundException.class) ) {
-                if( hasCauseAssignableFrom(cause, DestinationAccessException.class) ) {
-                    return result;
-                }
-
+            if( !hasCauseAssignableFrom(cause, DestinationAccessException.class)
+                && hasCauseAssignableFrom(cause, DestinationNotFoundException.class) ) {
+                suppressedExceptions.add(cause);
+            } else {
                 final String msg =
-                    "Service Binding Destination loader %s returned an exception when loading destination for service %s using service binding '%s'.";
+                    "Service Binding Destination loader %s returned an exception when loading destination for service '%s' using service binding %s.";
                 final String formattedMsg =
                     String
                         .format(
                             msg,
-                            loader.getClass(),
-                            options.getServiceBinding().getServiceIdentifier(),
+                            loader.getClass().getName(),
+                            options.getServiceBinding().getServiceIdentifier().orElse(null),
                             serviceBindingToString(serviceBinding));
                 return Try.failure(new DestinationAccessException(formattedMsg, cause));
             }
-
-            suppressedExceptions.add(cause);
         }
+        final String msg =
+            "None of the %s loaders could transform the service binding %s into a destination. "
+                + "Check the suppressed exceptions and logs for further details.";
         final DestinationNotFoundException destinationNotFoundException =
             new DestinationNotFoundException(
                 null,
-                "Destination could not be found in any of the existing loaders. Check the suppressed exceptions and logs for further details.");
+                msg.formatted(delegateLoaders.size(), serviceBindingToString(serviceBinding)));
         suppressedExceptions.forEach(destinationNotFoundException::addSuppressed);
 
         return Try.failure(destinationNotFoundException);
@@ -135,15 +135,15 @@ class DefaultServiceBindingDestinationLoaderChain implements ServiceBindingDesti
     private static String serviceBindingToString( @Nonnull final ServiceBinding serviceBinding )
     {
         return new StringBuilder()
-            .append("name: '")
+            .append("{ name: '")
             .append(serviceBinding.getName().orElse("<NULL>"))
             .append("', serviceName: '")
             .append(serviceBinding.getServiceName().orElse("<NULL>"))
             .append("', servicePlan: '")
             .append(serviceBinding.getServicePlan().orElse("<NULL>"))
-            .append("', tags: '")
+            .append("', tags: [")
             .append(String.join(", ", serviceBinding.getTags()))
-            .append("'")
+            .append("] }")
             .toString();
     }
 
