@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -101,8 +102,12 @@ public abstract class ActionRequestBuilder<BuilderT extends ActionRequestBuilder
      * Serializes the passed parameter with custom type adapters and returns a JsonElement.
      */
     @Nonnull
-    private <T> JsonElement serialize( @Nonnull final T parameter )
+    private <T> JsonElement serialize( @Nullable final T parameter )
     {
+        if( parameter == null ) {
+            return gson.toJsonTree(null);
+        }
+
         @SuppressWarnings( "unchecked" )
         final TypeToken<T> typeToken = TypeToken.get((Class<T>) parameter.getClass());
         final TypeAdapter<T> typeAdapter = GSON_VDM_ADAPTER_FACTORY.create(gson, typeToken);
