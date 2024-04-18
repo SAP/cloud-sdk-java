@@ -22,4 +22,4 @@
 ### 🐛 Fixed Issues
 
 - Fix an issue that would cause a NPE when using bound services backed by IAS via the [dedicated service binding format](/docs/java/features/connectivity/service-bindings#service-binding-format).
-- Fix an issue that would cause a NPE when using the OData `applyAction` method with a `null` parameter value in the action entity.
+- Fix an issue that would cause a NPE when using the OData `applyAction` method with a `null` parameter value.
