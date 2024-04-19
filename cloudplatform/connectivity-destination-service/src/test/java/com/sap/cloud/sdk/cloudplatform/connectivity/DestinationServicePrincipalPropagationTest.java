@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,6 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.exception.AuthTokenAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
@@ -82,6 +82,7 @@ class DestinationServicePrincipalPropagationTest
     @BeforeEach
     void setupConnectivity( @Nonnull final WireMockRuntimeInfo wm )
     {
+        Assertions.setMaxStackTraceElementsDisplayed(200);
         final ImmutableMap<String, Object> credentials =
             ImmutableMap
                 .<String, Object> builder()
@@ -137,7 +138,7 @@ class DestinationServicePrincipalPropagationTest
     @Test
     void testSuccessWithOnlyToken()
     {
-        final AuthToken token = context.setAuthToken();
+        context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -168,14 +169,14 @@ class DestinationServicePrincipalPropagationTest
 
         // assert mocks
         final DestinationRetrievalStrategy expectedStrategy =
-            DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token.getJwt().getToken());
+            DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT);
         verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 
     @Test
     void testFailingHeadersWithProviderDestinationAndSubscriberTenant()
     {
-        final AuthToken token = context.setAuthToken();
+        context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -193,7 +194,7 @@ class DestinationServicePrincipalPropagationTest
 
         // assert mocks
         final DestinationRetrievalStrategy expectedStrategy =
-            DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token.getJwt().getToken());
+            DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT);
         verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 

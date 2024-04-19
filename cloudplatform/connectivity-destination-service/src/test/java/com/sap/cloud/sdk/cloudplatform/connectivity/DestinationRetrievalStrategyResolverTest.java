@@ -33,6 +33,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.auth0.jwt.JWT;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
@@ -74,10 +75,10 @@ class DestinationRetrievalStrategyResolverTest
     @Test
     void testSimpleBehalfResolutions()
     {
-        final SoftAssertions softly = new SoftAssertions();
-
         final List<Tuple3<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, DestinationRetrievalStrategy>> testCases =
             new ArrayList<>();
+        final String token = mockXsuaaToken().getToken();
+        context.setAuthToken(JWT.decode(token));
 
         testCases
             .add(
@@ -129,22 +130,23 @@ class DestinationRetrievalStrategyResolverTest
                     .of(
                         CURRENT_TENANT,
                         FORWARD_USER_TOKEN,
-                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token)));
         testCases
             .add(
                 Tuple
                     .of(
                         ONLY_SUBSCRIBER,
                         FORWARD_USER_TOKEN,
-                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token)));
         testCases
             .add(
                 Tuple
                     .of(
                         ALWAYS_PROVIDER,
                         FORWARD_USER_TOKEN,
-                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_PROVIDER, "token")));
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_PROVIDER, token)));
 
+        final SoftAssertions softly = new SoftAssertions();
         testCases
             .forEach(
                 c -> softly
