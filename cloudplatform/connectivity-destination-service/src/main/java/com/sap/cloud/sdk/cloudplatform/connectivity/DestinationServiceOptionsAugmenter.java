@@ -76,7 +76,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @return The same augmenter that called this method.
      */
     @Nonnull
-    public DestinationServiceOptionsAugmenter refreshToken(@Nonnull final String refreshToken )
+    public DestinationServiceOptionsAugmenter refreshToken( @Nonnull final String refreshToken )
     {
         parameters.put(X_REFRESH_TOKEN_KEY, refreshToken);
         return this;
@@ -137,10 +137,8 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     }
 
     @Nonnull
-    static Option<String> getRefreshToken(@Nonnull final DestinationOptions options )
+    static Option<String> getRefreshToken( @Nonnull final DestinationOptions options )
     {
-        return options.get(X_REFRESH_TOKEN_KEY)
-                .filter(String.class::isInstance)
-                .map(String.class::cast);
+        return options.get(X_REFRESH_TOKEN_KEY).filter(String.class::isInstance).map(String.class::cast);
     }
 }

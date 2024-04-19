@@ -12,6 +12,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOpt
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +45,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.exception.AuthTokenAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
@@ -98,9 +100,7 @@ class DestinationServicePrincipalPropagationTest
 
         DefaultServiceBindingAccessor.setInstance(() -> List.of(connectivityService));
 
-       // doReturn(DESTINATION)
-       //     .when(destinationServiceAdapter)
-       //     .getConfigurationAsJson(anyString(), any(OnBehalfOf.class));
+        doReturn(DESTINATION).when(destinationServiceAdapter).getConfigurationAsJson(anyString(), any());
 
         stubFor(
             post("/xsuaa/oauth/token")
@@ -128,14 +128,16 @@ class DestinationServicePrincipalPropagationTest
             .hasMessage("Failed to get current authorization token.");
 
         // assert mocks
-        // verify(destinationServiceAdapter)
-        //     .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter)
+            .getConfigurationAsJson(
+                contains("test"),
+                eq(DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)));
     }
 
     @Test
     void testSuccessWithOnlyToken()
     {
-        context.setAuthToken();
+        final AuthToken token = context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -165,14 +167,15 @@ class DestinationServicePrincipalPropagationTest
         WireMock.verify(1, postRequestedFor(anyUrl()));
 
         // assert mocks
-        // verify(destinationServiceAdapter)
-        //     .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        final DestinationRetrievalStrategy expectedStrategy =
+            DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token.getJwt().getToken());
+        verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 
     @Test
     void testFailingHeadersWithProviderDestinationAndSubscriberTenant()
     {
-        context.setAuthToken();
+        final AuthToken token = context.setAuthToken();
 
         // test
         final DestinationService sut = new DestinationService(destinationServiceAdapter);
@@ -189,8 +192,9 @@ class DestinationServicePrincipalPropagationTest
                 "Tenant ID of destination 'test' does not match the current tenant ID. Destination was created specifically for tenant '', but the current tenant is 'subscriber'.");
 
         // assert mocks
-        // verify(destinationServiceAdapter)
-        //     .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        final DestinationRetrievalStrategy expectedStrategy =
+            DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token.getJwt().getToken());
+        verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 
     @Test

@@ -47,8 +47,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.TokenForwarding.NONE;
-
 /**
  * Retrieves destination information from the SCP destination service on Cloud Foundry.
  */
@@ -148,7 +146,8 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    DestinationServiceV1Response retrieveDestination(final DestinationRetrievalStrategy strategy, final String servicePath )
+    DestinationServiceV1Response
+        retrieveDestination( final DestinationRetrievalStrategy strategy, final String servicePath )
     {
         final String response = adapter.getConfigurationAsJson(servicePath, strategy);
 
@@ -311,7 +310,8 @@ public class DestinationService implements DestinationLoader
         getAndDeserializeDestinations( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
             throws DestinationAccessException
     {
-        final String json = adapter.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(behalf));
+        final String json =
+            adapter.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(behalf));
         return Streams
             .stream(GSON.fromJson(json, JsonElement.class).getAsJsonArray())
             .map(jsonElement -> (Map<String, Object>) GSON.fromJson(jsonElement, Map.class))

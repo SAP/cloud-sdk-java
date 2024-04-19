@@ -4,7 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
@@ -61,7 +60,8 @@ class DestinationRetrievalStrategyResolverTest
     @BeforeEach
     void prepareResolver()
     {
-        destinationRetriever = (Function<DestinationRetrievalStrategy, DestinationServiceV1Response>) mock(Function.class);
+        destinationRetriever =
+            (Function<DestinationRetrievalStrategy, DestinationServiceV1Response>) mock(Function.class);
         allDestinationRetriever = (Function<OnBehalfOf, List<DestinationProperties>>) mock(Function.class);
         sut =
             spy(
@@ -92,7 +92,7 @@ class DestinationRetrievalStrategyResolverTest
                     .of(
                         ONLY_SUBSCRIBER,
                         DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
-                            DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)));
+                        DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)));
         testCases
             .add(
                 Tuple
@@ -101,13 +101,49 @@ class DestinationRetrievalStrategyResolverTest
                         DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
                         DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_PROVIDER)));
 
-        testCases.add(Tuple.of(CURRENT_TENANT, EXCHANGE_ONLY, DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
-        testCases.add(Tuple.of(ONLY_SUBSCRIBER, EXCHANGE_ONLY, DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
-        testCases.add(Tuple.of(ALWAYS_PROVIDER, EXCHANGE_ONLY, DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        CURRENT_TENANT,
+                        EXCHANGE_ONLY,
+                        DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        ONLY_SUBSCRIBER,
+                        EXCHANGE_ONLY,
+                        DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        ALWAYS_PROVIDER,
+                        EXCHANGE_ONLY,
+                        DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
 
-        testCases.add(Tuple.of(CURRENT_TENANT, FORWARD_USER_TOKEN, DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
-        testCases.add(Tuple.of(ONLY_SUBSCRIBER, FORWARD_USER_TOKEN,  DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
-        testCases.add(Tuple.of(ALWAYS_PROVIDER, FORWARD_USER_TOKEN,  DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_PROVIDER, "token")));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        CURRENT_TENANT,
+                        FORWARD_USER_TOKEN,
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        ONLY_SUBSCRIBER,
+                        FORWARD_USER_TOKEN,
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, "token")));
+        testCases
+            .add(
+                Tuple
+                    .of(
+                        ALWAYS_PROVIDER,
+                        FORWARD_USER_TOKEN,
+                        DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_PROVIDER, "token")));
 
         testCases
             .forEach(
@@ -173,7 +209,8 @@ class DestinationRetrievalStrategyResolverTest
                     DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
                     subscriberT).isInstanceOf(DestinationAccessException.class));
 
-        verify(destinationRetriever, times(1)).apply(eq(DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_PROVIDER)));
+        verify(destinationRetriever, times(1))
+            .apply(eq(DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_PROVIDER)));
         verifyNoMoreInteractions(destinationRetriever);
     }
 

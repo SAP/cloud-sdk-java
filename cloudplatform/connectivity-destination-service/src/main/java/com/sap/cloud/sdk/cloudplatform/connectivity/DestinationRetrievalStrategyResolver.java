@@ -51,7 +51,7 @@ class DestinationRetrievalStrategyResolver
 
     static DestinationRetrievalStrategyResolver forSingleDestination(
         final Supplier<String> providerTenantIdSupplier,
-        final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever)
+        final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever )
     {
         return new DestinationRetrievalStrategyResolver(
             providerTenantIdSupplier,
@@ -71,34 +71,33 @@ class DestinationRetrievalStrategyResolver
 
     @SuppressWarnings( "deprecation" )
     DestinationRetrievalStrategy resolveSingleRequestStrategy(
-            @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
-            @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
-            @Nullable final String refreshToken)
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
+        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
+        @Nullable final String refreshToken )
     {
-        final OnBehalfOf behalfTechnicalUser = switch (retrievalStrategy) {
+        final OnBehalfOf behalfTechnicalUser = switch( retrievalStrategy ) {
             case ALWAYS_PROVIDER -> TECHNICAL_USER_PROVIDER;
             case CURRENT_TENANT, ONLY_SUBSCRIBER -> TECHNICAL_USER_CURRENT_TENANT;
         };
 
-        if ( refreshToken != null) {
+        if( refreshToken != null ) {
             return DestinationRetrievalStrategy.withRefreshToken(behalfTechnicalUser, refreshToken);
         }
 
-        final Try<String> maybeToken = AuthTokenAccessor
-                .tryGetCurrentToken()
-                .map(AuthToken::getJwt)
-                .map(DecodedJWT::getToken);
+        final Try<String> maybeToken =
+            AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt).map(DecodedJWT::getToken);
 
-        return switch (tokenExchangeStrategy) {
-            case FORWARD_USER_TOKEN ->
-                    maybeToken.isEmpty() ? DestinationRetrievalStrategy.withoutToken(behalfTechnicalUser) : DestinationRetrievalStrategy.withUserToken(behalfTechnicalUser, maybeToken.get());
+        return switch( tokenExchangeStrategy ) {
+            case FORWARD_USER_TOKEN -> maybeToken.isEmpty()
+                ? DestinationRetrievalStrategy.withoutToken(behalfTechnicalUser)
+                : DestinationRetrievalStrategy.withUserToken(behalfTechnicalUser, maybeToken.get());
             case LOOKUP_ONLY -> DestinationRetrievalStrategy.withoutToken(behalfTechnicalUser);
             case EXCHANGE_ONLY -> DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT);
             // this method must never be called for LOOKUP_THEN_EXCHANGE
             case LOOKUP_THEN_EXCHANGE -> throw new IllegalStateException(
-                    "Unexpected token exchange strategy "
-                            + tokenExchangeStrategy
-                            + " when building a request towards the destination service.");
+                "Unexpected token exchange strategy "
+                    + tokenExchangeStrategy
+                    + " when building a request towards the destination service.");
         };
     }
 
@@ -112,10 +111,10 @@ class DestinationRetrievalStrategyResolver
                 .getTokenExchangeStrategy(options)
                 .getOrElse(this::getDefaultTokenExchangeStrategy);
         final String refreshToken =
-                DestinationServiceOptionsAugmenter
-                        .getRefreshToken(options)
-                        .peek( any -> log.debug("Refresh token given, applying refresh token flow."))
-                        .getOrNull();
+            DestinationServiceOptionsAugmenter
+                .getRefreshToken(options)
+                .peek(any -> log.debug("Refresh token given, applying refresh token flow."))
+                .getOrNull();
 
         log
             .debug(
@@ -172,7 +171,10 @@ class DestinationRetrievalStrategyResolver
 
         if( tokenExchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE ) {
             final DestinationRetrievalStrategy strategy =
-                resolveSingleRequestStrategy(retrievalStrategy, DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY, null);
+                resolveSingleRequestStrategy(
+                    retrievalStrategy,
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
+                    refreshToken);
             return new DestinationRetrieval(() -> {
                 final DestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
@@ -186,7 +188,8 @@ class DestinationRetrievalStrategyResolver
             }, strategy.behalf());
         }
 
-        final DestinationRetrievalStrategy strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy, refreshToken);
+        final DestinationRetrievalStrategy strategy =
+            resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy, refreshToken);
         return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.behalf());
     }
 

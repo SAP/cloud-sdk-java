@@ -117,16 +117,16 @@ class DestinationServiceAdapter
     }
 
     @Nonnull
-    String getConfigurationAsJson(
-            @Nonnull final String servicePath,
-            @Nonnull DestinationRetrievalStrategy strategy)
+    String getConfigurationAsJson( @Nonnull final String servicePath, @Nonnull DestinationRetrievalStrategy strategy )
         throws DestinationAccessException,
             DestinationNotFoundException
     {
-        final HttpDestination serviceDestination = Objects.requireNonNull(
-                                serviceDestinationLoader.apply(strategy.behalf()),
-                                () -> "Destination for Destination Service on behalf of " + strategy.behalf() + " not found.");
-        
+        final HttpDestination serviceDestination =
+            Objects
+                .requireNonNull(
+                    serviceDestinationLoader.apply(strategy.behalf()),
+                    () -> "Destination for Destination Service on behalf of " + strategy.behalf() + " not found.");
+
         final HttpUriRequest request = prepareRequest(servicePath, strategy);
 
         final HttpResponse response;
@@ -140,7 +140,8 @@ class DestinationServiceAdapter
     }
 
     @Nonnull
-    private static String handleResponse(final HttpUriRequest request, final HttpResponse response) {
+    private static String handleResponse( final HttpUriRequest request, final HttpResponse response )
+    {
         final StatusLine status = response.getStatusLine();
         final int statusCode = status.getStatusCode();
         final String reasonPhrase = status.getReasonPhrase();
@@ -150,7 +151,9 @@ class DestinationServiceAdapter
         if( statusCode != HttpStatus.SC_OK ) {
             final String requestUri = request.getURI().getPath();
             if( statusCode == HttpStatus.SC_NOT_FOUND ) {
-                throw new DestinationNotFoundException(null, "Destination could not be found for path " + requestUri + ".");
+                throw new DestinationNotFoundException(
+                    null,
+                    "Destination could not be found for path " + requestUri + ".");
             } else {
                 throw new DestinationAccessException(
                     String
@@ -174,7 +177,8 @@ class DestinationServiceAdapter
         }
     }
 
-    private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy) {
+    private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
+    {
         final URI requestUri;
         try {
             requestUri = new URI(SERVICE_PATH + servicePath);
@@ -186,12 +190,12 @@ class DestinationServiceAdapter
         log.debug("Querying Destination Service via URI {}.", requestUri);
         final HttpUriRequest request = new HttpGet(requestUri);
 
-        final String headerName = switch( strategy.tokenForwarding() ){
+        final String headerName = switch( strategy.tokenForwarding() ) {
             case USER_TOKEN -> "x-user-token";
-            case REFRESH_TOKEN ->"x-refresh-token";
+            case REFRESH_TOKEN -> "x-refresh-token";
             case NONE -> null;
         };
-        if( headerName != null) {
+        if( headerName != null ) {
             request.addHeader(headerName, strategy.token());
         }
         return request;
