@@ -177,6 +177,15 @@ class BtpServicePropertySuppliers
                 attachIasCommunicationOptions(oAuth2OptionsBuilder);
             }
             attachClientKeyStore(oAuth2OptionsBuilder);
+            String appTid = switch( options.getOnBehalfOf() ) {
+                case TECHNICAL_USER_PROVIDER -> getCredentialOrThrow(String.class, "app_tid");
+                case TECHNICAL_USER_CURRENT_TENANT -> TenantAccessor
+                    .tryGetCurrentTenant()
+                    .map(Tenant::getTenantId)
+                    .getOrElse(() -> getCredentialOrThrow(String.class, "app_tid"));
+                case NAMED_USER_CURRENT_TENANT -> TenantAccessor.getCurrentTenant().getTenantId();
+            };
+            oAuth2OptionsBuilder.withTokenRetrievalParameter("app_tid", appTid);
 
             return oAuth2OptionsBuilder.build();
         }

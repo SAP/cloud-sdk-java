@@ -11,6 +11,8 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySup
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.assertj.core.data.MapEntry;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,7 +51,9 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
+import io.vavr.Tuple3;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -374,9 +378,56 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsKey("app_tid")
+                .containsValue(PROVIDER_TENANT_ID);
+        }
+
+        @Test
+        void testAppTidWithDifferentTenants()
+        {
+            final ServiceBindingDestinationOptions optionsCurrentTenant =
+                ServiceBindingDestinationOptions.forService(BINDING).build();
+            final ServiceBindingDestinationOptions optionsProviderTenant =
+                ServiceBindingDestinationOptions.forService(BINDING).onBehalfOf(TECHNICAL_USER_PROVIDER).build();
+            final ServiceBindingDestinationOptions optionsNamedUser =
+                ServiceBindingDestinationOptions.forService(BINDING).onBehalfOf(NAMED_USER_CURRENT_TENANT).build();
+
+            final List<Tuple3<ServiceBindingDestinationOptions, String, String>> testCases =
+                List
+                    .of(
+                        new Tuple3<>(optionsProviderTenant, null, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsProviderTenant, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsProviderTenant, SUBSCRIBER_TENANT_ID, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsCurrentTenant, null, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsCurrentTenant, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsCurrentTenant, SUBSCRIBER_TENANT_ID, SUBSCRIBER_TENANT_ID),
+                        new Tuple3<>(optionsNamedUser, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
+                        new Tuple3<>(optionsNamedUser, SUBSCRIBER_TENANT_ID, SUBSCRIBER_TENANT_ID));
+            final SoftAssertions softly = new SoftAssertions();
+            testCases.forEach(c -> {
+                final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(c._1);
+                OAuth2Options result;
+                if( c._2 != null ) {
+                    result = TenantAccessor.executeWithTenant(new DefaultTenant(c._2), sut::getOAuth2Options);
+                } else {
+                    result = sut.getOAuth2Options();
+                }
+
+                softly
+                    .assertThat(result.getAdditionalTokenRetrievalParameters())
+                    .describedAs("On behalf of %s with tenant %s should have app_tid %s", c._1, c._2, c._3)
+                    .containsKey("app_tid")
+                    .containsValue(c._3);
+            });
+
+            softly
+                .assertThatThrownBy(() -> IDENTITY_AUTHENTICATION.resolve(optionsNamedUser).getOAuth2Options())
+                .describedAs("Named user always requires a tenant to be defined")
+                .isInstanceOf(TenantAccessException.class);
+            softly.assertAll();
         }
 
         @Test
@@ -396,9 +447,11 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsKey("app_tid")
+                .containsValue(PROVIDER_TENANT_ID);
         }
 
         @Test
@@ -418,11 +471,16 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(
-                    MapEntry.entry("resource", "urn:sap:identity:application:provider:name:application-name"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:name:application-name",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @Test
@@ -442,10 +500,11 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map.of("resource", "urn:sap:identity:consumer:clientid:client-id", "app_tid", PROVIDER_TENANT_ID));
         }
 
         @Test
@@ -465,19 +524,24 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(
-                    MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @AllArgsConstructor
         private enum MutualTlsForTechnicalProviderAuthenticationTest
         {
-            TECHNICAL_PROVIDER_NO_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, null, true),
-            TECHNICAL_PROVIDER_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, SUBSCRIBER_TENANT_ID, true),
-            TECHNICAL_PROVIDER(OnBehalfOf.TECHNICAL_USER_PROVIDER, PROVIDER_TENANT_ID, true),
+            TECHNICAL_PROVIDER_NO_TENANT(TECHNICAL_USER_PROVIDER, null, true),
+            TECHNICAL_PROVIDER_SOME_TENANT(TECHNICAL_USER_PROVIDER, SUBSCRIBER_TENANT_ID, true),
+            TECHNICAL_PROVIDER(TECHNICAL_USER_PROVIDER, PROVIDER_TENANT_ID, true),
             TECHNICAL_CURRENT_NO_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, null, true),
             TECHNICAL_CURRENT_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, SUBSCRIBER_TENANT_ID, false),
             TECHNICAL_CURRENT_PROVIDER_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, PROVIDER_TENANT_ID, true),
