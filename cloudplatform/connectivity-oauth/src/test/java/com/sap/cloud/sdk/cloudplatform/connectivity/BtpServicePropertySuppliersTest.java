@@ -11,8 +11,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySup
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.CONNECTIVITY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.IDENTITY_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.WORKFLOW;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,6 +46,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRu
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Try;
@@ -490,9 +489,9 @@ class BtpServicePropertySuppliersTest
         @AllArgsConstructor
         private enum MutualTlsForTechnicalProviderAuthenticationTest
         {
-            TECHNICAL_PROVIDER_NO_TENANT(TECHNICAL_USER_PROVIDER, null, true),
-            TECHNICAL_PROVIDER_SOME_TENANT(TECHNICAL_USER_PROVIDER, SUBSCRIBER_TENANT_ID, true),
-            TECHNICAL_PROVIDER(TECHNICAL_USER_PROVIDER, PROVIDER_TENANT_ID, true),
+            TECHNICAL_PROVIDER_NO_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, null, true),
+            TECHNICAL_PROVIDER_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_PROVIDER, SUBSCRIBER_TENANT_ID, true),
+            TECHNICAL_PROVIDER(OnBehalfOf.TECHNICAL_USER_PROVIDER, PROVIDER_TENANT_ID, true),
             TECHNICAL_CURRENT_NO_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, null, true),
             TECHNICAL_CURRENT_SOME_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, SUBSCRIBER_TENANT_ID, false),
             TECHNICAL_CURRENT_PROVIDER_TENANT(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT, PROVIDER_TENANT_ID, true),
@@ -525,7 +524,14 @@ class BtpServicePropertySuppliersTest
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
             assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
 
-            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            final OAuth2Options oAuth2Options;
+            if( test.currentTenantId != null ) {
+                oAuth2Options =
+                    TenantAccessor.executeWithTenant(new DefaultTenant(test.currentTenantId), sut::getOAuth2Options);
+                assertThat(oAuth2Options).isNotNull();
+            } else {
+                oAuth2Options = sut.getOAuth2Options();
+            }
             assertThat(oAuth2Options.skipTokenRetrieval()).isEqualTo(test.expectedSkipTokenRetrieval);
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());

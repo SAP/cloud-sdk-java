@@ -4,7 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.TenantPropagationStrategy.TENANT_SUBDOMAIN;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
@@ -198,7 +197,7 @@ class OAuth2Service
 
     private void setAppTidInCaseOfIAS( @Nullable final String tenantId )
     {
-        if( tenantPropagationStrategy == TENANT_SUBDOMAIN && tenantId != null ) {
+        if( tenantPropagationStrategy == TenantPropagationStrategy.TENANT_SUBDOMAIN && tenantId != null ) {
             // the IAS property supplier will have set this to the provider ID by default
             // we have to override it here to match the current tenant, if the current tenant is defined
             additionalParameters.put("app_tid", tenantId);
@@ -224,7 +223,7 @@ class OAuth2Service
     @Nullable
     private String getTenantSubdomainOrNull( @Nullable final Tenant tenant )
     {
-        if( tenantPropagationStrategy != TENANT_SUBDOMAIN ) {
+        if( tenantPropagationStrategy != TenantPropagationStrategy.TENANT_SUBDOMAIN ) {
             return null;
         }
 
@@ -373,7 +372,7 @@ class OAuth2Service
         {
             final TenantPropagationStrategy tenantPropagationStrategy;
             if( IDENTITY_AUTHENTICATION.equals(serviceIdentifier) ) {
-                tenantPropagationStrategy = TENANT_SUBDOMAIN;
+                tenantPropagationStrategy = TenantPropagationStrategy.TENANT_SUBDOMAIN;
             } else {
                 tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
             }
