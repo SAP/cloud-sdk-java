@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,11 +48,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRu
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
-import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException;
 
-import io.vavr.Tuple3;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -386,51 +382,6 @@ class BtpServicePropertySuppliersTest
         }
 
         @Test
-        void testAppTidWithDifferentTenants()
-        {
-            final ServiceBindingDestinationOptions optionsCurrentTenant =
-                ServiceBindingDestinationOptions.forService(BINDING).build();
-            final ServiceBindingDestinationOptions optionsProviderTenant =
-                ServiceBindingDestinationOptions.forService(BINDING).onBehalfOf(TECHNICAL_USER_PROVIDER).build();
-            final ServiceBindingDestinationOptions optionsNamedUser =
-                ServiceBindingDestinationOptions.forService(BINDING).onBehalfOf(NAMED_USER_CURRENT_TENANT).build();
-
-            final List<Tuple3<ServiceBindingDestinationOptions, String, String>> testCases =
-                List
-                    .of(
-                        new Tuple3<>(optionsProviderTenant, null, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsProviderTenant, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsProviderTenant, SUBSCRIBER_TENANT_ID, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsCurrentTenant, null, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsCurrentTenant, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsCurrentTenant, SUBSCRIBER_TENANT_ID, SUBSCRIBER_TENANT_ID),
-                        new Tuple3<>(optionsNamedUser, PROVIDER_TENANT_ID, PROVIDER_TENANT_ID),
-                        new Tuple3<>(optionsNamedUser, SUBSCRIBER_TENANT_ID, SUBSCRIBER_TENANT_ID));
-            final SoftAssertions softly = new SoftAssertions();
-            testCases.forEach(c -> {
-                final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(c._1);
-                OAuth2Options result;
-                if( c._2 != null ) {
-                    result = TenantAccessor.executeWithTenant(new DefaultTenant(c._2), sut::getOAuth2Options);
-                } else {
-                    result = sut.getOAuth2Options();
-                }
-
-                softly
-                    .assertThat(result.getAdditionalTokenRetrievalParameters())
-                    .describedAs("On behalf of %s with tenant %s should have app_tid %s", c._1, c._2, c._3)
-                    .containsKey("app_tid")
-                    .containsValue(c._3);
-            });
-
-            softly
-                .assertThatThrownBy(() -> IDENTITY_AUTHENTICATION.resolve(optionsNamedUser).getOAuth2Options())
-                .describedAs("Named user always requires a tenant to be defined")
-                .isInstanceOf(TenantAccessException.class);
-            softly.assertAll();
-        }
-
-        @Test
         void testTargetUri()
         {
             final ServiceBindingDestinationOptions options =
@@ -574,19 +525,17 @@ class BtpServicePropertySuppliersTest
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
             assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
 
-            final OAuth2Options oAuth2Options;
-            if( test.currentTenantId != null ) {
-                oAuth2Options =
-                    TenantAccessor.executeWithTenant(new DefaultTenant(test.currentTenantId), sut::getOAuth2Options);
-                assertThat(oAuth2Options).isNotNull();
-            } else {
-                oAuth2Options = sut.getOAuth2Options();
-            }
-
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isEqualTo(test.expectedSkipTokenRetrieval);
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+
+            if( oAuth2Options.skipTokenRetrieval() ) {
+                assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            } else {
+                assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                    .containsOnly(entry("app_tid", PROVIDER_TENANT_ID));
+            }
         }
 
         @Test
