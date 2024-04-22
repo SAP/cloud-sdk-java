@@ -65,7 +65,7 @@ runs:
         
         # check runs are things like our CI pipeline
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_CHECKS")
-        EXCLUDED_WORKFLOWS=$(jq 'keys[]' <<< "${{ inputs.excluded-check-runs }}")
+        EXCLUDED_WORKFLOWS=$(jq -r 'keys[]' <<< "${{ inputs.excluded-check-runs }}")
         for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
           if [[ -z "$FAILED_CHECK_RUNS" ]]; then
             break
