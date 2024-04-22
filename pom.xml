@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.73.10</jco-api.version>
+		<jco-api.version>4.75.5</jco-api.version>
 		<jackson.version>2.17.0</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -109,16 +109,16 @@
 		<maven-plugin-annotations.version>3.12.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.4.0</openapi-generator.version>
+		<openapi-generator.version>7.5.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.78</bouncycastle.version>
+		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.5.2</wiremock.version>
+		<wiremock.version>3.5.3</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<kotlin.version>1.9.23</kotlin.version>
 		<byte-buddy.version>1.14.13</byte-buddy.version>
