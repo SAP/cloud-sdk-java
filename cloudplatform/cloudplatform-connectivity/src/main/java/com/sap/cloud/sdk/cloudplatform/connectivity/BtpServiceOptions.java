@@ -53,6 +53,7 @@ public final class BtpServiceOptions
      *            The parameters to pass to the chosen enhancer. These should be the same (including their order) as the
      *            parameters of the type-safe methods defined in this class.
      * @return An instance of {@link OptionsEnhancer} that can be used to configure a destination.
+     * @since 5.9.0
      */
     @Beta
     public static
