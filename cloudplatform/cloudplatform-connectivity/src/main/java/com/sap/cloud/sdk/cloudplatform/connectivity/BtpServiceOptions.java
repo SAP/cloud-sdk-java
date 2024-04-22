@@ -46,6 +46,9 @@ public final class BtpServiceOptions
 
     /**
      * Generically creates a new instance of {@link OptionsEnhancer} for the given enhancer name and parameters.
+     * <p>
+     * <b>Note:</b> This API is meant for expert users that want to use the SDK in a more dynamic way. For the vast
+     * majority of consumers, we strongly recommend using the type-safe methods defined in this class.
      *
      * @param enhancerName
      *            The name of the enhancer to be created. This should be the simple class name of the enhancer.
