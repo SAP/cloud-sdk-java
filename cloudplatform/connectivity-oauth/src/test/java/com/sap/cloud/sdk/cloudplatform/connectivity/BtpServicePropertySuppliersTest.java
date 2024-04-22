@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -374,9 +373,11 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsKey("app_tid")
+                .containsValue(PROVIDER_TENANT_ID);
         }
 
         @Test
@@ -396,9 +397,11 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsKey("app_tid")
+                .containsValue(PROVIDER_TENANT_ID);
         }
 
         @Test
@@ -418,11 +421,16 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(
-                    MapEntry.entry("resource", "urn:sap:identity:application:provider:name:application-name"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:name:application-name",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @Test
@@ -442,10 +450,11 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map.of("resource", "urn:sap:identity:consumer:clientid:client-id", "app_tid", PROVIDER_TENANT_ID));
         }
 
         @Test
@@ -465,11 +474,16 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2Options oAuth2Options = sut.getOAuth2Options();
             assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                .containsExactly(
-                    MapEntry.entry("resource", "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id"));
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @AllArgsConstructor
@@ -518,11 +532,16 @@ class BtpServicePropertySuppliersTest
             } else {
                 oAuth2Options = sut.getOAuth2Options();
             }
-
             assertThat(oAuth2Options.skipTokenRetrieval()).isEqualTo(test.expectedSkipTokenRetrieval);
-            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+
+            if( oAuth2Options.skipTokenRetrieval() ) {
+                assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters()).isEmpty();
+            } else {
+                assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                    .containsOnly(entry("app_tid", PROVIDER_TENANT_ID));
+            }
         }
 
         @Test

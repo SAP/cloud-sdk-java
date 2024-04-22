@@ -276,7 +276,8 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
                 .builder()
                 .copy(Map.of())
                 .withServiceIdentifier(IDENTITY_AUTHENTICATION)
-                .withCredentials(Map.of("clientid", "foo", "clientsecret", "bar", "url", "https://foo.com"))
+                .withCredentials(
+                    Map.of("clientid", "foo", "clientsecret", "bar", "url", "https://foo.com", "app_tid", "provider"))
                 .build();
         DefaultServiceBindingAccessor.setInstance(() -> List.of(iasBinding));
 

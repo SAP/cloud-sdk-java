@@ -175,6 +175,8 @@ class BtpServicePropertySuppliers
                 oAuth2OptionsBuilder.withSkipTokenRetrieval(true);
             } else {
                 attachIasCommunicationOptions(oAuth2OptionsBuilder);
+                oAuth2OptionsBuilder
+                    .withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
             }
             attachClientKeyStore(oAuth2OptionsBuilder);
 
