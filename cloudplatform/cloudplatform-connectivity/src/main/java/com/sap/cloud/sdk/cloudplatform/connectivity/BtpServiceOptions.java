@@ -59,6 +59,7 @@ public final class BtpServiceOptions
      * @since 5.9.0
      */
     @Beta
+    @Nonnull
     public static
         OptionsEnhancer<?>
         withGenericOption( @Nonnull final String enhancerName, @Nonnull final Object... parameters )
@@ -310,8 +311,8 @@ public final class BtpServiceOptions
             }
         }
 
-        // package-private for testing
-        static void addGenericEnhancerBuilder( @Nonnull final Map<String, Function<Object[], OptionsEnhancer<?>>> map )
+        private static void addGenericEnhancerBuilder(
+            @Nonnull final Map<String, Function<Object[], OptionsEnhancer<?>>> map )
         {
             final String key = IasOptions.class.getSimpleName();
             if( map.containsKey(key) ) {
@@ -320,21 +321,32 @@ public final class BtpServiceOptions
 
             map.put(key, args -> castParameters(args, 0, String.class, method -> {
                 if( "withTargetUri".equals(method) ) {
+                    final IllegalArgumentException suppressed;
                     try {
                         return castParameters(args, 1, String.class, IasOptions::withTargetUri);
                     }
                     catch( final IllegalArgumentException e ) {
-                        // ignored - try to apply overload
+                        suppressed = e;
                     }
 
                     try {
                         return castParameters(args, 1, URI.class, IasOptions::withTargetUri);
                     }
                     catch( final IllegalArgumentException e ) {
+                        e.addSuppressed(suppressed);
+                        final String argumentValue;
+                        if( args.length < 2 ) {
+                            argumentValue = "<no-value>";
+                        } else if( args[1] == null ) {
+                            argumentValue = "<null>";
+                        } else {
+                            argumentValue = args[1].toString();
+                        }
+
                         throw new IllegalArgumentException(
                             "Expected parameter 1 to be of type String or URI, but got %s instead."
-                                .formatted(
-                                    args.length > 1 && args[1] != null ? args[1].getClass().getName() : "<null>"));
+                                .formatted(argumentValue),
+                            e);
                     }
                 }
 
