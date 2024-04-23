@@ -75,7 +75,7 @@ runs:
           fi
         
           echo "[DEBUG] Excluding steps from workflow $EXCLUDED_WORKFLOW"
-          EXCLUDED_STEPS=$(jq -r '."$EXCLUDED_WORKFLOW"[]' <<< "${{ inputs.excluded-check-runs }}")
+          EXCLUDED_STEPS=$(jq -r '.\"$EXCLUDED_WORKFLOW\"[]' <<< "${{ inputs.excluded-check-runs }}")
           echo "[DEBUG] Excluded steps: $EXCLUDED_STEPS"
         
           if [[ -z "$EXCLUDED_STEPS" ]]; then
