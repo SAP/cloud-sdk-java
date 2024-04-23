@@ -83,11 +83,14 @@ runs:
         
           if [[ -z "$EXCLUDED_STEPS" ]]; then
             # the provided list is empty, so ignore all steps of the workflow
-            FAILED_CHECK_RUNS=$(jq -r 'select(.workflowName != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
+            FAILED_CHECK_RUNS=$(jq -r --arg workflow "$EXCLUDED_WORKFLOW" 'select(.workflowName != $workflow)' <<< "$FAILED_CHECK_RUNS")
           else
-            for EXCLUDED_STEP in "${EXCLUDED_STEPS[@]}"; do
-              FAILED_CHECK_RUNS=$(jq -r 'select(.workflowName != "$EXCLUDED_WORKFLOW" and .name != "$EXCLUDED_STEP")' <<< "$FAILED_CHECK_RUNS")
-            done
+            while IFS= read -r EXCLUDED_STEP; do
+              if [[ -z "$EXCLUDED_STEP" ]]; then
+                  continue
+              fi
+              FAILED_CHECK_RUNS=$(jq -r --arg workflow "$EXCLUDED_WORKFLOW" --arg step "$EXCLUDED_STEP" 'select(.workflowName != $workflow and .name != $step)' <<< "$FAILED_CHECK_RUNS")
+            done <<< "$EXCLUDED_STEPS"
           fi
         done <<< "$EXCLUDED_WORKFLOWS"
         
