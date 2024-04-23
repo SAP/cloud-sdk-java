@@ -61,8 +61,8 @@ jobs:
 
       - name: "Checkout Repository"
         uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
+#        with:
+#          ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
 
       - name: "Check Whether Code PR Can Be Merged"
         if: ${{ inputs.skip-pr-merge != 'true' }}
