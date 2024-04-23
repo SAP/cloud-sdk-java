@@ -70,7 +70,7 @@ jobs:
         with:
           pr-ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
           excluded-check-runs: |
-            { 
+            {
               \"Continuous Integration\": [\"Run BlackDuck Scan\", \"Run Security Rating\"], 
               \"dependabot merger\": [] 
             }
@@ -89,6 +89,10 @@ jobs:
           pr-ref: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
           repo: ${{ env.DOCS_REPO }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          excluded-check-runs: |
+            {
+              \"Build Cloud SDK Documentation\": [\"dependabot\"]
+            }
 
       - name: "Check Whether Release Notes PR Can Be Merged"
         if: ${{ inputs.skip-pr-merge != 'true' }}
@@ -97,6 +101,10 @@ jobs:
           pr-ref: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
           repo: ${{ env.DOCS_REPO }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          excluded-check-runs: |
+            {
+              \"Build Cloud SDK Documentation\": [\"dependabot\"]
+            }
 
 #  release:
 #    name: "Release"
