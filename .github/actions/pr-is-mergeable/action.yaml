@@ -67,7 +67,7 @@ runs:
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_CHECKS")
         echo "[DEBUG] Excluded Check Runs: '${{ inputs.excluded-check-runs }}'"
         EXCLUDED_WORKFLOWS=$(jq -r 'keys[]' <<< "${{ inputs.excluded-check-runs }}")
-        echo "[DEBUG] Excluded workflows: $EXCLUDED_WORKFLOWS"
+        echo "[DEBUG] Excluded workflows: '$EXCLUDED_WORKFLOWS'"
         
         while IFS= read -r EXCLUDED_WORKFLOW; do
           if [[ -z "$EXCLUDED_WORKFLOW" ]]; then
@@ -77,9 +77,9 @@ runs:
             break
           fi
         
-          echo "[DEBUG] Excluding steps from workflow $EXCLUDED_WORKFLOW"
-          EXCLUDED_STEPS=$(jq -r '."$EXCLUDED_WORKFLOW"[]' <<< "${{ inputs.excluded-check-runs }}")
-          echo "[DEBUG] Excluded steps: $EXCLUDED_STEPS"
+          echo "[DEBUG] Excluding steps from workflow '$EXCLUDED_WORKFLOW'"
+          EXCLUDED_STEPS=$(jq -r '."${EXCLUDED_WORKFLOW}" | .[]' <<< "${{ inputs.excluded-check-runs }}")
+          echo "[DEBUG] Excluded steps: '$EXCLUDED_STEPS'"
         
           if [[ -z "$EXCLUDED_STEPS" ]]; then
             # the provided list is empty, so ignore all steps of the workflow
