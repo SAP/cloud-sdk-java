@@ -69,11 +69,7 @@ jobs:
         uses: ./.github/actions/pr-is-mergeable
         with:
           pr-ref: ${{ steps.determine-branch-names.outputs.CODE_BRANCH_NAME }}
-          excluded-check-runs: >
-            {
-              "Continuous Integration": ["Run BlackDuck Scan", "Run Security Rating"],
-              "dependabot merger": []
-            }
+          excluded-check-runs: '{ "Continuous Integration": ["Run BlackDuck Scan", "Run Security Rating"], "dependabot merger": [] }'
 
       - name: "Check Code Release Commit Continuous Integration"
         if: ${{ inputs.skip-pr-merge != 'true' }}
