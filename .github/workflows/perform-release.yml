@@ -55,7 +55,9 @@ jobs:
           echo "CODE_BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "DOCS_BRANCH_NAME=$DOCS_BRANCH" >> $GITHUB_OUTPUT
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH" >> $GITHUB_OUTPUT
-          echo "RELEASE_COMMIT=$(gh release view '$RELEASE_TAG' --repo "${{ github.repository }}" --json targetCommitish | jq -r '.targetCommitish')" >> $GITHUB_OUTPUT
+          echo "RELEASE_COMMIT=$(gh release view "$RELEASE_TAG" --repo "${{ github.repository }}" --json targetCommitish | jq -r '.targetCommitish')" >> $GITHUB_OUTPUT
+          
+          echo "[DEBUG] Current GITHUB_OUTPUT: '$(cat $GITHUB_OUTPUT)'"
         env:
           GH_TOKEN: ${{ github.token }}
 

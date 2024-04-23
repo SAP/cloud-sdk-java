@@ -44,7 +44,7 @@ runs:
           exit 1
         fi
         
-        ECHO "RUN_ID=$(jq -r '.databaseId' <<< "$RUN_JSON")" >> $GITHUB_OUTPUT
+        echo "RUN_ID=$(jq -r '.databaseId' <<< "$RUN_JSON")" >> $GITHUB_OUTPUT
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
