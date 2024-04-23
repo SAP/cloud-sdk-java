@@ -20,7 +20,7 @@ inputs:
   excluded-check-runs:
     description: "A JSON object, where the keys are the names of the workflows to exclude. The values are a list of step names to ignore. If the list is empty, all steps of the workflow will be ignored."
     required: false
-    default: '{"${{ github.workflow }}": []}'
+    default: '{\"${{ github.workflow }}\": []}'
 
 outputs:
   pr-number:
