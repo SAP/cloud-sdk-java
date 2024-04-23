@@ -65,6 +65,7 @@ runs:
         
         # check runs are things like our CI pipeline
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_CHECKS")
+        echo "[DEBUG] Excluded Check Runs: '${{ inputs.excluded-check-runs }}'"
         EXCLUDED_WORKFLOWS=$(jq -r 'keys[]' <<< "${{ inputs.excluded-check-runs }}")
         echo "[DEBUG] Excluded workflows: $EXCLUDED_WORKFLOWS"
         
