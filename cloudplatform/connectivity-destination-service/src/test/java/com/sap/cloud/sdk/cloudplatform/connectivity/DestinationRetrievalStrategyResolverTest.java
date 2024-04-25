@@ -4,6 +4,9 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withRefreshToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withUserToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withoutToken;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
@@ -43,9 +46,10 @@ import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
 
-import io.vavr.Function3;
+import io.vavr.Function4;
 import io.vavr.Tuple;
 import io.vavr.Tuple3;
+import io.vavr.Tuple4;
 
 @SuppressWarnings( "deprecation" )
 class DestinationRetrievalStrategyResolverTest
@@ -79,65 +83,111 @@ class DestinationRetrievalStrategyResolverTest
     @Test
     void testSimpleBehalfResolutions()
     {
-        final List<Tuple3<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, DestinationRetrievalStrategy>> testCases =
+        final List<Tuple4<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, String, DestinationRetrievalStrategy>> testCases =
             new ArrayList<>();
         final String token = mockXsuaaToken().getToken();
+        final String refreshToken = "refreshToken";
         context.setAuthToken(JWT.decode(token));
-        Function3<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, DestinationRetrievalStrategy, Boolean> addCase =
-            ( s1, s2, expected ) -> testCases.add(Tuple.of(s1, s2, expected));
+        Function4<DestinationServiceRetrievalStrategy, DestinationServiceTokenExchangeStrategy, String, DestinationRetrievalStrategy, Boolean> addCase =
+            ( s1, s2, t, expected ) -> testCases.add(Tuple.of(s1, s2, t, expected));
 
+        //region LOOKUP_ONLY
         addCase
             .apply(
                 CURRENT_TENANT,
                 DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
-                DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+                null,
+                withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         addCase
             .apply(
                 ONLY_SUBSCRIBER,
                 DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
-                DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+                null,
+                withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         addCase
             .apply(
                 ALWAYS_PROVIDER,
                 DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
-                DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_PROVIDER));
-
+                null,
+                withoutToken(TECHNICAL_USER_PROVIDER));
         addCase
-            .apply(CURRENT_TENANT, EXCHANGE_ONLY, DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT));
+            .apply(
+                CURRENT_TENANT,
+                DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
+        addCase
+            .apply(
+                ONLY_SUBSCRIBER,
+                DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
+        addCase
+            .apply(
+                ALWAYS_PROVIDER,
+                DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_PROVIDER, refreshToken));
+        //endregion
+        //region EXCHANGE_ONLY
+        addCase.apply(CURRENT_TENANT, EXCHANGE_ONLY, null, withoutToken(NAMED_USER_CURRENT_TENANT));
+        addCase.apply(ONLY_SUBSCRIBER, EXCHANGE_ONLY, null, withoutToken(NAMED_USER_CURRENT_TENANT));
+        addCase.apply(ALWAYS_PROVIDER, EXCHANGE_ONLY, null, withoutToken(NAMED_USER_CURRENT_TENANT));
+        addCase
+            .apply(
+                CURRENT_TENANT,
+                EXCHANGE_ONLY,
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
         addCase
             .apply(
                 ONLY_SUBSCRIBER,
                 EXCHANGE_ONLY,
-                DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT));
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
         addCase
             .apply(
                 ALWAYS_PROVIDER,
                 EXCHANGE_ONLY,
-                DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT));
-
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_PROVIDER, refreshToken));
+        //endregion
+        //region FORWARD_USER_TOKEN
+        addCase.apply(CURRENT_TENANT, FORWARD_USER_TOKEN, null, withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+        addCase.apply(ONLY_SUBSCRIBER, FORWARD_USER_TOKEN, null, withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+        addCase.apply(ALWAYS_PROVIDER, FORWARD_USER_TOKEN, null, withUserToken(TECHNICAL_USER_PROVIDER, token));
         addCase
             .apply(
                 CURRENT_TENANT,
                 FORWARD_USER_TOKEN,
-                DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
         addCase
             .apply(
                 ONLY_SUBSCRIBER,
                 FORWARD_USER_TOKEN,
-                DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
         addCase
             .apply(
                 ALWAYS_PROVIDER,
                 FORWARD_USER_TOKEN,
-                DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_PROVIDER, token));
+                refreshToken,
+                withRefreshToken(TECHNICAL_USER_PROVIDER, refreshToken));
+        //endregion
 
         final SoftAssertions softly = new SoftAssertions();
         testCases
             .forEach(
                 c -> softly
-                    .assertThat(sut.resolveSingleRequestStrategy(c._1(), c._2(), null))
-                    .as("Expecting '%s' with '%s' to resolve to '%s'", c._1(), c._2(), c._3())
-                    .isEqualTo(c._3()));
+                    .assertThat(sut.resolveSingleRequestStrategy(c._1(), c._2(), c._3()))
+                    .as(
+                        "Expecting '%s' with '%s' %s to resolve to '%s'",
+                        c._1(),
+                        c._2(),
+                        c._3() != null ? "with refresh token" : "without refresh token",
+                        c._4())
+                    .isEqualTo(c._4()));
         softly.assertAll();
     }
 
@@ -196,8 +246,7 @@ class DestinationRetrievalStrategyResolverTest
                     DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
                     subscriberT).isInstanceOf(DestinationAccessException.class));
 
-        verify(destinationRetriever, times(1))
-            .apply(eq(DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_PROVIDER)));
+        verify(destinationRetriever, times(1)).apply(eq(withoutToken(TECHNICAL_USER_PROVIDER)));
         verifyNoMoreInteractions(destinationRetriever);
     }
 
