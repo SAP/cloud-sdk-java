@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static java.util.Map.entry;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -70,7 +71,8 @@ class OAuth2IntegrationTest
                 entry("credential-type", "binding-secret"),
                 entry("clientid", "myClientId"),
                 entry("clientsecret", "myClientSecret"),
-                entry("url", "http://provider.ias.domain"));
+                entry("url", "http://provider.ias.domain"),
+                entry("app_tid", "provider"));
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
         final Try<HttpDestination> maybeDestination =
@@ -94,7 +96,13 @@ class OAuth2IntegrationTest
             // call the method a second time, so we can be sure the token is cached correctly
             assertThat(destination.getHeaders()).contains(new Header(HttpHeaders.AUTHORIZATION, "Bearer " + token));
 
-            verify(1, postRequestedFor(urlEqualTo("/oauth2/token")).withHost(equalTo("provider.ias.domain")));
+            verify(
+                1,
+                postRequestedFor(urlEqualTo("/oauth2/token"))
+                    .withHost(equalTo("provider.ias.domain"))
+                    .withRequestBody(containing("client_id=myClientId"))
+                    .withRequestBody(containing("client_secret=myClientSecret"))
+                    .withRequestBody(containing("app_tid=provider")));
         }
 
         {
@@ -113,7 +121,13 @@ class OAuth2IntegrationTest
                 assertThat(destination.getHeaders()).contains(new Header(HttpHeaders.AUTHORIZATION, "Bearer " + token));
             });
 
-            verify(1, postRequestedFor(urlEqualTo("/oauth2/token")).withHost(equalTo("subscriber.ias.domain")));
+            verify(
+                1,
+                postRequestedFor(urlEqualTo("/oauth2/token"))
+                    .withHost(equalTo("subscriber.ias.domain"))
+                    .withRequestBody(containing("client_id=myClientId"))
+                    .withRequestBody(containing("client_secret=myClientSecret"))
+                    .withRequestBody(containing("app_tid=subscriber")));
         }
     }
 }
