@@ -66,6 +66,11 @@ Only the parts relevant to the CI/CD setup were kept and merged with the incomin
 
 On the 2nd of October around 2500 files were copied over from the internal to the open source repository with [this pull request](https://github.com/SAP/cloud-sdk-java/pull/83).
 We implemented the necessary adjustments for the CI/CD pipelines to work on the full code base (e.g. adjusting the thresholds for the code scans and test coverage, adjusting the copied over pom.xml files etc.).
+
+Copying over also meant we would lose the commit history of the code.
+While technically we could have kept it, it would have contained all the internal code and information we had to remove from the code base.
+Therefore, we decided to start with a clean commit history in the open source repository.
+
 This process finished on the 4th of October where the pull request was merged and the internal v5 branch archived.
 
 ## Summing Up
