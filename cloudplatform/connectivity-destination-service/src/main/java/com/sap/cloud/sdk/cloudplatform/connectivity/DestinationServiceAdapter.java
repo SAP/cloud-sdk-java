@@ -117,7 +117,9 @@ class DestinationServiceAdapter
     }
 
     @Nonnull
-    String getConfigurationAsJson( @Nonnull final String servicePath, @Nonnull DestinationRetrievalStrategy strategy )
+    String getConfigurationAsJson(
+        @Nonnull final String servicePath,
+        @Nonnull final DestinationRetrievalStrategy strategy )
         throws DestinationAccessException,
             DestinationNotFoundException
     {
