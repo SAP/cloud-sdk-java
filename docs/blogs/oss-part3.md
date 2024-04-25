@@ -111,7 +111,7 @@ Finally, in case the workflow fails it also sends a Slack notification to the de
 
 ### The Release Workflow
 
-We are using a two-step process for releasing to Maven Central, comprised of two workflows: [prepare-release](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/prepare-release.yaml) and [perform-release](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/perform-release.yaml).
+We are using a two-step process for releasing to Maven Central, comprised of two workflows: [prepare-release](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/prepare-release.yaml) and [perform-release](https://github.com/SAP/cloud-sdk-java/blob/main/.github/workflows/perform-release.yml).
 Both workflows are triggered manually and are designed to provide as much automation while being as reliable as possible.
 
 The `prepare-release` workflow first creates a branch for the release and increments the projects version to the desired release version.
