@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.annotations.Beta;
+
 import io.vavr.control.Option;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +76,9 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @param refreshToken
      *            Refresh token as encoded string.
      * @return The same augmenter that called this method.
+     * @since 5.9.0
      */
+    @Beta
     @Nonnull
     public DestinationServiceOptionsAugmenter refreshToken( @Nonnull final String refreshToken )
     {
