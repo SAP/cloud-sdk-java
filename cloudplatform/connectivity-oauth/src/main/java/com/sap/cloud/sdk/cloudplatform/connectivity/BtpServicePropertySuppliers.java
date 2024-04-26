@@ -105,7 +105,7 @@ class BtpServicePropertySuppliers
 
     private static class Xsuaa extends DefaultOAuth2PropertySupplier
     {
-        public Xsuaa( @Nonnull ServiceBindingDestinationOptions options )
+        public Xsuaa( @Nonnull final ServiceBindingDestinationOptions options )
         {
             super(options, List.of());
         }
