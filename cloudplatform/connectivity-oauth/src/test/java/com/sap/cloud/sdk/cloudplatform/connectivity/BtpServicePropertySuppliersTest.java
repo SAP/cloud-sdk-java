@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.AI_CORE;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServicePropertySuppliers.BUSINESS_LOGGING;
@@ -94,7 +95,102 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.DESTINATION.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri()).hasToString("https://destination-configuration.example.com");
+        }
+    }
+
+    @Nested
+    @DisplayName( "XSUAA" )
+    class XsuaaTest
+    {
+        private static final String PROVIDER_URL = "https://provider.xsuaa.domain";
+        private static final String PROVIDER_CERT_URL = "https://provider.cert.xsuaa.domain";
+        private static final ServiceBinding INSTANCE_SECRET_BINDING =
+            bindingWithCredentials(
+                ServiceIdentifier.of("xsuaa"),
+                entry("credential-type", "instance-secret"),
+                entry("clientid", "client-id"),
+                entry("clientsecret", "client-secret"),
+                entry("url", PROVIDER_URL));
+        private static final ServiceBinding X509_BINDING =
+            bindingWithCredentials(
+                ServiceIdentifier.of("xsuaa"),
+                entry("credential-type", "x509"),
+                entry("clientid", "client-id"),
+                entry("key", "key"),
+                entry("certificate", "certificate"),
+                entry("url", PROVIDER_URL),
+                entry("certurl", PROVIDER_CERT_URL));
+
+        @Test
+        void testInstanceSecret()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(INSTANCE_SECRET_BINDING).build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+            assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
+            assertThat(sut.getClientIdentity().getSecret()).isEqualTo("client-secret");
+        }
+
+        @Test
+        void testInstanceSecretWithTargetUri()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(INSTANCE_SECRET_BINDING)
+                    .withOption(AuthenticationServiceOptions.withTargetUri("https://foo.bar.baz"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth/token");
+            assertThat(sut.getServiceUri()).hasToString("https://foo.bar.baz");
+            assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
+            assertThat(sut.getClientIdentity().getSecret()).isEqualTo("client-secret");
+        }
+
+        @Test
+        void testX509()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions.forService(X509_BINDING).build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL + "/oauth/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_CERT_URL);
+            assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
+            assertThat(sut.getClientIdentity().getSecret()).isNull();
+            assertThat(sut.getClientIdentity().getKey()).isEqualTo("key");
+            assertThat(sut.getClientIdentity().getCertificate()).isEqualTo("certificate");
+        }
+
+        @Test
+        void testX509WithTargetUri()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(X509_BINDING)
+                    .withOption(AuthenticationServiceOptions.withTargetUri("https://foo.bar.baz"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL + "/oauth/token");
+            assertThat(sut.getServiceUri()).hasToString("https://foo.bar.baz");
+            assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
+            assertThat(sut.getClientIdentity().getSecret()).isNull();
+            assertThat(sut.getClientIdentity().getKey()).isEqualTo("key");
+            assertThat(sut.getClientIdentity().getCertificate()).isEqualTo("certificate");
         }
     }
 
@@ -120,6 +216,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = CONNECTIVITY.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri()).hasToString("http://host:1337");
         }
 
@@ -134,6 +231,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = CONNECTIVITY.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri()).hasToString("http://host:1337");
         }
 
@@ -147,6 +245,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = CONNECTIVITY.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri()).hasToString("http://host:1337");
         }
 
@@ -158,6 +257,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = CONNECTIVITY.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("onpremise_proxy_host");
@@ -171,6 +271,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = CONNECTIVITY.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("onpremise_proxy_port");
@@ -196,6 +297,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = BUSINESS_RULES.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri().toString()).containsIgnoringCase(api.name());
         }
 
@@ -207,6 +309,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = BUSINESS_RULES.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
@@ -232,6 +335,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = WORKFLOW.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThat(sut.getServiceUri().toString()).contains(api.name().toLowerCase());
         }
 
@@ -243,6 +347,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = WORKFLOW.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
@@ -336,6 +441,7 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = BUSINESS_LOGGING.resolve(options);
 
+            assertThat(sut).isNotNull();
             assertThatThrownBy(sut::getServiceUri)
                 .isExactlyInstanceOf(DestinationAccessException.class)
                 .hasMessageContaining("No option given");
@@ -386,7 +492,7 @@ class BtpServicePropertySuppliersTest
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
-                    .withOption(IasOptions.withTargetUri("https://foo.bar.baz"))
+                    .withOption(AuthenticationServiceOptions.withTargetUri("https://foo.bar.baz"))
                     .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
