@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.sap.cloud.sdk.testutil.TestContext;
 
@@ -156,30 +156,31 @@ class DestinationServiceAuthenticationTest
     @Test
     void testOAuthWithProvidedSystemUser()
     {
-        final ImmutableMap<String, String> properties =
-            ImmutableMap
-                .<String, String> builder()
-                .put("Authentication", "OAuth2SAMLBearerAssertion")
-                .put("audience", "https://a.s4hana.ondemand.com")
-                .put("authnContextClassRef", "urn:oasis:names:tc:SAML:2.0:ac:classes:X509")
-                .put("clientKey", "S4SDK-TEST-ABC-USER-IB")
-                .put("nameIdFormat", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
-                .put("scope", "API_BUSINESS_PARTNER_0001")
-                .put("tokenServiceUser", "S4SDK-TEST-ABC_USER")
-                .put("tokenServiceURL", "https://a.s4hana.ondemand.com/sap/bc/sec/oauth2/token?sap-client=100")
-                .put("userIdSource", "email")
-                .put("tokenServicePassword", "gVS7rPdqDSpRyTErxKGs$NhPebtntzbMCVyAAcij")
-                .put("SystemUser", "admin")
-                .build();
+        final Map<String, String> properties =
+            Map
+                .of(
+                    "Authentication",
+                    "OAuth2SAMLBearerAssertion",
+                    "audience",
+                    "https://a.s4hana.ondemand.com",
+                    "authnContextClassRef",
+                    "urn:oasis:names:tc:SAML:2.0:ac:classes:X509",
+                    "clientKey",
+                    "S4SDK-TEST-ABC-USER-IB",
+                    "nameIdFormat",
+                    "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+                    "scope",
+                    "API_BUSINESS_PARTNER_0001",
+                    "tokenServiceUser",
+                    "S4SDK-TEST-ABC_USER",
+                    "tokenServiceURL",
+                    "https://a.s4hana.ondemand.com/sap/bc/sec/oauth2/token?sap-client=100",
+                    "userIdSource",
+                    "email",
+                    "SystemUser",
+                    "admin");
         final Map<String, Map<String, String>> token =
-            Collections
-                .singletonMap(
-                    "http_header",
-                    ImmutableMap
-                        .<String, String> builder()
-                        .put("key", HttpHeaders.AUTHORIZATION)
-                        .put("value", "Bearer " + OAUTH_TOKEN)
-                        .build());
+            Map.of("http_header", Map.of("key", HttpHeaders.AUTHORIZATION, "value", "Bearer " + OAUTH_TOKEN));
 
         // OAuth2 SAML Bearer Assertion should work without a user when a system user is provided
         final DestinationRetrievalStrategy expectedStrategy =
@@ -422,24 +423,30 @@ class DestinationServiceAuthenticationTest
         @Nullable Map<String, ?> tokens,
         DestinationRetrievalStrategy expectedStrategy )
     {
-        final ImmutableMap.Builder<String, Object> builder =
-            ImmutableMap
-                .<String, Object> builder()
-                .put("owner", ImmutableMap.of("SubaccountId", "a89ea924-d9c2-4eab", "InstanceId", "foobar"))
-                .put(
+        final Map<String, Object> baseProperties =
+            Map
+                .of(
+                    "Name",
+                    DESTINATION_NAME,
+                    "Type",
+                    "HTTP",
+                    "URL",
+                    "https://a.s4hana.ondemand.com/some/path/SOME_API",
+                    "ProxyType",
+                    "Internet");
+        final Map<String, Object> destinationConfiguration = new TreeMap<>(baseProperties);
+        destinationConfiguration.putAll(properties);
+
+        final Map<String, Object> destination =
+            Map
+                .of(
+                    "owner",
+                    Map.of("SubaccountId", "a89ea924-d9c2-4eab", "InstanceId", "foobar"),
                     "destinationConfiguration",
-                    ImmutableMap
-                        .<String, String> builder()
-                        .put("Name", DESTINATION_NAME)
-                        .put("Type", "HTTP")
-                        .put("URL", "https://a.s4hana.ondemand.com/some/path/SOME_API")
-                        .put("ProxyType", "Internet")
-                        .putAll(properties)
-                        .build());
+                    destinationConfiguration,
+                    "authTokens",
+                    tokens != null ? List.of(tokens) : Collections.emptyList());
 
-        builder.put("authTokens", tokens != null ? List.of(tokens) : Collections.emptyList());
-        final Object payload = builder.build();
-
-        doReturn(new Gson().toJson(payload)).when(mockAdapter).getConfigurationAsJson(any(), eq(expectedStrategy));
+        doReturn(new Gson().toJson(destination)).when(mockAdapter).getConfigurationAsJson(any(), eq(expectedStrategy));
     }
 }
