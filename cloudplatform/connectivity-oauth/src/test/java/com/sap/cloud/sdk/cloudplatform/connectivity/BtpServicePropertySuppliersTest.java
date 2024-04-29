@@ -166,7 +166,7 @@ class BtpServicePropertySuppliersTest
 
             assertThat(sut).isNotNull();
             assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL + "/oauth/token");
-            assertThat(sut.getServiceUri()).hasToString(PROVIDER_CERT_URL);
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
             assertThat(sut.getClientIdentity().getSecret()).isNull();
             assertThat(sut.getClientIdentity().getKey()).isEqualTo("key");

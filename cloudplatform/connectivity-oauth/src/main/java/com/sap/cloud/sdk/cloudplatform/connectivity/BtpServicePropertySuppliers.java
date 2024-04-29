@@ -30,7 +30,6 @@ import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.mtls.SSLContextFactory;
 
-import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
 
 class BtpServicePropertySuppliers
@@ -114,17 +113,7 @@ class BtpServicePropertySuppliers
         @Override
         public URI getServiceUri()
         {
-            final Option<URI> maybeTargetUri = options.getOption(TargetUri.class);
-            if( maybeTargetUri.isDefined() ) {
-                return maybeTargetUri.get();
-            }
-
-            // we need to get the token uri here because it respects the different properties for either
-            // certificate (X509) or client secret authentication.
-            // so it either chooses the "url" or the "certurl" property.
-            // as we are overriding the method (see below), we need to use the super implementation to not get the
-            // "/oauth/token" appended to the URL.
-            return super.getTokenUri();
+            return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
         }
 
         @Nonnull
