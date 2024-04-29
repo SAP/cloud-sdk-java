@@ -4,8 +4,6 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalS
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.TokenForwarding.REFRESH_TOKEN;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.TokenForwarding.USER_TOKEN;
 
-import java.util.Objects;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -38,7 +36,10 @@ final class DestinationRetrievalStrategy
 
     static DestinationRetrievalStrategy withUserToken( @Nonnull final OnBehalfOf behalf, @Nonnull final String token )
     {
-        Objects.requireNonNull(token, "User token must not be null.");
+        if( token.isBlank() ) {
+            throw new IllegalArgumentException("User token must not be empty.");
+        }
+
         return new DestinationRetrievalStrategy(behalf, USER_TOKEN, token);
     }
 
@@ -46,7 +47,9 @@ final class DestinationRetrievalStrategy
         DestinationRetrievalStrategy
         withRefreshToken( @Nonnull final OnBehalfOf behalf, @Nonnull final String token )
     {
-        Objects.requireNonNull(token, "Refresh token must not be null.");
+        if( token.isBlank() ) {
+            throw new IllegalArgumentException("Refresh token must not be empty.");
+        }
         return new DestinationRetrievalStrategy(behalf, REFRESH_TOKEN, token);
     }
 
