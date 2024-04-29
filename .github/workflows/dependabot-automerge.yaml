@@ -30,7 +30,8 @@ jobs:
             MATCHES=$(jq -r --arg group "$GROUP" '.[] | select(.title | contains($group)) | .number' <<< "$PRS")
             PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
-          echo "PR_NUMBERS=$PR_NUMBERS" >> $GITHUB_OUTPUT
+          PR_NUMBERS=$(sort --unique <<< "$PR_NUMBERS")
+          echo "PR_NUMBERS='$PR_NUMBERS'" >> $GITHUB_OUTPUT
           
           echo "[DEBUG] PR_NUMBERS='$PR_NUMBERS'"
         env:
@@ -39,6 +40,10 @@ jobs:
       - name: Approve and Merge Dependabot PRs
         run: |
           while IFS= read -r PR_NUMBER; do
+            if [[ -z "$PR_NUMBER" ]]; then
+              continue
+            fi
+          
             gh pr merge "$PR_NUMBER" --auto --squash
             gh pr review "$PR_NUMBER" --approve
           done <<< "$(grep --extended-regexp --ignore-case '[0-9]+' <<< '${{ steps.find-prs.outputs.PR_NUMBERS }}')"
