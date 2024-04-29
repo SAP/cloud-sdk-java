@@ -1,6 +1,9 @@
 name: "Cache Maven Dependencies"
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
       - cron: '57 4 * * Sun'
