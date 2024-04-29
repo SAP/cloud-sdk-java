@@ -33,7 +33,7 @@ jobs:
           PR_NUMBERS=$(sort --unique <<< "$PR_NUMBERS")
           echo "PR_NUMBERS='$PR_NUMBERS'" >> $GITHUB_OUTPUT
           
-          echo "[DEBUG] PR_NUMBERS='$PR_NUMBERS'"
+          echo -e "[DEBUG] PR_NUMBERS='$PR_NUMBERS'"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
