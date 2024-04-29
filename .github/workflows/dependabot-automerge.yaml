@@ -35,7 +35,7 @@ jobs:
           
             PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
-          echo "[DEBUG] Approving and Merging following PRs: $(tr '\n' ' ' <<< '$PR_NUMBERS')"
+          echo "[DEBUG] Approving and Merging following PRs: '$PR_NUMBERS'"
           
           while IFS= read -r PR_NUMBER; do
             if [[ -z "$PR_NUMBER" ]]; then
