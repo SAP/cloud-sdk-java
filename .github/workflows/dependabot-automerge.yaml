@@ -27,6 +27,8 @@ jobs:
           PR_NUMBERS=
           while IFS= read -r GROUP; do
             MATCHES=$(jq -r --arg group "$GROUP" '.[] | select(.title | contains($group)) | .number' <<< "$PRS")
+            echo "[DEBUG] Found PRs for group '$GROUP': '$MATCHES'"
+          
             PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
           PR_NUMBERS=$(sort --unique <<< "$PR_NUMBERS")
