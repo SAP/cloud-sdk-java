@@ -21,8 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Find Dependabot PRs
-        id: find-prs
+      - name: Approve and Merge PRs
         run: |
           PRS=$(gh pr list --app "dependabot" --state "open" --json number,title)
           PR_NUMBERS=
@@ -31,12 +30,7 @@ jobs:
             PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
           PR_NUMBERS=$(sort --unique <<< "$PR_NUMBERS")
-          echo "PR_NUMBERS='$PR_NUMBERS'" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      - name: Approve and Merge Dependabot PRs
-        run: |
+          
           while IFS= read -r PR_NUMBER; do
             if [[ -z "$PR_NUMBER" ]]; then
               continue
@@ -44,6 +38,6 @@ jobs:
           
             gh pr merge "$PR_NUMBER" --auto --squash
             gh pr review "$PR_NUMBER" --approve
-          done <<< "$(grep --extended-regexp --ignore-case '[0-9]+' <<< '${{ steps.find-prs.outputs.PR_NUMBERS }}')"
+          done <<< "$(grep --extended-regexp --ignore-case '[0-9]+' <<< '$PR_NUMBERS')"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
