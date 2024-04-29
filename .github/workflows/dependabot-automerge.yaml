@@ -33,6 +33,8 @@ jobs:
           echo "PR_NUMBERS=$PR_NUMBERS" >> $GITHUB_OUTPUT
           
           echo "[DEBUG] PR_NUMBERS='$PR_NUMBERS'"
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
       - name: Approve and Merge Dependabot PRs
         run: |
