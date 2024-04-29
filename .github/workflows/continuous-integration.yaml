@@ -40,11 +40,10 @@ env:
   SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
   SDK_TARGETS_PATH: |
     ./**/target/**
-  DEPENDENCIES_CACHE_KEY: "dependencies"
-  DEPENDENCIES_PATH: |
-    ~/.m2/repository/**
-    !~/.m2/repository/archetype-catalog.xml
-    !~/.m2/repository/com/sap/cloud/sdk/**
+
+  # keep the following two variables in sync with our 'cache-maven-dependencies.yaml' workflow
+  MAVEN_CACHE_KEY: maven-dependencies
+  MAVEN_CACHE_DIR: ~/.m2/repository
 
   MVN_MULTI_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1C
   MVN_SINGLE_THREADED_ARGS: --batch-mode --fail-at-end --show-version --threads 1
@@ -117,8 +116,8 @@ jobs:
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
+          path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Build SDK"
         run: |
@@ -153,8 +152,8 @@ jobs:
         if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
+          path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Build Module Inventory"
         run: >
@@ -212,7 +211,7 @@ jobs:
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
@@ -275,7 +274,7 @@ jobs:
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
@@ -314,8 +313,8 @@ jobs:
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
+          path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Initialize CodeQL"
         uses: github/codeql-action/init@v3
@@ -357,8 +356,8 @@ jobs:
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.DEPENDENCIES_CACHE_KEY }}
-          path: ${{ env.DEPENDENCIES_PATH }}
+          key: ${{ env.MAVEN_CACHE_KEY }}
+          path: ${{ env.MAVEN_CACHE_DIR }}
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
