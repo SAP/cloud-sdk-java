@@ -31,11 +31,14 @@ jobs:
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
           PR_NUMBERS=$(sort --unique <<< "$PR_NUMBERS")
           
+          echo "[DEBUG] Approving and Merging following PRs: $(tr '\n' ' ' <<< '$PR_NUMBERS')"
+          
           while IFS= read -r PR_NUMBER; do
             if [[ -z "$PR_NUMBER" ]]; then
               continue
             fi
-          
+            
+            echo "[DEBUG] Approving and Merging PR #$PR_NUMBER"
             gh pr merge "$PR_NUMBER" --auto --squash
             gh pr review "$PR_NUMBER" --approve
           done <<< "$(grep --extended-regexp --ignore-case '[0-9]+' <<< '$PR_NUMBERS')"
