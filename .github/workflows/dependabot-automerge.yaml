@@ -45,6 +45,6 @@ jobs:
             echo "[DEBUG] Approving and Merging PR #$PR_NUMBER"
             gh pr merge "$PR_NUMBER" --auto --squash
             gh pr review "$PR_NUMBER" --approve
-          done <<< "$(grep --extended-regexp --ignore-case '[0-9]+' <<< '$PR_NUMBERS')"
+          done <<< "$PR_NUMBERS"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
