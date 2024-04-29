@@ -774,7 +774,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -927,7 +927,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.21.2</version>
+					<version>3.22.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
@@ -1071,7 +1071,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.2</version>
+					<version>3.5.3</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
