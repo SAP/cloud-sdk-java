@@ -148,13 +148,6 @@ jobs:
             echo "[DEBUG] Skipping release artifact generation"
           fi
 
-      - name: "Cache Dependencies"
-        if: ${{ steps.restore-dependencies.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v4
-        with:
-          key: ${{ env.MAVEN_CACHE_KEY }}
-          path: ${{ env.MAVEN_CACHE_DIR }}
-
       - name: "Build Module Inventory"
         run: >
           python ./scripts/create_module_inventory_file.py 
