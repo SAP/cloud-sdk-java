@@ -1,9 +1,6 @@
 name: "Cache Maven Dependencies"
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
   schedule:
       - cron: '57 4 * * Sun'
@@ -11,7 +8,7 @@ on:
 env:
   MAVEN_CACHE_REF: refs/heads/main
   MAVEN_CACHE_KEY: maven-dependencies
-  MAVEN_CACHE_DIR: ~/.m2/repository
+  MAVEN_CACHE_DIR: ~/.m2
 
 jobs:
   update-cache:
