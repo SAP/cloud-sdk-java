@@ -115,18 +115,6 @@ class BtpServicePropertySuppliers
         {
             return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
         }
-
-        @Nonnull
-        @Override
-        public URI getTokenUri()
-        {
-            String providerUrl = super.getTokenUri().toString();
-            if( providerUrl.endsWith("/") ) {
-                providerUrl = providerUrl.substring(0, providerUrl.length() - 1);
-            }
-
-            return URI.create(providerUrl + "/oauth/token");
-        }
     }
 
     private static class Destination extends DefaultOAuth2PropertySupplier

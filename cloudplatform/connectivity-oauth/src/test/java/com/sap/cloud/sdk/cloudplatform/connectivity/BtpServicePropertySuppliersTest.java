@@ -132,7 +132,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
 
             assertThat(sut).isNotNull();
-            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth/token");
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL);
             assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
             assertThat(sut.getClientIdentity().getSecret()).isEqualTo("client-secret");
@@ -150,7 +150,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
 
             assertThat(sut).isNotNull();
-            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth/token");
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL);
             assertThat(sut.getServiceUri()).hasToString("https://foo.bar.baz");
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
             assertThat(sut.getClientIdentity().getSecret()).isEqualTo("client-secret");
@@ -165,7 +165,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
 
             assertThat(sut).isNotNull();
-            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL + "/oauth/token");
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL);
             assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
             assertThat(sut.getClientIdentity().getSecret()).isNull();
@@ -185,7 +185,7 @@ class BtpServicePropertySuppliersTest
             final OAuth2PropertySupplier sut = BtpServicePropertySuppliers.XSUAA.resolve(options);
 
             assertThat(sut).isNotNull();
-            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL + "/oauth/token");
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_CERT_URL);
             assertThat(sut.getServiceUri()).hasToString("https://foo.bar.baz");
             assertThat(sut.getClientIdentity().getId()).isEqualTo("client-id");
             assertThat(sut.getClientIdentity().getSecret()).isNull();
