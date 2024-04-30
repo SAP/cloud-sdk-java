@@ -187,7 +187,6 @@ public final class BtpServiceOptions
         @Deprecated
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final String targetUri )
         {
-            logTargetUriDeprecationWarning();
             return withTargetUri(URI.create(targetUri));
         }
 
@@ -203,16 +202,7 @@ public final class BtpServiceOptions
         @Deprecated
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI targetUri )
         {
-            logTargetUriDeprecationWarning();
             return AuthenticationServiceOptions.withTargetUri(targetUri);
-        }
-
-        private static void logTargetUriDeprecationWarning()
-        {
-            log.warn("""
-                The method '{}.withTargetUri' is deprecated and will be removed in a future version of the Cloud SDK. \
-                Use '{}.withTargetUri' instead.
-                """, IasOptions.class, AuthenticationServiceOptions.class);
         }
 
         /**
