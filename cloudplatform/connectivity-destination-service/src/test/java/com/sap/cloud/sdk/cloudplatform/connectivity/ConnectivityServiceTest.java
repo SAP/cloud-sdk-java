@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -231,8 +232,8 @@ class ConnectivityServiceTest
         assertThat(dest).isNotNull();
 
         assertThatCode(dest::getHeaders)
+            .isInstanceOf(DestinationAccessException.class)
             .hasMessageEndingWith("Failed to resolve access token.")
-            .isInstanceOf(ResilienceRuntimeException.class)
             .hasRootCauseInstanceOf(OAuth2ServiceException.class);
     }
 
