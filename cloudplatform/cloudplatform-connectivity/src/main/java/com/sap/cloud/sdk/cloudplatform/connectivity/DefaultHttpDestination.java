@@ -198,7 +198,7 @@ public final class DefaultHttpDestination implements HttpDestination
             try {
                 result.addAll(headerProvider.getHeaders(requestContext));
             }
-            catch( Exception e ) {
+            catch( final Exception e ) {
                 final String err =
                     "Header provider '%s' threw an exception: %s"
                         .formatted(headerProvider.getClass().getSimpleName(), e.getMessage());
