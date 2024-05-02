@@ -108,14 +108,14 @@ class BtpServicePropertySuppliersTest
         private static final String PROVIDER_CERT_URL = "https://provider.cert.xsuaa.domain";
         private static final ServiceBinding INSTANCE_SECRET_BINDING =
             bindingWithCredentials(
-                ServiceIdentifier.of("xsuaa"),
+                ServiceIdentifier.XSUAA,
                 entry("credential-type", "instance-secret"),
                 entry("clientid", "client-id"),
                 entry("clientsecret", "client-secret"),
                 entry("url", PROVIDER_URL));
         private static final ServiceBinding X509_BINDING =
             bindingWithCredentials(
-                ServiceIdentifier.of("xsuaa"),
+                ServiceIdentifier.XSUAA,
                 entry("credential-type", "x509"),
                 entry("clientid", "client-id"),
                 entry("key", "key"),

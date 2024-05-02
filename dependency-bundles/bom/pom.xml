@@ -36,7 +36,7 @@
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- do not modify the following line, it is updated by the versioning script -->
 		<sdk.version>5.9.0-SNAPSHOT</sdk.version>
-		<service-binding.version>0.10.4</service-binding.version>
+		<service-binding.version>0.10.5</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.2.4</httpcore5.version>

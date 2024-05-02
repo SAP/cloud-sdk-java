@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 class BtpServicePropertySuppliers
 {
     static final OAuth2PropertySupplierResolver XSUAA =
-        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("xsuaa"), Xsuaa::new);
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.XSUAA, Xsuaa::new);
 
     static final OAuth2PropertySupplierResolver DESTINATION =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.DESTINATION, Destination::new);
