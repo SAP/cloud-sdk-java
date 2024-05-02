@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -78,17 +77,19 @@ public final class ServiceBindingDestinationOptions
                 .getServiceBindings()
                 .stream()
                 .filter(binding -> identifier.equals(binding.getServiceIdentifier().orElse(null)))
-                .collect(Collectors.toList());
+                .toList();
 
         if( bindings.isEmpty() ) {
-            throw new DestinationAccessException("Could not find any matching service bindings for " + identifier);
+            throw new DestinationAccessException(
+                "Could not find any matching service bindings for service identifier '" + identifier + "'");
         }
 
         if( bindings.size() > 1 ) {
             throw new DestinationAccessException(
-                identifier
-                    + " is ambiguous in this context since multiple service bindings were found matching this identifier. "
-                    + "Please make sure only a single instance is bound, or use .usingBinding(..) to pass a service binding explicitly.");
+                "'"
+                    + identifier
+                    + "' is ambiguous in this context since multiple service bindings were found matching this identifier. "
+                    + "Please make sure only a single instance is bound, or use .forService(ServiceBinding binding) to pass a service binding explicitly.");
         }
         return forService(bindings.get(0));
     }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -29,7 +30,7 @@ class DestinationKeyStoreComparator
      *            The KeyStore to calculate the hash code for.
      * @return The key-store hash code dynamically computed on behalf of stored certificates.
      */
-    static int resolveKeyStoreHashCode( @Nonnull final KeyStore ks )
+    static int resolveKeyStoreHashCode( @Nullable final KeyStore ks )
     {
         final HashCodeBuilder out = new HashCodeBuilder(INITIAL_HASH_CODE, 37);
         final Certificate[] certificates = resolveCertificatesOnly(ks);
@@ -45,8 +46,12 @@ class DestinationKeyStoreComparator
      * @return An array with certificates, or empty in case of error or non-certificate based keystore entries.
      */
     @Nonnull
-    static Certificate[] resolveCertificatesOnly( @Nonnull final KeyStore ks )
+    static Certificate[] resolveCertificatesOnly( @Nullable final KeyStore ks )
     {
+        if( ks == null ) {
+            return new Certificate[0];
+        }
+
         final ArrayList<Certificate> out = new ArrayList<>();
         try {
             final Enumeration<String> aliases = ks.aliases();

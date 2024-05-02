@@ -4,8 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
@@ -22,6 +22,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessRulesOptions;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.WorkflowOptions;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -33,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 
 class BtpServicePropertySuppliers
 {
+    static final OAuth2PropertySupplierResolver XSUAA =
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("xsuaa"), Xsuaa::new);
+
     static final OAuth2PropertySupplierResolver DESTINATION =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.DESTINATION, Destination::new);
 
@@ -83,6 +87,7 @@ class BtpServicePropertySuppliers
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
     static {
+        DEFAULT_SERVICE_RESOLVERS.add(XSUAA);
         DEFAULT_SERVICE_RESOLVERS.add(DESTINATION);
         DEFAULT_SERVICE_RESOLVERS.add(CONNECTIVITY);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_RULES);
@@ -95,6 +100,21 @@ class BtpServicePropertySuppliers
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
     {
         return new ArrayList<>(DEFAULT_SERVICE_RESOLVERS);
+    }
+
+    private static class Xsuaa extends DefaultOAuth2PropertySupplier
+    {
+        public Xsuaa( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, List.of());
+        }
+
+        @Nonnull
+        @Override
+        public URI getServiceUri()
+        {
+            return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
+        }
     }
 
     private static class Destination extends DefaultOAuth2PropertySupplier
@@ -149,7 +169,7 @@ class BtpServicePropertySuppliers
         @Override
         public URI getServiceUri()
         {
-            return options.getOption(IasTargetUri.class).getOrElse(super::getServiceUri);
+            return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
         }
 
         @Nonnull
@@ -174,6 +194,8 @@ class BtpServicePropertySuppliers
                 oAuth2OptionsBuilder.withSkipTokenRetrieval(true);
             } else {
                 attachIasCommunicationOptions(oAuth2OptionsBuilder);
+                oAuth2OptionsBuilder
+                    .withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
             }
             attachClientKeyStore(oAuth2OptionsBuilder);
 
@@ -247,6 +269,9 @@ class BtpServicePropertySuppliers
         private KeyStore getClientKeyStore()
         {
             final ClientIdentity clientIdentity = getClientIdentity();
+            if( clientIdentity instanceof ZtisClientIdentity ) {
+                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
+            }
             if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;
             }

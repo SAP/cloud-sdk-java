@@ -1,41 +1,50 @@
 name: dependabot merger
 
 on:
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '13 10 * * Mon' # trigger every Monday at 10:13, as our dependabot is configured to raise PRs every Monday at 8:00 a.m.
 
+env:
+  DEPENDABOT_GROUPS: |
+    production-minor-patch group
+    plugins group
+    test group
+    github-actions group
 jobs:
-  review-pr:
+  review-prs:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' &&
-      github.event_name == 'pull_request' }}
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - name: dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v1.6.0
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-      - name: "Prepare git"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Approve and Merge PRs
         run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
-      - name: comment major updates
-        if : ${{steps.metadata.outputs.update-type == 'version-update:semver-major' }}
-        run: |
-          gh pr comment $PR_URL --body "PR **not approved** because it includes a major update of a dependency"
-          gh pr edit $PR_URL --add-label "please review"
+          PRS=$(gh pr list --app "dependabot" --state "open" --json number,title)
+          PR_NUMBERS=
+          while IFS= read -r GROUP; do
+            if [[ -z "$GROUP" ]]; then
+              continue
+            fi
+          
+            MATCHES=$(jq -r --arg group "$GROUP" '.[] | select(.title | contains($group)) | .number' <<< "$PRS")
+            echo "[DEBUG] Found PRs for group '$GROUP': '$MATCHES'"
+          
+            PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
+          done <<< "${{ env.DEPENDABOT_GROUPS }}"
+          echo "[DEBUG] Approving and Merging following PRs: '$PR_NUMBERS'"
+          
+          while IFS= read -r PR_NUMBER; do
+            if [[ -z "$PR_NUMBER" ]]; then
+              continue
+            fi
+            
+            echo "[DEBUG] Approving and Merging PR #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --auto --squash
+            gh pr review "$PR_NUMBER" --approve
+          done <<< "$PR_NUMBERS"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR}}
-      - name: approve and merge
-        if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --squash "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR}}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.7.0-SNAPSHOT</version>
+		<version>5.9.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-oauth</artifactId>
 	<name>OAuth2 Connectivity</name>
@@ -44,6 +44,18 @@
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-ztis</artifactId>
+			<!-- connectivity-ztis brings some dependencies we don't want for applications that don't need it.
+			 Setting this to optional means ztis won't come transitively when including oauth.
+			 Users will have to include ztis manually. -->
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
@@ -122,6 +134,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -137,11 +153,6 @@
 		<dependency>
 			<groupId>com.sap.cloud.environment.servicebinding.api</groupId>
 			<artifactId>java-access-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-			<artifactId>connectivity-apache-httpclient4</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

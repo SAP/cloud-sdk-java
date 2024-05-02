@@ -255,6 +255,40 @@ class SingleValueActionRequestBuilderTest
     }
 
     @Test
+    void testActionWithEntityParameterNull()
+    {
+        final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);
+        final String actionRequestBody = readResourceFile("ActionNullEntityRequestBody.json");
+
+        stubFor(post(urlPathEqualTo(actionRequestUrl)).willReturn(okJson("{ \"Name\" : \"Tester\" }")));
+
+        final Map<String, Object> actionParameters = new LinkedHashMap<>();
+        actionParameters.put("entityParameter", null);
+
+        final SingleValueActionRequestBuilder<TestEntity> sut =
+            new SingleValueActionRequestBuilder<>(
+                DEFAULT_SERVICE_PATH,
+                ODATA_ACTION,
+                actionParameters,
+                TestEntity.class);
+        final ActionResponseSingle<TestEntity> actualResponse = sut.execute(destination);
+
+        verify(
+            postRequestedFor(urlEqualTo(actionRequestUrl))
+                .withHeader("Content-Type", equalTo("application/json"))
+                .withRequestBody(equalToJson(actionRequestBody)));
+
+        verify(
+            1,
+            headRequestedFor(urlEqualTo(DEFAULT_SERVICE_PATH))
+                .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getResponseResult().get().getName()).isEqualTo("Tester");
+        assertThat(actualResponse.getResponseStatusCode()).isEqualTo(200);
+    }
+
+    @Test
     void testActionWithComplexTypeParameterComplexTypeResponse()
     {
         final String actionRequestUrl = String.format("%s/%s", DEFAULT_SERVICE_PATH, ODATA_ACTION);

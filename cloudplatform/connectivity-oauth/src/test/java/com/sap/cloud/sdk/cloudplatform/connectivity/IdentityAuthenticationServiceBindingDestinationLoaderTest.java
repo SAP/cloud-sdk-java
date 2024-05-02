@@ -1,11 +1,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.IDENTITY_AUTHENTICATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -23,8 +25,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -37,23 +39,48 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 
 import io.vavr.control.Try;
 
-@Isolated( "because the tests manipulate the global default ServiceBindingAccessor" )
+@Isolated( "because the test manipulates the global default ServiceBindingAccessor" )
 class IdentityAuthenticationServiceBindingDestinationLoaderTest
 {
     private static final ServiceIdentifier SERVICE_IDENTIFIER = ServiceIdentifier.of("test-service");
-    private static final DefaultServiceBinding IDENTITY_BINDING =
+    private static final DefaultServiceBinding EMPTY_IDENTITY_BINDING =
         DefaultServiceBinding.builder().copy(Map.of()).withServiceIdentifier(IDENTITY_AUTHENTICATION).build();
 
-    @BeforeAll
-    static void mockIasBinding()
+    @BeforeEach
+    void mockIasBinding()
     {
-        DefaultServiceBindingAccessor.setInstance(() -> List.of(IDENTITY_BINDING));
+        DefaultServiceBindingAccessor.setInstance(() -> List.of(EMPTY_IDENTITY_BINDING));
     }
 
-    @AfterAll
-    static void resetServiceBindingAccessor()
+    @AfterEach
+    void resetServiceBindingAccessor()
     {
         DefaultServiceBindingAccessor.setInstance(null);
+    }
+
+    @Test
+    void testChainPicksUpIdentityLoader()
+    {
+        // sanity check
+        final ServiceBindingDestinationLoader chain = ServiceBindingDestinationLoader.defaultLoaderChain();
+        assertThat(chain).isInstanceOf(DefaultServiceBindingDestinationLoaderChain.class);
+
+        final List<ServiceBindingDestinationLoader> loaders =
+            ((DefaultServiceBindingDestinationLoaderChain) chain).getDelegateLoaders();
+        assertThat(loaders)
+            .describedAs("Expect the IAS loader to be present")
+            .hasAtLeastOneElementOfType(IdentityAuthenticationServiceBindingDestinationLoader.class);
+
+        final IdentityAuthenticationServiceBindingDestinationLoader loader =
+            loaders
+                .stream()
+                .filter(IdentityAuthenticationServiceBindingDestinationLoader.class::isInstance)
+                .map(IdentityAuthenticationServiceBindingDestinationLoader.class::cast)
+                .findAny()
+                .get();
+        assertThat(loader.getDelegateLoader())
+            .describedAs("The IAS loader should itself reference the chain")
+            .isSameAs(chain);
     }
 
     @Test
@@ -62,9 +89,9 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final ServiceBinding binding = enhanceMinimalBinding();
 
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
-            assertThat(delegateOptions.getServiceBinding()).isSameAs(IDENTITY_BINDING);
+            assertThat(delegateOptions.getServiceBinding()).isSameAs(EMPTY_IDENTITY_BINDING);
             assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-            assertThat(delegateOptions.getOption(IasTargetUri.class)).containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(TargetUri.class)).containsExactly(URI.create("https://foo.uri"));
             assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).isEmpty();
             assertThat(delegateOptions.getOption(IasCommunicationOptions.class)).isEmpty();
         });
@@ -182,24 +209,85 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
     void testNoEndpoints()
     {
         final ServiceBinding binding =
-            bindingWithCredentials(IDENTITY_AUTHENTICATION, entry("authentication-service.service-label", "identity"));
-
-        final ServiceBindingDestinationLoader delegate = mock(ServiceBindingDestinationLoader.class);
-
-        final IdentityAuthenticationServiceBindingDestinationLoader sut =
-            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+            bindingWithCredentials(SERVICE_IDENTIFIER, entry("authentication-service.service-label", "identity"));
 
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
                 .forService(binding)
                 .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
                 .build();
+
+        final ServiceBindingDestinationLoader delegate = mock(ServiceBindingDestinationLoader.class);
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader(delegate);
+
         final Try<HttpDestination> result = sut.tryGetDestination(options);
 
         assertThat(result.isFailure()).isTrue();
         assertThat(result.getCause()).isExactlyInstanceOf(DestinationAccessException.class);
 
         verify(delegate, never()).tryGetDestination(any());
+    }
+
+    @Test
+    void testNoIasBindingPresent()
+    {
+        // clear the IAS binding that is mocked by default for this test
+        DefaultServiceBindingAccessor.setInstance(null);
+
+        final ServiceBinding binding = enhanceMinimalBinding();
+        final ServiceBindingDestinationOptions opts = ServiceBindingDestinationOptions.forService(binding).build();
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader();
+
+        assertThatThrownBy(() -> sut.getDestination(opts))
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining(
+                "Failed to create a destination for service '%s' using IAS OAuth credentials",
+                SERVICE_IDENTIFIER.toString())
+            .hasCauseInstanceOf(DestinationAccessException.class)
+            .hasRootCauseMessage("Could not find any matching service bindings for service identifier 'identity'");
+    }
+
+    @Test
+    void testIasDestinationLoadingFails()
+    {
+        // the mocked IAS binding is empty, so the delegateLoader within 'sut' should return a DestinationNotFoundException
+        final ServiceBinding binding = enhanceMinimalBinding();
+        final ServiceBindingDestinationOptions opts = ServiceBindingDestinationOptions.forService(binding).build();
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader();
+
+        assertThatThrownBy(() -> sut.getDestination(opts))
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining(
+                "Failed to create a destination for service '%s' using IAS OAuth credentials",
+                SERVICE_IDENTIFIER.toString())
+            .hasCauseInstanceOf(DestinationNotFoundException.class);
+    }
+
+    @Test
+    void testIasDestinationLoadingSucceeds()
+    {
+        final DefaultServiceBinding iasBinding =
+            DefaultServiceBinding
+                .builder()
+                .copy(Map.of())
+                .withServiceIdentifier(IDENTITY_AUTHENTICATION)
+                .withCredentials(
+                    Map.of("clientid", "foo", "clientsecret", "bar", "url", "https://foo.com", "app_tid", "provider"))
+                .build();
+        DefaultServiceBindingAccessor.setInstance(() -> List.of(iasBinding));
+
+        final ServiceBinding binding = enhanceMinimalBinding();
+        final ServiceBindingDestinationOptions opts = ServiceBindingDestinationOptions.forService(binding).build();
+
+        final IdentityAuthenticationServiceBindingDestinationLoader sut =
+            new IdentityAuthenticationServiceBindingDestinationLoader();
+
+        assertThatCode(() -> sut.getDestination(opts)).doesNotThrowAnyException();
     }
 
     @SuppressWarnings( { "unchecked", "varargs" } )
@@ -212,7 +300,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         allEntries.add(entry("endpoints.foo.uri", "https://foo.uri"));
         allEntries.addAll(Arrays.stream(additionalEntries).toList());
 
-        return bindingWithCredentials(IDENTITY_AUTHENTICATION, allEntries.toArray(Map.Entry[]::new));
+        return bindingWithCredentials(SERVICE_IDENTIFIER, allEntries.toArray(Map.Entry[]::new));
     }
 
     @Nonnull

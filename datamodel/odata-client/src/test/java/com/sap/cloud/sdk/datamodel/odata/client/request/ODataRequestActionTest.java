@@ -86,6 +86,7 @@ class ODataRequestActionTest
         actionParameters.put("booleanParameter", true);
         actionParameters.put("integerParameter", 9000);
         actionParameters.put("decimalParameter", 3.14d);
+        actionParameters.put("nullParameter", null);
         final ODataRequestAction request =
             new ODataRequestAction(
                 ODATA_SERVICE_PATH,
