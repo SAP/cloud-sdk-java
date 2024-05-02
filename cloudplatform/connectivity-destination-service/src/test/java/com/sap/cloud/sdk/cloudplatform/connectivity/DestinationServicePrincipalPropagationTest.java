@@ -124,8 +124,9 @@ class DestinationServicePrincipalPropagationTest
         // assertions
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThatThrownBy(((DefaultHttpDestination) result)::getHeaders)
-            .isInstanceOf(AuthTokenAccessException.class)
-            .hasMessage("Failed to get current authorization token.");
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("Failed to get current authorization token.")
+            .hasCauseInstanceOf(AuthTokenAccessException.class);
 
         // assert mocks
         verify(destinationServiceAdapter)
@@ -184,8 +185,9 @@ class DestinationServicePrincipalPropagationTest
         // assertion
         assertThat(result).isInstanceOf(DefaultHttpDestination.class);
         assertThatThrownBy(((DefaultHttpDestination) result)::getHeaders)
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessage(
+            .isInstanceOf(DestinationAccessException.class)
+            .hasCauseInstanceOf(IllegalStateException.class)
+            .hasMessageContaining(
                 "Tenant ID of destination 'test' does not match the current tenant ID. Destination was created specifically for tenant '', but the current tenant is 'subscriber'.");
 
         // assert mocks
@@ -297,7 +299,7 @@ class DestinationServicePrincipalPropagationTest
             final Consumer<Try<Collection<Header>>> assertHeaders = headers -> {
                 final String descr = "Expecting header error for dest tenant %s, runtime tenant %s and strategy %s.";
                 assertThat(headers).describedAs(descr, destinationTenant, runtimeTenant, strategy).isEmpty();
-                assertThat(headers.getCause()).isInstanceOf(IllegalStateException.class);
+                assertThat(headers.getCause()).hasCauseInstanceOf(IllegalStateException.class);
             };
             return new Case(destinationTenant, runtimeTenant, options.build(), assertDestination, assertHeaders);
         }
