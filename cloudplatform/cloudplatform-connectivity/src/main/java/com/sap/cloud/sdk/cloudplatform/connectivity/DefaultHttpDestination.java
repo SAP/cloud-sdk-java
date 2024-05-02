@@ -194,7 +194,7 @@ public final class DefaultHttpDestination implements HttpDestination
         final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
 
         final List<Header> result = new ArrayList<>();
-        for( DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {
+        for( final DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {
             try {
                 result.addAll(headerProvider.getHeaders(requestContext));
             }
