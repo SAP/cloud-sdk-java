@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.sap.cloud.sdk.cloudplatform.thread.DefaultThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
@@ -21,6 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutor;
 
 import io.vavr.control.Try;
 
+@Isolated( "Manipulates the global BasicAuthenticationFacade" )
 class BasicAuthenticationThreadContextListenerTest
 {
     private static final String USERNAME = "username";
@@ -81,6 +84,9 @@ class BasicAuthenticationThreadContextListenerTest
     {
         when(mockFacade.tryGetBasicCredentials()).thenReturn(Try.success(BASIC_CREDENTIALS));
 
+        // sanity check: there is no parent context
+        assertThat(ThreadContextAccessor.tryGetCurrentContext()).isEmpty();
+
         final DefaultThreadContext contextToFill = new DefaultThreadContext();
         new BasicAuthenticationThreadContextListener().afterInitialize(contextToFill);
 
@@ -93,14 +99,24 @@ class BasicAuthenticationThreadContextListenerTest
     @Test
     void afterInitializeShouldGetBasicCredentialsFromAccessorOnEmptyParentContext()
     {
-        when(mockFacade.tryGetBasicCredentials()).thenReturn(Try.success(BASIC_CREDENTIALS));
+        ThreadContextExecutor.fromNewContext().execute(() -> {
+            // sanity check: there is a parent context, but it is empty
+            assertThat(
+                ThreadContextAccessor
+                    .getCurrentContext()
+                    .getPropertyValue(BasicAuthenticationThreadContextListener.PROPERTY_BASIC_AUTH_HEADER))
+                .isEmpty();
+            when(mockFacade.tryGetBasicCredentials()).thenReturn(Try.success(BASIC_CREDENTIALS));
 
-        final ThreadContext contextToFill = new DefaultThreadContext();
-        new BasicAuthenticationThreadContextListener().afterInitialize(contextToFill);
+            final DefaultThreadContext contextToFill = new DefaultThreadContext();
+            new BasicAuthenticationThreadContextListener().afterInitialize(contextToFill);
 
-        assertThat(
-            contextToFill.getPropertyValue(BasicAuthenticationThreadContextListener.PROPERTY_BASIC_AUTH_HEADER).get())
+            assertThat(
+                contextToFill
+                    .getPropertyValue(BasicAuthenticationThreadContextListener.PROPERTY_BASIC_AUTH_HEADER)
+                    .get())
                 .isEqualTo(BASIC_CREDENTIALS);
-        verify(mockFacade).tryGetBasicCredentials();
+            verify(mockFacade, atLeast(1)).tryGetBasicCredentials();
+        });
     }
 }
