@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -194,11 +193,19 @@ public final class DefaultHttpDestination implements HttpDestination
 
         final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
 
-        return aggregatedHeaderProviders
-            .stream()
-            .map(headerProvider -> headerProvider.getHeaders(requestContext))
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+        final List<Header> result = new ArrayList<>();
+        for( final DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {
+            try {
+                result.addAll(headerProvider.getHeaders(requestContext));
+            }
+            catch( final Exception e ) {
+                final String err =
+                    "Header provider '%s' threw an exception: %s"
+                        .formatted(headerProvider.getClass().getSimpleName(), e.getMessage());
+                throw new DestinationAccessException(err, e);
+            }
+        }
+        return result;
     }
 
     private Collection<Header> getHeadersForAuthType()

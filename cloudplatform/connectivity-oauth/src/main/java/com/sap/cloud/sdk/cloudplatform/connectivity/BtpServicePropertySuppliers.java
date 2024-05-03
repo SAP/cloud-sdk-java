@@ -4,8 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
@@ -34,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 
 class BtpServicePropertySuppliers
 {
+    static final OAuth2PropertySupplierResolver XSUAA =
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("xsuaa"), Xsuaa::new);
+
     static final OAuth2PropertySupplierResolver DESTINATION =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.DESTINATION, Destination::new);
 
@@ -84,6 +87,7 @@ class BtpServicePropertySuppliers
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
     static {
+        DEFAULT_SERVICE_RESOLVERS.add(XSUAA);
         DEFAULT_SERVICE_RESOLVERS.add(DESTINATION);
         DEFAULT_SERVICE_RESOLVERS.add(CONNECTIVITY);
         DEFAULT_SERVICE_RESOLVERS.add(BUSINESS_RULES);
@@ -96,6 +100,21 @@ class BtpServicePropertySuppliers
     static List<OAuth2PropertySupplierResolver> getDefaultServiceResolvers()
     {
         return new ArrayList<>(DEFAULT_SERVICE_RESOLVERS);
+    }
+
+    private static class Xsuaa extends DefaultOAuth2PropertySupplier
+    {
+        public Xsuaa( @Nonnull final ServiceBindingDestinationOptions options )
+        {
+            super(options, List.of());
+        }
+
+        @Nonnull
+        @Override
+        public URI getServiceUri()
+        {
+            return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
+        }
     }
 
     private static class Destination extends DefaultOAuth2PropertySupplier
@@ -150,7 +169,7 @@ class BtpServicePropertySuppliers
         @Override
         public URI getServiceUri()
         {
-            return options.getOption(IasTargetUri.class).getOrElse(super::getServiceUri);
+            return options.getOption(TargetUri.class).getOrElse(super::getServiceUri);
         }
 
         @Nonnull

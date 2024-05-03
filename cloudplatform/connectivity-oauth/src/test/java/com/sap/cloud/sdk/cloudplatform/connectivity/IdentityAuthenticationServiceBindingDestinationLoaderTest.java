@@ -1,8 +1,8 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.IDENTITY_AUTHENTICATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasTargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.NoTokenForTechnicalProviderUser;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,7 +91,7 @@ class IdentityAuthenticationServiceBindingDestinationLoaderTest
         final ServiceBindingDestinationLoader delegate = mockDelegateLoader(delegateOptions -> {
             assertThat(delegateOptions.getServiceBinding()).isSameAs(EMPTY_IDENTITY_BINDING);
             assertThat(delegateOptions.getOnBehalfOf()).isEqualTo(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-            assertThat(delegateOptions.getOption(IasTargetUri.class)).containsExactly(URI.create("https://foo.uri"));
+            assertThat(delegateOptions.getOption(TargetUri.class)).containsExactly(URI.create("https://foo.uri"));
             assertThat(delegateOptions.getOption(NoTokenForTechnicalProviderUser.class)).isEmpty();
             assertThat(delegateOptions.getOption(IasCommunicationOptions.class)).isEmpty();
         });

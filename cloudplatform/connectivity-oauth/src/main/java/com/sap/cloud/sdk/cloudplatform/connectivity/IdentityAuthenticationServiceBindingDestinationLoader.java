@@ -113,7 +113,7 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         }
         optionsBuilder
             .onBehalfOf(options.getOnBehalfOf())
-            .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
+            .withOption(BtpServiceOptions.AuthenticationServiceOptions.withTargetUri(endpoint.uri));
 
         if( !endpoint.alwaysRequiresToken ) {
             optionsBuilder.withOption(BtpServiceOptions.IasOptions.withoutTokenForTechnicalProviderUser());
