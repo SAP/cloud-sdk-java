@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Timeout;
 
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener;
+import com.sap.cloud.sdk.cloudplatform.security.BasicAuthenticationThreadContextListener;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalThreadContextListener;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
@@ -75,7 +76,8 @@ class ThreadContextTest
             .contains(
                 RequestHeaderThreadContextListener.class,
                 TenantThreadContextListener.class,
-                PrincipalThreadContextListener.class);
+                PrincipalThreadContextListener.class,
+                BasicAuthenticationThreadContextListener.class);
     }
 
     @Test
