@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
@@ -134,7 +133,7 @@ public class DestinationService implements DestinationLoader
             DestinationNotFoundException
     {
         final String servicePath = PATH_DEFAULT + destName;
-        final Function<Strategy, DestinationServiceV1Response> destinationRetriever =
+        final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever =
             strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
 
         final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
@@ -147,12 +146,11 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
+    DestinationServiceV1Response
+        retrieveDestination( final DestinationRetrievalStrategy strategy, final String servicePath )
     {
-        final String response =
-            strategy.isForwardToken()
-                ? adapter.getConfigurationAsJsonWithUserToken(servicePath, strategy.getBehalf())
-                : adapter.getConfigurationAsJson(servicePath, strategy.getBehalf());
+        final String response = adapter.getConfigurationAsJson(servicePath, strategy);
+
         return deserializeDestinationResponse(response);
     }
 
@@ -312,7 +310,8 @@ public class DestinationService implements DestinationLoader
         getAndDeserializeDestinations( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
             throws DestinationAccessException
     {
-        final String json = adapter.getConfigurationAsJson(servicePath, behalf);
+        final String json =
+            adapter.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(behalf));
         return Streams
             .stream(GSON.fromJson(json, JsonElement.class).getAsJsonArray())
             .map(jsonElement -> (Map<String, Object>) GSON.fromJson(jsonElement, Map.class))
