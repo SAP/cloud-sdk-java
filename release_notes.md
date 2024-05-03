@@ -29,4 +29,4 @@
 
 ### 🐛 Fixed Issues
 
-- Fix a regression that was introduced with the SAP Cloud SDK 5.0 release where the principal would no longer be derived from a `Basic` authorization header, in cases where neither a JWT nor an OIDC was present.
+- Fix a regression that was introduced with the SAP Cloud SDK 5.0 release where the principal would no longer be derived from a `Basic` authorization header, in cases where neither a JWT nor an OIDC token was present.
