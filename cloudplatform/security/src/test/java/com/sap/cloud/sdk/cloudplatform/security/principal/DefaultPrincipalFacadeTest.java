@@ -1,6 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.security.principal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Base64;
 import java.util.Map;
@@ -23,7 +23,7 @@ class DefaultPrincipalFacadeTest
                 final PrincipalFacade sut = new DefaultPrincipalFacade();
                 final Principal principal = sut.tryGetCurrentPrincipal().get();
 
-                assertEquals("username", principal.getPrincipalId());
+                assertThat(principal.getPrincipalId()).isEqualTo("username");
             });
     }
 }
