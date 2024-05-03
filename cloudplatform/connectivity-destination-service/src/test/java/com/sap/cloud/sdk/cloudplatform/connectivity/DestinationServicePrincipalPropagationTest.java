@@ -12,6 +12,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOpt
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +82,7 @@ class DestinationServicePrincipalPropagationTest
     @BeforeEach
     void setupConnectivity( @Nonnull final WireMockRuntimeInfo wm )
     {
+        Assertions.setMaxStackTraceElementsDisplayed(200);
         final ImmutableMap<String, Object> credentials =
             ImmutableMap
                 .<String, Object> builder()
@@ -98,9 +101,7 @@ class DestinationServicePrincipalPropagationTest
 
         DefaultServiceBindingAccessor.setInstance(() -> List.of(connectivityService));
 
-        doReturn(DESTINATION)
-            .when(destinationServiceAdapter)
-            .getConfigurationAsJson(anyString(), any(OnBehalfOf.class));
+        doReturn(DESTINATION).when(destinationServiceAdapter).getConfigurationAsJson(anyString(), any());
 
         stubFor(
             post("/xsuaa/oauth/token")
@@ -130,7 +131,9 @@ class DestinationServicePrincipalPropagationTest
 
         // assert mocks
         verify(destinationServiceAdapter)
-            .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+            .getConfigurationAsJson(
+                contains("test"),
+                eq(DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)));
     }
 
     @Test
@@ -166,8 +169,9 @@ class DestinationServicePrincipalPropagationTest
         WireMock.verify(1, postRequestedFor(anyUrl()));
 
         // assert mocks
-        verify(destinationServiceAdapter)
-            .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        final DestinationRetrievalStrategy expectedStrategy =
+            DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 
     @Test
@@ -191,8 +195,9 @@ class DestinationServicePrincipalPropagationTest
                 "Tenant ID of destination 'test' does not match the current tenant ID. Destination was created specifically for tenant '', but the current tenant is 'subscriber'.");
 
         // assert mocks
-        verify(destinationServiceAdapter)
-            .getConfigurationAsJson(contains("test"), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        final DestinationRetrievalStrategy expectedStrategy =
+            DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter).getConfigurationAsJson(contains("test"), eq(expectedStrategy));
     }
 
     @Test

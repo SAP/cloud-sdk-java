@@ -8,6 +8,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.BA
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.CLIENT_CERTIFICATE_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.NO_AUTHENTICATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_JWT_BEARER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_REFRESH_TOKEN;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.PRINCIPAL_PROPAGATION;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType.SAML_ASSERTION;
@@ -29,6 +30,7 @@ class AuthenticationTypeTest
         assertThat(CLIENT_CERTIFICATE_AUTHENTICATION.getIdentifier()).isEqualTo("ClientCertificateAuthentication");
         assertThat(OAUTH2_JWT_BEARER.getIdentifier()).isEqualTo("OAuth2JWTBearer");
         assertThat(SAML_ASSERTION.getIdentifier()).isEqualTo("SAMLAssertion");
+        assertThat(OAUTH2_REFRESH_TOKEN.getIdentifier()).isEqualTo("OAuth2RefreshToken");
     }
 
     @Test
@@ -44,6 +46,7 @@ class AuthenticationTypeTest
         assertThat(AuthenticationType.ofIdentifier("ClientCertificateAuthentication"))
             .isEqualTo(CLIENT_CERTIFICATE_AUTHENTICATION);
         assertThat(AuthenticationType.ofIdentifier("SAMLAssertion")).isEqualTo(SAML_ASSERTION);
+        assertThat(AuthenticationType.ofIdentifier("OAuth2RefreshToken")).isEqualTo(OAUTH2_REFRESH_TOKEN);
     }
 
     @Test

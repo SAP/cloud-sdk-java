@@ -82,7 +82,12 @@ public enum AuthenticationType
     /**
      * SDK specific authentication type to forward a given current Authentication Token directly to the destination
      */
-    TOKEN_FORWARDING("TokenForwarding");
+    TOKEN_FORWARDING("TokenForwarding"),
+
+    /**
+     * OAuth2RefreshToken
+     */
+    OAUTH2_REFRESH_TOKEN("OAuth2RefreshToken");
 
     @Getter
     private final String identifier;
