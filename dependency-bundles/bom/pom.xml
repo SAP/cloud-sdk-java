@@ -36,7 +36,7 @@
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- do not modify the following line, it is updated by the versioning script -->
 		<sdk.version>5.9.0-SNAPSHOT</sdk.version>
-		<service-binding.version>0.10.4</service-binding.version>
+		<service-binding.version>0.10.5</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.2.4</httpcore5.version>
@@ -264,13 +264,13 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.42.0</version>
+				<version>3.43.0</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.27.0</version>
+				<version>2.27.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
