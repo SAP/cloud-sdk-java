@@ -70,17 +70,11 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
         throwExceptionsBasedOnSoapResponsePayload( final String responsePayload )
     {
         if( responsePayload != null
-            && responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV) ) {
+            && responsePayload.contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV) ) {
             final String prefix = HttpStatus.SC_INTERNAL_SERVER_ERROR + " Internal Server Error. ";
 
             if( responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV
-                        + ":Server</faultcode>") ) {
+                .contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV + ":Server</faultcode>") ) {
                 final String message =
                     prefix
                         + "The ERP user lacks authorization to call the SOAP service (Authorization Object S_SERVICE). "
@@ -90,10 +84,7 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
             }
 
             if( responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV
-                        + ":Client</faultcode>") ) {
+                .contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV + ":Client</faultcode>") ) {
                 String exceptionName = "";
                 Pattern pattern = Pattern.compile("<Name>(.+?)</Name>");
                 Matcher matcher = pattern.matcher(responsePayload);
@@ -109,7 +100,7 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
                 }
 
                 final StringBuilder messageStringBuilder =
-                    new StringBuilder(prefix + " Exception occurred during execution of SOAP service.");
+                    new StringBuilder(prefix).append(" Exception occurred during execution of SOAP service.");
 
                 if( !exceptionName.isEmpty() ) {
                     messageStringBuilder.append(" Exception Name: ").append(exceptionName).append(".");

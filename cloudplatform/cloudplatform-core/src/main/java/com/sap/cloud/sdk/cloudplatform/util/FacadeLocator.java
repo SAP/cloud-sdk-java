@@ -119,7 +119,7 @@ public class FacadeLocator
     @Nonnull
     public static MockableInstance getMockableInstance()
     {
-        return FacadeLocator.mockableInstance;
+        return mockableInstance;
     }
 
     /**

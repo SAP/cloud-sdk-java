@@ -81,10 +81,6 @@ public enum DestinationServiceTokenExchangeStrategy
     @Nullable
     static DestinationServiceTokenExchangeStrategy ofIdentifier( @Nullable final String identifier )
     {
-        return Stream
-            .of(DestinationServiceTokenExchangeStrategy.values())
-            .filter(s -> s.getIdentifier().equalsIgnoreCase(identifier))
-            .findFirst()
-            .orElse(null);
+        return Stream.of(values()).filter(s -> s.getIdentifier().equalsIgnoreCase(identifier)).findFirst().orElse(null);
     }
 }

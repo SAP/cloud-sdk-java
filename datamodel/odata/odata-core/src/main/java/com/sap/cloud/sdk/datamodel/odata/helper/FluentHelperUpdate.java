@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -199,10 +200,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     @SafeVarargs
     public final FluentHelperT includingFields( @Nonnull final EntitySelectable<EntityT>... fields )
     {
-        for( final EntitySelectable<EntityT> entityField : fields ) {
-            includedFields.add(entityField);
-        }
-
+        includedFields.addAll(Arrays.asList(fields));
         return getThis();
     }
 
@@ -220,10 +218,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     @SafeVarargs
     public final FluentHelperT excludingFields( @Nonnull final EntitySelectable<EntityT>... fields )
     {
-        for( final EntitySelectable<EntityT> entityField : fields ) {
-            excludedFields.add(entityField);
-        }
-
+        excludedFields.addAll(Arrays.asList(fields));
         return getThis();
     }
 

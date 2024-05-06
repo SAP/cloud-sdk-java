@@ -46,7 +46,7 @@ public class Year extends Number implements Comparable<Year>
     @Override
     public long longValue()
     {
-        return year.longValue();
+        return year;
     }
 
     @Override

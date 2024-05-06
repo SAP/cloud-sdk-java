@@ -41,8 +41,8 @@ final class DwcConfiguration
 
     DwcConfiguration( @Nonnull final Function<String, String> environmentVariableReader )
     {
-        megacliteUrl = Lazy.of(() -> DwcConfiguration.loadMegacliteUri(environmentVariableReader));
-        providerTenant = Lazy.of(() -> DwcConfiguration.loadProviderTenantId(environmentVariableReader));
+        megacliteUrl = Lazy.of(() -> loadMegacliteUri(environmentVariableReader));
+        providerTenant = Lazy.of(() -> loadProviderTenantId(environmentVariableReader));
     }
 
     DwcConfiguration( @Nonnull final URI megacliteUrl, @Nonnull final String providerTenant )

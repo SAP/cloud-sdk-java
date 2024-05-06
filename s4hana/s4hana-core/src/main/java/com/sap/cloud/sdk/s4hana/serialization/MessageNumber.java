@@ -58,7 +58,7 @@ public class MessageNumber implements ErpType<MessageNumber>
     @Nonnull
     public static String toString( @Nonnull final Iterable<RemoteFunctionMessage> messages )
     {
-        final Function<RemoteFunctionMessage, String> function = new Function<RemoteFunctionMessage, String>()
+        final Function<RemoteFunctionMessage, String> function = new Function<>()
         {
             @Nullable
             @Override

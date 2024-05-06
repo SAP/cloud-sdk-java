@@ -12,7 +12,7 @@ class MessageResultReader
 {
     static <RequestResultT extends AbstractRemoteFunctionRequestResult<?, RequestResultT>> void addMessageToResult(
         final RequestResultT result,
-        final com.sap.cloud.sdk.s4hana.connectivity.rfc.AbstractRemoteFunctionRequestResult.MessageResult messageResult )
+        final AbstractRemoteFunctionRequestResult.MessageResult messageResult )
     {
         if( messageResult.getMessageType() == null ) {
             log.warn("Ignoring remote function message with unknown type: {}", messageResult);

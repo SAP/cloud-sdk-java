@@ -127,7 +127,7 @@ final class ODataEntitySerializer
         log.debug("Removing redundant \"versionIdentifier\" recursively from JSON object: {}", jsonObject);
 
         final Predicate<JsonElement> isNullOrString =
-            obj -> obj.isJsonNull() || (obj.isJsonPrimitive()) && obj.getAsJsonPrimitive().isString();
+            obj -> obj.isJsonNull() || obj.isJsonPrimitive() && obj.getAsJsonPrimitive().isString();
 
         traverseJsonObject(
             jsonObject,
