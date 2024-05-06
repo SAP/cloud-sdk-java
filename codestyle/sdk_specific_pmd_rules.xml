@@ -11,7 +11,7 @@
 
     <rule name="CustomLoggerDeclaration" language="java"
           message="Do not manually declare Logger reference."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not manually declare Logger reference. Use Lombok's @Slf4j annotation on class level instead.
         </description>
@@ -54,7 +54,7 @@
 
     <rule name="IncorrectUseOfOptional" language="java"
           message="Do not use Optional for method parameters or member fields."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Optional should only be used as return type, not as method parameter or member field.
         </description>
@@ -101,7 +101,7 @@
     </rule>
     <rule name="UseOfGuavaOptional" language="java"
           message="Guava's Optional is used, use the Java 8 Optional instead."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Guava's Optional is used, use the Java 8 Optional instead.
         </description>
@@ -124,7 +124,7 @@
     </rule>
     <rule name="NullAnnotationMissingOnPublicMethod" language="java"
           message="Public method is not annotated with @Nonnull or @Nullable."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Public method is not annotated with @Nonnull or @Nullable.
             This is beneficial to communicate a clear contract and ensure better interoperability with Kotlin.
@@ -180,7 +180,7 @@
     </rule>
     <rule name="NullAnnotationMissingOnPublicMethodParameter" language="java"
           message="Parameter type of public method is not annotated with @Nonnull or @Nullable."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Parameter type of public method is not annotated with @Nonnull or @Nullable.
             This is beneficial to communicate a clear API contract and it allows for effective argument constraint validation in the IDE.
@@ -225,7 +225,7 @@
     </rule>
     <rule name="NullAnnotationMissingOnPublicConstructorParameter" language="java"
           message="Parameter type of public constructor is not annotated with @Nonnull or @Nullable."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Parameter type of public constructor is not annotated with @Nonnull or @Nullable.
             This is beneficial to communicate a clear API contract and it allows for effective argument constraint validation in the IDE.
@@ -269,7 +269,7 @@
     </rule>
     <rule name="PrematureInstantiationInElseBlock" language="java"
           message="An instance is created in advance as part of an else block declaration."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not unnecessarily compute code in advance, when it's not needed.
             Avoid premature instantiation.
@@ -295,7 +295,7 @@
     </rule>
     <rule name="PrematureComputationOfElseBlock" language="java"
           message="Else block of fluent-API is computed in advance."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not unnecessarily compute code in advance, when it's not needed.
             Instead of invoking the fallback function, reference it as lambda or function reference, e.g. this::fallback
@@ -324,11 +324,9 @@
     <rule ref="category/java/performance.xml/UseStringBufferLength" />
     <rule ref="category/java/performance.xml/UseArraysAsList" />
     <rule ref="category/java/performance.xml/UseArrayListInsteadOfVector" />
-    <rule ref="category/java/performance.xml/UnnecessaryWrapperObjectCreation" />
     <rule ref="category/java/performance.xml/StringInstantiation" />
     <rule ref="category/java/performance.xml/InefficientStringBuffering" />
     <rule ref="category/java/performance.xml/InefficientEmptyStringCheck" />
-    <rule ref="category/java/performance.xml/AvoidUsingShortType" />
     <rule ref="category/java/performance.xml/AvoidFileStream" />
     <rule ref="category/java/performance.xml/AvoidArrayLoops" />
 
@@ -345,8 +343,6 @@
         </properties>
     </rule>
     <rule ref="category/java/codestyle.xml/ControlStatementBraces" />
-    <rule ref="category/java/codestyle.xml/DontImportJavaLang" />
-    <rule ref="category/java/codestyle.xml/DuplicateImports" />
     <rule ref="category/java/codestyle.xml/ExtendsObject" />
     <rule ref="category/java/codestyle.xml/FieldDeclarationsShouldBeAtStartOfClass" />
     <rule ref="category/java/codestyle.xml/FormalParameterNamingConventions" />
@@ -357,13 +353,15 @@
     <rule ref="category/java/codestyle.xml/MethodNamingConventions" />
     <rule ref="category/java/codestyle.xml/NoPackage" />
     <rule ref="category/java/codestyle.xml/PackageCase" />
+    <rule ref="category/java/codestyle.xml/UnnecessaryBoxing" />
+    <rule ref="category/java/codestyle.xml/UnnecessaryImport" />
     <rule ref="category/java/codestyle.xml/UnnecessaryModifier" />
     <rule ref="category/java/codestyle.xml/UnnecessaryReturn" />
     <rule ref="category/java/codestyle.xml/UseDiamondOperator" />
 
     <rule name="WildcardImports" language="java"
     message="Do not use wildcard imports"
-    class="net.sourceforge.pmd.lang.rule.XPathRule">
+    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
     <description>
         Do not use wildcard imports as they clutter the class namespace with unnecessary load of possible imports
     </description>
@@ -393,7 +391,7 @@
 
     <rule name="NoAssertKeyword" language="java"
           message="Do not use the assert keyword in Java."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not use the assert keyword in Java. Check conditions with if and throw meaningful exceptions instead.
         </description>
@@ -416,7 +414,7 @@
 
     <rule name="NoRedundantLogLevelCheck" language="java"
           message="Do not unnecessarily check SLF4J log levels for constant log payload."
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not unnecessarily check log levels for constant log payload. SLF4J internally runs the lookup already.
         </description>
