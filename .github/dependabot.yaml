@@ -31,6 +31,8 @@ updates:
     ignore:
       # updating leads to unintended formatting of POM files
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
+      # updating leads to issues while reading our PMD rule sets (due to a new major PMD version that is being used under-the-hood)
+      - dependency-name: 'org.apache.maven.plugins:maven-pmd-plugin'
       # used by deprecated code only, not worth updating for now
       - dependency-name: 'org.apache.axis2:*'
       # updating currently doesn't work as our rules are not compatible with the latest version
