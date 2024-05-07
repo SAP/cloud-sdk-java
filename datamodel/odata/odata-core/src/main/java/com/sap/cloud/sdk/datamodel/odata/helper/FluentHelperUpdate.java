@@ -198,6 +198,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      */
     @Nonnull
     @SafeVarargs
+    @SuppressWarnings( "varargs" )
     public final FluentHelperT includingFields( @Nonnull final EntitySelectable<EntityT>... fields )
     {
         includedFields.addAll(Arrays.asList(fields));
@@ -216,6 +217,7 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      */
     @Nonnull
     @SafeVarargs
+    @SuppressWarnings( "varargs" )
     public final FluentHelperT excludingFields( @Nonnull final EntitySelectable<EntityT>... fields )
     {
         excludedFields.addAll(Arrays.asList(fields));
