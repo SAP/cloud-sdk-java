@@ -120,7 +120,7 @@
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.5.4</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.23</kotlin.version>
+		<kotlin.version>1.9.24</kotlin.version>
 		<byte-buddy.version>1.14.14</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
