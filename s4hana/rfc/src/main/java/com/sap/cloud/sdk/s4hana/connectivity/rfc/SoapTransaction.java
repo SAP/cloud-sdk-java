@@ -60,14 +60,14 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
         }
         catch( final com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException e ) {
             final com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException alternativeException =
-                throwExceptionsBasedOnSoapResponsePayload(e.getMessage());
+                throwExceptionsBasedOnSoapResponsePayload(e.getMessage(), e);
             throw alternativeException != null ? alternativeException : new RemoteFunctionException(e);
         }
     }
 
     private
         com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
-        throwExceptionsBasedOnSoapResponsePayload( final String responsePayload )
+        throwExceptionsBasedOnSoapResponsePayload( final String responsePayload, @Nonnull final Exception cause )
     {
         if( responsePayload != null
             && responsePayload.contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV) ) {
@@ -80,7 +80,7 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
                         + "The ERP user lacks authorization to call the SOAP service (Authorization Object S_SERVICE). "
                         + responsePayload;
 
-                return new com.sap.cloud.sdk.s4hana.connectivity.exception.AccessDeniedException(message);
+                return new com.sap.cloud.sdk.s4hana.connectivity.exception.AccessDeniedException(message, cause);
             }
 
             if( responsePayload
@@ -110,7 +110,8 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
                 }
 
                 return new com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException(
-                    messageStringBuilder.toString());
+                    messageStringBuilder.toString(),
+                    cause);
             }
         }
         return null;
