@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 public final class ActionResponseCollection<ResultT>
 {
     // lazily evaluated response entity
-    private final AtomicReference<Option<List<ResultT>>> responseResult = new AtomicReference<>();
+    private volatile Option<List<ResultT>> responseResult = null;
+    private final Object responseResultLock = new Object();
 
     @Nonnull
     private final ODataRequestResultGeneric result;
@@ -51,17 +51,14 @@ public final class ActionResponseCollection<ResultT>
     @Nonnull
     public Option<List<ResultT>> getResponseResult()
     {
-        Option<List<ResultT>> value = responseResult.get();
-        if( value == null ) {
-            synchronized( responseResult ) {
-                value = responseResult.get();
-                if( value == null ) {
-                    value = parseEntityFromResponse();
-                    responseResult.set(value);
+        if( responseResult == null ) {
+            synchronized( responseResultLock ) {
+                if( responseResult == null ) {
+                    responseResult = parseEntityFromResponse();
                 }
             }
         }
-        return value;
+        return responseResult;
     }
 
     /**
