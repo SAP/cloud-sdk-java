@@ -60,40 +60,31 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
         }
         catch( final com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException e ) {
             final com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException alternativeException =
-                throwExceptionsBasedOnSoapResponsePayload(e.getMessage());
+                throwExceptionsBasedOnSoapResponsePayload(e.getMessage(), e);
             throw alternativeException != null ? alternativeException : new RemoteFunctionException(e);
         }
     }
 
     private
         com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException
-        throwExceptionsBasedOnSoapResponsePayload( final String responsePayload )
+        throwExceptionsBasedOnSoapResponsePayload( final String responsePayload, @Nonnull final Exception cause )
     {
         if( responsePayload != null
-            && responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV) ) {
+            && responsePayload.contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV) ) {
             final String prefix = HttpStatus.SC_INTERNAL_SERVER_ERROR + " Internal Server Error. ";
 
             if( responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV
-                        + ":Server</faultcode>") ) {
+                .contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV + ":Server</faultcode>") ) {
                 final String message =
                     prefix
                         + "The ERP user lacks authorization to call the SOAP service (Authorization Object S_SERVICE). "
                         + responsePayload;
 
-                return new com.sap.cloud.sdk.s4hana.connectivity.exception.AccessDeniedException(message);
+                return new com.sap.cloud.sdk.s4hana.connectivity.exception.AccessDeniedException(message, cause);
             }
 
             if( responsePayload
-                .contains(
-                    "<faultcode>"
-                        + com.sap.cloud.sdk.s4hana.connectivity.rfc.SoapNamespace.RESPONSE_PREFIX_SOAP_ENV
-                        + ":Client</faultcode>") ) {
+                .contains("<faultcode>" + SoapNamespace.RESPONSE_PREFIX_SOAP_ENV + ":Client</faultcode>") ) {
                 String exceptionName = "";
                 Pattern pattern = Pattern.compile("<Name>(.+?)</Name>");
                 Matcher matcher = pattern.matcher(responsePayload);
@@ -109,7 +100,7 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
                 }
 
                 final StringBuilder messageStringBuilder =
-                    new StringBuilder(prefix + " Exception occurred during execution of SOAP service.");
+                    new StringBuilder(prefix).append(" Exception occurred during execution of SOAP service.");
 
                 if( !exceptionName.isEmpty() ) {
                     messageStringBuilder.append(" Exception Name: ").append(exceptionName).append(".");
@@ -119,7 +110,8 @@ public class SoapTransaction<RequestT extends AbstractRemoteFunctionRequest<Requ
                 }
 
                 return new com.sap.cloud.sdk.s4hana.connectivity.exception.RequestExecutionException(
-                    messageStringBuilder.toString());
+                    messageStringBuilder.toString(),
+                    cause);
             }
         }
         return null;

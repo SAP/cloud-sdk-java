@@ -325,7 +325,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     public static <T extends StringBasedErpType<T>> Function<T, String> transformToString(
         @Nonnull final ErpTypeConverter<T> converter )
     {
-        return new Function<T, String>()
+        return new Function<>()
         {
             @Nullable
             @Override
@@ -355,7 +355,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     public static <T extends StringBasedErpType<T>> Function<String, T> transformToType(
         @Nonnull final ErpTypeConverter<T> converter )
     {
-        return new Function<String, T>()
+        return new Function<>()
         {
             @Nullable
             @Override

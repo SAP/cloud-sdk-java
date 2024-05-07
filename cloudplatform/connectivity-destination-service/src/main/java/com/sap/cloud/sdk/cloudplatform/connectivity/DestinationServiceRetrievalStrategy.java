@@ -69,10 +69,6 @@ public enum DestinationServiceRetrievalStrategy
     @Nullable
     public static DestinationServiceRetrievalStrategy ofIdentifier( @Nullable final String identifier )
     {
-        return Stream
-            .of(DestinationServiceRetrievalStrategy.values())
-            .filter(s -> s.getIdentifier().equalsIgnoreCase(identifier))
-            .findFirst()
-            .orElse(null);
+        return Stream.of(values()).filter(s -> s.getIdentifier().equalsIgnoreCase(identifier)).findFirst().orElse(null);
     }
 }

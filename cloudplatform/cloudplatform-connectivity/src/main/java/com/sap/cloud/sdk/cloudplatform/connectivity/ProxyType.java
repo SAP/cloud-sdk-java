@@ -127,7 +127,7 @@ public enum ProxyType
         if( identifier.equalsIgnoreCase("onpremise")
             || identifier.equalsIgnoreCase("on-premise")
             || identifier.equalsIgnoreCase("on_premise") ) {
-            return ProxyType.ON_PREMISE;
+            return ON_PREMISE;
         }
 
         throw new IllegalArgumentException("Unknown " + ProxyType.class.getSimpleName() + ": " + identifier + ".");

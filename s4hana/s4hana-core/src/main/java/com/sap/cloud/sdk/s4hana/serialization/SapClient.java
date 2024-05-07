@@ -114,10 +114,7 @@ public class SapClient extends StringBasedErpType<SapClient>
     @Nonnull
     public static Set<SapClient> toSapClients( @Nonnull final Collection<String> values )
     {
-        return values
-            .stream()
-            .map(StringBasedErpType.transformToType(new SapClientConverter()))
-            .collect(Collectors.toSet());
+        return values.stream().map(transformToType(new SapClientConverter())).collect(Collectors.toSet());
     }
 
     /**
@@ -132,9 +129,6 @@ public class SapClient extends StringBasedErpType<SapClient>
     @Nonnull
     public static Set<String> toStrings( @Nonnull final Collection<SapClient> values )
     {
-        return values
-            .stream()
-            .map(StringBasedErpType.transformToString(new SapClientConverter()))
-            .collect(Collectors.toSet());
+        return values.stream().map(transformToString(new SapClientConverter())).collect(Collectors.toSet());
     }
 }

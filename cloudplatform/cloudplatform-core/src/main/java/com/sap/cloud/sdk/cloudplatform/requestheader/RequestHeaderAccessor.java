@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.requestheader;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -49,11 +50,7 @@ public final class RequestHeaderAccessor
     @Beta
     public static void setHeaderFacade( @Nullable final RequestHeaderFacade requestHeaderFacade )
     {
-        if( requestHeaderFacade == null ) {
-            RequestHeaderAccessor.headerFacade = new DefaultRequestHeaderFacade();
-        } else {
-            RequestHeaderAccessor.headerFacade = requestHeaderFacade;
-        }
+        headerFacade = Objects.requireNonNullElseGet(requestHeaderFacade, DefaultRequestHeaderFacade::new);
     }
 
     /**

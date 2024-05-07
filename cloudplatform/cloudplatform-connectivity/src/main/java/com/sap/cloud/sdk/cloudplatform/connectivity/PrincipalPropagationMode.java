@@ -61,6 +61,6 @@ public enum PrincipalPropagationMode
                 return mode;
             }
         }
-        return PrincipalPropagationMode.UNKNOWN;
+        return UNKNOWN;
     }
 }
