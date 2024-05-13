@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceV1Response.DestinationAuthToken;
@@ -134,5 +135,36 @@ class DestinationServiceFactoryTest
         final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
 
         assertThat(result.asHttp().getAuthenticationType()).isEqualTo(AuthenticationType.TOKEN_FORWARDING);
+    }
+
+    @Test
+    @DisplayName( "Regression: Auth Tokens are always stored" )
+    // see https://github.com/SAP/cloud-sdk-java/issues/428
+    void regressionTestTokenIsStoredForNonHttpDestination()
+    {
+        response.getDestinationConfiguration().put("Type", "MAIL");
+
+        final DestinationAuthToken authToken = new DestinationAuthToken();
+        response.setAuthTokens(List.of(authToken));
+
+        final Destination result = DestinationServiceFactory.fromDestinationServiceV1Response(response);
+
+        assertThat(result.get(DestinationProperty.AUTH_TOKENS)).containsExactly(List.of(authToken));
+    }
+
+    @Test
+    @DisplayName( "Regression: Auth Token error on non-HTTP destination leads to exception" )
+    // see https://github.com/SAP/cloud-sdk-java/issues/428
+    void regressionTestAuthTokenErrorLeadsToExceptionOnNonHttpDestination()
+    {
+        response.getDestinationConfiguration().put("Type", "MAIL");
+
+        final DestinationAuthToken authToken = new DestinationAuthToken();
+        authToken.setError("some error");
+        response.setAuthTokens(List.of(authToken));
+
+        assertThatThrownBy(() -> DestinationServiceFactory.fromDestinationServiceV1Response(response))
+            .isExactlyInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("some error");
     }
 }
