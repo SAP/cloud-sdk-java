@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.adapter.ZonedDateTimeAdapter;
 
@@ -27,7 +28,7 @@ class ZonedDateTimeAdapterTest
 
         final ZonedDateTimeAdapter sut = new ZonedDateTimeAdapter();
         final JsonReader reader = new JsonReader(new StringReader(jsonInput));
-        reader.setLenient(true);
+        reader.setStrictness(Strictness.LENIENT);
         final ZonedDateTime result = sut.read(reader);
 
         assertThat(result).isEqualTo(ZonedDateTime.of(2018, 5, 8, 2, 0, 0, 0, ZoneId.of("UTC+2")));
