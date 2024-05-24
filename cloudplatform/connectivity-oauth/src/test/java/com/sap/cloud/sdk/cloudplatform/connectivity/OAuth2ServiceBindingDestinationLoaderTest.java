@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
 
+import com.sap.cloud.security.client.HttpClientException;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -239,7 +240,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
+        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(HttpClientException.class);
     }
 
     @Test
