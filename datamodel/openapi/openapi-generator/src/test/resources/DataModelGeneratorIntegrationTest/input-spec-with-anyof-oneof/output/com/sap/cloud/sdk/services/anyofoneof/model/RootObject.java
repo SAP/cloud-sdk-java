@@ -50,7 +50,7 @@ public class RootObject
 // CHECKSTYLE:ON
 {
   @JsonProperty("questions")
-  private List<RootObjectQuestionsInner> questions = new ArrayList<>();
+  private List<RootObjectQuestionsInner> questions;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -67,11 +67,11 @@ public class RootObject
     return this;
   }
   /**
-  * Add one questions instance to this {@link RootObject}.
-  * @param questionsItem The questions that should be added
+  * Add one Questions instance to this {@link RootObject}.
+  * @param questionsItem The Questions that should be added
   * @return The same instance of type {@link RootObject}
   */
-  @Nonnull public RootObject addquestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
+  @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
     if (this.questions == null) {
       this.questions = new ArrayList<>();
     }
