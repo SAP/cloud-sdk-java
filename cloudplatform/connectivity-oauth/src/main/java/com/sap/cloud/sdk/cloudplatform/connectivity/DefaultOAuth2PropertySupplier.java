@@ -139,7 +139,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
 
         final Option<String> exactCredentialType = getOAuthCredential(String.class, "credential-type");
-        if( exactCredentialType.contains(X509_ATTESTED) ) {
+        if( exactCredentialType.isDefined() && X509_ATTESTED.equalsIgnoreCase(exactCredentialType.get()) ) {
             return getZtisClientIdentity(clientid);
         }
 

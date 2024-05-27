@@ -157,7 +157,7 @@ class DefaultOAuth2PropertySupplierTest
     {
         final ServiceBinding binding =
             new ServiceBindingBuilder(ServiceIdentifier.of("testX509_attested"))
-                .with("credentials.uaa.credential-type", "X509_ATTESTED")
+                .with("credentials.uaa.credential-type", "X509_AttEsTEd") // should be case-insensitive
                 .with("credentials.uaa.clientid", "id")
                 .build();
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
