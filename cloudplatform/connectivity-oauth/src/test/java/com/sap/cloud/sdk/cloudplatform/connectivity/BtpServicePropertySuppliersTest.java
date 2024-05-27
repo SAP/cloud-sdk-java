@@ -116,7 +116,7 @@ class BtpServicePropertySuppliersTest
         private static final ServiceBinding X509_BINDING =
             bindingWithCredentials(
                 ServiceIdentifier.of("xsuaa"),
-                entry("credential-type", "x509"),
+                entry("credential-type", "x509_generated"),
                 entry("clientid", "client-id"),
                 entry("key", "key"),
                 entry("certificate", "certificate"),

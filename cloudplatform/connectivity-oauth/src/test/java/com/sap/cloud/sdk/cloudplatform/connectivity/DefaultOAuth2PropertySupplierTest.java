@@ -52,7 +52,7 @@ class DefaultOAuth2PropertySupplierTest
 
         assertThat(convert(CredentialType.X509, CredentialType.class)).isEqualTo(CredentialType.X509);
         assertThat(convert(CredentialType.X509.toString(), CredentialType.class)).isEqualTo(CredentialType.X509);
-        assertThat(convert("X509_GENERATED", CredentialType.class)).isEqualTo(CredentialType.X509);
+        assertThat(convert("X509_GENERATED", CredentialType.class)).isEqualTo(CredentialType.X509_GENERATED);
         assertThatThrownBy(() -> convert("not a valid credential type", CredentialType.class))
             .isExactlyInstanceOf(DestinationAccessException.class)
             .hasCauseExactlyInstanceOf(IllegalArgumentException.class);
@@ -153,6 +153,45 @@ class DefaultOAuth2PropertySupplierTest
     }
 
     @Test
+    void testCredentialTypeX509Generated()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.of("testX509"))
+                .with("credentials.uaa.credential-type", "X509_GENERATED")
+                .with("credentials.uaa.clientid", "id")
+                .with("credentials.uaa.certificate", "cert")
+                .with("credentials.uaa.key", "key")
+                .build();
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509_GENERATED);
+        assertThat(sut.getClientIdentity()).isInstanceOfSatisfying(ClientCertificate.class, cc -> {
+            assertThat(cc.getId()).isEqualTo("id");
+            assertThat(cc.getCertificate()).isEqualTo("cert");
+            assertThat(cc.getKey()).isEqualTo("key");
+        });
+    }
+
+    @Test
+    void testCredentialTypeX509Provided()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.of("testX509"))
+                .with("credentials.uaa.credential-type", "X509_PROVIDED")
+                .with("credentials.uaa.clientid", "id")
+                .build();
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThatThrownBy(sut::getClientIdentity)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("not supported");
+    }
+
+    @Test
     void testCredentialTypeX509_ATTESTED()
     {
         final ServiceBinding binding =
@@ -164,7 +203,7 @@ class DefaultOAuth2PropertySupplierTest
 
         sut = new DefaultOAuth2PropertySupplier(options);
 
-        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509);
+        assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509_ATTESTED);
         assertThatThrownBy(sut::getClientIdentity)
             .isInstanceOf(CloudPlatformException.class)
             .describedAs("We are not mocking the Zero Trust Identity Service here, so this should be a failure")
