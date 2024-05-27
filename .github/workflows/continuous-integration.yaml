@@ -158,7 +158,7 @@ jobs:
       - name: "Verify Local Changes"
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
-          if [[ "$CHANGED_FILES" ]]; then
+          if [[ ! -n "$CHANGED_FILES" ]]; then
               echo "There are local changes in the following files:"
               echo "$CHANGED_FILES"
               echo "Printing the git diff:"
