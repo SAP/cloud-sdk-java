@@ -39,7 +39,6 @@ final class SecurityLibWorkarounds
         if( rawType.equalsIgnoreCase(X509_GENERATED)
             || rawType.equalsIgnoreCase(X509_ATTESTED)
             || rawType.equalsIgnoreCase(X509_PROVIDED) ) {
-            // these particular credential types are only supported by the Security Client Lib > 3.3.5
             return CredentialType.X509;
         }
         return null;
