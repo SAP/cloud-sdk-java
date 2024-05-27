@@ -111,7 +111,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     @Nonnull
     public URI getTokenUri()
     {
-        final String tokenUrlProperty = switch(getCredentialType()) {
+        final String tokenUrlProperty = switch( getCredentialType() ) {
             case X509, X509_GENERATED, X509_PROVIDED, X509_ATTESTED -> "certurl";
             case BINDING_SECRET, INSTANCE_SECRET -> "url";
         };
@@ -129,7 +129,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
             case X509_ATTESTED -> getZtisIdentity(clientid);
             case BINDING_SECRET, INSTANCE_SECRET -> getSecretIdentity(clientid);
             case X509_PROVIDED -> throw new DestinationAccessException(
-                "Credential type X509_PROVIDED is not supported. Please use X509_ATTESTED instead.");
+                "Credential type X509_PROVIDED is not supported. Please use X509_GENERATED or X509_ATTESTED instead.");
         };
     }
 
@@ -189,8 +189,11 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     CredentialType getCredentialType()
     {
         return getOAuthCredential(CredentialType.class, "credential-type")
-                .onEmpty(() -> log.warn("Credential type not found or not recognised in service binding. Defaulting to BINDING_SECRET."))
-                .getOrElse(CredentialType.BINDING_SECRET);
+            .onEmpty(
+                () -> log
+                    .warn(
+                        "Credential type not found or not recognised in service binding. Defaulting to BINDING_SECRET."))
+            .getOrElse(CredentialType.BINDING_SECRET);
     }
 
     /**
