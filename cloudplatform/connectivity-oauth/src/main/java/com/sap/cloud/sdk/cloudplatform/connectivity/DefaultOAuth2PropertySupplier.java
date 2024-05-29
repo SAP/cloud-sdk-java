@@ -336,7 +336,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         }
         if( cls == CredentialType.class ) {
             try {
-                final T result = (T) SecurityLibWorkarounds.getCredentialType((String) value);
+                final T result = (T) CredentialType.from((String) value);
                 if( result == null ) {
                     throw new IllegalArgumentException();
                 }
