@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.X509_ATTESTED;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -125,9 +123,9 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
 
         return switch( getCredentialType() ) {
+            case BINDING_SECRET, INSTANCE_SECRET -> getSecretIdentity(clientid);
             case X509, X509_GENERATED -> getCertificateIdentity(clientid);
             case X509_ATTESTED -> getZtisIdentity(clientid);
-            case BINDING_SECRET, INSTANCE_SECRET -> getSecretIdentity(clientid);
             case X509_PROVIDED -> throw new DestinationAccessException(
                 "Credential type X509_PROVIDED is not supported. Please use X509_GENERATED or X509_ATTESTED instead.");
         };
