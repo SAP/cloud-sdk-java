@@ -128,6 +128,10 @@ public abstract class AbstractHttpClientFactory implements HttpClientFactory
 
     /**
      * Get the connection manager for the HTTP client builder.
+     * <p>
+     * <strong>Note:</strong> Since the destination may have custom TLS/SSL settings, the returned connection manager
+     * shall not be cached or reused. As a result the cardinality is: One {@code HttpClient} to one
+     * {@code HttpClientConnectionManager}.
      *
      * @param destination
      *            The optional destination reference.
