@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.net.URI;
+import java.security.KeyStore;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.TenantPropagationStrategy;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
@@ -360,5 +362,20 @@ class OAuth2ServiceTest
         OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(IDENTITY_1).build();
 
         assertThat(CacheManager.getCacheList()).contains(OAuth2Service.tokenServiceCache);
+    }
+
+    @Test
+    void testZeroTrustClientIdentity()
+    {
+        ClientIdentity identity = new ZtisClientIdentity("id", mock(KeyStore.class));
+        OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
+
+        final OAuth2TokenService result = service.getTokenService(null);
+        assertThat(result).isSameAs(service.getTokenService(null));
+
+        identity = new ZtisClientIdentity("other-id", mock(KeyStore.class));
+        service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
+
+        assertThat(result).isNotSameAs(service.getTokenService(null));
     }
 }
