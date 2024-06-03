@@ -120,7 +120,6 @@
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.6.0</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.24</kotlin.version>
 		<byte-buddy.version>1.14.16</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
@@ -372,22 +371,6 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-ext</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>
-			<!--Used for dependency convergence in datamodel-metadata-generator-->
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib-jdk8</artifactId>
-				<version>${kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib-common</artifactId>
-				<version>${kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib</artifactId>
-				<version>${kotlin.version}</version>
 			</dependency>
 			<!--For dependency convergence error between assertj-core and mockito-core-->
 			<dependency>
