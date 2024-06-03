@@ -111,7 +111,10 @@ class OAuth2Service
 
         final DefaultHttpDestination destination =
             DefaultHttpDestination
-                .builder(tokenUri)
+                // Giving an empty URL here as a workaround
+                // If we were to give the token URL here we can't change the subdomain later
+                // But the subdomain represents the tenant in case of IAS, so we have to change the subdomain per-tenant
+                .builder("")
                 .name("oauth-destination-ztis-" + identity.getId().hashCode())
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
