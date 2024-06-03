@@ -153,22 +153,25 @@ class OAuth2IntegrationTest
     }
 
     @Test
-    @DisplayName("The subdomain should be replaced for subscriber tenants when using IAS and ZTIS")
+    @DisplayName( "The subdomain should be replaced for subscriber tenants when using IAS and ZTIS" )
     void testIasFlowWithZeroTrustAndSubscriberTenant()
         throws KeyStoreException,
             CertificateException,
             IOException,
             NoSuchAlgorithmException
     {
-        final String token = "subscriberToken";
+        final KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(null, null);
+        final ClientIdentity identity = new SecurityLibWorkarounds.ZtisClientIdentity("myClientId", ks);
+
+        stubFor(
+            post("/oauth2/token")
+                .withHost(equalTo("provider.ias.domain"))
+                .willReturn(okJson(RESPONSE_TEMPLATE.formatted("providerToken"))));
         stubFor(
             post("/oauth2/token")
                 .withHost(equalTo("subscriber.ias.domain"))
-                .willReturn(okJson(RESPONSE_TEMPLATE.formatted(token))));
-
-        final KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(null, null);
-        final ClientIdentity identity = new SecurityLibWorkarounds.ZtisClientIdentity("id", ks);
+                .willReturn(okJson(RESPONSE_TEMPLATE.formatted("subscriberToken"))));
 
         final OAuth2Service sut =
             OAuth2Service
@@ -177,9 +180,23 @@ class OAuth2IntegrationTest
                 .withIdentity(identity)
                 .withTenantPropagationStrategy(OAuth2Service.TenantPropagationStrategy.TENANT_SUBDOMAIN)
                 .build();
+        // provider test
+        assertThat(sut.retrieveAccessToken()).contains("providerToken");
 
+        // subscriber test
         TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
-            assertThat(sut.retrieveAccessToken()).contains(token);
+            assertThat(sut.retrieveAccessToken()).contains("subscriberToken");
         });
+        verify(
+            1,
+            postRequestedFor(urlEqualTo("/oauth2/token"))
+                .withHost(equalTo("provider.ias.domain"))
+                .withRequestBody(containing("client_id=myClientId")));
+        verify(
+            1,
+            postRequestedFor(urlEqualTo("/oauth2/token"))
+                .withHost(equalTo("subscriber.ias.domain"))
+                .withRequestBody(containing("client_id=myClientId"))
+                .withRequestBody(containing("app_tid=subscriber")));
     }
 }
