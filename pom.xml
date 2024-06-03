@@ -120,7 +120,7 @@
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.6.0</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
-		<byte-buddy.version>1.14.16</byte-buddy.version>
+		<byte-buddy.version>1.14.17</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
