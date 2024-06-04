@@ -52,7 +52,7 @@ class DefaultOAuth2PropertySupplierTest
 
         assertThat(convert(CredentialType.X509, CredentialType.class)).isEqualTo(CredentialType.X509);
         assertThat(convert(CredentialType.X509.toString(), CredentialType.class)).isEqualTo(CredentialType.X509);
-        assertThat(convert("X509_GENERATED", CredentialType.class)).isEqualTo(CredentialType.X509);
+        assertThat(convert("X509_GeNEratED", CredentialType.class)).isEqualTo(CredentialType.X509);
         assertThatThrownBy(() -> convert("not a valid credential type", CredentialType.class))
             .isExactlyInstanceOf(DestinationAccessException.class)
             .hasCauseExactlyInstanceOf(IllegalArgumentException.class);

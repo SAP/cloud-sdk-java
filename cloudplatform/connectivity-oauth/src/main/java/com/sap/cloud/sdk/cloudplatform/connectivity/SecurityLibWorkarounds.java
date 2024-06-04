@@ -30,7 +30,7 @@ final class SecurityLibWorkarounds
     @Nullable
     static CredentialType getCredentialType( @Nonnull final String rawType )
     {
-        if( rawType.equals(X509_GENERATED) || rawType.equals(X509_ATTESTED) ) {
+        if( rawType.equalsIgnoreCase(X509_GENERATED) || rawType.equalsIgnoreCase(X509_ATTESTED) ) {
             // these particular credential types are only supported by the Security Client Lib > 3.3.5
             return CredentialType.X509;
         }
