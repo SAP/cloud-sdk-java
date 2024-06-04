@@ -110,6 +110,9 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     public URI getTokenUri()
     {
         final String tokenUrlProperty = switch( getCredentialType() ) {
+            // note: this is for XSUAA only and does not apply for IAS (check the overridden method in the property supplier for IAS)
+            // currently XSUAA only recognizes X509 and X509_ATTESTED, so we don't necessarily have to list X509_PROVIDED and X509_GENERATED here
+            // still, doesn't hurt and is more future-proof in case XSUAA ever starts adopting these identifiers
             case X509, X509_GENERATED, X509_PROVIDED, X509_ATTESTED -> "certurl";
             case BINDING_SECRET, INSTANCE_SECRET -> "url";
         };

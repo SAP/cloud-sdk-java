@@ -19,8 +19,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import java.io.IOException;
 import java.net.URI;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -366,14 +370,20 @@ class OAuth2ServiceTest
 
     @Test
     void testZeroTrustClientIdentity()
+        throws KeyStoreException,
+            CertificateException,
+            IOException,
+            NoSuchAlgorithmException
     {
-        ClientIdentity identity = new ZtisClientIdentity("id", mock(KeyStore.class));
+        final KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(null, null);
+        ClientIdentity identity = new ZtisClientIdentity("id", ks);
         OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
 
         final OAuth2TokenService result = service.getTokenService(null);
         assertThat(result).isSameAs(service.getTokenService(null));
 
-        identity = new ZtisClientIdentity("other-id", mock(KeyStore.class));
+        identity = new ZtisClientIdentity("other-id", ks);
         service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
 
         assertThat(result).isNotSameAs(service.getTokenService(null));
