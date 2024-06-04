@@ -21,6 +21,7 @@ final class SecurityLibWorkarounds
 {
     private static final String X509_GENERATED = "X509_GENERATED";
     static final String X509_ATTESTED = "X509_ATTESTED";
+    static final String X509_PROVIDED = "X509_PROVIDED";
 
     private SecurityLibWorkarounds()
     {
@@ -30,12 +31,17 @@ final class SecurityLibWorkarounds
     @Nullable
     static CredentialType getCredentialType( @Nonnull final String rawType )
     {
-        if( rawType.equals(X509_GENERATED) || rawType.equals(X509_ATTESTED) ) {
-            // these particular credential types are only supported by the Security Client Lib > 3.3.5
+        final CredentialType maybeType = CredentialType.from(rawType);
+        if( maybeType != null ) {
+            return maybeType;
+        }
+        // Workaround for the Security Client Lib <= 3.3.5 which does not recognise X509_GENERATED, X509_PROVIDED and X509_ATTESTED.
+        if( rawType.equalsIgnoreCase(X509_GENERATED)
+            || rawType.equalsIgnoreCase(X509_ATTESTED)
+            || rawType.equalsIgnoreCase(X509_PROVIDED) ) {
             return CredentialType.X509;
         }
-
-        return CredentialType.from(rawType);
+        return null;
     }
 
     @Getter
