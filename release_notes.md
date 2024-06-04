@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix an issue that prevented OAuth flows from working correctly for subscriber tenants when using IAS with credential type `X509_ATTESTED`
