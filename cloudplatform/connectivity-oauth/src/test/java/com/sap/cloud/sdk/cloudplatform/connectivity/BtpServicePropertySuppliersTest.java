@@ -566,7 +566,7 @@ class BtpServicePropertySuppliersTest
         @Test
         void testClientIdWithTenantId()
         {
-            @SuppressWarnings("deprecation")
+            @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
@@ -711,7 +711,7 @@ class BtpServicePropertySuppliersTest
                 IasOptions.withApplicationName("application-name");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientId =
                 IasOptions.withConsumerClient("client-id");
-            @SuppressWarnings("deprecation")
+            @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
                 IasOptions.withConsumerClient("client-id", "tenant-id");
 
