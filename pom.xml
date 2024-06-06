@@ -427,7 +427,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 					<executions>
 						<execution>
 							<id>enforce-project-rules</id>
@@ -636,7 +636,7 @@
 				<plugin>
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
-					<version>1.9.0</version>
+					<version>1.10.0</version>
 					<executions>
 						<execution>
 							<goals>
@@ -785,7 +785,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.13.0</version>
+					<version>3.13.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -987,7 +987,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.6.3</version>
+					<version>3.7.0</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>
@@ -1054,7 +1054,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.3</version>
+					<version>3.6.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
