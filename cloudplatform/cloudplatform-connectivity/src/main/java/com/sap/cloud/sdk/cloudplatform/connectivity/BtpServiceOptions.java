@@ -220,7 +220,7 @@ public final class BtpServiceOptions
          * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given application
          * provider name when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String, String)}.
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String)}.
          *
          * @param applicationName
          *            The name of the application provider to be used. This is the name that was used to register the
@@ -267,7 +267,9 @@ public final class BtpServiceOptions
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID and tenant ID
          *         being used when retrieving an authentication token from the IAS service.
+         * @deprecated since 5.11.0. Use {@link #withConsumerClient(String)} instead.
          */
+        @Deprecated
         @Nonnull
         public static
             OptionsEnhancer<?>
@@ -310,7 +312,7 @@ public final class BtpServiceOptions
         /**
          * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
          * to {@link #withoutTokenForTechnicalProviderUser()}, {@link #withApplicationName(String)}, and
-         * {@link #withConsumerClient(String, String)}.
+         * {@link #withConsumerClient(String)}.
          */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
