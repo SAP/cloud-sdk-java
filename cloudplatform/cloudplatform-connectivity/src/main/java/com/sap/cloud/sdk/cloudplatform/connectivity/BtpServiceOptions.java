@@ -267,7 +267,7 @@ public final class BtpServiceOptions
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID and tenant ID
          *         being used when retrieving an authentication token from the IAS service.
-         * @deprecated since 5.11.0. Use {@link #withConsumerClient(String)} instead.
+         * @deprecated since 5.10.0. Use {@link #withConsumerClient(String)} instead.
          */
         @Deprecated
         @Nonnull
