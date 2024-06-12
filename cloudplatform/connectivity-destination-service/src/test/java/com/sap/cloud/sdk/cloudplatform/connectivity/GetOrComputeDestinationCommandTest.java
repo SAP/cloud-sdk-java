@@ -172,12 +172,12 @@ class GetOrComputeDestinationCommandTest
 
     /**
      * Tests that for destinations that require a user token exchange, explicitly using the
-     * {@code ScpCfDestinationTokenExchangeStrategy.LOOKUP_ONLY} forces the destination to be cached for a tenant
+     * {@code DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY} forces the destination to be cached for a tenant
      */
     @Test
     void testLookupOnlyOnUserTokenDestination()
     {
-        final Destination scpCfDestination =
+        final Destination destination =
             DefaultHttpDestination
                 .builder("")
                 .name(DESTINATION_NAME)
@@ -198,7 +198,7 @@ class GetOrComputeDestinationCommandTest
         expectedCacheKey.append(DESTINATION_NAME, options);
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfDestination;
+            ( destinationName, destinationOptions ) -> destination;
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
@@ -209,13 +209,13 @@ class GetOrComputeDestinationCommandTest
 
         assertThat(destinationCache.getIfPresent(expectedCacheKey)).isNotNull();
         assertThat(isolationLocks.getIfPresent(expectedCacheKey)).isNotNull();
-        assertThat(fetchedDestination.get()).isSameAs(scpCfDestination);
+        assertThat(fetchedDestination.get()).isSameAs(destination);
     }
 
     @Test
     void testLookupOnlyExchangeStrategy()
     {
-        final Destination scpCfDestination =
+        final Destination destination =
             DefaultHttpDestination
                 .builder("")
                 .name(DESTINATION_NAME)
@@ -236,7 +236,7 @@ class GetOrComputeDestinationCommandTest
         expectedCacheKey.append(DESTINATION_NAME, options);
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfDestination;
+            ( destinationName, destinationOptions ) -> destination;
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
@@ -247,13 +247,13 @@ class GetOrComputeDestinationCommandTest
 
         assertThat(destinationCache.getIfPresent(expectedCacheKey)).isNotNull();
         assertThat(isolationLocks.getIfPresent(expectedCacheKey)).isNotNull();
-        assertThat(fetchedDestination.get()).isSameAs(scpCfDestination);
+        assertThat(fetchedDestination.get()).isSameAs(destination);
     }
 
     @Test
     void testLookupThenExchangeStrategy()
     {
-        final Destination scpCfDestination =
+        final Destination destination =
             DefaultHttpDestination
                 .builder("")
                 .name(DESTINATION_NAME)
@@ -276,7 +276,7 @@ class GetOrComputeDestinationCommandTest
         tenantCacheKey.append(DESTINATION_NAME, options);
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfDestination;
+            ( destinationName, destinationOptions ) -> destination;
 
         final GetOrComputeSingleDestinationCommand sut =
             PrincipalAccessor
@@ -302,13 +302,13 @@ class GetOrComputeDestinationCommandTest
         assertThat(destinationCache.getIfPresent(expectedCacheKey)).isNotNull();
         //The isolation cache key contains only tenant
         assertThat(isolationLocks.getIfPresent(tenantCacheKey)).isNotNull();
-        assertThat(fetchedDestination.get()).isSameAs(scpCfDestination);
+        assertThat(fetchedDestination.get()).isSameAs(destination);
     }
 
     @Test
     void testForwardUserTokenStrategyForUserPropagationDestination()
     {
-        final Destination scpCfUserPropagationDestination =
+        final Destination userPropagationDestination =
             DefaultHttpDestination
                 .builder("")
                 .name(DESTINATION_NAME)
@@ -330,7 +330,7 @@ class GetOrComputeDestinationCommandTest
         tenantCacheKey.append(DESTINATION_NAME, options);
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfUserPropagationDestination;
+            ( destinationName, destinationOptions ) -> userPropagationDestination;
 
         final GetOrComputeSingleDestinationCommand sut =
             PrincipalAccessor
@@ -354,10 +354,10 @@ class GetOrComputeDestinationCommandTest
 
         assertThat(sut.getAdditionalKeyWithTenantAndPrincipal()).isEqualTo(expectedCacheKey);
         //The destination cache key contains both tenant and principal
-        assertThat(destinationCache.getIfPresent(expectedCacheKey)).isEqualTo(scpCfUserPropagationDestination);
+        assertThat(destinationCache.getIfPresent(expectedCacheKey)).isEqualTo(userPropagationDestination);
         //The isolation cache key contains only tenant
         assertThat(isolationLocks.getIfPresent(tenantCacheKey)).isNotNull();
-        assertThat(fetchedDestination.get()).isSameAs(scpCfUserPropagationDestination);
+        assertThat(fetchedDestination.get()).isSameAs(userPropagationDestination);
 
     }
 
@@ -417,7 +417,7 @@ class GetOrComputeDestinationCommandTest
     @Test
     void testForwardUserTokenStrategyForUserPropagationDestinationWithoutPrincipalUnexpectedState()
     {
-        final Destination scpCfUserPropagationDestination =
+        final Destination userPropagationDestination =
             DefaultHttpDestination
                 .builder("")
                 .name(DESTINATION_NAME)
@@ -434,7 +434,7 @@ class GetOrComputeDestinationCommandTest
                 .build();
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfUserPropagationDestination;
+            ( destinationName, destinationOptions ) -> userPropagationDestination;
 
         final GetOrComputeSingleDestinationCommand sut =
             TenantAccessor
@@ -453,7 +453,7 @@ class GetOrComputeDestinationCommandTest
     @Test
     void testForwardUserTokenStrategyForClientCredentialsDestination()
     {
-        final Destination scpCfClientCredentialsDestination =
+        final Destination clientCredentialsDestination =
             DefaultHttpDestination
                 .builder("foo")
                 .name(DESTINATION_NAME)
@@ -475,7 +475,7 @@ class GetOrComputeDestinationCommandTest
         tenantAndPrincipalCacheKey.append(DESTINATION_NAME, options);
 
         final BiFunction<String, DestinationOptions, Destination> function =
-            ( destinationName, destinationOptions ) -> scpCfClientCredentialsDestination;
+            ( destinationName, destinationOptions ) -> clientCredentialsDestination;
 
         final GetOrComputeSingleDestinationCommand sut =
             PrincipalAccessor
@@ -498,12 +498,12 @@ class GetOrComputeDestinationCommandTest
 
         assertThat(sut.getAdditionalKeyWithTenantAndPrincipal()).isEqualTo(tenantAndPrincipalCacheKey);
         //The destination cache key contains only tenant
-        assertThat(destinationCache.getIfPresent(tenantCacheKey)).isEqualTo(scpCfClientCredentialsDestination);
+        assertThat(destinationCache.getIfPresent(tenantCacheKey)).isEqualTo(clientCredentialsDestination);
         //The destination cache key does not contain principal and tenant key
         assertThat(destinationCache.getIfPresent(tenantAndPrincipalCacheKey)).isNull();
         //The isolation cache key contains only tenant
         assertThat(isolationLocks.getIfPresent(tenantCacheKey)).isNotNull();
-        assertThat(fetchedDestination.get()).isSameAs(scpCfClientCredentialsDestination);
+        assertThat(fetchedDestination.get()).isSameAs(clientCredentialsDestination);
 
     }
 
