@@ -70,7 +70,6 @@ public final class ServiceBindingDestinationOptions
     @Nonnull
     public static Builder forService( @Nonnull final ServiceIdentifier identifier )
     {
-        // Move this out of here once we fix that currently the actual ServiceBindingAccessor instance is on ScpCf platform
         final List<ServiceBinding> bindings =
             DefaultServiceBindingAccessor
                 .getInstance()
