@@ -928,7 +928,7 @@ public class DestinationService implements DestinationLoader
         }
 
         /**
-         * Create the configured {@code ScpCfDestinationLoader} instance.
+         * Create the configured {@code DestinationService} instance.
          *
          * @return The new instance.
          * @since 4.4.0
