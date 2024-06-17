@@ -678,7 +678,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.7.0</version>
 					<executions>
 						<execution>
 							<id>analyze</id>
@@ -852,7 +852,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.5</version>
+					<version>3.3.0</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -903,7 +903,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.22.0</version>
+					<version>3.23.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
