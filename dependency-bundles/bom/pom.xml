@@ -42,7 +42,7 @@
 		<httpcore5.version>5.2.4</httpcore5.version>
 		<httpclient5.version>5.3.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
-		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
+		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
