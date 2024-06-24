@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.78.11</jco-api.version>
+		<jco-api.version>4.79.7</jco-api.version>
 		<jackson.version>2.17.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -94,18 +94,18 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.8</spring.version>
+		<spring.version>6.1.10</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.13</slf4j.version>
 		<assertj-core.version>3.26.0</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.12.0</mockito.version>
-		<jsonassert.version>1.5.1</jsonassert.version>
+		<jsonassert.version>1.5.2</jsonassert.version>
 		<junit.jupiter.version>5.10.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.7</maven-plugin.version>
+		<maven-plugin.version>3.9.8</maven-plugin.version>
 		<maven-plugin-annotations.version>3.13.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
@@ -117,7 +117,7 @@
 		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.6.0</wiremock.version>
+		<wiremock.version>3.7.0</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<byte-buddy.version>1.14.17</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
