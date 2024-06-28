@@ -35,6 +35,8 @@ updates:
       - dependency-name: 'org.apache.axis2:*'
       # updating currently doesn't work as our rules are not compatible with the latest version
       - dependency-name: 'com.puppycrawl.tools:checkstyle'
+      # latest version requires Java 21; remove once https://github.com/skyscreamer/JSONassert/issues/190 is fixed
+      - dependency-name: 'org.skyscreamer:jsonassert'
 
   # archetype updates
   # Dependabot seems to be unable to handle those, so this is disabled for now
