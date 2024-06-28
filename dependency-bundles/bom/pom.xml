@@ -42,11 +42,11 @@
 		<httpcore5.version>5.2.4</httpcore5.version>
 		<httpclient5.version>5.3.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
-		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
+		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<scp-cf.xsuaa-client.version>3.5.0</scp-cf.xsuaa-client.version>
+		<scp-cf.xsuaa-client.version>3.5.1</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.13</slf4j.version>
