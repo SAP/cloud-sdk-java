@@ -286,7 +286,7 @@ public final class ThreadContextExecutor
                         "No " + ThreadContextFacade.class.getSimpleName() + " defined.",
                         failure));
 
-        final ThreadContext initialContext = facade.tryGetCurrentContext().getOrNull();
+        final ThreadContext initialContext = facade.getCurrentContextOrNull();
         final ThreadContext executionThreadContext = threadContext.duplicate();
 
         notifyBeforeInitialize(executionThreadContext);
