@@ -200,6 +200,9 @@ class DestinationServiceAdapter
         if( headerName != null ) {
             request.addHeader(headerName, strategy.token());
         }
+        if( strategy.fragment() != null ) {
+            request.addHeader("x-fragment-name", strategy.fragment());
+        }
         return request;
     }
 

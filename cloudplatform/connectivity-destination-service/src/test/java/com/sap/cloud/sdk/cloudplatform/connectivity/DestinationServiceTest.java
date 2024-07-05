@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -1596,6 +1597,59 @@ class DestinationServiceTest
             .getConfigurationAsJson(
                 "/destinations/CC8-HTTP-OAUTH",
                 withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
+    }
+
+    // TODO test
+    @Test
+    void testFragmentDestinationsAreCacheIsolated()
+    {
+        DestinationService.Cache.disableChangeDetection();
+        final String destinationTemplate = """
+            {
+                "owner": {
+                    "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                    "InstanceId": null
+                },
+                "destinationConfiguration": {
+                    "Name": "destination",
+                    %s
+                    "Type": "HTTP",
+                    "URL": "https://%s.com/",
+                    "Authentication": "NoAuthentication",
+                    "ProxyType": "Internet"
+                }
+            }
+            """;
+
+        doReturn(destinationTemplate.formatted("\"FragmentName\": \"a-fragment\",", "a.fragment"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> "a-fragment".equals(it.fragment())));
+        doReturn(destinationTemplate.formatted("\"FragmentName\": \"b-fragment\",", "b.fragment"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> "b-fragment".equals(it.fragment())));
+        doReturn(destinationTemplate.formatted("", "destination"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> it.fragment() == null));
+
+        final Function<String, DestinationOptions> optsBuilder =
+            frag -> DestinationOptions
+                .builder()
+                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName(frag))
+                .build();
+
+        final Destination dA = loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get();
+        final Destination dB = loader.tryGetDestination("destination", optsBuilder.apply("b-fragment")).get();
+        final Destination d = loader.tryGetDestination("destination").get();
+
+        assertThat(dA).isNotEqualTo(dB).isNotEqualTo(d);
+        assertThat(dA.get("FragmentName")).contains("a-fragment");
+        assertThat(dB).isNotEqualTo(d);
+        assertThat(dB.get("FragmentName")).contains("b-fragment");
+
+        assertThat(d.get("FragmentName")).isEmpty();
+
+        assertThat(dA).isSameAs(loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get());
+        verify(destinationServiceAdapter, times(3)).getConfigurationAsJson(any(), any());
     }
 
     // @Test

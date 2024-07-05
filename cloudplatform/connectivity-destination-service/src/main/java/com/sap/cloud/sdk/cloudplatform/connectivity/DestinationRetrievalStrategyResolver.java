@@ -115,13 +115,18 @@ class DestinationRetrievalStrategyResolver
                 .getRefreshToken(options)
                 .peek(any -> log.debug("Refresh token given, applying refresh token flow."))
                 .getOrNull();
+        final String fragmentName =
+            DestinationServiceOptionsAugmenter
+                .getFragmentName(options)
+                .peek(it -> log.debug("Found fragment name '{}'.", it))
+                .getOrNull();
 
         log
             .debug(
                 "Loading destination from reuse-destination-service with retrieval strategy {} and token exchange strategy {}.",
                 retrievalStrategy,
                 tokenExchangeStrategy);
-        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy, refreshToken);
+        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy, refreshToken, fragmentName);
     }
 
     /**
@@ -159,7 +164,8 @@ class DestinationRetrievalStrategyResolver
     DestinationRetrieval prepareSupplier(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
-        @Nullable final String refreshToken )
+        @Nullable final String refreshToken,
+        @Nullable final String fragmentName )
         throws DestinationAccessException
     {
         log
@@ -175,6 +181,9 @@ class DestinationRetrievalStrategyResolver
                     retrievalStrategy,
                     DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
                     refreshToken);
+            if( fragmentName != null ) {
+                strategy.withFragmentName(fragmentName);
+            }
             return new DestinationRetrieval(() -> {
                 final DestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
@@ -190,6 +199,9 @@ class DestinationRetrievalStrategyResolver
 
         final DestinationRetrievalStrategy strategy =
             resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy, refreshToken);
+        if( fragmentName != null ) {
+            strategy.withFragmentName(fragmentName);
+        }
         return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.behalf());
     }
 
