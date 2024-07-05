@@ -1648,7 +1648,9 @@ class DestinationServiceTest
 
         assertThat(d.get("FragmentName")).isEmpty();
 
-        assertThat(dA).isSameAs(loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get());
+        assertThat(dA)
+            .describedAs("Destinations with fragments should be cached")
+            .isSameAs(loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get());
         verify(destinationServiceAdapter, times(3)).getConfigurationAsJson(any(), any());
     }
 
