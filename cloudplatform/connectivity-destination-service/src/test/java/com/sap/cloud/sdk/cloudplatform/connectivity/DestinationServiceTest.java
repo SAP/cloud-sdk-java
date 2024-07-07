@@ -1599,7 +1599,6 @@ class DestinationServiceTest
                 withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
     }
 
-    // TODO test
     @Test
     void testFragmentDestinationsAreCacheIsolated()
     {
