@@ -50,7 +50,7 @@ Please paste your stracktrace here within the backticks (replacing this comment)
 ```
 
 <!-- Application Logs
-Please make sure you [set your log level to debug](https://sap.github.io/cloud-sdk/docs/java/guides/logging-overview#configuring-logback) and attach the resulting log output as .txt or .log file to this issue.
+Please make sure you [set your log level to debug](https://sap.github.io/cloud-sdk/docs/java/guides/logging-overview#configuring-logback) and attach the resulting log output as .txt or .log file to this issue, no Kibana links.
 This is _very important_ as it usually gives a lot of information that is necessary to get to the root cause of an issue. Be sure to redact confidential information before posting.
 -->
 
