@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- The OpenAPI generator doesn't add `//NOPMD` after imports anymore.
 
 ### ✨ New Functionality
 
