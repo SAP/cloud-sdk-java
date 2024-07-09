@@ -9,7 +9,6 @@
 ### 🔧 Compatibility Notes
 
 - The OpenAPI generator doesn't add `//NOPMD` after imports anymore.
-  This makes it compatible with `google-java-format`.
 
 ### ✨ New Functionality
 
