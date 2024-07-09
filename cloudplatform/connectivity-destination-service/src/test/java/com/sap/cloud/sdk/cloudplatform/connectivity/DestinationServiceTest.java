@@ -1602,7 +1602,6 @@ class DestinationServiceTest
     @Test
     void testFragmentDestinationsAreCacheIsolated()
     {
-        DestinationService.Cache.disableChangeDetection();
         final String destinationTemplate = """
             {
                 "owner": {
@@ -1620,15 +1619,31 @@ class DestinationServiceTest
             }
             """;
 
+        final String responseSubaccountDestination = """
+            [{
+                "Name": "destination",
+                "Type": "HTTP",
+                "URL": "https://a.s4hana.ondemand.com",
+                "Authentication": "NoAuthentication",
+                "ProxyType": "Internet"
+              }]
+            """;
+
         doReturn(destinationTemplate.formatted("\"FragmentName\": \"a-fragment\",", "a.fragment"))
             .when(destinationServiceAdapter)
-            .getConfigurationAsJson(any(), argThat(it -> "a-fragment".equals(it.fragment())));
+            .getConfigurationAsJson(eq("/destinations/destination"), argThat(it -> "a-fragment".equals(it.fragment())));
         doReturn(destinationTemplate.formatted("\"FragmentName\": \"b-fragment\",", "b.fragment"))
             .when(destinationServiceAdapter)
-            .getConfigurationAsJson(any(), argThat(it -> "b-fragment".equals(it.fragment())));
+            .getConfigurationAsJson(eq("/destinations/destination"), argThat(it -> "b-fragment".equals(it.fragment())));
         doReturn(destinationTemplate.formatted("", "destination"))
             .when(destinationServiceAdapter)
-            .getConfigurationAsJson(any(), argThat(it -> it.fragment() == null));
+            .getConfigurationAsJson(eq("/destinations/destination"), argThat(it -> it.fragment() == null));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         final Function<String, DestinationOptions> optsBuilder =
             frag -> DestinationOptions
@@ -1650,7 +1665,7 @@ class DestinationServiceTest
         assertThat(dA)
             .describedAs("Destinations with fragments should be cached")
             .isSameAs(loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get());
-        verify(destinationServiceAdapter, times(3)).getConfigurationAsJson(any(), any());
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(any(), any());
     }
 
     // @Test

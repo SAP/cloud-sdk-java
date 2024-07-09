@@ -336,11 +336,14 @@ class GetOrComputeSingleDestinationCommand
         @Nonnull final DestinationProperties destinationFromGetAllEndPoint,
         @Nonnull final Destination individuallyRetrievedDestination )
     {
+        boolean isFragmentDestination = individuallyRetrievedDestination.get("FragmentName").isDefined();
+
         for( final String propertyName : destinationFromGetAllEndPoint.getPropertyNames() ) {
             final Option<Object> expectedProperty = destinationFromGetAllEndPoint.get(propertyName);
             final Option<Object> actualProperty = individuallyRetrievedDestination.get(propertyName);
 
-            if( !expectedProperty.equals(actualProperty) ) {
+            // Fragment destinations URLs are ALWAYS SKIPPED
+            if( !expectedProperty.equals(actualProperty) && !(isFragmentDestination && propertyName.equals("URL")) ) {
                 log.debug("Detected change in destination property {}", propertyName);
                 return false;
             }
@@ -351,7 +354,10 @@ class GetOrComputeSingleDestinationCommand
             final Option<Object> expectedProperty = individuallyRetrievedDestination.get(propertyName);
             final Option<Object> actualProperty = destinationFromGetAllEndPoint.get(propertyName);
 
-            if( !expectedProperty.equals(actualProperty) ) {
+            // Fragment destinations URLs are ALWAYS SKIPPED
+            if( !expectedProperty.equals(actualProperty)
+                && !propertyName.equals("FragmentName")
+                && !(isFragmentDestination && propertyName.equals("URL")) ) {
                 log.debug("Detected change in destination property {}", propertyName);
                 return false;
             }
