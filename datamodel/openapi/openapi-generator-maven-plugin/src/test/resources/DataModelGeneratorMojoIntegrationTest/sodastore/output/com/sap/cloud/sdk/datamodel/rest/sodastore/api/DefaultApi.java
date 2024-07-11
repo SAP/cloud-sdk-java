@@ -9,9 +9,9 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
-import com.sap.cloud.sdk.datamodel.rest.sodastore.model.NewSoda ; //NOPMD
-import com.sap.cloud.sdk.datamodel.rest.sodastore.model.Soda ; //NOPMD
-import com.sap.cloud.sdk.datamodel.rest.sodastore.model.UpdateSoda ; //NOPMD
+import com.sap.cloud.sdk.datamodel.rest.sodastore.model.NewSoda;
+import com.sap.cloud.sdk.datamodel.rest.sodastore.model.Soda;
+import com.sap.cloud.sdk.datamodel.rest.sodastore.model.UpdateSoda;
 
 import java.util.HashMap;
 import java.util.List;
