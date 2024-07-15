@@ -852,7 +852,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -903,7 +903,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.23.0</version>
+					<version>3.24.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
