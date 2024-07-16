@@ -218,16 +218,11 @@ jobs:
 
       - name: "Run Unit Tests"
         run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report"
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report --fail-at-end"
 
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
-      - name: "Test Report"
-        #Surefire reports are failing on pull requests created from forks and from GitHub Apps like dependabot
-        #https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
-        if: github.event.pull_request.head.repo.full_name == 'SAP/cloud-sdk-java' && github.actor != 'dependabot[bot]'
-        uses: scacap/action-surefire-report@v1
       - name: "Coverage Report"
         run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
@@ -281,7 +276,7 @@ jobs:
 
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
 
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
