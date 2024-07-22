@@ -117,7 +117,7 @@
 		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.8.0</wiremock.version>
+		<wiremock.version>3.9.0</wiremock.version>
 		<checkstyle.version>8.41</checkstyle.version>
 		<byte-buddy.version>1.14.18</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
@@ -376,7 +376,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.17.0</version>
+				<version>1.17.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
