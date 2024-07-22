@@ -60,7 +60,7 @@
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
-		<commons-lang3.version>3.14.0</commons-lang3.version>
+		<commons-lang3.version>3.15.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
 		<caffeine.version>3.1.8</caffeine.version>
