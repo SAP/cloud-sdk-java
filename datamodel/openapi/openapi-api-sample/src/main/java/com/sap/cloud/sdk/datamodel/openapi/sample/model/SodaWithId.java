@@ -39,18 +39,23 @@ public class SodaWithId
 // CHECKSTYLE:ON
 {
     @JsonProperty( "name" )
+    @Nonnull
     private String name;
 
     @JsonProperty( "brand" )
+    @Nonnull
     private String brand;
 
     @JsonProperty( "quantity" )
+    @Nonnull
     private Integer quantity;
 
     @JsonProperty( "price" )
+    @Nonnull
     private Float price;
 
     @JsonProperty( "id" )
+    @Nonnull
     private Long id;
 
     @JsonAnySetter

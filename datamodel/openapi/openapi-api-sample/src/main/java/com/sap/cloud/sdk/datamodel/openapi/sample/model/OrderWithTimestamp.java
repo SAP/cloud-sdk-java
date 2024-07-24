@@ -40,21 +40,27 @@ public class OrderWithTimestamp
 // CHECKSTYLE:ON
 {
     @JsonProperty( "productId" )
+    @Nonnull
     private Long productId;
 
     @JsonProperty( "quantity" )
+    @Nonnull
     private Integer quantity;
 
     @JsonProperty( "totalPrice" )
+    @Nonnull
     private Float totalPrice;
 
     @JsonProperty( "typelessProperty" )
-    private Object typelessProperty = null;
+    @Nullable
+    private Object typelessProperty;
 
     @JsonProperty( "nullableProperty" )
+    @Nullable
     private String nullableProperty;
 
     @JsonProperty( "timestamp" )
+    @Nonnull
     private OffsetDateTime timestamp;
 
     @JsonAnySetter
