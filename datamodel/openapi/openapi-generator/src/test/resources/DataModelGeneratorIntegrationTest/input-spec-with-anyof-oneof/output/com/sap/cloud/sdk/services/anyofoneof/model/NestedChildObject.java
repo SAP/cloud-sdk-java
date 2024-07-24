@@ -46,12 +46,15 @@ public class NestedChildObject
 // CHECKSTYLE:ON
 {
   @JsonProperty("id")
+  @Nonnull
   private String id;
 
   @JsonProperty("type")
+  @Nonnull
   private String type;
 
   @JsonProperty("text")
+  @Nonnull
   private String text;
 
   @JsonAnySetter
