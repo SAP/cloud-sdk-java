@@ -117,6 +117,7 @@
 					<sapCopyrightHeader>true</sapCopyrightHeader>
 					<additionalProperties>
 						<pojoBuilderMethodName>create</pojoBuilderMethodName>
+						<pojoBuildMethodName />
 						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
 					</additionalProperties>
 				</configuration>
