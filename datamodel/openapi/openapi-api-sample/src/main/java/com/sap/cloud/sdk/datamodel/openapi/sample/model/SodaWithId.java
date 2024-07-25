@@ -340,34 +340,85 @@ public class SodaWithId
         return o.toString().replace("\n", "\n    ");
     }
 
-    public static Builder builder()
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link SodaWithId} instance with all required
+     * argument.
+     */
+    public static Builder create()
     {
         return ( name ) -> ( brand ) -> (
-            quantity ) -> ( price ) -> () -> new SodaWithId().name(name).brand(brand).quantity(quantity).price(price);
+            quantity ) -> ( price ) -> new SodaWithId().name(name).brand(brand).quantity(quantity).price(price);
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder
     {
-        Builder1 name( String name );
+        /**
+         * Set the name of this {@link SodaWithId} instance.
+         *
+         * @param name
+         *            The name of this {@link SodaWithId}
+         * @return The builder.
+         */
+        Builder1
+
+            name( String name );
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder1
     {
-        Builder2 brand( String brand );
+
+        /**
+         * Set the brand of this {@link SodaWithId} instance.
+         *
+         * @param brand
+         *            The brand of this {@link SodaWithId}
+         * @return The builder.
+         */
+        Builder2
+
+            brand( String brand );
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder2
     {
-        Builder3 quantity( Integer quantity );
+
+        /**
+         * Set the quantity of this {@link SodaWithId} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link SodaWithId}
+         * @return The builder.
+         */
+        Builder3
+
+            quantity( Integer quantity );
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder3
     {
-        Builder4 price( Float price );
+
+        /**
+         * Set the price of this {@link SodaWithId} instance.
+         *
+         * @param price
+         *            The price of this {@link SodaWithId}
+         * @return A new instance.
+         */
+        SodaWithId
+
+            price( Float price );
     }
 
-    public interface Builder4
-    {
-        SodaWithId build();
-    }
 }

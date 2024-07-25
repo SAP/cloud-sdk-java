@@ -340,23 +340,48 @@ public class Order
         return o.toString().replace("\n", "\n    ");
     }
 
-    public static Builder builder()
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link Order} instance with all required
+     * argument.
+     */
+    public static Builder create()
     {
-        return ( productId ) -> ( quantity ) -> () -> new Order().productId(productId).quantity(quantity);
+        return ( productId ) -> ( quantity ) -> new Order().productId(productId).quantity(quantity);
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder
     {
-        Builder1 productId( Long productId );
+        /**
+         * Set the productId of this {@link Order} instance.
+         *
+         * @param productId
+         *            The productId of this {@link Order}
+         * @return The builder.
+         */
+        Builder1
+
+            productId( Long productId );
     }
 
+    /**
+     * Builder helper class.
+     */
     public interface Builder1
     {
-        Builder2 quantity( Integer quantity );
+
+        /**
+         * Set the quantity of this {@link Order} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link Order}
+         * @return A new instance.
+         */
+        Order
+
+            quantity( Integer quantity );
     }
 
-    public interface Builder2
-    {
-        Order build();
-    }
 }

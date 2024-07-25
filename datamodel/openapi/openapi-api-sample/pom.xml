@@ -116,7 +116,7 @@
 					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
 					<sapCopyrightHeader>true</sapCopyrightHeader>
 					<additionalProperties>
-						<pojoBuilder>true</pojoBuilder>
+						<pojoBuilderMethodName>create</pojoBuilderMethodName>
 					</additionalProperties>
 				</configuration>
 			</plugin>

@@ -21,12 +21,14 @@ import com.google.common.base.Strings;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Converts a {@link GenerationConfiguration} instance to a {@link ClientOptInput} instance which the OpenAPI Generator
  * expects
  */
+@Builder( )
 @Slf4j
 class GenerationConfigurationConverter
 {
@@ -88,6 +90,7 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
     }
 
+    @Builder( )
     private static void setAdditionalProperties(
         final GenerationConfiguration generationConfiguration,
         final CodegenConfigurator config )
