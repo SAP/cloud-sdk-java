@@ -61,9 +61,9 @@ public class DefaultHttpClientFactory extends AbstractHttpClientFactory
     protected RequestConfig.Builder getRequestConfigBuilder( @Nullable final HttpDestinationProperties destination )
     {
         return super.getRequestConfigBuilder(destination)
-            .setConnectTimeout(getTimeoutMilliseconds())
-            .setConnectionRequestTimeout(getTimeoutMilliseconds())
-            .setSocketTimeout(getTimeoutMilliseconds());
+            .setConnectTimeout(getTimeoutMilliseconds()) // until a connection is established
+            .setConnectionRequestTimeout(getTimeoutMilliseconds()) // when requesting a connection from the connection manager
+            .setSocketTimeout(getTimeoutMilliseconds()); // maximum period inactivity between two consecutive data packets
     }
 
     @Nonnull
