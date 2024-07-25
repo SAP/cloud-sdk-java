@@ -563,6 +563,17 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
          * @return {{^-last}}The builder.{{/-last}}{{#-last}}A new instance.{{/-last}}
          */
         {{^pojoBuildMethodName}}{{^-last}}Builder{{-index}}{{/-last}}{{#-last}}{{classname}}{{/-last}}{{/pojoBuildMethodName}}{{#pojoBuildMethodName}}Builder{{-index}}{{/pojoBuildMethodName}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{{datatypeWithEnum}}} {{name}});
+{{#isArray}}
+        /**
+        * Set the {{name}} of this {@link {{classname}}} instance.
+        *
+        * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
+        * @return {{^-last}}The builder.{{/-last}}{{#-last}}A new instance.{{/-last}}
+        */
+        default {{^pojoBuildMethodName}}{{^-last}}Builder{{-index}}{{/-last}}{{#-last}}{{classname}}{{/-last}}{{/pojoBuildMethodName}}{{#pojoBuildMethodName}}Builder{{-index}}{{/pojoBuildMethodName}} {{name}}( @Nonnull final {{{items.datatypeWithEnum}}}... {{name}}) {
+            return {{name}}(Arrays.asList({{name}}));
+        }
+{{/isArray}}
     }
 {{^-last}}
     /**
