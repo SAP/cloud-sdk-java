@@ -384,4 +384,23 @@ public class OrderWithTimestamp
         return o.toString().replace("\n", "\n    ");
     }
 
+    public static Builder builder()
+    {
+        return ( productId ) -> ( quantity ) -> () -> new OrderWithTimestamp().productId(productId).quantity(quantity);
+    }
+
+    public interface Builder
+    {
+        Builder1 productId( Long productId );
+    }
+
+    public interface Builder1
+    {
+        Builder2 quantity( Integer quantity );
+    }
+
+    public interface Builder2
+    {
+        OrderWithTimestamp build();
+    }
 }

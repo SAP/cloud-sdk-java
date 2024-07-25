@@ -66,7 +66,8 @@ class DeserializationTest
                 """;
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+        final SodaWithId expected =
+            SodaWithId.builder().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).build().id(0L);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 

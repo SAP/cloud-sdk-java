@@ -543,4 +543,21 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     }
   };
 {{/parcelableModel}}
+{{#pojoBuilder}}
+{{#hasRequired}}
+    public static Builder builder() {
+        return {{#requiredVars}}({{name}}) -> {{/requiredVars}}() -> new {{classname}}(){{#requiredVars}}.{{name}}({{name}}){{/requiredVars}};
+    }
+    public interface Builder {
+{{#requiredVars}}
+        Builder{{-index}} {{name}}( {{datatypeWithEnum}} {{name}});
+    }
+    public interface Builder{{-index}} {
+{{#-last}}
+        {{classname}} build();
+    }
+{{/-last}}
+{{/requiredVars}}
+{{/hasRequired}}
+{{/pojoBuilder}}
 }

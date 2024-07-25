@@ -340,4 +340,34 @@ public class SodaWithId
         return o.toString().replace("\n", "\n    ");
     }
 
+    public static Builder builder()
+    {
+        return ( name ) -> ( brand ) -> (
+            quantity ) -> ( price ) -> () -> new SodaWithId().name(name).brand(brand).quantity(quantity).price(price);
+    }
+
+    public interface Builder
+    {
+        Builder1 name( String name );
+    }
+
+    public interface Builder1
+    {
+        Builder2 brand( String brand );
+    }
+
+    public interface Builder2
+    {
+        Builder3 quantity( Integer quantity );
+    }
+
+    public interface Builder3
+    {
+        Builder4 price( Float price );
+    }
+
+    public interface Builder4
+    {
+        SodaWithId build();
+    }
 }
