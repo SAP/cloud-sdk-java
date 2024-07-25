@@ -320,9 +320,7 @@ public class Soda
          *            The name of this {@link Soda}
          * @return The builder.
          */
-        Builder1
-
-            name( String name );
+        Builder1 name( @Nonnull final String name );
     }
 
     /**
@@ -330,7 +328,6 @@ public class Soda
      */
     public interface Builder1
     {
-
         /**
          * Set the brand of this {@link Soda} instance.
          *
@@ -338,9 +335,7 @@ public class Soda
          *            The brand of this {@link Soda}
          * @return The builder.
          */
-        Builder2
-
-            brand( String brand );
+        Builder2 brand( @Nonnull final String brand );
     }
 
     /**
@@ -348,7 +343,6 @@ public class Soda
      */
     public interface Builder2
     {
-
         /**
          * Set the quantity of this {@link Soda} instance.
          *
@@ -356,9 +350,7 @@ public class Soda
          *            The quantity of this {@link Soda}
          * @return The builder.
          */
-        Builder3
-
-            quantity( Integer quantity );
+        Builder3 quantity( @Nonnull final Integer quantity );
     }
 
     /**
@@ -366,7 +358,6 @@ public class Soda
      */
     public interface Builder3
     {
-
         /**
          * Set the price of this {@link Soda} instance.
          *
@@ -374,9 +365,6 @@ public class Soda
          *            The price of this {@link Soda}
          * @return A new instance.
          */
-        Soda
-
-            price( Float price );
+        Soda price( @Nonnull final Float price );
     }
-
 }

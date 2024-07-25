@@ -55,12 +55,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     {{/isContainer}}
   {{/isXmlAttribute}}
   {{/withXml}}
-  {{#isNullable}}
-  @Nullable
-  {{/isNullable}}
-  {{^isNullable}}
-  @Nonnull
-  {{/isNullable}}
+  {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}}
   private {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
 
   {{/vars}}
@@ -546,7 +541,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
 {{#pojoBuilderMethodName}}
 {{#hasRequired}}
     /**
-    * Create a type-safe, fluent-api builder object to construct a new {@link {{classname}}} instance with all required argument.
+    * Create a type-safe, fluent-api builder object to construct a new {@link {{classname}}} instance with all required arguments.
     */
     public static Builder {{pojoBuilderMethodName}}() {
         return {{#requiredVars}}({{name}}) -> {{/requiredVars}}{{#pojoBuildMethodName}}() -> {{/pojoBuildMethodName}}new {{classname}}(){{#requiredVars}}.{{name}}({{name}}){{/requiredVars}};
@@ -555,25 +550,23 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     * Builder helper class.
     */
     public interface Builder {
-    {{#requiredVars}}
+{{#requiredVars}}
         /**
          * Set the {{name}} of this {@link {{classname}}} instance.
          *
          * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
          * @return {{^-last}}The builder.{{/-last}}{{#-last}}A new instance.{{/-last}}
          */
-        {{^pojoBuildMethodName}}{{^-last}}Builder{{-index}}{{/-last}}{{#-last}}{{classname}}{{/-last}}{{/pojoBuildMethodName}}
-        {{#pojoBuildMethodName}}Builder{{-index}}{{/pojoBuildMethodName}}
-        {{name}}( {{datatypeWithEnum}} {{name}});
+        {{^pojoBuildMethodName}}{{^-last}}Builder{{-index}}{{/-last}}{{#-last}}{{classname}}{{/-last}}{{/pojoBuildMethodName}}{{#pojoBuildMethodName}}Builder{{-index}}{{/pojoBuildMethodName}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{datatypeWithEnum}} {{name}});
     }
-    {{^-last}}
+{{^-last}}
     /**
      * Builder helper class.
      */
     public interface Builder{{-index}} {
-    {{/-last}}
-    {{#pojoBuildMethodName}}
-    {{#-last}}
+{{/-last}}
+{{#-last}}
+{{#pojoBuildMethodName}}
     /**
     * Builder helper class.
     */
@@ -585,9 +578,9 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
         */
         {{classname}} {{pojoBuildMethodName}}();
     }
-    {{/-last}}
-    {{/pojoBuildMethodName}}
-    {{/requiredVars}}
+{{/pojoBuildMethodName}}
+{{/-last}}
+{{/requiredVars}}
 {{/hasRequired}}
 {{/pojoBuilderMethodName}}
 }

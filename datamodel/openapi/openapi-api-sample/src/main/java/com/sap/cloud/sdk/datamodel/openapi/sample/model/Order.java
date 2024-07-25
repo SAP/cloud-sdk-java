@@ -361,9 +361,7 @@ public class Order
          *            The productId of this {@link Order}
          * @return The builder.
          */
-        Builder1
-
-            productId( Long productId );
+        Builder1 productId( @Nonnull final Long productId );
     }
 
     /**
@@ -371,7 +369,6 @@ public class Order
      */
     public interface Builder1
     {
-
         /**
          * Set the quantity of this {@link Order} instance.
          *
@@ -379,9 +376,6 @@ public class Order
          *            The quantity of this {@link Order}
          * @return A new instance.
          */
-        Order
-
-            quantity( Integer quantity );
+        Order quantity( @Nonnull final Integer quantity );
     }
-
 }
