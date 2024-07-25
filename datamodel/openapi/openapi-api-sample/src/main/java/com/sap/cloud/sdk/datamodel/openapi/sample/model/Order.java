@@ -62,6 +62,10 @@ public class Order
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    protected Order()
+    {
+    }
+
     /**
      * Set the productId of this {@link Order} instance and return the same instance.
      *
@@ -342,7 +346,7 @@ public class Order
 
     /**
      * Create a type-safe, fluent-api builder object to construct a new {@link Order} instance with all required
-     * argument.
+     * arguments.
      */
     public static Builder create()
     {

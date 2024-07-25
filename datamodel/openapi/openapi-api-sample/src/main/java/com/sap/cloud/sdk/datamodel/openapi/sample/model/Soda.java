@@ -58,6 +58,10 @@ public class Soda
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    protected Soda()
+    {
+    }
+
     /**
      * Set the name of this {@link Soda} instance and return the same instance.
      *
@@ -300,7 +304,7 @@ public class Soda
 
     /**
      * Create a type-safe, fluent-api builder object to construct a new {@link Soda} instance with all required
-     * argument.
+     * arguments.
      */
     public static Builder create()
     {

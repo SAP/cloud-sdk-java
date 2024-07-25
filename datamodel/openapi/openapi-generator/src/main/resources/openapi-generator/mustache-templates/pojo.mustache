@@ -69,6 +69,11 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   {{/parent}}
   }
   {{/parcelableModel}}
+  {{^parcelableModel}}
+  {{#pojoConstructorVisibility}}
+  {{pojoConstructorVisibility}} {{classname}}() { {{#parent}}super();{{/parent}} }
+  {{/pojoConstructorVisibility}}
+  {{/parcelableModel}}
   {{#vars}}
   {{^isReadOnly}}
 

@@ -67,6 +67,10 @@ public class OrderWithTimestamp
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    protected OrderWithTimestamp()
+    {
+    }
+
     /**
      * Set the productId of this {@link OrderWithTimestamp} instance and return the same instance.
      *
@@ -386,7 +390,7 @@ public class OrderWithTimestamp
 
     /**
      * Create a type-safe, fluent-api builder object to construct a new {@link OrderWithTimestamp} instance with all
-     * required argument.
+     * required arguments.
      */
     public static Builder create()
     {
