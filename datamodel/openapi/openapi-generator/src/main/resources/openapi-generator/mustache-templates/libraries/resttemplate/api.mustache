@@ -97,7 +97,7 @@ public class {{classname}} extends AbstractOpenApiService {
     {{#isDeprecated}}
     @Deprecated
     {{/isDeprecated}}
-    {{#isResponseOptional}}{{^returnType}}@Nullable{{/returnType}}{{#returnType}}@Nonnull{{/returnType}}{{/isResponseOptional}}{{^isResponseOptional}}@Nonnull{{/isResponseOptional}}
+    {{#isResponseOptional}}@Nullable{{/isResponseOptional}}{{^isResponseOptional}}@Nonnull{{/isResponseOptional}}
     public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}} {{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}} final {{#isFile}}{{#useAbstractionForFiles}}{{#collectionFormat}}java.util.Collection<org.springframework.core.io.Resource>{{/collectionFormat}}{{^collectionFormat}}org.springframework.core.io.Resource{{/collectionFormat}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}{{{dataType}}}{{/useAbstractionForFiles}}{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
         final Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
         {{#allParams}}{{#required}}
@@ -177,7 +177,7 @@ public class {{classname}} extends AbstractOpenApiService {
     {{#isDeprecated}}
     @Deprecated
     {{/isDeprecated}}
-    {{#isResponseOptional}}{{^returnType}}@Nullable{{/returnType}}{{#returnType}}@Nonnull{{/returnType}}{{/isResponseOptional}}{{^isResponseOptional}}@Nonnull{{/isResponseOptional}}
+    {{#isResponseOptional}}@Nullable{{/isResponseOptional}}{{^isResponseOptional}}@Nonnull{{/isResponseOptional}}
     public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#requiredParams}} @Nonnull final {{#isFile}}{{#useAbstractionForFiles}}{{#collectionFormat}}java.util.Collection<org.springframework.core.io.Resource>{{/collectionFormat}}{{^collectionFormat}}org.springframework.core.io.Resource{{/collectionFormat}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}{{{dataType}}}{{/useAbstractionForFiles}}{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}) throws OpenApiRequestException {
         {{#hasOptionalParams}}
         return {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#hasRequiredParams}}{{#requiredParams}}{{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}, {{/hasRequiredParams}}{{#optionalParams}}null{{^-last}}, {{/-last}}{{/optionalParams}});
