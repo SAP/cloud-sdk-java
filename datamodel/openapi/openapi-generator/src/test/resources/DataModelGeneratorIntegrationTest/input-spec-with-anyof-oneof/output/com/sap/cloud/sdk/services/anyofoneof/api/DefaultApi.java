@@ -72,7 +72,8 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return RootObject
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nonnull public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
+    @Nonnull
+    public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
         final Object localVarPostBody = rootObject;
         
         final String localVarPath = UriComponentsBuilder.fromPath("/some/endpoint").build().toUriString();
@@ -105,7 +106,8 @@ public class DefaultApi extends AbstractOpenApiService {
 * @return RootObject
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public RootObject someEndpointPost() throws OpenApiRequestException {
+    @Nonnull
+    public RootObject someEndpointPost() throws OpenApiRequestException {
         return someEndpointPost(null);
     }
 }
