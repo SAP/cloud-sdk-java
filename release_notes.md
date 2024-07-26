@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix `@Nonnull` and `@Nullable` annotation on endpoint methods of generated OpenAPI classes.
