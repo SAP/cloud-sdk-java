@@ -49,7 +49,7 @@ public class OrderWithTimestamp
     private Float totalPrice;
 
     @JsonProperty( "typelessProperty" )
-    private Object typelessProperty = null;
+    private Object typelessProperty;
 
     @JsonProperty( "nullableProperty" )
     private String nullableProperty;

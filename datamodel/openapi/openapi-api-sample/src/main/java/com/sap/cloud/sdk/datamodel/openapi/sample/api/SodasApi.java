@@ -21,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.Soda; //NOPMD
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId; //NOPMD
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.Soda;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
