@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -71,7 +70,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public List<SodaWithId> sodasGet()
         throws OpenApiRequestException
     {
@@ -125,7 +124,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public SodaWithId sodasIdGet( @Nonnull final Long id )
         throws OpenApiRequestException
     {
@@ -187,7 +186,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda sodasPut( @Nonnull final SodaWithId sodaWithId )
         throws OpenApiRequestException
     {
