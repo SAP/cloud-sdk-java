@@ -190,6 +190,9 @@
           },
           "404": {
             "description": "Soda product not found"
+          },
+          "204": {
+            "description": "Nothing has changed"
           }
         }
       }

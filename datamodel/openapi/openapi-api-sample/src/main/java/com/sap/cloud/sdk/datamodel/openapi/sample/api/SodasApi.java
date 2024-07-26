@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -179,6 +180,8 @@ public class SodasApi extends AbstractOpenApiService
      * <b>200</b> - The updated soda product
      * <p>
      * <b>404</b> - Soda product not found
+     * <p>
+     * <b>204</b> - Nothing has changed
      *
      * @param sodaWithId
      *            The updated soda product
@@ -186,7 +189,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public Soda sodasPut( @Nonnull final SodaWithId sodaWithId )
         throws OpenApiRequestException
     {
