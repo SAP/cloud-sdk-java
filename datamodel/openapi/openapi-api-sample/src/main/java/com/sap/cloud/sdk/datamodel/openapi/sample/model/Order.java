@@ -382,4 +382,5 @@ public class Order
          */
         Order quantity( @Nonnull final Integer quantity );
     }
+
 }

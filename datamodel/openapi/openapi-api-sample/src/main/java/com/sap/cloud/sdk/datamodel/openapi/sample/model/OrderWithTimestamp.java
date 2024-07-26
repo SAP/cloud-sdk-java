@@ -426,4 +426,5 @@ public class OrderWithTimestamp
          */
         OrderWithTimestamp quantity( @Nonnull final Integer quantity );
     }
+
 }

@@ -413,4 +413,5 @@ public class SodaWithId
          */
         SodaWithId price( @Nonnull final Float price );
     }
+
 }

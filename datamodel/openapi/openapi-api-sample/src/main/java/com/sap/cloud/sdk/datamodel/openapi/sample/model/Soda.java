@@ -371,4 +371,5 @@ public class Soda
          */
         Soda price( @Nonnull final Float price );
     }
+
 }
