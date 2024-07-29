@@ -55,7 +55,6 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     {{/isContainer}}
   {{/isXmlAttribute}}
   {{/withXml}}
-  {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}}
   private {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
 
   {{/vars}}
