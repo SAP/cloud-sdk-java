@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
+import javax.annotation.Nonnull;
+
 /**
  * Adjustable enum for SOAP XML response parsing. Only change the values, when namespaces in response payload differ
  * from ABAP defaults.
@@ -31,6 +33,7 @@ public enum SoapNamespace
     @Setter( AccessLevel.PUBLIC )
     private String label;
 
+    @Nonnull
     @Override
     public String toString()
     {

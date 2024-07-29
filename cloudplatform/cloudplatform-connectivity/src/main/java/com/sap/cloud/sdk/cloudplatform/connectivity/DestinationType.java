@@ -45,6 +45,7 @@ public enum DestinationType
         this.identifier = identifier;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {
