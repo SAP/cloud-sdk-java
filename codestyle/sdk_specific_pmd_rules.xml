@@ -229,7 +229,7 @@
                 <value>
                     <![CDATA[
                         //MethodCall[@MethodName='orElse' or @MethodName='getOrElse']
-                        /ArgumentList[.//MethodCall or .//ConstructorCall]
+                        /ArgumentList[not(LambdaExpression) and (.//MethodCall or .//ConstructorCall)]
                     ]]>
                 </value>
             </property>
