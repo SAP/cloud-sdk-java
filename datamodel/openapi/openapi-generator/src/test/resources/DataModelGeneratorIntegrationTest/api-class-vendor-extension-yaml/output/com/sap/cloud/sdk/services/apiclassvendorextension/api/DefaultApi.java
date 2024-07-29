@@ -39,6 +39,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 * API for managing sodas in a soda store
 */
 
+
 public class DefaultApi extends AbstractOpenApiService {
     /**
     * Instantiates this API class to invoke operations on the Soda Store API.
@@ -110,7 +111,7 @@ public class DefaultApi extends AbstractOpenApiService {
 * @return An OpenApiResponse containing the status code of the HttpResponse.
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public OpenApiResponse deleteSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         

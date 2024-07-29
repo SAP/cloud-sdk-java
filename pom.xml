@@ -247,6 +247,11 @@
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapi-generator.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-core</artifactId>
+				<version>${openapi-generator.version}</version>
+			</dependency>
 			<!-- Used in openapi-generator -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>

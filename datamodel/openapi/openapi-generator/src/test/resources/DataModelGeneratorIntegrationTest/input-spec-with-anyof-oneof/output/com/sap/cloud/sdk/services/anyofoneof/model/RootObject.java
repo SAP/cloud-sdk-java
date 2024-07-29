@@ -45,6 +45,7 @@ import javax.annotation.Nullable;
  * RootObject
  */
 
+
 // CHECKSTYLE:OFF
 public class RootObject 
 // CHECKSTYLE:ON

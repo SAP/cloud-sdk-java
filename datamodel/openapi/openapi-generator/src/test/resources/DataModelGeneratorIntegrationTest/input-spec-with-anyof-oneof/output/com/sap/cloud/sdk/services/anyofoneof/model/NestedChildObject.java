@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
  * NestedChildObject
  */
 
+
 // CHECKSTYLE:OFF
 public class NestedChildObject 
 // CHECKSTYLE:ON

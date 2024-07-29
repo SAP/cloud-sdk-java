@@ -42,6 +42,7 @@ import javax.annotation.Nullable;
  * ChildObject2
  */
 
+
 // CHECKSTYLE:OFF
 public class ChildObject2 
 // CHECKSTYLE:ON
