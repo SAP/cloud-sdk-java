@@ -2,6 +2,8 @@ package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConfig;
 import org.openapitools.codegen.CodegenOperation;
@@ -20,15 +22,18 @@ class DataModelGeneratorConfig implements CodegenConfig
     private final CodegenConfig config;
 
     @SuppressWarnings( "deprecation" )
-    DataModelGeneratorConfig( ClientOptInput clientOptInput )
+    DataModelGeneratorConfig( @Nonnull final ClientOptInput clientOptInput )
     {
         this(clientOptInput.getConfig());
     }
 
     @Override
-    public OperationsMap postProcessOperationsWithModels( OperationsMap objs, List<ModelMap> allModels )
+    @Nonnull
+    public
+        OperationsMap
+        postProcessOperationsWithModels( @Nonnull final OperationsMap objs, @Nonnull final List<ModelMap> allModels )
     {
-        for( CodegenOperation op : objs.getOperations().getOperation() ) {
+        for( final CodegenOperation op : objs.getOperations().getOperation() ) {
             op.isResponseOptional |= op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
         }
         return config.postProcessOperationsWithModels(objs, allModels);
