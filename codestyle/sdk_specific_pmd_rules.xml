@@ -63,7 +63,7 @@
                         //ClassBody/*
                         [
                             self::FieldDeclaration/ClassType[@SimpleName='Optional'] or
-                            self::MethodDeclaration/ClassType[@SimpleName='Optional']
+                            self::*/FormalParameters/FormalParameter/ClassType[@SimpleName='Optional']
                         ]
                     ]]>
                 </value>
