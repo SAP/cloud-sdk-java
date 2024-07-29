@@ -92,6 +92,7 @@ public enum AuthenticationType
     @Getter
     private final String identifier;
 
+    @Nonnull
     @Override
     public String toString()
     {

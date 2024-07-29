@@ -73,6 +73,7 @@ class HttpClientWrapper extends CloseableHttpClient
             return new HeaderElement[0];
         }
 
+        @Nonnull
         @Override
         public String toString()
         {

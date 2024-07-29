@@ -55,6 +55,7 @@ public enum MessageType implements ErpType<MessageType>
         this.identifier = identifier;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {

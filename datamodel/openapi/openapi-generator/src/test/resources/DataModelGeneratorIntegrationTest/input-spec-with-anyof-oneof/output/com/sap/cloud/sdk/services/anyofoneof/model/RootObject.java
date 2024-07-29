@@ -72,7 +72,7 @@ public class RootObject
   * @param questionsItem The questions that should be added
   * @return The same instance of type {@link RootObject}
   */
-  @Nonnull public RootObject addquestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
+  @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
     if (this.questions == null) {
       this.questions = new ArrayList<>();
     }
