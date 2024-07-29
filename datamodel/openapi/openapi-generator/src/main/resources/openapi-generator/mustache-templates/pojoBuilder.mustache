@@ -15,7 +15,7 @@
         * Set the {{name}} of this {@link {{classname}}} instance.
         *
         * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
-        * @return {{^-last}}The builder.{{/-last}}{{#-last}}A new instance.{{/-last}}
+        * @return {{^-last}}The {{classname}} builder.{{/-last}}{{#-last}}The {{classname}} instance.{{/-last}}
         */
         {{^pojoBuildMethodName}}{{^-last}}Builder{{-index}}{{/-last}}{{#-last}}{{classname}}{{/-last}}{{/pojoBuildMethodName}}{{#pojoBuildMethodName}}Builder{{-index}}{{/pojoBuildMethodName}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{{datatypeWithEnum}}} {{name}});
 {{#isArray}}
@@ -45,7 +45,7 @@
         /**
         * Finalize the builder for new {@link {{classname}}} instance.
         *
-        * @return A new instance.
+        * @return The {{classname}} instance.
         */
         {{classname}} {{pojoBuildMethodName}}();
     }
