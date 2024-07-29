@@ -318,7 +318,7 @@ public class Soda
          *
          * @param name
          *            The name of this {@link Soda}
-         * @return The builder.
+         * @return The Soda builder.
          */
         Builder1 name( @Nonnull final String name );
     }
@@ -333,7 +333,7 @@ public class Soda
          *
          * @param brand
          *            The brand of this {@link Soda}
-         * @return The builder.
+         * @return The Soda builder.
          */
         Builder2 brand( @Nonnull final String brand );
     }
@@ -348,7 +348,7 @@ public class Soda
          *
          * @param quantity
          *            The quantity of this {@link Soda}
-         * @return The builder.
+         * @return The Soda builder.
          */
         Builder3 quantity( @Nonnull final Integer quantity );
     }
@@ -363,7 +363,7 @@ public class Soda
          *
          * @param price
          *            The price of this {@link Soda}
-         * @return A new instance.
+         * @return The Soda instance.
          */
         Soda price( @Nonnull final Float price );
     }

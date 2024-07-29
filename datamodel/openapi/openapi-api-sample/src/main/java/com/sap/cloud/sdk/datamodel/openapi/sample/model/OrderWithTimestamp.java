@@ -401,7 +401,7 @@ public class OrderWithTimestamp
          *
          * @param productId
          *            The productId of this {@link OrderWithTimestamp}
-         * @return The builder.
+         * @return The OrderWithTimestamp builder.
          */
         Builder1 productId( @Nonnull final Long productId );
     }
@@ -416,7 +416,7 @@ public class OrderWithTimestamp
          *
          * @param quantity
          *            The quantity of this {@link OrderWithTimestamp}
-         * @return A new instance.
+         * @return The OrderWithTimestamp instance.
          */
         OrderWithTimestamp quantity( @Nonnull final Integer quantity );
     }

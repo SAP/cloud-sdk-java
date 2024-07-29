@@ -358,7 +358,7 @@ public class Order
          *
          * @param productId
          *            The productId of this {@link Order}
-         * @return The builder.
+         * @return The Order builder.
          */
         Builder1 productId( @Nonnull final Long productId );
     }
@@ -373,7 +373,7 @@ public class Order
          *
          * @param quantity
          *            The quantity of this {@link Order}
-         * @return A new instance.
+         * @return The Order instance.
          */
         Order quantity( @Nonnull final Integer quantity );
     }
