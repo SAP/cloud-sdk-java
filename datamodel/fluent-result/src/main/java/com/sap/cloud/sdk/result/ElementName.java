@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.result;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,5 +22,6 @@ public @interface ElementName {
      *
      * @return The identifiable name of the field.
      */
+    @Nonnull
     String value();
 }

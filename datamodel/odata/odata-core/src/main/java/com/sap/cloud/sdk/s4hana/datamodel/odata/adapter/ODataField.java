@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
 
 import com.sap.cloud.sdk.typeconverter.TypeConverter;
 
+import javax.annotation.Nonnull;
+
 /**
  * Annotation to be used to link fields to their OData property as well as converting between the domain type of a field
  * and the actually exposed type.
@@ -25,6 +27,7 @@ public @interface ODataField {
      *
      * @return The name of the corresponding OData property.
      */
+    @Nonnull
     String odataName();
 
     /**
@@ -32,5 +35,6 @@ public @interface ODataField {
      *
      * @return The type of the converter to use for the annotated field.
      */
+    @Nonnull
     Class<? extends TypeConverter<?, ?>> converter() default IdentityConverter.class;
 }
