@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
 
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -26,6 +27,7 @@ import lombok.SneakyThrows;
 class DataModelGeneratorIntegrationTest
 {
     @RequiredArgsConstructor
+    @AllArgsConstructor
     private enum TestCase
     {
         API_CLASS_VENDOR_EXTENSION_YAML(
@@ -59,7 +61,18 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.anyofoneof.model",
             ApiMaturity.RELEASED,
             true,
-            7);
+            7),
+        INPUT_SPEC_WITH_BUILDER(
+            "input-spec-with-builder",
+            "sodastore.JSON",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
+            ApiMaturity.RELEASED,
+            true,
+            6,
+            "builder",
+            "build",
+            "private");
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -68,6 +81,9 @@ class DataModelGeneratorIntegrationTest
         final ApiMaturity apiMaturity;
         final boolean anyOfOneOfGenerationEnabled;
         final int expectedNumberOfGeneratedFiles;
+        String methodBuilder = null;
+        String methodBuild = null;
+        String constructorVisibility = null;
     }
 
     @ParameterizedTest
@@ -96,6 +112,9 @@ class DataModelGeneratorIntegrationTest
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
+                .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
+                .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
+                .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
                 .build();
 
         final Try<GenerationResult> maybeGenerationResult =
@@ -130,6 +149,9 @@ class DataModelGeneratorIntegrationTest
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
+                .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
+                .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
+                .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
                 .build();
 
         new DataModelGenerator().generateDataModel(generationConfiguration);
