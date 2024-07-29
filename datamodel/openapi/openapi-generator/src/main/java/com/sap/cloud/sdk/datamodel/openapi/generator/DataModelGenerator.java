@@ -98,6 +98,7 @@ public class DataModelGenerator
                 GenerationConfigurationConverter.LIBRARY_NAME);
 
             cleanOutputDirectoryIfRequested(generationConfiguration);
+            clientOptInput.config(DataModelGeneratorConfig.ofInput(clientOptInput));
 
             final List<File> generatedFiles = new DefaultGenerator().opts(clientOptInput).generate();
 
