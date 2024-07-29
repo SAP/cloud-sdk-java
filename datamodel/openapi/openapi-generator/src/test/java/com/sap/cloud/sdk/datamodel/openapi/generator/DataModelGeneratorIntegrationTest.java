@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
 
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -21,6 +20,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
 
 import io.vavr.control.Try;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
