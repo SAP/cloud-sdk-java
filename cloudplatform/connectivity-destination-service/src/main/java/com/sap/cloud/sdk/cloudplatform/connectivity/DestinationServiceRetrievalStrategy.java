@@ -52,6 +52,7 @@ public enum DestinationServiceRetrievalStrategy
         this.identifier = identifier;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {
