@@ -4,11 +4,11 @@
 
 package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
+import javax.annotation.Nonnull;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-
-import javax.annotation.Nonnull;
 
 /**
  * Adjustable enum for SOAP XML response parsing. Only change the values, when namespaces in response payload differ
