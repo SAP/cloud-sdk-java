@@ -50,7 +50,6 @@ public class RootObject
 // CHECKSTYLE:ON
 {
   @JsonProperty("questions")
-  @Nonnull
   private List<RootObjectQuestionsInner> questions = new ArrayList<>();
 
   @JsonAnySetter
