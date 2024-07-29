@@ -20,15 +20,14 @@ class DataModelGeneratorConfig implements CodegenConfig
     private final CodegenConfig config;
 
     @SuppressWarnings( "deprecation" )
-    public static DataModelGeneratorConfig ofInput( ClientOptInput clientOptInput )
+    DataModelGeneratorConfig( ClientOptInput clientOptInput )
     {
-        return new DataModelGeneratorConfig(clientOptInput.getConfig());
+        this(clientOptInput.getConfig());
     }
 
     @Override
     public OperationsMap postProcessOperationsWithModels( OperationsMap objs, List<ModelMap> allModels )
     {
-
         for( CodegenOperation op : objs.getOperations().getOperation() ) {
             op.isResponseOptional |= op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
         }
