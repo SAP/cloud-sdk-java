@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
  * NewSoda
  */
 
+
 // CHECKSTYLE:OFF
 public class NewSoda 
 // CHECKSTYLE:ON
