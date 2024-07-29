@@ -215,8 +215,8 @@
             ]]>
         </example>
     </rule>
-    <rule name="PrematureInstantiationInElseBlock" language="java"
-          message="An instance is created in advance as part of an else block declaration."
+    <rule name="PrematureComputationOfElseBlock" language="java"
+          message="Else block of fluent-API is computed in advance."
           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not unnecessarily compute code in advance, when it's not needed.
@@ -356,8 +356,8 @@
                     <![CDATA[
                         //IfStatement[
                             @Else=false() and
-                                ./MethodCall[starts-with(@MethodName, "is") and ends-with(@MethodName, "Enabled") and AmbiguousName[@Name="log"]] and
-                                ./Block[@Size=1]/ExpressionStatement/MethodCall[AmbiguousName[@Name="log"] and not(.//MethodCall) and not(.//ConstructorCall)]
+                            ./MethodCall[starts-with(@MethodName, "is") and ends-with(@MethodName, "Enabled") and AmbiguousName[@Name="log"]] and
+                            ./Block[@Size=1]/ExpressionStatement/MethodCall[AmbiguousName[@Name="log"] and not(.//MethodCall) and not(.//ConstructorCall)]
                         ]
                     ]]>
                 </value>
