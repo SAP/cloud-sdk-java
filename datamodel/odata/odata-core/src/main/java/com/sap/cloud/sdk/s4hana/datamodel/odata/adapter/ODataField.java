@@ -10,9 +10,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.sap.cloud.sdk.typeconverter.TypeConverter;
-
 import javax.annotation.Nonnull;
+
+import com.sap.cloud.sdk.typeconverter.TypeConverter;
 
 /**
  * Annotation to be used to link fields to their OData property as well as converting between the domain type of a field
