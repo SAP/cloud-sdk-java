@@ -62,9 +62,7 @@ public enum ProxyType
             return ofIdentifier(identifier);
         }
         catch( final IllegalArgumentException e ) {
-            if( log.isWarnEnabled() ) {
-                log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultProxyType);
-            }
+            log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultProxyType);
             return defaultProxyType;
         }
     }
@@ -133,6 +131,7 @@ public enum ProxyType
         throw new IllegalArgumentException("Unknown " + ProxyType.class.getSimpleName() + ": " + identifier + ".");
     }
 
+    @Nonnull
     @Override
     public String toString()
     {

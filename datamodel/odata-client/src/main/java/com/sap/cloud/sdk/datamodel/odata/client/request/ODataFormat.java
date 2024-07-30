@@ -32,6 +32,7 @@ enum ODataFormat
     @Nonnull
     private final String httpAccept;
 
+    @Nonnull
     @Override
     public String toString()
     {

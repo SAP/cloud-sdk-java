@@ -24,6 +24,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static final String DESTINATION_RETRIEVAL_STRATEGY_KEY = "scp.cf.destinationRetrievalStrategy";
     static final String DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY = "scp.cf.destinationTokenExchangeStrategy";
     static final String X_REFRESH_TOKEN_KEY = "x-refresh-token";
+    static final String X_FRAGMENT_KEY = "X-fragment-name";
 
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -86,6 +87,31 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
         return this;
     }
 
+    /**
+     * Fragment that should enhance the destination to be fetched.
+     *
+     * @param fragmentName
+     *            The fragment name.
+     * @return The same augmenter that called this method.
+     * @since 5.11.0
+     */
+    @Beta
+    @Nonnull
+    public DestinationServiceOptionsAugmenter fragmentName( @Nonnull final String fragmentName )
+    {
+        parameters.put(X_FRAGMENT_KEY, fragmentName);
+        if( DestinationService.Cache.isEnabled() && DestinationService.Cache.isChangeDetectionEnabled() ) {
+            log
+                .warn(
+                    """
+                        A fragment was requested while change detection caching is enabled.\
+                        This is not recommended, as fragment-based destinations will effectively not be cached with this strategy.\
+                        Consider disabling change detection, if you frequently use destination fragments.
+                        """);
+        }
+        return this;
+    }
+
     @Override
     public void augmentBuilder( @Nonnull final DestinationOptions.Builder builder )
     {
@@ -144,5 +170,11 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static Option<String> getRefreshToken( @Nonnull final DestinationOptions options )
     {
         return options.get(X_REFRESH_TOKEN_KEY).filter(String.class::isInstance).map(String.class::cast);
+    }
+
+    @Nonnull
+    static Option<String> getFragmentName( @Nonnull final DestinationOptions options )
+    {
+        return options.get(X_FRAGMENT_KEY).filter(String.class::isInstance).map(String.class::cast);
     }
 }

@@ -224,5 +224,6 @@ public class ChildObject2
     return o.toString().replace("\n", "\n    ");
   }
 
+
 }
 

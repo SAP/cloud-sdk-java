@@ -20,12 +20,9 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //ClassOrInterfaceBodyDeclaration
-                        /FieldDeclaration[@Static]
-                        //PrimaryExpression[
-                            PrimaryPrefix/Name[@Image = "LoggerFactory.getLogger"] and
-                            PrimarySuffix//ClassOrInterfaceType[@Image = ancestor::ClassOrInterfaceDeclaration/@SimpleName]
-                        ]
+                        //FieldDeclaration[@Static]
+                        /VariableDeclarator
+                        /MethodCall[@MethodName = "getLogger"]/AmbiguousName[@Name = "LoggerFactory"]
                     ]]>
                 </value>
             </property>
@@ -63,10 +60,10 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //TypeDeclaration
+                        //ClassBody/*
                         [
-                            //FieldDeclaration/Type/ReferenceType/ClassOrInterfaceType[@Image='Optional'] or
-                            //FormalParameter/Type/ReferenceType/ClassOrInterfaceType[@Image='Optional']
+                            self::FieldDeclaration/ClassType[@SimpleName='Optional'] or
+                            self::*/FormalParameters/FormalParameter/ClassType[@SimpleName='Optional']
                         ]
                     ]]>
                 </value>
@@ -111,7 +108,7 @@
                 <value>
                     <![CDATA[
                         //ImportDeclaration
-                        [starts-with(Name/@Image, 'com.google.common.base.Optional')]
+                        [starts-with(@ImportedName, 'com.google.common.base.Optional')]
                     ]]>
                 </value>
             </property>
@@ -134,12 +131,9 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //ClassOrInterfaceDeclaration[@Public='true']
-                        //ClassOrInterfaceBodyDeclaration
-                        [MethodDeclaration[@Public='true' and @Void='false']/ResultType/Type/ReferenceType and
-                        not(
-                        Annotation/MarkerAnnotation/Name[@Image='Nullable'] or
-                        Annotation/MarkerAnnotation/Name[@Image='Nonnull']
+                        //MethodDeclaration[@EffectiveVisibility='public' and @Void=false() and ClassType and not(
+                            ./ModifierList/Annotation[@SimpleName='Nullable'] or
+                            ./ModifierList/Annotation[@SimpleName='Nonnull']
                         )]
                     ]]>
                 </value>
@@ -182,7 +176,7 @@
           message="Parameter type of public method is not annotated with @Nonnull or @Nullable."
           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
-            Parameter type of public method is not annotated with @Nonnull or @Nullable.
+            Missing @Nonnull or @Nullable annotation on parameter of public method or constructor.
             This is beneficial to communicate a clear API contract and it allows for effective argument constraint validation in the IDE.
         </description>
         <priority>5</priority>
@@ -190,60 +184,14 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //ClassOrInterfaceDeclaration[@Public='true']
-                        //ClassOrInterfaceBodyDeclaration
-                        /MethodDeclaration[@Public='true']
-                        /MethodDeclarator
+                        //ClassBody
+                        /*[@EffectiveVisibility='public']
                         /FormalParameters
                         /FormalParameter[
-                            ./Type/ReferenceType and
+                            ClassType and
                             not(
-                                ./Annotation/MarkerAnnotation/Name[@Image='Nullable'] or
-                                ./Annotation/MarkerAnnotation/Name[@Image='Nonnull']
-                            )]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <example>
-            <![CDATA[
-            public interface SomeType {
-                // Okay
-                void method();
-
-                // Okay
-                void method( @Nullable Object parameter );
-
-                // Okay
-                void method( @Nonnull Object parameter, int primitive );
-
-                // Nullability annotation missing
-                void method( Object parameter );
-            }
-            ]]>
-        </example>
-    </rule>
-    <rule name="NullAnnotationMissingOnPublicConstructorParameter" language="java"
-          message="Parameter type of public constructor is not annotated with @Nonnull or @Nullable."
-          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
-        <description>
-            Parameter type of public constructor is not annotated with @Nonnull or @Nullable.
-            This is beneficial to communicate a clear API contract and it allows for effective argument constraint validation in the IDE.
-        </description>
-        <priority>5</priority>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                        //ClassOrInterfaceDeclaration[@Public='true']
-                        //ClassOrInterfaceBodyDeclaration
-                        /ConstructorDeclaration[@Public='true']
-                        /FormalParameters
-                        /FormalParameter[
-                            ./Type/ReferenceType and
-                            not(
-                                ./Annotation/MarkerAnnotation/Name[@Image='Nullable'] or
-                                ./Annotation/MarkerAnnotation/Name[@Image='Nonnull']
+                                ./ModifierList/Annotation[@SimpleName='Nullable'] or
+                                ./ModifierList/Annotation[@SimpleName='Nonnull']
                             )]
                     ]]>
                 </value>
@@ -267,8 +215,8 @@
             ]]>
         </example>
     </rule>
-    <rule name="PrematureInstantiationInElseBlock" language="java"
-          message="An instance is created in advance as part of an else block declaration."
+    <rule name="PrematureComputationOfElseBlock" language="java"
+          message="Else block of fluent-API is computed in advance."
           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>
             Do not unnecessarily compute code in advance, when it's not needed.
@@ -280,43 +228,26 @@
             <property name="xpath">
                 <value>
                     <![CDATA[
-                        //PrimarySuffix[@Image='orElse' or @Image='getOrElse']
-                        /following-sibling::PrimarySuffix
-                        /Arguments
-                        /ArgumentList[count(./Expression)=1]
-                        /Expression
-                        /PrimaryExpression
-                        /*
-                        /AllocationExpression
+                        //MethodCall[@MethodName='orElse' or @MethodName='getOrElse']
+                        /ArgumentList[not(LambdaExpression) and (.//MethodCall or .//ConstructorCall)]
                     ]]>
                 </value>
             </property>
         </properties>
-    </rule>
-    <rule name="PrematureComputationOfElseBlock" language="java"
-          message="Else block of fluent-API is computed in advance."
-          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
-        <description>
-            Do not unnecessarily compute code in advance, when it's not needed.
-            Instead of invoking the fallback function, reference it as lambda or function reference, e.g. this::fallback
-        </description>
-        <priority>2</priority>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                        //PrimarySuffix[@Image='orElse' or @Image='getOrElse']
-                            /following-sibling::PrimarySuffix[1]
-                            /Arguments
-                            /ArgumentList[count(./Expression)=1]
-                            /Expression
-                            /PrimaryExpression
-                            /*
-                            /Arguments
-                    ]]>
-                </value>
-            </property>
-        </properties>
+        <example>
+            <![CDATA[
+            public class SomeType {
+                // Okay
+                Option.of(variable).getOrElse("foo");
+                Optional.of(variable).orElse(foo);
+                Optional.of(variable).orElseGet(() -> "foo" + bar());
+
+                // Not okay
+                Option.of(variable).getOrElse(bar());
+                Optional.of(variable).orElse("foo" + bar());
+            }
+            ]]>
+        </example>
     </rule>
 
     <!-- The following "performance"-related rules are taken from here: https://pmd.github.io/latest/pmd_rules_java_performance.html -->
@@ -425,11 +356,8 @@
                     <![CDATA[
                         //IfStatement[
                             @Else=false() and
-                            ./Expression/PrimaryExpression/PrimaryPrefix/Name[starts-with(@Image, "log.is") and ends-with(@Image, "Enabled")] and
-                            ./Statement/Block[count(*)=1]/BlockStatement/Statement/StatementExpression/PrimaryExpression[
-                                ./PrimaryPrefix/Name[starts-with(@Image, "log.")] and
-                                count(.//Arguments)=1
-                            ]
+                            ./MethodCall[starts-with(@MethodName, "is") and ends-with(@MethodName, "Enabled") and AmbiguousName[@Name="log"]] and
+                            ./Block[@Size=1]/ExpressionStatement/MethodCall[AmbiguousName[@Name="log"] and not(.//MethodCall) and not(.//ConstructorCall)]
                         ]
                     ]]>
                 </value>
