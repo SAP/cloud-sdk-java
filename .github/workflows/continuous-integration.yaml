@@ -63,12 +63,10 @@ jobs:
             echo "COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "COMMIT=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
           echo "Unable to determine commit SHA as the workflow was not triggered by a pull request and the commit input was not provided"
           exit 1
 
@@ -81,6 +79,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.context.outputs.commit }}
+
       - name: "Setup Java"
         uses: actions/setup-java@v4
         with:
@@ -107,11 +106,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.context.outputs.commit }}
+
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
+
       - name: "Restore Dependencies"
         id: restore-dependencies
         uses: actions/cache/restore@v4
@@ -125,11 +126,10 @@ jobs:
           
           if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
-          
             python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
             MVN_ARGS="$MVN_ARGS javadoc:aggregate -Pdocs"
           fi
-          
+
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
           mvn $MVN_ARGS
           
@@ -159,9 +159,7 @@ jobs:
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
           if [[ ! -z "$CHANGED_FILES" ]]; then
-              echo "There are local changes in the following files:"
-              echo "$CHANGED_FILES"
-              echo "Printing the git diff:"
+              echo "There are local changes in the following files:\n$CHANGED_FILES\nPrinting the git diff:"
               git --no-pager diff
               exit 1
           fi
@@ -173,12 +171,14 @@ jobs:
           name: ${{ env.RELEASE_ARTIFACT_NAME }}
           path: ~/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}
           retention-days: 1
+
       - name: "Upload SDK M2"
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.SDK_M2_PATH }}
           retention-days: 1
+
       - name: "Upload SDK Targets"
         uses: actions/upload-artifact@v4
         with:
@@ -195,22 +195,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.context.outputs.commit }}
+
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
+
       - name: "Restore Dependencies"
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
+
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
+
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -219,9 +223,24 @@ jobs:
       - name: "Run Unit Tests"
         run: |
           MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report --fail-at-end"
-
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
+
+      - name: "Run Sample Modules Test"
+        run: |
+          MVN_MODULES="-pl :odata-api-sample,:odata-v4-api-sample,:openapi-api-sample"
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} test --fail-at-end $MVN_MODULES -Dsdk.code.scanning"
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+      - name: "Verify Local Changes"
+        run: |
+          CHANGED_FILES="$(git --no-pager diff --name-only)"
+          if [[ ! -z "$CHANGED_FILES" ]]; then
+              echo "There are local changes in the following files:\n$CHANGED_FILES\nPrinting the git diff:"
+              git --no-pager diff
+              exit 1
+          fi
 
       - name: "Coverage Report"
         run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
@@ -253,22 +272,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.context.outputs.commit }}
+
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
+
       - name: "Restore Dependencies"
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
+
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
+
       - name: "Restore SDK Targets"
         uses: actions/download-artifact@v4
         with:
@@ -277,10 +300,8 @@ jobs:
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
-
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
-
           python ${{ matrix.task.report }}
 
   code-ql:
@@ -292,11 +313,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.context.outputs.commit }}
+
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
+
       - name: "Restore Dependencies"
         id: restore-dependencies
         uses: actions/cache/restore@v4
@@ -313,7 +336,6 @@ jobs:
       - name: "Build SDK"
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true ${{ env.MVN_SKIP_CI_PLUGINS }}"
-
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
@@ -340,12 +362,14 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
+
       - name: "Restore Dependencies"
         id: restore-dependencies
         uses: actions/cache/restore@v4
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
+
       - name: "Restore SDK M2"
         uses: actions/download-artifact@v4
         with:
@@ -393,13 +417,11 @@ jobs:
             cat $logFilePath
             exit 1
           fi
-
           if ! grep -q "I am running!" $logFilePath; then
             echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but did not contain the expected log output."
             cat $logFilePath
             exit 1
           fi
-
           if grep -iq "caused by" $logFilePath; then
             echo "Project generated from archetype '${{ matrix.task.archetype }}' started locally, but an unexpected error occurred."
             cat $logFilePath
