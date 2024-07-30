@@ -570,11 +570,6 @@
 										<message>Do not reference generated API modules (or modules transitively
 											referencing generated API modules), as they might be removed by profiles.</message>
 										<excludes>
-											<!--
-                                                                                        This list is created by adding all modules that are excluded by the sdk.code.scanning profile fixing the reported issues.
-                                                                                        An issue can be fixed by either removing the dependency (preferred solution, if possible), or adding the reported module here and excluding it via the mentioned profile.
-                                                                                        In general this list should be in sync with the list of modules excluded by the sdk.code.scanning profile.
-                                                                                         -->
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>

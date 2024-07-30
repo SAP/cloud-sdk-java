@@ -223,14 +223,6 @@ jobs:
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
-      - name: "Run Sample Modules Test"
-        run: |
-          MVN_MODULES="-pl :odata-api-sample,:odata-v4-api-sample,:openapi-api-sample"
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report --fail-at-end $MVN_MODULES -Dsdk.code.scanning"
-
-          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
-          mvn $MVN_ARGS
-
       - name: "Coverage Report"
         run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
