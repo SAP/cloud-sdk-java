@@ -817,7 +817,12 @@
 							</goals>
 							<configuration>
 								<destFile>${jacoco.executionDataFile}</destFile>
-								<excludes>org.apache.*</excludes>
+								<excludes>
+									<exclude>**/odata/sample/**/*</exclude>
+									<exclude>**/odatav4/sample/**/*</exclude>
+									<exclude>**/openapi/sample/**/*</exclude>
+									<exclude>**/testclasses/**/*</exclude>
+								</excludes>
 							</configuration>
 						</execution>
 						<execution>
@@ -828,7 +833,10 @@
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>
-									<exclude>**/testclasses/**</exclude>
+									<exclude>**/odata/sample/**/*</exclude>
+									<exclude>**/odatav4/sample/**/*</exclude>
+									<exclude>**/openapi/sample/**/*</exclude>
+									<exclude>**/testclasses/**/*</exclude>
 								</excludes>
 							</configuration>
 						</execution>
