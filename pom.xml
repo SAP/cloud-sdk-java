@@ -817,12 +817,6 @@
 							</goals>
 							<configuration>
 								<destFile>${jacoco.executionDataFile}</destFile>
-								<excludes>
-									<exclude>*/odata/sample/*</exclude>
-									<exclude>*/odatav4/sample/*</exclude>
-									<exclude>*/openapi/sample/*</exclude>
-									<exclude>*/testclasses/*</exclude>
-								</excludes>
 							</configuration>
 						</execution>
 						<execution>
@@ -832,12 +826,6 @@
 							</goals>
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
-								<excludes>
-									<exclude>*/odata/sample/*</exclude>
-									<exclude>*/odatav4/sample/*</exclude>
-									<exclude>*/openapi/sample/*</exclude>
-									<exclude>*/testclasses/*</exclude>
-								</excludes>
 							</configuration>
 						</execution>
 					</executions>
