@@ -71,7 +71,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return RootObject
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
         final Object localVarPostBody = rootObject;
         
