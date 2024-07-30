@@ -33,28 +33,27 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
-* Soda Store API in version 1.0.0.
-*
-* API for managing sodas in a soda store
-*/
-
+ * Soda Store API in version 1.0.0.
+ *
+ * API for managing sodas in a soda store
+ */
 public class AwesomeSodaApi extends AbstractOpenApiService {
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public AwesomeSodaApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     @Beta
     public AwesomeSodaApi( @Nonnull final ApiClient apiClient )
     {
@@ -62,15 +61,16 @@ public class AwesomeSodaApi extends AbstractOpenApiService {
     }
 
         /**
-    * <p>Add a new soda to the store</p>
-     *<p></p>
+     * <p>Add a new soda to the store</p>
+     * <p></p>
      * <p><b>201</b> - The newly added soda
-* @param newSoda
-            The value for the parameter newSoda
-* @return Soda
-* @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+     * @param newSoda
+     *      The value for the parameter newSoda
+     * @return Soda
+     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
+    @Nonnull
+    public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
         final Object localVarPostBody = newSoda;
         
         // verify the required parameter 'newSoda' is set

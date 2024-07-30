@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 /**
  * ChildObject1
  */
-
 // CHECKSTYLE:OFF
 public class ChildObject1 
 // CHECKSTYLE:ON
@@ -59,85 +58,85 @@ public class ChildObject1
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
    /**
-   * Set the id of this {@link ChildObject1} instance and return the same instance.
-   *
-   * @param id  The id of this {@link ChildObject1}
-   * @return The same instance of this {@link ChildObject1} class
-   */
+    * Set the id of this {@link ChildObject1} instance and return the same instance.
+    *
+    * @param id  The id of this {@link ChildObject1}
+    * @return The same instance of this {@link ChildObject1} class
+    */
    @Nonnull public ChildObject1 id(@Nonnull final String id) {
     this.id = id;
     return this;
   }
 
    /**
-   * Get id
-   * @return id  The id of this {@link ChildObject1} instance.
-  **/
+    * Get id
+    * @return id  The id of this {@link ChildObject1} instance.
+    */
   @Nonnull public String getId() {
     return id;
   }
 
   /**
-  * Set the id of this {@link ChildObject1} instance.
-  *
-  * @param id  The id of this {@link ChildObject1}
-  */
+   * Set the id of this {@link ChildObject1} instance.
+   *
+   * @param id  The id of this {@link ChildObject1}
+   */
   public void setId( @Nonnull final String id) {
     this.id = id;
   }
 
    /**
-   * Set the type of this {@link ChildObject1} instance and return the same instance.
-   *
-   * @param type  The type of this {@link ChildObject1}
-   * @return The same instance of this {@link ChildObject1} class
-   */
+    * Set the type of this {@link ChildObject1} instance and return the same instance.
+    *
+    * @param type  The type of this {@link ChildObject1}
+    * @return The same instance of this {@link ChildObject1} class
+    */
    @Nonnull public ChildObject1 type(@Nonnull final String type) {
     this.type = type;
     return this;
   }
 
    /**
-   * Get type
-   * @return type  The type of this {@link ChildObject1} instance.
-  **/
+    * Get type
+    * @return type  The type of this {@link ChildObject1} instance.
+    */
   @Nonnull public String getType() {
     return type;
   }
 
   /**
-  * Set the type of this {@link ChildObject1} instance.
-  *
-  * @param type  The type of this {@link ChildObject1}
-  */
+   * Set the type of this {@link ChildObject1} instance.
+   *
+   * @param type  The type of this {@link ChildObject1}
+   */
   public void setType( @Nonnull final String type) {
     this.type = type;
   }
 
    /**
-   * Set the text of this {@link ChildObject1} instance and return the same instance.
-   *
-   * @param text  The text of this {@link ChildObject1}
-   * @return The same instance of this {@link ChildObject1} class
-   */
+    * Set the text of this {@link ChildObject1} instance and return the same instance.
+    *
+    * @param text  The text of this {@link ChildObject1}
+    * @return The same instance of this {@link ChildObject1} class
+    */
    @Nonnull public ChildObject1 text(@Nonnull final String text) {
     this.text = text;
     return this;
   }
 
    /**
-   * Get text
-   * @return text  The text of this {@link ChildObject1} instance.
-  **/
+    * Get text
+    * @return text  The text of this {@link ChildObject1} instance.
+    */
   @Nonnull public String getText() {
     return text;
   }
 
   /**
-  * Set the text of this {@link ChildObject1} instance.
-  *
-  * @param text  The text of this {@link ChildObject1}
-  */
+   * Set the text of this {@link ChildObject1} instance.
+   *
+   * @param text  The text of this {@link ChildObject1}
+   */
   public void setText( @Nonnull final String text) {
     this.text = text;
   }

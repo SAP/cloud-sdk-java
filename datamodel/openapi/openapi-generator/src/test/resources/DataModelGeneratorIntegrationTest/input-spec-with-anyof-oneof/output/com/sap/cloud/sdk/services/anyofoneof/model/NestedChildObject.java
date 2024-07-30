@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 /**
  * NestedChildObject
  */
-
 // CHECKSTYLE:OFF
 public class NestedChildObject 
 // CHECKSTYLE:ON
@@ -59,85 +58,85 @@ public class NestedChildObject
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
    /**
-   * Set the id of this {@link NestedChildObject} instance and return the same instance.
-   *
-   * @param id  The id of this {@link NestedChildObject}
-   * @return The same instance of this {@link NestedChildObject} class
-   */
+    * Set the id of this {@link NestedChildObject} instance and return the same instance.
+    *
+    * @param id  The id of this {@link NestedChildObject}
+    * @return The same instance of this {@link NestedChildObject} class
+    */
    @Nonnull public NestedChildObject id(@Nonnull final String id) {
     this.id = id;
     return this;
   }
 
    /**
-   * Get id
-   * @return id  The id of this {@link NestedChildObject} instance.
-  **/
+    * Get id
+    * @return id  The id of this {@link NestedChildObject} instance.
+    */
   @Nonnull public String getId() {
     return id;
   }
 
   /**
-  * Set the id of this {@link NestedChildObject} instance.
-  *
-  * @param id  The id of this {@link NestedChildObject}
-  */
+   * Set the id of this {@link NestedChildObject} instance.
+   *
+   * @param id  The id of this {@link NestedChildObject}
+   */
   public void setId( @Nonnull final String id) {
     this.id = id;
   }
 
    /**
-   * Set the type of this {@link NestedChildObject} instance and return the same instance.
-   *
-   * @param type  The type of this {@link NestedChildObject}
-   * @return The same instance of this {@link NestedChildObject} class
-   */
+    * Set the type of this {@link NestedChildObject} instance and return the same instance.
+    *
+    * @param type  The type of this {@link NestedChildObject}
+    * @return The same instance of this {@link NestedChildObject} class
+    */
    @Nonnull public NestedChildObject type(@Nonnull final String type) {
     this.type = type;
     return this;
   }
 
    /**
-   * Get type
-   * @return type  The type of this {@link NestedChildObject} instance.
-  **/
+    * Get type
+    * @return type  The type of this {@link NestedChildObject} instance.
+    */
   @Nonnull public String getType() {
     return type;
   }
 
   /**
-  * Set the type of this {@link NestedChildObject} instance.
-  *
-  * @param type  The type of this {@link NestedChildObject}
-  */
+   * Set the type of this {@link NestedChildObject} instance.
+   *
+   * @param type  The type of this {@link NestedChildObject}
+   */
   public void setType( @Nonnull final String type) {
     this.type = type;
   }
 
    /**
-   * Set the text of this {@link NestedChildObject} instance and return the same instance.
-   *
-   * @param text  The text of this {@link NestedChildObject}
-   * @return The same instance of this {@link NestedChildObject} class
-   */
+    * Set the text of this {@link NestedChildObject} instance and return the same instance.
+    *
+    * @param text  The text of this {@link NestedChildObject}
+    * @return The same instance of this {@link NestedChildObject} class
+    */
    @Nonnull public NestedChildObject text(@Nonnull final String text) {
     this.text = text;
     return this;
   }
 
    /**
-   * Get text
-   * @return text  The text of this {@link NestedChildObject} instance.
-  **/
+    * Get text
+    * @return text  The text of this {@link NestedChildObject} instance.
+    */
   @Nonnull public String getText() {
     return text;
   }
 
   /**
-  * Set the text of this {@link NestedChildObject} instance.
-  *
-  * @param text  The text of this {@link NestedChildObject}
-  */
+   * Set the text of this {@link NestedChildObject} instance.
+   *
+   * @param text  The text of this {@link NestedChildObject}
+   */
   public void setText( @Nonnull final String text) {
     this.text = text;
   }

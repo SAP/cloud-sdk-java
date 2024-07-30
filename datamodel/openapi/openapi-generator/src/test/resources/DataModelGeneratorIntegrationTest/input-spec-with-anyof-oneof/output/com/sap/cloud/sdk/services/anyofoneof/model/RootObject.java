@@ -44,7 +44,6 @@ import javax.annotation.Nullable;
 /**
  * RootObject
  */
-
 // CHECKSTYLE:OFF
 public class RootObject 
 // CHECKSTYLE:ON
@@ -57,20 +56,20 @@ public class RootObject
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
    /**
-   * Set the questions of this {@link RootObject} instance and return the same instance.
-   *
-   * @param questions  The questions of this {@link RootObject}
-   * @return The same instance of this {@link RootObject} class
-   */
+    * Set the questions of this {@link RootObject} instance and return the same instance.
+    *
+    * @param questions  The questions of this {@link RootObject}
+    * @return The same instance of this {@link RootObject} class
+    */
    @Nonnull public RootObject questions(@Nonnull final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
     return this;
   }
   /**
-  * Add one questions instance to this {@link RootObject}.
-  * @param questionsItem The questions that should be added
-  * @return The same instance of type {@link RootObject}
-  */
+   * Add one questions instance to this {@link RootObject}.
+   * @param questionsItem The questions that should be added
+   * @return The same instance of type {@link RootObject}
+   */
   @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
     if (this.questions == null) {
       this.questions = new ArrayList<>();
@@ -80,18 +79,18 @@ public class RootObject
   }
 
    /**
-   * Get questions
-   * @return questions  The questions of this {@link RootObject} instance.
-  **/
+    * Get questions
+    * @return questions  The questions of this {@link RootObject} instance.
+    */
   @Nonnull public List<RootObjectQuestionsInner> getQuestions() {
     return questions;
   }
 
   /**
-  * Set the questions of this {@link RootObject} instance.
-  *
-  * @param questions  The questions of this {@link RootObject}
-  */
+   * Set the questions of this {@link RootObject} instance.
+   *
+   * @param questions  The questions of this {@link RootObject}
+   */
   public void setQuestions( @Nonnull final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
   }
