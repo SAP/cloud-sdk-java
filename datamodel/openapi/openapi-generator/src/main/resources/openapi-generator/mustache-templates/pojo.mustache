@@ -3,7 +3,7 @@
  * @deprecated{{/isDeprecated}}
  */{{#isDeprecated}}
 @Deprecated{{/isDeprecated}}
-{{>generatedAnnotation}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}
+{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}
 {{^isReleased}}@Beta{{/isReleased}}
 // CHECKSTYLE:OFF
 public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcelableModel}}implements Parcelable {{/parcelableModel}}{{^parcelableModel}}{{/parcelableModel}}

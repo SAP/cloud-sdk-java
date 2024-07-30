@@ -37,7 +37,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 * API for managing root and child objects
 */
 
-
 public class DefaultApi extends AbstractOpenApiService {
     /**
     * Instantiates this API class to invoke operations on the Sample API.
