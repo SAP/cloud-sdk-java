@@ -174,6 +174,13 @@ public final class DefaultDestination implements Destination
             return this;
         }
 
+        @Nonnull
+        Builder removeProperty( @Nonnull final String key )
+        {
+            properties.remove(key);
+            return this;
+        }
+
         /**
          * Sets the name of the {@code DefaultDestination}.
          *
