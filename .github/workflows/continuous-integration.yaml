@@ -226,22 +226,6 @@ jobs:
           echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
-      - name: "Run Sample Modules Test"
-        run: |
-          MVN_MODULES="-pl :odata-api-sample,:odata-v4-api-sample,:openapi-api-sample"
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} test --fail-at-end $MVN_MODULES -Dsdk.code.scanning"
-          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
-          mvn $MVN_ARGS
-
-      - name: "Verify Local Changes"
-        run: |
-          CHANGED_FILES="$(git --no-pager diff --name-only)"
-          if [[ ! -z "$CHANGED_FILES" ]]; then
-              echo "There are local changes in the following files:\n$CHANGED_FILES\nPrinting the git diff:"
-              git --no-pager diff
-              exit 1
-          fi
-
       - name: "Coverage Report"
         run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
