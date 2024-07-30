@@ -42,7 +42,7 @@ public class ODataResponseException extends ODataException
      */
     @Getter
     @Nonnull
-    private final Collection<Header> httpHeaders;
+    private final transient Collection<Header> httpHeaders;
 
     /**
      * The content of the HTTP response body as plain text or null, if the response did not contain a body.

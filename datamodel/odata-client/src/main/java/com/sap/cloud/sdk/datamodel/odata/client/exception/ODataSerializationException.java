@@ -25,7 +25,7 @@ public class ODataSerializationException extends ODataRequestException
      */
     @Nonnull
     @Getter
-    private final Object nonSerializableObject;
+    private final transient Object nonSerializableObject;
 
     /**
      * Default constructor.

@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 /**
  * Set of OData filter functions for temporal types.
  */
+@SuppressWarnings( "overloads" )
 public interface FilterExpressionTemporal
 {
     /**
