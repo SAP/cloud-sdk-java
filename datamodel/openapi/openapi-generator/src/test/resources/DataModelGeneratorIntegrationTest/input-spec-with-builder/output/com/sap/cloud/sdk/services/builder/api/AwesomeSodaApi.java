@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 * API for managing sodas in a soda store
 */
 
+
 public class AwesomeSodaApi extends AbstractOpenApiService {
     /**
     * Instantiates this API class to invoke operations on the Soda Store API.
@@ -70,7 +71,8 @@ public class AwesomeSodaApi extends AbstractOpenApiService {
 * @return Soda
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
+    @Nonnull
+    public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
         final Object localVarPostBody = newSoda;
         
         // verify the required parameter 'newSoda' is set

@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 * API for managing sodas in a soda store
 */
 
+
 public class DefaultApi extends AbstractOpenApiService {
     /**
     * Instantiates this API class to invoke operations on the Soda Store API.
@@ -71,7 +72,8 @@ public class DefaultApi extends AbstractOpenApiService {
 * @return An OpenApiResponse containing the status code of the HttpResponse.
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-     @Nonnull  public OpenApiResponse deleteSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
+    @Nullable
+    public OpenApiResponse deleteSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
         // verify the required parameter 'sodaId' is set
@@ -109,7 +111,8 @@ public class DefaultApi extends AbstractOpenApiService {
 * @return Soda
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public Soda getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
+    @Nonnull
+    public Soda getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
         // verify the required parameter 'sodaId' is set
@@ -150,7 +153,8 @@ public class DefaultApi extends AbstractOpenApiService {
 * @return Soda
 * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public Soda updateSodaById( @Nonnull final Long sodaId,  @Nonnull final UpdateSoda updateSoda) throws OpenApiRequestException {
+    @Nonnull
+    public Soda updateSodaById( @Nonnull final Long sodaId,  @Nonnull final UpdateSoda updateSoda) throws OpenApiRequestException {
         final Object localVarPostBody = updateSoda;
         
         // verify the required parameter 'sodaId' is set
