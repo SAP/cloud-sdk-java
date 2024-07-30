@@ -47,14 +47,12 @@ public class ODataBinaryAdapter extends TypeAdapter<byte[]>
         }
 
         final String jsonValue = jsonReader.nextString();
-        byte[] result;
         try {
-            result = Base64.getDecoder().decode(jsonValue.getBytes(StandardCharsets.UTF_8));
+            return Base64.getDecoder().decode(jsonValue.getBytes(StandardCharsets.UTF_8));
         }
         catch( final IllegalArgumentException e ) {
             log.debug("Cannot decode String as byte array: " + e.getMessage());
-            result = null;
+            return null;
         }
-        return result;
     }
 }

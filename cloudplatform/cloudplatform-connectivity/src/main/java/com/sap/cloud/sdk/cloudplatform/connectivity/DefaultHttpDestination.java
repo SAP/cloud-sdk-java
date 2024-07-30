@@ -608,8 +608,31 @@ public final class DefaultHttpDestination implements HttpDestination
             return builder.get(key, conversion);
         }
 
+        /**
+         * Removes the property with the given key from the destination to be created. This is useful when creating a
+         * builder from an existing destination and wanting to remove a property.
+         *
+         * @param key
+         *            The {@link DestinationPropertyKey} of the property to remove.
+         * @return This builder.
+         */
         @Nonnull
-        private Builder removeProperty( @Nonnull final DestinationPropertyKey<?> key )
+        public Builder removeProperty( @Nonnull final DestinationPropertyKey<?> key )
+        {
+            builder.removeProperty(key);
+            return this;
+        }
+
+        /**
+         * Removes the property with the given key from the destination to be created. This is useful when creating a
+         * builder from an existing destination and wanting to remove a property.
+         *
+         * @param key
+         *            The key of the property to remove.
+         * @return This builder.
+         */
+        @Nonnull
+        public Builder removeProperty( @Nonnull final String key )
         {
             builder.removeProperty(key);
             return this;
