@@ -67,6 +67,7 @@ public enum ApiMaturity
                     BETA.identifier));
     }
 
+    @Nonnull
     @Override
     public String toString()
     {

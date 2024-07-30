@@ -43,7 +43,8 @@ class DeserializationTest
             """;
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+        final SodaWithId expected =
+            SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
@@ -64,7 +65,8 @@ class DeserializationTest
             """;
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+        final SodaWithId expected =
+            SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
@@ -77,7 +79,7 @@ class DeserializationTest
         responseBody = "{\"name\": \"Cola\"}";
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().name("Cola");
+        final SodaWithId expected = SodaWithId.create().name("Cola").brand(null).quantity(null).price(null);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 

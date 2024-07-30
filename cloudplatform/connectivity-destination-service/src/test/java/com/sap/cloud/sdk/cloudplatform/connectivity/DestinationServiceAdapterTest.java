@@ -245,6 +245,31 @@ class DestinationServiceAdapterTest
     }
 
     @Test
+    void testFragmentName()
+    {
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+
+        final String fragment = "my-fragment";
+
+        final String destinationResponse =
+            adapterToTest
+                .getConfigurationAsJson(
+                    "/",
+                    DestinationRetrievalStrategy
+                        .withoutToken(TECHNICAL_USER_CURRENT_TENANT)
+                        .withFragmentName(fragment));
+
+        assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
+
+        verify(
+            1,
+            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL))
+                .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
+                .withHeader("x-fragment-name", equalTo(fragment))
+                .withoutHeader("x-user-token"));
+    }
+
+    @Test
     void getDestinationServiceProviderTenantShouldReturnProviderTenantFromServiceBinding()
     {
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);

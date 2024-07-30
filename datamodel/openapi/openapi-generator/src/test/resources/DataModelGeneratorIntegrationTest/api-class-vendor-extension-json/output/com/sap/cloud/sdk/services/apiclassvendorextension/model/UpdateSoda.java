@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.time.LocalDate;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -47,6 +48,12 @@ public class UpdateSoda
 {
   @JsonProperty("name")
   private String name;
+
+  @JsonProperty("zero")
+  private Boolean zero;
+
+  @JsonProperty("since")
+  private LocalDate since;
 
   @JsonProperty("brand")
   private String brand;
@@ -87,6 +94,62 @@ public class UpdateSoda
   */
   public void setName( @Nonnull final String name) {
     this.name = name;
+  }
+
+   /**
+   * Set the zero of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param zero  The zero of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+   @Nonnull public UpdateSoda zero(@Nonnull final Boolean zero) {
+    this.zero = zero;
+    return this;
+  }
+
+   /**
+   * Get zero
+   * @return zero  The zero of this {@link UpdateSoda} instance.
+  **/
+  @Nonnull public Boolean isZero() {
+    return zero;
+  }
+
+  /**
+  * Set the zero of this {@link UpdateSoda} instance.
+  *
+  * @param zero  The zero of this {@link UpdateSoda}
+  */
+  public void setZero( @Nonnull final Boolean zero) {
+    this.zero = zero;
+  }
+
+   /**
+   * Set the since of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param since  The since of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+   @Nonnull public UpdateSoda since(@Nonnull final LocalDate since) {
+    this.since = since;
+    return this;
+  }
+
+   /**
+   * Get since
+   * @return since  The since of this {@link UpdateSoda} instance.
+  **/
+  @Nonnull public LocalDate getSince() {
+    return since;
+  }
+
+  /**
+  * Set the since of this {@link UpdateSoda} instance.
+  *
+  * @param since  The since of this {@link UpdateSoda}
+  */
+  public void setSince( @Nonnull final LocalDate since) {
+    this.since = since;
   }
 
    /**
@@ -221,6 +284,8 @@ public class UpdateSoda
     final UpdateSoda updateSoda = (UpdateSoda) o;
     return Objects.equals(this.cloudSdkCustomFields, updateSoda.cloudSdkCustomFields) &&
         Objects.equals(this.name, updateSoda.name) &&
+        Objects.equals(this.zero, updateSoda.zero) &&
+        Objects.equals(this.since, updateSoda.since) &&
         Objects.equals(this.brand, updateSoda.brand) &&
         Objects.equals(this.flavor, updateSoda.flavor) &&
         Objects.equals(this.price, updateSoda.price);
@@ -228,7 +293,7 @@ public class UpdateSoda
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, brand, flavor, price, cloudSdkCustomFields);
+    return Objects.hash(name, zero, since, brand, flavor, price, cloudSdkCustomFields);
   }
 
   @Override
@@ -236,6 +301,8 @@ public class UpdateSoda
     final StringBuilder sb = new StringBuilder();
     sb.append("class UpdateSoda {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    zero: ").append(toIndentedString(zero)).append("\n");
+    sb.append("    since: ").append(toIndentedString(since)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
@@ -254,6 +321,7 @@ public class UpdateSoda
     }
     return o.toString().replace("\n", "\n    ");
   }
+
 
 }
 
