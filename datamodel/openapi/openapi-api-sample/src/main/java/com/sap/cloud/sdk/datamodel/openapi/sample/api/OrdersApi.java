@@ -7,6 +7,7 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -68,7 +69,7 @@ public class OrdersApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public Order ordersPost( @Nonnull final Order order )
         throws OpenApiRequestException
     {

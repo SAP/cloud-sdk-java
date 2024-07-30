@@ -69,7 +69,7 @@ public class AwesomeSodaApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
         final Object localVarPostBody = newSoda;
         
