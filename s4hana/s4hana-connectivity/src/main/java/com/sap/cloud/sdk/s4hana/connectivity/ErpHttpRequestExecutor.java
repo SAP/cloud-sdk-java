@@ -579,7 +579,7 @@ public class ErpHttpRequestExecutor<RequestT extends Request<RequestT, RequestRe
         final RequestBodyWithHeader bodyWithHeader = getRequestBodyWithHeader(destination, serializedRequest);
         final HttpUriRequest uriRequest = newRequest(requestMethod, requestUri, bodyWithHeader);
 
-        HttpResponse response;
+        final HttpResponse response;
         final List<Header> responseHeaders = new ArrayList<>();
         final String responseBody;
 
