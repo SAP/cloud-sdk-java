@@ -34,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * OrderWithTimestamp
  */
-
 // CHECKSTYLE:OFF
 public class OrderWithTimestamp
 // CHECKSTYLE:ON
@@ -83,7 +82,7 @@ public class OrderWithTimestamp
      * Get productId
      *
      * @return productId The productId of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Long getProductId()
     {
@@ -119,7 +118,7 @@ public class OrderWithTimestamp
      * Get quantity
      *
      * @return quantity The quantity of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Integer getQuantity()
     {
@@ -155,7 +154,7 @@ public class OrderWithTimestamp
      * Get totalPrice
      *
      * @return totalPrice The totalPrice of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Float getTotalPrice()
     {
@@ -191,7 +190,7 @@ public class OrderWithTimestamp
      * Some typeless property, interpreted by the generator as nullable by default (because typeless)
      *
      * @return typelessProperty The typelessProperty of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Object getTypelessProperty()
     {
@@ -227,7 +226,7 @@ public class OrderWithTimestamp
      * Some typed property that is deliberately made nullable
      *
      * @return nullableProperty The nullableProperty of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public String getNullableProperty()
     {
@@ -263,7 +262,7 @@ public class OrderWithTimestamp
      * Get timestamp
      *
      * @return timestamp The timestamp of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public OffsetDateTime getTimestamp()
     {

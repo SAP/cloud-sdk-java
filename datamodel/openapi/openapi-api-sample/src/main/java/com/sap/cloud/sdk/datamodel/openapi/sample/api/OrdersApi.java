@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +28,6 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  *
  * API for managing soda products and orders in SodaStore.
  */
-
 public class OrdersApi extends AbstractOpenApiService
 {
     /**
@@ -70,7 +68,7 @@ public class OrdersApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Order ordersPost( @Nonnull final Order order )
         throws OpenApiRequestException
     {
