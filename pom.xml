@@ -828,17 +828,10 @@
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
 								<excludes>
-									<exclude>**/odata/sample/**</exclude>
-									<exclude>**/odatav4/sample/**</exclude>
-									<exclude>**/openapi/sample/**</exclude>
-									<exclude>**/odata/namespaces/**</exclude>
-									<exclude>**/odata/services/**</exclude>
-									<exclude>**/odatav4/namespaces/**</exclude>
-									<exclude>**/odatav4/services/**</exclude>
-									<exclude>**/soap/client/**</exclude>
+									<exclude>**/odata/sample/**/*</exclude>
+									<exclude>**/odatav4/sample/**/*</exclude>
+									<exclude>**/openapi/sample/**/*</exclude>
 									<exclude>**/testclasses/**</exclude>
-									<!-- namespaces compiled to Java17 -->
-									<exclude>**/servletjakarta/**</exclude>
 								</excludes>
 							</configuration>
 						</execution>
