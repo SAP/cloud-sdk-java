@@ -204,6 +204,13 @@
           "name": {
             "type": "string"
           },
+          "zero": {
+            "type": "boolean"
+          },
+          "since": {
+            "type": "string",
+            "format": "date"
+          },
           "brand": {
             "type": "string"
           },
