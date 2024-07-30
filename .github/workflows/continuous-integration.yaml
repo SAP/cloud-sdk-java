@@ -159,7 +159,9 @@ jobs:
         run: |
           CHANGED_FILES="$(git --no-pager diff --name-only)"
           if [[ ! -z "$CHANGED_FILES" ]]; then
-              echo "There are local changes in the following files:\n$CHANGED_FILES\nPrinting the git diff:"
+              echo "There are local changes in the following files:"
+              echo "$CHANGED_FILES"
+              echo "Printing the git diff:"
               git --no-pager diff
               exit 1
           fi
