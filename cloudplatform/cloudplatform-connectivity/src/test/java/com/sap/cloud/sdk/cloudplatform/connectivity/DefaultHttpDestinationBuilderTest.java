@@ -85,6 +85,8 @@ class DefaultHttpDestinationBuilderTest
                 .builder("foo.bar")
                 .property("foo", "bar")
                 .property("bar", 42)
+                .property("baz", 1234)
+                .property(DestinationProperty.SAP_LANGUAGE, "en")
                 .header(header)
                 .headerProviders(headerProvider)
                 .keyStore(keyStore)
@@ -101,6 +103,17 @@ class DefaultHttpDestinationBuilderTest
         assertThat(sut.keyStore).isSameAs(keyStore);
         assertThat(sut.trustStore).isSameAs(trustStore);
         assertThat(sut.get(DestinationProperty.TRUST_ALL)).containsExactly(true);
+
+        assertThat(sut.get("baz", v -> (int) v)).contains(1234);
+        assertThat(sut.get(DestinationProperty.SAP_LANGUAGE)).contains("en");
+        sut.removeProperty("baz");
+        sut.removeProperty(DestinationProperty.SAP_LANGUAGE);
+        assertThat(sut.get("baz", v -> (int) v)).isEmpty();
+        assertThat(sut.get(DestinationProperty.SAP_LANGUAGE)).isEmpty();
+        assertThat(sut.build().getPropertyNames())
+            .contains("foo", "bar")
+            .doesNotContain("baz", DestinationProperty.SAP_LANGUAGE.getKeyName());
+
     }
 
     @Test
