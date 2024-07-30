@@ -49,7 +49,7 @@ public class OrderWithTimestamp
     private Float totalPrice;
 
     @JsonProperty( "typelessProperty" )
-    private Object typelessProperty = null;
+    private Object typelessProperty;
 
     @JsonProperty( "nullableProperty" )
     private String nullableProperty;
@@ -60,6 +60,10 @@ public class OrderWithTimestamp
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+
+    protected OrderWithTimestamp()
+    {
+    }
 
     /**
      * Set the productId of this {@link OrderWithTimestamp} instance and return the same instance.
@@ -376,6 +380,45 @@ public class OrderWithTimestamp
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link OrderWithTimestamp} instance with all
+     * required arguments.
+     */
+    public static Builder create()
+    {
+        return ( productId ) -> ( quantity ) -> new OrderWithTimestamp().productId(productId).quantity(quantity);
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder
+    {
+        /**
+         * Set the productId of this {@link OrderWithTimestamp} instance.
+         *
+         * @param productId
+         *            The productId of this {@link OrderWithTimestamp}
+         * @return The OrderWithTimestamp builder.
+         */
+        Builder1 productId( @Nonnull final Long productId );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder1
+    {
+        /**
+         * Set the quantity of this {@link OrderWithTimestamp} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link OrderWithTimestamp}
+         * @return The OrderWithTimestamp instance.
+         */
+        OrderWithTimestamp quantity( @Nonnull final Integer quantity );
     }
 
 }

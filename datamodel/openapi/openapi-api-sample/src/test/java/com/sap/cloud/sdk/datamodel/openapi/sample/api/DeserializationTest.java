@@ -32,19 +32,19 @@ class DeserializationTest
     @Test
     void testFullResponse()
     {
-        responseBody =
-                """
-                {
-                  "name": "Cola",
-                  "brand": "Coca-Cola",
-                  "quantity": 100,
-                  "price": 1.5,
-                  "id": 0
-                }
-                """;
+        responseBody = """
+            {
+              "name": "Cola",
+              "brand": "Coca-Cola",
+              "quantity": 100,
+              "price": 1.5,
+              "id": 0
+            }
+            """;
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+        final SodaWithId expected =
+            SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
@@ -54,19 +54,19 @@ class DeserializationTest
     @Test
     void testUnexpectedFieldOrder()
     {
-        responseBody =
-                """
-                {
-                  "name": "Cola",
-                  "price": 1.5,
-                  "id": 0,
-                  "brand": "Coca-Cola",
-                  "quantity": 100
-                }
-                """;
+        responseBody = """
+            {
+              "name": "Cola",
+              "price": 1.5,
+              "id": 0,
+              "brand": "Coca-Cola",
+              "quantity": 100
+            }
+            """;
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().id(0L).name("Cola").brand("Coca-Cola").quantity(100).price(1.5f);
+        final SodaWithId expected =
+            SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
@@ -79,7 +79,7 @@ class DeserializationTest
         responseBody = "{\"name\": \"Cola\"}";
         stub(responseBody);
 
-        final SodaWithId expected = new SodaWithId().name("Cola");
+        final SodaWithId expected = SodaWithId.create().name("Cola").brand(null).quantity(null).price(null);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
@@ -89,13 +89,12 @@ class DeserializationTest
     @Test
     void testUnexpectedAdditionalField()
     {
-        responseBody =
-                """
-                {
-                    "name": "Cola",
-                    "unexpectedField": []
-                }
-                """;
+        responseBody = """
+            {
+                "name": "Cola",
+                "unexpectedField": []
+            }
+            """;
         stub(responseBody);
 
         final SodaWithId actual = sut.sodasIdGet(1L);

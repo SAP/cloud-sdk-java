@@ -14,7 +14,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.uppercasefileextension.model;
+package com.sap.cloud.sdk.services.builder.model;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -38,11 +38,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * UpdateSoda
+ * NewSoda
  */
 
 // CHECKSTYLE:OFF
-public class UpdateSoda 
+public class NewSoda 
 // CHECKSTYLE:ON
 {
   @JsonProperty("name")
@@ -60,121 +60,122 @@ public class UpdateSoda
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+  private NewSoda() {  }
 
    /**
-   * Set the name of this {@link UpdateSoda} instance and return the same instance.
+   * Set the name of this {@link NewSoda} instance and return the same instance.
    *
-   * @param name  The name of this {@link UpdateSoda}
-   * @return The same instance of this {@link UpdateSoda} class
+   * @param name  The name of this {@link NewSoda}
+   * @return The same instance of this {@link NewSoda} class
    */
-   @Nonnull public UpdateSoda name(@Nonnull final String name) {
+   @Nonnull public NewSoda name(@Nonnull final String name) {
     this.name = name;
     return this;
   }
 
    /**
    * Get name
-   * @return name  The name of this {@link UpdateSoda} instance.
+   * @return name  The name of this {@link NewSoda} instance.
   **/
   @Nonnull public String getName() {
     return name;
   }
 
   /**
-  * Set the name of this {@link UpdateSoda} instance.
+  * Set the name of this {@link NewSoda} instance.
   *
-  * @param name  The name of this {@link UpdateSoda}
+  * @param name  The name of this {@link NewSoda}
   */
   public void setName( @Nonnull final String name) {
     this.name = name;
   }
 
    /**
-   * Set the brand of this {@link UpdateSoda} instance and return the same instance.
+   * Set the brand of this {@link NewSoda} instance and return the same instance.
    *
-   * @param brand  The brand of this {@link UpdateSoda}
-   * @return The same instance of this {@link UpdateSoda} class
+   * @param brand  The brand of this {@link NewSoda}
+   * @return The same instance of this {@link NewSoda} class
    */
-   @Nonnull public UpdateSoda brand(@Nonnull final String brand) {
+   @Nonnull public NewSoda brand(@Nonnull final String brand) {
     this.brand = brand;
     return this;
   }
 
    /**
    * Get brand
-   * @return brand  The brand of this {@link UpdateSoda} instance.
+   * @return brand  The brand of this {@link NewSoda} instance.
   **/
   @Nonnull public String getBrand() {
     return brand;
   }
 
   /**
-  * Set the brand of this {@link UpdateSoda} instance.
+  * Set the brand of this {@link NewSoda} instance.
   *
-  * @param brand  The brand of this {@link UpdateSoda}
+  * @param brand  The brand of this {@link NewSoda}
   */
   public void setBrand( @Nonnull final String brand) {
     this.brand = brand;
   }
 
    /**
-   * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
+   * Set the flavor of this {@link NewSoda} instance and return the same instance.
    *
-   * @param flavor  The flavor of this {@link UpdateSoda}
-   * @return The same instance of this {@link UpdateSoda} class
+   * @param flavor  The flavor of this {@link NewSoda}
+   * @return The same instance of this {@link NewSoda} class
    */
-   @Nonnull public UpdateSoda flavor(@Nonnull final String flavor) {
+   @Nonnull public NewSoda flavor(@Nonnull final String flavor) {
     this.flavor = flavor;
     return this;
   }
 
    /**
    * Get flavor
-   * @return flavor  The flavor of this {@link UpdateSoda} instance.
+   * @return flavor  The flavor of this {@link NewSoda} instance.
   **/
   @Nonnull public String getFlavor() {
     return flavor;
   }
 
   /**
-  * Set the flavor of this {@link UpdateSoda} instance.
+  * Set the flavor of this {@link NewSoda} instance.
   *
-  * @param flavor  The flavor of this {@link UpdateSoda}
+  * @param flavor  The flavor of this {@link NewSoda}
   */
   public void setFlavor( @Nonnull final String flavor) {
     this.flavor = flavor;
   }
 
    /**
-   * Set the price of this {@link UpdateSoda} instance and return the same instance.
+   * Set the price of this {@link NewSoda} instance and return the same instance.
    *
-   * @param price  The price of this {@link UpdateSoda}
-   * @return The same instance of this {@link UpdateSoda} class
+   * @param price  The price of this {@link NewSoda}
+   * @return The same instance of this {@link NewSoda} class
    */
-   @Nonnull public UpdateSoda price(@Nonnull final Float price) {
+   @Nonnull public NewSoda price(@Nonnull final Float price) {
     this.price = price;
     return this;
   }
 
    /**
    * Get price
-   * @return price  The price of this {@link UpdateSoda} instance.
+   * @return price  The price of this {@link NewSoda} instance.
   **/
   @Nonnull public Float getPrice() {
     return price;
   }
 
   /**
-  * Set the price of this {@link UpdateSoda} instance.
+  * Set the price of this {@link NewSoda} instance.
   *
-  * @param price  The price of this {@link UpdateSoda}
+  * @param price  The price of this {@link NewSoda}
   */
   public void setPrice( @Nonnull final Float price) {
     this.price = price;
   }
 
   /**
-   * Get the names of the unrecognizable properties of the {@link UpdateSoda}.
+   * Get the names of the unrecognizable properties of the {@link NewSoda}.
    * @return The set of properties names
    */
   @JsonIgnore
@@ -184,7 +185,7 @@ public class UpdateSoda
   }
 
   /**
-   * Get the value of an unrecognizable property of this {@link UpdateSoda} instance.
+   * Get the value of an unrecognizable property of this {@link NewSoda} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -192,13 +193,13 @@ public class UpdateSoda
   @Nullable
   public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
-        throw new NoSuchElementException("UpdateSoda has no field with name '" + name + "'.");
+        throw new NoSuchElementException("NewSoda has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
   }
 
   /**
-   * Set an unrecognizable property of this {@link UpdateSoda} instance. If the map previously contained a mapping
+   * Set an unrecognizable property of this {@link NewSoda} instance. If the map previously contained a mapping
    * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
    * @param customFieldValue The value of the property
@@ -218,12 +219,12 @@ public class UpdateSoda
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final UpdateSoda updateSoda = (UpdateSoda) o;
-    return Objects.equals(this.cloudSdkCustomFields, updateSoda.cloudSdkCustomFields) &&
-        Objects.equals(this.name, updateSoda.name) &&
-        Objects.equals(this.brand, updateSoda.brand) &&
-        Objects.equals(this.flavor, updateSoda.flavor) &&
-        Objects.equals(this.price, updateSoda.price);
+    final NewSoda newSoda = (NewSoda) o;
+    return Objects.equals(this.cloudSdkCustomFields, newSoda.cloudSdkCustomFields) &&
+        Objects.equals(this.name, newSoda.name) &&
+        Objects.equals(this.brand, newSoda.brand) &&
+        Objects.equals(this.flavor, newSoda.flavor) &&
+        Objects.equals(this.price, newSoda.price);
   }
 
   @Override
@@ -234,7 +235,7 @@ public class UpdateSoda
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("class UpdateSoda {\n");
+    sb.append("class NewSoda {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
@@ -255,6 +256,71 @@ public class UpdateSoda
     return o.toString().replace("\n", "\n    ");
   }
 
+    /**
+    * Create a type-safe, fluent-api builder object to construct a new {@link NewSoda} instance with all required arguments.
+    */
+    public static Builder builder() {
+        return (name) -> (brand) -> (flavor) -> (price) -> () -> new NewSoda().name(name).brand(brand).flavor(flavor).price(price);
+    }
+    /**
+    * Builder helper class.
+    */
+    public interface Builder {
+        /**
+        * Set the name of this {@link NewSoda} instance.
+        *
+        * @param name  The name of this {@link NewSoda}
+        * @return The NewSoda builder.
+        */
+        Builder1 name( @Nonnull final String name);
+    }
+    /**
+    * Builder helper class.
+    */
+    public interface Builder1 {
+        /**
+        * Set the brand of this {@link NewSoda} instance.
+        *
+        * @param brand  The brand of this {@link NewSoda}
+        * @return The NewSoda builder.
+        */
+        Builder2 brand( @Nonnull final String brand);
+    }
+    /**
+    * Builder helper class.
+    */
+    public interface Builder2 {
+        /**
+        * Set the flavor of this {@link NewSoda} instance.
+        *
+        * @param flavor  The flavor of this {@link NewSoda}
+        * @return The NewSoda builder.
+        */
+        Builder3 flavor( @Nonnull final String flavor);
+    }
+    /**
+    * Builder helper class.
+    */
+    public interface Builder3 {
+        /**
+        * Set the price of this {@link NewSoda} instance.
+        *
+        * @param price  The price of this {@link NewSoda}
+        * @return The NewSoda instance.
+        */
+        Builder4 price( @Nonnull final Float price);
+    }
+    /**
+    * Builder helper class.
+    */
+    public interface Builder4 {
+        /**
+        * Finalize the builder for new {@link NewSoda} instance.
+        *
+        * @return The NewSoda instance.
+        */
+        NewSoda build();
+    }
 
 }
 

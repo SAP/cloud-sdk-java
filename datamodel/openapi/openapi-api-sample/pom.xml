@@ -115,6 +115,11 @@
 					<deleteOutputDirectory>true</deleteOutputDirectory>
 					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
 					<sapCopyrightHeader>true</sapCopyrightHeader>
+					<additionalProperties>
+						<pojoBuilderMethodName>create</pojoBuilderMethodName>
+						<pojoBuildMethodName />
+						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
+					</additionalProperties>
 				</configuration>
 			</plugin>
 			<!-- Enable formatter to always run on the generated code -->

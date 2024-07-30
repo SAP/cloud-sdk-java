@@ -14,7 +14,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.uppercasefileextension.model;
+package com.sap.cloud.sdk.services.builder.model;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -60,6 +60,7 @@ public class UpdateSoda
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+  private UpdateSoda() {  }
 
    /**
    * Set the name of this {@link UpdateSoda} instance and return the same instance.
@@ -255,6 +256,12 @@ public class UpdateSoda
     return o.toString().replace("\n", "\n    ");
   }
 
+    /**
+    * Create a new {@link UpdateSoda} instance. No arguments are required.
+    */
+    public static UpdateSoda builder() {
+        return new UpdateSoda();
+    }
 
 }
 
