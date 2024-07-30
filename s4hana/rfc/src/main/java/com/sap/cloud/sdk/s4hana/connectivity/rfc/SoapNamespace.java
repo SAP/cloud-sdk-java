@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.s4hana.connectivity.rfc;
 
+import javax.annotation.Nonnull;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,7 @@ public enum SoapNamespace
     @Setter( AccessLevel.PUBLIC )
     private String label;
 
+    @Nonnull
     @Override
     public String toString()
     {
