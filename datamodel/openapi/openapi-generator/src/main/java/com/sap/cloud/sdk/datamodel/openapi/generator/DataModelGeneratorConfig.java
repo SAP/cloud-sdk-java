@@ -14,6 +14,18 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
+/**
+ * Delegator class for provided {@link CodegenConfig} object. This helper class allows for overriding the
+ * {@link #postProcessOperationsWithModels} method, to customize fields accessible from within a mustache template.
+ * <p>
+ * <b>Note:</b> This class suppresses "rawtypes" because of the incompatibility of lombok and generating signatures with
+ * generics.
+ * </p>
+ * <p>
+ * <b>Note:</b> This class suppresses "deprecation" because only {@link ClientOptInput#getConfig()} allows for accessing
+ * the delegated {@link CodegenConfig}.
+ * </p>
+ */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @SuppressWarnings( { "rawtypes", "deprecation" } )
 class DataModelGeneratorConfig implements CodegenConfig
@@ -21,7 +33,6 @@ class DataModelGeneratorConfig implements CodegenConfig
     @Delegate
     private final CodegenConfig config;
 
-    @SuppressWarnings( "deprecation" )
     DataModelGeneratorConfig( @Nonnull final ClientOptInput clientOptInput )
     {
         this(clientOptInput.getConfig());
