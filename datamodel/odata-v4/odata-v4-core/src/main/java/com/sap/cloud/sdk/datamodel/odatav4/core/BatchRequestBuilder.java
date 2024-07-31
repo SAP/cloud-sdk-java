@@ -54,6 +54,7 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
      * @param servicePath
      *            The service path to direct the requests to.
      */
+    @SuppressWarnings( "this-escape" ) // getUuidProvider() is designed to be overridable.
     public BatchRequestBuilder( @Nonnull final String servicePath )
     {
         super(servicePath, ODataResourcePath.of("$batch"));

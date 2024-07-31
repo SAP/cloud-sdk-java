@@ -68,6 +68,7 @@ public class CountRequestBuilder<EntityT extends VdmEntity<?>>
      * @param entityClass
      *            The expected entity type.
      */
+    @SuppressWarnings( "this-escape" )
     CountRequestBuilder(
         @Nonnull final String servicePath,
         @Nonnull final ODataResourcePath resourceToCount,

@@ -146,6 +146,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
      *             If the given value cannot be converted to an instance of this type, or any of the given parameter is
      *             {@code null}.
      */
+    @SuppressWarnings( "this-escape" )
     public StringBasedErpType(
         @Nullable final String value,
         @Nullable final CharCasing charCasing,
