@@ -33,29 +33,29 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
-* {{appName}} in version {{version}}.
-*
-* {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
-*/
-{{^isReleased}}@Beta{{/isReleased}}
+ * {{appName}} in version {{version}}.
+ *
+ * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+ */{{^isReleased}}
+@Beta{{/isReleased}}
 {{#operations}}
 public class {{classname}} extends AbstractOpenApiService {
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public {{classname}}( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     @Beta
     public {{classname}}( @Nonnull final ApiClient apiClient )
     {
@@ -145,29 +145,29 @@ public class {{classname}} extends AbstractOpenApiService {
 
     {{/hasOptionalParams}}
     /**
-    * <p>{{summary}}</p>
-     *<p>{{notes}}</p>
+     * <p>{{summary}}</p>
+     * <p>{{notes}}</p>
 {{#responses}}     * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
 {{/responses}}
 {{#requiredParams}}
-* @param {{paramName}}
+     * @param {{paramName}}
     {{#description}}
-        {{description}}
+     *      {{description}}
     {{/description}}
     {{^description}}
-            The value for the parameter {{paramName}}
+     *      The value for the parameter {{paramName}}
     {{/description}}
 {{/requiredParams}}
 {{#returnType}}
-* @return {{returnType}}
+     * @return {{returnType}}
 {{/returnType}}
 {{^returnType}}
-* @return An OpenApiResponse containing the status code of the HttpResponse.
+     * @return An OpenApiResponse containing the status code of the HttpResponse.
 {{/returnType}}
-* @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
 {{#externalDocs}}
-    * {{description}}
-    * @see <a href="{{url}}">{{summary}} Documentation</a>
+     * {{description}}
+     * @see <a href="{{url}}">{{summary}} Documentation</a>
 {{/externalDocs}}
      {{#isDeprecated}}
      * @deprecated
