@@ -157,7 +157,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
 
         final Header contentType = httpEntity.getContentType();
         if( contentType != null ) {
-            headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, Lists.newArrayList(contentType.getValue()));
+            headers.putIfAbsent(CONTENT_TYPE, Lists.newArrayList(contentType.getValue()));
         }
     }
 
