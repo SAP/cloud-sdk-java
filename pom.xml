@@ -110,7 +110,8 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.7.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.21</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
@@ -251,6 +252,21 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-core</artifactId>
 				<version>${openapi-generator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-models</artifactId>
+				<version>${io-swagger-core-v3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.parser.v3</groupId>
+				<artifactId>swagger-parser</artifactId>
+				<version>${io-swagger-parser-v3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.parser.v3</groupId>
+				<artifactId>swagger-parser-core</artifactId>
+				<version>${io-swagger-parser-v3.version}</version>
 			</dependency>
 			<!-- Used in openapi-generator -->
 			<dependency>

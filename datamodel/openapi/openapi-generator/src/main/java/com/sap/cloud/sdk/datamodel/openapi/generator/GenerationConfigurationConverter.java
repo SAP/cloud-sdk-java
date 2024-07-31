@@ -8,19 +8,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
-import org.openapitools.codegen.config.CodegenConfigurator;
+import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.config.GeneratorSettings;
 import org.openapitools.codegen.config.GlobalSettings;
+import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.OperationsMap;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.core.models.AuthorizationValue;
+import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,31 +58,85 @@ class GenerationConfigurationConverter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nonnull final Path inputSpec )
     {
-        final CodegenConfigurator config = new CodegenConfigurator();
+        setGlobalSettings();
+        final var inputSpecFile = inputSpec.toString();
 
-        config.setVerbose(generationConfiguration.isVerbose());
-
-        config.setInputSpec(inputSpec.toString());
-
-        config.setGeneratorName(GENERATOR_NAME);
-
+        final var config = new JavaClientCodegen()
+        {
+            // Custom processor to inject "x-return-nullable" extension
+            @Override
+            @Nonnull
+            public OperationsMap postProcessOperationsWithModels(
+                @Nonnull final OperationsMap ops,
+                @Nonnull final List<ModelMap> allModels )
+            {
+                for( final CodegenOperation op : ops.getOperations().getOperation() ) {
+                    final var noContent =
+                        op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
+                    op.vendorExtensions.put("x-return-nullable", op.isResponseOptional || noContent);
+                }
+                return super.postProcessOperationsWithModels(ops, allModels);
+            }
+        };
         config.setOutputDir(generationConfiguration.getOutputDirectory());
-
-        config.setTemplateDir(TEMPLATE_DIRECTORY);
-
-        setAdditionalProperties(generationConfiguration, config);
-
-        config.setGenerateAliasAsModel(false);
-        config.setRemoveOperationIdPrefix(true);
-
+        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
         config.setLibrary(LIBRARY_NAME);
-
         config.setApiPackage(generationConfiguration.getApiPackage());
         config.setModelPackage(generationConfiguration.getModelPackage());
+        config.setTemplateDir(TEMPLATE_DIRECTORY);
 
-        setGlobalSettings();
+        final var clientOptInput = new ClientOptInput();
+        clientOptInput.config(config);
+        clientOptInput.generatorSettings(new GeneratorSettings());
+        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
+        return clientOptInput;
+    }
 
-        return config.toClientOptInput();
+    private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
+    {
+        final List<AuthorizationValue> authorizationValues = List.of();
+        final var options = new ParseOptions();
+        options.setResolve(true);
+        final var spec = new OpenAPIParser().readLocation(inputSpecFile, authorizationValues, options);
+        if( !spec.getMessages().isEmpty() ) {
+            log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
+        }
+        return spec.getOpenAPI();
+    }
+
+    private static Map<String, Object> getAdditionalProperties( GenerationConfiguration config )
+    {
+        final Map<String, Object> result = new HashMap<>();
+
+        final var copyrightHeader = config.useSapCopyrightHeader() ? SAP_COPYRIGHT_HEADER : config.getCopyrightHeader();
+        if( !Strings.isNullOrEmpty(copyrightHeader) ) {
+            result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
+        }
+        result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
+        result.put(CodegenConstants.TEMPLATE_DIR, TEMPLATE_DIRECTORY);
+        result.put(JAVA_8_PROPERTY_KEY, "true");
+        result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
+        result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");
+        result.put(SOURCE_FOLDER_PROPERTY_KEY, "");
+        result.put(OPEN_API_NULLABLE_PROPERTY_KEY, "false");
+
+        // this allows the customer to override the default Cloud SDK settings above
+        config.getAdditionalProperties().forEach(( k, v ) -> {
+            if( result.containsKey(k) ) {
+                final var msg =
+                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.";
+                log.info(msg, result.get(k), k, v);
+            }
+            result.put(k, v);
+        });
+
+        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), config.getApiMaturity());
+        switch( config.getApiMaturity() ) {
+            case RELEASED -> result.put(IS_RELEASED_PROPERTY_KEY, true);
+            case BETA -> result.remove(IS_RELEASED_PROPERTY_KEY);
+        }
+        return result;
     }
 
     private static void setGlobalSettings()
@@ -84,62 +147,7 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
-        GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-    }
-
-    private static void setAdditionalProperties(
-        final GenerationConfiguration generationConfiguration,
-        final CodegenConfigurator config )
-    {
-        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), generationConfiguration.getApiMaturity());
-
-        final Map<String, Object> additionalProperties = new HashMap<>();
-
-        additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-
-        switch( generationConfiguration.getApiMaturity() ) {
-            case RELEASED: {
-                additionalProperties.put(IS_RELEASED_PROPERTY_KEY, true);
-                break;
-            }
-
-            case BETA: {
-                additionalProperties.remove(IS_RELEASED_PROPERTY_KEY);
-                break;
-            }
-        }
-
-        final String copyrightHeader =
-            generationConfiguration.useSapCopyrightHeader()
-                ? SAP_COPYRIGHT_HEADER
-                : generationConfiguration.getCopyrightHeader();
-
-        if( !Strings.isNullOrEmpty(copyrightHeader) ) {
-            additionalProperties.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
-        }
-
-        additionalProperties.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
-        additionalProperties.put(JAVA_8_PROPERTY_KEY, "true");
-        additionalProperties.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
-        additionalProperties.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");
-        additionalProperties.put(SOURCE_FOLDER_PROPERTY_KEY, "");
-        // this is set to false, to prevent issues with the JsonNullable annotation
-        // long term fix part of BLI CLOUDECOSYSTEM-9843
-        additionalProperties.put(OPEN_API_NULLABLE_PROPERTY_KEY, "false");
-
-        // this allows the customer to override the default Cloud SDK settings above
-        generationConfiguration.getAdditionalProperties().forEach(( k, v ) -> {
-            if( additionalProperties.containsKey(k) ) {
-                log
-                    .info(
-                        "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.",
-                        additionalProperties.get(k),
-                        k,
-                        v);
-            }
-            additionalProperties.put(k, v);
-        });
-        config.setAdditionalProperties(additionalProperties);
+        GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
     }
 }
