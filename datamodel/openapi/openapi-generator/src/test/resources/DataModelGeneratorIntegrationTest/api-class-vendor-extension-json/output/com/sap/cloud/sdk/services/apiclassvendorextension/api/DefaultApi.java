@@ -70,7 +70,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return An OpenApiResponse containing the status code of the HttpResponse.
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nonnull
+    @Nullable
     public OpenApiResponse deleteSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
@@ -109,7 +109,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
@@ -151,7 +151,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda updateSodaById( @Nonnull final Long sodaId,  @Nonnull final UpdateSoda updateSoda) throws OpenApiRequestException {
         final Object localVarPostBody = updateSoda;
         
