@@ -34,7 +34,8 @@ class DataModelGeneratorConfig implements CodegenConfig
         postProcessOperationsWithModels( @Nonnull final OperationsMap objs, @Nonnull final List<ModelMap> allModels )
     {
         for( final CodegenOperation op : objs.getOperations().getOperation() ) {
-            op.isResponseOptional |= op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
+            final var noContent = op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
+            op.vendorExtensions.put("x-return-nullable", op.isResponseOptional || noContent);
         }
         return config.postProcessOperationsWithModels(objs, allModels);
     }
