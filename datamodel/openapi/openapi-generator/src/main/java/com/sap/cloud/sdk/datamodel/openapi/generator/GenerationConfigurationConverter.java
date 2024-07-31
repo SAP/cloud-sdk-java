@@ -50,27 +50,18 @@ class GenerationConfigurationConverter
         @Nonnull final Path inputSpec )
     {
         final CodegenConfigurator config = new CodegenConfigurator();
-
         config.setVerbose(generationConfiguration.isVerbose());
-
         config.setInputSpec(inputSpec.toString());
-
         config.setGeneratorName(GENERATOR_NAME);
-
         config.setOutputDir(generationConfiguration.getOutputDirectory());
-
         config.setTemplateDir(TEMPLATE_DIRECTORY);
-
-        setAdditionalProperties(generationConfiguration, config);
-
         config.setGenerateAliasAsModel(false);
         config.setRemoveOperationIdPrefix(true);
-
         config.setLibrary(LIBRARY_NAME);
-
         config.setApiPackage(generationConfiguration.getApiPackage());
         config.setModelPackage(generationConfiguration.getModelPackage());
 
+        config.setAdditionalProperties(getAdditionalProperties(generationConfiguration));
         setGlobalSettings();
 
         return config.toClientOptInput();
@@ -88,58 +79,41 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
     }
 
-    private static void setAdditionalProperties(
-        final GenerationConfiguration generationConfiguration,
-        final CodegenConfigurator config )
+    private static Map<String, Object> getAdditionalProperties( GenerationConfiguration config )
     {
-        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), generationConfiguration.getApiMaturity());
+        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), config.getApiMaturity());
 
-        final Map<String, Object> additionalProperties = new HashMap<>();
+        final Map<String, Object> result = new HashMap<>();
+        result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
 
-        additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-
-        switch( generationConfiguration.getApiMaturity() ) {
-            case RELEASED: {
-                additionalProperties.put(IS_RELEASED_PROPERTY_KEY, true);
-                break;
-            }
-
-            case BETA: {
-                additionalProperties.remove(IS_RELEASED_PROPERTY_KEY);
-                break;
-            }
+        switch( config.getApiMaturity() ) {
+            case RELEASED -> result.put(IS_RELEASED_PROPERTY_KEY, true);
+            case BETA -> result.remove(IS_RELEASED_PROPERTY_KEY);
         }
 
-        final String copyrightHeader =
-            generationConfiguration.useSapCopyrightHeader()
-                ? SAP_COPYRIGHT_HEADER
-                : generationConfiguration.getCopyrightHeader();
-
+        final var copyrightHeader = config.useSapCopyrightHeader() ? SAP_COPYRIGHT_HEADER : config.getCopyrightHeader();
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
-            additionalProperties.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
+            result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
 
-        additionalProperties.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
-        additionalProperties.put(JAVA_8_PROPERTY_KEY, "true");
-        additionalProperties.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
-        additionalProperties.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");
-        additionalProperties.put(SOURCE_FOLDER_PROPERTY_KEY, "");
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
+        result.put(JAVA_8_PROPERTY_KEY, "true");
+        result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
+        result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");
+        result.put(SOURCE_FOLDER_PROPERTY_KEY, "");
         // this is set to false, to prevent issues with the JsonNullable annotation
         // long term fix part of BLI CLOUDECOSYSTEM-9843
-        additionalProperties.put(OPEN_API_NULLABLE_PROPERTY_KEY, "false");
+        result.put(OPEN_API_NULLABLE_PROPERTY_KEY, "false");
 
         // this allows the customer to override the default Cloud SDK settings above
-        generationConfiguration.getAdditionalProperties().forEach(( k, v ) -> {
-            if( additionalProperties.containsKey(k) ) {
-                log
-                    .info(
-                        "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.",
-                        additionalProperties.get(k),
-                        k,
-                        v);
+        config.getAdditionalProperties().forEach(( k, v ) -> {
+            if( result.containsKey(k) ) {
+                final var msg =
+                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.";
+                log.info(msg, result.get(k), k, v);
             }
-            additionalProperties.put(k, v);
+            result.put(k, v);
         });
-        config.setAdditionalProperties(additionalProperties);
+        return result;
     }
 }
