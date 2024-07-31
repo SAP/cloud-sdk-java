@@ -110,8 +110,9 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.7.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.21</io-swagger-core-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
+		<jmustache.version>1.15</jmustache.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
 		<bouncycastle.version>1.78.1</bouncycastle.version>
@@ -251,6 +252,16 @@
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-core</artifactId>
 				<version>${openapi-generator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-models</artifactId>
+				<version>${io-swagger-core-v3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.samskivert</groupId>
+				<artifactId>jmustache</artifactId>
+				<version>${jmustache.version}</version>
 			</dependency>
 			<!-- Used in openapi-generator -->
 			<dependency>

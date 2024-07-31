@@ -113,12 +113,10 @@
 		<dependency>
 			<groupId>com.samskivert</groupId>
 			<artifactId>jmustache</artifactId>
-			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-models</artifactId>
-			<version>2.2.21</version>
 		</dependency>
 		<!-- scope test -->
 		<dependency>
