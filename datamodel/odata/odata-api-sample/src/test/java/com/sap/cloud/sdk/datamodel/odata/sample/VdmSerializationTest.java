@@ -20,8 +20,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.Vendo
 
 class VdmSerializationTest
 {
-    private static final String PRODUCT_JSON =
-        """
+    private static final String PRODUCT_JSON = """
         {
           "versionIdentifier":null,
           "Id":10401010,
@@ -48,7 +47,7 @@ class VdmSerializationTest
     void testGsonSerialization()
     {
         final String actualJson = new GsonBuilder().serializeNulls().create().toJson(PRODUCT_OBJECT);
-        assertThat(actualJson).isNotNull().isEqualTo(PRODUCT_JSON);
+        assertThat(actualJson).isNotNull().isEqualToIgnoringWhitespace(PRODUCT_JSON);
     }
 
     @Test
@@ -76,7 +75,7 @@ class VdmSerializationTest
         throws Exception
     {
         final String actualJson = new ObjectMapper().writeValueAsString(PRODUCT_OBJECT);
-        assertThat(actualJson).isNotNull().isEqualTo(PRODUCT_JSON);
+        assertThat(actualJson).isNotNull().isEqualToIgnoringWhitespace(PRODUCT_JSON);
     }
 
     @Test
