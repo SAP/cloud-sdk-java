@@ -8,8 +8,10 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;
 
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -25,10 +27,6 @@ public class ODataRequestCreate extends ODataRequestGeneric
 {
     @Nonnull
     private final String serializedEntity;
-
-    {
-        addHeader("Content-Type", "application/json");
-    }
 
     /**
      * Convenience constructor for OData delete requests on entity collections directly. For operations on nested
@@ -72,6 +70,7 @@ public class ODataRequestCreate extends ODataRequestGeneric
     {
         super(servicePath, entityPath, protocol);
         this.serializedEntity = serializedEntity;
+        headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, Lists.newArrayList("application/json"));
     }
 
     @Nonnull

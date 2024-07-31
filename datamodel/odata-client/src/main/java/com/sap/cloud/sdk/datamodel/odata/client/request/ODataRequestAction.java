@@ -9,8 +9,10 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;
 
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -29,10 +31,6 @@ public class ODataRequestAction extends ODataRequestGeneric
 
     @Nonnull
     private final String query;
-
-    {
-        addHeader("Content-Type", "application/json");
-    }
 
     /**
      * Convenience constructor for invocations of unbound actions. For bound actions use
@@ -105,6 +103,7 @@ public class ODataRequestAction extends ODataRequestGeneric
         super(servicePath, actionPath, protocol);
         this.actionParameters = actionParameters != null ? actionParameters : "{}";
         this.query = encodedQuery != null ? encodedQuery : "";
+        headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, Lists.newArrayList("application/json"));
     }
 
     @Nonnull

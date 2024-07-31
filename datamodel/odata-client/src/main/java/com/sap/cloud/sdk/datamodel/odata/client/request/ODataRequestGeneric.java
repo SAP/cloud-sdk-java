@@ -20,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfToken;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
@@ -100,7 +101,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
         this.protocol = protocol;
         this.servicePath = servicePath;
         this.resourcePath = resourcePath;
-        addHeaderIfAbsent(HttpHeaders.ACCEPT, DEFAULT_FORMAT.getHttpAccept());
+        headers.putIfAbsent(HttpHeaders.ACCEPT, Lists.newArrayList(DEFAULT_FORMAT.getHttpAccept()));
     }
 
     /**
@@ -198,9 +199,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
      */
     public void addHeaderIfAbsent( @Nonnull final String key, @Nullable final String value )
     {
-        final ArrayList<String> values = new ArrayList<>(1);
-        values.add(value);
-        headers.putIfAbsent(key, values);
+        headers.putIfAbsent(key, Lists.newArrayList(value));
     }
 
     /**

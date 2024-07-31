@@ -12,12 +12,14 @@ import javax.annotation.Nullable;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -155,7 +157,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
 
         final Header contentType = httpEntity.getContentType();
         if( contentType != null ) {
-            addHeaderIfAbsent(CONTENT_TYPE, contentType.getValue());
+            headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, Lists.newArrayList(contentType.getValue()));
         }
     }
 
