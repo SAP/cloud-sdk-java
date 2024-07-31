@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 /**
  * Soda
  */
-
 // CHECKSTYLE:OFF
 public class Soda 
 // CHECKSTYLE:ON
@@ -65,141 +64,141 @@ public class Soda
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
    /**
-   * Set the id of this {@link Soda} instance and return the same instance.
-   *
-   * @param id  The id of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
+    * Set the id of this {@link Soda} instance and return the same instance.
+    *
+    * @param id  The id of this {@link Soda}
+    * @return The same instance of this {@link Soda} class
+    */
    @Nonnull public Soda id(@Nonnull final Long id) {
     this.id = id;
     return this;
   }
 
    /**
-   * Get id
-   * @return id  The id of this {@link Soda} instance.
-  **/
+    * Get id
+    * @return id  The id of this {@link Soda} instance.
+    */
   @Nonnull public Long getId() {
     return id;
   }
 
   /**
-  * Set the id of this {@link Soda} instance.
-  *
-  * @param id  The id of this {@link Soda}
-  */
+   * Set the id of this {@link Soda} instance.
+   *
+   * @param id  The id of this {@link Soda}
+   */
   public void setId( @Nonnull final Long id) {
     this.id = id;
   }
 
    /**
-   * Set the name of this {@link Soda} instance and return the same instance.
-   *
-   * @param name  The name of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
+    * Set the name of this {@link Soda} instance and return the same instance.
+    *
+    * @param name  The name of this {@link Soda}
+    * @return The same instance of this {@link Soda} class
+    */
    @Nonnull public Soda name(@Nonnull final String name) {
     this.name = name;
     return this;
   }
 
    /**
-   * Get name
-   * @return name  The name of this {@link Soda} instance.
-  **/
+    * Get name
+    * @return name  The name of this {@link Soda} instance.
+    */
   @Nonnull public String getName() {
     return name;
   }
 
   /**
-  * Set the name of this {@link Soda} instance.
-  *
-  * @param name  The name of this {@link Soda}
-  */
+   * Set the name of this {@link Soda} instance.
+   *
+   * @param name  The name of this {@link Soda}
+   */
   public void setName( @Nonnull final String name) {
     this.name = name;
   }
 
    /**
-   * Set the brand of this {@link Soda} instance and return the same instance.
-   *
-   * @param brand  The brand of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
+    * Set the brand of this {@link Soda} instance and return the same instance.
+    *
+    * @param brand  The brand of this {@link Soda}
+    * @return The same instance of this {@link Soda} class
+    */
    @Nonnull public Soda brand(@Nonnull final String brand) {
     this.brand = brand;
     return this;
   }
 
    /**
-   * Get brand
-   * @return brand  The brand of this {@link Soda} instance.
-  **/
+    * Get brand
+    * @return brand  The brand of this {@link Soda} instance.
+    */
   @Nonnull public String getBrand() {
     return brand;
   }
 
   /**
-  * Set the brand of this {@link Soda} instance.
-  *
-  * @param brand  The brand of this {@link Soda}
-  */
+   * Set the brand of this {@link Soda} instance.
+   *
+   * @param brand  The brand of this {@link Soda}
+   */
   public void setBrand( @Nonnull final String brand) {
     this.brand = brand;
   }
 
    /**
-   * Set the flavor of this {@link Soda} instance and return the same instance.
-   *
-   * @param flavor  The flavor of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
+    * Set the flavor of this {@link Soda} instance and return the same instance.
+    *
+    * @param flavor  The flavor of this {@link Soda}
+    * @return The same instance of this {@link Soda} class
+    */
    @Nonnull public Soda flavor(@Nonnull final String flavor) {
     this.flavor = flavor;
     return this;
   }
 
    /**
-   * Get flavor
-   * @return flavor  The flavor of this {@link Soda} instance.
-  **/
+    * Get flavor
+    * @return flavor  The flavor of this {@link Soda} instance.
+    */
   @Nonnull public String getFlavor() {
     return flavor;
   }
 
   /**
-  * Set the flavor of this {@link Soda} instance.
-  *
-  * @param flavor  The flavor of this {@link Soda}
-  */
+   * Set the flavor of this {@link Soda} instance.
+   *
+   * @param flavor  The flavor of this {@link Soda}
+   */
   public void setFlavor( @Nonnull final String flavor) {
     this.flavor = flavor;
   }
 
    /**
-   * Set the price of this {@link Soda} instance and return the same instance.
-   *
-   * @param price  The price of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
+    * Set the price of this {@link Soda} instance and return the same instance.
+    *
+    * @param price  The price of this {@link Soda}
+    * @return The same instance of this {@link Soda} class
+    */
    @Nonnull public Soda price(@Nonnull final Float price) {
     this.price = price;
     return this;
   }
 
    /**
-   * Get price
-   * @return price  The price of this {@link Soda} instance.
-  **/
+    * Get price
+    * @return price  The price of this {@link Soda} instance.
+    */
   @Nonnull public Float getPrice() {
     return price;
   }
 
   /**
-  * Set the price of this {@link Soda} instance.
-  *
-  * @param price  The price of this {@link Soda}
-  */
+   * Set the price of this {@link Soda} instance.
+   *
+   * @param price  The price of this {@link Soda}
+   */
   public void setPrice( @Nonnull final Float price) {
     this.price = price;
   }

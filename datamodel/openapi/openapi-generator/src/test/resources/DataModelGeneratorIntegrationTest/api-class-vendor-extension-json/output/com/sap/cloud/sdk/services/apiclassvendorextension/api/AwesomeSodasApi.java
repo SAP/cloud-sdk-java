@@ -32,28 +32,27 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
-* Soda Store API in version 1.0.0.
-*
-* API for managing sodas in a soda store
-*/
-
+ * Soda Store API in version 1.0.0.
+ *
+ * API for managing sodas in a soda store
+ */
 public class AwesomeSodasApi extends AbstractOpenApiService {
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public AwesomeSodasApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     @Beta
     public AwesomeSodasApi( @Nonnull final ApiClient apiClient )
     {
@@ -61,13 +60,14 @@ public class AwesomeSodasApi extends AbstractOpenApiService {
     }
 
         /**
-    * <p>Get a list of all sodas</p>
-     *<p></p>
+     * <p>Get a list of all sodas</p>
+     * <p></p>
      * <p><b>200</b> - A list of sodas
-* @return List&lt;Soda&gt;
-* @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+     * @return List&lt;Soda&gt;
+     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public List<Soda> getSodas() throws OpenApiRequestException {
+    @Nullable
+    public List<Soda> getSodas() throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
         final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
