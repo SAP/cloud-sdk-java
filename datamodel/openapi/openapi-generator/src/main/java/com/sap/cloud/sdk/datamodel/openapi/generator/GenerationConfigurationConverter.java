@@ -132,7 +132,6 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-        result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
         result.put(CodegenConstants.TEMPLATE_DIR, TEMPLATE_DIRECTORY);
         result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
         result.put(JAVA_8_PROPERTY_KEY, "true");
