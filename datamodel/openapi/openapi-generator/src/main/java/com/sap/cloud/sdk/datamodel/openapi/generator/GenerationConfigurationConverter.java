@@ -71,8 +71,10 @@ class GenerationConfigurationConverter
             {
                 for( final CodegenOperation op : ops.getOperations().getOperation() ) {
                     final var noContent =
-                        op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
-                    op.vendorExtensions.put("x-return-nullable", op.isResponseOptional || noContent);
+                        op.isResponseOptional
+                            || op.responses == null
+                            || op.responses.stream().anyMatch(r -> "204".equals(r.code));
+                    op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
             }
