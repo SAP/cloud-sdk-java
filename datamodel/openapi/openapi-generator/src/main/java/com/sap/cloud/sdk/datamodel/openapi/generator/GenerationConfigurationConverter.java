@@ -79,29 +79,17 @@ class GenerationConfigurationConverter
             }
         };
         config.setOutputDir(generationConfiguration.getOutputDirectory());
-        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
         config.setModelPackage(generationConfiguration.getModelPackage());
         config.setTemplateDir(TEMPLATE_DIRECTORY);
+        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
 
         final var clientOptInput = new ClientOptInput();
         clientOptInput.config(config);
         clientOptInput.generatorSettings(new GeneratorSettings());
         clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
         return clientOptInput;
-    }
-
-    private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
-    {
-        final List<AuthorizationValue> authorizationValues = List.of();
-        final var options = new ParseOptions();
-        options.setResolve(true);
-        final var spec = new OpenAPIParser().readLocation(inputSpecFile, authorizationValues, options);
-        if( !spec.getMessages().isEmpty() ) {
-            log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
-        }
-        return spec.getOpenAPI();
     }
 
     private static void setGlobalSettings()
@@ -114,6 +102,18 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
         GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+    }
+
+    private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
+    {
+        final List<AuthorizationValue> authorizationValues = List.of();
+        final var options = new ParseOptions();
+        options.setResolve(true);
+        final var spec = new OpenAPIParser().readLocation(inputSpecFile, authorizationValues, options);
+        if( !spec.getMessages().isEmpty() ) {
+            log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
+        }
+        return spec.getOpenAPI();
     }
 
     private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )
