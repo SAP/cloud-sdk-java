@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.adapter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +17,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEnum;
 
@@ -32,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JacksonVdmEnumDeserializer extends StdDeserializer<VdmEnum> implements ContextualDeserializer
 {
     private static final long serialVersionUID = 3282694560867458205L;
-    private Map<String, VdmEnum> nameEnumLookupMap = Collections.emptyMap();
+    private ImmutableMap<String, VdmEnum> nameEnumLookupMap = ImmutableMap.of();
     private Class<? extends VdmEnum> valueType;
 
     /**
@@ -83,7 +82,6 @@ public class JacksonVdmEnumDeserializer extends StdDeserializer<VdmEnum> impleme
         }
 
         final String serializedValue = parser.getValueAsString();
-        final VdmEnum enumValue = nameEnumLookupMap.getOrDefault(serializedValue, null);
-        return enumValue;
+        return nameEnumLookupMap.getOrDefault(serializedValue, null);
     }
 }

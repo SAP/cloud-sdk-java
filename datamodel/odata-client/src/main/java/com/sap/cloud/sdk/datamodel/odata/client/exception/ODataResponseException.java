@@ -21,12 +21,14 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A generic {@link ODataException} representing an erroneous service response. This exception class comprises details
  * of the HTTP response.
  */
 @EqualsAndHashCode( callSuper = true )
+@Slf4j
 public class ODataResponseException extends ODataException
 {
     private static final long serialVersionUID = 4615831202194546242L;
@@ -42,7 +44,7 @@ public class ODataResponseException extends ODataException
      */
     @Getter
     @Nonnull
-    private final Collection<Header> httpHeaders;
+    private final transient Collection<Header> httpHeaders;
 
     /**
      * The content of the HTTP response body as plain text or null, if the response did not contain a body.
@@ -75,7 +77,7 @@ public class ODataResponseException extends ODataException
         httpBody =
             Try
                 .of(() -> EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8))
-                .onFailure(this::addSuppressed)
+                .onFailure(e -> log.debug("HTTP response could not be consumed.", e))
                 .toOption();
     }
 }
