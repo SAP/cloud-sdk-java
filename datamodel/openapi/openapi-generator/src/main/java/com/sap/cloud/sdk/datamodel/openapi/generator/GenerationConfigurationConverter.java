@@ -79,7 +79,7 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
     }
 
-    private static Map<String, Object> getAdditionalProperties( GenerationConfiguration config )
+    private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )
     {
         log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), config.getApiMaturity());
 
