@@ -109,7 +109,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return An OpenApiResponse containing the status code of the HttpResponse.
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public OpenApiResponse deleteSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
