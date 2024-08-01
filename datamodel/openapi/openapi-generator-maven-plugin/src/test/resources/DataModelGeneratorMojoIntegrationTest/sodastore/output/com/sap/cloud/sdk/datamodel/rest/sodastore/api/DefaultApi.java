@@ -70,7 +70,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda addSoda( @Nonnull final NewSoda newSoda) throws OpenApiRequestException {
         final Object localVarPostBody = newSoda;
         
@@ -148,7 +148,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
@@ -185,7 +185,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return List&lt;Soda&gt;
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public List<Soda> getSodas() throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
@@ -219,7 +219,7 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return Soda
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public Soda updateSodaById( @Nonnull final Long sodaId,  @Nonnull final UpdateSoda updateSoda) throws OpenApiRequestException {
         final Object localVarPostBody = updateSoda;
         

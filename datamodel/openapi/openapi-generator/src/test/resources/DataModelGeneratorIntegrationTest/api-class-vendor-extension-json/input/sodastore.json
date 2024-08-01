@@ -188,6 +188,13 @@
           "brand": {
             "type": "string"
           },
+          "zero": {
+            "type": "boolean"
+          },
+          "since": {
+            "type": "string",
+            "format": "date"
+          },
           "flavor": {
             "type": "string"
           },

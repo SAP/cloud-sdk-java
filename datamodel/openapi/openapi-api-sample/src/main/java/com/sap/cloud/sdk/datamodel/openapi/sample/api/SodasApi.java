@@ -70,7 +70,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public List<SodaWithId> sodasGet()
         throws OpenApiRequestException
     {
@@ -124,7 +124,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public SodaWithId sodasIdGet( @Nonnull final Long id )
         throws OpenApiRequestException
     {
@@ -179,6 +179,8 @@ public class SodasApi extends AbstractOpenApiService
      * <b>200</b> - The updated soda product
      * <p>
      * <b>404</b> - Soda product not found
+     * <p>
+     * <b>204</b> - Nothing has changed
      *
      * @param sodaWithId
      *            The updated soda product

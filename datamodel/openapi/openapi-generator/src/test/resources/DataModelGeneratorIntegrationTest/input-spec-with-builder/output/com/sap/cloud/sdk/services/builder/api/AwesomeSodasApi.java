@@ -66,7 +66,7 @@ public class AwesomeSodasApi extends AbstractOpenApiService {
      * @return List&lt;Soda&gt;
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public List<Soda> getSodas() throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
