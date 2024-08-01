@@ -39,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class GenerationConfigurationConverter
 {
-    private static final String GENERATOR_NAME = "java";
     private static final String IS_RELEASED_PROPERTY_KEY = "isReleased";
     private static final String JAVA_8_PROPERTY_KEY = "java8";
     private static final String DATE_LIBRARY_PROPERTY_KEY = "dateLibrary";
@@ -132,7 +131,6 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-        result.put(CodegenConstants.TEMPLATE_DIR, TEMPLATE_DIRECTORY);
         result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
