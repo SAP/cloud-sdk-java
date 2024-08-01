@@ -104,21 +104,43 @@ class GenerationConfigurationConverter
         return spec.getOpenAPI();
     }
 
-    private static Map<String, Object> getAdditionalProperties( GenerationConfiguration config )
+    private static void setGlobalSettings()
     {
+        GlobalSettings.setProperty(CodegenConstants.APIS, "");
+        GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
+        GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
+        GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
+        GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
+        GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
+        GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+    }
+
+    private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )
+    {
+        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), config.getApiMaturity());
+
         final Map<String, Object> result = new HashMap<>();
+        result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+
+        switch( config.getApiMaturity() ) {
+            case RELEASED -> result.put(IS_RELEASED_PROPERTY_KEY, true);
+            case BETA -> result.remove(IS_RELEASED_PROPERTY_KEY);
+        }
 
         final var copyrightHeader = config.useSapCopyrightHeader() ? SAP_COPYRIGHT_HEADER : config.getCopyrightHeader();
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
         result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
         result.put(CodegenConstants.TEMPLATE_DIR, TEMPLATE_DIRECTORY);
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
         result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");
         result.put(SOURCE_FOLDER_PROPERTY_KEY, "");
+        // this is set to false, to prevent issues with the JsonNullable annotation
+        // long term fix part of BLI CLOUDECOSYSTEM-9843
         result.put(OPEN_API_NULLABLE_PROPERTY_KEY, "false");
 
         // this allows the customer to override the default Cloud SDK settings above
@@ -130,24 +152,6 @@ class GenerationConfigurationConverter
             }
             result.put(k, v);
         });
-
-        log.info("Using {} as {}.", ApiMaturity.class.getSimpleName(), config.getApiMaturity());
-        switch( config.getApiMaturity() ) {
-            case RELEASED -> result.put(IS_RELEASED_PROPERTY_KEY, true);
-            case BETA -> result.remove(IS_RELEASED_PROPERTY_KEY);
-        }
         return result;
-    }
-
-    private static void setGlobalSettings()
-    {
-        GlobalSettings.setProperty(CodegenConstants.APIS, "");
-        GlobalSettings.setProperty(CodegenConstants.MODELS, "");
-        GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
-        GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
-        GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
-        GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
-        GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-        GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
     }
 }
