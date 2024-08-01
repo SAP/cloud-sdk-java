@@ -8,19 +8,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
-import org.openapitools.codegen.config.CodegenConfigurator;
+import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.config.GeneratorSettings;
 import org.openapitools.codegen.config.GlobalSettings;
+import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.OperationsMap;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.core.models.AuthorizationValue;
+import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,22 +58,38 @@ class GenerationConfigurationConverter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nonnull final Path inputSpec )
     {
-        final CodegenConfigurator config = new CodegenConfigurator();
-        config.setVerbose(generationConfiguration.isVerbose());
-        config.setInputSpec(inputSpec.toString());
-        config.setGeneratorName(GENERATOR_NAME);
+        setGlobalSettings();
+        final var inputSpecFile = inputSpec.toString();
+
+        final var config = new JavaClientCodegen()
+        {
+            // Custom processor to inject "x-return-nullable" extension
+            @Override
+            @Nonnull
+            public OperationsMap postProcessOperationsWithModels(
+                @Nonnull final OperationsMap ops,
+                @Nonnull final List<ModelMap> allModels )
+            {
+                for( final CodegenOperation op : ops.getOperations().getOperation() ) {
+                    final var noContent =
+                        op.responses == null || op.responses.stream().anyMatch(r -> "204".equals(r.code));
+                    op.vendorExtensions.put("x-return-nullable", op.isResponseOptional || noContent);
+                }
+                return super.postProcessOperationsWithModels(ops, allModels);
+            }
+        };
         config.setOutputDir(generationConfiguration.getOutputDirectory());
-        config.setTemplateDir(TEMPLATE_DIRECTORY);
-        config.setGenerateAliasAsModel(false);
-        config.setRemoveOperationIdPrefix(true);
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
         config.setModelPackage(generationConfiguration.getModelPackage());
+        config.setTemplateDir(TEMPLATE_DIRECTORY);
+        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
 
-        config.setAdditionalProperties(getAdditionalProperties(generationConfiguration));
-        setGlobalSettings();
-
-        return config.toClientOptInput();
+        final var clientOptInput = new ClientOptInput();
+        clientOptInput.config(config);
+        clientOptInput.generatorSettings(new GeneratorSettings());
+        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
+        return clientOptInput;
     }
 
     private static void setGlobalSettings()
@@ -77,6 +102,18 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
         GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+    }
+
+    private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
+    {
+        final List<AuthorizationValue> authorizationValues = List.of();
+        final var options = new ParseOptions();
+        options.setResolve(true);
+        final var spec = new OpenAPIParser().readLocation(inputSpecFile, authorizationValues, options);
+        if( !spec.getMessages().isEmpty() ) {
+            log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
+        }
+        return spec.getOpenAPI();
     }
 
     private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )
@@ -95,7 +132,8 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-
+        result.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+        result.put(CodegenConstants.TEMPLATE_DIR, TEMPLATE_DIRECTORY);
         result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");

@@ -111,12 +111,16 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.samskivert</groupId>
-			<artifactId>jmustache</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-models</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser-core</artifactId>
 		</dependency>
 		<!-- scope test -->
 		<dependency>
