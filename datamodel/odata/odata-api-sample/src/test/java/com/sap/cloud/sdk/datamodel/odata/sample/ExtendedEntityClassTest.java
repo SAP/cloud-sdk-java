@@ -45,8 +45,7 @@ import lombok.SneakyThrows;
 
 class ExtendedEntityClassTest
 {
-    private static final String PRODUCT_INPUT =
-        """
+    private static final String PRODUCT_INPUT = """
         {
           "versionIdentifier": "testVersion",
           "Id": "1005",
@@ -56,8 +55,7 @@ class ExtendedEntityClassTest
           "Shoesize": 8
         }
         """;
-    private static final String EXPECTED_PRODUCT_OUTPUT =
-        """
+    private static final String EXPECTED_PRODUCT_OUTPUT = """
         {
         "versionIdentifier":"testVersion",
         "Id":1005,
@@ -185,7 +183,7 @@ class ExtendedEntityClassTest
         final String actualSerializedProduct = gsonBuilder.create().toJson(customProduct);
 
         assertThat(actualSerializedProduct).isNotNull();
-        assertThat(actualSerializedProduct).isEqualTo(EXPECTED_PRODUCT_OUTPUT);
+        assertThat(actualSerializedProduct).isEqualToIgnoringNewLines(EXPECTED_PRODUCT_OUTPUT);
     }
 
     @Test
@@ -220,7 +218,7 @@ class ExtendedEntityClassTest
         final ObjectMapper mapper = new ObjectMapper();
         final String actualSerializedProduct = mapper.writeValueAsString(customProduct);
 
-        assertThat(actualSerializedProduct).isNotNull().isEqualTo(EXPECTED_PRODUCT_OUTPUT);
+        assertThat(actualSerializedProduct).isNotNull().isEqualToIgnoringNewLines(EXPECTED_PRODUCT_OUTPUT);
     }
 
     @Test

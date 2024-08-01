@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Order
  */
-
 // CHECKSTYLE:OFF
 public class Order
 // CHECKSTYLE:ON
@@ -79,7 +78,7 @@ public class Order
      * Get productId
      *
      * @return productId The productId of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Long getProductId()
     {
@@ -115,7 +114,7 @@ public class Order
      * Get quantity
      *
      * @return quantity The quantity of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Integer getQuantity()
     {
@@ -151,7 +150,7 @@ public class Order
      * Get totalPrice
      *
      * @return totalPrice The totalPrice of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Float getTotalPrice()
     {
@@ -187,7 +186,7 @@ public class Order
      * Some typeless property, interpreted by the generator as nullable by default (because typeless)
      *
      * @return typelessProperty The typelessProperty of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Object getTypelessProperty()
     {
@@ -223,7 +222,7 @@ public class Order
      * Some typed property that is deliberately made nullable
      *
      * @return nullableProperty The nullableProperty of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public String getNullableProperty()
     {

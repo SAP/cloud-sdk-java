@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Soda
  */
-
 // CHECKSTYLE:OFF
 public class Soda
 // CHECKSTYLE:ON
@@ -76,7 +75,7 @@ public class Soda
      * Get name
      *
      * @return name The name of this {@link Soda} instance.
-     **/
+     */
     @Nonnull
     public String getName()
     {
@@ -112,7 +111,7 @@ public class Soda
      * Get brand
      *
      * @return brand The brand of this {@link Soda} instance.
-     **/
+     */
     @Nonnull
     public String getBrand()
     {
@@ -148,7 +147,7 @@ public class Soda
      * Get quantity
      *
      * @return quantity The quantity of this {@link Soda} instance.
-     **/
+     */
     @Nonnull
     public Integer getQuantity()
     {
@@ -184,7 +183,7 @@ public class Soda
      * Get price
      *
      * @return price The price of this {@link Soda} instance.
-     **/
+     */
     @Nonnull
     public Float getPrice()
     {

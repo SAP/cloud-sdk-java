@@ -28,7 +28,6 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  *
  * API for managing soda products and orders in SodaStore.
  */
-
 public class OrdersApi extends AbstractOpenApiService
 {
     /**

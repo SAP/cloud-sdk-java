@@ -33,6 +33,7 @@
 		<module>odata-v4-core</module>
 		<module>odata-v4-generator</module>
 		<module>odata-v4-generator-maven-plugin</module>
+		<module>odata-v4-api-sample</module>
 	</modules>
 	<scm>
 		<connection />
@@ -45,18 +46,4 @@
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 		<japicmp.skip>true</japicmp.skip>
 	</properties>
-	<profiles>
-		<profile>
-			<id>code.scans.included</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>sdk.code.scanning</name>
-				</property>
-			</activation>
-			<modules>
-				<module>odata-v4-api-sample</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>
