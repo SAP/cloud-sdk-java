@@ -15,7 +15,7 @@ For HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenien
 You can generate a typed client for this service yourself.
 Follow the sample instructions below to complete the generation steps:
 
-* (Install Apache Maven version `3.5.0` or above.)
+* (Install Apache Maven version `3.9.5` or above.)
 * (Install Java `17` or above.)
 * (Have a Maven based Java project, with a `pom.xml` in `<project_root>/`)
 * Download and put the API specification into `<project_root>/src/main/resources/`.
