@@ -6,7 +6,7 @@
 The [SAP Cloud SDK](https://sap.github.io/cloud-sdk/) is a versatile set of libraries for developers to build backend applications in a cloud-native way and host them on SAP Business Technology Platform or other runtimes.
 It allows the user to develop, extend, and communicate with SAP solutions like SAP S/4HANA Cloud, SAP SuccessFactors, and many others.
 
-For the HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenient features to transform service specifications into client libraries that are type-safe, resilient and performant.
+For HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenient features to transform service specifications into client libraries that are type-safe, resilient and performant.
 
 ### Generate Client Library for OData V2 Services
 
