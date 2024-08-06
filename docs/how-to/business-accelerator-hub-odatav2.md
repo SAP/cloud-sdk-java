@@ -39,10 +39,12 @@ The details of the generation steps may vary depending on the custom project set
     <dependency>
       <groupId>com.sap.cloud.sdk.datamodel</groupId>
       <artifactId>odata-core</artifactId>
+      <version>5.11.0</version> <!-- Please use always the latest version! -->
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+      <version>1.18.34</version> <!-- Please use always the latest version! -->
       <scope>provided</scope>
     </dependency>
     ```
