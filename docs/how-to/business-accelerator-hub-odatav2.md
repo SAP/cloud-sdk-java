@@ -76,8 +76,10 @@ The details of the generation steps may vary depending on the custom project set
   ```
   * Review the configuration section of the plugin to make sure `inputDirectory` points at the directory where the EDMX specification is stored.
   * Generated classes will be stored in the directory specified by `outputDirectory`.
-  * Set other configuration parameters to your preferences or leave them as is.
-  * <details><summary>With Maven projects there are different approaches to place and maintain generated files.</summary>
+  * <details><summary>
+    Set other configuration parameters to your preferences or leave them as is.
+    Maven allows for different approaches.
+    </summary>
     
     * Above configuration deletes old generated code and generates new code with every compilation.
     * Remove or change the `phase` to customize the plugin invocation order in the build.
