@@ -8,7 +8,7 @@ It allows the user to develop, extend, and communicate with SAP solutions like S
 
 For HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenient features to transform service specifications into client libraries that are type-safe, resilient and performant.
 
-### Generate Client Library for OData V2 Services
+### Generate Client Library for OData V4 Services
 
 #### Generation Steps
 
@@ -54,7 +54,7 @@ The details of the generation steps may vary depending on the custom project set
   ```xml
   <plugin>
     <groupId>com.sap.cloud.sdk.datamodel</groupId>
-    <artifactId>odata-generator-maven-plugin</artifactId>
+    <artifactId>odata-v4-generator-maven-plugin</artifactId>
     <version>5.11.0</version> <!-- Please use the latest version! -->
     <executions>
       <execution>
@@ -106,7 +106,7 @@ Usage Example:
   ```
 
 Further samples:
-* Please find our [sample project for OData v2 specification](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/odata/odata-api-sample)
+* Please find our [sample project for OData v4 specification](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/odata-v4/odata-v4-api-sample)
 
 Troubleshooting:
 * The documentation explains the available options for using [the Destination API](https://sap.github.io/cloud-sdk/docs/java/features/connectivity/destination-service#accessing-destinations).
