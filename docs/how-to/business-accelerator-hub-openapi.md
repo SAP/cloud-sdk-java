@@ -8,7 +8,7 @@ It allows the user to develop, extend, and communicate with SAP solutions like S
 
 For HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenient features to transform service specifications into client libraries that are type-safe, resilient and performant.
 
-### Generate Client Library for OData V4 Services
+### Generate Client Library for OpenAPI Services
 
 #### Generation Steps
 
