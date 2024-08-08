@@ -306,11 +306,10 @@ class DataModelGeneratorUnitTest
     @SneakyThrows
     void testCleanOutputDirectory()
     {
-        final File existingFile =
-            Files
-                .createTempFile(outputDirectory, "dummyFile", DataModelGeneratorUnitTest.class.getSimpleName())
-                .toFile();
-        assertThat(existingFile.exists()).isTrue();
+        final File classFile = Files.createTempFile(outputDirectory, null, "myclass.java").toFile();
+        final File ignoreFile = Files.createTempFile(outputDirectory, ".ignore", null).toFile();
+        assertThat(classFile.exists()).isTrue();
+        assertThat(ignoreFile.exists()).isTrue();
 
         final GenerationConfiguration configuration =
             GenerationConfiguration
@@ -326,8 +325,10 @@ class DataModelGeneratorUnitTest
 
         assertThat(generationResult.isSuccess()).isTrue();
 
-        // assert that the file was deleted
-        assertThat(existingFile.exists()).isFalse();
+        // assert that the class file was deleted
+        assertThat(classFile.exists()).isFalse();
+        // assert that the ignore file remains
+        assertThat(ignoreFile.exists()).isTrue();
     }
 
     @Test
