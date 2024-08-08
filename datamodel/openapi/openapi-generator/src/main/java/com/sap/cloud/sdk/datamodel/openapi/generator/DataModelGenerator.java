@@ -10,11 +10,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.function.IOConsumer;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 
@@ -115,7 +119,36 @@ public class DataModelGenerator
             && outputDirectory.exists()
             && outputDirectory.isDirectory() ) {
             log.info("Deleting output directory \"{}\".", outputDirectory.getAbsolutePath());
-            FileUtils.cleanDirectory(outputDirectory);
+
+            // create set of directories that can be deleted
+            HashSet<File> allowedDirs = new HashSet<>();
+            allowedDirs.add(outputDirectory);
+            Consumer<String> addDirs = pckg -> {
+                File d = outputDirectory;
+                for( final String ns : pckg.split("\\.") ) {
+                    d = new File(d, ns);
+                    if( !d.exists() || !d.isDirectory() ) {
+                        return;
+                    }
+                    allowedDirs.add(d);
+                }
+            };
+            addDirs.accept(generationConfiguration.getModelPackage());
+            addDirs.accept(generationConfiguration.getApiPackage());
+
+            // recursively list files that are going to be deleted, safety check:
+            // throw if unexpected file (non-java or non-ignore file) or unexpected folder (non-package)
+            var deleteFiles = FileUtils.listFilesAndDirs(outputDirectory, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
+            deleteFiles.removeIf(f -> f.isDirectory() && allowedDirs.contains(f));
+            deleteFiles.removeIf(f -> f.isFile() && (f.getName().startsWith(".") || f.getName().endsWith(".java")));
+            if( !deleteFiles.isEmpty() ) {
+                throw new IOException("Unexpected files found. Will not delete: " + deleteFiles);
+            }
+
+            // get non-ignore files from outputDirectory folder (non-recursive)
+            var nonIgnoreFiles = outputDirectory.listFiles(( dir, file ) -> !file.startsWith("."));
+            // delete the files (recursively)
+            IOConsumer.forAll(FileUtils::forceDelete, nonIgnoreFiles);
         }
     }
 
