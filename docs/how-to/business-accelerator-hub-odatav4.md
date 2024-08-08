@@ -17,7 +17,7 @@ Follow the sample instructions below to complete the generation steps:
 
 * (Install Apache Maven version `3.9.5` or above.)
 * (Install Java `17` or above.)
-* (Have a Maven based Java project, with a `pom.xml` in `<project_root>/`)
+* (Have a Maven based Java project, with a `pom.xml` in `<project_root>/`.)
 * Download and put the API specification into `<project_root>/src/main/resources/`.
 * Configure the code generator in `<project_root>/pom.xml`.
 * Consume the generated code.
@@ -48,7 +48,6 @@ The details of the generation steps may vary depending on the custom project set
       <scope>provided</scope>
     </dependency>
     ```
-  Versions tags may need to be applied to the above declarations.
 
 * Under the _plugins_ section in the `<project_root>/pom.xml` add the generator plugin for OData.
   ```xml
@@ -106,7 +105,7 @@ Usage Example:
   ```
 
 Further samples:
-* Please find our [sample project for OData v4 specification](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/odata-v4/odata-v4-api-sample)
+* Please find our [sample project for OData v4](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/odata-v4/odata-v4-api-sample).
 
 Troubleshooting:
 * The documentation explains the available options for using [the Destination API](https://sap.github.io/cloud-sdk/docs/java/features/connectivity/destination-service#accessing-destinations).

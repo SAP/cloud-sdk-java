@@ -8,7 +8,7 @@ It allows the user to develop, extend, and communicate with SAP solutions like S
 
 For HTTP protocols _OpenAPI_ and _OData_, the _SAP Cloud SDK_ provides convenient features to transform service specifications into client libraries that are type-safe, resilient and performant.
 
-### Generate Client Library for OData V2 Services
+### Generate Client Library for OData V4 Services
 
 #### Generation Steps
 
@@ -27,8 +27,8 @@ The details of the generation steps may vary depending on the custom project set
 #### Download the API Specification
 
 * To download the API specification from the Overview tab, scroll to the _API Resources_ section.
-  **Choose EDMX format.**
-  The other formats are not supported by _SAP Cloud SDK_ code generation for OData.
+  **Choose JSON or YAML format.**
+  The other formats are not supported by _SAP Cloud SDK_ code generation for OpenAPI.
 * Put the specification inside the project folder to `<project_root>/src/main/resources/`
 
 #### Configure the Code Generator
@@ -38,42 +38,35 @@ The details of the generation steps may vary depending on the custom project set
     ```xml
     <dependency>
       <groupId>com.sap.cloud.sdk.datamodel</groupId>
-      <artifactId>odata-core</artifactId>
+      <artifactId>>openapi-core</artifactId>
       <version>5.11.0</version> <!-- Please use the latest version! -->
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.34</version> <!-- Please use the latest version! -->
-      <scope>provided</scope>
     </dependency>
     ```
 
-* Under the _plugins_ section in the `<project_root>/pom.xml` add the generator plugin for OData.
+* Under the _plugins_ section in the `<project_root>/pom.xml` add the generator plugin for OpenAPI.
   ```xml
   <plugin>
     <groupId>com.sap.cloud.sdk.datamodel</groupId>
-    <artifactId>odata-generator-maven-plugin</artifactId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
     <version>5.11.0</version> <!-- Please use the latest version! -->
     <executions>
       <execution>
-        <id>generate-consumption</id>
         <phase>generate-sources</phase>
         <goals>
           <goal>generate</goal>
         </goals>
-        <configuration>
-          <inputDirectory>${project.basedir}/src/main/resources</inputDirectory>
-          <outputDirectory>${project.basedir}/src/main/java/generated</outputDirectory>
-          <deleteOutputDirectory>true</deleteOutputDirectory>
-          <packageName>org.example.generated</packageName>
-          <serviceMethodsPerEntitySet>true</serviceMethodsPerEntitySet>
-        </configuration>
       </execution>
     </executions>
+    <configuration>
+      <inputSpec>${project.basedir}/src/main/resources/MY_SPECIFICATION.YAML</inputSpec>
+      <outputDirectory>${project.basedir}/src/main/java/generated</outputDirectory>
+      <deleteOutputDirectory>true</deleteOutputDirectory>
+      <apiPackage>org.example.generated.api</apiPackage>
+      <modelPackage>org.example.generated.model</modelPackage>
+    </configuration>
   </plugin>
   ```
-  * Review the configuration section of the plugin to make sure `inputDirectory` points at the directory where the EDMX specification is stored.
+  * Replace the `inputSpec` sample value `MY_SPECIFICATION.YAML` with the respective filename of the previously downloaded specification file.
   * Generated classes will be stored in the directory specified by `outputDirectory`.
   * <details><summary>
     Set other configuration parameters to your preferences or leave them as is.
@@ -92,20 +85,20 @@ The details of the generation steps may vary depending on the custom project set
 
 * Run `mvn clean install` in the root folder of your project.
 * You should now find generated classes in the output directory specified in your generator maven plugin configuration.
-* In case of any issues carefully check your configuration and refer to our [extended typed client generation manual](https://sap.github.io/cloud-sdk/docs/java/features/odata/vdm-generator).
-* Congratulations! Check the usage example below to import and invoke the generated OData client library.
+* In case of any issues carefully check your configuration and refer to our [extended typed client generation manual](https://sap.github.io/cloud-sdk/docs/java/features/rest/generate-rest-client).
+* Congratulations! Check the usage example below to import and invoke the generated OpenAPI client library.
 
 Usage Example:
 
 * To consume the service via the generated typed client library, run the code snippet below:
   ```java
   Destination destination = DestinationAccessor.getDestination("MyDestination");
-  SdkGroceryStoreService service = new DefaultSdkGroceryStoreService();
-  List<Product> result = service.getAllProduct().executeRequest(destination);
+  SodasApi service = new SodasApi(destination);
+  List<Soda> sodas = service.sodasGet();
   ```
 
 Further samples:
-* Please find our [sample project for OData v2](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/odata/odata-api-sample).
+* Please find our [sample project for OpenAPI](https://github.com/SAP/cloud-sdk-java/tree/main/datamodel/openapi/openapi-api-sample).
 
 Troubleshooting:
 * The documentation explains the available options for using [the Destination API](https://sap.github.io/cloud-sdk/docs/java/features/connectivity/destination-service#accessing-destinations).
