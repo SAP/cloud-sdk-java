@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
@@ -109,25 +109,19 @@ public class DataModelGenerator
         });
     }
 
-    private void cleanOutputDirectoryIfRequested( final GenerationConfiguration generationConfiguration )
+    private void cleanOutputDirectoryIfRequested( final GenerationConfiguration configuration )
         throws IOException
     {
-        final File outputDirectory = FileUtils.getFile(generationConfiguration.getOutputDirectory());
-        if( generationConfiguration.deleteOutputDirectory()
-            && outputDirectory.exists()
-            && outputDirectory.isDirectory() ) {
+        final File outputDirectory = FileUtils.getFile(configuration.getOutputDirectory());
+        if( configuration.deleteOutputDirectory() && outputDirectory.exists() && outputDirectory.isDirectory() ) {
             log.info("Cleaning generated folders in output directory \"{}\".", outputDirectory.getAbsolutePath());
 
-            final var pckModel = generationConfiguration.getModelPackage();
-            final var dirModel = Arrays.stream(pckModel.split("\\.")).reduce(outputDirectory, File::new, ( a, b ) -> a);
-            if( dirModel.exists() && dirModel.isDirectory() ) {
-                IOConsumer.forAll(FileUtils::forceDelete, dirModel);
-            }
-
-            final var pckApi = generationConfiguration.getApiPackage();
-            final var dirApi = Arrays.stream(pckApi.split("\\.")).reduce(outputDirectory, File::new, ( a, b ) -> a);
-            if( dirApi.exists() && dirApi.isDirectory() ) {
-                IOConsumer.forAll(FileUtils::forceDelete, dirApi);
+            for( final var pckg : List.of(configuration.getModelPackage(), configuration.getApiPackage()) ) {
+                final var file = outputDirectory.toPath().resolve(pckg.replace(".", File.separator)).toFile();
+                if( file.exists() && file.isDirectory() ) {
+                    log.info("Deleting files from directory \"{}\".", file);
+                    IOConsumer.forAll(FileUtils::forceDelete, file);
+                }
             }
         }
     }
@@ -157,22 +151,21 @@ public class DataModelGenerator
         classPathResourceValidator.assertTemplatesAvailableOnClasspath(templateDirectory, libraryName);
     }
 
-    private void assertRequiredFieldsAreFilled( final GenerationConfiguration configuration )
+    private void assertRequiredFieldsAreFilled( final GenerationConfiguration config )
     {
-        if( configuration.getInputSpec() == null || configuration.getInputSpec().isEmpty() ) {
+        if( config.getInputSpec() == null || config.getInputSpec().isEmpty() ) {
             throw new IllegalArgumentException("Input file path is null or empty.");
         }
-
-        if( configuration.getApiPackage() == null || configuration.getApiPackage().isEmpty() ) {
-            throw new IllegalArgumentException("API package is null or empty.");
-        }
-
-        if( configuration.getModelPackage() == null || configuration.getModelPackage().isEmpty() ) {
-            throw new IllegalArgumentException("Model package is null or empty.");
-        }
-
-        if( configuration.getOutputDirectory() == null || configuration.getOutputDirectory().isEmpty() ) {
+        if( config.getOutputDirectory() == null || config.getOutputDirectory().isEmpty() ) {
             throw new IllegalArgumentException("Output directory is null or empty.");
+        }
+
+        final var packagePattern = Pattern.compile("[a-z_$][a-z0-9_$]+(\\.[a-z0-9_$]+)*");
+        if( config.getApiPackage() == null || !packagePattern.matcher(config.getApiPackage()).matches() ) {
+            throw new IllegalArgumentException("API package is null or empty or invalid.");
+        }
+        if( config.getModelPackage() == null || !packagePattern.matcher(config.getModelPackage()).matches() ) {
+            throw new IllegalArgumentException("Model package is null or empty or invalid.");
         }
     }
 
