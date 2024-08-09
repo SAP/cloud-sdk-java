@@ -306,9 +306,15 @@ class DataModelGeneratorUnitTest
     @SneakyThrows
     void testCleanOutputDirectory()
     {
-        final File classFile = Files.createTempFile(outputDirectory, null, "myclass.java").toFile();
-        final File ignoreFile = Files.createTempFile(outputDirectory, ".ignore", null).toFile();
-        assertThat(classFile.exists()).isTrue();
+        final Path modelDir = Files.createDirectory(outputDirectory.resolve("model"));
+        final Path apiDir = Files.createDirectory(outputDirectory.resolve("api"));
+
+        final File modelFile = Files.createFile(modelDir.resolve("mymodel.java")).toFile();
+        final File apiFile = Files.createFile(apiDir.resolve("myapi.java")).toFile();
+        final File ignoreFile = Files.createFile(outputDirectory.resolve(".ignore")).toFile();
+
+        assertThat(modelFile.exists()).isTrue();
+        assertThat(apiFile.exists()).isTrue();
         assertThat(ignoreFile.exists()).isTrue();
 
         final GenerationConfiguration configuration =
@@ -325,8 +331,9 @@ class DataModelGeneratorUnitTest
 
         assertThat(generationResult.isSuccess()).isTrue();
 
-        // assert that the class file was deleted
-        assertThat(classFile.exists()).isFalse();
+        // assert that the java files are deleted
+        assertThat(modelFile.exists()).isFalse();
+        assertThat(apiFile.exists()).isFalse();
         // assert that the ignore file remains
         assertThat(ignoreFile.exists()).isTrue();
     }
