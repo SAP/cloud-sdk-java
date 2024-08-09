@@ -57,7 +57,7 @@ class GenerationConfigurationConverter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nonnull final Path inputSpec )
     {
-        setGlobalSettings();
+        setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
         final var config = new JavaClientCodegen()
@@ -93,16 +93,25 @@ class GenerationConfigurationConverter
         return clientOptInput;
     }
 
-    private static void setGlobalSettings()
+    private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
-        GlobalSettings.setProperty(CodegenConstants.APIS, "");
-        GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "includeApis"));
+        GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "includeModels"));
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
         GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+    }
+
+    private static String getAllowedIds( @Nonnull final GenerationConfiguration config, @Nonnull final String property )
+    {
+        final var allowIds = config.getAdditionalProperties().get(property);
+        if( allowIds == null || allowIds.isBlank() ) {
+            return "";
+        }
+        return String.join(",", allowIds.trim().split("\\s+"));
     }
 
     private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
