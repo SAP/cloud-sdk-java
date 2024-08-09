@@ -4,17 +4,14 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static org.apache.commons.io.filefilter.TrueFileFilter.TRUE;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
@@ -119,37 +116,19 @@ public class DataModelGenerator
         if( generationConfiguration.deleteOutputDirectory()
             && outputDirectory.exists()
             && outputDirectory.isDirectory() ) {
-            log.info("Deleting output directory \"{}\".", outputDirectory.getAbsolutePath());
+            log.info("Cleaning generated folders in output directory \"{}\".", outputDirectory.getAbsolutePath());
 
-            // create set of directories that can be deleted
-            final var allowedDirs = new HashSet<File>();
-            allowedDirs.add(outputDirectory);
-            final Consumer<String> addDirs = pckg -> {
-                File d = outputDirectory;
-                for( final String ns : pckg.split("\\.") ) {
-                    d = new File(d, ns);
-                    if( !d.exists() || !d.isDirectory() ) {
-                        return;
-                    }
-                    allowedDirs.add(d);
-                }
-            };
-            addDirs.accept(generationConfiguration.getModelPackage());
-            addDirs.accept(generationConfiguration.getApiPackage());
-
-            // recursively list files that are going to be deleted, safety check:
-            // throw if unexpected file (non-java or non-ignore file) or unexpected folder (non-package)
-            final var deleteFiles = FileUtils.listFilesAndDirs(outputDirectory, TRUE, TRUE);
-            deleteFiles.removeIf(f -> f.isDirectory() && allowedDirs.contains(f));
-            deleteFiles.removeIf(f -> f.isFile() && (f.getName().startsWith(".") || f.getName().endsWith(".java")));
-            if( !deleteFiles.isEmpty() ) {
-                throw new IOException("Unexpected files found. Will not delete: " + deleteFiles);
+            final var pckModel = generationConfiguration.getModelPackage();
+            final var dirModel = Arrays.stream(pckModel.split("\\.")).reduce(outputDirectory, File::new, ( a, b ) -> a);
+            if( dirModel.exists() && dirModel.isDirectory() ) {
+                IOConsumer.forAll(FileUtils::forceDelete, dirModel);
             }
 
-            // get non-ignore files from outputDirectory folder (non-recursive)
-            final var nonIgnoreFiles = outputDirectory.listFiles(( dir, file ) -> !file.startsWith("."));
-            // delete the files (recursively)
-            IOConsumer.forAll(FileUtils::forceDelete, nonIgnoreFiles);
+            final var pckApi = generationConfiguration.getApiPackage();
+            final var dirApi = Arrays.stream(pckApi.split("\\.")).reduce(outputDirectory, File::new, ( a, b ) -> a);
+            if( dirApi.exists() && dirApi.isDirectory() ) {
+                IOConsumer.forAll(FileUtils::forceDelete, dirApi);
+            }
         }
     }
 

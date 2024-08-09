@@ -66,10 +66,10 @@ public class GenerationConfiguration
     }
 
     /**
-     * Indicates whether to delete the output directory prior to the generation.
+     * Indicates whether to delete the generated files from output directory prior to the generation.
      *
-     * @return {@code true} if the output directory should be deleted before generating the OpenAPI client,
-     *         {@code false} otherwise.
+     * @return {@code true} if the generated files should be deleted from output directory before generating the OpenAPI
+     *         client, {@code false} otherwise.
      */
     public boolean deleteOutputDirectory()
     {
