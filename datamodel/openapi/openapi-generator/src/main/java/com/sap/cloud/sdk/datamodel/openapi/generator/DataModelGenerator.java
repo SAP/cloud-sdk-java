@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static org.apache.commons.io.filefilter.TrueFileFilter.TRUE;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,7 +19,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.function.IOConsumer;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
@@ -121,9 +122,9 @@ public class DataModelGenerator
             log.info("Deleting output directory \"{}\".", outputDirectory.getAbsolutePath());
 
             // create set of directories that can be deleted
-            HashSet<File> allowedDirs = new HashSet<>();
+            final var allowedDirs = new HashSet<File>();
             allowedDirs.add(outputDirectory);
-            Consumer<String> addDirs = pckg -> {
+            final Consumer<String> addDirs = pckg -> {
                 File d = outputDirectory;
                 for( final String ns : pckg.split("\\.") ) {
                     d = new File(d, ns);
@@ -138,7 +139,7 @@ public class DataModelGenerator
 
             // recursively list files that are going to be deleted, safety check:
             // throw if unexpected file (non-java or non-ignore file) or unexpected folder (non-package)
-            var deleteFiles = FileUtils.listFilesAndDirs(outputDirectory, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
+            final var deleteFiles = FileUtils.listFilesAndDirs(outputDirectory, TRUE, TRUE);
             deleteFiles.removeIf(f -> f.isDirectory() && allowedDirs.contains(f));
             deleteFiles.removeIf(f -> f.isFile() && (f.getName().startsWith(".") || f.getName().endsWith(".java")));
             if( !deleteFiles.isEmpty() ) {
@@ -146,7 +147,7 @@ public class DataModelGenerator
             }
 
             // get non-ignore files from outputDirectory folder (non-recursive)
-            var nonIgnoreFiles = outputDirectory.listFiles(( dir, file ) -> !file.startsWith("."));
+            final var nonIgnoreFiles = outputDirectory.listFiles(( dir, file ) -> !file.startsWith("."));
             // delete the files (recursively)
             IOConsumer.forAll(FileUtils::forceDelete, nonIgnoreFiles);
         }
