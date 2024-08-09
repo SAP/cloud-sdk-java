@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -151,20 +151,20 @@ public class DataModelGenerator
         classPathResourceValidator.assertTemplatesAvailableOnClasspath(templateDirectory, libraryName);
     }
 
-    private void assertRequiredFieldsAreFilled( final GenerationConfiguration config )
+    private void assertRequiredFieldsAreFilled( final GenerationConfiguration configuration )
     {
-        if( config.getInputSpec() == null || config.getInputSpec().isEmpty() ) {
+        if( configuration.getInputSpec() == null || configuration.getInputSpec().isEmpty() ) {
             throw new IllegalArgumentException("Input file path is null or empty.");
         }
-        if( config.getOutputDirectory() == null || config.getOutputDirectory().isEmpty() ) {
+        if( configuration.getOutputDirectory() == null || configuration.getOutputDirectory().isEmpty() ) {
             throw new IllegalArgumentException("Output directory is null or empty.");
         }
 
-        final var packagePattern = Pattern.compile("[a-z_$][a-z0-9_$]+(\\.[a-z0-9_$]+)*");
-        if( config.getApiPackage() == null || !packagePattern.matcher(config.getApiPackage()).matches() ) {
+        final Predicate<String> goodPackage = p -> !p.isEmpty() && !p.startsWith(".") && !p.contains(File.separator);
+        if( configuration.getApiPackage() == null || !goodPackage.test(configuration.getApiPackage()) ) {
             throw new IllegalArgumentException("API package is null or empty or invalid.");
         }
-        if( config.getModelPackage() == null || !packagePattern.matcher(config.getModelPackage()).matches() ) {
+        if( configuration.getModelPackage() == null || !goodPackage.test(configuration.getModelPackage()) ) {
             throw new IllegalArgumentException("Model package is null or empty or invalid.");
         }
     }
