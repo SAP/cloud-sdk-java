@@ -79,6 +79,10 @@
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>grpc-bom</artifactId>
+					<groupId>io.grpc</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -86,6 +90,12 @@
 			<artifactId>grpc-netty-linux</artifactId>
 			<version>0.8.6</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>grpc-bom</artifactId>
+					<groupId>io.grpc</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.vavr</groupId>
