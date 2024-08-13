@@ -249,11 +249,6 @@
 				<version>${openapi-generator.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-core</artifactId>
-				<version>${openapi-generator.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-models</artifactId>
 				<version>${io-swagger-core-v3.version}</version>
