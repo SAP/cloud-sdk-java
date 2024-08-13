@@ -38,7 +38,7 @@ The details of the generation steps may vary depending on the custom project set
     ```xml
     <dependency>
       <groupId>com.sap.cloud.sdk.datamodel</groupId>
-      <artifactId>odata-core</artifactId>
+      <artifactId>odata-v4-core</artifactId>
       <version>5.11.0</version> <!-- Please use the latest version! -->
     </dependency>
     <dependency>
