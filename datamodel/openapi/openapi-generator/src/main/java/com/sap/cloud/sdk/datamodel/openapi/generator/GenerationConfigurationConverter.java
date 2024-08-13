@@ -62,7 +62,26 @@ class GenerationConfigurationConverter
         setGlobalSettings();
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = new JavaClientCodegen()
+        final var config = createCodegenConfig();
+        config.setOutputDir(generationConfiguration.getOutputDirectory());
+        config.setLibrary(LIBRARY_NAME);
+        config.setApiPackage(generationConfiguration.getApiPackage());
+        config.setModelPackage(generationConfiguration.getModelPackage());
+        config.setTemplateDir(TEMPLATE_DIRECTORY);
+        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
+
+        final var operationIdNameMapping = getOperationIdNameMapping(generationConfiguration);
+        config.operationIdNameMapping().putAll(operationIdNameMapping);
+
+        final var clientOptInput = new ClientOptInput();
+        clientOptInput.config(config);
+        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
+        return clientOptInput;
+    }
+
+    private static JavaClientCodegen createCodegenConfig()
+    {
+        return new JavaClientCodegen()
         {
             // Custom processor to inject "x-return-nullable" extension
             @Override
@@ -81,21 +100,6 @@ class GenerationConfigurationConverter
                 return super.postProcessOperationsWithModels(ops, allModels);
             }
         };
-        config.setOutputDir(generationConfiguration.getOutputDirectory());
-        config.setLibrary(LIBRARY_NAME);
-        config.setApiPackage(generationConfiguration.getApiPackage());
-        config.setModelPackage(generationConfiguration.getModelPackage());
-        config.setTemplateDir(TEMPLATE_DIRECTORY);
-        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
-
-        final var operationIdNameMapping = getOperationIdNameMapping(generationConfiguration);
-        config.operationIdNameMapping().putAll(operationIdNameMapping);
-
-        final var clientOptInput = new ClientOptInput();
-        clientOptInput.config(config);
-        clientOptInput.generatorSettings(new GeneratorSettings());
-        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
-        return clientOptInput;
     }
 
     private static Map<String, String> getOperationIdNameMapping( @Nonnull final GenerationConfiguration config )
