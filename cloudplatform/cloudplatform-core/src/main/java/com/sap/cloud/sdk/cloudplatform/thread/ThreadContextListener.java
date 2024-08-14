@@ -17,12 +17,33 @@ public interface ThreadContextListener extends Comparable<ThreadContextListener>
      */
     class DefaultPriorities
     {
+        /**
+         * The default priority for the RequestHeaderThreadContextListener
+         */
         public static final int REQUEST_HEADER_LISTENER = -7;
+        /**
+         * The default priority for the AuthTokenThreadContextListener
+         */
         public static final int AUTH_TOKEN_LISTENER = -6;
+        /**
+         * The default priority for the SecurityContextThreadContextDecorator
+         */
         public static final int SCP_CF_SECURITY_CONTEXT_DECORATOR = -5;
+        /**
+         * The default priority for the BasicAuthenticationThreadContextListener
+         */
         public static final int BASIC_AUTH_LISTENER = -4;
+        /**
+         * The default priority for the PrincipalThreadContextListener
+         */
         public static final int PRINCIPAL_LISTENER = -3;
+        /**
+         * The default priority for the TenantThreadContextListener
+         */
         public static final int TENANT_LISTENER = -2;
+        /**
+         * The default priority for custom listeners
+         */
         public static final int CUSTOM_LISTENER = 0;
     }
 
