@@ -42,7 +42,7 @@ public interface ThreadContextListener extends Comparable<ThreadContextListener>
          */
         public static final int TENANT_LISTENER = -2;
         /**
-         * The default priority for NEO Listeners
+         * The default priority for custom listeners
          */
         public static final int CUSTOM_LISTENER = 0;
     }
