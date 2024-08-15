@@ -9,7 +9,7 @@ Content-ID: 2
 HTTP/1.1 400 Bad Request
 Content-Type: application/json; charset=utf-8
 
-[{"Id":"System.ComponentModel.DataAnnotations.RequiredAttribute","Message":"The FirstName field is required.","PropertyName":"FirstName","Severity":"Error"}]
+{"error": {"code": "005056A509B11EE1B9A8FEC11C23378E","message": {"lang": "en","value": "The FirstName field is required"}}}
 --changesetresponse_4459f831-1259-4f7c-89a0-95162d172489--
 --batchresponse_2e5e59e3-ef58-493c-b947-638f445896aa
 Content-Type: application/http

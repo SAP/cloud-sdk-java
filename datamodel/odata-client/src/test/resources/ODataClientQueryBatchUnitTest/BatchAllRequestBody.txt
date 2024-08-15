@@ -16,9 +16,9 @@ Content-Transfer-Encoding: binary
 Content-ID: 2
 
 POST Entity HTTP/1.1
+Accept: application/json
 Set-Cookie: foo
 Set-Cookie: bar
-Accept: application/json
 Content-Type: application/json
 
 {"foo": "bar"}
@@ -29,9 +29,9 @@ Content-Transfer-Encoding: binary
 Content-ID: 3
 
 PATCH Entity(%27the-key%23%26%21%25%27) HTTP/1.1
-If-Match: version-identifier
 Accept: application/json
 Content-Type: application/json
+If-Match: version-identifier
 
 {"foo": "bar"}
 
