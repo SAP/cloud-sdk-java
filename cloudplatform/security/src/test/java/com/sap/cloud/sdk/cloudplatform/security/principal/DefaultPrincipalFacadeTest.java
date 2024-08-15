@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Base64;
 import java.util.Map;
 
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 
+import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 
 class DefaultPrincipalFacadeTest
