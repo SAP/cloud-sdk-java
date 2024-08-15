@@ -20,6 +20,7 @@ import com.sap.cloud.sdk.result.GsonResultElementFactory;
 import com.sap.cloud.sdk.result.GsonResultObject;
 import com.sap.cloud.sdk.result.ResultObject;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 
 /**
@@ -33,7 +34,6 @@ class ODataHealthyResponseValidator
      *
      * @param result
      *            The OData response object.
-     *
      * @throws ODataResponseException
      *             When the response code infers an unhealthy state, i.e. when >= 400.
      * @throws ODataServiceErrorException
@@ -41,7 +41,7 @@ class ODataHealthyResponseValidator
      */
     static void requireHealthyResponse( @Nonnull final ODataRequestResult result )
     {
-        final ODataRequestGeneric request = result.getODataRequest();
+        ODataRequestGeneric request = result.getODataRequest();
         final HttpResponse httpResponse = result.getHttpResponse();
         final StatusLine statusLine = httpResponse.getStatusLine();
 
@@ -49,27 +49,19 @@ class ODataHealthyResponseValidator
             return;
         }
 
-        ODataRequestGeneric batchFailedRequest = null;
         if( request instanceof ODataRequestBatch oDataRequestBatch ) {
-            batchFailedRequest = findFailedBatchRequest(httpResponse, oDataRequestBatch);
+            request = Option.of(findFailedBatchRequest(httpResponse, oDataRequestBatch)).getOrElse(request);
         }
 
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
-        final ODataResponseException preparedException =
-            new ODataResponseException(
-                batchFailedRequest == null ? request : batchFailedRequest,
-                httpResponse,
-                msg,
-                null);
 
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {
             final String msgError = msg + " The OData service responded with an error message.";
             throw new ODataServiceErrorException(request, httpResponse, msgError, null, odataError.get());
         }
-
-        throw preparedException;
+        throw new ODataResponseException(request, httpResponse, msg, null);
     }
 
     @Nullable
