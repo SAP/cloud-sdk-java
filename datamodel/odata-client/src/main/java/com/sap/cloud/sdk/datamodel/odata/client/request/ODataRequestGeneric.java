@@ -7,9 +7,9 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -78,13 +78,13 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     /**
      * Map of HTTP header key-values which are added to the OData request.
      */
-    final Map<String, Collection<String>> headers = new TreeMap<>();
+    final Map<String, Collection<String>> headers = new HashMap<>();
 
     /**
      * Map of additional generic HTTP query parameters.
      */
     @Getter( AccessLevel.PROTECTED )
-    private final Map<String, String> queryParameters = new TreeMap<>();
+    private final Map<String, String> queryParameters = new HashMap<>();
 
     /**
      * The CSRF token retriever.
@@ -285,7 +285,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     @Nonnull
     public Map<String, Collection<String>> getHeaders()
     {
-        return new TreeMap<>(headers);
+        return new HashMap<>(headers);
     }
 
     @Nonnull
