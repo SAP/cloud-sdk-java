@@ -331,6 +331,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 .withOnBehalfOf(behalf)
                 .withTenantPropagationStrategyFrom(serviceIdentifier)
                 .withAdditionalParameters(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .withTimeLimiter(oAuth2Options.getTimeLimiter())
                 .build();
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }

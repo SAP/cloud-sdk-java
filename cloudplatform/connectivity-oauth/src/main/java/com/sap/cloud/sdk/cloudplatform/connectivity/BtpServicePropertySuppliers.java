@@ -188,18 +188,18 @@ class BtpServicePropertySuppliers
         @Override
         public OAuth2Options getOAuth2Options()
         {
-            final OAuth2Options.Builder oAuth2OptionsBuilder = OAuth2Options.builder();
+            final OAuth2Options.Builder builder = OAuth2Options.builder();
+            options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
 
             if( skipTokenRetrieval() ) {
-                oAuth2OptionsBuilder.withSkipTokenRetrieval(true);
+                builder.withSkipTokenRetrieval(true);
             } else {
-                attachIasCommunicationOptions(oAuth2OptionsBuilder);
-                oAuth2OptionsBuilder
-                    .withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
+                attachIasCommunicationOptions(builder);
+                builder.withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
             }
-            attachClientKeyStore(oAuth2OptionsBuilder);
+            attachClientKeyStore(builder);
 
-            return oAuth2OptionsBuilder.build();
+            return builder.build();
         }
 
         private void attachIasCommunicationOptions( @Nonnull final OAuth2Options.Builder optionsBuilder )
