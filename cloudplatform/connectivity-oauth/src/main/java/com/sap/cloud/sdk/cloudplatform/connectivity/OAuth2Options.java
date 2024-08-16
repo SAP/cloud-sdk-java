@@ -31,6 +31,8 @@ public final class OAuth2Options
 {
     /**
      * The default timeout of 10 seconds for token retrieval.
+     *
+     * @since 5.12.0
      */
     public static final TimeLimiterConfiguration DEFAULT_TIMEOUT = TimeLimiterConfiguration.of(Duration.ofSeconds(10));
     /**
@@ -44,6 +46,8 @@ public final class OAuth2Options
     private final Map<String, String> additionalTokenRetrievalParameters;
     /**
      * A timeout to be applied for token retrieval.
+     *
+     * @since 5.12.0
      */
     @Nonnull
     @Getter
@@ -168,6 +172,7 @@ public final class OAuth2Options
          * @param timeLimiter
          *            The custom timeout configuration.
          * @return This {@link Builder}.
+         * @since 5.12.0
          */
         @Nonnull
         public Builder withTimeLimiter( @Nonnull final TimeLimiterConfiguration timeLimiter )
@@ -202,6 +207,8 @@ public final class OAuth2Options
 
     /**
      * Configure the timeout applied to token retrieval.
+     *
+     * @since 5.12.0
      */
     @Getter
     @RequiredArgsConstructor( staticName = "of" )
