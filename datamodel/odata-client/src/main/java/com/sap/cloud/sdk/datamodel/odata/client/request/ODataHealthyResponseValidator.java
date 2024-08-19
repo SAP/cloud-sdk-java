@@ -41,7 +41,7 @@ class ODataHealthyResponseValidator
      */
     static void requireHealthyResponse( @Nonnull final ODataRequestResult result )
     {
-        ODataRequestGeneric request = result.getODataRequest();
+        final ODataRequestGeneric originalRequest = result.getODataRequest();
         final HttpResponse httpResponse = result.getHttpResponse();
         final StatusLine statusLine = httpResponse.getStatusLine();
 
@@ -49,9 +49,8 @@ class ODataHealthyResponseValidator
             return;
         }
 
-        if( request instanceof ODataRequestBatch oDataRequestBatch ) {
-            request = Option.of(findFailedBatchRequest(httpResponse, oDataRequestBatch)).getOrElse(request);
-        }
+        final ODataRequestGeneric requestRelevantForException =
+            findPotentialBatchItem(httpResponse, originalRequest).getOrElse(originalRequest);
 
         final Integer statusCode = statusLine == null ? null : statusLine.getStatusCode();
         final String msg = "The HTTP response code (" + statusCode + ") indicates an error.";
@@ -59,37 +58,44 @@ class ODataHealthyResponseValidator
         final Try<ODataServiceError> odataError = Try.of(() -> loadErrorFromResponse(result));
         if( odataError.isSuccess() ) {
             final String msgError = msg + " The OData service responded with an error message.";
-            throw new ODataServiceErrorException(request, httpResponse, msgError, null, odataError.get());
+            throw new ODataServiceErrorException(
+                requestRelevantForException,
+                httpResponse,
+                msgError,
+                null,
+                odataError.get());
         }
-        throw new ODataResponseException(request, httpResponse, msg, null);
+        throw new ODataResponseException(requestRelevantForException, httpResponse, msg, null);
     }
 
-    @Nullable
+    @Nonnull
     private static
-        ODataRequestGeneric
-        findFailedBatchRequest( final HttpResponse httpResponse, final ODataRequestBatch oDataRequestBatch )
+        Option<ODataRequestGeneric>
+        findPotentialBatchItem( final HttpResponse httpResponse, final ODataRequestGeneric request )
     {
-        final Integer failedBatchRequestNumber =
-            httpResponse instanceof MultipartHttpResponse
-                ? ((MultipartHttpResponse) httpResponse).getContentId()
-                : null;
+        if( !(request instanceof ODataRequestBatch requestBatch)
+            || !(httpResponse instanceof MultipartHttpResponse multipartHttpResponse) ) {
+            return Option.none();
+        }
+        @Nullable
+        final Integer failedBatchRequestNumber = multipartHttpResponse.getContentId();
         if( failedBatchRequestNumber == null ) {
-            return null;
+            return Option.none();
         }
 
-        for( final ODataRequestBatch.BatchItem requestGeneric : oDataRequestBatch.getRequests() ) {
+        for( final ODataRequestBatch.BatchItem requestGeneric : requestBatch.getRequests() ) {
             if( requestGeneric instanceof ODataRequestBatch.BatchItemChangeset changeset ) {
                 for( final ODataRequestBatch.BatchItemSingle single : changeset.getRequests() ) {
                     if( single.getContentId() == failedBatchRequestNumber ) {
-                        return single.getRequest();
+                        return Option.of(single.getRequest());
                     }
                 }
             } else if( requestGeneric instanceof ODataRequestBatch.BatchItemSingle single
                 && single.getContentId() == failedBatchRequestNumber ) {
-                return single.getRequest();
+                return Option.of(single.getRequest());
             }
         }
-        return null;
+        return Option.none();
     }
 
     @Nonnull
