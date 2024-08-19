@@ -134,6 +134,15 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         };
     }
 
+    @Nonnull
+    @Override
+    public OAuth2Options getOAuth2Options()
+    {
+        final OAuth2Options.Builder builder = OAuth2Options.builder();
+        options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
+        return builder.build();
+    }
+
     /**
      * Get the path under which the oauth properties are stored in the service binding credentials.
      *

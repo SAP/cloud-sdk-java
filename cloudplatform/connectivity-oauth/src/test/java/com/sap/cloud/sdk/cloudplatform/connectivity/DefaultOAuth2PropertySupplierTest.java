@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.environment.servicebinding.api.exception.ServiceBindingAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.CredentialType;
 
@@ -208,6 +210,28 @@ class DefaultOAuth2PropertySupplierTest
             .isInstanceOf(CloudPlatformException.class)
             .describedAs("We are not mocking the Zero Trust Identity Service here, so this should be a failure")
             .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
+    }
+
+    @Test
+    void testTimeoutConfiguration()
+    {
+        final ServiceBinding binding =
+            new ServiceBindingBuilder(ServiceIdentifier.DESTINATION).with("name", "asdf").build();
+        ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        sut = new DefaultOAuth2PropertySupplier(options);
+
+        assertThat(sut.getOAuth2Options().getTimeLimiter()).isSameAs(OAuth2Options.DEFAULT_TIMEOUT);
+
+        options =
+            ServiceBindingDestinationOptions
+                .forService(binding)
+                .withOption(
+                    OAuth2Options.TokenRetrievalTimeout.of(TimeLimiterConfiguration.of(Duration.ofSeconds(100))))
+                .build();
+        sut = new DefaultOAuth2PropertySupplier(options);
+        assertThat(sut.getOAuth2Options().getTimeLimiter())
+            .isEqualTo(TimeLimiterConfiguration.of(Duration.ofSeconds(100)));
     }
 
     @RequiredArgsConstructor
