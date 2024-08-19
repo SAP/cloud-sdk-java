@@ -779,7 +779,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.20.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -789,7 +789,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.13.1</version>
+					<version>3.14.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -849,7 +849,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.4.0</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
