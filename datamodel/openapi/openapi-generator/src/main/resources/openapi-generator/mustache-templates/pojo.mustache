@@ -114,7 +114,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
    * @return The same instance of type {@link {{classname}}}
    */
-  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
+  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
     this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}};
     this.{{name}}.put(key, {{name}}Item);
     return this;
