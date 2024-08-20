@@ -140,7 +140,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order totalPrice( @Nonnull final Float totalPrice )
+    public Order totalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
         return this;
@@ -163,7 +163,7 @@ public class Order
      * @param totalPrice
      *            The totalPrice of this {@link Order}
      */
-    public void setTotalPrice( @Nonnull final Float totalPrice )
+    public void setTotalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
     }

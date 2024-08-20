@@ -144,7 +144,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp totalPrice( @Nonnull final Float totalPrice )
+    public OrderWithTimestamp totalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
         return this;
@@ -167,7 +167,7 @@ public class OrderWithTimestamp
      * @param totalPrice
      *            The totalPrice of this {@link OrderWithTimestamp}
      */
-    public void setTotalPrice( @Nonnull final Float totalPrice )
+    public void setTotalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
     }
@@ -252,7 +252,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp timestamp( @Nonnull final OffsetDateTime timestamp )
+    public OrderWithTimestamp timestamp( @Nullable final OffsetDateTime timestamp )
     {
         this.timestamp = timestamp;
         return this;
@@ -275,7 +275,7 @@ public class OrderWithTimestamp
      * @param timestamp
      *            The timestamp of this {@link OrderWithTimestamp}
      */
-    public void setTimestamp( @Nonnull final OffsetDateTime timestamp )
+    public void setTimestamp( @Nullable final OffsetDateTime timestamp )
     {
         this.timestamp = timestamp;
     }
