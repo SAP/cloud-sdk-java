@@ -88,7 +88,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    {{/maximum}}
    * @return The same instance of this {@link {{classname}}} class
    */
-  @Nonnull public {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
+  @Nonnull public {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
     return this;
   }
@@ -162,7 +162,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * Maximum: {{maximum}}
    {{/maximum}}
    */
-  public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
+  public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}};
   }
   {{/isReadOnly}}
