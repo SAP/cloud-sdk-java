@@ -262,7 +262,7 @@ class ODataClientBatchResponseParsingUnitTest
         assertThat(batchResponse.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
         // Test assertion: response parsing
-        assertThatExceptionOfType(ODataResponseException.class)
+        assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> batchResponse.getResult(create1))
             .satisfies(e -> {
                 assertThat(e.getHttpCode()).isEqualTo(400);
@@ -270,7 +270,7 @@ class ODataClientBatchResponseParsingUnitTest
                 assertThat(e.getRequest()).isSameAs(create2);
             });
 
-        assertThatExceptionOfType(ODataResponseException.class)
+        assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> batchResponse.getResult(create2))
             .satisfies(e -> {
                 assertThat(e.getHttpCode()).isEqualTo(400);
