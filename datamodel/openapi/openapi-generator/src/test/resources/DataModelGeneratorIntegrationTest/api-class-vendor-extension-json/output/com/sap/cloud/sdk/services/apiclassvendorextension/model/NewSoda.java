@@ -129,7 +129,7 @@ public class NewSoda
    * @param zero  The zero of this {@link NewSoda}
    * @return The same instance of this {@link NewSoda} class
    */
-  @Nonnull public NewSoda zero( @Nonnull final Boolean zero) {
+  @Nonnull public NewSoda zero( @Nullable final Boolean zero) {
     this.zero = zero;
     return this;
   }
@@ -147,7 +147,7 @@ public class NewSoda
    *
    * @param zero  The zero of this {@link NewSoda}
    */
-  public void setZero( @Nonnull final Boolean zero) {
+  public void setZero( @Nullable final Boolean zero) {
     this.zero = zero;
   }
 
@@ -157,7 +157,7 @@ public class NewSoda
    * @param since  The since of this {@link NewSoda}
    * @return The same instance of this {@link NewSoda} class
    */
-  @Nonnull public NewSoda since( @Nonnull final LocalDate since) {
+  @Nonnull public NewSoda since( @Nullable final LocalDate since) {
     this.since = since;
     return this;
   }
@@ -175,7 +175,7 @@ public class NewSoda
    *
    * @param since  The since of this {@link NewSoda}
    */
-  public void setSince( @Nonnull final LocalDate since) {
+  public void setSince( @Nullable final LocalDate since) {
     this.since = since;
   }
 

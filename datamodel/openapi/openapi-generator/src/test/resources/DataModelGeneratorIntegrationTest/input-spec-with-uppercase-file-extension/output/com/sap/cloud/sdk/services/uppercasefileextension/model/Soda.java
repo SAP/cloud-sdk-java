@@ -69,7 +69,7 @@ public class Soda
    * @param id  The id of this {@link Soda}
    * @return The same instance of this {@link Soda} class
    */
-  @Nonnull public Soda id( @Nonnull final Long id) {
+  @Nonnull public Soda id( @Nullable final Long id) {
     this.id = id;
     return this;
   }
@@ -87,7 +87,7 @@ public class Soda
    *
    * @param id  The id of this {@link Soda}
    */
-  public void setId( @Nonnull final Long id) {
+  public void setId( @Nullable final Long id) {
     this.id = id;
   }
 

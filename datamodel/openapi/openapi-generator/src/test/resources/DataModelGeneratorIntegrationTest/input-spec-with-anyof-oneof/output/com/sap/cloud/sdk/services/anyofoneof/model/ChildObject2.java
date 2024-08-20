@@ -64,7 +64,7 @@ public class ChildObject2
    * @param id  The id of this {@link ChildObject2}
    * @return The same instance of this {@link ChildObject2} class
    */
-  @Nonnull public ChildObject2 id( @Nonnull final String id) {
+  @Nonnull public ChildObject2 id( @Nullable final String id) {
     this.id = id;
     return this;
   }
@@ -82,7 +82,7 @@ public class ChildObject2
    *
    * @param id  The id of this {@link ChildObject2}
    */
-  public void setId( @Nonnull final String id) {
+  public void setId( @Nullable final String id) {
     this.id = id;
   }
 
@@ -92,7 +92,7 @@ public class ChildObject2
    * @param type  The type of this {@link ChildObject2}
    * @return The same instance of this {@link ChildObject2} class
    */
-  @Nonnull public ChildObject2 type( @Nonnull final String type) {
+  @Nonnull public ChildObject2 type( @Nullable final String type) {
     this.type = type;
     return this;
   }
@@ -110,7 +110,7 @@ public class ChildObject2
    *
    * @param type  The type of this {@link ChildObject2}
    */
-  public void setType( @Nonnull final String type) {
+  public void setType( @Nullable final String type) {
     this.type = type;
   }
 
@@ -120,7 +120,7 @@ public class ChildObject2
    * @param text  The text of this {@link ChildObject2}
    * @return The same instance of this {@link ChildObject2} class
    */
-  @Nonnull public ChildObject2 text( @Nonnull final String text) {
+  @Nonnull public ChildObject2 text( @Nullable final String text) {
     this.text = text;
     return this;
   }
@@ -138,7 +138,7 @@ public class ChildObject2
    *
    * @param text  The text of this {@link ChildObject2}
    */
-  public void setText( @Nonnull final String text) {
+  public void setText( @Nullable final String text) {
     this.text = text;
   }
 

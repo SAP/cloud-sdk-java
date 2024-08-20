@@ -66,7 +66,7 @@ public class UpdateSoda
    * @param name  The name of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-  @Nonnull public UpdateSoda name( @Nonnull final String name) {
+  @Nonnull public UpdateSoda name( @Nullable final String name) {
     this.name = name;
     return this;
   }
@@ -84,7 +84,7 @@ public class UpdateSoda
    *
    * @param name  The name of this {@link UpdateSoda}
    */
-  public void setName( @Nonnull final String name) {
+  public void setName( @Nullable final String name) {
     this.name = name;
   }
 
@@ -94,7 +94,7 @@ public class UpdateSoda
    * @param brand  The brand of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-  @Nonnull public UpdateSoda brand( @Nonnull final String brand) {
+  @Nonnull public UpdateSoda brand( @Nullable final String brand) {
     this.brand = brand;
     return this;
   }
@@ -112,7 +112,7 @@ public class UpdateSoda
    *
    * @param brand  The brand of this {@link UpdateSoda}
    */
-  public void setBrand( @Nonnull final String brand) {
+  public void setBrand( @Nullable final String brand) {
     this.brand = brand;
   }
 
@@ -122,7 +122,7 @@ public class UpdateSoda
    * @param flavor  The flavor of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-  @Nonnull public UpdateSoda flavor( @Nonnull final String flavor) {
+  @Nonnull public UpdateSoda flavor( @Nullable final String flavor) {
     this.flavor = flavor;
     return this;
   }
@@ -140,7 +140,7 @@ public class UpdateSoda
    *
    * @param flavor  The flavor of this {@link UpdateSoda}
    */
-  public void setFlavor( @Nonnull final String flavor) {
+  public void setFlavor( @Nullable final String flavor) {
     this.flavor = flavor;
   }
 
@@ -150,7 +150,7 @@ public class UpdateSoda
    * @param price  The price of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-  @Nonnull public UpdateSoda price( @Nonnull final Float price) {
+  @Nonnull public UpdateSoda price( @Nullable final Float price) {
     this.price = price;
     return this;
   }
@@ -168,7 +168,7 @@ public class UpdateSoda
    *
    * @param price  The price of this {@link UpdateSoda}
    */
-  public void setPrice( @Nonnull final Float price) {
+  public void setPrice( @Nullable final Float price) {
     this.price = price;
   }
 

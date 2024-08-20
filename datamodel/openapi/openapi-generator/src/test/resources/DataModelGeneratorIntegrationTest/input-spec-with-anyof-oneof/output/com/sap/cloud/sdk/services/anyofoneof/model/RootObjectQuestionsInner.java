@@ -66,7 +66,7 @@ public class RootObjectQuestionsInner
    * @param id  The id of this {@link RootObjectQuestionsInner}
    * @return The same instance of this {@link RootObjectQuestionsInner} class
    */
-  @Nonnull public RootObjectQuestionsInner id( @Nonnull final String id) {
+  @Nonnull public RootObjectQuestionsInner id( @Nullable final String id) {
     this.id = id;
     return this;
   }
@@ -84,7 +84,7 @@ public class RootObjectQuestionsInner
    *
    * @param id  The id of this {@link RootObjectQuestionsInner}
    */
-  public void setId( @Nonnull final String id) {
+  public void setId( @Nullable final String id) {
     this.id = id;
   }
 
@@ -94,7 +94,7 @@ public class RootObjectQuestionsInner
    * @param type  The type of this {@link RootObjectQuestionsInner}
    * @return The same instance of this {@link RootObjectQuestionsInner} class
    */
-  @Nonnull public RootObjectQuestionsInner type( @Nonnull final String type) {
+  @Nonnull public RootObjectQuestionsInner type( @Nullable final String type) {
     this.type = type;
     return this;
   }
@@ -112,7 +112,7 @@ public class RootObjectQuestionsInner
    *
    * @param type  The type of this {@link RootObjectQuestionsInner}
    */
-  public void setType( @Nonnull final String type) {
+  public void setType( @Nullable final String type) {
     this.type = type;
   }
 
@@ -122,7 +122,7 @@ public class RootObjectQuestionsInner
    * @param text  The text of this {@link RootObjectQuestionsInner}
    * @return The same instance of this {@link RootObjectQuestionsInner} class
    */
-  @Nonnull public RootObjectQuestionsInner text( @Nonnull final String text) {
+  @Nonnull public RootObjectQuestionsInner text( @Nullable final String text) {
     this.text = text;
     return this;
   }
@@ -140,7 +140,7 @@ public class RootObjectQuestionsInner
    *
    * @param text  The text of this {@link RootObjectQuestionsInner}
    */
-  public void setText( @Nonnull final String text) {
+  public void setText( @Nullable final String text) {
     this.text = text;
   }
 

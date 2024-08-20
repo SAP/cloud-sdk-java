@@ -61,7 +61,7 @@ public class RootObject
    * @param questions  The questions of this {@link RootObject}
    * @return The same instance of this {@link RootObject} class
    */
-  @Nonnull public RootObject questions( @Nonnull final List<RootObjectQuestionsInner> questions) {
+  @Nonnull public RootObject questions( @Nullable final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
     return this;
   }
@@ -91,7 +91,7 @@ public class RootObject
    *
    * @param questions  The questions of this {@link RootObject}
    */
-  public void setQuestions( @Nonnull final List<RootObjectQuestionsInner> questions) {
+  public void setQuestions( @Nullable final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
   }
 

@@ -63,7 +63,7 @@ public class NestedChildObject
    * @param id  The id of this {@link NestedChildObject}
    * @return The same instance of this {@link NestedChildObject} class
    */
-  @Nonnull public NestedChildObject id( @Nonnull final String id) {
+  @Nonnull public NestedChildObject id( @Nullable final String id) {
     this.id = id;
     return this;
   }
@@ -81,7 +81,7 @@ public class NestedChildObject
    *
    * @param id  The id of this {@link NestedChildObject}
    */
-  public void setId( @Nonnull final String id) {
+  public void setId( @Nullable final String id) {
     this.id = id;
   }
 
@@ -91,7 +91,7 @@ public class NestedChildObject
    * @param type  The type of this {@link NestedChildObject}
    * @return The same instance of this {@link NestedChildObject} class
    */
-  @Nonnull public NestedChildObject type( @Nonnull final String type) {
+  @Nonnull public NestedChildObject type( @Nullable final String type) {
     this.type = type;
     return this;
   }
@@ -109,7 +109,7 @@ public class NestedChildObject
    *
    * @param type  The type of this {@link NestedChildObject}
    */
-  public void setType( @Nonnull final String type) {
+  public void setType( @Nullable final String type) {
     this.type = type;
   }
 
@@ -119,7 +119,7 @@ public class NestedChildObject
    * @param text  The text of this {@link NestedChildObject}
    * @return The same instance of this {@link NestedChildObject} class
    */
-  @Nonnull public NestedChildObject text( @Nonnull final String text) {
+  @Nonnull public NestedChildObject text( @Nullable final String text) {
     this.text = text;
     return this;
   }
@@ -137,7 +137,7 @@ public class NestedChildObject
    *
    * @param text  The text of this {@link NestedChildObject}
    */
-  public void setText( @Nonnull final String text) {
+  public void setText( @Nullable final String text) {
     this.text = text;
   }
 
