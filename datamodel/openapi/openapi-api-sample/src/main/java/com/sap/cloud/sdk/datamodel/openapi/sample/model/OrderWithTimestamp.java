@@ -180,7 +180,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp typelessProperty( @Nonnull final Object typelessProperty )
+    public OrderWithTimestamp typelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
         return this;
@@ -191,7 +191,7 @@ public class OrderWithTimestamp
      *
      * @return typelessProperty The typelessProperty of this {@link OrderWithTimestamp} instance.
      */
-    @Nonnull
+    @Nullable
     public Object getTypelessProperty()
     {
         return typelessProperty;
@@ -203,7 +203,7 @@ public class OrderWithTimestamp
      * @param typelessProperty
      *            Some typeless property, interpreted by the generator as nullable by default (because typeless)
      */
-    public void setTypelessProperty( @Nonnull final Object typelessProperty )
+    public void setTypelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
     }
@@ -216,7 +216,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp nullableProperty( @Nonnull final String nullableProperty )
+    public OrderWithTimestamp nullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
         return this;
@@ -227,7 +227,7 @@ public class OrderWithTimestamp
      *
      * @return nullableProperty The nullableProperty of this {@link OrderWithTimestamp} instance.
      */
-    @Nonnull
+    @Nullable
     public String getNullableProperty()
     {
         return nullableProperty;
@@ -239,7 +239,7 @@ public class OrderWithTimestamp
      * @param nullableProperty
      *            Some typed property that is deliberately made nullable
      */
-    public void setNullableProperty( @Nonnull final String nullableProperty )
+    public void setNullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
     }
