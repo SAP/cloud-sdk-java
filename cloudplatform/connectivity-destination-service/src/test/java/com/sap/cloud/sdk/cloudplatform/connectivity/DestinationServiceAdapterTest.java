@@ -14,6 +14,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
@@ -32,6 +34,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -374,8 +377,8 @@ class DestinationServiceAdapterTest
     void testErrorHandling()
     {
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
-        wm.stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(badRequest().withBody("bad, evil request")));
-        wm.stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "dest")).willReturn(notFound()));
+        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(badRequest().withBody("bad, evil request")));
+        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "dest")).willReturn(notFound()));
 
         assertThatThrownBy(
             () -> adapterToTest
