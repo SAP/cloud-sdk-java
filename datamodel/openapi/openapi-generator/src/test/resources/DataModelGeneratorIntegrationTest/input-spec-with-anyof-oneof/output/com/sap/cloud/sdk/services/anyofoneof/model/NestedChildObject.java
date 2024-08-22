@@ -57,21 +57,21 @@ public class NestedChildObject
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
-    * Set the id of this {@link NestedChildObject} instance and return the same instance.
-    *
-    * @param id  The id of this {@link NestedChildObject}
-    * @return The same instance of this {@link NestedChildObject} class
-    */
-   @Nonnull public NestedChildObject id(@Nonnull final String id) {
+  /**
+   * Set the id of this {@link NestedChildObject} instance and return the same instance.
+   *
+   * @param id  The id of this {@link NestedChildObject}
+   * @return The same instance of this {@link NestedChildObject} class
+   */
+  @Nonnull public NestedChildObject id( @Nullable final String id) {
     this.id = id;
     return this;
   }
 
-   /**
-    * Get id
-    * @return id  The id of this {@link NestedChildObject} instance.
-    */
+  /**
+   * Get id
+   * @return id  The id of this {@link NestedChildObject} instance.
+   */
   @Nonnull public String getId() {
     return id;
   }
@@ -81,25 +81,25 @@ public class NestedChildObject
    *
    * @param id  The id of this {@link NestedChildObject}
    */
-  public void setId( @Nonnull final String id) {
+  public void setId( @Nullable final String id) {
     this.id = id;
   }
 
-   /**
-    * Set the type of this {@link NestedChildObject} instance and return the same instance.
-    *
-    * @param type  The type of this {@link NestedChildObject}
-    * @return The same instance of this {@link NestedChildObject} class
-    */
-   @Nonnull public NestedChildObject type(@Nonnull final String type) {
+  /**
+   * Set the type of this {@link NestedChildObject} instance and return the same instance.
+   *
+   * @param type  The type of this {@link NestedChildObject}
+   * @return The same instance of this {@link NestedChildObject} class
+   */
+  @Nonnull public NestedChildObject type( @Nullable final String type) {
     this.type = type;
     return this;
   }
 
-   /**
-    * Get type
-    * @return type  The type of this {@link NestedChildObject} instance.
-    */
+  /**
+   * Get type
+   * @return type  The type of this {@link NestedChildObject} instance.
+   */
   @Nonnull public String getType() {
     return type;
   }
@@ -109,25 +109,25 @@ public class NestedChildObject
    *
    * @param type  The type of this {@link NestedChildObject}
    */
-  public void setType( @Nonnull final String type) {
+  public void setType( @Nullable final String type) {
     this.type = type;
   }
 
-   /**
-    * Set the text of this {@link NestedChildObject} instance and return the same instance.
-    *
-    * @param text  The text of this {@link NestedChildObject}
-    * @return The same instance of this {@link NestedChildObject} class
-    */
-   @Nonnull public NestedChildObject text(@Nonnull final String text) {
+  /**
+   * Set the text of this {@link NestedChildObject} instance and return the same instance.
+   *
+   * @param text  The text of this {@link NestedChildObject}
+   * @return The same instance of this {@link NestedChildObject} class
+   */
+  @Nonnull public NestedChildObject text( @Nullable final String text) {
     this.text = text;
     return this;
   }
 
-   /**
-    * Get text
-    * @return text  The text of this {@link NestedChildObject} instance.
-    */
+  /**
+   * Get text
+   * @return text  The text of this {@link NestedChildObject} instance.
+   */
   @Nonnull public String getText() {
     return text;
   }
@@ -137,7 +137,7 @@ public class NestedChildObject
    *
    * @param text  The text of this {@link NestedChildObject}
    */
-  public void setText( @Nonnull final String text) {
+  public void setText( @Nullable final String text) {
     this.text = text;
   }
 
@@ -158,7 +158,7 @@ public class NestedChildObject
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("NestedChildObject has no field with name '" + name + "'.");
     }

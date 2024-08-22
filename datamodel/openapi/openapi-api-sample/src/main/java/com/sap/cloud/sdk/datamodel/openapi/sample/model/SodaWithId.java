@@ -212,7 +212,7 @@ public class SodaWithId
      * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public SodaWithId id( @Nonnull final Long id )
+    public SodaWithId id( @Nullable final Long id )
     {
         this.id = id;
         return this;
@@ -235,7 +235,7 @@ public class SodaWithId
      * @param id
      *            The id of this {@link SodaWithId}
      */
-    public void setId( @Nonnull final Long id )
+    public void setId( @Nullable final Long id )
     {
         this.id = id;
     }
