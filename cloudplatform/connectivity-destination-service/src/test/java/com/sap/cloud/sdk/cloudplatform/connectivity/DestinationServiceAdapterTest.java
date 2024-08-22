@@ -370,6 +370,39 @@ class DestinationServiceAdapterTest
                 """);
     }
 
+    @Test
+    void testErrorHandling()
+    {
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+        wm.stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(badRequest().withBody("bad, evil request")));
+        wm.stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "dest")).willReturn(notFound()));
+
+        assertThatThrownBy(
+            () -> adapterToTest
+                .getConfigurationAsJson("/", DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("status 400");
+        assertThatThrownBy(
+            () -> adapterToTest
+                .getConfigurationAsJson(
+                    "/dest",
+                    DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
+            .describedAs("A 404 should produce a DestinationNotFoundException")
+            .isInstanceOf(DestinationNotFoundException.class)
+            .hasMessageContaining("Destination could not be found");
+
+        // invoke adapter 200 times, ensuring the response content is consumed
+        for( int i = 0; i < 200; i++ ) {
+            assertThatThrownBy(
+                () -> adapterToTest
+                    .getConfigurationAsJson(
+                        "/",
+                        DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
+                .isInstanceOf(DestinationAccessException.class)
+                .hasMessageContaining("status 400");
+        }
+    }
+
     private static DestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
     {
         return new DestinationServiceAdapter(null, () -> {
