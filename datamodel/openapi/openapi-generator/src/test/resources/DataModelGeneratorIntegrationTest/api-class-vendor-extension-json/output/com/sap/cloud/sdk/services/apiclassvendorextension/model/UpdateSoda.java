@@ -67,21 +67,21 @@ public class UpdateSoda
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
-    * Set the name of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param name  The name of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda name(@Nonnull final String name) {
+  /**
+   * Set the name of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param name  The name of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda name( @Nullable final String name) {
     this.name = name;
     return this;
   }
 
-   /**
-    * Get name
-    * @return name  The name of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get name
+   * @return name  The name of this {@link UpdateSoda} instance.
+   */
   @Nonnull public String getName() {
     return name;
   }
@@ -91,25 +91,25 @@ public class UpdateSoda
    *
    * @param name  The name of this {@link UpdateSoda}
    */
-  public void setName( @Nonnull final String name) {
+  public void setName( @Nullable final String name) {
     this.name = name;
   }
 
-   /**
-    * Set the zero of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param zero  The zero of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda zero(@Nonnull final Boolean zero) {
+  /**
+   * Set the zero of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param zero  The zero of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda zero( @Nullable final Boolean zero) {
     this.zero = zero;
     return this;
   }
 
-   /**
-    * Get zero
-    * @return zero  The zero of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get zero
+   * @return zero  The zero of this {@link UpdateSoda} instance.
+   */
   @Nonnull public Boolean isZero() {
     return zero;
   }
@@ -119,25 +119,25 @@ public class UpdateSoda
    *
    * @param zero  The zero of this {@link UpdateSoda}
    */
-  public void setZero( @Nonnull final Boolean zero) {
+  public void setZero( @Nullable final Boolean zero) {
     this.zero = zero;
   }
 
-   /**
-    * Set the since of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param since  The since of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda since(@Nonnull final LocalDate since) {
+  /**
+   * Set the since of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param since  The since of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda since( @Nullable final LocalDate since) {
     this.since = since;
     return this;
   }
 
-   /**
-    * Get since
-    * @return since  The since of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get since
+   * @return since  The since of this {@link UpdateSoda} instance.
+   */
   @Nonnull public LocalDate getSince() {
     return since;
   }
@@ -147,25 +147,25 @@ public class UpdateSoda
    *
    * @param since  The since of this {@link UpdateSoda}
    */
-  public void setSince( @Nonnull final LocalDate since) {
+  public void setSince( @Nullable final LocalDate since) {
     this.since = since;
   }
 
-   /**
-    * Set the brand of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param brand  The brand of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda brand(@Nonnull final String brand) {
+  /**
+   * Set the brand of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param brand  The brand of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda brand( @Nullable final String brand) {
     this.brand = brand;
     return this;
   }
 
-   /**
-    * Get brand
-    * @return brand  The brand of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get brand
+   * @return brand  The brand of this {@link UpdateSoda} instance.
+   */
   @Nonnull public String getBrand() {
     return brand;
   }
@@ -175,25 +175,25 @@ public class UpdateSoda
    *
    * @param brand  The brand of this {@link UpdateSoda}
    */
-  public void setBrand( @Nonnull final String brand) {
+  public void setBrand( @Nullable final String brand) {
     this.brand = brand;
   }
 
-   /**
-    * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param flavor  The flavor of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda flavor(@Nonnull final String flavor) {
+  /**
+   * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param flavor  The flavor of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda flavor( @Nullable final String flavor) {
     this.flavor = flavor;
     return this;
   }
 
-   /**
-    * Get flavor
-    * @return flavor  The flavor of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get flavor
+   * @return flavor  The flavor of this {@link UpdateSoda} instance.
+   */
   @Nonnull public String getFlavor() {
     return flavor;
   }
@@ -203,25 +203,25 @@ public class UpdateSoda
    *
    * @param flavor  The flavor of this {@link UpdateSoda}
    */
-  public void setFlavor( @Nonnull final String flavor) {
+  public void setFlavor( @Nullable final String flavor) {
     this.flavor = flavor;
   }
 
-   /**
-    * Set the price of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param price  The price of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda price(@Nonnull final Float price) {
+  /**
+   * Set the price of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param price  The price of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda price( @Nullable final Float price) {
     this.price = price;
     return this;
   }
 
-   /**
-    * Get price
-    * @return price  The price of this {@link UpdateSoda} instance.
-    */
+  /**
+   * Get price
+   * @return price  The price of this {@link UpdateSoda} instance.
+   */
   @Nonnull public Float getPrice() {
     return price;
   }
@@ -231,7 +231,7 @@ public class UpdateSoda
    *
    * @param price  The price of this {@link UpdateSoda}
    */
-  public void setPrice( @Nonnull final Float price) {
+  public void setPrice( @Nullable final Float price) {
     this.price = price;
   }
 
@@ -252,7 +252,7 @@ public class UpdateSoda
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("UpdateSoda has no field with name '" + name + "'.");
     }
