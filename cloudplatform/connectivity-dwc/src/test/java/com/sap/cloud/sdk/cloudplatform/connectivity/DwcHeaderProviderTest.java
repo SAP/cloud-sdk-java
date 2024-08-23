@@ -67,4 +67,31 @@ class DwcHeaderProviderTest
                 new Header("dwc-header1", "dwc-value1"),
                 new Header("dwc-header2", "dwc-value2"));
     }
+
+    @Test
+    void testLimitedHeaders() {
+        final DestinationRequestContext requestContext = mock(DestinationRequestContext.class);
+
+        final RequestHeaderContainer headers =
+                DefaultRequestHeaderContainer
+                        .builder()
+                        .withHeader("header1", "value1")
+                        .withHeader("DWC-header1", "dwc-value1")
+                        .withHeader("dWc-subdomain", "subdomain")
+                        .withHeader("dWc-TENANT", "tenant")
+                        .withHeader("dwc-jwt", "jwt")
+                        .build();
+
+        var sut = DwcHeaderProvider.limitedHeaderProviderForDestinationAccess();
+        final List<Header> dwcHeaders =
+                RequestHeaderAccessor
+                    .executeWithHeaderContainer(headers, () -> sut.getHeaders(requestContext));
+
+        assertThat(dwcHeaders).hasSize(3);
+        assertThat(dwcHeaders)
+            .containsExactlyInAnyOrder(
+                new Header("dwc-subdomain", "subdomain"),
+                new Header("dwc-tenant", "tenant"),
+                new Header("dwc-jwt", "jwt"));
+    }
 }
