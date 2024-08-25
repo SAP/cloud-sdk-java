@@ -25,6 +25,8 @@
 - Upgrade  to version `1.66.0` of `gRPC` dependencies coming in transitively when using `connectivity-ztis`
 - Improve the error handling for OData batch requests.
   In case an OData error is given within a batch response it will now be parsed and returned as `ODataServiceErrorException`.
+- Reduce the amount of DwC headers sent when communicating via megaclite.
+  This reduces the risk of exceeding the maximum header size limit of the Cloud Foundry infrastructure.
 
 ### 🐛 Fixed Issues
 
