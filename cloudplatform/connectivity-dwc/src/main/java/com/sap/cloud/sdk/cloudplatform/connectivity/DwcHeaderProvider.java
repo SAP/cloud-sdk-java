@@ -40,13 +40,13 @@ public class DwcHeaderProvider implements DestinationHeaderProvider
         this.limiters = limiters.stream().map(String::toLowerCase).toList();
     }
 
-  /**
-   * The HA Proxy on CF imposes a limit on header size.
-   * When accessing the destination service via megaclite not all DwC headers are required.
-   *
-   * @return A header provider configured to only forward dwc headers required for destination service access.
-   */
-  static DwcHeaderProvider limitedHeaderProviderForDestinationAccess()
+    /**
+     * The HA Proxy on CF imposes a limit on header size. When accessing the destination service via megaclite not all
+     * DwC headers are required.
+     *
+     * @return A header provider configured to only forward dwc headers required for destination service access.
+     */
+    static DwcHeaderProvider limitedHeaderProviderForDestinationAccess()
     {
         return new DwcHeaderProvider(
             List

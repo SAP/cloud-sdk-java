@@ -69,23 +69,23 @@ class DwcHeaderProviderTest
     }
 
     @Test
-    void testLimitedHeaders() {
+    void testLimitedHeaders()
+    {
         final DestinationRequestContext requestContext = mock(DestinationRequestContext.class);
 
         final RequestHeaderContainer headers =
-                DefaultRequestHeaderContainer
-                        .builder()
-                        .withHeader("header1", "value1")
-                        .withHeader("DWC-header1", "dwc-value1")
-                        .withHeader("dWc-subdomain", "subdomain")
-                        .withHeader("dWc-TENANT", "tenant")
-                        .withHeader("dwc-jwt", "jwt")
-                        .build();
+            DefaultRequestHeaderContainer
+                .builder()
+                .withHeader("header1", "value1")
+                .withHeader("DWC-header1", "dwc-value1")
+                .withHeader("dWc-subdomain", "subdomain")
+                .withHeader("dWc-TENANT", "tenant")
+                .withHeader("dwc-jwt", "jwt")
+                .build();
 
         var sut = DwcHeaderProvider.limitedHeaderProviderForDestinationAccess();
         final List<Header> dwcHeaders =
-                RequestHeaderAccessor
-                    .executeWithHeaderContainer(headers, () -> sut.getHeaders(requestContext));
+            RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> sut.getHeaders(requestContext));
 
         assertThat(dwcHeaders).hasSize(3);
         assertThat(dwcHeaders)
