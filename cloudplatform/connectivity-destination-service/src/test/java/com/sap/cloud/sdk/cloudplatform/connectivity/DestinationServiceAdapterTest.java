@@ -4,42 +4,50 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.okForJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withUserToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withoutToken;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
@@ -60,6 +68,8 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.Service;
 import com.sap.cloud.security.test.JwtGenerator;
+
+import lombok.SneakyThrows;
 
 @WireMockTest
 class DestinationServiceAdapterTest
@@ -123,10 +133,7 @@ class DestinationServiceAdapterTest
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
         final String response =
-            adapterToTest
-                .getConfigurationAsJson(
-                    "/",
-                    DestinationRetrievalStrategy.withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
+            adapterToTest.getConfigurationAsJson("/", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
 
         assertThat(response).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -164,10 +171,7 @@ class DestinationServiceAdapterTest
             TenantAccessor
                 .executeWithTenant(
                     () -> "tenant-id",
-                    () -> adapterToTest
-                        .getConfigurationAsJson(
-                            "/",
-                            DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT)));
+                    () -> adapterToTest.getConfigurationAsJson("/", withoutToken(NAMED_USER_CURRENT_TENANT)));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -197,10 +201,7 @@ class DestinationServiceAdapterTest
 
         // actual request, ensure that the tenant matches the one in the User JWT
         final String destinationResponse =
-            adapterToTest
-                .getConfigurationAsJson(
-                    "/",
-                    DestinationRetrievalStrategy.withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+            adapterToTest.getConfigurationAsJson("/", withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -258,11 +259,7 @@ class DestinationServiceAdapterTest
 
         final String destinationResponse =
             adapterToTest
-                .getConfigurationAsJson(
-                    "/",
-                    DestinationRetrievalStrategy
-                        .withoutToken(TECHNICAL_USER_CURRENT_TENANT)
-                        .withFragmentName(fragment));
+                .getConfigurationAsJson("/", withoutToken(TECHNICAL_USER_CURRENT_TENANT).withFragmentName(fragment));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
 
@@ -375,38 +372,49 @@ class DestinationServiceAdapterTest
                 """);
     }
 
+    @SneakyThrows
     @Test
-    @Timeout( value = 15_000, unit = TimeUnit.MILLISECONDS )
     void testErrorHandling()
     {
-        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
-        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(badRequest().withBody("bad, evil request")));
-        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "dest")).willReturn(notFound()));
+        final var httpClient = mock(HttpClient.class);
+        final var destination = DefaultHttpDestination.builder("http://foo").build();
+        HttpClientAccessor.setHttpClientFactory(( dest ) -> dest == destination ? httpClient : null);
 
+        final var destinations = Collections.singletonMap(OnBehalfOf.TECHNICAL_USER_PROVIDER, destination);
+        final var SUT = new DestinationServiceAdapter(destinations::get, () -> null, null);
+
+        // setup 400 response
+        var stream400 = spy(new ByteArrayInputStream("bad, evil request".getBytes(StandardCharsets.UTF_8)));
+        var response400 = new BasicHttpResponse(HttpVersion.HTTP_1_1, 400, "Bad Request");
+        response400.setEntity(new InputStreamEntity(stream400));
+        doReturn(response400).when(httpClient).execute(any());
+
+        // test
         assertThatThrownBy(
-            () -> adapterToTest
-                .getConfigurationAsJson("/", DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
+            () -> SUT.getConfigurationAsJson("/service-path", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER)))
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining("status 400");
+
+        // verify closed stream
+        Mockito.verify(stream400, atLeastOnce()).close();
+
+        // setup 404 response
+        var stream404 = spy(new ByteArrayInputStream("Nothing here.".getBytes(StandardCharsets.UTF_8)));
+        var response404 = new BasicHttpResponse(HttpVersion.HTTP_1_1, 404, "Not Found");
+        response404.setEntity(new InputStreamEntity(stream404));
+        doReturn(response404).when(httpClient).execute(any());
+
+        // test
         assertThatThrownBy(
-            () -> adapterToTest
-                .getConfigurationAsJson(
-                    "/dest",
-                    DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
+            () -> SUT.getConfigurationAsJson("/service-path", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER)))
             .describedAs("A 404 should produce a DestinationNotFoundException")
             .isInstanceOf(DestinationNotFoundException.class)
             .hasMessageContaining("Destination could not be found");
 
-        // invoke adapter 200 times, ensuring the response content is consumed
-        for( int i = 0; i < 200; i++ ) {
-            assertThatThrownBy(
-                () -> adapterToTest
-                    .getConfigurationAsJson(
-                        "/",
-                        DestinationRetrievalStrategy.withoutToken(TECHNICAL_USER_CURRENT_TENANT)))
-                .isInstanceOf(DestinationAccessException.class)
-                .hasMessageContaining("status 400");
-        }
+        // verify closed stream
+        Mockito.verify(stream404, atLeastOnce()).close();
+
+        HttpClientAccessor.setHttpClientFactory(null);
     }
 
     private static DestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
