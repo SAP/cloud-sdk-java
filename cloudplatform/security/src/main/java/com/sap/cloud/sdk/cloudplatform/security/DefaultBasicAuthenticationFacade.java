@@ -13,8 +13,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpHeaders;
-
+import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.security.exception.BasicAuthenticationAccessException;
