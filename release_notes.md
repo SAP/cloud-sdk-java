@@ -15,6 +15,10 @@
 - Timeouts for OAuth2 token retrievals can now be customized.
   As part of `ServiceBindingDestinationOptions` the new option `OAuth2Options.TokenRetrievalTimeout` can now be passed to set a custom timeout.
   Refer to [this documentation](https://sap.github.io/cloud-sdk/docs/java/features/connectivity/service-bindings#about-the-options) for more details.
+- In `DestinationService` class allow for optional argument `DestinationServiceRetrievalStrategy` in method `getAllDestinationProperties`.
+  This additional API allows for ensuring tenant-specific destination lookups.
+  Available values are: `CURRENT_TENANT` (default), `ALWAYS_PROVIDER` and `ONLY_SUBSCRIBER`.
+  
 
 ### 📈 Improvements
 
