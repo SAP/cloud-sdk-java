@@ -35,7 +35,7 @@ public class DwcHeaderProvider implements DestinationHeaderProvider
      */
     public DwcHeaderProvider()
     {
-        limiters = List.of();
+        this(List.of());
     }
 
     DwcHeaderProvider( @Nonnull final Collection<String> limiters )
