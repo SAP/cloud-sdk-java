@@ -27,9 +27,10 @@ public interface DestinationHeaderProvider
      * Defines the header provider cardinality: how many instances the header provider class can be attached to a single
      * destination.
      * <ul>
-     * <li>&lt;1: undefined</li>
-     * <li>1: consider only last attached instance</li>
-     * <li>n&gt;1: last n attached instances.</li>
+     * <li>&lt;0: undefined</li>
+     * <li>0: no instance attached to destination.</li>
+     * <li>1: consider only last instance attached to destination</li>
+     * <li>n&gt;1: last n instances attached to destination.</li>
      * </ul>
      *
      * @return The header provider cardinality.

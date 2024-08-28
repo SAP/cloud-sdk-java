@@ -769,5 +769,20 @@ class DefaultHttpDestinationTest
                     MyHeaderProviderCardinatlity3.class,
                     MyHeaderProviderCardinatlityDefault.class);
         }
+
+        // extension: remove
+        {
+            final var all =
+                asList(
+                    new ErpDestinationHeaderProvider(),
+                    new ErpDestinationHeaderProvider(),
+                    new ErpDestinationHeaderProvider()
+                    {
+                        @Getter
+                        private final int cardinality = 0;
+                    });
+            final var retained = DefaultHttpDestination.refineHeaderProviders(all);
+            assertThat(retained).isEmpty();
+        }
     }
 }

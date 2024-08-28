@@ -215,16 +215,16 @@ public final class DefaultHttpDestination implements HttpDestination
         final var result = new LinkedList<T>();
         final var retain = new AtomicInteger();
         for( T provider : providers ) {
+            result.add(provider);
             if( provider.getCardinality() != Integer.MAX_VALUE ) {
-                retain.set(provider.getCardinality() - 1);
+                retain.set(provider.getCardinality());
                 final var iter = result.descendingIterator();
                 while( iter.hasNext() ) {
-                    if( provider.getClass().isInstance(iter.next()) && retain.decrementAndGet() < 0 ) {
+                    if( iter.next().getClass().isInstance(provider) && retain.decrementAndGet() < 0 ) {
                         iter.remove();
                     }
                 }
             }
-            result.add(provider);
         }
         return result;
     }
