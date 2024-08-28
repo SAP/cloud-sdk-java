@@ -22,4 +22,20 @@ public interface DestinationHeaderProvider
      */
     @Nonnull
     List<Header> getHeaders( @Nonnull final DestinationRequestContext requestContext );
+
+    /**
+     * Defines the header provider cardinality: how many instances the header provider class can be attached to a single
+     * destination.
+     * <ul>
+     * <li>&lt;1: undefined</li>
+     * <li>1: consider only last attached instance</li>
+     * <li>n&gt;1: last n attached instances.</li>
+     * </ul>
+     *
+     * @return The header provider cardinality.
+     */
+    default int getCardinality()
+    {
+        return Integer.MAX_VALUE;
+    }
 }

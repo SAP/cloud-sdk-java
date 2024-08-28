@@ -25,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class DwcHeaderProvider implements DestinationHeaderProvider
 {
     @Getter
+    private final int cardinality = 1;
+
+    @Getter
     private static final DwcHeaderProvider instance = new DwcHeaderProvider();
 
     @Nonnull

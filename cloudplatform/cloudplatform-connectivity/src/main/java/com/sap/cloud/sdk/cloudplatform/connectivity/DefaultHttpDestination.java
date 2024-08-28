@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -184,26 +185,46 @@ public final class DefaultHttpDestination implements HttpDestination
 
     private List<Header> getHeadersFromHeaderProviders( @Nonnull final URI requestUri )
     {
-        final List<DestinationHeaderProvider> aggregatedHeaderProviders = new ArrayList<>();
-        aggregatedHeaderProviders.addAll(customHeaderProviders);
-        aggregatedHeaderProviders.addAll(headerProvidersFromClassLoading);
+        final var allHeaderProviders = new ArrayList<DestinationHeaderProvider>();
+        allHeaderProviders.addAll(customHeaderProviders);
+        allHeaderProviders.addAll(headerProvidersFromClassLoading);
 
-        final String msg = "Found these {} destination header providers: {}";
-        log.debug(msg, aggregatedHeaderProviders.size(), aggregatedHeaderProviders);
+        final var refinedHeaderProviders = refineHeaderProviders(allHeaderProviders);
+        final var msg = "Retained {} of {} found destination header providers: {}";
+        log.debug(msg, refinedHeaderProviders.size(), allHeaderProviders.size(), refinedHeaderProviders);
 
-        final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
+        final var requestContext = new DestinationRequestContext(this, requestUri);
 
-        final List<Header> result = new ArrayList<>();
-        for( final DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {
+        final var result = new ArrayList<Header>();
+        for( final DestinationHeaderProvider headerProvider : refinedHeaderProviders ) {
             try {
                 result.addAll(headerProvider.getHeaders(requestContext));
             }
             catch( final Exception e ) {
-                final String err =
-                    "Header provider '%s' threw an exception: %s"
-                        .formatted(headerProvider.getClass().getSimpleName(), e.getMessage());
+                final var name = headerProvider.getClass().getSimpleName();
+                final var err = "Header provider '%s' threw an exception: %s".formatted(name, e.getMessage());
                 throw new DestinationAccessException(err, e);
             }
+        }
+        return result;
+    }
+
+    @Nonnull
+    static <T extends DestinationHeaderProvider> List<T> refineHeaderProviders( @Nonnull final Iterable<T> providers )
+    {
+        final var result = new LinkedList<T>();
+        final var retain = new AtomicInteger();
+        for( T provider : providers ) {
+            if( provider.getCardinality() != Integer.MAX_VALUE ) {
+                retain.set(provider.getCardinality() - 1);
+                final var iter = result.descendingIterator();
+                while( iter.hasNext() ) {
+                    if( provider.getClass().isInstance(iter.next()) && retain.decrementAndGet() < 0 ) {
+                        iter.remove();
+                    }
+                }
+            }
+            result.add(provider);
         }
         return result;
     }

@@ -14,11 +14,14 @@ import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class OAuth2HeaderProvider implements DestinationHeaderProvider
 {
+    @Getter
+    private final int cardinality = 1;
     @Nonnull
     private final OAuth2Service oauth2service;
     @Nonnull

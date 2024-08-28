@@ -45,6 +45,10 @@ class MegacliteConnectivityProxyInformationResolver implements DestinationHeader
     // see https://github.com/SAP/cloud-sdk-java-backlog/issues/209
     private static final String CONNECTIVITY_SERVICE_PATH = "/config/v1/connectivity/token";
     private static final Gson GSON = new Gson();
+
+    @Getter
+    private final int cardinality = 1;
+
     @Nonnull
     @Getter
     private static final MegacliteConnectivityProxyInformationResolver instance =

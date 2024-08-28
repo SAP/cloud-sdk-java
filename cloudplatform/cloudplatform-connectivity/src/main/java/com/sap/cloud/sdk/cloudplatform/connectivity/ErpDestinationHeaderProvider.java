@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ErpDestinationHeaderProvider implements DestinationHeaderProvider
 {
+    @Getter
+    private final int cardinality = 1;
+
     @Nonnull
     @Override
     public List<Header> getHeaders( @Nonnull final DestinationRequestContext requestContext )

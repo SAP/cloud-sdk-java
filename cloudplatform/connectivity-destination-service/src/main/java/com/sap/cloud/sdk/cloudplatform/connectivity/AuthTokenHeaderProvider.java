@@ -19,6 +19,7 @@ import org.apache.http.HttpHeaders;
 import com.google.common.base.Strings;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,8 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class AuthTokenHeaderProvider implements DestinationHeaderProvider
 {
-    private static final String SECURITY_SESSION_HEADER = "x-sap-security-session";
     private static final String CREATE_SESSION_VALUE = "create";
+    private static final String SECURITY_SESSION_HEADER = "x-sap-security-session";
+
+    @Getter
+    private final int cardinality = 1;
 
     @Nonnull
     @Override

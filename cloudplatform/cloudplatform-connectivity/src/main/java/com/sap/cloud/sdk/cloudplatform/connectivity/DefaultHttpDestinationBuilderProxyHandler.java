@@ -19,6 +19,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoun
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 
 import io.vavr.control.Option;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -154,6 +155,9 @@ class DefaultHttpDestinationBuilderProxyHandler
     {
         private static final String HEADER_NAME = "SAP-Connectivity-Authentication";
 
+        @Getter
+        private final int cardinality = 1;
+
         @Nonnull
         @Override
         public List<Header> getHeaders( @Nonnull final DestinationRequestContext requestContext )
@@ -168,6 +172,9 @@ class DefaultHttpDestinationBuilderProxyHandler
      */
     static class SapConnectivityLocationIdHeaderProvider implements DestinationHeaderProvider
     {
+        @Getter
+        private final int cardinality = 1;
+
         @Nonnull
         @Override
         public List<Header> getHeaders( @Nonnull final DestinationRequestContext requestContext )
