@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.Arrays.asList;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,7 @@ import com.sap.cloud.sdk.cloudplatform.security.ClientCertificate;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 class DefaultHttpDestinationTest
@@ -656,5 +661,113 @@ class DefaultHttpDestinationTest
         assertThat(sut.keyStore).isSameAs(keyStore);
         assertThat(sut.trustStore).isSameAs(trustStore);
         assertThat(sut.get(DestinationProperty.TRUST_ALL)).containsExactly(true);
+    }
+
+    @Test
+    void testRefineHeaderProviders()
+    {
+        // simple
+        {
+            final var all =
+                asList(
+                    new ErpDestinationHeaderProvider(),
+                    new ErpDestinationHeaderProvider(),
+                    new ErpDestinationHeaderProvider());
+            final var retained = DefaultHttpDestination.refineHeaderProviders(all);
+            assertThat(retained).hasSize(1).hasExactlyElementsOfTypes(ErpDestinationHeaderProvider.class);
+        }
+
+        // complex
+        {
+            final var all =
+                asList(
+                    new ErpDestinationHeaderProvider(),
+                    new ErpDestinationHeaderProvider(),
+                    new DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider(),
+                    new DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider(),
+                    new DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider(),
+                    new DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider());
+            final var retained = DefaultHttpDestination.refineHeaderProviders(all);
+            assertThat(retained)
+                .hasSize(3)
+                .hasExactlyElementsOfTypes(
+                    ErpDestinationHeaderProvider.class,
+                    DefaultHttpDestinationBuilderProxyHandler.SapConnectivityAuthenticationHeaderProvider.class,
+                    DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider.class);
+        }
+
+        // lambda
+        {
+            final List<DestinationHeaderProvider> all =
+                asList(
+                    new ErpDestinationHeaderProvider(),
+                    ( ctxt ) -> List.of(),
+                    ( ctxt ) -> List.of(),
+                    ( ctxt ) -> List.of());
+            final var retained = DefaultHttpDestination.refineHeaderProviders(all);
+            assertThat(retained).hasSize(4);
+        }
+
+        // custom
+        {
+            class MyHeaderProviderCardinatlityDefault implements DestinationHeaderProvider
+            {
+                @Nonnull
+                @Override
+                public List<Header> getHeaders( @Nonnull DestinationRequestContext requestContext )
+                {
+                    return List.of();
+                }
+            }
+            class MyHeaderProviderCardinatlity1 implements DestinationHeaderProvider
+            {
+                @Getter
+                private final int cardinality = 1;
+
+                @Nonnull
+                @Override
+                public List<Header> getHeaders( @Nonnull DestinationRequestContext requestContext )
+                {
+                    return List.of();
+                }
+            }
+            class MyHeaderProviderCardinatlity3 implements DestinationHeaderProvider
+            {
+                @Getter
+                private final int cardinality = 3;
+
+                @Nonnull
+                @Override
+                public List<Header> getHeaders( @Nonnull DestinationRequestContext requestContext )
+                {
+                    return List.of();
+                }
+            }
+            final var all =
+                asList(
+                    new MyHeaderProviderCardinatlity1(), // remove
+                    new MyHeaderProviderCardinatlity3(), // remove
+                    new MyHeaderProviderCardinatlityDefault(), // retained
+                    new MyHeaderProviderCardinatlity1(), // remove
+                    new MyHeaderProviderCardinatlity3(), // retained
+                    new MyHeaderProviderCardinatlityDefault(), // retained
+                    new MyHeaderProviderCardinatlity1(), // remove
+                    new MyHeaderProviderCardinatlity3(), // retained
+                    new MyHeaderProviderCardinatlityDefault(), // retained
+                    new MyHeaderProviderCardinatlity1(), // retained
+                    new MyHeaderProviderCardinatlity3(), // retained
+                    new MyHeaderProviderCardinatlityDefault());// retained
+            final var retained = DefaultHttpDestination.refineHeaderProviders(all);
+            assertThat(retained)
+                .hasExactlyElementsOfTypes(
+                    MyHeaderProviderCardinatlityDefault.class,
+                    MyHeaderProviderCardinatlity3.class,
+                    MyHeaderProviderCardinatlityDefault.class,
+                    MyHeaderProviderCardinatlity3.class,
+                    MyHeaderProviderCardinatlityDefault.class,
+                    MyHeaderProviderCardinatlity1.class,
+                    MyHeaderProviderCardinatlity3.class,
+                    MyHeaderProviderCardinatlityDefault.class);
+        }
     }
 }
