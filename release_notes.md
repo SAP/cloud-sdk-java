@@ -32,4 +32,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix an issue where multiple instances of the same `DestinationHeaderProvider` type are evaluated to a single destination unintentionally, leading to duplicate HTTP headers and broken HTTP requests consecutively. 
