@@ -41,6 +41,10 @@ public class DwcHeaderUtils
      * The name of the header that contains the Deploy with Confidence JWT token.
      */
     public static final String DWC_JWT_HEADER = "dwc-jwt";
+    /**
+     * The name of the header that contains the Deploy with Confidence JWT token issued by IAS.
+     */
+    public static final String DWC_IAS_JWT_HEADER = "dwc-ias-jwt";
 
     /**
      * This method fetches the value of the {@link #DWC_TENANT_HEADER} header or throws an
@@ -117,6 +121,20 @@ public class DwcHeaderUtils
     @Nonnull
     public static String getDwcJwtOrThrow()
     {
+        final String errMsg = "Unable to find the " + DWC_JWT_HEADER + " or " + DWC_IAS_JWT_HEADER + " header value.";
+        final RequestHeaderContainer container =
+            RequestHeaderAccessor
+                .tryGetHeaderContainer()
+                .getOrElseThrow(e -> new DwcHeaderNotFoundException(errMsg, e));
+
+        if( !container.containsHeader(DWC_JWT_HEADER) && !container.containsHeader(DWC_IAS_JWT_HEADER) ) {
+            throw new DwcHeaderNotFoundException(errMsg);
+        }
+
+        if( container.containsHeader(DWC_IAS_JWT_HEADER) ) {
+            return getNonEmptyDwcHeaderValue(DWC_IAS_JWT_HEADER);
+        }
+
         return getNonEmptyDwcHeaderValue(DWC_JWT_HEADER);
     }
 

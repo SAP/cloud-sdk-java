@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.security;
 
+import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_IAS_JWT_HEADER;
 import static com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils.DWC_JWT_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,10 +30,21 @@ class DwcAuthTokenFacadeTest
     @Test
     void testSuccessfulAuthTokenRetrieval()
     {
+        this.doTestSuccessfulAuthTokenRetrieval(DWC_JWT_HEADER);
+    }
+
+    @Test
+    void testSuccessfulIasAuthTokenRetrieval()
+    {
+        this.doTestSuccessfulAuthTokenRetrieval(DWC_IAS_JWT_HEADER);
+    }
+
+    void doTestSuccessfulAuthTokenRetrieval(String dwcHeaderKey)
+    {
         final String token = JWT.create().sign(Algorithm.none());
 
         final AuthToken expectedToken = new AuthToken(JWT.decode(token));
-        final Map<String, String> headers = ImmutableMap.of(DWC_JWT_HEADER, token);
+        final Map<String, String> headers = ImmutableMap.of(dwcHeaderKey, token);
 
         RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> {
             final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
