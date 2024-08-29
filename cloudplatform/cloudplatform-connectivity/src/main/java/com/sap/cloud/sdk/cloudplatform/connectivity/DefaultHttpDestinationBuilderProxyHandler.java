@@ -27,6 +27,26 @@ import lombok.extern.slf4j.Slf4j;
 class DefaultHttpDestinationBuilderProxyHandler
 {
     /**
+     * Predicate for a given {@link DefaultHttpDestination.Builder} object.
+     *
+     * @param builder
+     *            The builder.
+     * @return {@code true} if proxy type is "onPremise" and handler wasn't invoked already. {@code false} otherwise.
+     */
+    boolean canHandle( @Nonnull final DefaultHttpDestination.Builder builder )
+    {
+        final boolean isOnPremise = builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE);
+        if( !isOnPremise ) {
+            return false;
+        }
+
+        final boolean hasBeenHandledAlready =
+            builder.customHeaderProviders.stream().anyMatch(SapConnectivityLocationIdHeaderProvider.class::isInstance);
+
+        return !hasBeenHandledAlready;
+    }
+
+    /**
      * Handler to work resolve a proxied {@link DefaultHttpDestination} object.
      *
      * @param builder
