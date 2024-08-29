@@ -558,20 +558,20 @@ public final class DefaultHttpDestination implements HttpDestination
 
         final DefaultDestination.Builder builder = DefaultDestination.builder();
 
-        @Setter( onParam = @__( { @Nullable } ), onMethod = @__( { @Nonnull } ), value = AccessLevel.PACKAGE )
+        @Setter( onParam_ = @Nullable, onMethod_ = @Nonnull, value = AccessLevel.PACKAGE )
         private DefaultHttpDestinationBuilderProxyHandler proxyHandler =
             new DefaultHttpDestinationBuilderProxyHandler();
 
         /**
          * The {@link KeyStore} to be used when communicating over HTTP.
          */
-        @Setter( onParam = @__( { @Nullable } ), onMethod = @__( { @Nonnull } ) )
+        @Setter( onParam_ = @Nullable, onMethod_ = @Nonnull )
         KeyStore keyStore = null;
 
         /**
          * The trust store to be used when communicating over HTTP.
          */
-        @Setter( onParam = @__( { @Nullable } ), onMethod = @__( { @Nonnull } ) )
+        @Setter( onParam_ = @Nullable, onMethod_ = @Nonnull )
         KeyStore trustStore = null;
 
         final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
