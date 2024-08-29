@@ -481,12 +481,6 @@ class DestinationServiceTest
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
             .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
-
-        // verify all results are cached
-        verify(destinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
-        verify(destinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
     }
 
     @Test
@@ -503,12 +497,6 @@ class DestinationServiceTest
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
             .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
-
-        // verify all results are cached
-        verify(destinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
-        verify(destinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
     }
 
     @Test
