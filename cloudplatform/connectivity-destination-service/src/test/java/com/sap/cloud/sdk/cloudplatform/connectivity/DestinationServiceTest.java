@@ -620,16 +620,11 @@ class DestinationServiceTest
     @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
     void testGetAllDestinationPropertiesOnlySubscriberStrategyReadsSubscriberDestinations()
     {
-        // set current tenant to be the provider tenant
-        context.clearTenant();
-
-        TenantAccessor
-            .executeWithTenant(
-                providerTenant,
-                () -> assertThatThrownBy(() -> loader.getAllDestinationProperties(ONLY_SUBSCRIBER))
-                    .isInstanceOf(DestinationAccessException.class)
-                    .hasMessageContaining(
-                        "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination."));
+        context.setTenant(providerTenant);
+        assertThatThrownBy(() -> loader.getAllDestinationProperties(ONLY_SUBSCRIBER))
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining(
+                "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
     }
 
     @Test
