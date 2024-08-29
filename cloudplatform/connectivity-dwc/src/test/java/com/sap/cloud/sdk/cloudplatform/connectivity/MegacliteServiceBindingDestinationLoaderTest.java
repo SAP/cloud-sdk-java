@@ -269,6 +269,7 @@ class MegacliteServiceBindingDestinationLoaderTest
         when(mock.getProxyUrl()).thenReturn(proxyUrl);
         when(mock.getAuthorizationToken()).thenReturn("proxy-auth");
         when(mock.getHeaders(any())).thenCallRealMethod();
+        when(mock.getCardinality()).thenCallRealMethod();
 
         sut.setConnectivityResolver(mock);
 
