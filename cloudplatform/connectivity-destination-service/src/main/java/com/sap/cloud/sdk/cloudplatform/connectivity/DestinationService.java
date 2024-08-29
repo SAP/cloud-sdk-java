@@ -174,7 +174,7 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
-     * Fetches all destination properties from the BTP Destination Service on behalf of current tenant.
+     * Fetches all destination properties from the BTP Destination Service on behalf of the current tenant.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration. For
@@ -188,7 +188,7 @@ public class DestinationService implements DestinationLoader
      * @since 5.1.0
      */
     @Nonnull
-    public List<DestinationProperties> getAllDestinationProperties()
+    public Collection<DestinationProperties> getAllDestinationProperties()
     {
         return getAllDestinationProperties(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
     }
@@ -209,7 +209,7 @@ public class DestinationService implements DestinationLoader
      * @since 5.12.0
      */
     @Nonnull
-    public List<DestinationProperties> getAllDestinationProperties(
+    public Collection<DestinationProperties> getAllDestinationProperties(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy )
     {
         final var augmenter = DestinationServiceOptionsAugmenter.augmenter().retrievalStrategy(retrievalStrategy);
@@ -219,7 +219,8 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
-     * Fetches the properties of a specific destination from the BTP Destination Service on behalf of current tenant.
+     * Fetches the properties of a specific destination from the BTP Destination Service on behalf of the current
+     * tenant.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destination.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration. For
@@ -286,7 +287,7 @@ public class DestinationService implements DestinationLoader
             DestinationRetrievalStrategyResolver
                 .forAllDestinations(adapter::getProviderTenantId, this::loadAndParseAllDestinations);
 
-        return Try.of(() -> resolver.prepareSupplierAllDestinations(options).get());
+        return Try.success(options).map(resolver::prepareSupplierAllDestinations).map(Supplier::get);
     }
 
     @Nonnull
