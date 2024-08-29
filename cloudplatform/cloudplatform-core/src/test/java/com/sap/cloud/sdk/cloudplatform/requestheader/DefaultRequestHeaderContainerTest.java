@@ -84,8 +84,12 @@ class DefaultRequestHeaderContainerTest
 
         final RequestHeaderContainer sut = DefaultRequestHeaderContainer.fromMultiValueMap(input);
 
-        assertThat(sut.getHeaderNames()).containsExactlyInAnyOrder("key1");
+        assertThat(sut.getHeaderNames()).doesNotContain("key2", "key3").containsExactlyInAnyOrder("key1");
         assertThat(sut.getHeaderValues("Key1")).containsExactlyInAnyOrder("Value1");
+        assertThat(sut.getHeaderValues("Key1")).containsExactlyInAnyOrder("Value1");
+        assertThat(sut.getHeaderValues("Key2")).isNotNull().isEmpty();
+        assertThat(sut.getHeaderValues("Key3")).isNotNull().isEmpty();
+        assertThat(sut.getHeaderValues("Key4")).isNotNull().isEmpty();
     }
 
     @Test
