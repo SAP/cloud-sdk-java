@@ -32,4 +32,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix an issue where proxy headers are applied multiple times for OnPremise destinations.
