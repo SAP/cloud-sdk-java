@@ -126,7 +126,7 @@ class EncodedQueryTest
                 .withQueryParameter("foo", "hash#tag")
                 .withQueryParameter("param", "% $&#?\"\\+'bar")
                 .toRequest();
-        final String expected = "param=%25%20%24%26%23%3F%22%5C%2B'bar&foo=hash%23tag";
+        final String expected = "foo=hash%23tag&param=%25%20%24%26%23%3F%22%5C%2B'bar";
 
         assertThat(request.getRequestQuery()).isEqualTo(expected);
     }
