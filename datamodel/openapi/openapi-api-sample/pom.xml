@@ -119,6 +119,7 @@
 						<pojoBuilderMethodName>create</pojoBuilderMethodName>
 						<pojoBuildMethodName />
 						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
+						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
 					</additionalProperties>
 				</configuration>
 			</plugin>
