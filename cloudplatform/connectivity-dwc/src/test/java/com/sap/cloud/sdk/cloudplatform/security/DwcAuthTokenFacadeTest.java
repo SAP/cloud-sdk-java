@@ -58,6 +58,27 @@ class DwcAuthTokenFacadeTest
     }
 
     @Test
+    void testIasAuthTokenTakePrecedenceInRetrieval()
+    {
+        final String iasToken = JWT.create().sign(Algorithm.none());
+        final String xsuaaToken = JWT.create().sign(Algorithm.none());
+
+        final AuthToken expectedToken = new AuthToken(JWT.decode(iasToken));
+
+        final Map<String, String> headers = ImmutableMap.of(DWC_IAS_JWT_HEADER, iasToken, DWC_JWT_HEADER, xsuaaToken);
+
+        RequestHeaderAccessor.executeWithHeaderContainer(headers, () -> {
+            final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
+            final AuthToken currentToken = AuthTokenAccessor.getCurrentToken();
+            final Try<AuthToken> maybeTokenFromContext =
+                    currentContext.getPropertyValue(AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN);
+
+            assertThat(currentToken).isEqualTo(expectedToken);
+            assertThat(maybeTokenFromContext).contains(expectedToken);
+        });
+    }
+
+    @Test
     void testUnsuccessfulAuthTokenRetrieval()
     {
         RequestHeaderAccessor.executeWithHeaderContainer(RequestHeaderContainer.EMPTY, () -> {
