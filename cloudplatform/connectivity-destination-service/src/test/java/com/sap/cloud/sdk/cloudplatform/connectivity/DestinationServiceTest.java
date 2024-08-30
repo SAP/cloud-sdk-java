@@ -468,6 +468,38 @@ class DestinationServiceTest
     }
 
     @Test
+    void testGettingDestinationPropertiesProvider()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
+
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ALWAYS_PROVIDER);
+        assertThat(destinationList)
+            .extracting(d -> d.get(DestinationProperty.NAME).get())
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+    }
+
+    @Test
+    void testGettingDestinationPropertiesSubscriber()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ONLY_SUBSCRIBER);
+        assertThat(destinationList)
+            .extracting(d -> d.get(DestinationProperty.NAME).get())
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+    }
+
+    @Test
     // slow test, run manually if needed
     void destinationServiceTimeOutWhileGettingDestination()
         throws IOException
@@ -540,8 +572,8 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
-    @DisplayName( "Test getting Destination Properties for the provider" )
-    void testDestinationPropertiesForProvider()
+    @DisplayName( "Test getting Destinations for the provider" )
+    void testGetAllDestinationsForProvider()
     {
         doReturn(responseServiceInstanceDestination)
             .when(destinationServiceAdapter)
@@ -567,7 +599,7 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
-    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
+    @DisplayName( "Test getting Destinations can enforce a subscriber tenant" )
     void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
         final DestinationOptions options =
@@ -579,6 +611,17 @@ class DestinationServiceTest
             TenantAccessor.executeWithTenant(providerTenant, () -> loader.tryGetAllDestinations(options));
 
         assertThatThrownBy(result::get)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining(
+                "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
+    }
+
+    @Test
+    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
+    void testGetAllDestinationPropertiesOnlySubscriberStrategyReadsSubscriberDestinations()
+    {
+        context.setTenant(providerTenant);
+        assertThatThrownBy(() -> loader.getAllDestinationProperties(ONLY_SUBSCRIBER))
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining(
                 "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
