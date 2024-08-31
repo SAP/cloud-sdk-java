@@ -39,7 +39,7 @@ class DwcAuthTokenFacadeTest
         this.doTestSuccessfulAuthTokenRetrieval(DWC_IAS_JWT_HEADER);
     }
 
-    void doTestSuccessfulAuthTokenRetrieval(String dwcHeaderKey)
+    void doTestSuccessfulAuthTokenRetrieval( String dwcHeaderKey )
     {
         final String token = JWT.create().sign(Algorithm.none());
 
@@ -71,7 +71,7 @@ class DwcAuthTokenFacadeTest
             final ThreadContext currentContext = ThreadContextAccessor.getCurrentContext();
             final AuthToken currentToken = AuthTokenAccessor.getCurrentToken();
             final Try<AuthToken> maybeTokenFromContext =
-                    currentContext.getPropertyValue(AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN);
+                currentContext.getPropertyValue(AuthTokenThreadContextListener.PROPERTY_AUTH_TOKEN);
 
             assertThat(currentToken).isEqualTo(expectedToken);
             assertThat(maybeTokenFromContext).contains(expectedToken);

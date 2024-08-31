@@ -126,12 +126,12 @@ public class DwcHeaderUtils
                 .tryGetHeaderContainer()
                 .getOrElseThrow(e -> new DwcHeaderNotFoundException("Unable to get current request headers.", e));
 
-        if(!container.containsHeader(DWC_JWT_HEADER) && !container.containsHeader(DWC_IAS_JWT_HEADER)) {
+        if( !container.containsHeader(DWC_JWT_HEADER) && !container.containsHeader(DWC_IAS_JWT_HEADER) ) {
             throw new DwcHeaderNotFoundException(
                 "Unable to find the " + DWC_JWT_HEADER + " or " + DWC_IAS_JWT_HEADER + " in header.");
         }
 
-        if(container.containsHeader(DWC_IAS_JWT_HEADER)) {
+        if( container.containsHeader(DWC_IAS_JWT_HEADER) ) {
             return doGetNonEmptyDwcHeaderValue(container, DWC_IAS_JWT_HEADER);
         }
 
