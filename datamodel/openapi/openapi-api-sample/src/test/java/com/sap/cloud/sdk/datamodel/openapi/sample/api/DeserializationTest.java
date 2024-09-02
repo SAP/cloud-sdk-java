@@ -37,7 +37,7 @@ class DeserializationTest
               "name": "Cola",
               "brand": "Coca-Cola",
               "quantity": 100,
-              "packaging" : null,
+              "packaging" : "new-value",
               "price": 1.5,
               "id": 0
             }
@@ -45,7 +45,14 @@ class DeserializationTest
         stub(responseBody);
 
         final SodaWithId expected =
-            SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
+            SodaWithId
+                .create()
+                .name("Cola")
+                .brand("Coca-Cola")
+                .quantity(100)
+                .price(1.5f)
+                .id(0L)
+                .packaging(SodaWithId.PackagingEnum.UNKNOWN_DEFAULT_OPEN_API);
 
         final SodaWithId actual = sut.sodasIdGet(1L);
 
