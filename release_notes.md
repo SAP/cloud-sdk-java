@@ -26,7 +26,7 @@
   Instead, only the `apiPackage`- and `apiPackage`-related directories will be cleaned.
   This reduces the risk of deleting files unexpectedly and allows for reusing the same `outputDirectory` for multiple generator plugin invocations.
 - \[OpenAPI Generator\] The property accessors of generated model classes now have consistent `@Nullable` and `@Nonnull` annotation.
-- \[OpenAPI Generator\] Enable `enumUnknownDefaultCase=true`.
+- \[OpenAPI Generator\] Enable the option `<enumUnknownDefaultCase>` that allows for lenient handling of unknown enum values coming from a server.
 - Upgrade  to version `1.66.0` of `gRPC` dependencies coming in transitively when using `connectivity-ztis`
 - Improve the error handling for OData batch requests.
   In case an OData error is given within a batch response it will now be parsed and returned as `ODataServiceErrorException`.
