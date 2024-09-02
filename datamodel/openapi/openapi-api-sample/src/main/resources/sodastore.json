@@ -54,6 +54,11 @@
             "format": "int32",
             "example": 100
           },
+          "packaging": {
+            "type": "string",
+            "enum": ["glass", "carton", "can"],
+            "nullable": false
+          },
           "price": {
             "type": "number",
             "format": "float",

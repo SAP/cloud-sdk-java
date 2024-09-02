@@ -38,6 +38,7 @@ class SerializationTest
               "name": "Cola",
               "brand": "Coca-Cola",
               "quantity": 100,
+              "packaging" : null,
               "price": 1.5,
               "id": 0
             }
@@ -59,12 +60,21 @@ class SerializationTest
               "name": "Cola",
               "brand": "Coca-Cola",
               "quantity": 100,
+              "packaging" : "can",
               "price": 1.5,
               "id": 0
             }
             """;
 
-        final SodaWithId obj = SodaWithId.create().name("Cola").brand("Coca-Cola").quantity(100).price(1.5f).id(0L);
+        final SodaWithId obj =
+            SodaWithId
+                .create()
+                .name("Cola")
+                .brand("Coca-Cola")
+                .quantity(100)
+                .price(1.5f)
+                .id(0L)
+                .packaging(SodaWithId.PackagingEnum.CAN);
 
         assertThat(new ObjectMapper().writeValueAsString(obj)).isEqualToIgnoringWhitespace(expected);
     }
