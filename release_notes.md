@@ -36,5 +36,5 @@
   In case of an error a potential response body will now be logged with the error message.
 
 ### 🐛 Fixed Issues
-
+- fix: issue [#557](https://github.com/SAP/cloud-sdk-java/issues/557):  DwC Auth Token not available (DwC + IAS) by @jingweiz2017 in #568
 - Fix an issue where proxy headers are applied multiple times for OnPremise destinations.
