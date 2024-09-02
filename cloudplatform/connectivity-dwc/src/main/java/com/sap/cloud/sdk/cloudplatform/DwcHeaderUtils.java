@@ -150,7 +150,9 @@ public class DwcHeaderUtils
         return doGetNonEmptyDwcHeaderValue(container, key);
     }
 
-    private static String doGetNonEmptyDwcHeaderValue( @Nonnull final RequestHeaderContainer container, final String key )
+    private static
+        String
+        doGetNonEmptyDwcHeaderValue( @Nonnull final RequestHeaderContainer container, final String key )
     {
         return container
             .getHeaderValues(key)
