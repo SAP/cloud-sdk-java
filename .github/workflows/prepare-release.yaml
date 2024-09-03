@@ -148,7 +148,7 @@ jobs:
       - name: "Create Release"
         id: create-release
         run: |
-          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/site/apidocs/ .
+          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/reports/apidocs/ .
           tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
@@ -209,7 +209,7 @@ jobs:
 
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv ./.targets/target/site/apidocs/* $TARGET_DIR
+          mv ./.targets/target/reports/apidocs/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
