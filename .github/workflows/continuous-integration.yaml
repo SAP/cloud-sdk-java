@@ -229,7 +229,7 @@ jobs:
           mvn $MVN_ARGS
 
       - name: "Coverage Report"
-        run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/reports/jacoco/jacoco.csv"
+        run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
   static-code-analysis:
     needs: [ context, build ]
