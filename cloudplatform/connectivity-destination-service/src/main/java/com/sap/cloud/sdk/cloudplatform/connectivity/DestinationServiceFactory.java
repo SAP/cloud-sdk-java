@@ -56,6 +56,9 @@ class DestinationServiceFactory
         // enable tenant id
         baseBuilder.property(DestinationProperty.TENANT_ID, getDestinationTenantId(onBehalfOf));
 
+        // store auth tokens, if any
+        storeAuthTokens(baseBuilder, response.getAuthTokens());
+
         // finalize RFC destination
         if( baseBuilder.get(DestinationProperty.TYPE).contains(DestinationType.RFC) ) {
             return handleRfcDestination(baseBuilder.build());
@@ -108,18 +111,6 @@ class DestinationServiceFactory
 
         // enable auth tokens
         if( authTokens != null && !authTokens.isEmpty() ) {
-            final AuthenticationType authType =
-                builder.get(DestinationProperty.AUTH_TYPE).getOrElse(AuthenticationType.NO_AUTHENTICATION);
-            authTokens.forEach(t -> throwOnTokenError(builder.get(DestinationProperty.NAME).getOrNull(), t));
-            authTokens.forEach(t -> setExpirationTimestamp(t, authType));
-
-            // Note: it is important that the auth tokens are added as property here
-            // for the HttpClientCache we need to include them in the cache key
-            // since they may contain cookies for which we need to make sure they
-            // are not shared between different http clients
-            // we can't attach the tokens directly to the header provider,
-            // because the header providers are excluded from the cache key
-            builder.property(DestinationProperty.AUTH_TOKENS, authTokens);
             builder.headerProviders(new AuthTokenHeaderProvider());
         }
 
@@ -138,6 +129,26 @@ class DestinationServiceFactory
                     """;
             throw new DestinationAccessException(msg.formatted(destinationName, destinationAuthToken.getError()));
         }
+    }
+
+    private static void storeAuthTokens(
+        @Nonnull final DefaultDestination.Builder builder,
+        @Nullable final List<DestinationServiceV1Response.DestinationAuthToken> authTokens )
+    {
+        if( authTokens == null || authTokens.isEmpty() ) {
+            return;
+        }
+
+        final AuthenticationType authType =
+            builder.get(DestinationProperty.AUTH_TYPE).getOrElse(AuthenticationType.NO_AUTHENTICATION);
+        authTokens.forEach(t -> throwOnTokenError(builder.get(DestinationProperty.NAME).getOrNull(), t));
+        authTokens.forEach(t -> setExpirationTimestamp(t, authType));
+
+        // Note: it is important that the auth tokens are added as property here
+        // for the HttpClientCache we need to include them in the cache key
+        // since they may contain cookies for which we need to make sure they
+        // are not shared between different http clients
+        builder.property(DestinationProperty.AUTH_TOKENS, authTokens);
     }
 
     private static void setExpirationTimestamp(

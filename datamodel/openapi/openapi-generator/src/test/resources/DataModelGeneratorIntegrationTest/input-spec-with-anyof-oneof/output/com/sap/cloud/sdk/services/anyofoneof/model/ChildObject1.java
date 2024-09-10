@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 /**
  * ChildObject1
  */
-
 // CHECKSTYLE:OFF
 public class ChildObject1 
 // CHECKSTYLE:ON
@@ -58,87 +57,87 @@ public class ChildObject1
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
+  /**
    * Set the id of this {@link ChildObject1} instance and return the same instance.
    *
    * @param id  The id of this {@link ChildObject1}
    * @return The same instance of this {@link ChildObject1} class
    */
-   @Nonnull public ChildObject1 id(@Nonnull final String id) {
+  @Nonnull public ChildObject1 id( @Nullable final String id) {
     this.id = id;
     return this;
   }
 
-   /**
+  /**
    * Get id
    * @return id  The id of this {@link ChildObject1} instance.
-  **/
+   */
   @Nonnull public String getId() {
     return id;
   }
 
   /**
-  * Set the id of this {@link ChildObject1} instance.
-  *
-  * @param id  The id of this {@link ChildObject1}
-  */
-  public void setId( @Nonnull final String id) {
+   * Set the id of this {@link ChildObject1} instance.
+   *
+   * @param id  The id of this {@link ChildObject1}
+   */
+  public void setId( @Nullable final String id) {
     this.id = id;
   }
 
-   /**
+  /**
    * Set the type of this {@link ChildObject1} instance and return the same instance.
    *
    * @param type  The type of this {@link ChildObject1}
    * @return The same instance of this {@link ChildObject1} class
    */
-   @Nonnull public ChildObject1 type(@Nonnull final String type) {
+  @Nonnull public ChildObject1 type( @Nullable final String type) {
     this.type = type;
     return this;
   }
 
-   /**
+  /**
    * Get type
    * @return type  The type of this {@link ChildObject1} instance.
-  **/
+   */
   @Nonnull public String getType() {
     return type;
   }
 
   /**
-  * Set the type of this {@link ChildObject1} instance.
-  *
-  * @param type  The type of this {@link ChildObject1}
-  */
-  public void setType( @Nonnull final String type) {
+   * Set the type of this {@link ChildObject1} instance.
+   *
+   * @param type  The type of this {@link ChildObject1}
+   */
+  public void setType( @Nullable final String type) {
     this.type = type;
   }
 
-   /**
+  /**
    * Set the text of this {@link ChildObject1} instance and return the same instance.
    *
    * @param text  The text of this {@link ChildObject1}
    * @return The same instance of this {@link ChildObject1} class
    */
-   @Nonnull public ChildObject1 text(@Nonnull final String text) {
+  @Nonnull public ChildObject1 text( @Nullable final String text) {
     this.text = text;
     return this;
   }
 
-   /**
+  /**
    * Get text
    * @return text  The text of this {@link ChildObject1} instance.
-  **/
+   */
   @Nonnull public String getText() {
     return text;
   }
 
   /**
-  * Set the text of this {@link ChildObject1} instance.
-  *
-  * @param text  The text of this {@link ChildObject1}
-  */
-  public void setText( @Nonnull final String text) {
+   * Set the text of this {@link ChildObject1} instance.
+   *
+   * @param text  The text of this {@link ChildObject1}
+   */
+  public void setText( @Nullable final String text) {
     this.text = text;
   }
 
@@ -159,7 +158,7 @@ public class ChildObject1
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("ChildObject1 has no field with name '" + name + "'.");
     }
@@ -221,6 +220,7 @@ public class ChildObject1
     }
     return o.toString().replace("\n", "\n    ");
   }
+
 
 }
 

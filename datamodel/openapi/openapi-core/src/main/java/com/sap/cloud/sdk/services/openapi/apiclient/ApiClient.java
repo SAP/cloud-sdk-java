@@ -505,7 +505,7 @@ public final class ApiClient
             return params;
         }
 
-        Collection<?> valueCollection;
+        final Collection<?> valueCollection;
         if( value instanceof Collection ) {
             valueCollection = (Collection<?>) value;
         } else {

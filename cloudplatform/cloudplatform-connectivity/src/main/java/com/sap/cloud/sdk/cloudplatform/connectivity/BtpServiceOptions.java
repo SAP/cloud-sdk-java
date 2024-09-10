@@ -15,6 +15,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOpt
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Options that can be used in a {@link ServiceBindingDestinationOptions} to configure the destinations for specific
@@ -102,11 +103,70 @@ public final class BtpServiceOptions
     }
 
     /**
+     * Factory class for common Authentication Service options.
+     * <p>
+     * {@link OptionsEnhancer} instances created in this class will be interpreted by services with <b>either</b>
+     * {@link com.sap.cloud.environment.servicebinding.api.ServiceIdentifier#IDENTITY_AUTHENTICATION} <b>or</b>
+     * {@code ServiceIdentifier.of("xsuaa")}.
+     *
+     * @since 5.9.0
+     */
+    public static final class AuthenticationServiceOptions
+    {
+        private AuthenticationServiceOptions()
+        {
+            throw new IllegalStateException("This class should not be instantiated.");
+        }
+
+        /**
+         * Overwrites the target URI that is extracted from the IAS or XSUAA service binding.
+         *
+         * @param uri
+         *            The target URI to be used.
+         * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS or XSUAA
+         *         service binding and that contains the target URI.
+         */
+        @Nonnull
+        public static OptionsEnhancer<?> withTargetUri( @Nonnull final String uri )
+        {
+            return withTargetUri(URI.create(uri));
+        }
+
+        /**
+         * Overwrites the target URI that is extracted from the IAS or XSUAA service binding.
+         *
+         * @param uri
+         *            The target URI to be used.
+         * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS or XSUAA
+         *         service binding and that contains the target URI.
+         */
+        @Nonnull
+        public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI uri )
+        {
+            return new TargetUri(uri);
+        }
+
+        /**
+         * An {@link OptionsEnhancer} that contains the target URI for an IAS or XSUAA-based destination. Also refer to
+         * {@link #withTargetUri(String)}.
+         * <p>
+         * This class replaces the deprecated {@link IasOptions.IasTargetUri}.
+         */
+        @Value
+        @AllArgsConstructor( access = AccessLevel.PRIVATE )
+        public static class TargetUri implements OptionsEnhancer<URI>
+        {
+            URI value;
+        }
+    }
+
+    /**
      * Factory class for Identity Authentication Service
      * ({@link com.sap.cloud.environment.servicebinding.api.ServiceIdentifier#IDENTITY_AUTHENTICATION}) options.
      *
      * @since 5.5.0
      */
+    @Slf4j
     public static final class IasOptions
     {
         private IasOptions()
@@ -121,8 +181,10 @@ public final class BtpServiceOptions
          *            The target URI to be used.
          * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS service
          *         binding and that contains the target URI.
+         * @deprecated since 5.9.0. Use {@link AuthenticationServiceOptions#withTargetUri(String)} instead.
          */
         @Nonnull
+        @Deprecated
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final String targetUri )
         {
             return withTargetUri(URI.create(targetUri));
@@ -134,11 +196,13 @@ public final class BtpServiceOptions
          * @param targetUri
          *            The target URI to be used.
          * @return An instance of {@link OptionsEnhancer} that is used when creating a destination from an IAS service
+         * @deprecated since 5.9.0. Use {@link AuthenticationServiceOptions#withTargetUri(URI)} instead.
          */
         @Nonnull
+        @Deprecated
         public static OptionsEnhancer<?> withTargetUri( @Nonnull final URI targetUri )
         {
-            return new IasTargetUri(targetUri);
+            return AuthenticationServiceOptions.withTargetUri(targetUri);
         }
 
         /**
@@ -156,7 +220,7 @@ public final class BtpServiceOptions
          * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given application
          * provider name when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
          * <p>
-         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String, String)}.
+         * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String)}.
          *
          * @param applicationName
          *            The name of the application provider to be used. This is the name that was used to register the
@@ -203,7 +267,9 @@ public final class BtpServiceOptions
          *            IAS authentication token sent by the consumer application upon calling this application.
          * @return An instance of {@link OptionsEnhancer} that will lead to the given consumer client ID and tenant ID
          *         being used when retrieving an authentication token from the IAS service.
+         * @deprecated since 5.10.0. Use {@link #withConsumerClient(String)} instead.
          */
+        @Deprecated
         @Nonnull
         public static
             OptionsEnhancer<?>
@@ -215,9 +281,12 @@ public final class BtpServiceOptions
         /**
          * An {@link OptionsEnhancer} that contains the target URI for an IAS-based destination. Also refer to
          * {@link #withTargetUri(String)}.
+         *
+         * @deprecated since 5.9.0. Use {@link AuthenticationServiceOptions.TargetUri} instead.
          */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )
+        @Deprecated
         public static class IasTargetUri implements OptionsEnhancer<URI>
         {
             URI value;
@@ -243,7 +312,7 @@ public final class BtpServiceOptions
         /**
          * An {@link OptionsEnhancer} that contains the communication options for an IAS-based destination. Also refer
          * to {@link #withoutTokenForTechnicalProviderUser()}, {@link #withApplicationName(String)}, and
-         * {@link #withConsumerClient(String, String)}.
+         * {@link #withConsumerClient(String)}.
          */
         @Value
         @AllArgsConstructor( access = AccessLevel.PRIVATE )

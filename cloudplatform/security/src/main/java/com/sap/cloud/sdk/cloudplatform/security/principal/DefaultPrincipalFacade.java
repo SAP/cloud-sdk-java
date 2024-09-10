@@ -28,7 +28,11 @@ import lombok.RequiredArgsConstructor;
 public class DefaultPrincipalFacade implements PrincipalFacade
 {
     private static final List<PrincipalExtractor> DEFAULT_PRINCIPAL_EXTRACTORS =
-        Arrays.asList(new OAuth2AuthTokenPrincipalExtractor(), new OidcAuthTokenPrincipalExtractor());
+        Arrays
+            .asList(
+                new OAuth2AuthTokenPrincipalExtractor(),
+                new OidcAuthTokenPrincipalExtractor(),
+                new BasicCredentialsPrincipalExtractor());
 
     private final List<PrincipalExtractor> principalExtractors;
 

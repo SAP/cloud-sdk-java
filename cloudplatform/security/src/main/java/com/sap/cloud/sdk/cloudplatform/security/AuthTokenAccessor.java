@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.security;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -64,11 +65,7 @@ public final class AuthTokenAccessor
      */
     public static void setAuthTokenFacade( @Nullable final AuthTokenFacade requestFacade )
     {
-        if( requestFacade == null ) {
-            AuthTokenAccessor.authTokenFacade = getDefaultAuthTokenFacade();
-        } else {
-            AuthTokenAccessor.authTokenFacade = requestFacade;
-        }
+        authTokenFacade = Objects.requireNonNullElseGet(requestFacade, AuthTokenAccessor::getDefaultAuthTokenFacade);
     }
 
     @Nonnull

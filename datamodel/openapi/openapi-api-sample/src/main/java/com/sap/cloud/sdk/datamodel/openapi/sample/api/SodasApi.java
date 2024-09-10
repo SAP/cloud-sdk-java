@@ -21,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.Soda; //NOPMD
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId; //NOPMD
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.Soda;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
@@ -32,7 +32,6 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  *
  * API for managing soda products and orders in SodaStore.
  */
-
 public class SodasApi extends AbstractOpenApiService
 {
     /**
@@ -71,7 +70,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public List<SodaWithId> sodasGet()
         throws OpenApiRequestException
     {
@@ -125,7 +124,7 @@ public class SodasApi extends AbstractOpenApiService
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
-    @Nullable
+    @Nonnull
     public SodaWithId sodasIdGet( @Nonnull final Long id )
         throws OpenApiRequestException
     {
@@ -180,6 +179,8 @@ public class SodasApi extends AbstractOpenApiService
      * <b>200</b> - The updated soda product
      * <p>
      * <b>404</b> - Soda product not found
+     * <p>
+     * <b>204</b> - Nothing has changed
      *
      * @param sodaWithId
      *            The updated soda product

@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 /**
  * Set of OData filter functions for arithmetic types.
  */
+@SuppressWarnings( "overloads" )
 public interface FilterExpressionArithmetic
 {
     /**

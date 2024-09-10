@@ -18,9 +18,9 @@ inputs:
     required: false
     default: ${{ github.token }}
   excluded-check-runs:
-    description: "A comma-separated list of workflow names that are excluded from the Check Runs check"
+    description: "A JSON object, where the keys are the names of the workflows to exclude. The values are a list of step names to ignore. If the list is empty, all steps of the workflow will be ignored."
     required: false
-    default: ${{ github.workflow }}
+    default: '{\"${{ github.workflow }}\": []}'
 
 outputs:
   pr-number:
@@ -34,7 +34,7 @@ runs:
   using: composite
   steps:
     - name: "Print Action Start"
-      run: echo ">>>>> Starting PR Is Mergeable Action; inputs = ${{ toJson(inputs) }}"
+      run: echo ">>>>> Starting PR Is Mergeable Action; Not printing inputs, as they might contain sensitive information"
       shell: bash
 
     - name: "Check Whether PR Is Mergeable"
@@ -65,14 +65,30 @@ runs:
         
         # check runs are things like our CI pipeline
         FAILED_CHECK_RUNS=$(jq -r '.[] | select(.__typename == "CheckRun" and .conclusion != "SUCCESS" and .conclusion != "NEUTRAL")' <<< "$PR_CHECKS")
-        IFS=',' read -ra EXCLUDED_WORKFLOWS <<< "${{ inputs.excluded-check-runs }}"
-        for EXCLUDED_WORKFLOW in "${EXCLUDED_WORKFLOWS[@]}"; do
+        EXCLUDED_WORKFLOWS=$(jq -r 'keys[]' <<< "${{ inputs.excluded-check-runs }}")
+        
+        while IFS= read -r EXCLUDED_WORKFLOW; do
+          if [[ -z "$EXCLUDED_WORKFLOW" ]]; then
+            continue
+          fi
           if [[ -z "$FAILED_CHECK_RUNS" ]]; then
             break
           fi
         
-          FAILED_CHECK_RUNS=$(jq -r 'select(.workflowName != "$EXCLUDED_WORKFLOW")' <<< "$FAILED_CHECK_RUNS")
-        done
+          EXCLUDED_STEPS=$(jq -r --arg workflow "$EXCLUDED_WORKFLOW" '.[$workflow] | .[]' <<< "${{ inputs.excluded-check-runs }}")
+        
+          if [[ -z "$EXCLUDED_STEPS" ]]; then
+            # the provided list is empty, so ignore all steps of the workflow
+            FAILED_CHECK_RUNS=$(jq -r --arg workflow "$EXCLUDED_WORKFLOW" 'select(.workflowName != $workflow)' <<< "$FAILED_CHECK_RUNS")
+          else
+            while IFS= read -r EXCLUDED_STEP; do
+              if [[ -z "$EXCLUDED_STEP" ]]; then
+                  continue
+              fi
+              FAILED_CHECK_RUNS=$(jq -r --arg workflow "$EXCLUDED_WORKFLOW" --arg step "$EXCLUDED_STEP" 'select(.workflowName != $workflow and .name != $step)' <<< "$FAILED_CHECK_RUNS")
+            done <<< "$EXCLUDED_STEPS"
+          fi
+        done <<< "$EXCLUDED_WORKFLOWS"
         
         if [[ -n "$FAILED_CHECK_RUNS" ]]; then
           echo "PR #$PR_NUMBER (in ${{ inputs.repo }}) contains failed check runs: "

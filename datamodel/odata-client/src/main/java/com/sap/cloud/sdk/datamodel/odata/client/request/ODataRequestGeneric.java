@@ -7,9 +7,9 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -20,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfToken;
 import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
@@ -77,13 +78,13 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     /**
      * Map of HTTP header key-values which are added to the OData request.
      */
-    final Map<String, Collection<String>> headers = new HashMap<>();
+    final Map<String, Collection<String>> headers = new TreeMap<>();
 
     /**
      * Map of additional generic HTTP query parameters.
      */
     @Getter( AccessLevel.PROTECTED )
-    private final Map<String, String> queryParameters = new HashMap<>();
+    private final Map<String, String> queryParameters = new TreeMap<>();
 
     /**
      * The CSRF token retriever.
@@ -100,7 +101,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
         this.protocol = protocol;
         this.servicePath = servicePath;
         this.resourcePath = resourcePath;
-        addHeaderIfAbsent(HttpHeaders.ACCEPT, DEFAULT_FORMAT.getHttpAccept());
+        headers.putIfAbsent(HttpHeaders.ACCEPT, Lists.newArrayList(DEFAULT_FORMAT.getHttpAccept()));
     }
 
     /**
@@ -198,9 +199,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
      */
     public void addHeaderIfAbsent( @Nonnull final String key, @Nullable final String value )
     {
-        final ArrayList<String> values = new ArrayList<>(1);
-        values.add(value);
-        headers.putIfAbsent(key, values);
+        headers.putIfAbsent(key, Lists.newArrayList(value));
     }
 
     /**
@@ -286,7 +285,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     @Nonnull
     public Map<String, Collection<String>> getHeaders()
     {
-        return new HashMap<>(headers);
+        return new TreeMap<>(headers);
     }
 
     @Nonnull

@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.Test;
+
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 
 import io.vavr.control.Option;
 
@@ -66,6 +69,24 @@ class DestinationHeaderProviderTest
         final Collection<Header> actualHeader = destination.getHeaders();
 
         assertThat(actualHeader).contains(TEST_HEADER);
+    }
+
+    @Test
+    void testExceptionsAreHandled()
+    {
+        final DestinationHeaderProvider failingProvider = ( any ) -> {
+            throw new RuntimeException("Test exception");
+        };
+
+        final DefaultHttpDestination sut =
+            DefaultHttpDestination.builder("bar").headerProviders(failingProvider).build();
+
+        assertThatThrownBy(sut::getHeaders)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasRootCauseInstanceOf(RuntimeException.class)
+            .hasMessage(
+                "Header provider '%s' threw an exception: Test exception",
+                failingProvider.getClass().getSimpleName());
     }
 
     public static class TestDestinationHeaderProvider implements DestinationHeaderProvider

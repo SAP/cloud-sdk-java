@@ -40,7 +40,7 @@ public class ODataException extends IllegalStateException
      * The OData request that was attempted while this exception occurred.
      */
     @Nonnull
-    private final ODataRequestGeneric request;
+    private final transient ODataRequestGeneric request;
 
     /**
      * Default constructor.

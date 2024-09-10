@@ -37,7 +37,7 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
      */
     DefaultHttpClientCache()
     {
-        this(5, TimeUnit.MINUTES);
+        this(1, TimeUnit.HOURS);
     }
 
     /**
@@ -67,7 +67,7 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
      */
     DefaultHttpClientCache( final long duration, @Nonnull final TimeUnit unit, @Nonnull final Ticker ticker )
     {
-        cache = Caffeine.newBuilder().expireAfterWrite(duration, unit).ticker(ticker).build();
+        cache = Caffeine.newBuilder().expireAfterAccess(duration, unit).ticker(ticker).build();
         CacheManager.register(cache);
     }
 

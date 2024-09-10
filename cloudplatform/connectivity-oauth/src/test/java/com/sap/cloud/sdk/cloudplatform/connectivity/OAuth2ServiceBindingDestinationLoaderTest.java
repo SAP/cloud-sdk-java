@@ -37,6 +37,7 @@ import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
+import com.sap.cloud.security.client.HttpClientException;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
@@ -239,7 +240,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
+        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(HttpClientException.class);
     }
 
     @Test

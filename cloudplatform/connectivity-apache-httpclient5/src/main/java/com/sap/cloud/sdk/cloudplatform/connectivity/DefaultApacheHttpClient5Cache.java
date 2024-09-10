@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
 {
-    static final Duration DEFAULT_DURATION = Duration.ofMinutes(5L);
+    static final Duration DEFAULT_DURATION = Duration.ofHours(1L);
     static final Ticker DEFAULT_TICKER = Ticker.systemTicker();
 
     @Nonnull
@@ -45,7 +45,7 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
 
     DefaultApacheHttpClient5Cache( @Nonnull final Duration cacheDuration, @Nonnull final Ticker ticker )
     {
-        cache = Caffeine.newBuilder().expireAfterWrite(cacheDuration).ticker(ticker).build();
+        cache = Caffeine.newBuilder().expireAfterAccess(cacheDuration).ticker(ticker).build();
         CacheManager.register(cache);
     }
 

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.6.0-SNAPSHOT</version>
+	<version>5.13.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -44,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.6.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.13.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -81,10 +81,10 @@
                  -->
 		<argLine>-Xmx${surefire.maxMemorySize} -Dfile.encoding=${project.build.sourceEncoding} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel}</argLine>
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
-		<codeAnalysisExclusions>**/odata/namespaces/**,**/odata/services/**,**/odatav4/namespaces/**,**/odatav4/services/**,**/soap/client/**,**/testclasses/**</codeAnalysisExclusions>
+		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.71.11</jco-api.version>
-		<jackson.version>2.16.2</jackson.version>
+		<jco-api.version>4.85.8</jco-api.version>
+		<jackson.version>2.17.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20240303</json.version>
@@ -94,34 +94,33 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.4</spring.version>
+		<spring.version>6.1.12</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.12</slf4j.version>
-		<assertj-core.version>3.25.3</assertj-core.version>
+		<slf4j.version>2.0.16</slf4j.version>
+		<assertj-core.version>3.26.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.11.0</mockito.version>
-		<jsonassert.version>1.5.1</jsonassert.version>
-		<junit.jupiter.version>5.10.2</junit.jupiter.version>
+		<mockito.version>5.13.0</mockito.version>
+		<jsonassert.version>1.5.3</jsonassert.version>
+		<junit.jupiter.version>5.11.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.6</maven-plugin.version>
-		<maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
+		<maven-plugin.version>3.9.9</maven-plugin.version>
+		<maven-plugin-annotations.version>3.15.0</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.3.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.1.13</io-swagger-core-v3.version>
+		<openapi-generator.version>7.8.0</openapi-generator.version>
+		<io-swagger-core-v3.version>2.2.23</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.77</bouncycastle.version>
+		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
-		<jakarta-xml-bind.version>4.0.2</jakarta-xml-bind.version>
 		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.4.2</wiremock.version>
-		<checkstyle.version>8.41</checkstyle.version>
-		<kotlin.version>1.9.23</kotlin.version>
-		<byte-buddy.version>1.14.12</byte-buddy.version>
+		<wiremock.version>3.9.1</wiremock.version>
+		<checkstyle.version>10.18.1</checkstyle.version>
+		<byte-buddy.version>1.15.1</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -249,6 +248,21 @@
 				<artifactId>openapi-generator</artifactId>
 				<version>${openapi-generator.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-models</artifactId>
+				<version>${io-swagger-core-v3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.parser.v3</groupId>
+				<artifactId>swagger-parser</artifactId>
+				<version>${io-swagger-parser-v3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.parser.v3</groupId>
+				<artifactId>swagger-parser-core</artifactId>
+				<version>${io-swagger-parser-v3.version}</version>
+			</dependency>
 			<!-- Used in openapi-generator -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -361,33 +375,11 @@
 				<artifactId>stax2-api</artifactId>
 				<version>${stax2-api.version}</version>
 			</dependency>
-			<!--Used to resolve conflicts inside org.openapitools:openapi-generator -->
-			<dependency>
-				<groupId>jakarta.xml.bind</groupId>
-				<artifactId>jakarta.xml.bind-api</artifactId>
-				<version>${jakarta-xml-bind.version}</version>
-			</dependency>
 			<!--Used to override version 1.7.36 coming from openapi-generator -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-ext</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>
-			<!--Used for dependency convergence in datamodel-metadata-generator-->
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib-jdk8</artifactId>
-				<version>${kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib-common</artifactId>
-				<version>${kotlin.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib</artifactId>
-				<version>${kotlin.version}</version>
 			</dependency>
 			<!--For dependency convergence error between assertj-core and mockito-core-->
 			<dependency>
@@ -400,7 +392,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.16.1</version>
+				<version>1.17.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -444,7 +436,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 					<executions>
 						<execution>
 							<id>enforce-project-rules</id>
@@ -594,11 +586,6 @@
 										<message>Do not reference generated API modules (or modules transitively
 											referencing generated API modules), as they might be removed by profiles.</message>
 										<excludes>
-											<!--
-                                                                                        This list is created by adding all modules that are excluded by the sdk.code.scanning profile fixing the reported issues.
-                                                                                        An issue can be fixed by either removing the dependency (preferred solution, if possible), or adding the reported module here and excluding it via the mentioned profile.
-                                                                                        In general this list should be in sync with the list of modules excluded by the sdk.code.scanning profile.
-                                                                                         -->
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
@@ -653,7 +640,7 @@
 				<plugin>
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
-					<version>1.9.0</version>
+					<version>1.12.0</version>
 					<executions>
 						<execution>
 							<goals>
@@ -702,7 +689,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.8.0</version>
 					<executions>
 						<execution>
 							<id>analyze</id>
@@ -730,6 +717,7 @@
 						<failOnWarning>true</failOnWarning>
 						<failBuild>true</failBuild>
 						<ignoreNonCompile>false</ignoreNonCompile>
+						<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
 						<ignoredUnusedDeclaredDependencies combine.children="append">
 							<!--  ignore annotations that are not visible on bytecode level  -->
 							<ignoredUnusedDeclaredDependency>com.google.code.findbugs:jsr305</ignoredUnusedDeclaredDependency>
@@ -747,12 +735,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.3.2</version>
+					<version>3.4.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.13.0</version>
 					<configuration>
 						<release>${java.version}</release>
 						<showWarnings>true</showWarnings>
@@ -773,17 +761,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.1.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.1.3</version>
 					<configuration>
 						<retryFailedDeploymentCount>3</retryFailedDeploymentCount>
 					</configuration>
@@ -791,7 +779,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.20.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -801,12 +789,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.15.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.6.0</version>
 					<executions>
 						<execution>
 							<id>remove-old-artifacts</id>
@@ -836,7 +824,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.11</version>
+					<version>0.8.12</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -845,7 +833,6 @@
 							</goals>
 							<configuration>
 								<destFile>${jacoco.executionDataFile}</destFile>
-								<excludes>org.apache.*</excludes>
 							</configuration>
 						</execution>
 						<execution>
@@ -855,19 +842,6 @@
 							</goals>
 							<configuration>
 								<dataFile>${jacoco.executionDataFile}</dataFile>
-								<excludes>
-									<exclude>**/odata/sample/**</exclude>
-									<exclude>**/odatav4/sample/**</exclude>
-									<exclude>**/openapi/sample/**</exclude>
-									<exclude>**/odata/namespaces/**</exclude>
-									<exclude>**/odata/services/**</exclude>
-									<exclude>**/odatav4/namespaces/**</exclude>
-									<exclude>**/odatav4/services/**</exclude>
-									<exclude>**/soap/client/**</exclude>
-									<exclude>**/testclasses/**</exclude>
-									<!-- namespaces compiled to Java17 -->
-									<exclude>**/servletjakarta/**</exclude>
-								</excludes>
 							</configuration>
 						</execution>
 					</executions>
@@ -875,7 +849,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.5</version>
+					<version>3.5.0</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -895,7 +869,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.5.0</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
@@ -914,7 +888,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.3.1</version>
+					<version>4.8.6.3</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -926,7 +900,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.21.2</version>
+					<version>3.25.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
@@ -975,7 +949,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.30</version>
+							<version>1.18.34</version>
 						</dependency>
 					</dependencies>
 					<configuration>
@@ -1003,7 +977,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.6.3</version>
+					<version>3.10.0</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>
@@ -1046,7 +1020,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 					<executions>
 						<execution>
 							<goals>
@@ -1070,7 +1044,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.2</version>
+					<version>3.6.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

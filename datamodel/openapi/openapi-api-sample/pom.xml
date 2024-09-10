@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>5.6.0-SNAPSHOT</version>
+		<version>5.13.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-api-sample</artifactId>
 	<name>Data Model - OpenAPI Services - Sample API</name>
@@ -115,6 +115,12 @@
 					<deleteOutputDirectory>true</deleteOutputDirectory>
 					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
 					<sapCopyrightHeader>true</sapCopyrightHeader>
+					<additionalProperties>
+						<pojoBuilderMethodName>create</pojoBuilderMethodName>
+						<pojoBuildMethodName />
+						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
+						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
+					</additionalProperties>
 				</configuration>
 			</plugin>
 			<!-- Enable formatter to always run on the generated code -->
@@ -144,6 +150,34 @@
 				</executions>
 				<configuration>
 					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -107,7 +107,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
     private Boolean sapCopyrightHeader;
 
     /**
-     * Defines whether to delete the output directory prior to the generation.
+     * Defines whether to delete the generated files from output directory prior to the generation.
      */
     @Parameter( property = "openapi.generate.deleteOutputDirectory", defaultValue = "false" )
     private boolean deleteOutputDirectory;

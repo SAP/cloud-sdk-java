@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.time.LocalDate;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -40,13 +41,18 @@ import javax.annotation.Nullable;
 /**
  * UpdateSoda
  */
-
 // CHECKSTYLE:OFF
 public class UpdateSoda 
 // CHECKSTYLE:ON
 {
   @JsonProperty("name")
   private String name;
+
+  @JsonProperty("zero")
+  private Boolean zero;
+
+  @JsonProperty("since")
+  private LocalDate since;
 
   @JsonProperty("brand")
   private String brand;
@@ -61,115 +67,171 @@ public class UpdateSoda
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
+  /**
    * Set the name of this {@link UpdateSoda} instance and return the same instance.
    *
    * @param name  The name of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-   @Nonnull public UpdateSoda name(@Nonnull final String name) {
+  @Nonnull public UpdateSoda name( @Nullable final String name) {
     this.name = name;
     return this;
   }
 
-   /**
+  /**
    * Get name
    * @return name  The name of this {@link UpdateSoda} instance.
-  **/
+   */
   @Nonnull public String getName() {
     return name;
   }
 
   /**
-  * Set the name of this {@link UpdateSoda} instance.
-  *
-  * @param name  The name of this {@link UpdateSoda}
-  */
-  public void setName( @Nonnull final String name) {
+   * Set the name of this {@link UpdateSoda} instance.
+   *
+   * @param name  The name of this {@link UpdateSoda}
+   */
+  public void setName( @Nullable final String name) {
     this.name = name;
   }
 
-   /**
+  /**
+   * Set the zero of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param zero  The zero of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda zero( @Nullable final Boolean zero) {
+    this.zero = zero;
+    return this;
+  }
+
+  /**
+   * Get zero
+   * @return zero  The zero of this {@link UpdateSoda} instance.
+   */
+  @Nonnull public Boolean isZero() {
+    return zero;
+  }
+
+  /**
+   * Set the zero of this {@link UpdateSoda} instance.
+   *
+   * @param zero  The zero of this {@link UpdateSoda}
+   */
+  public void setZero( @Nullable final Boolean zero) {
+    this.zero = zero;
+  }
+
+  /**
+   * Set the since of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param since  The since of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda since( @Nullable final LocalDate since) {
+    this.since = since;
+    return this;
+  }
+
+  /**
+   * Get since
+   * @return since  The since of this {@link UpdateSoda} instance.
+   */
+  @Nonnull public LocalDate getSince() {
+    return since;
+  }
+
+  /**
+   * Set the since of this {@link UpdateSoda} instance.
+   *
+   * @param since  The since of this {@link UpdateSoda}
+   */
+  public void setSince( @Nullable final LocalDate since) {
+    this.since = since;
+  }
+
+  /**
    * Set the brand of this {@link UpdateSoda} instance and return the same instance.
    *
    * @param brand  The brand of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-   @Nonnull public UpdateSoda brand(@Nonnull final String brand) {
+  @Nonnull public UpdateSoda brand( @Nullable final String brand) {
     this.brand = brand;
     return this;
   }
 
-   /**
+  /**
    * Get brand
    * @return brand  The brand of this {@link UpdateSoda} instance.
-  **/
+   */
   @Nonnull public String getBrand() {
     return brand;
   }
 
   /**
-  * Set the brand of this {@link UpdateSoda} instance.
-  *
-  * @param brand  The brand of this {@link UpdateSoda}
-  */
-  public void setBrand( @Nonnull final String brand) {
+   * Set the brand of this {@link UpdateSoda} instance.
+   *
+   * @param brand  The brand of this {@link UpdateSoda}
+   */
+  public void setBrand( @Nullable final String brand) {
     this.brand = brand;
   }
 
-   /**
+  /**
    * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
    *
    * @param flavor  The flavor of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-   @Nonnull public UpdateSoda flavor(@Nonnull final String flavor) {
+  @Nonnull public UpdateSoda flavor( @Nullable final String flavor) {
     this.flavor = flavor;
     return this;
   }
 
-   /**
+  /**
    * Get flavor
    * @return flavor  The flavor of this {@link UpdateSoda} instance.
-  **/
+   */
   @Nonnull public String getFlavor() {
     return flavor;
   }
 
   /**
-  * Set the flavor of this {@link UpdateSoda} instance.
-  *
-  * @param flavor  The flavor of this {@link UpdateSoda}
-  */
-  public void setFlavor( @Nonnull final String flavor) {
+   * Set the flavor of this {@link UpdateSoda} instance.
+   *
+   * @param flavor  The flavor of this {@link UpdateSoda}
+   */
+  public void setFlavor( @Nullable final String flavor) {
     this.flavor = flavor;
   }
 
-   /**
+  /**
    * Set the price of this {@link UpdateSoda} instance and return the same instance.
    *
    * @param price  The price of this {@link UpdateSoda}
    * @return The same instance of this {@link UpdateSoda} class
    */
-   @Nonnull public UpdateSoda price(@Nonnull final Float price) {
+  @Nonnull public UpdateSoda price( @Nullable final Float price) {
     this.price = price;
     return this;
   }
 
-   /**
+  /**
    * Get price
    * @return price  The price of this {@link UpdateSoda} instance.
-  **/
+   */
   @Nonnull public Float getPrice() {
     return price;
   }
 
   /**
-  * Set the price of this {@link UpdateSoda} instance.
-  *
-  * @param price  The price of this {@link UpdateSoda}
-  */
-  public void setPrice( @Nonnull final Float price) {
+   * Set the price of this {@link UpdateSoda} instance.
+   *
+   * @param price  The price of this {@link UpdateSoda}
+   */
+  public void setPrice( @Nullable final Float price) {
     this.price = price;
   }
 
@@ -190,7 +252,7 @@ public class UpdateSoda
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("UpdateSoda has no field with name '" + name + "'.");
     }
@@ -221,6 +283,8 @@ public class UpdateSoda
     final UpdateSoda updateSoda = (UpdateSoda) o;
     return Objects.equals(this.cloudSdkCustomFields, updateSoda.cloudSdkCustomFields) &&
         Objects.equals(this.name, updateSoda.name) &&
+        Objects.equals(this.zero, updateSoda.zero) &&
+        Objects.equals(this.since, updateSoda.since) &&
         Objects.equals(this.brand, updateSoda.brand) &&
         Objects.equals(this.flavor, updateSoda.flavor) &&
         Objects.equals(this.price, updateSoda.price);
@@ -228,7 +292,7 @@ public class UpdateSoda
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, brand, flavor, price, cloudSdkCustomFields);
+    return Objects.hash(name, zero, since, brand, flavor, price, cloudSdkCustomFields);
   }
 
   @Override
@@ -236,6 +300,8 @@ public class UpdateSoda
     final StringBuilder sb = new StringBuilder();
     sb.append("class UpdateSoda {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    zero: ").append(toIndentedString(zero)).append("\n");
+    sb.append("    since: ").append(toIndentedString(since)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
@@ -254,6 +320,7 @@ public class UpdateSoda
     }
     return o.toString().replace("\n", "\n    ");
   }
+
 
 }
 

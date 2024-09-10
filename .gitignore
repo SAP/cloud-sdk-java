@@ -41,3 +41,4 @@ javadoc.properties
 
 local_maven_repo
 badges/
+.java-version

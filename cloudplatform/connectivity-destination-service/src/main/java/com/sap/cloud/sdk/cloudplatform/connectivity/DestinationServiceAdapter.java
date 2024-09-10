@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,9 +22,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicHeader;
+import org.slf4j.event.Level;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.google.common.base.Strings;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -34,8 +33,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
 import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 
 import io.vavr.control.Try;
 import lombok.AccessLevel;
@@ -122,12 +119,71 @@ class DestinationServiceAdapter
     }
 
     @Nonnull
-    private String requestDestinationConfigurationAsJson(
+    String getConfigurationAsJson(
         @Nonnull final String servicePath,
-        @Nonnull final Destination serviceDestination,
-        final boolean enableUserToken )
+        @Nonnull final DestinationRetrievalStrategy strategy )
         throws DestinationAccessException,
             DestinationNotFoundException
+    {
+        final HttpDestination serviceDestination =
+            Objects
+                .requireNonNull(
+                    serviceDestinationLoader.apply(strategy.behalf()),
+                    () -> "Destination for Destination Service on behalf of " + strategy.behalf() + " not found.");
+
+        final HttpUriRequest request = prepareRequest(servicePath, strategy);
+
+        final HttpResponse response;
+        try {
+            response = HttpClientAccessor.getHttpClient(serviceDestination).execute(request);
+        }
+        catch( final IOException e ) {
+            throw new DestinationAccessException(e);
+        }
+        return handleResponse(request, response);
+    }
+
+    @Nonnull
+    private static String handleResponse( final HttpUriRequest request, final HttpResponse response )
+    {
+        final StatusLine status = response.getStatusLine();
+        final int statusCode = status.getStatusCode();
+        final String reasonPhrase = status.getReasonPhrase();
+
+        Try<String> maybeBody = Try.of(() -> HttpEntityUtil.getResponseBody(response));
+        String logMessage = "Destination service returned HTTP status %s (%s)";
+        if( maybeBody.isFailure() ) {
+            final var ex =
+                new DestinationAccessException("Failed to read body from HTTP response", maybeBody.getCause());
+            maybeBody = Try.failure(ex);
+            logMessage = String.format(logMessage, statusCode, reasonPhrase);
+        } else {
+            logMessage = String.format(logMessage + "and body '%s'", statusCode, reasonPhrase, maybeBody.get());
+        }
+
+        if( statusCode == HttpStatus.SC_OK ) {
+            final var ex = new DestinationAccessException("Failed to get destinations: no body returned in response.");
+            maybeBody = maybeBody.filter(it -> !Strings.isNullOrEmpty(it), () -> ex);
+            log.atLevel(maybeBody.isSuccess() ? Level.DEBUG : Level.ERROR).log(logMessage);
+            return maybeBody.get();
+        }
+
+        log.error(logMessage);
+        final String requestUri = request.getURI().getPath();
+        if( statusCode == HttpStatus.SC_NOT_FOUND ) {
+            throw new DestinationNotFoundException(null, "Destination could not be found for path " + requestUri + ".");
+        }
+        throw new DestinationAccessException(
+            String
+                .format(
+                    "Failed to get destinations: destination service returned HTTP status %s (%S) at '%s'.,",
+                    statusCode,
+                    reasonPhrase,
+                    requestUri));
+
+    }
+
+    private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
     {
         final URI requestUri;
         try {
@@ -138,99 +194,20 @@ class DestinationServiceAdapter
         }
 
         log.debug("Querying Destination Service via URI {}.", requestUri);
-
         final HttpUriRequest request = new HttpGet(requestUri);
-        if( enableUserToken ) {
-            AuthTokenAccessor
-                .tryGetCurrentToken()
-                .map(AuthToken::getJwt)
-                .map(DecodedJWT::getToken)
-                .map(it -> new BasicHeader("x-user-token", it))
-                .peek(request::addHeader);
+
+        final String headerName = switch( strategy.tokenForwarding() ) {
+            case USER_TOKEN -> "x-user-token";
+            case REFRESH_TOKEN -> "x-refresh-token";
+            case NONE -> null;
+        };
+        if( headerName != null ) {
+            request.addHeader(headerName, strategy.token());
         }
-
-        final HttpResponse response;
-        try {
-            response = HttpClientAccessor.getHttpClient(serviceDestination).execute(request);
+        if( strategy.fragment() != null ) {
+            request.addHeader("x-fragment-name", strategy.fragment());
         }
-        catch( final IOException e ) {
-            throw new DestinationAccessException(e);
-        }
-
-        log
-            .debug(
-                "Destination service returned HTTP status {} ({})",
-                response.getStatusLine().getStatusCode(),
-                response.getStatusLine().getReasonPhrase());
-
-        final StatusLine status = response.getStatusLine();
-        final int statusCode = status.getStatusCode();
-        final String reasonPhrase = status.getReasonPhrase();
-
-        if( statusCode != HttpStatus.SC_OK ) {
-            if( statusCode == HttpStatus.SC_NOT_FOUND ) {
-                throw new DestinationNotFoundException(
-                    null,
-                    "Destination could not be found for path " + servicePath + ".");
-            } else {
-                throw new DestinationAccessException(
-                    String
-                        .format(
-                            "Failed to get destinations: destination service returned HTTP status %s (%S) at '%s'.,",
-                            statusCode,
-                            reasonPhrase,
-                            requestUri));
-            }
-        }
-
-        try {
-            final String responseBody = HttpEntityUtil.getResponseBody(response);
-            if( responseBody == null ) {
-                throw new DestinationAccessException("Failed to get destinations: no body returned in response.");
-            }
-            return responseBody;
-        }
-        catch( final IOException e ) {
-            throw new DestinationAccessException(e);
-        }
-    }
-
-    @Nonnull
-    String getConfigurationAsJsonWithUserToken( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
-        throws DestinationAccessException,
-            DestinationNotFoundException
-    {
-        return getConfigurationAsJsonInternal(servicePath, behalf, true);
-    }
-
-    @Nonnull
-    String getConfigurationAsJson( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
-        throws DestinationAccessException,
-            DestinationNotFoundException
-    {
-        return getConfigurationAsJsonInternal(servicePath, behalf, false);
-    }
-
-    @Nonnull
-    @SuppressWarnings( "ConstantConditions" )
-    private String getConfigurationAsJsonInternal(
-        @Nonnull final String servicePath,
-        @Nonnull final OnBehalfOf behalf,
-        final boolean xUserToken )
-        throws DestinationAccessException,
-            DestinationNotFoundException
-    {
-        final HttpDestination serviceDestination =
-            Objects
-                .requireNonNull(
-                    serviceDestinationLoader.apply(behalf),
-                    () -> "Destination for Destination Service on behalf of " + behalf + " not found.");
-        log
-            .debug(
-                "Querying BTP destination service on service path {} to fetch all destinations at service instance level and using destination: {}",
-                servicePath,
-                serviceDestination);
-        return requestDestinationConfigurationAsJson(servicePath, serviceDestination, xUserToken);
+        return request;
     }
 
     @Nonnull
@@ -243,7 +220,7 @@ class DestinationServiceAdapter
                 .getServiceBindings()
                 .stream()
                 .filter(binding -> ServiceIdentifier.DESTINATION.equals(binding.getServiceIdentifier().orElse(null)))
-                .collect(Collectors.toList());
+                .toList();
 
         if( matchingBindings.isEmpty() ) {
             throw new NoServiceBindingException(

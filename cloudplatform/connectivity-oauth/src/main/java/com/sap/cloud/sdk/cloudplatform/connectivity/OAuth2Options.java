@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.security.KeyStore;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +9,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,14 +30,28 @@ import lombok.extern.slf4j.Slf4j;
 public final class OAuth2Options
 {
     /**
+     * The default timeout of 10 seconds for token retrieval.
+     *
+     * @since 5.12.0
+     */
+    public static final TimeLimiterConfiguration DEFAULT_TIMEOUT = TimeLimiterConfiguration.of(Duration.ofSeconds(10));
+    /**
      * The default {@link OAuth2Options} instance that does not alter the token retrieval process and does not use mTLS
      * for the target system connection.
      */
-    public static final OAuth2Options DEFAULT = new OAuth2Options(false, Map.of(), null);
+    public static final OAuth2Options DEFAULT = new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null);
 
     private final boolean skipTokenRetrieval;
     @Nonnull
     private final Map<String, String> additionalTokenRetrievalParameters;
+    /**
+     * A timeout to be applied for token retrieval.
+     *
+     * @since 5.12.0
+     */
+    @Nonnull
+    @Getter
+    private final TimeLimiterConfiguration timeLimiter;
     /**
      * The {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>. This
      * {@link KeyStore} <b>is not used</b> to build an mTLS connection towards the OAuth2 token service.
@@ -85,6 +103,7 @@ public final class OAuth2Options
         private boolean skipTokenRetrieval = false;
         private final Map<String, String> additionalTokenRetrievalParameters = new HashMap<>();
         private KeyStore clientKeyStore;
+        private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
 
         /**
          * Indicates whether to skip the OAuth2 token flow.
@@ -148,6 +167,21 @@ public final class OAuth2Options
         }
 
         /**
+         * Set a custom timeout for token retrieval. {@link #DEFAULT_TIMEOUT} by default.
+         *
+         * @param timeLimiter
+         *            The custom timeout configuration.
+         * @return This {@link Builder}.
+         * @since 5.12.0
+         */
+        @Nonnull
+        public Builder withTimeLimiter( @Nonnull final TimeLimiterConfiguration timeLimiter )
+        {
+            this.timeLimiter = timeLimiter;
+            return this;
+        }
+
+        /**
          * Creates a new {@link OAuth2Options} instance.
          *
          * @return A new {@link OAuth2Options} instance.
@@ -166,7 +200,21 @@ public final class OAuth2Options
             return new OAuth2Options(
                 skipTokenRetrieval,
                 new HashMap<>(additionalTokenRetrievalParameters),
+                timeLimiter,
                 clientKeyStore);
         }
+    }
+
+    /**
+     * Configure the timeout applied to token retrieval.
+     *
+     * @since 5.12.0
+     */
+    @Getter
+    @RequiredArgsConstructor( staticName = "of" )
+    public static class TokenRetrievalTimeout implements OptionsEnhancer<TimeLimiterConfiguration>
+    {
+        @Nonnull
+        private final TimeLimiterConfiguration value;
     }
 }

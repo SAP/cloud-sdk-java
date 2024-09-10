@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategyResolver.Strategy;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
@@ -134,7 +133,7 @@ public class DestinationService implements DestinationLoader
             DestinationNotFoundException
     {
         final String servicePath = PATH_DEFAULT + destName;
-        final Function<Strategy, DestinationServiceV1Response> destinationRetriever =
+        final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever =
             strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
 
         final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
@@ -147,12 +146,11 @@ public class DestinationService implements DestinationLoader
     }
 
     @Nonnull
-    DestinationServiceV1Response retrieveDestination( final Strategy strategy, final String servicePath )
+    DestinationServiceV1Response
+        retrieveDestination( final DestinationRetrievalStrategy strategy, final String servicePath )
     {
-        final String response =
-            strategy.isForwardToken()
-                ? adapter.getConfigurationAsJsonWithUserToken(servicePath, strategy.getBehalf())
-                : adapter.getConfigurationAsJson(servicePath, strategy.getBehalf());
+        final String response = adapter.getConfigurationAsJson(servicePath, strategy);
+
         return deserializeDestinationResponse(response);
     }
 
@@ -176,6 +174,26 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
+     * Fetches all destination properties from the BTP Destination Service on behalf of the current tenant.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration. For
+     * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
+     * </p>
+     * In case there exists a destination with the same name on service instance and on sub-account level, the
+     * destination at service instance level takes precedence.
+     *
+     * @return A list of destination properties.
+     * @see DestinationService#getAllDestinationProperties(DestinationServiceRetrievalStrategy)
+     * @since 5.1.0
+     */
+    @Nonnull
+    public Collection<DestinationProperties> getAllDestinationProperties()
+    {
+        return getAllDestinationProperties(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
+    }
+
+    /**
      * Fetches all destination properties from the BTP Destination Service.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
@@ -186,21 +204,23 @@ public class DestinationService implements DestinationLoader
      * destination at service instance level takes precedence.
      *
      * @return A list of destination properties.
-     * @since 5.1.0
+     * @param retrievalStrategy
+     *            Strategy for loading destinations in a multi-tenant application.
+     * @since 5.12.0
      */
     @Nonnull
-    public Collection<DestinationProperties> getAllDestinationProperties()
+    public Collection<DestinationProperties> getAllDestinationProperties(
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy )
     {
+        final var augmenter = DestinationServiceOptionsAugmenter.augmenter().retrievalStrategy(retrievalStrategy);
+        final var options = DestinationOptions.builder().augmentBuilder(augmenter).build();
         return new ArrayList<>(
-            Cache
-                .getOrComputeAllDestinations(
-                    DestinationOptions.builder().build(),
-                    this::getAllDestinationsByRetrievalStrategy)
-                .get());
+            Cache.getOrComputeAllDestinations(options, this::getAllDestinationsByRetrievalStrategy).get());
     }
 
     /**
-     * Fetches the properties of a specific destination from the BTP Destination Service.
+     * Fetches the properties of a specific destination from the BTP Destination Service on behalf of the current
+     * tenant.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destination.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration. For
@@ -237,7 +257,8 @@ public class DestinationService implements DestinationLoader
      * @param options
      *            Destination configuration object.
      * @return A Try iterable of CF destinations.
-     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
+     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} and
+     *             {@link #getAllDestinationProperties(DestinationServiceRetrievalStrategy)} instead.
      */
     @Nonnull
     @Deprecated
@@ -312,7 +333,8 @@ public class DestinationService implements DestinationLoader
         getAndDeserializeDestinations( @Nonnull final String servicePath, @Nonnull final OnBehalfOf behalf )
             throws DestinationAccessException
     {
-        final String json = adapter.getConfigurationAsJson(servicePath, behalf);
+        final String json =
+            adapter.getConfigurationAsJson(servicePath, DestinationRetrievalStrategy.withoutToken(behalf));
         return Streams
             .stream(GSON.fromJson(json, JsonElement.class).getAsJsonArray())
             .map(jsonElement -> (Map<String, Object>) GSON.fromJson(jsonElement, Map.class))
@@ -929,7 +951,7 @@ public class DestinationService implements DestinationLoader
         }
 
         /**
-         * Create the configured {@code ScpCfDestinationLoader} instance.
+         * Create the configured {@code DestinationService} instance.
          *
          * @return The new instance.
          * @since 4.4.0

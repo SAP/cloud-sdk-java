@@ -23,7 +23,7 @@ class ApiClassNameFieldPreprocessor implements PreprocessingStep
     @Override
     public PreprocessingStepResult execute( @Nonnull final JsonNode input, @Nonnull final ObjectMapper objectMapper )
     {
-        final String extensionFieldValue = input.path(API_CLASS_NAME_EXTENSION_FIELD).asText(null);
+        final String extensionFieldValue = input.path(API_CLASS_NAME_EXTENSION_FIELD).asText();
 
         final JsonNode paths = input.path("paths");
 
@@ -54,9 +54,14 @@ class ApiClassNameFieldPreprocessor implements PreprocessingStep
             return;
         }
 
-        final String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText(rootLevelValue);
+        String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText();
+        if( extensionFieldValue == null || extensionFieldValue.isEmpty() ) {
+            extensionFieldValue = rootLevelValue;
+        }
 
-        inputNode.forEach(operation -> visitOperation(operation, mapper, extensionFieldValue));
+        for( final JsonNode jsonNode : inputNode ) {
+            visitOperation(jsonNode, mapper, extensionFieldValue);
+        }
     }
 
     private void visitOperation(
@@ -68,7 +73,10 @@ class ApiClassNameFieldPreprocessor implements PreprocessingStep
             return;
         }
 
-        final String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText(pathLevelValue);
+        String extensionFieldValue = inputNode.path(API_CLASS_NAME_EXTENSION_FIELD).asText();
+        if( extensionFieldValue == null || extensionFieldValue.isEmpty() ) {
+            extensionFieldValue = pathLevelValue;
+        }
 
         if( extensionFieldValue != null && !extensionFieldValue.isEmpty() ) {
             changesApplied = true;
