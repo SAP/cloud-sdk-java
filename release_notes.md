@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- https://github.com/SAP/cloud-sdk-java/issues/582 Replaced QueryParameters encoder with better version
+- OpenAPI QueryParameters are now encoded
