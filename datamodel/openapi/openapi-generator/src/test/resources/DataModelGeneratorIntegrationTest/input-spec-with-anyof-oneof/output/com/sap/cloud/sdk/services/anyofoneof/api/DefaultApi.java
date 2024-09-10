@@ -9,7 +9,7 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
-import com.sap.cloud.sdk.services.anyofoneof.model.RootObject ; //NOPMD
+import com.sap.cloud.sdk.services.anyofoneof.model.RootObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,28 +32,27 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
-* Sample API in version 1.0.0.
-*
-* API for managing root and child objects
-*/
-
+ * Sample API in version 1.0.0.
+ *
+ * API for managing root and child objects
+ */
 public class DefaultApi extends AbstractOpenApiService {
     /**
-    * Instantiates this API class to invoke operations on the Sample API.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the Sample API.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public DefaultApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the Sample API based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the Sample API based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     @Beta
     public DefaultApi( @Nonnull final ApiClient apiClient )
     {
@@ -72,7 +71,8 @@ public class DefaultApi extends AbstractOpenApiService {
      * @return RootObject
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable  public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
+    @Nonnull
+    public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
         final Object localVarPostBody = rootObject;
         
         final String localVarPath = UriComponentsBuilder.fromPath("/some/endpoint").build().toUriString();
@@ -97,15 +97,16 @@ public class DefaultApi extends AbstractOpenApiService {
     }
 
     /**
-    * <p></p>
-     *<p></p>
+     * <p></p>
+     * <p></p>
      * <p><b>201</b> - Something was created.
      * <p><b>400</b> - Request was invalid.
      * <p><b>401</b> - Authentication Error
-* @return RootObject
-* @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+     * @return RootObject
+     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
-    @Nullable   public RootObject someEndpointPost() throws OpenApiRequestException {
+    @Nonnull
+    public RootObject someEndpointPost() throws OpenApiRequestException {
         return someEndpointPost(null);
     }
 }

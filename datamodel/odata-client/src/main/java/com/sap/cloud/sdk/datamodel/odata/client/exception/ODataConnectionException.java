@@ -27,7 +27,7 @@ public class ODataConnectionException extends ODataRequestException
      * The {@link HttpUriRequest} that was attempted.
      */
     @Nonnull
-    private final HttpUriRequest httpRequest;
+    private final transient HttpUriRequest httpRequest;
 
     /**
      * Default constructor.

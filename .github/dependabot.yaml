@@ -33,8 +33,6 @@ updates:
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
       # used by deprecated code only, not worth updating for now
       - dependency-name: 'org.apache.axis2:*'
-      # updating currently doesn't work as our rules are not compatible with the latest version
-      - dependency-name: 'com.puppycrawl.tools:checkstyle'
 
   # archetype updates
   # Dependabot seems to be unable to handle those, so this is disabled for now

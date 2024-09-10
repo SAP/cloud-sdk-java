@@ -146,6 +146,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
      *             If the given value cannot be converted to an instance of this type, or any of the given parameter is
      *             {@code null}.
      */
+    @SuppressWarnings( "this-escape" )
     public StringBasedErpType(
         @Nullable final String value,
         @Nullable final CharCasing charCasing,
@@ -325,7 +326,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     public static <T extends StringBasedErpType<T>> Function<T, String> transformToString(
         @Nonnull final ErpTypeConverter<T> converter )
     {
-        return new Function<T, String>()
+        return new Function<>()
         {
             @Nullable
             @Override
@@ -355,7 +356,7 @@ public abstract class StringBasedErpType<T extends StringBasedErpType<T>>
     public static <T extends StringBasedErpType<T>> Function<String, T> transformToType(
         @Nonnull final ErpTypeConverter<T> converter )
     {
-        return new Function<String, T>()
+        return new Function<>()
         {
             @Nullable
             @Override

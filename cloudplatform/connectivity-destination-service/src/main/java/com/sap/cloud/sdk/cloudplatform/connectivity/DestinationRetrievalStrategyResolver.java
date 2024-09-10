@@ -25,14 +25,15 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -40,25 +41,17 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings( "PMD.TooManyStaticImports" ) // without these static imports the code becomes unreadable
 class DestinationRetrievalStrategyResolver
 {
-    private static final Strategy tokenExchangeOnlyStrategy = new Strategy(NAMED_USER_CURRENT_TENANT, false);
     private final Supplier<String> providerTenantIdSupplier;
-    private final Function<Strategy, DestinationServiceV1Response> destinationRetriever;
+    private final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever;
     private final Function<OnBehalfOf, List<DestinationProperties>> allDestinationRetriever;
 
     static final String JWT_ATTR_EXT = "ext_attr";
     static final String JWT_ATTR_ENHANCER = "enhancer";
     static final String JWT_ATTR_XSUAA = "XSUAA";
 
-    @Value
-    static class Strategy
-    {
-        OnBehalfOf behalf;
-        boolean forwardToken;
-    }
-
     static DestinationRetrievalStrategyResolver forSingleDestination(
         final Supplier<String> providerTenantIdSupplier,
-        final Function<Strategy, DestinationServiceV1Response> destinationRetriever )
+        final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever )
     {
         return new DestinationRetrievalStrategyResolver(
             providerTenantIdSupplier,
@@ -77,42 +70,35 @@ class DestinationRetrievalStrategyResolver
     }
 
     @SuppressWarnings( "deprecation" )
-    Strategy resolveSingleRequestStrategy(
+    DestinationRetrievalStrategy resolveSingleRequestStrategy(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
-        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
+        @Nullable final String refreshToken )
     {
-        final OnBehalfOf behalfTechnicalUser;
+        final OnBehalfOf behalfTechnicalUser = switch( retrievalStrategy ) {
+            case ALWAYS_PROVIDER -> TECHNICAL_USER_PROVIDER;
+            case CURRENT_TENANT, ONLY_SUBSCRIBER -> TECHNICAL_USER_CURRENT_TENANT;
+        };
 
-        switch( retrievalStrategy ) {
-            case ALWAYS_PROVIDER:
-                behalfTechnicalUser = TECHNICAL_USER_PROVIDER;
-                break;
-            case CURRENT_TENANT:
-            case ONLY_SUBSCRIBER:
-                behalfTechnicalUser = TECHNICAL_USER_CURRENT_TENANT;
-                break;
-            // sanity check
-            default:
-                throw new IllegalStateException(
-                    "Unexpected retrieval strategy "
-                        + retrievalStrategy
-                        + " when building a request towards the destination service.");
+        if( refreshToken != null ) {
+            return DestinationRetrievalStrategy.withRefreshToken(behalfTechnicalUser, refreshToken);
         }
 
-        switch( tokenExchangeStrategy ) {
-            case FORWARD_USER_TOKEN:
-                return new Strategy(behalfTechnicalUser, true);
-            case LOOKUP_ONLY:
-                return new Strategy(behalfTechnicalUser, false);
-            case EXCHANGE_ONLY:
-                return new Strategy(NAMED_USER_CURRENT_TENANT, false);
-            default:
-                // sanity check that this method is never called for LOOKUP_THEN_EXCHANGE
-                throw new IllegalStateException(
-                    "Unexpected token exchange strategy "
-                        + tokenExchangeStrategy
-                        + " when building a request towards the destination service.");
-        }
+        final Try<String> maybeToken =
+            AuthTokenAccessor.tryGetCurrentToken().map(AuthToken::getJwt).map(DecodedJWT::getToken);
+
+        return switch( tokenExchangeStrategy ) {
+            case FORWARD_USER_TOKEN -> maybeToken.isEmpty()
+                ? DestinationRetrievalStrategy.withoutToken(behalfTechnicalUser)
+                : DestinationRetrievalStrategy.withUserToken(behalfTechnicalUser, maybeToken.get());
+            case LOOKUP_ONLY -> DestinationRetrievalStrategy.withoutToken(behalfTechnicalUser);
+            case EXCHANGE_ONLY -> DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT);
+            // this method must never be called for LOOKUP_THEN_EXCHANGE
+            case LOOKUP_THEN_EXCHANGE -> throw new IllegalStateException(
+                "Unexpected token exchange strategy "
+                    + tokenExchangeStrategy
+                    + " when building a request towards the destination service.");
+        };
     }
 
     DestinationRetrieval prepareSupplier( @Nonnull final DestinationOptions options )
@@ -124,13 +110,23 @@ class DestinationRetrievalStrategyResolver
             DestinationServiceOptionsAugmenter
                 .getTokenExchangeStrategy(options)
                 .getOrElse(this::getDefaultTokenExchangeStrategy);
+        final String refreshToken =
+            DestinationServiceOptionsAugmenter
+                .getRefreshToken(options)
+                .peek(any -> log.debug("Refresh token given, applying refresh token flow."))
+                .getOrNull();
+        final String fragmentName =
+            DestinationServiceOptionsAugmenter
+                .getFragmentName(options)
+                .peek(it -> log.debug("Found fragment name '{}'.", it))
+                .getOrNull();
 
         log
             .debug(
                 "Loading destination from reuse-destination-service with retrieval strategy {} and token exchange strategy {}.",
                 retrievalStrategy,
                 tokenExchangeStrategy);
-        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy);
+        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy, refreshToken, fragmentName);
     }
 
     /**
@@ -167,7 +163,9 @@ class DestinationRetrievalStrategyResolver
     @SuppressWarnings( "deprecation" )
     DestinationRetrieval prepareSupplier(
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
-        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy )
+        @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
+        @Nullable final String refreshToken,
+        @Nullable final String fragmentName )
         throws DestinationAccessException
     {
         log
@@ -178,8 +176,14 @@ class DestinationRetrievalStrategyResolver
         warnOrThrowOnUnsupportedCombinations(retrievalStrategy, tokenExchangeStrategy);
 
         if( tokenExchangeStrategy == DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE ) {
-            final Strategy strategy =
-                resolveSingleRequestStrategy(retrievalStrategy, DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY);
+            final DestinationRetrievalStrategy strategy =
+                resolveSingleRequestStrategy(
+                    retrievalStrategy,
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY,
+                    refreshToken);
+            if( fragmentName != null ) {
+                strategy.withFragmentName(fragmentName);
+            }
             return new DestinationRetrieval(() -> {
                 final DestinationServiceV1Response result = destinationRetriever.apply(strategy);
                 if( !doesDestinationConfigurationRequireUserTokenExchange(result) ) {
@@ -189,12 +193,16 @@ class DestinationRetrievalStrategyResolver
                     throw new DestinationAccessException(
                         "Can't perform token exchange, the current token is not issued for the provider tenant.");
                 }
-                return destinationRetriever.apply(tokenExchangeOnlyStrategy);
-            }, strategy.getBehalf());
+                return destinationRetriever.apply(DestinationRetrievalStrategy.withoutToken(NAMED_USER_CURRENT_TENANT));
+            }, strategy.behalf());
         }
 
-        final Strategy strategy = resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy);
-        return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.getBehalf());
+        final DestinationRetrievalStrategy strategy =
+            resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy, refreshToken);
+        if( fragmentName != null ) {
+            strategy.withFragmentName(fragmentName);
+        }
+        return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.behalf());
     }
 
     @SuppressWarnings( "deprecation" )

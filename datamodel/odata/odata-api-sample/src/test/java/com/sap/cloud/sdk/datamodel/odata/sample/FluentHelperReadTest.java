@@ -33,26 +33,26 @@ class FluentHelperReadTest
     private static final String ODATA_QUERY_URL = ODATA_ENDPOINT_URL + "/Products";
     private static final String PRODUCT_RESPONSE_BODY =
         """
-        {
-          "d": {
-            "results": [{
-            "__metadata": {
-              "id": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
-              "uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
-              "type": "SdkGroceryStore.ProductType",
-              "etag": "W/\\"datetimeoffset'2018-04-25T09%3A51%3A49.1719080Z'\\""
-            },
-            "Id": "44444",
-            "Name": "Product",
-            "Price": "19.99",
-            "VendorId": 42,
-            "Image": "AQID",
-            "ShelfId": null,
-            "Vendor": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor"}},
-            "Shelf": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf"}}
-          }]}
-        }
-        """;
+            {
+              "d": {
+                "results": [{
+                "__metadata": {
+                  "id": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                  "uri": "https://127.0.0.1/com.sap.cloud.sdk.store.grocery/Products(44444)",
+                  "type": "SdkGroceryStore.ProductType",
+                  "etag": "W/\\"datetimeoffset'2018-04-25T09%3A51%3A49.1719080Z'\\""
+                },
+                "Id": "44444",
+                "Name": "Product",
+                "Price": "19.99",
+                "VendorId": 42,
+                "Image": "AQID",
+                "ShelfId": null,
+                "Vendor": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Vendor"}},
+                "Shelf": {"__deferred": {"uri": "https://127.0.0.1//com.sap.cloud.sdk.store.grocery/Products(44444)/Shelf"}}
+              }]}
+            }
+            """;
 
     private DefaultHttpDestination destination;
 

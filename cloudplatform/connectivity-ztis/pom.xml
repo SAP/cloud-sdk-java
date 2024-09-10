@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.9.0-SNAPSHOT</version>
+		<version>5.13.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-ztis</artifactId>
 	<name>Connectivity - Zero Trust Identity Service</name>
@@ -42,12 +42,12 @@
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
-				<version>3.25.3</version>
+				<version>3.25.4</version>
 			</dependency>
 			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
-				<version>1.63.0</version>
+				<version>1.66.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -85,6 +85,22 @@
 			<groupId>io.spiffe</groupId>
 			<artifactId>grpc-netty-linux</artifactId>
 			<version>0.8.6</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Override grpc versions from spiffe -->
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty-shaded</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-protobuf</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-stub</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

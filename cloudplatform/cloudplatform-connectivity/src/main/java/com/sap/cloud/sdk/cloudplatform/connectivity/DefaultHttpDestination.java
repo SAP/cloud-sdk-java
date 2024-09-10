@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +42,8 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
@@ -194,11 +195,19 @@ public final class DefaultHttpDestination implements HttpDestination
 
         final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
 
-        return aggregatedHeaderProviders
-            .stream()
-            .map(headerProvider -> headerProvider.getHeaders(requestContext))
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+        final List<Header> result = new ArrayList<>();
+        for( final DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {
+            try {
+                result.addAll(headerProvider.getHeaders(requestContext));
+            }
+            catch( final Exception e ) {
+                final String err =
+                    "Header provider '%s' threw an exception: %s"
+                        .formatted(headerProvider.getClass().getSimpleName(), e.getMessage());
+                throw new DestinationAccessException(err, e);
+            }
+        }
+        return result;
     }
 
     private Collection<Header> getHeadersForAuthType()
@@ -542,13 +551,29 @@ public final class DefaultHttpDestination implements HttpDestination
     /**
      * Builder class to allow for easy creation of an immutable {@code DefaultHttpDestination} instance.
      */
+    @Accessors( fluent = true, chain = true )
     public static class Builder
     {
         final List<Header> headers = Lists.newArrayList();
+
         final DefaultDestination.Builder builder = DefaultDestination.builder();
-        final DefaultHttpDestinationBuilderProxyHandler proxyHandler = new DefaultHttpDestinationBuilderProxyHandler();
+
+        @Setter( onParam_ = @Nullable, value = AccessLevel.PACKAGE )
+        private DefaultHttpDestinationBuilderProxyHandler proxyHandler =
+            new DefaultHttpDestinationBuilderProxyHandler();
+
+        /**
+         * The {@link KeyStore} to be used when communicating over HTTP.
+         */
+        @Setter( onParam_ = @Nullable )
         KeyStore keyStore = null;
+
+        /**
+         * The trust store to be used when communicating over HTTP.
+         */
+        @Setter( onParam_ = @Nullable )
         KeyStore trustStore = null;
+
         final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
 
         /**
@@ -601,8 +626,31 @@ public final class DefaultHttpDestination implements HttpDestination
             return builder.get(key, conversion);
         }
 
+        /**
+         * Removes the property with the given key from the destination to be created. This is useful when creating a
+         * builder from an existing destination and wanting to remove a property.
+         *
+         * @param key
+         *            The {@link DestinationPropertyKey} of the property to remove.
+         * @return This builder.
+         */
         @Nonnull
-        private Builder removeProperty( @Nonnull final DestinationPropertyKey<?> key )
+        public Builder removeProperty( @Nonnull final DestinationPropertyKey<?> key )
+        {
+            builder.removeProperty(key);
+            return this;
+        }
+
+        /**
+         * Removes the property with the given key from the destination to be created. This is useful when creating a
+         * builder from an existing destination and wanting to remove a property.
+         *
+         * @param key
+         *            The key of the property to remove.
+         * @return This builder.
+         */
+        @Nonnull
+        public Builder removeProperty( @Nonnull final String key )
         {
             builder.removeProperty(key);
             return this;
@@ -674,34 +722,6 @@ public final class DefaultHttpDestination implements HttpDestination
         public Builder keyStorePassword( @Nonnull final String value )
         {
             return property(DestinationProperty.KEY_STORE_PASSWORD, value);
-        }
-
-        /**
-         * Sets the {@link KeyStore} to be used when communicating over HTTP.
-         *
-         * @param keyStore
-         *            The keyStore that should be used for HTTP communication
-         * @return This builder.
-         */
-        @Nonnull
-        public Builder keyStore( @Nonnull final KeyStore keyStore )
-        {
-            this.keyStore = keyStore;
-            return this;
-        }
-
-        /**
-         * Sets the Trust Store to be used when communicating over HTTP.
-         *
-         * @param trustStore
-         *            The Trust Store that should be used. for HTTP communication
-         * @return This builder.
-         */
-        @Nonnull
-        public Builder trustStore( @Nonnull final KeyStore trustStore )
-        {
-            this.trustStore = trustStore;
-            return this;
         }
 
         /**
@@ -979,7 +999,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 property(DestinationProperty.TYPE, DestinationType.HTTP);
             }
 
-            if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
+            if( proxyHandler.canHandle(this) ) {
                 try {
                     return proxyHandler.handle(this);
                 }

@@ -77,6 +77,7 @@ public class GetAllRequestBuilder<EntityT extends VdmEntity<?>>
      * @param entityClass
      *            The expected entity type.
      */
+    @SuppressWarnings( "this-escape" )
     GetAllRequestBuilder(
         @Nonnull final String servicePath,
         @Nonnull final ODataResourcePath entityPath,

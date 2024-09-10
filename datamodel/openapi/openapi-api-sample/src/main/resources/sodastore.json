@@ -54,6 +54,11 @@
             "format": "int32",
             "example": 100
           },
+          "packaging": {
+            "type": "string",
+            "enum": ["glass", "carton", "can"],
+            "nullable": false
+          },
           "price": {
             "type": "number",
             "format": "float",
@@ -190,6 +195,9 @@
           },
           "404": {
             "description": "Soda product not found"
+          },
+          "204": {
+            "description": "Nothing has changed"
           }
         }
       }

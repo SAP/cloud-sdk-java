@@ -34,6 +34,7 @@ public class ErpTypeSerializer
     /**
      * Initializes the {@link ErpTypeSerializer} with default ERP type converters.
      */
+    @SuppressWarnings( "this-escape" )
     public ErpTypeSerializer()
     {
         withTypeConverters(

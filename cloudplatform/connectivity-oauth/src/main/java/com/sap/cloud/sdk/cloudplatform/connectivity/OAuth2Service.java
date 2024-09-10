@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +110,10 @@ class OAuth2Service
 
         final DefaultHttpDestination destination =
             DefaultHttpDestination
-                .builder(tokenUri)
+                // Giving an empty URL here as a workaround
+                // If we were to give the token URL here we can't change the subdomain later
+                // But the subdomain represents the tenant in case of IAS, so we have to change the subdomain per-tenant
+                .builder("")
                 .name("oauth-destination-ztis-" + identity.getId().hashCode())
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
@@ -311,15 +313,13 @@ class OAuth2Service
     static class Builder
     {
         private static final String XSUAA_TOKEN_PATH = "/oauth/token";
-        private static final Duration DEFAULT_TIME_OUT = Duration.ofSeconds(10);
 
         private URI tokenUri;
         private ClientIdentity identity;
         private OnBehalfOf onBehalfOf = OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
         private TenantPropagationStrategy tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
         private final Map<String, String> additionalParameters = new HashMap<>();
-        private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter =
-            ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TIME_OUT);
+        private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )

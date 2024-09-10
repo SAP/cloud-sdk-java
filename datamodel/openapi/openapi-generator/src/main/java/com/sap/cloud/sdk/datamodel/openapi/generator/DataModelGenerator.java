@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.function.IOConsumer;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 
@@ -107,15 +109,20 @@ public class DataModelGenerator
         });
     }
 
-    private void cleanOutputDirectoryIfRequested( final GenerationConfiguration generationConfiguration )
+    private void cleanOutputDirectoryIfRequested( final GenerationConfiguration configuration )
         throws IOException
     {
-        final File outputDirectory = FileUtils.getFile(generationConfiguration.getOutputDirectory());
-        if( generationConfiguration.deleteOutputDirectory()
-            && outputDirectory.exists()
-            && outputDirectory.isDirectory() ) {
-            log.info("Deleting output directory \"{}\".", outputDirectory.getAbsolutePath());
-            FileUtils.cleanDirectory(outputDirectory);
+        final File outputDirectory = FileUtils.getFile(configuration.getOutputDirectory());
+        if( configuration.deleteOutputDirectory() && outputDirectory.exists() && outputDirectory.isDirectory() ) {
+            log.info("Cleaning generated folders in output directory \"{}\".", outputDirectory.getAbsolutePath());
+
+            for( final var pckg : List.of(configuration.getModelPackage(), configuration.getApiPackage()) ) {
+                final var file = outputDirectory.toPath().resolve(pckg.replace(".", File.separator)).toFile();
+                if( file.exists() && file.isDirectory() ) {
+                    log.info("Deleting files from directory \"{}\".", file);
+                    IOConsumer.forAll(FileUtils::forceDelete, file);
+                }
+            }
         }
     }
 
@@ -149,17 +156,16 @@ public class DataModelGenerator
         if( configuration.getInputSpec() == null || configuration.getInputSpec().isEmpty() ) {
             throw new IllegalArgumentException("Input file path is null or empty.");
         }
-
-        if( configuration.getApiPackage() == null || configuration.getApiPackage().isEmpty() ) {
-            throw new IllegalArgumentException("API package is null or empty.");
-        }
-
-        if( configuration.getModelPackage() == null || configuration.getModelPackage().isEmpty() ) {
-            throw new IllegalArgumentException("Model package is null or empty.");
-        }
-
         if( configuration.getOutputDirectory() == null || configuration.getOutputDirectory().isEmpty() ) {
             throw new IllegalArgumentException("Output directory is null or empty.");
+        }
+
+        final Predicate<String> goodPackage = p -> !p.isEmpty() && !p.startsWith(".") && !p.contains(File.separator);
+        if( configuration.getApiPackage() == null || !goodPackage.test(configuration.getApiPackage()) ) {
+            throw new IllegalArgumentException("API package is null or empty or invalid.");
+        }
+        if( configuration.getModelPackage() == null || !goodPackage.test(configuration.getModelPackage()) ) {
+            throw new IllegalArgumentException("Model package is null or empty or invalid.");
         }
     }
 

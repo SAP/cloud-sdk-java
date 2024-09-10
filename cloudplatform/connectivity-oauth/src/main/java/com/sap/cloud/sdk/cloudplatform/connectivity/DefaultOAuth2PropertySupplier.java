@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.X509_ATTESTED;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -111,7 +109,13 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     @Nonnull
     public URI getTokenUri()
     {
-        final String tokenUrlProperty = getCredentialType() == CredentialType.X509 ? "certurl" : "url";
+        final String tokenUrlProperty = switch( getCredentialType() ) {
+            // note: this is for XSUAA only and does not apply for IAS (check the overridden method in the property supplier for IAS)
+            // currently XSUAA only recognizes X509 and X509_ATTESTED, so we don't necessarily have to list X509_PROVIDED and X509_GENERATED here
+            // still, doesn't hurt and is more future-proof in case XSUAA ever starts adopting these identifiers
+            case X509, X509_GENERATED, X509_PROVIDED, X509_ATTESTED -> "certurl";
+            case BINDING_SECRET, INSTANCE_SECRET -> "url";
+        };
         return getOAuthCredentialOrThrow(URI.class, tokenUrlProperty);
     }
 
@@ -119,7 +123,24 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     @Nonnull
     public ClientIdentity getClientIdentity()
     {
-        return getCredentialType() == CredentialType.X509 ? getCertificateIdentity() : getSecretIdentity();
+        final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
+
+        return switch( getCredentialType() ) {
+            case BINDING_SECRET, INSTANCE_SECRET -> getSecretIdentity(clientid);
+            case X509, X509_GENERATED -> getCertificateIdentity(clientid);
+            case X509_ATTESTED -> getZtisIdentity(clientid);
+            case X509_PROVIDED -> throw new DestinationAccessException(
+                "Credential type X509_PROVIDED is not supported. Please use X509_GENERATED or X509_ATTESTED instead.");
+        };
+    }
+
+    @Nonnull
+    @Override
+    public OAuth2Options getOAuth2Options()
+    {
+        final OAuth2Options.Builder builder = OAuth2Options.builder();
+        options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
+        return builder.build();
     }
 
     /**
@@ -134,22 +155,15 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     }
 
     @Nonnull
-    ClientIdentity getCertificateIdentity()
+    private ClientIdentity getCertificateIdentity( @Nonnull final String clientid )
     {
-        final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
-
-        final Option<String> exactCredentialType = getOAuthCredential(String.class, "credential-type");
-        if( exactCredentialType.contains(X509_ATTESTED) ) {
-            return getZtisClientIdentity(clientid);
-        }
-
         final String cert = getOAuthCredentialOrThrow(String.class, "certificate");
         final String key = getOAuthCredentialOrThrow(String.class, "key");
         return new ClientCertificate(cert, key, clientid);
     }
 
     @Nonnull
-    private ZtisClientIdentity getZtisClientIdentity( @Nonnull final String clientid )
+    private ZtisClientIdentity getZtisIdentity( @Nonnull final String clientid )
     {
         try {
             // sanity check: assert the connectivity-ztis module is present
@@ -175,9 +189,8 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     }
 
     @Nonnull
-    ClientIdentity getSecretIdentity()
+    private ClientIdentity getSecretIdentity( @Nonnull final String clientid )
     {
-        final String clientid = getOAuthCredentialOrThrow(String.class, "clientid");
         final String secret = getOAuthCredentialOrThrow(String.class, "clientsecret");
         return new ClientCredentials(clientid, secret);
     }
@@ -185,7 +198,12 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     @Nonnull
     CredentialType getCredentialType()
     {
-        return getOAuthCredential(CredentialType.class, "credential-type").getOrElse(CredentialType.BINDING_SECRET);
+        return getOAuthCredential(CredentialType.class, "credential-type")
+            .onEmpty(
+                () -> log
+                    .warn(
+                        "Credential type not found or not recognised in service binding. Defaulting to BINDING_SECRET."))
+            .getOrElse(CredentialType.BINDING_SECRET);
     }
 
     /**

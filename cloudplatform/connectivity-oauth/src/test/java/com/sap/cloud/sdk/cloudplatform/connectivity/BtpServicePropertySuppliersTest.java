@@ -116,7 +116,7 @@ class BtpServicePropertySuppliersTest
         private static final ServiceBinding X509_BINDING =
             bindingWithCredentials(
                 ServiceIdentifier.XSUAA,
-                entry("credential-type", "x509"),
+                entry("credential-type", "x509_generated"),
                 entry("clientid", "client-id"),
                 entry("key", "key"),
                 entry("certificate", "certificate"),
@@ -566,6 +566,7 @@ class BtpServicePropertySuppliersTest
         @Test
         void testClientIdWithTenantId()
         {
+            @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions options =
                 ServiceBindingDestinationOptions
                     .forService(BINDING)
@@ -710,6 +711,7 @@ class BtpServicePropertySuppliersTest
                 IasOptions.withApplicationName("application-name");
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientId =
                 IasOptions.withConsumerClient("client-id");
+            @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions.OptionsEnhancer<?> clientIdAndTenantId =
                 IasOptions.withConsumerClient("client-id", "tenant-id");
 
