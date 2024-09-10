@@ -31,6 +31,7 @@ public class ErpInteger extends IntegerBasedErpType<ErpInteger>
      * @throws IllegalArgumentException
      *             when the input value could not be converted.
      */
+    @SuppressWarnings( "this-escape" )
     public ErpInteger( @Nonnull final Long value )
     {
         super(value);
@@ -45,6 +46,7 @@ public class ErpInteger extends IntegerBasedErpType<ErpInteger>
      * @throws IllegalArgumentException
      *             when the input value could not be converted.
      */
+    @SuppressWarnings( "this-escape" )
     public ErpInteger( @Nullable final String str )
     {
         super(str);
@@ -59,6 +61,7 @@ public class ErpInteger extends IntegerBasedErpType<ErpInteger>
      * @throws IllegalArgumentException
      *             when the input value could not be converted.
      */
+    @SuppressWarnings( "this-escape" )
     public ErpInteger( @Nonnull final Integer value )
     {
         super(value);

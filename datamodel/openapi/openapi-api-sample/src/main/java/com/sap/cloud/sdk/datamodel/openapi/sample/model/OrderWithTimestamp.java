@@ -34,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * OrderWithTimestamp
  */
-
 // CHECKSTYLE:OFF
 public class OrderWithTimestamp
 // CHECKSTYLE:ON
@@ -49,7 +48,7 @@ public class OrderWithTimestamp
     private Float totalPrice;
 
     @JsonProperty( "typelessProperty" )
-    private Object typelessProperty = null;
+    private Object typelessProperty;
 
     @JsonProperty( "nullableProperty" )
     private String nullableProperty;
@@ -60,6 +59,10 @@ public class OrderWithTimestamp
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+
+    protected OrderWithTimestamp()
+    {
+    }
 
     /**
      * Set the productId of this {@link OrderWithTimestamp} instance and return the same instance.
@@ -79,7 +82,7 @@ public class OrderWithTimestamp
      * Get productId
      *
      * @return productId The productId of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Long getProductId()
     {
@@ -115,7 +118,7 @@ public class OrderWithTimestamp
      * Get quantity
      *
      * @return quantity The quantity of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Integer getQuantity()
     {
@@ -141,7 +144,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp totalPrice( @Nonnull final Float totalPrice )
+    public OrderWithTimestamp totalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
         return this;
@@ -151,7 +154,7 @@ public class OrderWithTimestamp
      * Get totalPrice
      *
      * @return totalPrice The totalPrice of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public Float getTotalPrice()
     {
@@ -164,7 +167,7 @@ public class OrderWithTimestamp
      * @param totalPrice
      *            The totalPrice of this {@link OrderWithTimestamp}
      */
-    public void setTotalPrice( @Nonnull final Float totalPrice )
+    public void setTotalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
     }
@@ -177,7 +180,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp typelessProperty( @Nonnull final Object typelessProperty )
+    public OrderWithTimestamp typelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
         return this;
@@ -187,8 +190,8 @@ public class OrderWithTimestamp
      * Some typeless property, interpreted by the generator as nullable by default (because typeless)
      *
      * @return typelessProperty The typelessProperty of this {@link OrderWithTimestamp} instance.
-     **/
-    @Nonnull
+     */
+    @Nullable
     public Object getTypelessProperty()
     {
         return typelessProperty;
@@ -200,7 +203,7 @@ public class OrderWithTimestamp
      * @param typelessProperty
      *            Some typeless property, interpreted by the generator as nullable by default (because typeless)
      */
-    public void setTypelessProperty( @Nonnull final Object typelessProperty )
+    public void setTypelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
     }
@@ -213,7 +216,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp nullableProperty( @Nonnull final String nullableProperty )
+    public OrderWithTimestamp nullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
         return this;
@@ -223,8 +226,8 @@ public class OrderWithTimestamp
      * Some typed property that is deliberately made nullable
      *
      * @return nullableProperty The nullableProperty of this {@link OrderWithTimestamp} instance.
-     **/
-    @Nonnull
+     */
+    @Nullable
     public String getNullableProperty()
     {
         return nullableProperty;
@@ -236,7 +239,7 @@ public class OrderWithTimestamp
      * @param nullableProperty
      *            Some typed property that is deliberately made nullable
      */
-    public void setNullableProperty( @Nonnull final String nullableProperty )
+    public void setNullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
     }
@@ -249,7 +252,7 @@ public class OrderWithTimestamp
      * @return The same instance of this {@link OrderWithTimestamp} class
      */
     @Nonnull
-    public OrderWithTimestamp timestamp( @Nonnull final OffsetDateTime timestamp )
+    public OrderWithTimestamp timestamp( @Nullable final OffsetDateTime timestamp )
     {
         this.timestamp = timestamp;
         return this;
@@ -259,7 +262,7 @@ public class OrderWithTimestamp
      * Get timestamp
      *
      * @return timestamp The timestamp of this {@link OrderWithTimestamp} instance.
-     **/
+     */
     @Nonnull
     public OffsetDateTime getTimestamp()
     {
@@ -272,7 +275,7 @@ public class OrderWithTimestamp
      * @param timestamp
      *            The timestamp of this {@link OrderWithTimestamp}
      */
-    public void setTimestamp( @Nonnull final OffsetDateTime timestamp )
+    public void setTimestamp( @Nullable final OffsetDateTime timestamp )
     {
         this.timestamp = timestamp;
     }
@@ -376,6 +379,45 @@ public class OrderWithTimestamp
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link OrderWithTimestamp} instance with all
+     * required arguments.
+     */
+    public static Builder create()
+    {
+        return ( productId ) -> ( quantity ) -> new OrderWithTimestamp().productId(productId).quantity(quantity);
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder
+    {
+        /**
+         * Set the productId of this {@link OrderWithTimestamp} instance.
+         *
+         * @param productId
+         *            The productId of this {@link OrderWithTimestamp}
+         * @return The OrderWithTimestamp builder.
+         */
+        Builder1 productId( @Nonnull final Long productId );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder1
+    {
+        /**
+         * Set the quantity of this {@link OrderWithTimestamp} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link OrderWithTimestamp}
+         * @return The OrderWithTimestamp instance.
+         */
+        OrderWithTimestamp quantity( @Nonnull final Integer quantity );
     }
 
 }

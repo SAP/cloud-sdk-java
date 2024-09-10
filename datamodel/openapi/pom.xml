@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>datamodel-parent</artifactId>
-		<version>5.10.0-SNAPSHOT</version>
+		<version>5.13.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-parent</artifactId>
 	<packaging>pom</packaging>
@@ -33,6 +33,7 @@
 		<module>openapi-core</module>
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
+		<module>openapi-api-sample</module>
 	</modules>
 	<scm>
 		<connection />
@@ -53,18 +54,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<profiles>
-		<profile>
-			<id>code.scans.included</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>sdk.code.scanning</name>
-				</property>
-			</activation>
-			<modules>
-				<module>openapi-api-sample</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>

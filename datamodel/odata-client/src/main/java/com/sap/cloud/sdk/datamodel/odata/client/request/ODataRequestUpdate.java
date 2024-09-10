@@ -18,6 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -155,7 +156,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
 
         final Header contentType = httpEntity.getContentType();
         if( contentType != null ) {
-            addHeaderIfAbsent(CONTENT_TYPE, contentType.getValue());
+            headers.putIfAbsent(CONTENT_TYPE, Lists.newArrayList(contentType.getValue()));
         }
     }
 

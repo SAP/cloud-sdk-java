@@ -139,7 +139,7 @@ jobs:
         env:
           PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
-      - name: "Perform Release"
+      - name: "Deploy Locally"
         run: >
           mvn
           $MVN_CLI_ARGS
@@ -149,7 +149,13 @@ jobs:
           -Dgpg.passphrase="$GPG_PASSPHRASE"
           -Dgpg.keyname="$MAVEN_CENTRAL_USER"
           deploy
+        env:
+          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
+      - name: "Deploy Staging"
+        run: >
           mvn
           $MVN_CLI_ARGS
           org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository
@@ -158,10 +164,9 @@ jobs:
           -DrepositoryDirectory=./temp_local_repo
           -DstagingProfileId=$MAVEN_CENTRAL_PROFILE_ID
         env:
-          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_CENTRAL_USER: ${{ secrets.SONATYPE_TOKEN_NAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.SONATYPE_TOKEN_PASS }}
           MAVEN_CENTRAL_PROFILE_ID: ${{ secrets.MAVEN_CENTRAL_PROFILE_ID }}
-          GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
       - name: "Merge Code PR"
         if: ${{ inputs.skip-pr-merge != 'true' }}

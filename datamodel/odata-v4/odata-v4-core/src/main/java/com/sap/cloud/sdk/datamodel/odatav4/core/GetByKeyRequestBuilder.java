@@ -98,6 +98,7 @@ public class GetByKeyRequestBuilder<EntityT extends VdmEntity<?>>
      * @param entityPath
      *            The {@link ODataResourcePath} that identifies the entity to read.
      */
+    @SuppressWarnings( "this-escape" )
     GetByKeyRequestBuilder(
         @Nonnull final String servicePath,
         @Nonnull final ODataResourcePath entityPath,

@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -314,7 +313,6 @@ class OAuth2Service
     static class Builder
     {
         private static final String XSUAA_TOKEN_PATH = "/oauth/token";
-        private static final Duration DEFAULT_TIME_OUT = Duration.ofSeconds(10);
 
         /**
          * {@link ServiceIdentifier#IDENTITY_AUTHENTICATION} referenced indirectly for backwards compatibility.
@@ -326,8 +324,7 @@ class OAuth2Service
         private OnBehalfOf onBehalfOf = OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
         private TenantPropagationStrategy tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
         private final Map<String, String> additionalParameters = new HashMap<>();
-        private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter =
-            ResilienceConfiguration.TimeLimiterConfiguration.of(DEFAULT_TIME_OUT);
+        private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )

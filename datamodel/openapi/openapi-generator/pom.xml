@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>5.10.0-SNAPSHOT</version>
+		<version>5.13.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-generator</artifactId>
 	<packaging>jar</packaging>
@@ -105,6 +105,18 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser-core</artifactId>
 		</dependency>
 		<!-- scope test -->
 		<dependency>

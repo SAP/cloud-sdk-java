@@ -10,6 +10,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.annotation.Nonnull;
+
 import com.sap.cloud.sdk.typeconverter.TypeConverter;
 
 /**
@@ -25,6 +27,7 @@ public @interface ODataField {
      *
      * @return The name of the corresponding OData property.
      */
+    @Nonnull
     String odataName();
 
     /**
@@ -32,5 +35,6 @@ public @interface ODataField {
      *
      * @return The type of the converter to use for the annotated field.
      */
+    @Nonnull
     Class<? extends TypeConverter<?, ?>> converter() default IdentityConverter.class;
 }

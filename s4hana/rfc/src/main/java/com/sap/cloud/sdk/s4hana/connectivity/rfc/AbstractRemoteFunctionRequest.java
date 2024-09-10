@@ -96,6 +96,7 @@ public abstract class AbstractRemoteFunctionRequest<RequestT extends AbstractRem
      * @param constructedByMethod
      *            The name of the method from which this constructor is being called.
      */
+    @SuppressWarnings( "this-escape" )
     protected AbstractRemoteFunctionRequest(
         @Nonnull final String functionName,
         @Nonnull final CommitStrategy commitStrategy,

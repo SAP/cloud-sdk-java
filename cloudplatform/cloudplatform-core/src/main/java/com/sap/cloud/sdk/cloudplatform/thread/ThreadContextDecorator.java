@@ -19,7 +19,13 @@ public interface ThreadContextDecorator
      */
     class DefaultPriorities
     {
+        /**
+         * The priority for the security context decorator.
+         */
         public static final int SCP_CF_SECURITY_CONTEXT_DECORATOR = -1;
+        /**
+         * The priority for the custom decorator.
+         */
         public static final int CUSTOM_DECORATOR = 0;
     }
 

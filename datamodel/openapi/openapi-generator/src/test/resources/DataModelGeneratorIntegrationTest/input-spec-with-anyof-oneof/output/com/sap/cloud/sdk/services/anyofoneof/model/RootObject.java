@@ -44,7 +44,6 @@ import javax.annotation.Nullable;
 /**
  * RootObject
  */
-
 // CHECKSTYLE:OFF
 public class RootObject 
 // CHECKSTYLE:ON
@@ -56,22 +55,22 @@ public class RootObject
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
+  /**
    * Set the questions of this {@link RootObject} instance and return the same instance.
    *
    * @param questions  The questions of this {@link RootObject}
    * @return The same instance of this {@link RootObject} class
    */
-   @Nonnull public RootObject questions(@Nonnull final List<RootObjectQuestionsInner> questions) {
+  @Nonnull public RootObject questions( @Nullable final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
     return this;
   }
   /**
-  * Add one questions instance to this {@link RootObject}.
-  * @param questionsItem The questions that should be added
-  * @return The same instance of type {@link RootObject}
-  */
-  @Nonnull public RootObject addquestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
+   * Add one questions instance to this {@link RootObject}.
+   * @param questionsItem The questions that should be added
+   * @return The same instance of type {@link RootObject}
+   */
+  @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
     if (this.questions == null) {
       this.questions = new ArrayList<>();
     }
@@ -79,20 +78,20 @@ public class RootObject
     return this;
   }
 
-   /**
+  /**
    * Get questions
    * @return questions  The questions of this {@link RootObject} instance.
-  **/
+   */
   @Nonnull public List<RootObjectQuestionsInner> getQuestions() {
     return questions;
   }
 
   /**
-  * Set the questions of this {@link RootObject} instance.
-  *
-  * @param questions  The questions of this {@link RootObject}
-  */
-  public void setQuestions( @Nonnull final List<RootObjectQuestionsInner> questions) {
+   * Set the questions of this {@link RootObject} instance.
+   *
+   * @param questions  The questions of this {@link RootObject}
+   */
+  public void setQuestions( @Nullable final List<RootObjectQuestionsInner> questions) {
     this.questions = questions;
   }
 
@@ -113,7 +112,7 @@ public class RootObject
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("RootObject has no field with name '" + name + "'.");
     }
@@ -171,6 +170,7 @@ public class RootObject
     }
     return o.toString().replace("\n", "\n    ");
   }
+
 
 }
 

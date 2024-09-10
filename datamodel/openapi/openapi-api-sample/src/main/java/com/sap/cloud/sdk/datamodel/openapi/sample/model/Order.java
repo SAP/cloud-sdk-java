@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Order
  */
-
 // CHECKSTYLE:OFF
 public class Order
 // CHECKSTYLE:ON
@@ -57,6 +56,10 @@ public class Order
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    protected Order()
+    {
+    }
+
     /**
      * Set the productId of this {@link Order} instance and return the same instance.
      *
@@ -75,7 +78,7 @@ public class Order
      * Get productId
      *
      * @return productId The productId of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Long getProductId()
     {
@@ -111,7 +114,7 @@ public class Order
      * Get quantity
      *
      * @return quantity The quantity of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Integer getQuantity()
     {
@@ -137,7 +140,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order totalPrice( @Nonnull final Float totalPrice )
+    public Order totalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
         return this;
@@ -147,7 +150,7 @@ public class Order
      * Get totalPrice
      *
      * @return totalPrice The totalPrice of this {@link Order} instance.
-     **/
+     */
     @Nonnull
     public Float getTotalPrice()
     {
@@ -160,7 +163,7 @@ public class Order
      * @param totalPrice
      *            The totalPrice of this {@link Order}
      */
-    public void setTotalPrice( @Nonnull final Float totalPrice )
+    public void setTotalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
     }
@@ -173,7 +176,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order typelessProperty( @Nonnull final Object typelessProperty )
+    public Order typelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
         return this;
@@ -183,8 +186,8 @@ public class Order
      * Some typeless property, interpreted by the generator as nullable by default (because typeless)
      *
      * @return typelessProperty The typelessProperty of this {@link Order} instance.
-     **/
-    @Nonnull
+     */
+    @Nullable
     public Object getTypelessProperty()
     {
         return typelessProperty;
@@ -196,7 +199,7 @@ public class Order
      * @param typelessProperty
      *            Some typeless property, interpreted by the generator as nullable by default (because typeless)
      */
-    public void setTypelessProperty( @Nonnull final Object typelessProperty )
+    public void setTypelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
     }
@@ -209,7 +212,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order nullableProperty( @Nonnull final String nullableProperty )
+    public Order nullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
         return this;
@@ -219,8 +222,8 @@ public class Order
      * Some typed property that is deliberately made nullable
      *
      * @return nullableProperty The nullableProperty of this {@link Order} instance.
-     **/
-    @Nonnull
+     */
+    @Nullable
     public String getNullableProperty()
     {
         return nullableProperty;
@@ -232,7 +235,7 @@ public class Order
      * @param nullableProperty
      *            Some typed property that is deliberately made nullable
      */
-    public void setNullableProperty( @Nonnull final String nullableProperty )
+    public void setNullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
     }
@@ -333,6 +336,45 @@ public class Order
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link Order} instance with all required
+     * arguments.
+     */
+    public static Builder create()
+    {
+        return ( productId ) -> ( quantity ) -> new Order().productId(productId).quantity(quantity);
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder
+    {
+        /**
+         * Set the productId of this {@link Order} instance.
+         *
+         * @param productId
+         *            The productId of this {@link Order}
+         * @return The Order builder.
+         */
+        Builder1 productId( @Nonnull final Long productId );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder1
+    {
+        /**
+         * Set the quantity of this {@link Order} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link Order}
+         * @return The Order instance.
+         */
+        Order quantity( @Nonnull final Integer quantity );
     }
 
 }

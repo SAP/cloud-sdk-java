@@ -72,6 +72,7 @@ public enum DestinationServiceTokenExchangeStrategy
         this.identifier = identifier;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {

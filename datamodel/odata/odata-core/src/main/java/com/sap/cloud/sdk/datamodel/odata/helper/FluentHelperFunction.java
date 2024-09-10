@@ -51,6 +51,7 @@ public abstract class FluentHelperFunction<FluentHelperT, ObjectT, ResultT>
     /**
      * Upper-case HTTP method derived from {@link #createRequest(URI)} method.
      */
+    @SuppressWarnings( "this-escape" )
     private final Lazy<String> httpMethod = Lazy.of(() -> createRequest(URI.create("")).getMethod().toUpperCase());
 
     private boolean csrfTokenRetrieverUpdated = false;

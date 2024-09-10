@@ -27,33 +27,34 @@ public class GenerationConfiguration
     String outputDirectory;
     String apiPackage;
     String modelPackage;
+
     @Builder.Default
     ApiMaturity apiMaturity = ApiMaturity.DEFAULT;
+
     @Builder.Default
     String copyrightHeader = "";
+
+    /**
+     * Indicates whether to use verbose output. <br>
+     * <strong>Please note:</strong> This boolean property has no more effect.
+     */
     @Builder.Default
-    @Getter( AccessLevel.NONE )
+    @Getter( AccessLevel.PUBLIC )
     boolean verbose = false;
+
     @Builder.Default
     @Getter( AccessLevel.NONE )
     boolean withSapCopyrightHeader = false;
+
     @Builder.Default
     @Getter( AccessLevel.NONE )
     boolean deleteOutputDirectory = false;
+
     @Singular( ignoreNullCollections = true )
     Map<String, String> additionalProperties;
+
     @Builder.Default
     boolean oneOfAnyOfGenerationEnabled = false;
-
-    /**
-     * Indicates whether to use verbose output.
-     *
-     * @return {@code true} if verbose output should be used, {@code false} otherwise.
-     */
-    public boolean isVerbose()
-    {
-        return verbose;
-    }
 
     /**
      * Indicates whether to use the default SAP copyright header for generated files.
@@ -66,10 +67,10 @@ public class GenerationConfiguration
     }
 
     /**
-     * Indicates whether to delete the output directory prior to the generation.
+     * Indicates whether to delete the generated files from output directory prior to the generation.
      *
-     * @return {@code true} if the output directory should be deleted before generating the OpenAPI client,
-     *         {@code false} otherwise.
+     * @return {@code true} if the generated files should be deleted from output directory before generating the OpenAPI
+     *         client, {@code false} otherwise.
      */
     public boolean deleteOutputDirectory()
     {

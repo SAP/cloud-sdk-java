@@ -213,7 +213,7 @@ class DestinationRetrievalStrategyResolverTest
                     .executeWithTenant(
                         c._3(),
                         () -> softly
-                            .assertThatThrownBy(() -> sut.prepareSupplier(c._1(), c._2(), null))
+                            .assertThatThrownBy(() -> sut.prepareSupplier(c._1(), c._2(), null, null))
                             .as("Expecting '%s' with '%s' and '%s' to throw.", c._1(), c._2(), c._3())
                             .isInstanceOf(DestinationAccessException.class)));
 
@@ -234,7 +234,12 @@ class DestinationRetrievalStrategyResolverTest
     {
         doAnswer(( any ) -> true).when(sut).doesDestinationConfigurationRequireUserTokenExchange(any());
         final DestinationRetrieval supplier =
-            sut.prepareSupplier(ALWAYS_PROVIDER, DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE, null);
+            sut
+                .prepareSupplier(
+                    ALWAYS_PROVIDER,
+                    DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE,
+                    null,
+                    null);
 
         TenantAccessor
             .executeWithTenant(
@@ -259,7 +264,7 @@ class DestinationRetrievalStrategyResolverTest
         sut.prepareSupplier(DestinationOptions.builder().build());
         sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
 
-        verify(sut).prepareSupplier(CURRENT_TENANT, FORWARD_USER_TOKEN, null);
+        verify(sut).prepareSupplier(CURRENT_TENANT, FORWARD_USER_TOKEN, null, null);
         verify(sut).prepareSupplierAllDestinations(CURRENT_TENANT);
     }
 
@@ -272,7 +277,8 @@ class DestinationRetrievalStrategyResolverTest
         sut.prepareSupplier(DestinationOptions.builder().build());
         sut.prepareSupplierAllDestinations(DestinationOptions.builder().build());
 
-        verify(sut).prepareSupplier(CURRENT_TENANT, DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE, null);
+        verify(sut)
+            .prepareSupplier(CURRENT_TENANT, DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE, null, null);
         verify(sut).prepareSupplierAllDestinations(CURRENT_TENANT);
     }
 
@@ -289,5 +295,20 @@ class DestinationRetrievalStrategyResolverTest
         sut.prepareSupplier(opts);
 
         verify(sut).resolveSingleRequestStrategy(eq(CURRENT_TENANT), eq(LOOKUP_ONLY), eq(refreshToken));
+    }
+
+    @Test
+    void testFragmentName()
+    {
+        final String fragmentName = "my-fragment";
+        final DestinationOptions opts =
+            DestinationOptions
+                .builder()
+                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName(fragmentName))
+                .build();
+
+        sut.prepareSupplier(opts);
+
+        verify(sut).prepareSupplier(any(), any(), eq(null), eq(fragmentName));
     }
 }
