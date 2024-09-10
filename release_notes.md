@@ -8,9 +8,16 @@
 
 ### 🔧 Compatibility Notes
 
+- Minimum required versions:
+  - SAP BTP Security Services Integration Libraries `com.sap.cloud.security` 3.4.3 
+  - CAP `com.sap.cds` 2.9.3
+  - SAP Java Buildpack `com.sap.cloud.sjb` 2.10.0
+- Using IAS requires XSUAA version to be minimum `3.4.0`.
+- Change the `DefaultHttpDestination.Builder` to throw an exception when the proxy configuration can not be determined for on-premise destinations.
+  Previously, only an error was logged to give a grace period for analyzing and fixing the underlying issue.
 - Change the default implementations of `HttpClientCache` and `ApacheHttpClient5Cache` to throw an exception in cases where previously only an error was logged.
   The previous behavior of logging an error and falling back to creating a new http client granted a grace period to fix the underlying issue.
-  
+
 ### ✨ New Functionality
 
 - 
