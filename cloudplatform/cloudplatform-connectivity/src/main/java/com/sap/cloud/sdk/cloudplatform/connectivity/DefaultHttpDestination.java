@@ -1004,15 +1004,7 @@ public final class DefaultHttpDestination implements HttpDestination
                     return proxyHandler.handle(this);
                 }
                 catch( final Exception e ) {
-                    final String msg =
-                        """
-                            Unable to resolve proxy configuration for destination. \
-                            This destination cannot be used for anything other than reading its properties. \
-                            This is unexpected and will be changed to fail instead in a future version of Cloud SDK. \
-                            Please analyze the attached stack trace and resolve the issue. \
-                            In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.\
-                            """;
-                    log.error(msg, e);
+                    throw new DestinationAccessException("Unable to resolve proxy configuration for destination", e);
                 }
             }
             return buildInternal();
