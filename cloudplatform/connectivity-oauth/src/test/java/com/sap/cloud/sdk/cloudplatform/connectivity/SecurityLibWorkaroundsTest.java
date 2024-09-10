@@ -26,20 +26,18 @@ class SecurityLibWorkaroundsTest
     @Test
     void testGetCredentialType()
     {
-        assertThat(SecurityLibWorkarounds.getCredentialType("binding-secret")).isEqualTo(CredentialType.BINDING_SECRET);
-        assertThat(SecurityLibWorkarounds.getCredentialType("Binding-Secret")).isEqualTo(CredentialType.BINDING_SECRET);
-        assertThat(SecurityLibWorkarounds.getCredentialType("instance-secret"))
-            .isEqualTo(CredentialType.INSTANCE_SECRET);
-        assertThat(SecurityLibWorkarounds.getCredentialType("Instance-Secret"))
-            .isEqualTo(CredentialType.INSTANCE_SECRET);
-        assertThat(SecurityLibWorkarounds.getCredentialType("X509_GENERATED")).isEqualTo(CredentialType.X509_GENERATED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("x509_generated")).isEqualTo(CredentialType.X509_GENERATED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("X509_ATTESTED")).isEqualTo(CredentialType.X509_ATTESTED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("x509_attested")).isEqualTo(CredentialType.X509_ATTESTED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("X509_PROVIDED")).isEqualTo(CredentialType.X509_PROVIDED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("x509_provided")).isEqualTo(CredentialType.X509_PROVIDED);
-        assertThat(SecurityLibWorkarounds.getCredentialType("X509")).isEqualTo(CredentialType.X509);
-        assertThat(SecurityLibWorkarounds.getCredentialType("x509")).isEqualTo(CredentialType.X509);
-        assertThat(SecurityLibWorkarounds.getCredentialType("foo")).isNull();
+        assertThat(CredentialType.from("binding-secret")).isEqualTo(CredentialType.BINDING_SECRET);
+        assertThat(CredentialType.from("Binding-Secret")).isEqualTo(CredentialType.BINDING_SECRET);
+        assertThat(CredentialType.from("instance-secret")).isEqualTo(CredentialType.INSTANCE_SECRET);
+        assertThat(CredentialType.from("Instance-Secret")).isEqualTo(CredentialType.INSTANCE_SECRET);
+        assertThat(CredentialType.from("X509_GENERATED")).isEqualTo(CredentialType.X509_GENERATED);
+        assertThat(CredentialType.from("x509_generated")).isEqualTo(CredentialType.X509_GENERATED);
+        assertThat(CredentialType.from("X509_ATTESTED")).isEqualTo(CredentialType.X509_ATTESTED);
+        assertThat(CredentialType.from("x509_attested")).isEqualTo(CredentialType.X509_ATTESTED);
+        assertThat(CredentialType.from("X509_PROVIDED")).isEqualTo(CredentialType.X509_PROVIDED);
+        assertThat(CredentialType.from("x509_provided")).isEqualTo(CredentialType.X509_PROVIDED);
+        assertThat(CredentialType.from("X509")).isEqualTo(CredentialType.X509);
+        assertThat(CredentialType.from("x509")).isEqualTo(CredentialType.X509);
+        assertThat(CredentialType.from("foo")).isNull();
     }
 }
