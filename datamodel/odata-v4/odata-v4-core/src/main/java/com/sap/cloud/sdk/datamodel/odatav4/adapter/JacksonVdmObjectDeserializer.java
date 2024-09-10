@@ -99,7 +99,7 @@ public class JacksonVdmObjectDeserializer extends StdDeserializer<VdmObject<?>> 
                 throw new IOException(
                     "Expected field name at current position of JSON object. Instead there was " + token);
             }
-            final String fieldName = parser.getCurrentName();
+            final String fieldName = parser.currentName();
 
             // Step from JSON element name to element value
             parser.nextToken();

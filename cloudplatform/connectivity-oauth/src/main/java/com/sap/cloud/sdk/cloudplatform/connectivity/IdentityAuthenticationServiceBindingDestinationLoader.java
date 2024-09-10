@@ -14,6 +14,7 @@ import com.sap.cloud.environment.servicebinding.api.TypedMapView;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 
+import io.vavr.Lazy;
 import io.vavr.control.Try;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IdentityAuthenticationServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
-    private static final DestinationNotFoundException NOT_AN_IAS_SERVICE_BINDING =
-        new DestinationNotFoundException("The bound service is not backed by the IAS service.");
     private static final DestinationAccessException NOT_EXACTLY_ONE_ENDPOINT =
         new DestinationAccessException("The IAS-based service binding contains multiple HTTP endpoints.");
 
@@ -40,23 +39,38 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     private static final String PROPERTY_TYPE_MISMATCH_WITH_FALLBACK_TEMPLATE =
         "The '{}' attribute of the IAS-based service binding is expected to be an instance of {}, which is not the case. The fallback value will be used instead.";
 
-    private static final ServiceIdentifier NULL_IDENTIFIER = ServiceIdentifier.of("unknown-service");
+    // We have a sort of circular reference here:
+    // ServiceBindingDestinationLoader
+    //   -> DefaultServiceBindingDestinationLoaderChain
+    //      -> DEFAULT_INSTANCE
+    //       -> DEFAULT_DELEGATE_LOADERS
+    //          -> IdentityAuthenticationServiceBindingDestinationLoader
+    //            -> delegateLoader
+    //               -> DefaultServiceBindingDestinationLoaderChain
+    //                  -> DEFAULT_INSTANCE
+    //                      -> ...
+    // So this needs to be lazy, as otherwise it will reference DefaultServiceBindingDestinationLoaderChain#DEFAULT_INSTANCE before it is initialized and cause an NPE.
     @Nonnull
-    private final ServiceBindingDestinationLoader delegateLoader;
+    private final Lazy<ServiceBindingDestinationLoader> delegateLoader;
 
     /**
      * The default constructor.
      */
     public IdentityAuthenticationServiceBindingDestinationLoader()
     {
-        this(ServiceBindingDestinationLoader.defaultLoaderChain());
+        delegateLoader = Lazy.of(ServiceBindingDestinationLoader::defaultLoaderChain);
     }
 
     // for testing purposes
     IdentityAuthenticationServiceBindingDestinationLoader(
         @Nonnull final ServiceBindingDestinationLoader delegateLoader )
     {
-        this.delegateLoader = delegateLoader;
+        this.delegateLoader = Lazy.of(() -> delegateLoader);
+    }
+
+    ServiceBindingDestinationLoader getDelegateLoader()
+    {
+        return delegateLoader.get();
     }
 
     @Nonnull
@@ -64,27 +78,51 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
     public Try<HttpDestination> tryGetDestination( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceBinding serviceBinding = options.getServiceBinding();
+        final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
+
+        final String preparedMessage =
+            "Failed to create a destination for service '%s' using IAS OAuth credentials."
+                .formatted(serviceBinding.getServiceIdentifier().orElse(null));
+
+        // please note: The IAS service binding itself is not meant to be handled by this loader, but is handled by the OAuth loader
+        // this
+        if( !IasServiceBindingView.isBackedByIas(credentials) ) {
+            return Try
+                .failure(
+                    new DestinationNotFoundException(
+                        null,
+                        preparedMessage + " The service binding does not represent a re-use service backed by IAS."));
+        }
+
         final Try<HttpEndpointEntry> maybeEndpoint =
             IasServiceBindingView
-                .tryFromServiceBinding(serviceBinding)
+                .tryFromCredentials(credentials)
                 .flatMapTry(IdentityAuthenticationServiceBindingDestinationLoader::tryGetEndpoint);
         if( maybeEndpoint.isFailure() ) {
-            return Try.failure(maybeEndpoint.getCause());
+            return Try.failure(new DestinationAccessException(preparedMessage, maybeEndpoint.getCause()));
         }
 
         final HttpEndpointEntry endpoint = maybeEndpoint.get();
 
-        final ServiceBindingDestinationOptions.Builder optionsBuilder =
-            ServiceBindingDestinationOptions
-                .forService(ServiceIdentifier.of("identity"))
-                .onBehalfOf(options.getOnBehalfOf())
-                .withOption(BtpServiceOptions.IasOptions.withTargetUri(endpoint.uri));
+        final ServiceBindingDestinationOptions.Builder optionsBuilder;
+        try {
+            optionsBuilder = ServiceBindingDestinationOptions.forService(ServiceIdentifier.of("identity"));
+        }
+        catch( final DestinationAccessException e ) {
+            return Try.failure(new DestinationAccessException(preparedMessage, e));
+        }
+        optionsBuilder
+            .onBehalfOf(options.getOnBehalfOf())
+            .withOption(BtpServiceOptions.AuthenticationServiceOptions.withTargetUri(endpoint.uri));
 
         if( !endpoint.alwaysRequiresToken ) {
             optionsBuilder.withOption(BtpServiceOptions.IasOptions.withoutTokenForTechnicalProviderUser());
         }
 
-        return delegateLoader.tryGetDestination(optionsBuilder.build());
+        final Try<HttpDestination> maybeDestination = getDelegateLoader().tryGetDestination(optionsBuilder.build());
+        return maybeDestination.isSuccess()
+            ? maybeDestination
+            : Try.failure(new DestinationAccessException(null, preparedMessage, maybeDestination.getCause()));
     }
 
     @Nonnull
@@ -104,24 +142,21 @@ public class IdentityAuthenticationServiceBindingDestinationLoader implements Se
         List<HttpEndpointEntry> endpoints;
 
         @Nonnull
-        static Try<IasServiceBindingView> tryFromServiceBinding( @Nonnull final ServiceBinding serviceBinding )
+        static Try<IasServiceBindingView> tryFromCredentials( @Nonnull final TypedMapView credentials )
         {
-            final TypedMapView credentials = TypedMapView.ofCredentials(serviceBinding);
-            final TypedMapView authenticationService = getAuthenticationServiceOrNull(credentials);
-
-            if( authenticationService == null || !isBackedByIas(authenticationService) ) {
-                return Try.failure(NOT_AN_IAS_SERVICE_BINDING);
-            }
             return Try.of(() -> getHttpEndpointsOrThrow(credentials)).map(IasServiceBindingView::new);
         }
 
-        private static TypedMapView getAuthenticationServiceOrNull( @Nonnull final TypedMapView credentials )
+        private static boolean isBackedByIas( @Nonnull final TypedMapView credentials )
         {
-            return getWithFallback(TypedMapView.class, credentials, "authentication-service", null);
-        }
+            @Nullable
+            final TypedMapView authenticationService =
+                getWithFallback(TypedMapView.class, credentials, "authentication-service", null);
+            if( authenticationService == null ) {
+                return false;
+            }
 
-        private static boolean isBackedByIas( @Nonnull final TypedMapView authenticationService )
-        {
+            @Nullable
             final String serviceLabel = getWithFallback(String.class, authenticationService, "service-label", null);
             return "identity".equalsIgnoreCase(serviceLabel);
         }

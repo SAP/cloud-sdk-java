@@ -2,9 +2,9 @@
  * {{description}}{{^description}}{{classname}}{{/description}}{{#isDeprecated}}
  * @deprecated{{/isDeprecated}}
  */{{#isDeprecated}}
-@Deprecated{{/isDeprecated}}
-{{>generatedAnnotation}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}
-{{^isReleased}}@Beta{{/isReleased}}
+@Deprecated{{/isDeprecated}}{{#discriminator}}
+{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}{{^isReleased}}
+@Beta{{/isReleased}}
 // CHECKSTYLE:OFF
 public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcelableModel}}implements Parcelable {{/parcelableModel}}{{^parcelableModel}}{{/parcelableModel}}
 // CHECKSTYLE:ON
@@ -68,10 +68,15 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   {{/parent}}
   }
   {{/parcelableModel}}
+  {{^parcelableModel}}
+  {{#pojoConstructorVisibility}}
+  {{pojoConstructorVisibility}} {{classname}}() { {{#parent}}super();{{/parent}} }
+  {{/pojoConstructorVisibility}}
+  {{/parcelableModel}}
   {{#vars}}
   {{^isReadOnly}}
 
-   /**
+  /**
    * Set the {{name}} of this {@link {{classname}}} instance and return the same instance.
    *
    * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
@@ -83,17 +88,17 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    {{/maximum}}
    * @return The same instance of this {@link {{classname}}} class
    */
-   @Nonnull public {{classname}} {{name}}(@Nonnull final {{{datatypeWithEnum}}} {{name}}) {
+  @Nonnull public {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
     return this;
   }
   {{#isArray}}
   /**
-  * Add one {{nameInCamelCase}} instance to this {@link {{classname}}}.
-  * @param {{name}}Item The {{nameInCamelCase}} that should be added
-  * @return The same instance of type {@link {{classname}}}
-  */
-  @Nonnull public {{classname}} add{{nameInCamelCase}}Item( @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
+   * Add one {{nameInCamelCase}} instance to this {@link {{classname}}}.
+   * @param {{name}}Item The {{nameInCamelCase}} that should be added
+   * @return The same instance of type {@link {{classname}}}
+   */
+  @Nonnull public {{classname}} add{{nameInPascalCase}}Item( @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
     if (this.{{name}} == null) {
       this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new {{#uniqueItems}}LinkedHashSet{{/uniqueItems}}{{^uniqueItems}}ArrayList{{/uniqueItems}}<>(){{/defaultValue}};
     }
@@ -103,21 +108,21 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   {{/isArray}}
   {{#isMap}}
 
-   /**
+  /**
    * Put one {{nameInCamelCase}} instance to this {@link {{classname}}} instance.
    * @param key The String key of this {{nameInCamelCase}} instance
    * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
    * @return The same instance of type {@link {{classname}}}
    */
-   @Nonnull public {{classname}} put{{nameInCamelCase}}Item(@Nonnull final String key, @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
-      this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}};
+  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
+    this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}};
     this.{{name}}.put(key, {{name}}Item);
     return this;
   }
   {{/isMap}}
 
   {{/isReadOnly}}
-   /**
+  /**
   {{#description}}
    * {{.}}
   {{/description}}
@@ -131,33 +136,33 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * maximum: {{.}}
   {{/maximum}}
    * @return {{name}}  The {{name}} of this {@link {{classname}}} instance.
-   {{#deprecated}}
-   * @deprecated
-   {{/deprecated}}
-  **/
   {{#deprecated}}
-   @Deprecated
+   * @deprecated
+  {{/deprecated}}
+   */
+  {{#deprecated}}
+  @Deprecated
   {{/deprecated}}
 {{#useBeanValidation}}{{>beanValidation}}{{/useBeanValidation}}{{#vendorExtensions.extraAnnotation}}
   {{{vendorExtensions.extraAnnotation}}}
 {{/vendorExtensions.extraAnnotation}}
-  @Nonnull public {{{datatypeWithEnum}}} {{getter}}() {
+  {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}@Nonnull{{/isNullable}} public {{{datatypeWithEnum}}} {{getter}}() {
     return {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
   }
   {{^isReadOnly}}
 
   /**
-  * Set the {{name}} of this {@link {{classname}}} instance.
-  *
-  * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
-  {{#minimum}}
-  * Minimum: {{minimum}}
-  {{/minimum}}
-  {{#maximum}}
-  * Maximum: {{maximum}}
-  {{/maximum}}
-  */
-  public void {{setter}}( @Nonnull final {{{datatypeWithEnum}}} {{name}}) {
+   * Set the {{name}} of this {@link {{classname}}} instance.
+   *
+   * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
+   {{#minimum}}
+   * Minimum: {{minimum}}
+   {{/minimum}}
+   {{#maximum}}
+   * Maximum: {{maximum}}
+   {{/maximum}}
+   */
+  public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}};
   }
   {{/isReadOnly}}
@@ -180,7 +185,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("{{classname}} has no field with name '" + name + "'.");
     }
@@ -537,4 +542,5 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     }
   };
 {{/parcelableModel}}
+{{>pojoBuilder}}
 }

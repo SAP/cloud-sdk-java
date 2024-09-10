@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withUserToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withoutToken;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_RETRIEVAL_STRATEGY_KEY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
@@ -11,11 +13,15 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRet
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -46,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -60,7 +67,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.stubbing.Answer;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.JWT;
+import com.google.gson.stream.MalformedJsonException;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -319,12 +327,13 @@ class DestinationServiceTest
     @RegisterExtension
     static final TestContext context = TestContext.withThreadContext().resetCaches();
 
-    private DestinationServiceAdapter scpCfDestinationServiceAdapter;
+    private DestinationServiceAdapter destinationServiceAdapter;
     private DestinationService loader;
     private Tenant providerTenant;
     private DefaultTenant subscriberTenant;
     private DefaultPrincipal principal1;
     private DefaultPrincipal principal2;
+    private String userToken;
 
     @BeforeEach
     void setup()
@@ -337,10 +346,10 @@ class DestinationServiceTest
         principal2 = new DefaultPrincipal("principal-2");
         context.setPrincipal(principal1);
 
-        final DecodedJWT xsuaaJwt = mockXsuaaToken();
-        context.setAuthToken(xsuaaJwt);
+        userToken = mockXsuaaToken().getToken();
+        context.setAuthToken(JWT.decode(userToken));
 
-        scpCfDestinationServiceAdapter =
+        destinationServiceAdapter =
             spy(
                 new DestinationServiceAdapter(
                     behalf -> DefaultHttpDestination.builder("").build(),
@@ -349,7 +358,7 @@ class DestinationServiceTest
         // identifier UUID added to isolate resilience states
         loader =
             new DestinationService(
-                scpCfDestinationServiceAdapter,
+                destinationServiceAdapter,
                 DestinationService
                     .createResilienceConfiguration(
                         "singleDestResilience" + UUID.randomUUID(),
@@ -366,20 +375,13 @@ class DestinationServiceTest
         final String destinationPath = "/destinations/" + destinationName;
 
         doReturn(httResponseProvider)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(destinationPath, OnBehalfOf.TECHNICAL_USER_PROVIDER);
-        doReturn(httResponseProvider)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(destinationPath, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
+                eq(destinationPath),
+                argThat(s -> s.behalf() == OnBehalfOf.TECHNICAL_USER_PROVIDER));
         doReturn(httpResponseSubscriber)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(destinationPath, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        doReturn(httpResponseSubscriber)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(destinationPath, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        doReturn(httpResponseSubscriber)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(destinationPath, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq(destinationPath), argThat(s -> s.behalf() == TECHNICAL_USER_CURRENT_TENANT));
     }
 
     @AfterEach
@@ -432,11 +434,11 @@ class DestinationServiceTest
     void testGettingDestinationProperties()
     {
         doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties();
 
@@ -459,10 +461,42 @@ class DestinationServiceTest
             .isInstanceOf(DestinationNotFoundException.class);
 
         // verify all results are cached
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+    }
+
+    @Test
+    void testGettingDestinationPropertiesProvider()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
+
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ALWAYS_PROVIDER);
+        assertThat(destinationList)
+            .extracting(d -> d.get(DestinationProperty.NAME).get())
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+    }
+
+    @Test
+    void testGettingDestinationPropertiesSubscriber()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+
+        final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ONLY_SUBSCRIBER);
+        assertThat(destinationList)
+            .extracting(d -> d.get(DestinationProperty.NAME).get())
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
     }
 
     @Test
@@ -509,10 +543,7 @@ class DestinationServiceTest
             .hasRootCauseExactlyInstanceOf(TimeoutException.class);
 
         verify(cl, times(1)).execute(any());
-        verify(adapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/SomeDestinationName",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(adapter, times(1)).getConfigurationAsJson(eq("/destinations/SomeDestinationName"), any());
 
         // reset
         HttpClientAccessor.setHttpClientFactory(null);
@@ -541,15 +572,15 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
-    @DisplayName( "Test getting Destination Properties for the provider" )
-    void testDestinationPropertiesForProvider()
+    @DisplayName( "Test getting Destinations for the provider" )
+    void testGetAllDestinationsForProvider()
     {
         doReturn(responseServiceInstanceDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
         doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_PROVIDER));
 
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
@@ -568,7 +599,7 @@ class DestinationServiceTest
 
     @SuppressWarnings( "deprecation" )
     @Test
-    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
+    @DisplayName( "Test getting Destinations can enforce a subscriber tenant" )
     void testGetAllDestinationsOnlySubscriberStrategyReadsSubscriberDestinations()
     {
         final DestinationOptions options =
@@ -580,6 +611,17 @@ class DestinationServiceTest
             TenantAccessor.executeWithTenant(providerTenant, () -> loader.tryGetAllDestinations(options));
 
         assertThatThrownBy(result::get)
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining(
+                "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
+    }
+
+    @Test
+    @DisplayName( "Test getting Destination Properties can enforce a subscriber tenant" )
+    void testGetAllDestinationPropertiesOnlySubscriberStrategyReadsSubscriberDestinations()
+    {
+        context.setTenant(providerTenant);
+        assertThatThrownBy(() -> loader.getAllDestinationProperties(ONLY_SUBSCRIBER))
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining(
                 "The current tenant is the provider tenant, which should not be the case with the option OnlySubscriber. Cannot retrieve destination.");
@@ -652,11 +694,11 @@ class DestinationServiceTest
     void testTokenExchangeLookupThenExchange()
     {
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         doReturn(responseDestinationWithAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
 
         @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
@@ -668,18 +710,18 @@ class DestinationServiceTest
 
         assertThat(httpDestination.getHeaders()).containsExactly(new Header("Authorization", "Bearer bearer_token"));
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
     }
 
     @Test
     void testTokenExchangeLookupOnly()
     {
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
@@ -692,22 +734,20 @@ class DestinationServiceTest
 
         assertThatThrownBy(destination::get).isExactlyInstanceOf(DestinationAccessException.class);
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(0))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(0))
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/CC8-HTTP-OAUTH",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(0))
+            .getConfigurationAsJson(
+                eq("/destinations/CC8-HTTP-OAUTH"),
+                argThat(s -> !s.equals(withoutToken(TECHNICAL_USER_CURRENT_TENANT))));
     }
 
     @Test
     void testTokenExchangeExchangeOnly()
     {
         doReturn(responseDestinationWithAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
 
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(EXCHANGE_ONLY)).build();
@@ -717,9 +757,10 @@ class DestinationServiceTest
 
         assertThat(httpDestination.getHeaders()).containsExactly(new Header("Authorization", "Bearer bearer_token"));
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(0)).getConfigurationAsJsonWithUserToken(any(), any());
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(0))
+            .getConfigurationAsJson(any(), argThat(s -> !s.equals(withoutToken(NAMED_USER_CURRENT_TENANT))));
     }
 
     @SuppressWarnings( "deprecation" )
@@ -743,8 +784,8 @@ class DestinationServiceTest
                 + "    \"mail.description\": \"delete me\""
                 + "  }"
                 + "}")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(eq("/destinations/" + destinationName), any(OnBehalfOf.class));
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/destinations/" + destinationName), any());
 
         @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
@@ -766,8 +807,8 @@ class DestinationServiceTest
         assertThat(dest.get(DestinationProperty.CLOUD_CONNECTOR_LOCATION_ID)).containsExactly("bla");
         assertThat(dest.get("mail.description")).containsExactly("delete me");
 
-        verify(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        verify(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_PROVIDER));
     }
 
     @Test
@@ -781,28 +822,28 @@ class DestinationServiceTest
         assertThat(defaultOptions).isEqualTo(secondInstanceOfDefaultOptions);
 
         loader.tryGetDestination(destinationName);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         loader.tryGetDestination(destinationName, defaultOptions);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         loader.tryGetDestination(destinationName, optionsWithDefaultRetrievalStrategy);
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         loader.tryGetDestination(destinationName, secondInstanceOfDefaultOptions);
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
     }
 
     @Test
@@ -816,10 +857,10 @@ class DestinationServiceTest
                 DestinationOptions.builder().parameter("timestamp", Instant.now().toEpochMilli()).build();
 
             loader.tryGetDestination(destinationName, options);
-            verify(scpCfDestinationServiceAdapter, times(1))
-                .getConfigurationAsJsonWithUserToken(
+            verify(destinationServiceAdapter, times(1))
+                .getConfigurationAsJson(
                     "/destinations/" + destinationName,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                    withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
         }
         // sleep to guarantee at least 1ms difference
         Thread.sleep(100);
@@ -829,10 +870,10 @@ class DestinationServiceTest
                 DestinationOptions.builder().parameter("timestamp", Instant.now().toEpochMilli()).build();
 
             loader.tryGetDestination(destinationName, options);
-            verify(scpCfDestinationServiceAdapter, times(2))
-                .getConfigurationAsJsonWithUserToken(
+            verify(destinationServiceAdapter, times(2))
+                .getConfigurationAsJson(
                     "/destinations/" + destinationName,
-                    OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                    withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
         }
     }
 
@@ -845,10 +886,10 @@ class DestinationServiceTest
             loader.tryGetDestination(destinationName).get();
         }
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
     }
@@ -873,8 +914,8 @@ class DestinationServiceTest
     private void tryGetDestinationTwice( String destinationName, String responseDestination, int numberOfFetches )
     {
         doReturn(responseDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
@@ -886,8 +927,8 @@ class DestinationServiceTest
         loader.tryGetDestination(destinationName, options);
         loader.tryGetDestination(destinationName, options);
 
-        verify(scpCfDestinationServiceAdapter, times(numberOfFetches))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(numberOfFetches))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
     }
 
@@ -947,13 +988,11 @@ class DestinationServiceTest
     void testLookupPerformedTwiceWhenAuthTokenExpiredAndRequiresUserTokenExchange()
     {
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         doReturn(responseDestinationWithExpiredAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/CC8-HTTP-OAUTH",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
 
         @SuppressWarnings( "deprecation" )
         final DestinationOptionsAugmenter optionsStrategy =
@@ -963,10 +1002,10 @@ class DestinationServiceTest
         loader.tryGetDestination("CC8-HTTP-OAUTH", options);
         loader.tryGetDestination("CC8-HTTP-OAUTH", options);
 
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/CC8-HTTP-OAUTH", withoutToken(NAMED_USER_CURRENT_TENANT));
     }
 
     /* Test case:
@@ -1063,8 +1102,8 @@ class DestinationServiceTest
             }
             return responseDestinationWithBasicAuthToken;
         })
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         final Future<Try<Destination>> firstThread = ThreadContextExecutors.submit(() -> {
             softly.assertThat(TenantAccessor.tryGetCurrentTenant()).isNotEmpty();
@@ -1099,8 +1138,8 @@ class DestinationServiceTest
         assertThat(secondThread.get()).isNotEmpty();
         verify(tenantLockSpy, times(1)).lock();
         verify(tenantLockSpy, times(1)).unlock();
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         softly.assertThat(DestinationService.Cache.instanceSingle().asMap()).containsOnlyKeys(tenantCacheKey);
         softly.assertAll();
@@ -1190,8 +1229,8 @@ class DestinationServiceTest
             }
             return responseDestinationWithBasicAuthToken;
         })
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         @SuppressWarnings( "deprecation" )
         final DestinationOptions options =
             DestinationOptions
@@ -1231,11 +1270,11 @@ class DestinationServiceTest
         // assert no cache entries for get-all commands
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         // we are not performing further requests (i.e. there are no 'get-all' requests)
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verifyNoMoreInteractions(destinationServiceAdapter);
 
         softly.assertAll();
     }
@@ -1244,10 +1283,10 @@ class DestinationServiceTest
     void testPrincipalsShareDestinationWithoutUserPropagation()
     {
         doReturn(responseDestinationWithBasicAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         context.setTenant(providerTenant);
         context.setPrincipal(principal1);
@@ -1261,10 +1300,10 @@ class DestinationServiceTest
         assertThat(secondDestination).isNotEmpty();
         assertThat(firstDestination.get()).isSameAs(secondDestination.get());
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
     }
 
     @Test
@@ -1274,8 +1313,8 @@ class DestinationServiceTest
             DestinationOptions.builder().augmentBuilder(augmenter().tokenExchangeStrategy(EXCHANGE_ONLY)).build();
 
         doReturn(responseDestinationWithAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
 
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
 
@@ -1299,11 +1338,11 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
 
         // we are not performing further requests (i.e. there are no 'get-all' requests)
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
     @Test
@@ -1315,12 +1354,12 @@ class DestinationServiceTest
         final DestinationOptions options = DestinationOptions.builder().augmentBuilder(optionsStrategy).build();
 
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
 
         doReturn(responseDestinationWithAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
 
         final Try<Destination> firstDestination = loader.tryGetDestination(destinationName, options);
 
@@ -1343,30 +1382,26 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
 
         // we are not performing further requests (i.e. there are no 'get-all' requests)
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
     @Test
     void testSmartCacheServesAllPrincipalsWithSameDestination()
     {
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        doReturn("[]").when(destinationServiceAdapter).getConfigurationAsJson(eq("/instanceDestinations"), any());
         doReturn(responseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/subaccountDestinations"), any());
 
         doReturn(responseDestinationWithBasicAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/CC8-HTTP-BASIC",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/destinations/CC8-HTTP-BASIC"), any());
 
         final AtomicReference<Destination> destination = new AtomicReference<>();
 
@@ -1381,33 +1416,29 @@ class DestinationServiceTest
             assertThat(tryDestination.get()).isSameAs(destination.get());
         }
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/CC8-HTTP-BASIC",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
     }
 
     @Test
     void testChangeDetectionWithMisconfiguredDestination()
     {
-        doReturn("[]")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        doReturn("[]").when(destinationServiceAdapter).getConfigurationAsJson(eq("/instanceDestinations"), any());
         // One of the getAll destinations will be misconfigured (the smart cache will implicitly call getAll)
         doReturn(brokenResponseSubaccountDestination)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/subaccountDestinations"), any());
 
         // normal response for the requested destination
         doReturn(responseDestinationWithBasicAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/CC8-HTTP-BASIC",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/destinations/CC8-HTTP-BASIC"), any());
 
         final int circuitBreakerBuffer =
             ResilienceConfiguration.CircuitBreakerConfiguration.DEFAULT_CLOSED_BUFFER_SIZE
@@ -1421,18 +1452,18 @@ class DestinationServiceTest
         }
 
         // the circuit breaker will getAll, receive a misconfigured destination and open
-        verify(scpCfDestinationServiceAdapter, times(circuitBreakerBuffer))
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(circuitBreakerBuffer))
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(circuitBreakerBuffer))
+            .getConfigurationAsJson("/instanceDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(circuitBreakerBuffer))
+            .getConfigurationAsJson("/subaccountDestinations", withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         // the requested destination is unaffected
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
                 "/destinations/CC8-HTTP-BASIC",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         // we are not performing further requests
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
     @Test
@@ -1452,13 +1483,11 @@ class DestinationServiceTest
 
         assertThat(DestinationService.Cache.instanceAll().asMap()).isEmpty();
 
-        verify(scpCfDestinationServiceAdapter, times(1))
-            .getConfigurationAsJsonWithUserToken(
-                "/destinations/" + destinationName,
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(eq("/destinations/" + destinationName), any());
 
         // we are not performing further requests (i.e. there are no 'get-all' requests)
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
     /**
@@ -1481,8 +1510,8 @@ class DestinationServiceTest
         final SoftAssertions softly = new SoftAssertions();
 
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         doAnswer((Answer<String>) invocation -> {
             try {
                 destinationRetrievalLatch.countDown();
@@ -1493,8 +1522,8 @@ class DestinationServiceTest
             }
             return responseDestinationWithAuthToken;
         })
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
 
         final Future<Try<Destination>> firstThread = ThreadContextExecutors.submit(() -> {
             softly.assertThat(TenantAccessor.tryGetCurrentTenant()).isNotEmpty();
@@ -1528,11 +1557,11 @@ class DestinationServiceTest
         softly.assertThat(secondThread.get()).isNotEmpty();
         verify(tenantLockSpy, times(1)).lock();
         verify(tenantLockSpy, times(1)).unlock();
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
-        verify(scpCfDestinationServiceAdapter, times(2))
-            .getConfigurationAsJson("/destinations/" + destinationName, OnBehalfOf.NAMED_USER_CURRENT_TENANT);
-        verifyNoMoreInteractions(scpCfDestinationServiceAdapter);
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(TECHNICAL_USER_CURRENT_TENANT));
+        verify(destinationServiceAdapter, times(2))
+            .getConfigurationAsJson("/destinations/" + destinationName, withoutToken(NAMED_USER_CURRENT_TENANT));
+        verifyNoMoreInteractions(destinationServiceAdapter);
 
         softly
             .assertThat(DestinationService.Cache.instanceSingle().asMap())
@@ -1545,14 +1574,15 @@ class DestinationServiceTest
     }
 
     @Test
-    void testDestinationWithInvalidJsonProperty()
+    void testDestinationWithInvalidJson()
     {
-        doReturn("{ \"destinationConfiguration\" : { \"Name\" : null } }")
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/destinations/BadDestination", OnBehalfOf.TECHNICAL_USER_PROVIDER);
+        doReturn("{ \"destinationConfiguration\" : { \"Name ... } }")
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/destinations/BadDestination"), any());
 
         assertThatThrownBy(() -> loader.tryGetDestination("BadDestination").get())
-            .isInstanceOf(DestinationAccessException.class);
+            .isInstanceOf(DestinationAccessException.class)
+            .hasRootCauseInstanceOf(MalformedJsonException.class);
     }
 
     @Test
@@ -1574,11 +1604,15 @@ class DestinationServiceTest
     void testGetAllDestinationsHandlesFailure()
     {
         doThrow(new DestinationAccessException("Error"))
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/instanceDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
+                eq("/instanceDestinations"),
+                argThat(s -> s.behalf() == OnBehalfOf.TECHNICAL_USER_PROVIDER));
         doThrow(new DestinationAccessException("Error"))
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson("/subaccountDestinations", OnBehalfOf.TECHNICAL_USER_PROVIDER);
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
+                eq("/subaccountDestinations"),
+                argThat(s -> s.behalf() == OnBehalfOf.TECHNICAL_USER_PROVIDER));
 
         assertThatThrownBy(loader::getAllDestinationProperties).isExactlyInstanceOf(DestinationAccessException.class);
     }
@@ -1587,10 +1621,10 @@ class DestinationServiceTest
     void testAuthTokenFailureIsNotCached()
     {
         doReturn(responseDestinationWithoutAuthToken)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
                 "/destinations/CC8-HTTP-OAUTH",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         final DestinationOptions options = DestinationOptions.builder().build();
 
@@ -1602,10 +1636,64 @@ class DestinationServiceTest
         loader.tryGetDestination("CC8-HTTP-OAUTH", options);
 
         // verify the result is not cached
-        verify(scpCfDestinationServiceAdapter, times(3))
-            .getConfigurationAsJsonWithUserToken(
+        verify(destinationServiceAdapter, times(3))
+            .getConfigurationAsJson(
                 "/destinations/CC8-HTTP-OAUTH",
-                OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT);
+                withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
+    }
+
+    @Test
+    void testFragmentDestinationsAreCacheIsolated()
+    {
+        DestinationService.Cache.disableChangeDetection();
+        final String destinationTemplate = """
+            {
+                "owner": {
+                    "SubaccountId": "00000000-0000-0000-0000-000000000000",
+                    "InstanceId": null
+                },
+                "destinationConfiguration": {
+                    "Name": "destination",
+                    %s
+                    "Type": "HTTP",
+                    "URL": "https://%s.com/",
+                    "Authentication": "NoAuthentication",
+                    "ProxyType": "Internet"
+                }
+            }
+            """;
+
+        doReturn(destinationTemplate.formatted("\"FragmentName\": \"a-fragment\",", "a.fragment"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> "a-fragment".equals(it.fragment())));
+        doReturn(destinationTemplate.formatted("\"FragmentName\": \"b-fragment\",", "b.fragment"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> "b-fragment".equals(it.fragment())));
+        doReturn(destinationTemplate.formatted("", "destination"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), argThat(it -> it.fragment() == null));
+
+        final Function<String, DestinationOptions> optsBuilder =
+            frag -> DestinationOptions
+                .builder()
+                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName(frag))
+                .build();
+
+        final Destination dA = loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get();
+        final Destination dB = loader.tryGetDestination("destination", optsBuilder.apply("b-fragment")).get();
+        final Destination d = loader.tryGetDestination("destination").get();
+
+        assertThat(dA).isNotEqualTo(dB).isNotEqualTo(d);
+        assertThat(dA.get("FragmentName")).contains("a-fragment");
+        assertThat(dB).isNotEqualTo(d);
+        assertThat(dB.get("FragmentName")).contains("b-fragment");
+
+        assertThat(d.get("FragmentName")).isEmpty();
+
+        assertThat(dA)
+            .describedAs("Destinations with fragments should be cached")
+            .isSameAs(loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get());
+        verify(destinationServiceAdapter, times(3)).getConfigurationAsJson(any(), any());
     }
 
     // @Test
@@ -1626,11 +1714,11 @@ class DestinationServiceTest
             return responseDestinationWithAuthToken;
         };
         doAnswer(response)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(any(), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), withoutToken(TECHNICAL_USER_CURRENT_TENANT));
         doAnswer(response)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJsonWithUserToken(any(), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(any(), withUserToken(TECHNICAL_USER_CURRENT_TENANT, userToken));
 
         final ExecutorService executorService = Executors.newFixedThreadPool(100);
         final int iterations = 10000;
@@ -1660,9 +1748,7 @@ class DestinationServiceTest
             }
             return responseDestinationWithBasicAuthToken;
         };
-        doAnswer(response)
-            .when(scpCfDestinationServiceAdapter)
-            .getConfigurationAsJson(any(), eq(OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT));
+        doAnswer(response).when(destinationServiceAdapter).getConfigurationAsJson(any(), any());
 
         HttpClient httpClient = null;
         Destination destination = null;

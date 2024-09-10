@@ -46,7 +46,7 @@ class FluentHelperFactory
             @Nonnull final String entityCollection,
             @Nonnull final Map<String, Object> key )
     {
-        return new FluentHelperByKey<FluentHelperT, EntityT, SelectableT>(servicePath, entityCollection)
+        return new FluentHelperByKey<>(servicePath, entityCollection)
         {
             @Nonnull
             @Override
@@ -69,7 +69,7 @@ class FluentHelperFactory
         FluentHelperRead<FluentHelperT, EntityT, SelectableT>
         read( @Nonnull final Class<EntityT> entityClass, @Nonnull final String entityCollection )
     {
-        return new FluentHelperRead<FluentHelperT, EntityT, SelectableT>(servicePath, entityCollection)
+        return new FluentHelperRead<>(servicePath, entityCollection)
         {
             @Nonnull
             @Override
@@ -85,7 +85,7 @@ class FluentHelperFactory
         FluentHelperCreate<FluentHelperT, EntityT>
         create( @Nonnull final String entityCollection, @Nonnull final EntityT entity )
     {
-        return new FluentHelperCreate<FluentHelperT, EntityT>(servicePath, entityCollection)
+        return new FluentHelperCreate<>(servicePath, entityCollection)
         {
             @Nonnull
             @Override
@@ -117,7 +117,7 @@ class FluentHelperFactory
         FluentHelperDelete<FluentHelperT, EntityT>
         delete( @Nonnull final String entityCollection, @Nonnull final EntityT entity )
     {
-        return new FluentHelperDelete<FluentHelperT, EntityT>(servicePath, entityCollection)
+        return new FluentHelperDelete<>(servicePath, entityCollection)
         {
             @Nonnull
             @Override
@@ -149,7 +149,7 @@ class FluentHelperFactory
         FluentHelperUpdate<FluentHelperT, EntityT>
         update( @Nonnull final String entityCollection, @Nonnull final EntityT entity )
     {
-        return new FluentHelperUpdate<FluentHelperT, EntityT>(servicePath, entityCollection)
+        return new FluentHelperUpdate<>(servicePath, entityCollection)
         {
             @Nonnull
             @Override
@@ -186,7 +186,7 @@ class FluentHelperFactory
             @Nonnull final Function<URI, HttpUriRequest> requestHandler,
             @Nonnull final BiFunction<FluentHelperFunction<FluentHelperT, ObjectT, ResultT>, Destination, ResultT> executeHandler )
     {
-        return new FluentHelperFunction<FluentHelperT, ObjectT, ResultT>(servicePath)
+        return new FluentHelperFunction<>(servicePath)
         {
             @Nonnull
             @Override

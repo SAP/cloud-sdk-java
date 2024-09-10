@@ -148,7 +148,7 @@ jobs:
       - name: "Create Release"
         id: create-release
         run: |
-          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/site/apidocs/ .
+          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/reports/apidocs/ .
           tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
@@ -209,7 +209,7 @@ jobs:
 
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv ./.targets/target/site/apidocs/* $TARGET_DIR
+          mv ./.targets/target/reports/apidocs/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
@@ -379,7 +379,7 @@ jobs:
         if: ${{ needs.create-release.outputs.release-url != '' }}
         run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-name }} --yes
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
       - name: "Delete Release Branch"
@@ -400,14 +400,14 @@ jobs:
         if: ${{ needs.create-docs-pr.outputs.pr-url != '' }}
         run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-docs-pr.outputs.pr-url }} --delete-branch
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
       - name: "Delete Release Notes PR"
         if: ${{ needs.create-release-notes-pr.outputs.pr-url != '' }}
         run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-release-notes-pr.outputs.pr-url }} --delete-branch
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
       - name: "Notify"

@@ -30,7 +30,7 @@ class ODataDateTimeStringCalendarConverter extends AbstractTypeConverter<String,
             return ConvertedObject.ofNotConvertible();
         }
 
-        long millis;
+        final long millis;
         try {
             millis = Long.parseLong(matcher.group(1));
         }

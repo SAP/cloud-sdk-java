@@ -9,6 +9,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.annotation.Nonnull;
+
 /**
  * Annotation indicating the name of an element.
  */
@@ -21,5 +23,6 @@ public @interface ElementName {
      *
      * @return The identifiable name of the field.
      */
+    @Nonnull
     String value();
 }

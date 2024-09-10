@@ -333,9 +333,7 @@ public class SoapRemoteFunctionRequestSerializer<RequestT extends AbstractRemote
         typeConverters.add(new com.sap.cloud.sdk.s4hana.serialization.LocalDateConverter("yyyy-MM-dd"));
         typeConverters.add(new com.sap.cloud.sdk.s4hana.serialization.LocalTimeConverter("HH:mm:ss"));
 
-        final GsonBuilder gsonBuilder =
-            com.sap.cloud.sdk.s4hana.connectivity.rfc.RemoteFunctionGsonBuilder
-                .newSoapRequestResultGsonBuilder(typeConverters);
+        final GsonBuilder gsonBuilder = RemoteFunctionGsonBuilder.newSoapRequestResultGsonBuilder(typeConverters);
 
         final RequestResultT result = gsonBuilder.create().fromJson(resultObj, resultType);
         result.setRequest(request);
@@ -363,10 +361,7 @@ public class SoapRemoteFunctionRequestSerializer<RequestT extends AbstractRemote
                     MessageResultReader
                         .addMessageToResult(
                             result,
-                            element
-                                .getAsObject()
-                                .as(
-                                    com.sap.cloud.sdk.s4hana.connectivity.rfc.AbstractRemoteFunctionRequestResult.MessageResult.class));
+                            element.getAsObject().as(AbstractRemoteFunctionRequestResult.MessageResult.class));
                 }
             }
         }

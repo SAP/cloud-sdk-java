@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.annotations.Beta;
+
 import io.vavr.control.Option;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
 {
     static final String DESTINATION_RETRIEVAL_STRATEGY_KEY = "scp.cf.destinationRetrievalStrategy";
     static final String DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY = "scp.cf.destinationTokenExchangeStrategy";
+    static final String X_REFRESH_TOKEN_KEY = "x-refresh-token";
+    static final String X_FRAGMENT_KEY = "X-fragment-name";
 
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -64,6 +68,47 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
         @Nonnull final DestinationServiceTokenExchangeStrategy strategy )
     {
         parameters.put(DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY, strategy);
+        return this;
+    }
+
+    /**
+     * Refresh token to be sent for destination of type {@link AuthenticationType#OAUTH2_REFRESH_TOKEN}.
+     *
+     * @param refreshToken
+     *            Refresh token as encoded string.
+     * @return The same augmenter that called this method.
+     * @since 5.9.0
+     */
+    @Beta
+    @Nonnull
+    public DestinationServiceOptionsAugmenter refreshToken( @Nonnull final String refreshToken )
+    {
+        parameters.put(X_REFRESH_TOKEN_KEY, refreshToken);
+        return this;
+    }
+
+    /**
+     * Fragment that should enhance the destination to be fetched.
+     *
+     * @param fragmentName
+     *            The fragment name.
+     * @return The same augmenter that called this method.
+     * @since 5.11.0
+     */
+    @Beta
+    @Nonnull
+    public DestinationServiceOptionsAugmenter fragmentName( @Nonnull final String fragmentName )
+    {
+        parameters.put(X_FRAGMENT_KEY, fragmentName);
+        if( DestinationService.Cache.isEnabled() && DestinationService.Cache.isChangeDetectionEnabled() ) {
+            log
+                .warn(
+                    """
+                        A fragment was requested while change detection caching is enabled.\
+                        This is not recommended, as fragment-based destinations will effectively not be cached with this strategy.\
+                        Consider disabling change detection, if you frequently use destination fragments.
+                        """);
+        }
         return this;
     }
 
@@ -119,5 +164,17 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
         }
 
         return strategy.map(DestinationServiceTokenExchangeStrategy.class::cast);
+    }
+
+    @Nonnull
+    static Option<String> getRefreshToken( @Nonnull final DestinationOptions options )
+    {
+        return options.get(X_REFRESH_TOKEN_KEY).filter(String.class::isInstance).map(String.class::cast);
+    }
+
+    @Nonnull
+    static Option<String> getFragmentName( @Nonnull final DestinationOptions options )
+    {
+        return options.get(X_FRAGMENT_KEY).filter(String.class::isInstance).map(String.class::cast);
     }
 }

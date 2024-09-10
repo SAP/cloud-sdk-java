@@ -28,7 +28,7 @@ public class ODataServiceErrorException extends ODataResponseException
      * The parsed {@link ODataServiceError} that was found in the HTTP response body.
      */
     @Nonnull
-    private final ODataServiceError odataError;
+    private final transient ODataServiceError odataError;
 
     /**
      * Default constructor.

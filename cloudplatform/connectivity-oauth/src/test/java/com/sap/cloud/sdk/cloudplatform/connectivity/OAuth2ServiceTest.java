@@ -1,10 +1,13 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_PROVIDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -16,7 +19,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +34,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import com.auth0.jwt.JWT;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.TenantPropagationStrategy;
+import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
+import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.config.Service;
+import com.sap.cloud.security.test.JwtGenerator;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 
 import lombok.SneakyThrows;
@@ -126,18 +140,91 @@ class OAuth2ServiceTest
     }
 
     @Test
-    void singleOAuth2ServiceImplSingleSubscriber()
+    void testZidHeaderTenantStrategy()
     {
         final OAuth2Service service =
-            OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(IDENTITY_1).build();
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withTenantPropagationStrategy(TenantPropagationStrategy.ZID_HEADER)
+                .build();
 
-        final String token1 = TenantAccessor.executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
-        final String token2 = TenantAccessor.executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
+        TenantAccessor.executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
+        TenantAccessor.executeWithTenant(new DefaultTenant("abcd"), service::retrieveAccessToken);
 
-        assertThat(token1).isEqualTo(TOKEN_1);
-        assertThat(token2).isEqualTo(TOKEN_1);
+        SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withHeader("x-zid", equalTo("abcd")));
+    }
 
-        SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")));
+    @Test
+    void testSubdomainTenantStrategy()
+    {
+        final OAuth2Service.Builder serviceBuilder =
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withAdditionalParameter("app_tid", "provider")
+                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN);
+        {
+            // behalf: current tenant
+            OAuth2Service service = serviceBuilder.build();
+            // we have to use localhost here as subdomains because this test doesn't mock different subdomains
+            // instead, that aspect is tested in OAuth2IntegrationTest
+            service.retrieveAccessToken();
+            TenantAccessor.executeWithTenant(new DefaultTenant("t1", "localhost"), service::retrieveAccessToken);
+            TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
+
+            SERVER_1
+                .verify(
+                    1,
+                    postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=provider")));
+            SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=t1")));
+            SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=t2")));
+        }
+        {
+            // behalf provider
+            final OAuth2Service service = serviceBuilder.withOnBehalfOf(TECHNICAL_USER_PROVIDER).build();
+
+            service.retrieveAccessToken();
+            TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
+
+            SERVER_1
+                .verify(
+                    1,
+                    postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=provider")));
+            SERVER_1
+                .verify(
+                    1,
+                    postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=provider")));
+        }
+        {
+            // behalf named user
+            final OAuth2Service service = serviceBuilder.withOnBehalfOf(NAMED_USER_CURRENT_TENANT).build();
+
+            assertThatThrownBy(service::retrieveAccessToken);
+
+            context.setTenant(new DefaultTenant("tenant", "localhost"));
+            context.setPrincipal();
+            final String token =
+                JwtGenerator
+                    .getInstance(Service.IAS, "clientid")
+                    .withClaimValue("app_tid", "tenant")
+                    .createToken()
+                    .getTokenValue();
+            context.setAuthToken(new AuthToken(JWT.decode(token)));
+
+            service.retrieveAccessToken();
+
+            SERVER_1
+                .verify(
+                    1,
+                    postRequestedFor(urlEqualTo("/oauth/token"))
+                        .withRequestBody(containing("app_tid=tenant"))
+                        .withRequestBody(
+                            containing("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer".replace(":", "%3A")))
+                        .withRequestBody(containing("assertion=" + token)));
+        }
     }
 
     @Test
@@ -154,7 +241,8 @@ class OAuth2ServiceTest
         assertThat(token1).isEqualTo(TOKEN_1);
         assertThat(token2).isEqualTo(TOKEN_1);
 
-        SERVER_1.verify(2, postRequestedFor(urlEqualTo("/oauth/token")));
+        SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withHeader("x-zid", equalTo("tenant 1")));
+        SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withHeader("x-zid", equalTo("tenant 2")));
     }
 
     @Test
@@ -278,5 +366,26 @@ class OAuth2ServiceTest
         OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(IDENTITY_1).build();
 
         assertThat(CacheManager.getCacheList()).contains(OAuth2Service.tokenServiceCache);
+    }
+
+    @Test
+    void testZeroTrustClientIdentity()
+        throws KeyStoreException,
+            CertificateException,
+            IOException,
+            NoSuchAlgorithmException
+    {
+        final KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(null, null);
+        ClientIdentity identity = new ZtisClientIdentity("id", ks);
+        OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
+
+        final OAuth2TokenService result = service.getTokenService(null);
+        assertThat(result).isSameAs(service.getTokenService(null));
+
+        identity = new ZtisClientIdentity("other-id", ks);
+        service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
+
+        assertThat(result).isNotSameAs(service.getTokenService(null));
     }
 }

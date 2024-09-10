@@ -25,9 +25,7 @@ class QueryParamGetter
 {
     private static final String URL_QUERIES = "URL.queries.";
 
-    private static final char[] SAFE_CHARS_IN_QUERY_VALUES = { '_', '*', '-', ':', ',', '/', '\'', '(', ')', '.', '|' };
-
-    private static final Escaper URL_QUERY_ESCAPER = new PercentEscaper(new String(SAFE_CHARS_IN_QUERY_VALUES), false);
+    private static final Escaper URL_QUERY_ESCAPER = new PercentEscaper("_*-:,/'().|", false);
 
     /**
      * Get the headers defined on the destination via properties.

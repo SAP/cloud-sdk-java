@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.security.config.ClientCredentials;
 
 class OAuth2ServiceBuilderTest
@@ -128,5 +130,21 @@ class OAuth2ServiceBuilderTest
                 .withIdentity(new ClientCredentials("id", "secret"));
 
         assertThatNoException().isThrownBy(sut::build);
+    }
+
+    @Test
+    void testTimeoutIsAdded()
+    {
+        final OAuth2Service.Builder sut = OAuth2Service.builder();
+        assertThat(sut.getTimeLimiter())
+            .describedAs("OAuth 2 service should default to %s", OAuth2Options.DEFAULT_TIMEOUT)
+            .isEqualTo(OAuth2Options.DEFAULT_TIMEOUT);
+
+        TimeLimiterConfiguration tl = TimeLimiterConfiguration.of(Duration.ZERO);
+        sut.withTimeLimiter(tl);
+        assertThat(sut.getTimeLimiter()).isSameAs(tl);
+
+        sut.withTokenUri("https://foo.bar").withIdentity(new ClientCredentials("id", "secret"));
+        assertThat(sut.build().getResilienceConfiguration().timeLimiterConfiguration()).isSameAs(tl);
     }
 }

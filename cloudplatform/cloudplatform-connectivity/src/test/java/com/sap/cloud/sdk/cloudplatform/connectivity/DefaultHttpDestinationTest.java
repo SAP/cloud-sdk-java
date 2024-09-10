@@ -4,9 +4,18 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.Arrays.asList;
+
+import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.CONNECTIVITY;
+import static com.sap.cloud.environment.servicebinding.api.ServiceIdentifier.DESTINATION;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.Options.ProxyOptions;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,8 +31,10 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
+import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingBuilder;
 import com.sap.cloud.sdk.cloudplatform.security.BasicAuthHeaderEncoder;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.BearerCredentials;
@@ -540,6 +551,54 @@ class DefaultHttpDestinationTest
         // "fallback" properties ARE NOT overwritten - this is done for compatibility with Cloud SDK v4 behavior
         assertThat(destination.get(DestinationProperty.PROXY_HOST)).containsExactly("initial.host");
         assertThat(destination.get(DestinationProperty.PROXY_PORT)).containsExactly(4321);
+    }
+
+    @Test
+    @SneakyThrows
+    void testProxyHeaderProvidersOnlyAddedOnce()
+    {
+        // test setup for spy-able handler
+        final var handler = spy(new DefaultHttpDestinationBuilderProxyHandler());
+        when(handler.getServiceBindingAccessor())
+            .thenReturn(
+                () -> asList(
+                    new DefaultServiceBindingBuilder().withServiceIdentifier(CONNECTIVITY).build(),
+                    new DefaultServiceBindingBuilder().withServiceIdentifier(DESTINATION).build()));
+        when(handler.getServiceBindingDestinationLoader())
+            .thenReturn(( opts ) -> opts.getOption(ProxyOptions.class).toTry());
+
+        // check proxy header provider when starting with new destination
+        final var baseHttpDestination =
+            DefaultHttpDestination
+                .builder("http://my-target.com")
+                .name("name")
+                .property(DestinationProperty.PROXY_URI, URI.create("http://initial.uri:1234"))
+                .property(DestinationProperty.PROXY_AUTH, "Bearer initial-token")
+                .property(DestinationProperty.PROXY_TYPE, ProxyType.ON_PREMISE)
+                .proxyHandler(handler)
+                .build();
+        assertThat(baseHttpDestination.getCustomHeaderProviders())
+            .hasSize(1)
+            .hasOnlyElementsOfTypes(
+                DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider.class);
+
+        // check proxy header provider when copying a destination
+        final var destination1 = baseHttpDestination.toBuilder().proxyHandler(handler).build();
+        assertThat(destination1.getCustomHeaderProviders())
+            .hasSize(1)
+            .hasOnlyElementsOfTypes(
+                DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider.class);
+
+        // check proxy header provider when copying a destination from a copied destination
+        final var destination2 = destination1.toBuilder().proxyHandler(handler).build();
+        assertThat(destination2.getCustomHeaderProviders())
+            .hasSize(1)
+            .hasOnlyElementsOfTypes(
+                DefaultHttpDestinationBuilderProxyHandler.SapConnectivityLocationIdHeaderProvider.class);
+
+        // assure the handler is only invoked once (while checked 3 times)
+        Mockito.verify(handler, times(3)).canHandle(any());
+        Mockito.verify(handler, times(1)).handle(any());
     }
 
     @Test

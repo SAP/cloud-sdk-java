@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.cache;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +38,7 @@ public final class SerializableCacheKey implements GenericCacheKey<SerializableC
     private final String principalId;
 
     @Getter
-    private final List<Serializable> components = new ArrayList<>();
+    private final ArrayList<Serializable> components = new ArrayList<>();
 
     @Nonnull
     @Override

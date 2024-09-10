@@ -62,9 +62,6 @@
   </rule>
   -->
 
-  <rule ref="category/java/errorprone.xml/CloneThrowsCloneNotSupportedException">
-    <priority>3</priority>
-  </rule>
   <rule ref="category/java/design.xml/AvoidThrowingNullPointerException">
     <priority>4</priority>
   </rule>

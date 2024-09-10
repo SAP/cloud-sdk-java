@@ -30,6 +30,7 @@ enum ParameterKind
      * @deprecated This module will be discontinued, along with its classes and methods.
      */
     @Deprecated
+    @Nonnull
     @Override
     public String toString()
     {

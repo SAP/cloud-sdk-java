@@ -43,6 +43,7 @@ public enum SecurityConfigurationStrategy
      *
      * @return The default value
      */
+    @Nonnull
     public static SecurityConfigurationStrategy getDefault()
     {
         return FROM_DESTINATION;
@@ -76,6 +77,7 @@ public enum SecurityConfigurationStrategy
         throw new IllegalArgumentException("No SecurityConfigurationStrategy found for identifier: " + identifier);
     }
 
+    @Nonnull
     @Override
     public String toString()
     {

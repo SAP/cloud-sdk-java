@@ -171,6 +171,8 @@ class MetadataApiSpecificUsage
         @Nullable
         String value;
 
+        @Nonnull
+        @Override
         public String toString()
         {
             final String typeUnqualified = getUnqualified(type);

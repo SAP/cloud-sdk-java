@@ -99,10 +99,7 @@ public class DistributionChannel extends StringBasedErpType<DistributionChannel>
     @Nonnull
     public static Set<DistributionChannel> toDistributionChannels( @Nonnull final Collection<String> values )
     {
-        return values
-            .stream()
-            .map(StringBasedErpType.transformToType(new DistributionChannelConverter()))
-            .collect(Collectors.toSet());
+        return values.stream().map(transformToType(new DistributionChannelConverter())).collect(Collectors.toSet());
     }
 
     /**
@@ -115,9 +112,6 @@ public class DistributionChannel extends StringBasedErpType<DistributionChannel>
     @Nonnull
     public static Set<String> toStrings( @Nonnull final Collection<DistributionChannel> values )
     {
-        return values
-            .stream()
-            .map(StringBasedErpType.transformToString(new DistributionChannelConverter()))
-            .collect(Collectors.toSet());
+        return values.stream().map(transformToString(new DistributionChannelConverter())).collect(Collectors.toSet());
     }
 }

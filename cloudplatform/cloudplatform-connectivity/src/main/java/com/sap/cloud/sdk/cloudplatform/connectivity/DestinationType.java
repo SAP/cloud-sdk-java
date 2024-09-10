@@ -45,6 +45,7 @@ public enum DestinationType
         this.identifier = identifier;
     }
 
+    @Nonnull
     @Override
     public String toString()
     {
@@ -100,9 +101,7 @@ public enum DestinationType
             return ofIdentifier(identifier);
         }
         catch( final IllegalArgumentException e ) {
-            if( log.isWarnEnabled() ) {
-                log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultDestinationType);
-            }
+            log.warn("Identifier '{}' is not supported. Falling back to {}.", identifier, defaultDestinationType);
             return defaultDestinationType;
         }
     }
