@@ -12,6 +12,7 @@
   - SAP BTP Security Services Integration Libraries `com.sap.cloud.security` 3.4.3 
   - CAP `com.sap.cds` 2.9.3
   - SAP Java Buildpack `com.sap.cloud.sjb` 2.10.0
+- Using IAS requires XSUAA version to be minimum `3.4.0`.
 
 ### ✨ New Functionality
 
