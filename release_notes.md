@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- Using IAS requires XSUAA version to be minimum `3.4.0`.
 
 ### ✨ New Functionality
 
