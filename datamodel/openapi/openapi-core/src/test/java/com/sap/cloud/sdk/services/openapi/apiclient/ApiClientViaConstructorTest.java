@@ -5,9 +5,10 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -89,6 +92,35 @@ class ApiClientViaConstructorTest
         server.verify();
     }
 
+    @Test
+    void testApiClientWithQueryParams()
+    {
+        final String filterQueryValue = "emails.value eq \"my.email@test.com\"";
+        final String expectedFilterQuery = "emails.value%20eq%20%22my.email@test.com%22";
+        final String filterQueryParam = "filter";
+        MultiValueMap<String, String> execQueryParams = new LinkedMultiValueMap<>();
+        List<String> values = new ArrayList<>();
+        values.add(filterQueryValue);
+        execQueryParams.put("filter", values);
+
+        final ApiClient apiClient = new ApiClient().setBasePath(BASE_PATH);
+        final RestTemplate restTemplate = apiClient.getRestTemplate();
+        final MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+
+        server
+            .expect(
+                ExpectedCount.once(),
+                requestTo(BASE_PATH + RELATIVE_PATH + "?" + filterQueryParam + "=" + expectedFilterQuery))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(queryParam(filterQueryParam, expectedFilterQuery))
+            .andRespond(MockRestResponseCreators.withSuccess(SUCCESS_BODY, MediaType.TEXT_PLAIN));
+
+        final MyTestOpenApiService myTestOpenApiService = new MyTestOpenApiService(apiClient);
+        myTestOpenApiService.invokeApiEndpoint(HttpMethod.GET, null, execQueryParams);
+
+        server.verify();
+    }
+
     private static class MyDto
     {
         @JsonProperty( "Return" )
@@ -112,16 +144,19 @@ class ApiClientViaConstructorTest
             super(apiClient);
         }
 
-        void invokeApiEndpoint()
+        void invokeApiEndpoint( @Nullable Object body )
         {
-            invokeApiEndpoint(null);
+            invokeApiEndpoint(HttpMethod.POST, body, null);
         }
 
-        void invokeApiEndpoint( @Nullable Object body )
+        void invokeApiEndpoint(
+            HttpMethod method,
+            @Nullable Object body,
+            @Nullable MultiValueMap<String, String> queryParams )
         {
             assertThat(apiClient.getBasePath()).isEqualTo(BASE_PATH);
 
-            final ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<String>()
+            final ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>()
             {
             };
 
@@ -129,8 +164,8 @@ class ApiClientViaConstructorTest
                 apiClient
                     .invokeAPI(
                         UriComponentsBuilder.fromPath(RELATIVE_PATH).toUriString(),
-                        HttpMethod.POST,
-                        null,
+                        method,
+                        queryParams,
                         body,
                         new HttpHeaders(),
                         null,
