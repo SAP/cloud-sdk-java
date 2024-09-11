@@ -26,4 +26,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- OpenAPI QueryParameters are now encoded

@@ -4,10 +4,8 @@
 
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -40,6 +38,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -699,14 +698,7 @@ public final class ApiClient
             //encode the query parameters in case they contain unsafe characters
             for( final List<String> values : queryParams.values() ) {
                 if( values != null ) {
-                    for( int i = 0; i < values.size(); i++ ) {
-                        try {
-                            values.set(i, URLEncoder.encode(values.get(i), "utf8"));
-                        }
-                        catch( final UnsupportedEncodingException e ) {
-                            throw new OpenApiRequestException(e);
-                        }
-                    }
+                    values.replaceAll(queryParam -> UriUtils.encodeQueryParam(queryParam, "utf8"));
                 }
             }
             builder.queryParams(queryParams);
