@@ -80,12 +80,7 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
             cacheKey = getCacheKey(destination);
         }
         catch( final TenantAccessException | PrincipalAccessException | IllegalStateException e ) {
-            final String msg =
-                "Failed to create cache key for HttpClient. Falling back to creating a new http client instance."
-                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
-                    + " Please analyze the attached stack trace and resolve the issue.";
-            log.error(msg, e);
-            return Try.ofSupplier(createHttpClient);
+            return Try.failure(new HttpClientInstantiationException("Failed to create cache key for HttpClient", e));
         }
 
         final HttpClient httpClient;
@@ -125,10 +120,8 @@ class DefaultApacheHttpClient5Cache implements ApacheHttpClient5Cache
         }
         if( maybeTenant.isFailure() ) {
             final String msg =
-                "Tenant and Principal accessors are returning inconsistent results: A principal is defined, but no tenant is defined in the current context."
-                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
-                    + " Please analyze the attached stack trace and resolve the issue.";
-            log.error(msg, maybeTenant.getCause());
+                "Tenant and Principal accessors are returning inconsistent results: A principal is defined, but no tenant is defined in the current context.";
+            throw new IllegalStateException(msg, maybeTenant.getCause());
         }
         return CacheKey.of(maybeTenant.getOrNull(), principal.get()).append(destination);
     }
