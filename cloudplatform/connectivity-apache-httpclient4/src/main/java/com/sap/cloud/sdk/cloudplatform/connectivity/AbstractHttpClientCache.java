@@ -76,23 +76,18 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
 
         final Try<Cache<CacheKey, HttpClient>> maybeCache = getCache();
         if( maybeCache.isFailure() ) {
-            final String msg =
-                "Failed to get HttpClientCache. Falling back to creating a new http client instance."
-                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
-                    + " Please analyze the attached stack trace and resolve the issue.";
-            log.error(msg, maybeCache.getCause());
-            return Try.ofSupplier(createHttpClient);
+            return Try
+                .failure(new HttpClientInstantiationException("Failed to get HttpClientCache.", maybeCache.getCause()));
         }
 
         final Try<CacheKey> maybeKey = destination != null ? getCacheKey(destination) : getCacheKey();
 
         if( maybeKey.isFailure() ) {
-            final String msg =
-                "Failed to create cache key for HttpClient. Falling back to creating a new http client instance."
-                    + " This is unexpected and will be changed to fail instead in a future version of Cloud SDK."
-                    + " Please analyze the attached stack trace and resolve the issue.";
-            log.error(msg, maybeKey.getCause());
-            return Try.ofSupplier(createHttpClient);
+            return Try
+                .failure(
+                    new HttpClientInstantiationException(
+                        "Failed to create cache key for HttpClient",
+                        maybeKey.getCause()));
         }
 
         final Cache<CacheKey, HttpClient> cache = maybeCache.get();
