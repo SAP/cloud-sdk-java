@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-bom</artifactId>
-	<version>5.13.0-SNAPSHOT</version>
+	<version>5.14.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Modules and Dependencies BOM</name>
 	<description>Bill of Materials (BOM) of the SAP Cloud SDK modules and dependencies.</description>
@@ -35,7 +35,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- do not modify the following line, it is updated by the versioning script -->
-		<sdk.version>5.13.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.14.0-SNAPSHOT</sdk.version>
 		<service-binding.version>0.10.5</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
