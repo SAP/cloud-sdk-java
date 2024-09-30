@@ -101,7 +101,7 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.14.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.11.0</junit.jupiter.version>
+		<junit.jupiter.version>5.11.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -110,7 +110,7 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.8.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.23</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.24</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
@@ -119,7 +119,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.9.1</wiremock.version>
-		<checkstyle.version>10.18.1</checkstyle.version>
+		<checkstyle.version>10.18.2</checkstyle.version>
 		<byte-buddy.version>1.15.3</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
