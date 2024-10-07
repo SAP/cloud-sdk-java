@@ -83,7 +83,7 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.86.5</jco-api.version>
+		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.18.0</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
@@ -99,9 +99,9 @@
 		<slf4j.version>2.0.16</slf4j.version>
 		<assertj-core.version>3.26.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.14.0</mockito.version>
+		<mockito.version>5.14.1</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.11.1</junit.jupiter.version>
+		<junit.jupiter.version>5.11.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -110,7 +110,7 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
 		<openapi-generator.version>7.8.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.24</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.25</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
