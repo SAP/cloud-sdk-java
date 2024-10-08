@@ -29,6 +29,8 @@ updates:
       test:
         dependency-type: "development"
     ignore:
+      # updating leads to ignoring our formatting rules
+      - dependency-name: 'net.revelc.code.formatter:formatter-maven-plugin'
       # updating leads to unintended formatting of POM files
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
       # used by deprecated code only, not worth updating for now
