@@ -70,6 +70,9 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   {{/parcelableModel}}
   {{^parcelableModel}}
   {{#pojoConstructorVisibility}}
+  /**
+   * Default constructor for {{classname}}.
+   */
   {{pojoConstructorVisibility}} {{classname}}() { {{#parent}}super();{{/parent}} }
   {{/pojoConstructorVisibility}}
   {{/parcelableModel}}
