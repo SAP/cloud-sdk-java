@@ -134,6 +134,9 @@ public class Soda
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    /**
+     * Default constructor for Soda.
+     */
     protected Soda()
     {
     }

@@ -60,6 +60,9 @@ public class OrderWithTimestamp
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    /**
+     * Default constructor for OrderWithTimestamp.
+     */
     protected OrderWithTimestamp()
     {
     }
