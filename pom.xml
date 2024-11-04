@@ -84,7 +84,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.18.0</jackson.version>
+		<jackson.version>2.18.1</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20240303</json.version>
@@ -120,7 +120,7 @@
 		<qdox.version>2.1.0</qdox.version>
 		<wiremock.version>3.9.1</wiremock.version>
 		<checkstyle.version>10.18.2</checkstyle.version>
-		<byte-buddy.version>1.15.7</byte-buddy.version>
+		<byte-buddy.version>1.15.10</byte-buddy.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
