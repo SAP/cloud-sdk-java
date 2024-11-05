@@ -7,7 +7,6 @@ package com.sap.cloud.sdk.cloudplatform.requestheader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.thread.Property;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextListener;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
  * Implementation of {@link ThreadContextListener} that ensures the correct initialization of the
  * {@link RequestHeaderContainer} when working with non-container managed threads on all supported Cloud platforms.
  */
-@Beta
 @Slf4j
 public class RequestHeaderThreadContextListener implements ThreadContextListener
 {

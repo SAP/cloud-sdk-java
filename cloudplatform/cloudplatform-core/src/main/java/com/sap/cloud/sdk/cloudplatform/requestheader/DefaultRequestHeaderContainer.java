@@ -14,7 +14,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -28,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * Default implementation of the {@link RequestHeaderContainer} interface.
  */
-@Beta
 @EqualsAndHashCode
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 public final class DefaultRequestHeaderContainer implements RequestHeaderContainer
@@ -137,7 +135,6 @@ public final class DefaultRequestHeaderContainer implements RequestHeaderContain
      * Implementation of the {@link RequestHeaderContainer.Builder} interface that is able to construct and manipulate
      * {@link DefaultRequestHeaderContainer}s.
      */
-    @Beta
     @NoArgsConstructor( access = AccessLevel.PRIVATE )
     public static class Builder implements RequestHeaderContainer.Builder
     {
