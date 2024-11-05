@@ -15,7 +15,6 @@ import org.apache.hc.client5.http.classic.HttpClient;
  *
  * @since 4.20.0
  */
-
 public class ApacheHttpClient5FactoryBuilder
 {
     @Nonnull
