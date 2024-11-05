@@ -10,14 +10,12 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.
  *
  * @since 4.20.0
  */
-@Beta
+
 public class ApacheHttpClient5FactoryBuilder
 {
     @Nonnull
