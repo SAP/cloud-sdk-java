@@ -121,6 +121,8 @@
 		<wiremock.version>3.9.1</wiremock.version>
 		<checkstyle.version>10.18.2</checkstyle.version>
 		<byte-buddy.version>1.15.10</byte-buddy.version>
+		<snakeyaml.version>2.3</snakeyaml.version>
+		<commons-codec.version>1.17.1</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -392,7 +394,13 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.17.1</version>
+				<version>${commons-codec.version}</version>
+			</dependency>
+			<!-- Added to resolve dependency convergence between openapi-generator, and jackson -->
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
