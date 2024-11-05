@@ -39,7 +39,6 @@ import lombok.ToString;
  * generated VDM classes (POJOs, fluent helpers, service classes, etc.), which uses the SAP Cloud SDK to access OData
  * services.
  */
-@Beta
 public class DefaultAnnotationStrategy implements AnnotationStrategy
 {
     private static final Logger logger = MessageCollector.getLogger(DefaultAnnotationStrategy.class);

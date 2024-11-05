@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
  * Represents the default {@link NamingStrategy} implementation, which generates syntactically correct Java names
  * without doing any additional modifications.
  */
-@Beta
 @NoArgsConstructor
 public class SimpleNamingStrategy extends AbstractNamingStrategy
 {

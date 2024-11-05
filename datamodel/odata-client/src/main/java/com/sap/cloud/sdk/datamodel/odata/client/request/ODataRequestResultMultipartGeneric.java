@@ -164,7 +164,6 @@ public class ODataRequestResultMultipartGeneric
      *
      * @since 5.5.0
      */
-    @Beta
     @Override
     public void close()
     {

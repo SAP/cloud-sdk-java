@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 /**
  * Custom runtime exception that is thrown in cases of unrecoverable errors.
  */
-@Beta
 public class ODataGeneratorException extends RuntimeException
 {
     private static final long serialVersionUID = 6937287713485851338L;

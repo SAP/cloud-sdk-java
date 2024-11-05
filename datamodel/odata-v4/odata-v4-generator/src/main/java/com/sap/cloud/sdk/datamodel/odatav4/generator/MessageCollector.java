@@ -25,7 +25,6 @@ import com.google.common.annotations.Beta;
 /**
  * Wrapper for the {@code LoggerFactory}, collecting all logged messages.
  */
-@Beta
 public class MessageCollector
 {
     /**

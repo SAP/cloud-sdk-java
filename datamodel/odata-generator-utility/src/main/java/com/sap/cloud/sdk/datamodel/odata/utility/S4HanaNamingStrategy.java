@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
  * Represents a {@link NamingStrategy}, which removes pre- and suffixes from the generated Java identifiers that are
  * typically used in S4Hana service definitions.
  */
-@Beta
 @NoArgsConstructor
 public final class S4HanaNamingStrategy extends AbstractNamingStrategy
 {

@@ -25,7 +25,6 @@ import lombok.Getter;
  * Builder for the {@code ODataToVdmGenerator}, gathering all relevant parameter or providing default values for
  * unspecified ones.
  */
-@Beta
 @Getter
 public class DataModelGenerator implements DataModelGeneratorConfig
 {

@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 /**
  * Data structure representing an OData navigation property.
  */
-@Beta
 public interface NavigationPropertyAnnotationModel
 {
     /**

@@ -131,7 +131,6 @@ public class DefaultBatchResponseResult implements BatchResponse
      *
      * @since 4.15.0
      */
-    @Beta
     @Override
     public void close()
     {

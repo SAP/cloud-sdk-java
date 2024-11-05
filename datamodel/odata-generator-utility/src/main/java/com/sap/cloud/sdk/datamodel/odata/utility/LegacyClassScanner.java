@@ -42,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
-@Beta
 public class LegacyClassScanner
 {
     @Nullable

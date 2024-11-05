@@ -55,7 +55,6 @@ public interface FilterableBoolean<EntityT> extends FilterableValue<EntityT, Boo
      *
      * @since 4.8.0
      */
-    @Beta
     @Nonnull
     static <EntityT> FilterableBoolean<EntityT> fromCustomFilter(
         @Nonnull final ValueBoolean delegateExpression,

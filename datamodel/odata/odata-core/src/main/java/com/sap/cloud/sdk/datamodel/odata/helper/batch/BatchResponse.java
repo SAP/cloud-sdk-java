@@ -102,7 +102,6 @@ public interface BatchResponse extends AutoCloseable
      *
      * @since 4.15.0
      */
-    @Beta
     @Override
     void close();
 }

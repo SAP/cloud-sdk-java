@@ -16,7 +16,6 @@ import lombok.Getter;
  * add parameters to annotations while generating Java code. <b>NOTE: Only primitive types, {@link String}, {@link Enum}
  * , and {@link Class} are supported.</b>
  */
-@Beta
 public class AnnotationParameter
 {
     @Getter

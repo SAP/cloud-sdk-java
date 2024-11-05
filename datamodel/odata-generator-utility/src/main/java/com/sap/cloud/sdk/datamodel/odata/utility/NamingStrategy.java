@@ -12,7 +12,6 @@ import com.google.common.annotations.Beta;
 /**
  * Represents a strategy for generating various types of Java names from OData entity/property names and labels.
  */
-@Beta
 public interface NamingStrategy
 {
     /**

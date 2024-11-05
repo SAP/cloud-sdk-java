@@ -26,7 +26,6 @@ import lombok.Setter;
  * Represents an abstract base implementation of the {@link NamingStrategy}. It provides convenience methods (such as
  * {@link AbstractNamingStrategy#convertToJavaClassName(String, String)}) for inheritors to leverage.
  */
-@Beta
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class AbstractNamingStrategy implements NamingStrategy

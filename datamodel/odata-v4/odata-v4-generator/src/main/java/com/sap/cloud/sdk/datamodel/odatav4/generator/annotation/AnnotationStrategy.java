@@ -23,7 +23,6 @@ import com.google.common.annotations.Beta;
  * <li>Member variables representing OData properties of complex types.</li>
  * </ul>
  */
-@Beta
 public interface AnnotationStrategy
 {
     /**

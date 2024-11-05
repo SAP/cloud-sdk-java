@@ -21,7 +21,6 @@ import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
 /**
  * Mojo used in the OData V4 Generator Maven Plugin.
  */
-@Beta
 @Mojo( name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresProject = false )
 public class DataModelGeneratorMojo extends AbstractMojo
 {

@@ -22,7 +22,6 @@ import lombok.Getter;
  * generated Java code.
  */
 @EqualsAndHashCode
-@Beta
 public class AnnotationDefinition
 {
     @Getter

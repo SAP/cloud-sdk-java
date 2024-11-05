@@ -265,7 +265,6 @@ public final class BatchResponse implements AutoCloseable
      *
      * @since 4.15.0
      */
-    @Beta
     @Override
     public void close()
     {

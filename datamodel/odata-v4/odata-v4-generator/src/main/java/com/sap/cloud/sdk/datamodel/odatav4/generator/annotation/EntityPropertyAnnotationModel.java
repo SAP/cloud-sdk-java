@@ -12,7 +12,6 @@ import com.google.common.annotations.Beta;
 /**
  * Data structure representing an OData property of an entity or complex type.
  */
-@Beta
 public interface EntityPropertyAnnotationModel
 {
     /**
