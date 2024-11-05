@@ -30,7 +30,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+{{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+{{/aiSdkConstructor}}
+{{#aiSdkConstructor}}import com.sap.ai.sdk.core.AiCoreService;
+import com.sap.ai.sdk.core.AiCoreDestination;
+{{/aiSdkConstructor}}
 
 /**
  * {{appName}} in version {{version}}.
@@ -40,6 +44,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 @Beta{{/isReleased}}
 {{#operations}}
 public class {{classname}} extends AbstractOpenApiService {
+{{^aiSdkConstructor}}
     /**
      * Instantiates this API class to invoke operations on the {{appName}}.
      *
@@ -61,6 +66,27 @@ public class {{classname}} extends AbstractOpenApiService {
     {
          super(apiClient);
     }
+{{/aiSdkConstructor}}
+{{#aiSdkConstructor}}
+
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
+    public {{classname}}()
+    {
+         super(new AiCoreService().client());
+    }
+
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}
+     *
+     * @param aiCoreDestination The configured connectivity instance to AI Core
+     */
+    public {{classname}}( @Nonnull final AiCoreDestination aiCoreDestination )
+    {
+        super(aiCoreDestination.client());
+    }
+{{/aiSdkConstructor}}
 
     {{#operation}}{{#hasOptionalParams}}
     /**
