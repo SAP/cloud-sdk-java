@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
  *
  * @since 4.20.0
  */
-
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
 public final class ApacheHttpClient5Accessor
 {
