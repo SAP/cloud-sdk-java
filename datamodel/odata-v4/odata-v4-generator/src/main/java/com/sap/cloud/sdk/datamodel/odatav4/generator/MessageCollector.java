@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MessageFormatter;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Wrapper for the {@code LoggerFactory}, collecting all logged messages.
  */

@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.generator.annotation;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import lombok.Getter;
 
 /**

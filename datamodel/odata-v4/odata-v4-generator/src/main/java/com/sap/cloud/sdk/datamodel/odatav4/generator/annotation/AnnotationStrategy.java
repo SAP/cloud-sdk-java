@@ -8,8 +8,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Implementations of this interface instruct the VDM generator on which annotations to apply to the generated Java
  * code.

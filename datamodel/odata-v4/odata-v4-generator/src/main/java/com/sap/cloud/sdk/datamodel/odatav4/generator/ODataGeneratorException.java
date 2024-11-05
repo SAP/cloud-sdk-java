@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.generator;
 
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Custom runtime exception that is thrown in cases of unrecoverable errors.
  */

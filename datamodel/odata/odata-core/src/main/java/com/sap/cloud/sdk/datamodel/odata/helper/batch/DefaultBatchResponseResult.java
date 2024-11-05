@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultMultipartGeneric;
 import com.sap.cloud.sdk.datamodel.odata.helper.CollectionValuedFluentHelperFunction;

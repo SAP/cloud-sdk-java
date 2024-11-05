@@ -6,8 +6,6 @@ package com.sap.cloud.sdk.datamodel.odata.utility;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import lombok.NoArgsConstructor;
 
 /**

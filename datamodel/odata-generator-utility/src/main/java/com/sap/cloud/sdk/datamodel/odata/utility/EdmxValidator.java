@@ -18,8 +18,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.annotations.Beta;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
