@@ -70,7 +70,6 @@ public final class CacheManager
      * @return The given cache.
      * @since 4.3.0
      */
-    @Beta
     @Nonnull
     public static synchronized <T> Cache<CacheKey, T> unregister( @Nonnull final Cache<CacheKey, T> cache )
     {

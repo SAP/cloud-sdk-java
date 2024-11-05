@@ -55,7 +55,6 @@ public interface HttpClientCache
      * Constant implementation of {@see HttpClientCache} with disabled the cache logic. Useful for testing and
      * troubleshooting. Don't use in production.
      */
-    @Beta
     @Nonnull
     HttpClientCache DISABLED = new HttpClientCache()
     {

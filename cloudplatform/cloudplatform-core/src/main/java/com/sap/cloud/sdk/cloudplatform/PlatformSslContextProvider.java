@@ -14,7 +14,6 @@ import io.vavr.control.Try;
 /**
  * Creates an SslContext based on properties of the platform.
  */
-@Beta
 @FunctionalInterface
 public interface PlatformSslContextProvider
 {
