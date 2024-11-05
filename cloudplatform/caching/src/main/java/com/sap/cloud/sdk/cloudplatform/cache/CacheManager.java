@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;

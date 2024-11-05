@@ -11,7 +11,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAccessException;

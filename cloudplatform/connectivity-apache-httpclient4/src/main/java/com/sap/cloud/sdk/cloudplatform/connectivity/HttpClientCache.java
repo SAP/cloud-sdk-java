@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 
 import io.vavr.control.Try;

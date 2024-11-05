@@ -7,8 +7,6 @@ package com.sap.cloud.sdk.cloudplatform;
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Try;
 
 /**
