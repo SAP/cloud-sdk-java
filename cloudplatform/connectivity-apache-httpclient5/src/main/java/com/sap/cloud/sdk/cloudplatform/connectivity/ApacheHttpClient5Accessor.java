@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 
@@ -23,7 +22,6 @@ import lombok.NoArgsConstructor;
  *
  * @since 4.20.0
  */
-@Beta
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
 public final class ApacheHttpClient5Accessor
 {
