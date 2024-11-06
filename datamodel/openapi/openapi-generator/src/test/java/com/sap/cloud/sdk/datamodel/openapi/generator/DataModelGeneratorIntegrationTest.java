@@ -30,6 +30,18 @@ class DataModelGeneratorIntegrationTest
     @AllArgsConstructor
     private enum TestCase
     {
+        API_CLASS_FOR_AI_SDK(
+            "api-class-for-ai-sdk",
+            "sodastore.json",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
+            ApiMaturity.RELEASED,
+            true,
+            6,
+            null,
+            null,
+            null,
+            "true"),
         API_CLASS_VENDOR_EXTENSION_YAML(
             "api-class-vendor-extension-yaml",
             "sodastore.yaml",
@@ -72,7 +84,8 @@ class DataModelGeneratorIntegrationTest
             6,
             "builder",
             "build",
-            "private");
+            "private",
+            null),;
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -84,6 +97,7 @@ class DataModelGeneratorIntegrationTest
         String methodBuilder = null;
         String methodBuild = null;
         String constructorVisibility = null;
+        String aiSdkConstructor = null;
     }
 
     @ParameterizedTest
@@ -115,6 +129,7 @@ class DataModelGeneratorIntegrationTest
                 .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
                 .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
                 .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
+                .additionalProperty("aiSdkConstructor", testCase.aiSdkConstructor)
                 .build();
 
         final Try<GenerationResult> maybeGenerationResult =
@@ -135,7 +150,7 @@ class DataModelGeneratorIntegrationTest
         final Path outputDirectory = getComparisonDirectory(testCase);
 
         assertThat(inputDirectory).exists().isReadable().isDirectory();
-        assertThat(inputDirectory).exists().isReadable().isDirectory();
+        assertThat(outputDirectory).exists().isReadable().isDirectory();
 
         final GenerationConfiguration generationConfiguration =
             GenerationConfiguration
@@ -152,6 +167,7 @@ class DataModelGeneratorIntegrationTest
                 .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
                 .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
                 .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
+                .additionalProperty("aiSdkConstructor", testCase.aiSdkConstructor)
                 .build();
 
         new DataModelGenerator().generateDataModel(generationConfiguration);
