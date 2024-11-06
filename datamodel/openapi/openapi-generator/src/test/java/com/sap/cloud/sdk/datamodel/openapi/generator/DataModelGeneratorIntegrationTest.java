@@ -32,7 +32,7 @@ class DataModelGeneratorIntegrationTest
     {
         API_CLASS_FOR_AI_SDK(
             "api-class-for-ai-sdk",
-            "sodastore.JSON",
+            "sodastore.json",
             "com.sap.cloud.sdk.services.builder.api",
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
