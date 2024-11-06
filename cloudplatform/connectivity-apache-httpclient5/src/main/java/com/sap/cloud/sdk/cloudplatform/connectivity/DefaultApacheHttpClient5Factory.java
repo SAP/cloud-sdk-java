@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE;
+
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -50,7 +52,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     private final Timeout timeout;
     private final int maxConnectionsTotal;
     private final int maxConnectionsPerRoute;
-    // for testing purposes
+
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
 
@@ -95,7 +97,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             HttpClients
                 .custom()
                 .setConnectionManager(getConnectionManager(destination))
-                .setDefaultRequestConfig(getRequestConfig())
+                .setDefaultRequestConfig(getRequestConfig(destination))
                 .setProxy(getProxy(destination));
 
         if( requestInterceptor != null ) {
@@ -162,9 +164,28 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     }
 
     @Nonnull
-    private RequestConfig getRequestConfig()
+    private RequestConfig getRequestConfig( @Nullable final HttpDestinationProperties destination )
     {
-        return RequestConfig.custom().setConnectionRequestTimeout(timeout).build();
+        return RequestConfig
+            .custom()
+            .setProtocolUpgradeEnabled(isProtocolUpgradeEnabled(destination))
+            .setConnectionRequestTimeout(timeout)
+            .build();
+    }
+
+    private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
+    {
+        if( ENABLE_TLS_UPGRADE != null ) {
+            return ENABLE_TLS_UPGRADE;
+        }
+        if( destination == null ) {
+            return true;
+        }
+        if( destination.getTlsVersion().isDefined() ) {
+            return false;
+        }
+        return !destination.getProxyType().contains(ProxyType.ON_PREMISE)
+            && destination.getProxyConfiguration().isEmpty();
     }
 
     @Nullable

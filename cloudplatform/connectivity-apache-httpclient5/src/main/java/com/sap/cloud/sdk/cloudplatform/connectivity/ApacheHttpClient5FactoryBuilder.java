@@ -7,8 +7,11 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.time.Duration;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.classic.HttpClient;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.
@@ -21,6 +24,20 @@ public class ApacheHttpClient5FactoryBuilder
     private Duration timeout = DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT;
     private int maxConnectionsTotal = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL;
     private int maxConnectionsPerRoute = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+
+    /**
+     * Enables or disables the automatic TLS version upgrade feature for the {@link HttpClient} instances created by the
+     * to-be-built.
+     * <p>
+     * {@code null} -> default behavior, enabled by default, but disabled if connection is without proxy.
+     * <p>
+     * {@code true} -> always enabled
+     * <p>
+     * {@code false} -> always disabled
+     */
+    @Nullable
+    @Beta
+    public static Boolean ENABLE_TLS_UPGRADE = null;
 
     /**
      * Sets the timeout {@link HttpClient} instances created by the to-be-built {@link ApacheHttpClient5Factory} should
