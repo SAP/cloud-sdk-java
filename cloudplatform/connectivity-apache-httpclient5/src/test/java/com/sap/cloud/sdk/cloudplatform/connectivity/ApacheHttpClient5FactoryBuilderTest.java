@@ -17,8 +17,6 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.config.Configurable;
 import org.junit.jupiter.api.Test;
 
-import lombok.SneakyThrows;
-
 class ApacheHttpClient5FactoryBuilderTest
 {
 
@@ -29,7 +27,6 @@ class ApacheHttpClient5FactoryBuilderTest
         assertThatNoException().isThrownBy(() -> new ApacheHttpClient5FactoryBuilder().build());
     }
 
-    @SneakyThrows
     @Test
     void testTlsUpgradeToggle()
     {
