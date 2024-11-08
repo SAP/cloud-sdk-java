@@ -17,7 +17,7 @@
 ### 📈 Improvements
 
 - Minor improvement on OpenAPI code generator to apply JavaDoc on customized model class constructors.
-- Fix a TLS compatibility issue between latest _Apache HttpClient 5_ and _SAP Cloud Connector / OnPremise_.
+- Fix a TLS compatibility issue between the latest _Apache HttpClient 5_ and on-premise connectivity (via SAP Cloud Connector).
 - Stabilize ApacheHttpClient5 related API without changes.
   The `@Beta` annotations are removed in most places and consuming applications no longer need to suppress warnings.
 
