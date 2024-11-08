@@ -52,7 +52,9 @@ class DefaultApacheHttpClient5CacheTest
         new DefaultApacheHttpClient5Factory(
             DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT,
             DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL,
-            DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
+            DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE,
+            null,
+            ApacheHttpClient5FactoryBuilder.TlsUpgrade.AUTOMATIC);
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
     private static final Duration TEN_MINUTES = Duration.ofMinutes(10L);
 

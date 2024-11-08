@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE;
-
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -56,24 +54,21 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
 
-    DefaultApacheHttpClient5Factory(
-        @Nonnull final Duration timeout,
-        final int maxConnectionsTotal,
-        final int maxConnectionsPerRoute )
-    {
-        this(timeout, maxConnectionsTotal, maxConnectionsPerRoute, null);
-    }
+    @Nonnull
+    private final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade;
 
     DefaultApacheHttpClient5Factory(
         @Nonnull final Duration timeout,
         final int maxConnectionsTotal,
         final int maxConnectionsPerRoute,
-        @Nullable final HttpRequestInterceptor requestInterceptor )
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
+        this.tlsUpgrade = tlsUpgrade;
     }
 
     @Nonnull
@@ -175,16 +170,19 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
 
     private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
     {
-        if( ENABLE_TLS_UPGRADE != null ) {
-            return ENABLE_TLS_UPGRADE;
-        }
-        if( destination == null ) {
-            return true;
-        }
-        if( destination.getTlsVersion().isDefined() ) {
-            return false;
-        }
-        return !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+        return switch( tlsUpgrade ) {
+            case ENABLED -> true;
+            case DISABLED -> false;
+            case AUTOMATIC -> {
+                if( destination == null ) {
+                    yield true;
+                }
+                if( destination.getTlsVersion().isDefined() ) {
+                    yield false;
+                }
+                yield !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+            }
+        };
     }
 
     @Nullable

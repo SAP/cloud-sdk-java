@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade.DISABLED;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade.ENABLED;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination.builder;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType.INTERNET;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ProxyType.ON_PREMISE;
@@ -38,24 +40,24 @@ class ApacheHttpClient5FactoryBuilderTest
         var destProxy = builder(service).trustAllCertificates().proxyType(INTERNET).proxyConfiguration(proxy).build();
         var destTlsVersion = builder(service).trustAllCertificates().tlsVersion("TLSv1.1").build();
 
-        var sut = new ApacheHttpClient5FactoryBuilder().build();
+        ApacheHttpClient5Factory sut;
 
         // force upgrade=true
-        ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE = true;
+        sut = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(ENABLED).build();
         assertProtocolUpgradeEnabled(sut, destInternet);
         assertProtocolUpgradeEnabled(sut, destOnPremise);
         assertProtocolUpgradeEnabled(sut, destProxy);
         assertProtocolUpgradeEnabled(sut, destTlsVersion);
 
         // force upgrade=false
-        ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE = false;
+        sut = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(DISABLED).build();
         assertProtocolUpgradeDisabled(sut, destInternet);
         assertProtocolUpgradeDisabled(sut, destOnPremise);
         assertProtocolUpgradeDisabled(sut, destProxy);
         assertProtocolUpgradeDisabled(sut, destTlsVersion);
 
         // default
-        ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE = null;
+        sut = new ApacheHttpClient5FactoryBuilder().build();
         assertProtocolUpgradeEnabled(sut, destInternet);
         assertProtocolUpgradeDisabled(sut, destOnPremise);
         assertProtocolUpgradeEnabled(sut, destProxy);
