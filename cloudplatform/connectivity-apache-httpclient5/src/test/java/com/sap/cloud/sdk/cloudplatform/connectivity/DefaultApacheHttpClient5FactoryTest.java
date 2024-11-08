@@ -9,7 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade.INTERNET;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade.AUTOMATIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -89,7 +89,7 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                INTERNET);
+                AUTOMATIC);
     }
 
     @Test
@@ -104,7 +104,7 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                INTERNET);
+                AUTOMATIC);
 
         final ApacheHttpClient5Factory factoryWithEnoughTimeout =
             new DefaultApacheHttpClient5Factory(
@@ -112,7 +112,7 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                INTERNET);
+                AUTOMATIC);
 
         final ClassicHttpRequest request = new HttpGet(WIRE_MOCK_SERVER.url("/timeout"));
 
@@ -141,7 +141,7 @@ class DefaultApacheHttpClient5FactoryTest
                 1,
                 MAX_CONNECTIONS_PER_ROUTE,
                 requestInterceptor,
-                INTERNET);
+                AUTOMATIC);
 
         final HttpClient client = sut.createHttpClient();
         final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-1"));
@@ -164,7 +164,7 @@ class DefaultApacheHttpClient5FactoryTest
                 MAX_CONNECTIONS,
                 1,
                 requestInterceptor,
-                INTERNET);
+                AUTOMATIC);
 
         final ClassicHttpRequest firstRequest = new HttpGet(WIRE_MOCK_SERVER.url("/max-connections-per-route"));
         final ClassicHttpRequest secondRequest = new HttpGet(SECOND_WIRE_MOCK_SERVER.url("/max-connections-per-route"));

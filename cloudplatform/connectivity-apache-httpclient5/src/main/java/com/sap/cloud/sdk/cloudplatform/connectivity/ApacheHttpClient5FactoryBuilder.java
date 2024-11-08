@@ -21,7 +21,7 @@ public class ApacheHttpClient5FactoryBuilder
 {
     @Nonnull
     private Duration timeout = DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT;
-    private TlsUpgrade tlsUpgrade = TlsUpgrade.INTERNET;
+    private TlsUpgrade tlsUpgrade = TlsUpgrade.AUTOMATIC;
     private int maxConnectionsTotal = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL;
     private int maxConnectionsPerRoute = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
 
@@ -44,7 +44,7 @@ public class ApacheHttpClient5FactoryBuilder
         /**
          * Automatic TLS upgrade is enabled only for {@link ProxyType#INTERNET}, default.
          */
-        INTERNET;
+        AUTOMATIC;
     }
 
     /**

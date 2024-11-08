@@ -170,22 +170,19 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
 
     private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
     {
-        switch( tlsUpgrade ) {
-            case ENABLED:
-                return true;
-            case DISABLED:
-                return false;
-            case INTERNET:
+        return switch( tlsUpgrade ) {
+            case ENABLED -> true;
+            case DISABLED -> false;
+            case AUTOMATIC -> {
                 if( destination == null ) {
-                    return true;
+                    yield true;
                 }
                 if( destination.getTlsVersion().isDefined() ) {
-                    return false;
+                    yield false;
                 }
-                return !destination.getProxyType().contains(ProxyType.ON_PREMISE);
-            default:
-                throw new IllegalStateException("Unknown TLS upgrade setting: " + tlsUpgrade);
-        }
+                yield !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+            }
+        };
     }
 
     @Nullable
