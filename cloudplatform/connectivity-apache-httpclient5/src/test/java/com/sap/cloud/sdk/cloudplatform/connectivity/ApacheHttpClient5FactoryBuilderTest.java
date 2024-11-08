@@ -58,7 +58,7 @@ class ApacheHttpClient5FactoryBuilderTest
         ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE = null;
         assertProtocolUpgradeEnabled(sut, destInternet);
         assertProtocolUpgradeDisabled(sut, destOnPremise);
-        assertProtocolUpgradeDisabled(sut, destProxy);
+        assertProtocolUpgradeEnabled(sut, destProxy);
         assertProtocolUpgradeDisabled(sut, destTlsVersion);
     }
 
