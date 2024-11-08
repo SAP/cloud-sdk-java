@@ -184,8 +184,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         if( destination.getTlsVersion().isDefined() ) {
             return false;
         }
-        return !destination.getProxyType().contains(ProxyType.ON_PREMISE)
-            && destination.getProxyConfiguration().isEmpty();
+        return !destination.getProxyType().contains(ProxyType.ON_PREMISE);
     }
 
     @Nullable
