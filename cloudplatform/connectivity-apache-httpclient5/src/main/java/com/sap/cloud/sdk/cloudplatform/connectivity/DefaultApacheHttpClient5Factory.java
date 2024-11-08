@@ -4,8 +4,6 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.ENABLE_TLS_UPGRADE;
-
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -56,24 +54,21 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
 
-    DefaultApacheHttpClient5Factory(
-        @Nonnull final Duration timeout,
-        final int maxConnectionsTotal,
-        final int maxConnectionsPerRoute )
-    {
-        this(timeout, maxConnectionsTotal, maxConnectionsPerRoute, null);
-    }
+    @Nonnull
+    private final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade;
 
     DefaultApacheHttpClient5Factory(
         @Nonnull final Duration timeout,
         final int maxConnectionsTotal,
         final int maxConnectionsPerRoute,
-        @Nullable final HttpRequestInterceptor requestInterceptor )
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
+        this.tlsUpgrade = tlsUpgrade;
     }
 
     @Nonnull
@@ -175,17 +170,22 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
 
     private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
     {
-        if( ENABLE_TLS_UPGRADE != null ) {
-            return ENABLE_TLS_UPGRADE;
+        switch( tlsUpgrade ) {
+            case ENABLED:
+                return true;
+            case DISABLED:
+                return false;
+            case INTERNET:
+                if( destination == null ) {
+                    return true;
+                }
+                if( destination.getTlsVersion().isDefined() ) {
+                    return false;
+                }
+                return !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+            default:
+                throw new IllegalStateException("Unknown TLS upgrade setting: " + tlsUpgrade);
         }
-        if( destination == null ) {
-            return true;
-        }
-        if( destination.getTlsVersion().isDefined() ) {
-            return false;
-        }
-        return !destination.getProxyType().contains(ProxyType.ON_PREMISE)
-            && destination.getProxyConfiguration().isEmpty();
     }
 
     @Nullable
