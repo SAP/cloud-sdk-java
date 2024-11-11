@@ -14,13 +14,11 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CaseFormat;
 
 /**
  * Utility class, that bundles various naming related operations. <b>This class is meant for internal usage only.</b>
  */
-@Beta
 public final class NamingUtils
 {
     private static final String FLUENT_HELPER_SUFFIX = "FluentHelper";

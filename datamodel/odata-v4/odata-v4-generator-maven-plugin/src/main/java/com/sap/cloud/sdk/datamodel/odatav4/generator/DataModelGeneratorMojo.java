@@ -13,7 +13,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingStrategy;
 import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
@@ -21,7 +20,6 @@ import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
 /**
  * Mojo used in the OData V4 Generator Maven Plugin.
  */
-@Beta
 @Mojo( name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresProject = false )
 public class DataModelGeneratorMojo extends AbstractMojo
 {
