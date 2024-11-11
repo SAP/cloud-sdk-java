@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.datamodel.odatav4.expression;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.Expressions;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FilterExpression;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FilterExpressionLogical;
@@ -55,7 +54,6 @@ public interface FilterableBoolean<EntityT> extends FilterableValue<EntityT, Boo
      *
      * @since 4.8.0
      */
-    @Beta
     @Nonnull
     static <EntityT> FilterableBoolean<EntityT> fromCustomFilter(
         @Nonnull final ValueBoolean delegateExpression,

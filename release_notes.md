@@ -16,7 +16,7 @@
 
 ### 📈 Improvements
 
-- 
+- Stabilize experimental OData client API without changes.
 
 ### 🐛 Fixed Issues
 
