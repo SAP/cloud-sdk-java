@@ -16,7 +16,6 @@
 
 ### 📈 Improvements
 
-- Minor improvment on OpenAPI code generator to apply JavaDoc on customized model class constructors.
 - Stabilize experimental OData client API without changes.
 
 ### 🐛 Fixed Issues
