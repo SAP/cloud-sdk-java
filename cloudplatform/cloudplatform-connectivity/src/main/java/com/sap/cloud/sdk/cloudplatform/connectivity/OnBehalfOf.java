@@ -4,14 +4,11 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Represents the behalf upon which an outbound request can be made.
  *
  * @since 4.10.0
  */
-@Beta
 public enum OnBehalfOf
 {
     /**
@@ -32,5 +29,5 @@ public enum OnBehalfOf
      *
      * @since 4.10.0
      */
-    NAMED_USER_CURRENT_TENANT;
+    NAMED_USER_CURRENT_TENANT
 }
