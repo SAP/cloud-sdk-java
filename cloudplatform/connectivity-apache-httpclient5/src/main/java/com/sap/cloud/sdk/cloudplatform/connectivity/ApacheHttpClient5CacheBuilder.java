@@ -17,7 +17,6 @@ import com.google.common.annotations.Beta;
  *
  * @since 4.20.0
  */
-@Beta
 public class ApacheHttpClient5CacheBuilder
 {
     @Nonnull
@@ -34,6 +33,7 @@ public class ApacheHttpClient5CacheBuilder
      * @return This builder.
      */
     @Nonnull
+    @Beta
     public ApacheHttpClient5CacheBuilder durationInMilliseconds( final int durationInMilliseconds )
     {
         return duration(Duration.ofMillis(durationInMilliseconds));
