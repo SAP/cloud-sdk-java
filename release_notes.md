@@ -17,6 +17,7 @@
 ### 📈 Improvements
 
 - Stabilize experimental OData client API without changes.
+- Stabilize RequestHeaderAccessor related API without changes.
 
 ### 🐛 Fixed Issues
 
