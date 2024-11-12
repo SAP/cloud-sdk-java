@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -30,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 4.17.0
  */
-@Beta
 @Slf4j
 public class MegacliteServiceBindingAccessor implements ServiceBindingAccessor
 {
