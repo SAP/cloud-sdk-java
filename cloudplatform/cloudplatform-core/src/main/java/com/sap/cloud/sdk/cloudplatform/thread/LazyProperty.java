@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextPropertyException;
 
 import io.vavr.control.Try;
@@ -25,7 +24,6 @@ import io.vavr.control.Try;
  * @param <T>
  *            The generic value type.
  */
-@Beta
 class LazyProperty<T> extends Property<T>
 {
     @Nonnull

@@ -10,8 +10,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Cache} interface.
  *
@@ -33,7 +31,6 @@ public class ApacheHttpClient5CacheBuilder
      * @return This builder.
      */
     @Nonnull
-    @Beta
     public ApacheHttpClient5CacheBuilder durationInMilliseconds( final int durationInMilliseconds )
     {
         return duration(Duration.ofMillis(durationInMilliseconds));

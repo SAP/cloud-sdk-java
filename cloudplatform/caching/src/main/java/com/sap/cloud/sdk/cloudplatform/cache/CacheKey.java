@@ -11,7 +11,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.PrincipalAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.principal.exception.PrincipalAccessException;
@@ -117,7 +116,6 @@ public final class CacheKey implements GenericCacheKey<CacheKey, Object>
      * @return A new {@link CacheKey} constructed from the given tenant and principal identifier.
      * @since 4.6.0
      */
-    @Beta
     @Nonnull
     public static CacheKey fromIds( @Nullable final String tenantId, @Nullable final String principalId )
     {
