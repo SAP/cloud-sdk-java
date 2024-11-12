@@ -7,7 +7,6 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.Options;
@@ -29,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see MegacliteServiceBindingAccessor
  * @since 4.17.0
  */
-@Beta
 @Slf4j
 public final class MegacliteServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
@@ -147,8 +145,8 @@ public final class MegacliteServiceBindingDestinationLoader implements ServiceBi
     private MegacliteServiceBinding getBindingOrThrow( @Nonnull final ServiceBindingDestinationOptions options )
     {
         final ServiceBinding serviceBinding = options.getServiceBinding();
-        if( serviceBinding instanceof MegacliteServiceBinding ) {
-            return (MegacliteServiceBinding) serviceBinding;
+        if( serviceBinding instanceof MegacliteServiceBinding megacliteServiceBinding ) {
+            return megacliteServiceBinding;
         }
         final String msg =
             "Unable to transform the provided service binding for service '%s' into a Megaclite based destination. Expected the service binding to be of type '%s' but got a '%s' instead.";
