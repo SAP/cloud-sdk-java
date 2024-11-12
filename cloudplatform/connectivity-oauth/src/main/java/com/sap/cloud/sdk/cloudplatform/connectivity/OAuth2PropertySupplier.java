@@ -8,7 +8,6 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.security.config.ClientIdentity;
 
 /**
@@ -17,7 +16,6 @@ import com.sap.cloud.security.config.ClientIdentity;
  *
  * @since 4.20.0
  */
-@Beta
 public interface OAuth2PropertySupplier
 {
     /**

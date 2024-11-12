@@ -3,7 +3,6 @@
  */
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import com.google.common.annotations.Beta;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
 import com.google.common.net.PercentEscaper;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * Encoding strategy.
  */
-@Beta
 @RequiredArgsConstructor
 public enum UriEncodingStrategy
 {

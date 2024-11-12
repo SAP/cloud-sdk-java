@@ -16,9 +16,9 @@
 
 ### 📈 Improvements
 
-- Minor improvement on OpenAPI code generator to apply JavaDoc on customized model class constructors.
-- Stabilize ApacheHttpClient5 related API without changes.
-  The `@Beta` annotations are removed in most places and consuming applications no longer need to suppress warnings.
+- Stabilize experimental OData client API without changes.
+- Stabilize RequestHeaderAccessor related API without changes.
+- Stabilize ServiceBindingDestinationLoader related API without changes.
 
 ### 🐛 Fixed Issues
 

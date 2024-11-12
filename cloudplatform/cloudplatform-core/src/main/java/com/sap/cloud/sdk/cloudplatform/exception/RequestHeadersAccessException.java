@@ -6,15 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.exception;
 
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
-
 import lombok.RequiredArgsConstructor;
 
 /**
  * Thrown if the request headers cannot be accessed.
  */
 @RequiredArgsConstructor
-@Beta
 public class RequestHeadersAccessException extends RuntimeException
 {
     private static final long serialVersionUID = -4402302735368094185L;

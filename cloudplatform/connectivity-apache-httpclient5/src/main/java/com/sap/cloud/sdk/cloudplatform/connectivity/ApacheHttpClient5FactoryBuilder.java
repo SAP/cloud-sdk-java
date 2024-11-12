@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.
  *
@@ -19,8 +21,31 @@ public class ApacheHttpClient5FactoryBuilder
 {
     @Nonnull
     private Duration timeout = DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT;
+    private TlsUpgrade tlsUpgrade = TlsUpgrade.AUTOMATIC;
     private int maxConnectionsTotal = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL;
     private int maxConnectionsPerRoute = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+
+    /**
+     * Enum to control the automatic TLS upgrade feature for insecure connections.
+     *
+     * @since 5.14.0
+     */
+    @Beta
+    public enum TlsUpgrade
+    {
+        /**
+         * Automatic TLS upgrade is enabled.
+         */
+        ENABLED,
+        /**
+         * Automatic TLS upgrade is disabled.
+         */
+        DISABLED,
+        /**
+         * Automatic TLS upgrade is enabled only for {@link ProxyType#INTERNET}, default.
+         */
+        AUTOMATIC;
+    }
 
     /**
      * Sets the timeout {@link HttpClient} instances created by the to-be-built {@link ApacheHttpClient5Factory} should
@@ -90,6 +115,20 @@ public class ApacheHttpClient5FactoryBuilder
     }
 
     /**
+     * Sets the automatic TLS upgrade strategy. This strategy controls whether insecure connections should be
+     * automatically upgraded.
+     *
+     * @since 5.14.0
+     */
+    @Beta
+    @Nonnull
+    public ApacheHttpClient5FactoryBuilder tlsUpgrade( @Nonnull final TlsUpgrade tlsUpgrade )
+    {
+        this.tlsUpgrade = tlsUpgrade;
+        return this;
+    }
+
+    /**
      * Sets the maximum number of parallel connections <b>per route</b> (e.g. per remote host) that can be established
      * with a {@link HttpClient} created by the to-be-built {@link ApacheHttpClient5Factory}.
      * <p>
@@ -116,6 +155,11 @@ public class ApacheHttpClient5FactoryBuilder
     @Nonnull
     public ApacheHttpClient5Factory build()
     {
-        return new DefaultApacheHttpClient5Factory(timeout, maxConnectionsTotal, maxConnectionsPerRoute, null);
+        return new DefaultApacheHttpClient5Factory(
+            timeout,
+            maxConnectionsTotal,
+            maxConnectionsPerRoute,
+            null,
+            tlsUpgrade);
     }
 }

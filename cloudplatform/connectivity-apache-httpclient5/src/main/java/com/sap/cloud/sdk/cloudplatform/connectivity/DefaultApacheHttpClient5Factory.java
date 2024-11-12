@@ -50,28 +50,25 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     private final Timeout timeout;
     private final int maxConnectionsTotal;
     private final int maxConnectionsPerRoute;
-    // for testing purposes
+
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
 
-    DefaultApacheHttpClient5Factory(
-        @Nonnull final Duration timeout,
-        final int maxConnectionsTotal,
-        final int maxConnectionsPerRoute )
-    {
-        this(timeout, maxConnectionsTotal, maxConnectionsPerRoute, null);
-    }
+    @Nonnull
+    private final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade;
 
     DefaultApacheHttpClient5Factory(
         @Nonnull final Duration timeout,
         final int maxConnectionsTotal,
         final int maxConnectionsPerRoute,
-        @Nullable final HttpRequestInterceptor requestInterceptor )
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
+        this.tlsUpgrade = tlsUpgrade;
     }
 
     @Nonnull
@@ -95,7 +92,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             HttpClients
                 .custom()
                 .setConnectionManager(getConnectionManager(destination))
-                .setDefaultRequestConfig(getRequestConfig())
+                .setDefaultRequestConfig(getRequestConfig(destination))
                 .setProxy(getProxy(destination));
 
         if( requestInterceptor != null ) {
@@ -162,9 +159,30 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     }
 
     @Nonnull
-    private RequestConfig getRequestConfig()
+    private RequestConfig getRequestConfig( @Nullable final HttpDestinationProperties destination )
     {
-        return RequestConfig.custom().setConnectionRequestTimeout(timeout).build();
+        return RequestConfig
+            .custom()
+            .setProtocolUpgradeEnabled(isProtocolUpgradeEnabled(destination))
+            .setConnectionRequestTimeout(timeout)
+            .build();
+    }
+
+    private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
+    {
+        return switch( tlsUpgrade ) {
+            case ENABLED -> true;
+            case DISABLED -> false;
+            case AUTOMATIC -> {
+                if( destination == null ) {
+                    yield true;
+                }
+                if( destination.getTlsVersion().isDefined() ) {
+                    yield false;
+                }
+                yield !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+            }
+        };
     }
 
     @Nullable

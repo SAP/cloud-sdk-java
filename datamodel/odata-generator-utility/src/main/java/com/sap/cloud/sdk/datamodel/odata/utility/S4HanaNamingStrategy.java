@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
  * Represents a {@link NamingStrategy}, which removes pre- and suffixes from the generated Java identifiers that are
  * typically used in S4Hana service definitions.
  */
-@Beta
 @NoArgsConstructor
 public final class S4HanaNamingStrategy extends AbstractNamingStrategy
 {
