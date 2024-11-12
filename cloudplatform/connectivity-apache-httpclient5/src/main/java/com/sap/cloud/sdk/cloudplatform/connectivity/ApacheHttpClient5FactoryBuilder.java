@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.
  *
@@ -28,6 +30,7 @@ public class ApacheHttpClient5FactoryBuilder
      *
      * @since 5.14.0
      */
+    @Beta
     public enum TlsUpgrade
     {
         /**
