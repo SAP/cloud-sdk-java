@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 
 import io.vavr.control.Try;
@@ -55,7 +54,6 @@ public interface HttpClientCache
      * Constant implementation of {@see HttpClientCache} with disabled the cache logic. Useful for testing and
      * troubleshooting. Don't use in production.
      */
-    @Beta
     @Nonnull
     HttpClientCache DISABLED = new HttpClientCache()
     {

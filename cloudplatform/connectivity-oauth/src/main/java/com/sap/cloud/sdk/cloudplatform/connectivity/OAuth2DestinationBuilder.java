@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHeaders;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.security.config.ClientIdentity;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.10.0
  */
 @Slf4j
-@Beta
 public class OAuth2DestinationBuilder
 {
     /**
@@ -29,7 +27,6 @@ public class OAuth2DestinationBuilder
      * @since 4.10.0
      */
     @FunctionalInterface
-    @Beta
     public interface BuilderWithTargetUrl
     {
         /**
@@ -50,7 +47,6 @@ public class OAuth2DestinationBuilder
      * @since 4.10.0
      */
     @FunctionalInterface
-    @Beta
     public interface BuilderWithTokenEndpoint
     {
         /**

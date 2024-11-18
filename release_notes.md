@@ -16,9 +16,9 @@
 
 ### 📈 Improvements
 
-- Stabilize experimental OData client API without changes.
-- Stabilize RequestHeaderAccessor related API without changes.
-- Stabilize ServiceBindingDestinationLoader related API without changes.
+- Stabilize most of the remaining experimental APIs without changes, e.g.
+  - RequestHeaderAccessor
+  - ServiceBindingDestinationLoader
 
 ### 🐛 Fixed Issues
 

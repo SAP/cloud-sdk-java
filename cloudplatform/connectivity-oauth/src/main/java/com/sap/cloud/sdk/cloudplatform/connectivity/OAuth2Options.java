@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 5.5.0
  */
-@Beta
 @AllArgsConstructor( access = AccessLevel.PRIVATE )
 @EqualsAndHashCode
 public final class OAuth2Options
@@ -96,7 +94,6 @@ public final class OAuth2Options
     /**
      * A builder implementation that helps with creating customized {@link OAuth2Options} instances.
      */
-    @Beta
     @Slf4j
     public static class Builder
     {

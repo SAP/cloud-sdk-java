@@ -9,7 +9,6 @@ import java.util.Base64;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.sap.cloud.sdk.cloudplatform.exception.DwcHeaderNotFoundException;
@@ -22,7 +21,6 @@ import lombok.Value;
 /**
  * Utility class to extract specific values from the SAP Deploy with Confidence request headers.
  */
-@Beta
 public class DwcHeaderUtils
 {
     /**

@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
@@ -54,7 +53,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see MegacliteServiceBindingAccessor#registerServiceBinding(MegacliteServiceBinding)
  * @since 4.17.0
  */
-@Beta
 @Getter( AccessLevel.PACKAGE )
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @EqualsAndHashCode

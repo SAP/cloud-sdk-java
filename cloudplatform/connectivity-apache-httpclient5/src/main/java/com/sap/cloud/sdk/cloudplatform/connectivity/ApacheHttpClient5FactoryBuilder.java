@@ -120,7 +120,6 @@ public class ApacheHttpClient5FactoryBuilder
      *
      * @since 5.14.0
      */
-    @Beta
     @Nonnull
     public ApacheHttpClient5FactoryBuilder tlsUpgrade( @Nonnull final TlsUpgrade tlsUpgrade )
     {
