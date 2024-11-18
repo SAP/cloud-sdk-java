@@ -16,7 +16,9 @@
 
 ### 📈 Improvements
 
-- Stabilize all experimental APIs without changes.
+- Stabilize most of the remaining experimental APIs without changes, e.g.
+  - RequestHeaderAccessor
+  - ServiceBindingDestinationLoader
 
 ### 🐛 Fixed Issues
 
