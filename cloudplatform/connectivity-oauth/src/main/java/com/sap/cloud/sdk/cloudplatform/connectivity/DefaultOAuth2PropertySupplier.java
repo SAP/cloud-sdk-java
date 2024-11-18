@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
 import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 4.20.0
  */
-@Beta
 @Slf4j
 public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
 {

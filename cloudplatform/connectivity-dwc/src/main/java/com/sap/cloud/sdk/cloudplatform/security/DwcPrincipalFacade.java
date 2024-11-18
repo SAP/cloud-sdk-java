@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.cloudplatform.security;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.DwcHeaderUtils;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipalFacade;
@@ -22,7 +21,6 @@ import io.vavr.control.Try;
  * Represents a specific {@link DefaultPrincipalFacade} that is used when running on the SAP Deploy with Confidence
  * stack.
  */
-@Beta
 public class DwcPrincipalFacade extends DefaultPrincipalFacade
 {
     private static final String PRINCIPAL = PrincipalThreadContextListener.PROPERTY_PRINCIPAL;

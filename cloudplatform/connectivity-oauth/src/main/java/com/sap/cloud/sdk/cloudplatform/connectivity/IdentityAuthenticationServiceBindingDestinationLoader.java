@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
@@ -25,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 5.6.0
  */
-@Beta
 @Slf4j
 public class IdentityAuthenticationServiceBindingDestinationLoader implements ServiceBindingDestinationLoader
 {
