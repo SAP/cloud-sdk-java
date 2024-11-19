@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,8 +40,6 @@ import com.github.tomakehurst.wiremock.stubbing.SubEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
-
-import javax.annotation.Nonnull;
 
 @WireMockTest
 class ApacheHttpClient5HeaderTest
