@@ -7,8 +7,6 @@ package com.sap.cloud.sdk.datamodel.metadata.generator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @Getter
-@Beta
 public final class ProtocolSpecificMetadata
 {
     @Nonnull
