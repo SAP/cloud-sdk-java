@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Add support for `TypeDefinition` entries in OData V4 EDMX files.
 
 ### 📈 Improvements
 
