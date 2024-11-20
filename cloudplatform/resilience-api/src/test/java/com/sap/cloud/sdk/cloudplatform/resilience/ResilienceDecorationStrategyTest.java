@@ -27,16 +27,16 @@ import io.vavr.control.Try;
 class ResilienceDecorationStrategyTest
 {
     @Nested
-    public class TestDecorationStrategy implements ResilienceDecorationStrategy
+    public static class TestDecorationStrategy implements ResilienceDecorationStrategy
     {
         @Nonnull
         @Override
         public <T> Supplier<T> decorateSupplier(
             @Nonnull final Supplier<T> supplier,
             @Nonnull final ResilienceConfiguration configuration,
-            @Nullable final Function<? super Throwable, T> fallbackFunction)
+            @Nullable final Function<? super Throwable, T> fallbackFunction )
         {
-            if(fallbackFunction != null) {
+            if( fallbackFunction != null ) {
                 return () -> {
                     final Try<T> callWithFallback = Try.ofSupplier(supplier).recover(fallbackFunction);
                     return callWithFallback.get();
@@ -50,9 +50,9 @@ class ResilienceDecorationStrategyTest
         public <T> Callable<T> decorateCallable(
             @Nonnull final Callable<T> callable,
             @Nonnull final ResilienceConfiguration configuration,
-            @Nullable final Function<? super Throwable, T> fallbackFunction)
+            @Nullable final Function<? super Throwable, T> fallbackFunction )
         {
-            if(fallbackFunction != null) {
+            if( fallbackFunction != null ) {
                 return () -> {
                     final Try<T> callWithFallback = Try.ofCallable(callable).recover(fallbackFunction);
                     return callWithFallback.get();
@@ -70,7 +70,7 @@ class ResilienceDecorationStrategyTest
         @Test
         void testNamedThreadQueueCallable()
             throws ExecutionException,
-            InterruptedException
+                InterruptedException
         {
             final CompletableFuture<String> threadNameQueueCallable =
                 queueCallable(this::getThreadName, ResilienceConfiguration.empty("identifier"), null);
@@ -81,7 +81,7 @@ class ResilienceDecorationStrategyTest
         @Test
         void testNamedThreadQueueSupplier()
             throws ExecutionException,
-            InterruptedException
+                InterruptedException
         {
             final CompletableFuture<String> threadNameQueueSupplier =
                 queueSupplier(this::getThreadName, ResilienceConfiguration.empty("identifier"), null);
@@ -92,7 +92,7 @@ class ResilienceDecorationStrategyTest
         @Test
         void testThreadNameFromExecutor()
             throws ExecutionException,
-            InterruptedException
+                InterruptedException
         {
             final Supplier<String> nameSupplier = () -> Thread.currentThread().getName();
             final CompletableFuture<String> nameFuture =
@@ -140,7 +140,7 @@ class ResilienceDecorationStrategyTest
                         return null;
                     }, null, ( exception ) -> "Fallback result").get()).isNotEqualTo("Fallback result");
                 }
-                catch(final InterruptedException | ExecutionException e) {
+                catch( final InterruptedException | ExecutionException e ) {
                     throw new RuntimeException(e);
                 }
             });
@@ -155,17 +155,17 @@ class ResilienceDecorationStrategyTest
 
                 try {
                     assertThat(new TestDecorationStrategy().queueCallable(() -> {
-                            final ThreadContext childContext = ThreadContextAccessor.getCurrentContext();
-                            assertThat(childContext).isEqualTo(parentThreadContext);
-                            assertThat(childContext).isNotSameAs(parentThreadContext);
-                            return null;
-                        },
+                        final ThreadContext childContext = ThreadContextAccessor.getCurrentContext();
+                        assertThat(childContext).isEqualTo(parentThreadContext);
+                        assertThat(childContext).isNotSameAs(parentThreadContext);
+                        return null;
+                    },
                         ResilienceConfiguration
                             .of("identifier")
                             .timeLimiterConfiguration(ResilienceConfiguration.TimeLimiterConfiguration.of()),
                         ( exception ) -> "Fallback result").get()).isNotEqualTo("Fallback result");
                 }
-                catch(final InterruptedException | ExecutionException e) {
+                catch( final InterruptedException | ExecutionException e ) {
                     throw new RuntimeException(e);
                 }
             });
