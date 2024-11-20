@@ -29,7 +29,7 @@ class ResilienceDecoratorQueuedOperationsTest
     @BeforeEach
     void prepareDecorator()
     {
-        ResilienceDecorator.setDecorationStrategy(new ResilienceDecorationStrategyTest.TestDecorationStrategy());
+        ResilienceDecorator.setDecorationStrategy(new TestDecorationStrategy());
     }
 
     @AfterEach
