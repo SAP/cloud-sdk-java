@@ -38,7 +38,6 @@ class DataModelGeneratorMojoIntegrationTest extends AbstractMojoTestCase
     void generateAndCompareSodastoreLibrary()
         throws Throwable
     {
-        super.setUp();
         final String outputFolderWithActualContent =
             Paths.get(outputDirectory.getAbsolutePath()).resolve("output").toString();
 
@@ -50,18 +49,21 @@ class DataModelGeneratorMojoIntegrationTest extends AbstractMojoTestCase
     }
 
     // Run this test method manually to overwrite the folder containing the expected content with the latest generator state
-     @Test
+    @Test
     void regenerateExpectedSodastoreLibrary()
         throws Throwable
     {
-        super.setUp();
         generateSodastoreLibrary(FOLDER_WITH_EXPECTED_CONTENT);
     }
 
     private void generateSodastoreLibrary( final String outputDirectory )
         throws Throwable
     {
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) super.lookupMojo("generate", "src/test/resources/DataModelGeneratorMojoIntegrationTest/sodastore/input/pom.xml");
+        super.setUp();
+        final DataModelGeneratorMojo mojo =
+            (DataModelGeneratorMojo) super.lookupMojo(
+                "generate",
+                "src/test/resources/DataModelGeneratorMojoIntegrationTest/sodastore/input/pom.xml");
 
         final GenerationConfiguration configuration = mojo.retrieveGenerationConfiguration().get();
 

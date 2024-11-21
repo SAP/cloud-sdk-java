@@ -128,6 +128,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
     public void execute()
         throws MojoExecutionException
     {
+        initializeEmptyParameters();
         if( skip ) {
             getLog().info("Skipping the REST VDM Generator Maven Plugin as instructed.");
             return;
@@ -160,14 +161,17 @@ public class DataModelGeneratorMojo extends AbstractMojo
         if( compileScope == null ) {
             compileScope = CompileScope.NONE;
         }
-        if (verbose == null) {
+        if( verbose == null ) {
             verbose = false;
         }
-        if (copyrightHeader == null) {
+        if( copyrightHeader == null ) {
             copyrightHeader = "";
         }
-        if (skip == null) {
+        if( skip == null ) {
             skip = false;
+        }
+        if( sapCopyrightHeader == null ) {
+            sapCopyrightHeader = false;
         }
     }
 
