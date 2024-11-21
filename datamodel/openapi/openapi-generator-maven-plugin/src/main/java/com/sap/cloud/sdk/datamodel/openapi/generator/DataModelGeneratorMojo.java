@@ -160,10 +160,20 @@ public class DataModelGeneratorMojo extends AbstractMojo
         if( compileScope == null ) {
             compileScope = CompileScope.NONE;
         }
+        if (verbose == null) {
+            verbose = false;
+        }
+        if (copyrightHeader == null) {
+            copyrightHeader = "";
+        }
+        if (skip == null) {
+            skip = false;
+        }
     }
 
     Try<GenerationConfiguration> retrieveGenerationConfiguration()
     {
+        initializeEmptyParameters();
         return Try
             .of(
                 () -> GenerationConfiguration
