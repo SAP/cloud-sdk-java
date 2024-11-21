@@ -4,30 +4,23 @@
 
 package com.sap.cloud.sdk.datamodel.odata.generator;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.io.File;
-import java.net.URL;
-
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.jupiter.api.Disabled;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.jupiter.api.Test;
 
-//import org.junit.runner.Description;
-//import org.junit.runners.model.Statement;
 import com.sap.cloud.sdk.datamodel.odata.generator.annotation.DefaultAnnotationStrategy;
 import com.sap.cloud.sdk.datamodel.odata.utility.NameSource;
 import com.sap.cloud.sdk.datamodel.odata.utility.S4HanaNamingStrategy;
 
-class DataModelGeneratorMojoTest
+class DataModelGeneratorMojoTest extends AbstractMojoTestCase
 {
-    @Disabled( "find a solution without using deprecated MojoRule" )
     @Test
     void test()
         throws Throwable
     {
-        final DataModelGeneratorMojo mojo = loadTestProject();
+        super.setUp();
+        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) super.lookupMojo("generate", "src/test/resources/DataModelGeneratorMojoTest/pom.xml");
         final DataModelGenerator generator = mojo.getDataModelGenerator();
 
         assertSoftly(softly -> {
@@ -57,45 +50,4 @@ class DataModelGeneratorMojoTest
             softly.assertThat(generator.isServiceMethodsPerEntitySet()).isTrue();
         });
     }
-
-    private DataModelGeneratorMojo loadTestProject()
-        throws Throwable
-    {
-        final URL resource = getClass().getClassLoader().getResource(getClass().getSimpleName());
-        assertThat(resource).isNotNull();
-
-        final File pomFile = new File(resource.getFile());
-
-        final MojoRule rule = new MojoRule();
-        // hacky workaround to invoke the internal call to "testCase.setUp()" inside MojoRule
-        // exploiting the fact that the setup is not teared down after "evaluate" returns
-        // this workaround is applied because "lookupConfiguredMojo" is not available on AbstractMojoTestCase
-        // and this way we can skip the effort to re-implement what is already available in MojoRule
-        /*
-        rule.apply(new Statement()
-        {
-            @Override
-            public void evaluate()
-            {
-
-            }
-        }, Description.createSuiteDescription("dummy")).evaluate();
-        return (DataModelGeneratorMojo) rule.lookupConfiguredMojo(pomFile, "generate");
-         */
-        return null;
-    }
 }
-
-/**
- * Since version 3.2 you don't need to use @MojoRule, 7 years ago. Just follow the three steps below:
- *
- * Your test class should extend AbstractMojoTestCase
- *
- * Before your tests, call super.setUp()
- *
- * Perform a lookup for your mojo:
- *
- * MyMojo myMojo = (MyMojo) super.lookupMojo("myGoal", "src/test/resources/its/my-test-mojo.pom.xml");
- *
- * With that, you can work with Junit 5, Mockito, etc, with no overhead.
- */
