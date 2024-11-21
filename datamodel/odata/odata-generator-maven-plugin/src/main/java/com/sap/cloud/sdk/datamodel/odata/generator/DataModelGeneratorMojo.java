@@ -258,11 +258,11 @@ public class DataModelGeneratorMojo extends AbstractMojo
             serviceMethodsPerEntitySet = false;
         }
 
-        if ( namingStrategy == null) {
+        if( namingStrategy == null ) {
             namingStrategy = DataModelGenerator.DEFAULT_NAMING_STRATEGY;
         }
 
-        if ( annotationStrategy == null) {
+        if( annotationStrategy == null ) {
             annotationStrategy = DataModelGenerator.DEFAULT_ANNOTATION_STRATEGY;
         }
     }

@@ -20,7 +20,10 @@ class DataModelGeneratorMojoTest extends AbstractMojoTestCase
         throws Throwable
     {
         super.setUp();
-        final DataModelGeneratorMojo mojo = (DataModelGeneratorMojo) super.lookupMojo("generate", "src/test/resources/DataModelGeneratorMojoTest/pom.xml");
+        final DataModelGeneratorMojo mojo =
+            (DataModelGeneratorMojo) super.lookupMojo(
+                "generate",
+                "src/test/resources/DataModelGeneratorMojoTest/pom.xml");
         final DataModelGenerator generator = mojo.getDataModelGenerator();
 
         assertSoftly(softly -> {
