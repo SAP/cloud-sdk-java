@@ -1,9 +1,10 @@
+/*
+ * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 package com.sap.cloud.sdk.cloudplatform.resilience;
 
-import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
-import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
-import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -11,8 +12,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
+
+import com.sap.cloud.sdk.cloudplatform.thread.ThreadContext;
+import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextAccessor;
+import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 
 public class ResilienceDecorationStrategyTest extends TestDecorationStrategy
 {
