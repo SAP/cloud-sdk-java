@@ -3,8 +3,8 @@
  */
 
 /*
- * Sample API
- * API for managing root and child objects
+ * Soda Store API
+ * API for managing sodas in a soda store
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -14,7 +14,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.anyofoneof.model;
+package test;
 
 import java.util.Objects;
 import java.util.Arrays;
@@ -27,10 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.sap.cloud.sdk.services.anyofoneof.model.RootObjectQuestionsInner;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,61 +40,81 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * RootObject
+ * Fanta
  */
 // CHECKSTYLE:OFF
-public class RootObject {
+public class Fanta implements Soda {
 // CHECKSTYLE:ON
-  @JsonProperty("questions")
-  private List<RootObjectQuestionsInner> questions = new ArrayList<>();
+  @JsonProperty("taste")
+  private String taste;
+
+  @JsonProperty("caffeine")
+  private String caffeine;
 
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
   /**
-   * Set the questions of this {@link RootObject} instance and return the same instance.
+   * Set the taste of this {@link Fanta} instance and return the same instance.
    *
-   * @param questions  The questions of this {@link RootObject}
-   * @return The same instance of this {@link RootObject} class
+   * @param taste  The taste of this {@link Fanta}
+   * @return The same instance of this {@link Fanta} class
    */
-  @Nonnull public RootObject questions( @Nullable final List<RootObjectQuestionsInner> questions) {
-    this.questions = questions;
-    return this;
-  }
-  /**
-   * Add one questions instance to this {@link RootObject}.
-   * @param questionsItem The questions that should be added
-   * @return The same instance of type {@link RootObject}
-   */
-  @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
-    if (this.questions == null) {
-      this.questions = new ArrayList<>();
-    }
-    this.questions.add(questionsItem);
+  @Nonnull public Fanta taste( @Nullable final String taste) {
+    this.taste = taste;
     return this;
   }
 
   /**
-   * Get questions
-   * @return questions  The questions of this {@link RootObject} instance.
+   * Get taste
+   * @return taste  The taste of this {@link Fanta} instance.
    */
   @Nullable
-  public List<RootObjectQuestionsInner> getQuestions() {
-    return questions;
+  public String getTaste() {
+    return taste;
   }
 
   /**
-   * Set the questions of this {@link RootObject} instance.
+   * Set the taste of this {@link Fanta} instance.
    *
-   * @param questions  The questions of this {@link RootObject}
+   * @param taste  The taste of this {@link Fanta}
    */
-  public void setQuestions( @Nullable final List<RootObjectQuestionsInner> questions) {
-    this.questions = questions;
+  public void setTaste( @Nullable final String taste) {
+    this.taste = taste;
   }
 
   /**
-   * Get the names of the unrecognizable properties of the {@link RootObject}.
+   * Set the caffeine of this {@link Fanta} instance and return the same instance.
+   *
+   * @param caffeine  The caffeine of this {@link Fanta}
+   * @return The same instance of this {@link Fanta} class
+   */
+  @Nonnull public Fanta caffeine( @Nullable final String caffeine) {
+    this.caffeine = caffeine;
+    return this;
+  }
+
+  /**
+   * Get caffeine
+   * @return caffeine  The caffeine of this {@link Fanta} instance.
+   */
+  @Nullable
+  public String getCaffeine() {
+    return caffeine;
+  }
+
+  /**
+   * Set the caffeine of this {@link Fanta} instance.
+   *
+   * @param caffeine  The caffeine of this {@link Fanta}
+   */
+  public void setCaffeine( @Nullable final String caffeine) {
+    this.caffeine = caffeine;
+  }
+
+  /**
+   * Get the names of the unrecognizable properties of the {@link Fanta}.
    * @return The set of properties names
    */
   @JsonIgnore
@@ -105,7 +124,7 @@ public class RootObject {
   }
 
   /**
-   * Get the value of an unrecognizable property of this {@link RootObject} instance.
+   * Get the value of an unrecognizable property of this {@link Fanta} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -113,13 +132,13 @@ public class RootObject {
   @Nullable
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
-        throw new NoSuchElementException("RootObject has no field with name '" + name + "'.");
+        throw new NoSuchElementException("Fanta has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
   }
 
   /**
-   * Set an unrecognizable property of this {@link RootObject} instance. If the map previously contained a mapping
+   * Set an unrecognizable property of this {@link Fanta} instance. If the map previously contained a mapping
    * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
    * @param customFieldValue The value of the property
@@ -139,21 +158,23 @@ public class RootObject {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final RootObject rootObject = (RootObject) o;
-    return Objects.equals(this.cloudSdkCustomFields, rootObject.cloudSdkCustomFields) &&
-        Objects.equals(this.questions, rootObject.questions);
+    final Fanta fanta = (Fanta) o;
+    return Objects.equals(this.cloudSdkCustomFields, fanta.cloudSdkCustomFields) &&
+        Objects.equals(this.taste, fanta.taste) &&
+        Objects.equals(this.caffeine, fanta.caffeine);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(questions, cloudSdkCustomFields);
+    return Objects.hash(taste, caffeine, cloudSdkCustomFields);
   }
 
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("class RootObject {\n");
-    sb.append("    questions: ").append(toIndentedString(questions)).append("\n");
+    sb.append("class Fanta {\n");
+    sb.append("    taste: ").append(toIndentedString(taste)).append("\n");
+    sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

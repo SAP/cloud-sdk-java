@@ -105,7 +105,16 @@ class DataModelGeneratorIntegrationTest
                     "removeOperationIdPrefixDelimiter",
                     "\\.",
                     "removeOperationIdPrefixCount",
-                    "3")),;
+                    "3")),
+        ONEOF(
+            "oneof",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            true,
+            4,
+            Map.of("useOneOfInterfaces", "true")),;
 
         final String testCaseName;
         final String inputSpecFileName;

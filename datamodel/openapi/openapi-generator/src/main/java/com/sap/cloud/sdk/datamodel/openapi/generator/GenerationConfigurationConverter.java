@@ -136,7 +136,7 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "false");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
         result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");

@@ -16,11 +16,11 @@
 
 package com.sap.cloud.sdk.services.anyofoneof.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.sap.cloud.sdk.services.anyofoneof.model.NestedChildObject;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,9 +41,8 @@ import javax.annotation.Nullable;
  * ChildObject2
  */
 // CHECKSTYLE:OFF
-public class ChildObject2 
+public class ChildObject2 {
 // CHECKSTYLE:ON
-{
   @JsonProperty("id")
   private String id;
 
@@ -73,7 +71,8 @@ public class ChildObject2
    * Get id
    * @return id  The id of this {@link ChildObject2} instance.
    */
-  @Nonnull public String getId() {
+  @Nullable
+  public String getId() {
     return id;
   }
 
@@ -101,7 +100,8 @@ public class ChildObject2
    * Get type
    * @return type  The type of this {@link ChildObject2} instance.
    */
-  @Nonnull public String getType() {
+  @Nullable
+  public String getType() {
     return type;
   }
 
@@ -129,7 +129,8 @@ public class ChildObject2
    * Get text
    * @return text  The text of this {@link ChildObject2} instance.
    */
-  @Nonnull public String getText() {
+  @Nullable
+  public String getText() {
     return text;
   }
 
@@ -221,7 +222,6 @@ public class ChildObject2
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

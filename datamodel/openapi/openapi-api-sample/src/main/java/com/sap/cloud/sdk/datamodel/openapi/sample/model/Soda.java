@@ -37,8 +37,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 // CHECKSTYLE:OFF
 public class Soda
-// CHECKSTYLE:ON
 {
+    // CHECKSTYLE:ON
     @JsonProperty( "name" )
     private String name;
 
@@ -268,7 +268,7 @@ public class Soda
      *
      * @return packaging The packaging of this {@link Soda} instance.
      */
-    @Nonnull
+    @Nullable
     public PackagingEnum getPackaging()
     {
         return packaging;

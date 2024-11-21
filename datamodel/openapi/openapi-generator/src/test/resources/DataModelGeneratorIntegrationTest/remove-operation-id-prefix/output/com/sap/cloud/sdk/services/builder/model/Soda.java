@@ -16,18 +16,17 @@
 
 package com.sap.cloud.sdk.services.builder.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,9 +40,8 @@ import javax.annotation.Nullable;
  * Soda
  */
 // CHECKSTYLE:OFF
-public class Soda 
+public class Soda {
 // CHECKSTYLE:ON
-{
   @JsonProperty("name")
   private String name;
 
@@ -137,7 +135,8 @@ public class Soda
    * Get name
    * @return name  The name of this {@link Soda} instance.
    */
-  @Nonnull public String getName() {
+  @Nonnull
+  public String getName() {
     return name;
   }
 
@@ -165,7 +164,8 @@ public class Soda
    * Get brand
    * @return brand  The brand of this {@link Soda} instance.
    */
-  @Nonnull public String getBrand() {
+  @Nonnull
+  public String getBrand() {
     return brand;
   }
 
@@ -193,7 +193,8 @@ public class Soda
    * Get quantity
    * @return quantity  The quantity of this {@link Soda} instance.
    */
-  @Nonnull public Integer getQuantity() {
+  @Nonnull
+  public Integer getQuantity() {
     return quantity;
   }
 
@@ -221,7 +222,8 @@ public class Soda
    * Get packaging
    * @return packaging  The packaging of this {@link Soda} instance.
    */
-  @Nonnull public PackagingEnum getPackaging() {
+  @Nullable
+  public PackagingEnum getPackaging() {
     return packaging;
   }
 
@@ -249,7 +251,8 @@ public class Soda
    * Get price
    * @return price  The price of this {@link Soda} instance.
    */
-  @Nonnull public Float getPrice() {
+  @Nonnull
+  public Float getPrice() {
     return price;
   }
 
@@ -345,7 +348,6 @@ public class Soda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

@@ -16,11 +16,11 @@
 
 package com.sap.cloud.sdk.services.builder.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.OffsetDateTime;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,9 +41,8 @@ import javax.annotation.Nullable;
  * OrderWithTimestamp
  */
 // CHECKSTYLE:OFF
-public class OrderWithTimestamp 
+public class OrderWithTimestamp {
 // CHECKSTYLE:ON
-{
   @JsonProperty("productId")
   private Long productId;
 
@@ -82,7 +80,8 @@ public class OrderWithTimestamp
    * Get productId
    * @return productId  The productId of this {@link OrderWithTimestamp} instance.
    */
-  @Nonnull public Long getProductId() {
+  @Nonnull
+  public Long getProductId() {
     return productId;
   }
 
@@ -110,7 +109,8 @@ public class OrderWithTimestamp
    * Get quantity
    * @return quantity  The quantity of this {@link OrderWithTimestamp} instance.
    */
-  @Nonnull public Integer getQuantity() {
+  @Nonnull
+  public Integer getQuantity() {
     return quantity;
   }
 
@@ -138,7 +138,8 @@ public class OrderWithTimestamp
    * Get totalPrice
    * @return totalPrice  The totalPrice of this {@link OrderWithTimestamp} instance.
    */
-  @Nonnull public Float getTotalPrice() {
+  @Nullable
+  public Float getTotalPrice() {
     return totalPrice;
   }
 
@@ -166,7 +167,8 @@ public class OrderWithTimestamp
    * Some typeless property, interpreted by the generator as nullable by default (because typeless)
    * @return typelessProperty  The typelessProperty of this {@link OrderWithTimestamp} instance.
    */
-  @Nullable public Object getTypelessProperty() {
+  @Nullable
+  public Object getTypelessProperty() {
     return typelessProperty;
   }
 
@@ -194,7 +196,8 @@ public class OrderWithTimestamp
    * Some typed property that is deliberately made nullable
    * @return nullableProperty  The nullableProperty of this {@link OrderWithTimestamp} instance.
    */
-  @Nullable public String getNullableProperty() {
+  @Nullable
+  public String getNullableProperty() {
     return nullableProperty;
   }
 
@@ -222,7 +225,8 @@ public class OrderWithTimestamp
    * Get timestamp
    * @return timestamp  The timestamp of this {@link OrderWithTimestamp} instance.
    */
-  @Nonnull public OffsetDateTime getTimestamp() {
+  @Nullable
+  public OffsetDateTime getTimestamp() {
     return timestamp;
   }
 
@@ -320,7 +324,6 @@ public class OrderWithTimestamp
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

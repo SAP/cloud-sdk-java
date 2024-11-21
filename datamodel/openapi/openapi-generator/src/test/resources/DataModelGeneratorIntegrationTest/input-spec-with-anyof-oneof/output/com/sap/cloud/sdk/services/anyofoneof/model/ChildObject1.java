@@ -16,18 +16,17 @@
 
 package com.sap.cloud.sdk.services.anyofoneof.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,9 +40,8 @@ import javax.annotation.Nullable;
  * ChildObject1
  */
 // CHECKSTYLE:OFF
-public class ChildObject1 
+public class ChildObject1 {
 // CHECKSTYLE:ON
-{
   @JsonProperty("id")
   private String id;
 
@@ -72,7 +70,8 @@ public class ChildObject1
    * Get id
    * @return id  The id of this {@link ChildObject1} instance.
    */
-  @Nonnull public String getId() {
+  @Nullable
+  public String getId() {
     return id;
   }
 
@@ -100,7 +99,8 @@ public class ChildObject1
    * Get type
    * @return type  The type of this {@link ChildObject1} instance.
    */
-  @Nonnull public String getType() {
+  @Nullable
+  public String getType() {
     return type;
   }
 
@@ -128,7 +128,8 @@ public class ChildObject1
    * Get text
    * @return text  The text of this {@link ChildObject1} instance.
    */
-  @Nonnull public String getText() {
+  @Nullable
+  public String getText() {
     return text;
   }
 
@@ -220,7 +221,6 @@ public class ChildObject1
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

@@ -36,8 +36,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 // CHECKSTYLE:OFF
 public class OrderWithTimestamp
-// CHECKSTYLE:ON
 {
+    // CHECKSTYLE:ON
     @JsonProperty( "productId" )
     private Long productId;
 
@@ -158,7 +158,7 @@ public class OrderWithTimestamp
      *
      * @return totalPrice The totalPrice of this {@link OrderWithTimestamp} instance.
      */
-    @Nonnull
+    @Nullable
     public Float getTotalPrice()
     {
         return totalPrice;
@@ -266,7 +266,7 @@ public class OrderWithTimestamp
      *
      * @return timestamp The timestamp of this {@link OrderWithTimestamp} instance.
      */
-    @Nonnull
+    @Nullable
     public OffsetDateTime getTimestamp()
     {
         return timestamp;

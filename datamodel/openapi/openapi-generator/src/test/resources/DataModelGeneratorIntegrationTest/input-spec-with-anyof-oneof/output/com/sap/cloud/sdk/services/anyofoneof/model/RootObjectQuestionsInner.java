@@ -16,11 +16,11 @@
 
 package com.sap.cloud.sdk.services.anyofoneof.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.sap.cloud.sdk.services.anyofoneof.model.ChildObject1;
 import com.sap.cloud.sdk.services.anyofoneof.model.ChildObject2;
 import com.sap.cloud.sdk.services.anyofoneof.model.ChildObject3;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,10 +42,10 @@ import javax.annotation.Nullable;
 /**
  * RootObjectQuestionsInner
  */
+@JsonTypeName("RootObject_questions_inner")
 // CHECKSTYLE:OFF
-public class RootObjectQuestionsInner 
+public class RootObjectQuestionsInner {
 // CHECKSTYLE:ON
-{
   @JsonProperty("id")
   private String id;
 
@@ -75,7 +74,8 @@ public class RootObjectQuestionsInner
    * Get id
    * @return id  The id of this {@link RootObjectQuestionsInner} instance.
    */
-  @Nonnull public String getId() {
+  @Nullable
+  public String getId() {
     return id;
   }
 
@@ -103,7 +103,8 @@ public class RootObjectQuestionsInner
    * Get type
    * @return type  The type of this {@link RootObjectQuestionsInner} instance.
    */
-  @Nonnull public String getType() {
+  @Nullable
+  public String getType() {
     return type;
   }
 
@@ -131,7 +132,8 @@ public class RootObjectQuestionsInner
    * Get text
    * @return text  The text of this {@link RootObjectQuestionsInner} instance.
    */
-  @Nonnull public String getText() {
+  @Nullable
+  public String getText() {
     return text;
   }
 
@@ -223,7 +225,6 @@ public class RootObjectQuestionsInner
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

@@ -16,11 +16,11 @@
 
 package com.sap.cloud.sdk.services.builder.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.LocalDate;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,9 +41,8 @@ import javax.annotation.Nullable;
  * UpdateSoda
  */
 // CHECKSTYLE:OFF
-public class UpdateSoda 
+public class UpdateSoda {
 // CHECKSTYLE:ON
-{
   @JsonProperty("name")
   private String name;
 
@@ -82,7 +80,8 @@ public class UpdateSoda
    * Get name
    * @return name  The name of this {@link UpdateSoda} instance.
    */
-  @Nonnull public String getName() {
+  @Nullable
+  public String getName() {
     return name;
   }
 
@@ -110,7 +109,8 @@ public class UpdateSoda
    * Get zero
    * @return zero  The zero of this {@link UpdateSoda} instance.
    */
-  @Nonnull public Boolean isZero() {
+  @Nullable
+  public Boolean isZero() {
     return zero;
   }
 
@@ -138,7 +138,8 @@ public class UpdateSoda
    * Get since
    * @return since  The since of this {@link UpdateSoda} instance.
    */
-  @Nonnull public LocalDate getSince() {
+  @Nullable
+  public LocalDate getSince() {
     return since;
   }
 
@@ -166,7 +167,8 @@ public class UpdateSoda
    * Get brand
    * @return brand  The brand of this {@link UpdateSoda} instance.
    */
-  @Nonnull public String getBrand() {
+  @Nullable
+  public String getBrand() {
     return brand;
   }
 
@@ -194,7 +196,8 @@ public class UpdateSoda
    * Get flavor
    * @return flavor  The flavor of this {@link UpdateSoda} instance.
    */
-  @Nonnull public String getFlavor() {
+  @Nullable
+  public String getFlavor() {
     return flavor;
   }
 
@@ -222,7 +225,8 @@ public class UpdateSoda
    * Get price
    * @return price  The price of this {@link UpdateSoda} instance.
    */
-  @Nonnull public Float getPrice() {
+  @Nullable
+  public Float getPrice() {
     return price;
   }
 
@@ -320,7 +324,6 @@ public class UpdateSoda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

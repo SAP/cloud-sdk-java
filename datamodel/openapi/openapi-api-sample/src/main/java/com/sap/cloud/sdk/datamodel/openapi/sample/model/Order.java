@@ -35,8 +35,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 // CHECKSTYLE:OFF
 public class Order
-// CHECKSTYLE:ON
 {
+    // CHECKSTYLE:ON
     @JsonProperty( "productId" )
     private Long productId;
 
@@ -154,7 +154,7 @@ public class Order
      *
      * @return totalPrice The totalPrice of this {@link Order} instance.
      */
-    @Nonnull
+    @Nullable
     public Float getTotalPrice()
     {
         return totalPrice;
