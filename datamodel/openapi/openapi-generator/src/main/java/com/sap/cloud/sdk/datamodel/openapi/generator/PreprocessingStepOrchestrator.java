@@ -5,7 +5,6 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -50,18 +49,14 @@ class PreprocessingStepOrchestrator
      * Enable/Disable generating clients for input specification with oneOf, anyOf keywords based on
      * {@code anyOfOneOfGenerationEnabled}
      *
-     * @param anyOfOneOfGenerationEnabled
+     * @param anyOfOneOfGenerationEnabled true if clients should be generated for input specification with oneOf, anyOf
      *
      * @return this
      */
-    PreprocessingStepOrchestrator enableAnyOfOneOfGeneration( @Nonnull final boolean anyOfOneOfGenerationEnabled )
+    PreprocessingStepOrchestrator enableAnyOfOneOfGeneration( final boolean anyOfOneOfGenerationEnabled )
     {
         if( !anyOfOneOfGenerationEnabled ) {
             steps.add(ValidationKeywordsPreprocessor::new);
-        } else {
-            log
-                .warn(
-                    "oneOf/anyOf keywords processing is turned on, the generated client may not be feature complete and work as expected for all cases involving anyOf/oneOf");
         }
         return this;
     }
@@ -115,7 +110,7 @@ class PreprocessingStepOrchestrator
                         "." + fileFormat.getFileExtensions().get(0));
 
             final String content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+            Files. writeString(path, content);
 
             return path.normalize().toAbsolutePath();
         }
