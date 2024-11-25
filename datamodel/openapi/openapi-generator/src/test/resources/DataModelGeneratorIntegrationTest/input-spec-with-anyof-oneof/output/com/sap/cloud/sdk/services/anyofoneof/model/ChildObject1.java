@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,7 +39,7 @@ import javax.annotation.Nullable;
  * ChildObject1
  */
 // CHECKSTYLE:OFF
-public class ChildObject1 implements RootObjectQuestionsInner 
+public class ChildObject1 
 // CHECKSTYLE:ON
 {
   @JsonProperty("id")

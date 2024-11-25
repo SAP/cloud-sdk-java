@@ -15,9 +15,6 @@
 {{/swagger2AnnotationLibrary}}
 {{#jackson}}
 {{#isClassnameSanitized}}
-{{^hasDiscriminatorWithNonEmptyMapping}}
-@JsonTypeName("{{name}}")
-{{/hasDiscriminatorWithNonEmptyMapping}}
 {{/isClassnameSanitized}}
 {{/jackson}}
 {{>additionalModelTypeAnnotations}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}{{^isReleased}}
