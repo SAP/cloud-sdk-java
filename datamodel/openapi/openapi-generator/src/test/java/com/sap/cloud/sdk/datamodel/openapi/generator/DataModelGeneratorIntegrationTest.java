@@ -106,15 +106,7 @@ class DataModelGeneratorIntegrationTest
                     "\\.",
                     "removeOperationIdPrefixCount",
                     "3")),
-        ONEOF(
-            "oneof",
-            "sodastore.yaml",
-            "test",
-            "test",
-            ApiMaturity.RELEASED,
-            true,
-            4,
-            Map.of("useOneOfInterfaces", "true")),;
+        ONEOF("oneof", "sodastore.yaml", "test", "test", ApiMaturity.RELEASED, true, 6, Map.of()),;
 
         final String testCaseName;
         final String inputSpecFileName;
