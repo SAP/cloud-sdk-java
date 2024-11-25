@@ -21,23 +21,43 @@ paths:
 
 components:
   schemas:
-    Soda:
+
+    OneOfWithDiscriminatorAndMapping:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
       discriminator:
-        propertyName: caffeine
+        propertyName: sodaType
+        mapping:
+          Cola: '#/components/schemas/Cola'
+          Fanta: '#/components/schemas/Fanta'
+
+    OneOfWithDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+      discriminator:
+        propertyName: sodaType
+
+    OneOf:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    AnyOf:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+
+    AllOf:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+
     Cola:
       type: object
       properties:
-        bubbles:
-          type: string
-        caffeine:
-          type: string
+        sodaType: string
     Fanta:
       type: object
       properties:
-        taste:
-          type: string
-        caffeine:
-          type: string
+        sodaType: string
