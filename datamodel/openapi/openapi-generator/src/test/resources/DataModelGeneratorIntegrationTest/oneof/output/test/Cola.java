@@ -70,7 +70,7 @@ public class Cola implements Soda {
    * Get bubbles
    * @return bubbles  The bubbles of this {@link Cola} instance.
    */
-  @Nullable
+  @Nonnull
   public String getBubbles() {
     return bubbles;
   }
@@ -99,7 +99,7 @@ public class Cola implements Soda {
    * Get caffeine
    * @return caffeine  The caffeine of this {@link Cola} instance.
    */
-  @Nullable
+  @Nonnull
   public String getCaffeine() {
     return caffeine;
   }

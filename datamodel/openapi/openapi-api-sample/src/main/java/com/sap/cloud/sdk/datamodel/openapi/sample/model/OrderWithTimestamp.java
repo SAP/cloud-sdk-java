@@ -158,7 +158,7 @@ public class OrderWithTimestamp
      *
      * @return totalPrice The totalPrice of this {@link OrderWithTimestamp} instance.
      */
-    @Nullable
+    @Nonnull
     public Float getTotalPrice()
     {
         return totalPrice;
@@ -266,7 +266,7 @@ public class OrderWithTimestamp
      *
      * @return timestamp The timestamp of this {@link OrderWithTimestamp} instance.
      */
-    @Nullable
+    @Nonnull
     public OffsetDateTime getTimestamp()
     {
         return timestamp;

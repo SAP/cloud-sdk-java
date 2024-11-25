@@ -70,7 +70,7 @@ public class Fanta implements Soda {
    * Get taste
    * @return taste  The taste of this {@link Fanta} instance.
    */
-  @Nullable
+  @Nonnull
   public String getTaste() {
     return taste;
   }
@@ -99,7 +99,7 @@ public class Fanta implements Soda {
    * Get caffeine
    * @return caffeine  The caffeine of this {@link Fanta} instance.
    */
-  @Nullable
+  @Nonnull
   public String getCaffeine() {
     return caffeine;
   }

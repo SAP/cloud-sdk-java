@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * NestedChildObject
  */
 // CHECKSTYLE:OFF
-public class NestedChildObject {
+public class NestedChildObject implements ChildObject2 {
 // CHECKSTYLE:ON
   @JsonProperty("id")
   private String id;
@@ -70,7 +70,7 @@ public class NestedChildObject {
    * Get id
    * @return id  The id of this {@link NestedChildObject} instance.
    */
-  @Nullable
+  @Nonnull
   public String getId() {
     return id;
   }
@@ -99,7 +99,7 @@ public class NestedChildObject {
    * Get type
    * @return type  The type of this {@link NestedChildObject} instance.
    */
-  @Nullable
+  @Nonnull
   public String getType() {
     return type;
   }
@@ -128,7 +128,7 @@ public class NestedChildObject {
    * Get text
    * @return text  The text of this {@link NestedChildObject} instance.
    */
-  @Nullable
+  @Nonnull
   public String getText() {
     return text;
   }

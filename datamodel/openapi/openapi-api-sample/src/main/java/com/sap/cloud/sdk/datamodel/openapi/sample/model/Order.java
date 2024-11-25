@@ -154,7 +154,7 @@ public class Order
      *
      * @return totalPrice The totalPrice of this {@link Order} instance.
      */
-    @Nullable
+    @Nonnull
     public Float getTotalPrice()
     {
         return totalPrice;

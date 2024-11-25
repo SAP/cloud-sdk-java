@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * ChildObject1
  */
 // CHECKSTYLE:OFF
-public class ChildObject1 {
+public class ChildObject1 implements RootObjectQuestionsInner {
 // CHECKSTYLE:ON
   @JsonProperty("id")
   private String id;
@@ -70,7 +70,7 @@ public class ChildObject1 {
    * Get id
    * @return id  The id of this {@link ChildObject1} instance.
    */
-  @Nullable
+  @Nonnull
   public String getId() {
     return id;
   }
@@ -99,7 +99,7 @@ public class ChildObject1 {
    * Get type
    * @return type  The type of this {@link ChildObject1} instance.
    */
-  @Nullable
+  @Nonnull
   public String getType() {
     return type;
   }
@@ -128,7 +128,7 @@ public class ChildObject1 {
    * Get text
    * @return text  The text of this {@link ChildObject1} instance.
    */
-  @Nullable
+  @Nonnull
   public String getText() {
     return text;
   }

@@ -222,7 +222,7 @@ public class Soda {
    * Get packaging
    * @return packaging  The packaging of this {@link Soda} instance.
    */
-  @Nullable
+  @Nonnull
   public PackagingEnum getPackaging() {
     return packaging;
   }

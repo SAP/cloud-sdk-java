@@ -80,7 +80,7 @@ public class RootObject {
    * Get questions
    * @return questions  The questions of this {@link RootObject} instance.
    */
-  @Nullable
+  @Nonnull
   public List<RootObjectQuestionsInner> getQuestions() {
     return questions;
   }
