@@ -37,8 +37,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 // CHECKSTYLE:OFF
 public class Soda
+// CHECKSTYLE:ON
 {
-    // CHECKSTYLE:ON
     @JsonProperty( "name" )
     private String name;
 

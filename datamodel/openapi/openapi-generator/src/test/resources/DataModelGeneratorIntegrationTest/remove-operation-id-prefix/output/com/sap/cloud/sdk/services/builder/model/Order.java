@@ -40,8 +40,9 @@ import javax.annotation.Nullable;
  * Order
  */
 // CHECKSTYLE:OFF
-public class Order {
+public class Order 
 // CHECKSTYLE:ON
+{
   @JsonProperty("productId")
   private Long productId;
 

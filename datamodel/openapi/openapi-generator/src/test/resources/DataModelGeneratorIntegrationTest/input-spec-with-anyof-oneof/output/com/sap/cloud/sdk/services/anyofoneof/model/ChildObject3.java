@@ -41,8 +41,9 @@ import javax.annotation.Nullable;
  * ChildObject3
  */
 // CHECKSTYLE:OFF
-public class ChildObject3 implements RootObjectQuestionsInner {
+public class ChildObject3 implements RootObjectQuestionsInner 
 // CHECKSTYLE:ON
+{
   @JsonProperty("id")
   private String id;
 

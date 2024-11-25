@@ -35,8 +35,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 // CHECKSTYLE:OFF
 public class Order
+// CHECKSTYLE:ON
 {
-    // CHECKSTYLE:ON
     @JsonProperty( "productId" )
     private Long productId;
 

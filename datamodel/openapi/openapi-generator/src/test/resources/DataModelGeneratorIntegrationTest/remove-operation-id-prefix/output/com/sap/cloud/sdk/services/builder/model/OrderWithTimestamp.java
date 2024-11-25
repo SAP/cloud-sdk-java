@@ -41,8 +41,9 @@ import javax.annotation.Nullable;
  * OrderWithTimestamp
  */
 // CHECKSTYLE:OFF
-public class OrderWithTimestamp {
+public class OrderWithTimestamp 
 // CHECKSTYLE:ON
+{
   @JsonProperty("productId")
   private Long productId;
 

@@ -41,8 +41,9 @@ import javax.annotation.Nullable;
  * NewSoda
  */
 // CHECKSTYLE:OFF
-public class NewSoda {
+public class NewSoda 
 // CHECKSTYLE:ON
+{
   @JsonProperty("name")
   private String name;
 

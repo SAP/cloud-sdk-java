@@ -44,8 +44,9 @@ import javax.annotation.Nullable;
  * RootObject
  */
 // CHECKSTYLE:OFF
-public class RootObject {
+public class RootObject 
 // CHECKSTYLE:ON
+{
   @JsonProperty("questions")
   private List<RootObjectQuestionsInner> questions = new ArrayList<>();
 

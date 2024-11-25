@@ -40,8 +40,9 @@ import javax.annotation.Nullable;
  * NestedChildObject
  */
 // CHECKSTYLE:OFF
-public class NestedChildObject implements ChildObject2 {
+public class NestedChildObject implements ChildObject2 
 // CHECKSTYLE:ON
+{
   @JsonProperty("id")
   private String id;
 

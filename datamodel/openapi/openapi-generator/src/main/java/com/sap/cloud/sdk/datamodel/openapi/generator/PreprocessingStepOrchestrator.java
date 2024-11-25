@@ -49,7 +49,8 @@ class PreprocessingStepOrchestrator
      * Enable/Disable generating clients for input specification with oneOf, anyOf keywords based on
      * {@code anyOfOneOfGenerationEnabled}
      *
-     * @param anyOfOneOfGenerationEnabled true if clients should be generated for input specification with oneOf, anyOf
+     * @param anyOfOneOfGenerationEnabled
+     *            true if clients should be generated for input specification with oneOf, anyOf
      *
      * @return this
      */
@@ -110,7 +111,7 @@ class PreprocessingStepOrchestrator
                         "." + fileFormat.getFileExtensions().get(0));
 
             final String content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-            Files. writeString(path, content);
+            Files.writeString(path, content);
 
             return path.normalize().toAbsolutePath();
         }
