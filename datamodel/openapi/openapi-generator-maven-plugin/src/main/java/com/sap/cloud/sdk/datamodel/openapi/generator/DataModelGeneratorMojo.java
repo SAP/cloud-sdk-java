@@ -119,13 +119,13 @@ public class DataModelGeneratorMojo extends AbstractMojo
     private boolean enableOneOfAnyOfGeneration;
 
     /**
-     * Generate model classes
+     * Generate model classes. Default is true.
      */
     @Parameter( property = "openapi.generate.generateModels", defaultValue = "true" )
     private boolean generateModels;
 
     /**
-     * Generate API classes (client classes)
+     * Generate API classes (client classes). Default is true.
      */
     @Parameter( property = "openapi.generate.generateApis", defaultValue = "true" )
     private boolean generateApis;
