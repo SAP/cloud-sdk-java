@@ -56,7 +56,7 @@ class GenerationConfigurationConverter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nonnull final Path inputSpec )
     {
-        setGlobalSettings();
+        setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
         final var config = createCodegenConfig();
@@ -96,10 +96,14 @@ class GenerationConfigurationConverter
         };
     }
 
-    private static void setGlobalSettings()
+    private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
-        GlobalSettings.setProperty(CodegenConstants.APIS, "");
-        GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        if( configuration.isGenerateApis() ) {
+            GlobalSettings.setProperty(CodegenConstants.APIS, "");
+        }
+        if( configuration.isGenerateModels() ) {
+            GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        }
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());

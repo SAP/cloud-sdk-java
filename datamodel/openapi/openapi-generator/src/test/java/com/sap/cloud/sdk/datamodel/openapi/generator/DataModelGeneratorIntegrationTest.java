@@ -36,6 +36,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
             Map.of("aiSdkConstructor", "true")),
         API_CLASS_VENDOR_EXTENSION_YAML(
@@ -45,6 +46,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             4,
             Map.of()),
         API_CLASS_VENDOR_EXTENSION_JSON(
@@ -54,6 +56,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             6,
             Map.of()),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
@@ -63,6 +66,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.uppercasefileextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             6,
             Map.of()),
         INPUT_SPEC_WITH_ANYOF_ONEOF(
@@ -72,6 +76,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.anyofoneof.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             7,
             Map.of()),
         INPUT_SPEC_WITH_BUILDER(
@@ -80,6 +85,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.api",
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
+            true,
             true,
             6,
             Map
@@ -97,6 +103,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
             Map
                 .of(
@@ -113,8 +120,19 @@ class DataModelGeneratorIntegrationTest
             "test",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
-            Map.of("useOneOfInterfaces", "true")),;
+            Map.of("useOneOfInterfaces", "true")),
+        GENERATE_APIS(
+            "generate-apis",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            true,
+            false,
+            5,
+            Map.of());
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -122,6 +140,7 @@ class DataModelGeneratorIntegrationTest
         final String modelPackageName;
         final ApiMaturity apiMaturity;
         final boolean anyOfOneOfGenerationEnabled;
+        final boolean generateApis;
         final int expectedNumberOfGeneratedFiles;
         final Map<String, String> additionalProperties;
     }
@@ -145,6 +164,7 @@ class DataModelGeneratorIntegrationTest
             GenerationConfiguration
                 .builder()
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
@@ -178,6 +198,7 @@ class DataModelGeneratorIntegrationTest
             GenerationConfiguration
                 .builder()
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
