@@ -13,6 +13,12 @@
 ### ✨ New Functionality
 
 - Add support for `TypeDefinition` entries in OData V4 EDMX files.
+- OpenAPI generator improvements:
+  - Add `oneOf`, `anyOf` and `allOf` support for OpenAPI generation.
+    - The option `enableOneOfAnyOfGeneration` on the `openapi-generator-maven-plugin` can be used with
+      the additional property `useOneOfInterfaces` to generate interfaces for `oneOf`, `anyOf` and `allOf` schemas. 
+  - Add `generateApis` and `generateModels` options to the `openapi-generator-maven-plugin` to disable
+   the generation of APIs and models respectively.
 
 ### 📈 Improvements
 
