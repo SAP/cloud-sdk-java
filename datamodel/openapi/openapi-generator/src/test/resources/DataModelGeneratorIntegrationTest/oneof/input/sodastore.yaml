@@ -44,12 +44,12 @@ components:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
     AnyOf:
-      oneOf:
+      anyOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
 
     AllOf:
-      oneOf:
+      allOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
 
