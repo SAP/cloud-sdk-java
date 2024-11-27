@@ -56,7 +56,7 @@ class GenerationConfigurationConverter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nonnull final Path inputSpec )
     {
-        setGlobalSettings();
+        setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
         final var config = createCodegenConfig();
@@ -96,10 +96,14 @@ class GenerationConfigurationConverter
         };
     }
 
-    private static void setGlobalSettings()
+    private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
-        GlobalSettings.setProperty(CodegenConstants.APIS, "");
-        GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        if( configuration.isGenerateApis() ) {
+            GlobalSettings.setProperty(CodegenConstants.APIS, "");
+        }
+        if( configuration.isGenerateModels() ) {
+            GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+        }
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
@@ -136,7 +140,7 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "false");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
         result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");

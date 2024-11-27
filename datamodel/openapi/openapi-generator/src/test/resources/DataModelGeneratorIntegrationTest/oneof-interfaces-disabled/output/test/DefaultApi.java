@@ -2,14 +2,14 @@
  * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
-package com.sap.cloud.sdk.services.anyofoneof.api;
+package test;
 
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
-import com.sap.cloud.sdk.services.anyofoneof.model.RootObject;
+import test.OneOf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +32,13 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
- * Sample API in version 1.0.0.
+ * Soda Store API in version 1.0.0.
  *
- * API for managing root and child objects
+ * API for managing sodas in a soda store
  */
 public class DefaultApi extends AbstractOpenApiService {
     /**
-     * Instantiates this API class to invoke operations on the Sample API.
+     * Instantiates this API class to invoke operations on the Soda Store API.
      *
      * @param httpDestination The destination that API should be used with
      */
@@ -48,7 +48,7 @@ public class DefaultApi extends AbstractOpenApiService {
     }
 
     /**
-     * Instantiates this API class to invoke operations on the Sample API based on a given {@link ApiClient}.
+     * Instantiates this API class to invoke operations on the Soda Store API based on a given {@link ApiClient}.
      *
      * @param apiClient
      *            ApiClient to invoke the API on
@@ -59,23 +59,18 @@ public class DefaultApi extends AbstractOpenApiService {
          super(apiClient);
     }
 
-    
-    /**
+        /**
+     * <p>Get a list of all sodas</p>
      * <p></p>
-     *<p></p>
-     * <p><b>201</b> - Something was created.
-     * <p><b>400</b> - Request was invalid.
-     * <p><b>401</b> - Authentication Error
-     * @param rootObject  (optional)
-        The value for the parameter rootObject
-     * @return RootObject
+     * <p><b>200</b> - A list of sodas
+     * @return List&lt;OneOf&gt;
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
     @Nonnull
-    public RootObject someEndpointPost( @Nullable final RootObject rootObject) throws OpenApiRequestException {
-        final Object localVarPostBody = rootObject;
+    public List<OneOf> getSodas() throws OpenApiRequestException {
+        final Object localVarPostBody = null;
         
-        final String localVarPath = UriComponentsBuilder.fromPath("/some/endpoint").build().toUriString();
+        final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -85,28 +80,12 @@ public class DefaultApi extends AbstractOpenApiService {
             "application/json"
         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-        };
+        final String[] localVarContentTypes = { };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] {  };
 
-        final ParameterizedTypeReference<RootObject> localVarReturnType = new ParameterizedTypeReference<RootObject>() {};
-        return apiClient.invokeAPI(localVarPath, HttpMethod.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
-    }
-
-    /**
-     * <p></p>
-     * <p></p>
-     * <p><b>201</b> - Something was created.
-     * <p><b>400</b> - Request was invalid.
-     * <p><b>401</b> - Authentication Error
-     * @return RootObject
-     * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-     */
-    @Nonnull
-    public RootObject someEndpointPost() throws OpenApiRequestException {
-        return someEndpointPost(null);
+        final ParameterizedTypeReference<List<OneOf>> localVarReturnType = new ParameterizedTypeReference<List<OneOf>>() {};
+        return apiClient.invokeAPI(localVarPath, HttpMethod.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 }

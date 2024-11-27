@@ -3,8 +3,8 @@
  */
 
 /*
- * Sample API
- * API for managing root and child objects
+ * Soda Store API
+ * API for managing sodas in a soda store
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -14,89 +14,83 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.anyofoneof.model;
+package test;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.sap.cloud.sdk.services.anyofoneof.model.RootObjectQuestionsInner;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.io.Serializable;
+import test.Cola;
+import test.Fanta;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * RootObject
+ * OneOfWithDiscriminatorAndMapping
  */
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "sodaType", visible = true)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = Cola.class, name = "Cola"),
+  @JsonSubTypes.Type(value = Fanta.class, name = "Fanta"),
+})
 // CHECKSTYLE:OFF
-public class RootObject 
+public class OneOfWithDiscriminatorAndMapping 
 // CHECKSTYLE:ON
 {
-  @JsonProperty("questions")
-  private List<RootObjectQuestionsInner> questions = new ArrayList<>();
+  @JsonProperty("sodaType")
+  private String sodaType;
 
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
   /**
-   * Set the questions of this {@link RootObject} instance and return the same instance.
+   * Set the sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance and return the same instance.
    *
-   * @param questions  The questions of this {@link RootObject}
-   * @return The same instance of this {@link RootObject} class
+   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping}
+   * @return The same instance of this {@link OneOfWithDiscriminatorAndMapping} class
    */
-  @Nonnull public RootObject questions( @Nullable final List<RootObjectQuestionsInner> questions) {
-    this.questions = questions;
-    return this;
-  }
-  /**
-   * Add one questions instance to this {@link RootObject}.
-   * @param questionsItem The questions that should be added
-   * @return The same instance of type {@link RootObject}
-   */
-  @Nonnull public RootObject addQuestionsItem( @Nonnull final RootObjectQuestionsInner questionsItem) {
-    if (this.questions == null) {
-      this.questions = new ArrayList<>();
-    }
-    this.questions.add(questionsItem);
+  @Nonnull public OneOfWithDiscriminatorAndMapping sodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
     return this;
   }
 
   /**
-   * Get questions
-   * @return questions  The questions of this {@link RootObject} instance.
+   * Get sodaType
+   * @return sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance.
    */
-  @Nonnull public List<RootObjectQuestionsInner> getQuestions() {
-    return questions;
+  @Nonnull
+  public String getSodaType() {
+    return sodaType;
   }
 
   /**
-   * Set the questions of this {@link RootObject} instance.
+   * Set the sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance.
    *
-   * @param questions  The questions of this {@link RootObject}
+   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping}
    */
-  public void setQuestions( @Nullable final List<RootObjectQuestionsInner> questions) {
-    this.questions = questions;
+  public void setSodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
   }
 
   /**
-   * Get the names of the unrecognizable properties of the {@link RootObject}.
+   * Get the names of the unrecognizable properties of the {@link OneOfWithDiscriminatorAndMapping}.
    * @return The set of properties names
    */
   @JsonIgnore
@@ -106,7 +100,7 @@ public class RootObject
   }
 
   /**
-   * Get the value of an unrecognizable property of this {@link RootObject} instance.
+   * Get the value of an unrecognizable property of this {@link OneOfWithDiscriminatorAndMapping} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -114,13 +108,13 @@ public class RootObject
   @Nullable
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
-        throw new NoSuchElementException("RootObject has no field with name '" + name + "'.");
+        throw new NoSuchElementException("OneOfWithDiscriminatorAndMapping has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
   }
 
   /**
-   * Set an unrecognizable property of this {@link RootObject} instance. If the map previously contained a mapping
+   * Set an unrecognizable property of this {@link OneOfWithDiscriminatorAndMapping} instance. If the map previously contained a mapping
    * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
    * @param customFieldValue The value of the property
@@ -140,21 +134,21 @@ public class RootObject
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final RootObject rootObject = (RootObject) o;
-    return Objects.equals(this.cloudSdkCustomFields, rootObject.cloudSdkCustomFields) &&
-        Objects.equals(this.questions, rootObject.questions);
+    final OneOfWithDiscriminatorAndMapping oneOfWithDiscriminatorAndMapping = (OneOfWithDiscriminatorAndMapping) o;
+    return Objects.equals(this.cloudSdkCustomFields, oneOfWithDiscriminatorAndMapping.cloudSdkCustomFields) &&
+        Objects.equals(this.sodaType, oneOfWithDiscriminatorAndMapping.sodaType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(questions, cloudSdkCustomFields);
+    return Objects.hash(sodaType, cloudSdkCustomFields);
   }
 
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("class RootObject {\n");
-    sb.append("    questions: ").append(toIndentedString(questions)).append("\n");
+    sb.append("class OneOfWithDiscriminatorAndMapping {\n");
+    sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();
@@ -170,7 +164,6 @@ public class RootObject
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

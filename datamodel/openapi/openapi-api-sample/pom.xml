@@ -93,6 +93,11 @@
 			<artifactId>jackson-databind</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -108,7 +113,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<inputSpec>${project.basedir}/src/main/resources/sodastore.json</inputSpec>
+					<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
 					<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
 					<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
 					<apiMaturity>released</apiMaturity>
@@ -119,6 +124,7 @@
 						<pojoBuilderMethodName>create</pojoBuilderMethodName>
 						<pojoBuildMethodName />
 						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
+						<useOneOfInterfaces>true</useOneOfInterfaces>
 						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
 					</additionalProperties>
 				</configuration>

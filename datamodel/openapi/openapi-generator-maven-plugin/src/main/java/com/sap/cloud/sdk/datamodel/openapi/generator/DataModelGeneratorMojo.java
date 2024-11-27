@@ -119,6 +119,18 @@ public class DataModelGeneratorMojo extends AbstractMojo
     private boolean enableOneOfAnyOfGeneration;
 
     /**
+     * Generate model classes. Default is true.
+     */
+    @Parameter( property = "openapi.generate.generateModels", defaultValue = "true" )
+    private boolean generateModels;
+
+    /**
+     * Generate API classes (client classes). Default is true.
+     */
+    @Parameter( property = "openapi.generate.generateApis", defaultValue = "true" )
+    private boolean generateApis;
+
+    /**
      * Defines a list of additional properties that will be passed to the Java generator.
      */
     @Parameter( property = "openapi.generate.additionalProperties" )
@@ -179,6 +191,8 @@ public class DataModelGeneratorMojo extends AbstractMojo
                     .deleteOutputDirectory(deleteOutputDirectory)
                     .additionalProperties(additionalProperties)
                     .oneOfAnyOfGenerationEnabled(enableOneOfAnyOfGeneration)
+                    .generateModels(generateModels)
+                    .generateApis(generateApis)
                     .build());
     }
 

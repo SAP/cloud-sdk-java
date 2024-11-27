@@ -36,6 +36,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
             Map.of("aiSdkConstructor", "true")),
         API_CLASS_VENDOR_EXTENSION_YAML(
@@ -45,6 +46,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             4,
             Map.of()),
         API_CLASS_VENDOR_EXTENSION_JSON(
@@ -54,6 +56,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             6,
             Map.of()),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
@@ -63,23 +66,36 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.uppercasefileextension.model",
             ApiMaturity.RELEASED,
             false,
+            true,
             6,
             Map.of()),
-        INPUT_SPEC_WITH_ANYOF_ONEOF(
-            "input-spec-with-anyof-oneof",
-            "AggregatorNestedSchemaChild.json",
-            "com.sap.cloud.sdk.services.anyofoneof.api",
-            "com.sap.cloud.sdk.services.anyofoneof.model",
+        ONE_OF_INTERFACES_DISABLED(
+            "oneof-interfaces-disabled",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            false,
+            true,
+            8,
+            Map.of()),
+        ONE_OF_INTERFACES_ENABLED(
+            "oneof-interfaces-enabled",
+            "sodastore.yaml",
+            "test",
+            "test",
             ApiMaturity.RELEASED,
             true,
-            7,
-            Map.of()),
+            true,
+            8,
+            Map.of("useOneOfInterfaces", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
             "sodastore.JSON",
             "com.sap.cloud.sdk.services.builder.api",
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
+            true,
             true,
             6,
             Map
@@ -97,6 +113,7 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
             Map
                 .of(
@@ -105,7 +122,17 @@ class DataModelGeneratorIntegrationTest
                     "removeOperationIdPrefixDelimiter",
                     "\\.",
                     "removeOperationIdPrefixCount",
-                    "3")),;
+                    "3")),
+        GENERATE_APIS(
+            "generate-apis",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            true,
+            false,
+            7,
+            Map.of());
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -113,6 +140,7 @@ class DataModelGeneratorIntegrationTest
         final String modelPackageName;
         final ApiMaturity apiMaturity;
         final boolean anyOfOneOfGenerationEnabled;
+        final boolean generateApis;
         final int expectedNumberOfGeneratedFiles;
         final Map<String, String> additionalProperties;
     }
@@ -136,6 +164,7 @@ class DataModelGeneratorIntegrationTest
             GenerationConfiguration
                 .builder()
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
@@ -169,6 +198,7 @@ class DataModelGeneratorIntegrationTest
             GenerationConfiguration
                 .builder()
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)

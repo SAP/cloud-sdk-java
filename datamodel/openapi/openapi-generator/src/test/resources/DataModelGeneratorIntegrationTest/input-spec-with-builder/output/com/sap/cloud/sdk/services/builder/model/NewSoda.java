@@ -16,23 +16,21 @@
 
 package com.sap.cloud.sdk.services.builder.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +77,8 @@ public class NewSoda
    * Get name
    * @return name  The name of this {@link NewSoda} instance.
    */
-  @Nonnull public String getName() {
+  @Nonnull
+  public String getName() {
     return name;
   }
 
@@ -107,7 +106,8 @@ public class NewSoda
    * Get brand
    * @return brand  The brand of this {@link NewSoda} instance.
    */
-  @Nonnull public String getBrand() {
+  @Nonnull
+  public String getBrand() {
     return brand;
   }
 
@@ -135,7 +135,8 @@ public class NewSoda
    * Get flavor
    * @return flavor  The flavor of this {@link NewSoda} instance.
    */
-  @Nonnull public String getFlavor() {
+  @Nonnull
+  public String getFlavor() {
     return flavor;
   }
 
@@ -163,7 +164,8 @@ public class NewSoda
    * Get price
    * @return price  The price of this {@link NewSoda} instance.
    */
-  @Nonnull public Float getPrice() {
+  @Nonnull
+  public Float getPrice() {
     return price;
   }
 
@@ -257,7 +259,6 @@ public class NewSoda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
     /**
     * Create a type-safe, fluent-api builder object to construct a new {@link NewSoda} instance with all required arguments.
     */

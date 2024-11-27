@@ -13,6 +13,8 @@
 ### ✨ New Functionality
 
 - Add support for `TypeDefinition` entries in OData V4 EDMX files.
+- Add `generateApis` and `generateModels` options to the `openapi-generator-maven-plugin` to
+  disable the generation of APIs and models respectively.
 
 ### 📈 Improvements
 
