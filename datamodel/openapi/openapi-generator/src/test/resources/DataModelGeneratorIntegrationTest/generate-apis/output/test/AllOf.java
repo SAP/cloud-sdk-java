@@ -22,6 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,9 +42,41 @@ import javax.annotation.Nullable;
 public class AllOf 
 // CHECKSTYLE:ON
 {
+  @JsonProperty("sodaType")
+  private String sodaType;
+
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+
+  /**
+   * Set the sodaType of this {@link AllOf} instance and return the same instance.
+   *
+   * @param sodaType  The sodaType of this {@link AllOf}
+   * @return The same instance of this {@link AllOf} class
+   */
+  @Nonnull public AllOf sodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
+    return this;
+  }
+
+  /**
+   * Get sodaType
+   * @return sodaType  The sodaType of this {@link AllOf} instance.
+   */
+  @Nonnull
+  public String getSodaType() {
+    return sodaType;
+  }
+
+  /**
+   * Set the sodaType of this {@link AllOf} instance.
+   *
+   * @param sodaType  The sodaType of this {@link AllOf}
+   */
+  public void setSodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
+  }
 
   /**
    * Get the names of the unrecognizable properties of the {@link AllOf}.
@@ -87,18 +124,20 @@ public class AllOf
       return false;
     }
     final AllOf allOf = (AllOf) o;
-    return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields);
+    return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields) &&
+        Objects.equals(this.sodaType, allOf.sodaType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cloudSdkCustomFields);
+    return Objects.hash(sodaType, cloudSdkCustomFields);
   }
 
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("class AllOf {\n");
+    sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

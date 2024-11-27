@@ -22,16 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import test.Cola;
-import test.Fanta;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,16 +36,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * OneOfWithDiscriminatorAndMapping
+ * Fanta
  */
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "sodaType", visible = true)
-@JsonSubTypes({
-  @JsonSubTypes.Type(value = Cola.class, name = "Cola"),
-  @JsonSubTypes.Type(value = Fanta.class, name = "Fanta"),
-})
 // CHECKSTYLE:OFF
-public class OneOfWithDiscriminatorAndMapping 
+public class Fanta 
 // CHECKSTYLE:ON
 {
   @JsonProperty("sodaType")
@@ -61,19 +50,19 @@ public class OneOfWithDiscriminatorAndMapping
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
   /**
-   * Set the sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance and return the same instance.
+   * Set the sodaType of this {@link Fanta} instance and return the same instance.
    *
-   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping}
-   * @return The same instance of this {@link OneOfWithDiscriminatorAndMapping} class
+   * @param sodaType  The sodaType of this {@link Fanta}
+   * @return The same instance of this {@link Fanta} class
    */
-  @Nonnull public OneOfWithDiscriminatorAndMapping sodaType( @Nullable final String sodaType) {
+  @Nonnull public Fanta sodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
     return this;
   }
 
   /**
    * Get sodaType
-   * @return sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance.
+   * @return sodaType  The sodaType of this {@link Fanta} instance.
    */
   @Nonnull
   public String getSodaType() {
@@ -81,16 +70,16 @@ public class OneOfWithDiscriminatorAndMapping
   }
 
   /**
-   * Set the sodaType of this {@link OneOfWithDiscriminatorAndMapping} instance.
+   * Set the sodaType of this {@link Fanta} instance.
    *
-   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminatorAndMapping}
+   * @param sodaType  The sodaType of this {@link Fanta}
    */
   public void setSodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
   }
 
   /**
-   * Get the names of the unrecognizable properties of the {@link OneOfWithDiscriminatorAndMapping}.
+   * Get the names of the unrecognizable properties of the {@link Fanta}.
    * @return The set of properties names
    */
   @JsonIgnore
@@ -100,7 +89,7 @@ public class OneOfWithDiscriminatorAndMapping
   }
 
   /**
-   * Get the value of an unrecognizable property of this {@link OneOfWithDiscriminatorAndMapping} instance.
+   * Get the value of an unrecognizable property of this {@link Fanta} instance.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
@@ -108,13 +97,13 @@ public class OneOfWithDiscriminatorAndMapping
   @Nullable
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
-        throw new NoSuchElementException("OneOfWithDiscriminatorAndMapping has no field with name '" + name + "'.");
+        throw new NoSuchElementException("Fanta has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
   }
 
   /**
-   * Set an unrecognizable property of this {@link OneOfWithDiscriminatorAndMapping} instance. If the map previously contained a mapping
+   * Set an unrecognizable property of this {@link Fanta} instance. If the map previously contained a mapping
    * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
    * @param customFieldValue The value of the property
@@ -134,9 +123,9 @@ public class OneOfWithDiscriminatorAndMapping
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final OneOfWithDiscriminatorAndMapping oneOfWithDiscriminatorAndMapping = (OneOfWithDiscriminatorAndMapping) o;
-    return Objects.equals(this.cloudSdkCustomFields, oneOfWithDiscriminatorAndMapping.cloudSdkCustomFields) &&
-        Objects.equals(this.sodaType, oneOfWithDiscriminatorAndMapping.sodaType);
+    final Fanta fanta = (Fanta) o;
+    return Objects.equals(this.cloudSdkCustomFields, fanta.cloudSdkCustomFields) &&
+        Objects.equals(this.sodaType, fanta.sodaType);
   }
 
   @Override
@@ -147,7 +136,7 @@ public class OneOfWithDiscriminatorAndMapping
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("class OneOfWithDiscriminatorAndMapping {\n");
+    sb.append("class Fanta {\n");
     sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");

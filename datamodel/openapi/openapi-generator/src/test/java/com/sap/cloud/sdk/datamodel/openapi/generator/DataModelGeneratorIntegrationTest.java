@@ -77,7 +77,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             false,
             true,
-            6,
+            8,
             Map.of()),
         ONE_OF_INTERFACES_ENABLED(
             "oneof-interfaces-enabled",
@@ -87,7 +87,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            6,
+            8,
             Map.of("useOneOfInterfaces", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
@@ -131,7 +131,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             false,
-            5,
+            7,
             Map.of());
 
         final String testCaseName;

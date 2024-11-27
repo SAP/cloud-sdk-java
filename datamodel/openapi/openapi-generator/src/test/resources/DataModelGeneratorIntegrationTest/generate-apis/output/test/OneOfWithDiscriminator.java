@@ -23,8 +23,15 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonValue;
+import test.Cola;
+import test.Fanta;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,9 +53,41 @@ import javax.annotation.Nullable;
 public class OneOfWithDiscriminator 
 // CHECKSTYLE:ON
 {
+  @JsonProperty("sodaType")
+  private String sodaType;
+
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+
+  /**
+   * Set the sodaType of this {@link OneOfWithDiscriminator} instance and return the same instance.
+   *
+   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminator}
+   * @return The same instance of this {@link OneOfWithDiscriminator} class
+   */
+  @Nonnull public OneOfWithDiscriminator sodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
+    return this;
+  }
+
+  /**
+   * Get sodaType
+   * @return sodaType  The sodaType of this {@link OneOfWithDiscriminator} instance.
+   */
+  @Nonnull
+  public String getSodaType() {
+    return sodaType;
+  }
+
+  /**
+   * Set the sodaType of this {@link OneOfWithDiscriminator} instance.
+   *
+   * @param sodaType  The sodaType of this {@link OneOfWithDiscriminator}
+   */
+  public void setSodaType( @Nullable final String sodaType) {
+    this.sodaType = sodaType;
+  }
 
   /**
    * Get the names of the unrecognizable properties of the {@link OneOfWithDiscriminator}.
@@ -96,18 +135,20 @@ public class OneOfWithDiscriminator
       return false;
     }
     final OneOfWithDiscriminator oneOfWithDiscriminator = (OneOfWithDiscriminator) o;
-    return Objects.equals(this.cloudSdkCustomFields, oneOfWithDiscriminator.cloudSdkCustomFields);
+    return Objects.equals(this.cloudSdkCustomFields, oneOfWithDiscriminator.cloudSdkCustomFields) &&
+        Objects.equals(this.sodaType, oneOfWithDiscriminator.sodaType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cloudSdkCustomFields);
+    return Objects.hash(sodaType, cloudSdkCustomFields);
   }
 
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("class OneOfWithDiscriminator {\n");
+    sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

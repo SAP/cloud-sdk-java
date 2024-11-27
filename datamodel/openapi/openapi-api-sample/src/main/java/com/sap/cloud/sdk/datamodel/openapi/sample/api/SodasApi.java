@@ -178,9 +178,9 @@ public class SodasApi extends AbstractOpenApiService
      * <p>
      * <b>200</b> - The updated soda product
      * <p>
-     * <b>404</b> - Soda product not found
-     * <p>
      * <b>204</b> - Nothing has changed
+     * <p>
+     * <b>404</b> - Soda product not found
      *
      * @param sodaWithId
      *            The updated soda product
