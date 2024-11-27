@@ -94,10 +94,13 @@ public class OneOfDeserializationTest
         AllOf allOfCola = newDefaultObjectMapper().readValue(cola, AllOf.class);
         assertThat(allOfCola.getSodaType()).isEqualTo("Cola");
         assertThat(allOfCola.isCaffeine()).isTrue();
+        assertThat(allOfCola.getColor()).isNull();
+
 
         AllOf allOfFanta = newDefaultObjectMapper().readValue(fanta, AllOf.class);
         assertThat(allOfFanta.getSodaType()).isEqualTo("Fanta");
         assertThat(allOfFanta.getColor()).isEqualTo("orange");
+        assertThat(allOfFanta.isCaffeine()).isNull();
     }
 
     /**
