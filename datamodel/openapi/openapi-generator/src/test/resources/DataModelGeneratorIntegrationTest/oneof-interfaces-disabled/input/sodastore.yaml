@@ -43,6 +43,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
+
     AnyOf:
       anyOf:
         - $ref: '#/components/schemas/Cola'
