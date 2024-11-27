@@ -9,7 +9,7 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
-import test.Soda;
+import test.OneOf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,11 +63,11 @@ public class DefaultApi extends AbstractOpenApiService {
      * <p>Get a list of all sodas</p>
      * <p></p>
      * <p><b>200</b> - A list of sodas
-     * @return List&lt;Soda&gt;
+     * @return List&lt;OneOf&gt;
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
     @Nonnull
-    public List<Soda> getSodas() throws OpenApiRequestException {
+    public List<OneOf> getSodas() throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
         final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
@@ -85,7 +85,7 @@ public class DefaultApi extends AbstractOpenApiService {
 
         final String[] localVarAuthNames = new String[] {  };
 
-        final ParameterizedTypeReference<List<Soda>> localVarReturnType = new ParameterizedTypeReference<List<Soda>>() {};
+        final ParameterizedTypeReference<List<OneOf>> localVarReturnType = new ParameterizedTypeReference<List<OneOf>>() {};
         return apiClient.invokeAPI(localVarPath, HttpMethod.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 }

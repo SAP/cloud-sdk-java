@@ -17,7 +17,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Soda'
+                  $ref: '#/components/schemas/OneOf'
 
 components:
   schemas:
@@ -57,8 +57,10 @@ components:
     Cola:
       type: object
       properties:
-        sodaType: string
+        sodaType:
+          type: string
     Fanta:
       type: object
       properties:
-        sodaType: string
+        sodaType:
+          type: string
