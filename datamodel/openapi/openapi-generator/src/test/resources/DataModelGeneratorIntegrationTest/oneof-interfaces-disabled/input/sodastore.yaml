@@ -3,7 +3,6 @@ info:
   title: Soda Store API
   version: 1.0.0
   description: API for managing sodas in a soda store
-
 paths:
   /sodas:
     get:
@@ -18,10 +17,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OneOf'
-
 components:
   schemas:
-
     OneOfWithDiscriminatorAndMapping:
       oneOf:
         - $ref: '#/components/schemas/Cola'
@@ -31,29 +28,24 @@ components:
         mapping:
           Cola: '#/components/schemas/Cola'
           Fanta: '#/components/schemas/Fanta'
-
     OneOfWithDiscriminator:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
       discriminator:
         propertyName: sodaType
-
     OneOf:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
-
     AnyOf:
       anyOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
-
     AllOf:
       allOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
-
     Cola:
       type: object
       properties:
