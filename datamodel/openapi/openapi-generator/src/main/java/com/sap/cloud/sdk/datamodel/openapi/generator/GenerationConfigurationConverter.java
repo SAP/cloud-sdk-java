@@ -104,6 +104,9 @@ class GenerationConfigurationConverter
         if( configuration.isGenerateModels() ) {
             GlobalSettings.setProperty(CodegenConstants.MODELS, "");
         }
+        if( configuration.isDebugModels() ) {
+            GlobalSettings.setProperty("debugModels", "true");
+        }
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());

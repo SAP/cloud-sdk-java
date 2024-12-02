@@ -163,6 +163,7 @@ class DataModelGeneratorIntegrationTest
         final var generationConfiguration =
             GenerationConfiguration
                 .builder()
+                // .debugModels(true) enable this for better mustache file debugging
                 .apiPackage(testCase.apiPackageName)
                 .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
