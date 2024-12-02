@@ -114,7 +114,7 @@ class OneOfDeserializationTest
             .isEqualTo(Fanta.create().color("orange").sodaType("fancy_fanta"));
 
         assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminatorAndMapping.class))
-                .isInstanceOf(JsonProcessingException.class);
+            .isInstanceOf(JsonProcessingException.class);
 
     }
 
