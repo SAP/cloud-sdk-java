@@ -26,8 +26,8 @@ components:
       discriminator:
         propertyName: sodaType
         mapping:
-          Cola: '#/components/schemas/Cola'
-          Fanta: '#/components/schemas/Fanta'
+          cool_cola: '#/components/schemas/Cola'
+          fancy_fanta: '#/components/schemas/Fanta'
     OneOfWithDiscriminator:
       oneOf:
         - $ref: '#/components/schemas/Cola'
