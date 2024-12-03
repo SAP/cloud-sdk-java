@@ -33,7 +33,6 @@ import com.google.common.annotations.Beta;
 {{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 {{/aiSdkConstructor}}
 {{#aiSdkConstructor}}import com.sap.ai.sdk.core.AiCoreService;
-import com.sap.ai.sdk.core.AiCoreDestination;
 {{/aiSdkConstructor}}
 
 /**
@@ -74,17 +73,17 @@ public class {{classname}} extends AbstractOpenApiService {
      */
     public {{classname}}()
     {
-         super(new AiCoreService().client());
+         super(new AiCoreService().getApiClient());
     }
 
     /**
      * Instantiates this API class to invoke operations on the {{appName}}
      *
-     * @param aiCoreDestination The configured connectivity instance to AI Core
+     * @param aiCoreService The configured connectivity instance to AI Core
      */
-    public {{classname}}( @Nonnull final AiCoreDestination aiCoreDestination )
+    public {{classname}}( @Nonnull final AiCoreService aiCoreService )
     {
-        super(aiCoreDestination.client());
+        super(aiCoreService.getApiClient());
     }
 {{/aiSdkConstructor}}
 
