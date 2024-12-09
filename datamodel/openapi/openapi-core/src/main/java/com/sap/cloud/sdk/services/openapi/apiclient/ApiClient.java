@@ -693,6 +693,7 @@ public final class ApiClient
         // auth headers are added automatically by the SDK
         // updateParamsForAuth(authNames, queryParams, headerParams);
 
+        @SuppressWarnings( "deprecation" ) // spring-web:6.2.0 and later, works until <7.0.0
         final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(basePath).path(path);
         if( queryParams != null ) {
             //encode the query parameters in case they contain unsafe characters
