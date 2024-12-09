@@ -94,32 +94,32 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.14</spring.version>
+		<spring.version>6.2.0</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.16</slf4j.version>
 		<assertj-core.version>3.26.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.14.2</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.11.2</junit.jupiter.version>
+		<junit.jupiter.version>5.11.3</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.9</maven-plugin.version>
-		<maven-plugin-annotations.version>3.15.0</maven-plugin-annotations.version>
+		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.8.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.25</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
+		<openapi-generator.version>7.10.0</openapi-generator.version>
+		<io-swagger-core-v3.version>2.2.26</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.24</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.78.1</bouncycastle.version>
+		<bouncycastle.version>1.79</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
-		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.9.1</wiremock.version>
-		<checkstyle.version>10.18.2</checkstyle.version>
+		<qdox.version>2.2.0</qdox.version>
+		<wiremock.version>3.10.0</wiremock.version>
+		<checkstyle.version>10.20.2</checkstyle.version>
 		<byte-buddy.version>1.15.10</byte-buddy.version>
 		<snakeyaml.version>2.3</snakeyaml.version>
 		<commons-codec.version>1.17.1</commons-codec.version>
@@ -957,7 +957,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.34</version>
+							<version>1.18.36</version>
 						</dependency>
 					</dependencies>
 					<configuration>
@@ -985,7 +985,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.1</version>
+					<version>3.11.2</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>

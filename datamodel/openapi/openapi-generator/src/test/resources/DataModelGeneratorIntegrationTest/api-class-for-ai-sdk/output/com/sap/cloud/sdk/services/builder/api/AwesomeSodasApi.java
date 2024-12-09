@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 
 import com.sap.ai.sdk.core.AiCoreService;
-import com.sap.ai.sdk.core.AiCoreDestination;
 
 /**
  * Soda Store API in version 1.0.0.
@@ -44,17 +43,17 @@ public class AwesomeSodasApi extends AbstractOpenApiService {
      */
     public AwesomeSodasApi()
     {
-         super(new AiCoreService().client());
+         super(new AiCoreService().getApiClient());
     }
 
     /**
      * Instantiates this API class to invoke operations on the Soda Store API
      *
-     * @param aiCoreDestination The configured connectivity instance to AI Core
+     * @param aiCoreService The configured connectivity instance to AI Core
      */
-    public AwesomeSodasApi( @Nonnull final AiCoreDestination aiCoreDestination )
+    public AwesomeSodasApi( @Nonnull final AiCoreService aiCoreService )
     {
-        super(aiCoreDestination.client());
+        super(aiCoreService.getApiClient());
     }
 
         /**
