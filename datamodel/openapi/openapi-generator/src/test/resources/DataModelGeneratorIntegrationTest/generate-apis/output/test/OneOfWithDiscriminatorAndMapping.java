@@ -43,8 +43,7 @@ import javax.annotation.Nullable;
 /**
  * OneOfWithDiscriminatorAndMapping
  */
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "sodaType", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "sodaType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = Cola.class, name = "Cola"),
   @JsonSubTypes.Type(value = Fanta.class, name = "Fanta"),

@@ -62,6 +62,9 @@ public class GenerationConfiguration
     @Builder.Default
     boolean generateApis = true;
 
+    @Builder.Default
+    boolean debugModels = false;
+
     /**
      * Indicates whether to use the default SAP copyright header for generated files.
      *
