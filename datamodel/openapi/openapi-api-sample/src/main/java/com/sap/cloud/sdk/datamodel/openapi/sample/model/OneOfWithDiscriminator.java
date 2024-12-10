@@ -22,13 +22,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * OneOfWithDiscriminator
  */
-
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "sodaType", visible = true )
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "sodaType", visible = true )
 @JsonSubTypes( {
     @JsonSubTypes.Type( value = Cola.class, name = "Cola" ),
     @JsonSubTypes.Type( value = Fanta.class, name = "Fanta" ), } )
 
 public interface OneOfWithDiscriminator
 {
-    public String getSodaType();
+    String getSodaType();
 }

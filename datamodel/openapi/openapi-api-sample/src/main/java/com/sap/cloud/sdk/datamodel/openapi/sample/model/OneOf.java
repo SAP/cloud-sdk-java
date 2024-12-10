@@ -16,13 +16,14 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * OneOf
  */
-
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "", visible = true )
+@JsonTypeInfo( use = JsonTypeInfo.Id.DEDUCTION )
+@JsonSubTypes( { @JsonSubTypes.Type( value = Cola.class ), @JsonSubTypes.Type( value = Fanta.class ), } )
 
 public interface OneOf
 {
