@@ -82,7 +82,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             return httpClient;
         }
 
-        return new ApacheHttpClient5Wrapper(httpClient, destination);
+        return new ApacheHttpClient5Wrapper(httpClient, destination, getRequestConfig(destination));
     }
 
     @Nonnull
