@@ -24,4 +24,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix ApacheHttpClient5Wrapper to propagate the configuration to Spring RestTemplate.

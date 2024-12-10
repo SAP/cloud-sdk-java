@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class HttpClientWrapperTest
             DefaultHttpDestination.builder("http://foo.com").headerProviders(c -> List.of()).build();
         final DefaultHttpDestination thirdDestination = DefaultHttpDestination.builder("http://bar.com").build();
         final ApacheHttpClient5Wrapper sut =
-            new ApacheHttpClient5Wrapper(mock(CloseableHttpClient.class), firstDestination);
+            new ApacheHttpClient5Wrapper(mock(CloseableHttpClient.class), firstDestination, mock(RequestConfig.class));
 
         assertThat(sut.withDestination(firstDestination)).isSameAs(sut);
         assertThat(sut.withDestination(firstDestination)).isNotSameAs(sut.withDestination(secondDestination));

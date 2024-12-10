@@ -4,6 +4,13 @@
 
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 
@@ -18,6 +25,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
@@ -27,8 +35,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
+@WireMockTest
 class ApiClientViaConstructorTest
 {
     private static final String RELATIVE_PATH = "/apiEndpoint";
@@ -119,6 +133,45 @@ class ApiClientViaConstructorTest
         myTestOpenApiService.invokeApiEndpoint(HttpMethod.GET, null, execQueryParams);
 
         server.verify();
+    }
+
+    @Test
+    void testHttpRequestConfigIsTransmitted( WireMockRuntimeInfo wm )
+    {
+        httpRequest(TlsUpgrade.DISABLED, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
+
+        httpRequest(TlsUpgrade.ENABLED, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withHeader("Upgrade", equalTo("TLS/1.2")));
+    }
+
+    private static void httpRequest( TlsUpgrade toggle, String url )
+    {
+        var sut = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(toggle).build();
+        var httpClient = sut.createHttpClient(DefaultHttpDestination.builder(url).build());
+        var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        var restTemplate = new RestTemplate(clientHttpRequestFactory);
+        var apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(url);
+
+        stubFor(get(anyUrl()).willReturn(ok("success")));
+
+        assertThat(
+            apiClient
+                .invokeAPI(
+                    "/apiEndpoint",
+                    HttpMethod.GET,
+                    null,
+                    null,
+                    new HttpHeaders(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    new ParameterizedTypeReference<String>()
+                    {
+                    }))
+            .isEqualTo("success");
     }
 
     private static class MyDto
