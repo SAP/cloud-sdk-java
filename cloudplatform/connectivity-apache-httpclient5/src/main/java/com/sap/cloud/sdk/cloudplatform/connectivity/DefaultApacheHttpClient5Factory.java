@@ -77,22 +77,25 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         throws DestinationAccessException,
             HttpClientInstantiationException
     {
-        final CloseableHttpClient httpClient = buildHttpClient(destination);
+        final var requestConfig = getRequestConfig(destination);
+        final CloseableHttpClient httpClient = buildHttpClient(destination, requestConfig);
         if( destination == null ) {
             return httpClient;
         }
 
-        return new ApacheHttpClient5Wrapper(httpClient, destination, getRequestConfig(destination));
+        return new ApacheHttpClient5Wrapper(httpClient, destination, requestConfig);
     }
 
     @Nonnull
-    private CloseableHttpClient buildHttpClient( @Nullable final HttpDestinationProperties destination )
+    private CloseableHttpClient buildHttpClient(
+        @Nullable final HttpDestinationProperties destination,
+        @Nonnull final RequestConfig requestConfig )
     {
         final HttpClientBuilder builder =
             HttpClients
                 .custom()
                 .setConnectionManager(getConnectionManager(destination))
-                .setDefaultRequestConfig(getRequestConfig(destination))
+                .setDefaultRequestConfig(requestConfig)
                 .setProxy(getProxy(destination));
 
         if( requestInterceptor != null ) {
