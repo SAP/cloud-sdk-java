@@ -4,6 +4,9 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Files;
@@ -98,14 +101,10 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             6,
-            Map
-                .of(
-                    "pojoBuilderMethodName",
-                    "builder",
-                    "pojoBuildMethodName",
-                    "build",
-                    "pojoConstructorVisibility",
-                    "private")),
+            ofEntries(
+                entry("pojoBuilderMethodName", "builder"),
+                entry("pojoBuildMethodName", "build"),
+                entry("pojoConstructorVisibility", "private"))),
         REMOVE_OPERATION_ID_PREFIX(
             "remove-operation-id-prefix",
             "sodastore.json",
@@ -115,14 +114,10 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             6,
-            Map
-                .of(
-                    "removeOperationIdPrefix",
-                    "true",
-                    "removeOperationIdPrefixDelimiter",
-                    "\\.",
-                    "removeOperationIdPrefixCount",
-                    "3")),
+            ofEntries(
+                entry("removeOperationIdPrefix", "true"),
+                entry("removeOperationIdPrefixDelimiter", "\\."),
+                entry("removeOperationIdPrefixCount", "3"))),
         GENERATE_APIS(
             "generate-apis",
             "sodastore.yaml",
@@ -132,7 +127,17 @@ class DataModelGeneratorIntegrationTest
             true,
             false,
             7,
-            Map.of());
+            Map.of()),
+        GENERATE_MODELS(
+            "generate-models",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            true,
+            true,
+            3,
+            ofEntries(entry("apisToGenerate", "Default, NotExist"), entry("modelsToGenerate", "Cola,Fanta ,NotExist")));
 
         final String testCaseName;
         final String inputSpecFileName;
