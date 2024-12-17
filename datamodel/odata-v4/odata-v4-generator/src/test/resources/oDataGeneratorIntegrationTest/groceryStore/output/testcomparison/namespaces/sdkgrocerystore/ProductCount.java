@@ -72,25 +72,25 @@ public class ProductCount
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("ProductId", getProductId());
-        values.put("Quantity", getQuantity());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("ProductId", getProductId());
+        cloudSdkValues.put("Quantity", getQuantity());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("ProductId")) {
-                final Object value = values.remove("ProductId");
+            if (cloudSdkValues.containsKey("ProductId")) {
+                final Object value = cloudSdkValues.remove("ProductId");
                 if ((value == null)||(!value.equals(getProductId()))) {
                     setProductId(((Integer) value));
                 }
             }
-            if (values.containsKey("Quantity")) {
-                final Object value = values.remove("Quantity");
+            if (cloudSdkValues.containsKey("Quantity")) {
+                final Object value = cloudSdkValues.remove("Quantity");
                 if ((value == null)||(!value.equals(getQuantity()))) {
                     setQuantity(((Integer) value));
                 }
@@ -102,7 +102,7 @@ public class ProductCount
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

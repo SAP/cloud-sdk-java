@@ -73,25 +73,25 @@ public class DateRange
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Start", getStart());
-        values.put("End", getEnd());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Start", getStart());
+        cloudSdkValues.put("End", getEnd());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Start")) {
-                final Object value = values.remove("Start");
+            if (cloudSdkValues.containsKey("Start")) {
+                final Object value = cloudSdkValues.remove("Start");
                 if ((value == null)||(!value.equals(getStart()))) {
                     setStart(((OffsetDateTime) value));
                 }
             }
-            if (values.containsKey("End")) {
-                final Object value = values.remove("End");
+            if (cloudSdkValues.containsKey("End")) {
+                final Object value = cloudSdkValues.remove("End");
                 if ((value == null)||(!value.equals(getEnd()))) {
                     setEnd(((OffsetDateTime) value));
                 }
@@ -103,7 +103,7 @@ public class DateRange
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

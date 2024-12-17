@@ -303,68 +303,68 @@ public class Address extends VdmEntity<Address> implements VdmEntitySet
     @Override
     protected Map<java.lang.String, Object> toMapOfFields()
     {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("Street", getStreet());
-        values.put("City", getCity());
-        values.put("State", getState());
-        values.put("Country", getCountry());
-        values.put("PostalCode", getPostalCode());
-        values.put("Latitude", getLatitude());
-        values.put("Longitude", getLongitude());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("Street", getStreet());
+        cloudSdkValues.put("City", getCity());
+        cloudSdkValues.put("State", getState());
+        cloudSdkValues.put("Country", getCountry());
+        cloudSdkValues.put("PostalCode", getPostalCode());
+        cloudSdkValues.put("Latitude", getLatitude());
+        cloudSdkValues.put("Longitude", getLongitude());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<java.lang.String, Object> inputValues )
     {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("Street") ) {
-                final Object value = values.remove("Street");
+            if( cloudSdkValues.containsKey("Street") ) {
+                final Object value = cloudSdkValues.remove("Street");
                 if( (value == null) || (!value.equals(getStreet())) ) {
                     setStreet(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("City") ) {
-                final Object value = values.remove("City");
+            if( cloudSdkValues.containsKey("City") ) {
+                final Object value = cloudSdkValues.remove("City");
                 if( (value == null) || (!value.equals(getCity())) ) {
                     setCity(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("State") ) {
-                final Object value = values.remove("State");
+            if( cloudSdkValues.containsKey("State") ) {
+                final Object value = cloudSdkValues.remove("State");
                 if( (value == null) || (!value.equals(getState())) ) {
                     setState(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("Country") ) {
-                final Object value = values.remove("Country");
+            if( cloudSdkValues.containsKey("Country") ) {
+                final Object value = cloudSdkValues.remove("Country");
                 if( (value == null) || (!value.equals(getCountry())) ) {
                     setCountry(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("PostalCode") ) {
-                final Object value = values.remove("PostalCode");
+            if( cloudSdkValues.containsKey("PostalCode") ) {
+                final Object value = cloudSdkValues.remove("PostalCode");
                 if( (value == null) || (!value.equals(getPostalCode())) ) {
                     setPostalCode(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("Latitude") ) {
-                final Object value = values.remove("Latitude");
+            if( cloudSdkValues.containsKey("Latitude") ) {
+                final Object value = cloudSdkValues.remove("Latitude");
                 if( (value == null) || (!value.equals(getLatitude())) ) {
                     setLatitude(((Double) value));
                 }
             }
-            if( values.containsKey("Longitude") ) {
-                final Object value = values.remove("Longitude");
+            if( cloudSdkValues.containsKey("Longitude") ) {
+                final Object value = cloudSdkValues.remove("Longitude");
                 if( (value == null) || (!value.equals(getLongitude())) ) {
                     setLongitude(((Double) value));
                 }
@@ -376,7 +376,7 @@ public class Address extends VdmEntity<Address> implements VdmEntitySet
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override

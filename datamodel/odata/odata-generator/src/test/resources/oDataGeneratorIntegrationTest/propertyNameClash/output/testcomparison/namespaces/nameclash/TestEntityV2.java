@@ -181,32 +181,32 @@ public class TestEntityV2
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("KeyPropertyGuid", getKeyPropertyGuid());
-        values.put("MultiLink", getMultiLink());
-        values.put("toMultiLink", getToMultiLink());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyPropertyGuid", getKeyPropertyGuid());
+        cloudSdkValues.put("MultiLink", getMultiLink());
+        cloudSdkValues.put("toMultiLink", getToMultiLink());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyPropertyGuid")) {
-                final Object value = values.remove("KeyPropertyGuid");
+            if (cloudSdkValues.containsKey("KeyPropertyGuid")) {
+                final Object value = cloudSdkValues.remove("KeyPropertyGuid");
                 if ((value == null)||(!value.equals(getKeyPropertyGuid()))) {
                     setKeyPropertyGuid(((UUID) value));
                 }
             }
-            if (values.containsKey("MultiLink")) {
-                final Object value = values.remove("MultiLink");
+            if (cloudSdkValues.containsKey("MultiLink")) {
+                final Object value = cloudSdkValues.remove("MultiLink");
                 if ((value == null)||(!value.equals(getMultiLink()))) {
                     setMultiLink(((String) value));
                 }
             }
-            if (values.containsKey("toMultiLink")) {
-                final Object value = values.remove("toMultiLink");
+            if (cloudSdkValues.containsKey("toMultiLink")) {
+                final Object value = cloudSdkValues.remove("toMultiLink");
                 if ((value == null)||(!value.equals(getToMultiLink()))) {
                     setToMultiLink(((String) value));
                 }
@@ -217,8 +217,8 @@ public class TestEntityV2
         }
         // navigation properties
         {
-            if ((values).containsKey("to_MultiLink")) {
-                final Object value = (values).remove("to_MultiLink");
+            if ((cloudSdkValues).containsKey("to_MultiLink")) {
+                final Object value = (cloudSdkValues).remove("to_MultiLink");
                 if (value instanceof Iterable) {
                     if (toMultiLink_2 == null) {
                         toMultiLink_2 = Lists.newArrayList();
@@ -245,7 +245,7 @@ public class TestEntityV2
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**
@@ -322,11 +322,11 @@ public class TestEntityV2
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfNavigationProperties() {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toMultiLink_2 != null) {
-            (values).put("to_MultiLink", toMultiLink_2);
+            (cloudSdkValues).put("to_MultiLink", toMultiLink_2);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

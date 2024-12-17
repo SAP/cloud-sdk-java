@@ -114,18 +114,18 @@ public class TestEntityCircularLinkParent
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("KeyProperty", getKeyProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyProperty", getKeyProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyProperty")) {
-                final Object value = values.remove("KeyProperty");
+            if (cloudSdkValues.containsKey("KeyProperty")) {
+                final Object value = cloudSdkValues.remove("KeyProperty");
                 if ((value == null)||(!value.equals(getKeyProperty()))) {
                     setKeyProperty(((java.lang.String) value));
                 }
@@ -136,8 +136,8 @@ public class TestEntityCircularLinkParent
         }
         // navigation properties
         {
-            if ((values).containsKey("to_Child")) {
-                final Object value = (values).remove("to_Child");
+            if ((cloudSdkValues).containsKey("to_Child")) {
+                final Object value = (cloudSdkValues).remove("to_Child");
                 if (value instanceof Map) {
                     if (toChild == null) {
                         toChild = new TestEntityCircularLinkChild();
@@ -148,7 +148,7 @@ public class TestEntityCircularLinkParent
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -159,11 +159,11 @@ public class TestEntityCircularLinkParent
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toChild!= null) {
-            (values).put("to_Child", toChild);
+            (cloudSdkValues).put("to_Child", toChild);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

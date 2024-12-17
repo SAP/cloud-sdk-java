@@ -118,25 +118,25 @@ public class FunctionResult
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("RequestId", getRequestId());
-        values.put("Message", getMessage());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("RequestId", getRequestId());
+        cloudSdkValues.put("Message", getMessage());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("RequestId")) {
-                final Object value = values.remove("RequestId");
+            if (cloudSdkValues.containsKey("RequestId")) {
+                final Object value = cloudSdkValues.remove("RequestId");
                 if ((value == null)||(!value.equals(getRequestId()))) {
                     setRequestId(((UUID) value));
                 }
             }
-            if (values.containsKey("Message")) {
-                final Object value = values.remove("Message");
+            if (cloudSdkValues.containsKey("Message")) {
+                final Object value = cloudSdkValues.remove("Message");
                 if ((value == null)||(!value.equals(getMessage()))) {
                     setMessage(((java.lang.String) value));
                 }
@@ -148,14 +148,14 @@ public class FunctionResult
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
+        return cloudSdkValues;
     }
 
 }
