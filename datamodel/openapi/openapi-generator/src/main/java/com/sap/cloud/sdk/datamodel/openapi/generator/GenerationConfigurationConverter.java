@@ -8,13 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -27,6 +30,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -92,6 +96,20 @@ class GenerationConfigurationConverter
                     op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
+            }
+
+            @SuppressWarnings( "rawtypes" )
+            @Override
+            protected
+                void
+                updateModelForComposedSchema( CodegenModel m, Schema schema, Map<String, Schema> allDefinitions )
+            {
+                super.updateModelForComposedSchema(m, schema, allDefinitions);
+                for( Set<String> check : List.of(m.anyOf, m.oneOf) ) {
+                    Set<String> fix = new HashSet<>();
+                    check.removeIf(i -> i.startsWith("List<") && fix.add(i.substring(5, i.length() - 1) + "[]"));
+                    check.addAll(fix);
+                }
             }
         };
     }
