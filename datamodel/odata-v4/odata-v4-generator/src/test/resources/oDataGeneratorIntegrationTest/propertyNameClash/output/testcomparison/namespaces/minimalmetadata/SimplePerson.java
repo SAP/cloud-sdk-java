@@ -137,25 +137,25 @@ public class SimplePerson
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Person", getPerson());
-        values.put("ToFriend", getToFriend());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Person", getPerson());
+        cloudSdkValues.put("ToFriend", getToFriend());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Person")) {
-                final Object value = values.remove("Person");
+            if (cloudSdkValues.containsKey("Person")) {
+                final Object value = cloudSdkValues.remove("Person");
                 if ((value == null)||(!value.equals(getPerson()))) {
                     setPerson(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("ToFriend")) {
-                final Object value = values.remove("ToFriend");
+            if (cloudSdkValues.containsKey("ToFriend")) {
+                final Object value = cloudSdkValues.remove("ToFriend");
                 if ((value == null)||(!value.equals(getToFriend()))) {
                     setToFriend(((java.lang.String) value));
                 }
@@ -166,8 +166,8 @@ public class SimplePerson
         }
         // navigation properties
         {
-            if ((values).containsKey("Friend")) {
-                final Object value = (values).remove("Friend");
+            if ((cloudSdkValues).containsKey("Friend")) {
+                final Object value = (cloudSdkValues).remove("Friend");
                 if (value instanceof Map) {
                     if (toFriend_2 == null) {
                         toFriend_2 = new Friend();
@@ -178,7 +178,7 @@ public class SimplePerson
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -189,11 +189,11 @@ public class SimplePerson
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toFriend_2 != null) {
-            (values).put("Friend", toFriend_2);
+            (cloudSdkValues).put("Friend", toFriend_2);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

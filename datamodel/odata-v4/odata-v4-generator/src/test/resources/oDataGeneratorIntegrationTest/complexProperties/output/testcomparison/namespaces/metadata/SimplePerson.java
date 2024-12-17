@@ -176,27 +176,27 @@ public class SimplePerson
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("FirstName", getFirstName());
-        values.put("LastName", getLastName());
-        values.put("Relationships", getRelationships());
-        values.put("Favorite", getFavorite());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("FirstName", getFirstName());
+        cloudSdkValues.put("LastName", getLastName());
+        cloudSdkValues.put("Relationships", getRelationships());
+        cloudSdkValues.put("Favorite", getFavorite());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("FirstName")) {
-                final Object value = values.remove("FirstName");
+            if (cloudSdkValues.containsKey("FirstName")) {
+                final Object value = cloudSdkValues.remove("FirstName");
                 if ((value == null)||(!value.equals(getFirstName()))) {
                     setFirstName(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("LastName")) {
-                final Object value = values.remove("LastName");
+            if (cloudSdkValues.containsKey("LastName")) {
+                final Object value = cloudSdkValues.remove("LastName");
                 if ((value == null)||(!value.equals(getLastName()))) {
                     setLastName(((java.lang.String) value));
                 }
@@ -204,8 +204,8 @@ public class SimplePerson
         }
         // structured properties
         {
-            if (values.containsKey("Relationships")) {
-                final Object value = values.remove("Relationships");
+            if (cloudSdkValues.containsKey("Relationships")) {
+                final Object value = cloudSdkValues.remove("Relationships");
                 if (value instanceof Iterable) {
                     final LinkedList<Relationship> relationships = new LinkedList<Relationship>();
                     for (Object properties: ((Iterable<?> ) value)) {
@@ -223,8 +223,8 @@ public class SimplePerson
                     setRelationships(null);
                 }
             }
-            if (values.containsKey("Favorite")) {
-                final Object value = values.remove("Favorite");
+            if (cloudSdkValues.containsKey("Favorite")) {
+                final Object value = cloudSdkValues.remove("Favorite");
                 if (value instanceof Map) {
                     if (getFavorite() == null) {
                         setFavorite(new Relationship());
@@ -241,7 +241,7 @@ public class SimplePerson
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override

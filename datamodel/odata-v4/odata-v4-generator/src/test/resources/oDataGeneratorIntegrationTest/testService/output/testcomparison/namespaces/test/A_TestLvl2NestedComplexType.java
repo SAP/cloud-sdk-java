@@ -62,18 +62,18 @@ public class A_TestLvl2NestedComplexType
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("StringProperty", getStringProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("StringProperty", getStringProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("StringProperty")) {
-                final Object value = values.remove("StringProperty");
+            if (cloudSdkValues.containsKey("StringProperty")) {
+                final Object value = cloudSdkValues.remove("StringProperty");
                 if ((value == null)||(!value.equals(getStringProperty()))) {
                     setStringProperty(((java.lang.String) value));
                 }
@@ -85,7 +85,7 @@ public class A_TestLvl2NestedComplexType
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

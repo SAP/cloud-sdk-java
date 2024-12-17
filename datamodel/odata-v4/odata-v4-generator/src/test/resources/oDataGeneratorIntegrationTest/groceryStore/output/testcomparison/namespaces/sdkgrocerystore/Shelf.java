@@ -153,25 +153,25 @@ public class Shelf
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("FloorPlanId", getFloorPlanId());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("FloorPlanId", getFloorPlanId());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Id")) {
-                final Object value = values.remove("Id");
+            if (cloudSdkValues.containsKey("Id")) {
+                final Object value = cloudSdkValues.remove("Id");
                 if ((value == null)||(!value.equals(getId()))) {
                     setId(((Integer) value));
                 }
             }
-            if (values.containsKey("FloorPlanId")) {
-                final Object value = values.remove("FloorPlanId");
+            if (cloudSdkValues.containsKey("FloorPlanId")) {
+                final Object value = cloudSdkValues.remove("FloorPlanId");
                 if ((value == null)||(!value.equals(getFloorPlanId()))) {
                     setFloorPlanId(((Integer) value));
                 }
@@ -182,8 +182,8 @@ public class Shelf
         }
         // navigation properties
         {
-            if ((values).containsKey("FloorPlan")) {
-                final Object value = (values).remove("FloorPlan");
+            if ((cloudSdkValues).containsKey("FloorPlan")) {
+                final Object value = (cloudSdkValues).remove("FloorPlan");
                 if (value instanceof Map) {
                     if (toFloorPlan == null) {
                         toFloorPlan = new FloorPlan();
@@ -193,8 +193,8 @@ public class Shelf
                     toFloorPlan.fromMap(inputMap);
                 }
             }
-            if ((values).containsKey("Products")) {
-                final Object value = (values).remove("Products");
+            if ((cloudSdkValues).containsKey("Products")) {
+                final Object value = (cloudSdkValues).remove("Products");
                 if (value instanceof Iterable) {
                     if (toProducts == null) {
                         toProducts = Lists.newArrayList();
@@ -221,7 +221,7 @@ public class Shelf
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -232,14 +232,14 @@ public class Shelf
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfNavigationProperties() {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toFloorPlan!= null) {
-            (values).put("FloorPlan", toFloorPlan);
+            (cloudSdkValues).put("FloorPlan", toFloorPlan);
         }
         if (toProducts!= null) {
-            (values).put("Products", toProducts);
+            (cloudSdkValues).put("Products", toProducts);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

@@ -222,34 +222,34 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("CustomerId", getCustomerId());
-        values.put("TotalAmount", getTotalAmount());
-        values.put("ProductCounts", getProductCounts());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("CustomerId", getCustomerId());
+        cloudSdkValues.put("TotalAmount", getTotalAmount());
+        cloudSdkValues.put("ProductCounts", getProductCounts());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("CustomerId") ) {
-                final Object value = values.remove("CustomerId");
+            if( cloudSdkValues.containsKey("CustomerId") ) {
+                final Object value = cloudSdkValues.remove("CustomerId");
                 if( (value == null) || (!value.equals(getCustomerId())) ) {
                     setCustomerId(((Integer) value));
                 }
             }
-            if( values.containsKey("TotalAmount") ) {
-                final Object value = values.remove("TotalAmount");
+            if( cloudSdkValues.containsKey("TotalAmount") ) {
+                final Object value = cloudSdkValues.remove("TotalAmount");
                 if( (value == null) || (!value.equals(getTotalAmount())) ) {
                     setTotalAmount(((BigDecimal) value));
                 }
@@ -257,8 +257,8 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
         }
         // structured properties
         {
-            if( values.containsKey("ProductCounts") ) {
-                final Object value = values.remove("ProductCounts");
+            if( cloudSdkValues.containsKey("ProductCounts") ) {
+                final Object value = cloudSdkValues.remove("ProductCounts");
                 if( value instanceof Iterable ) {
                     final LinkedList<ProductCount> productCounts = new LinkedList<ProductCount>();
                     for( Object properties : ((Iterable<?>) value) ) {
@@ -279,8 +279,8 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
         }
         // navigation properties
         {
-            if( (values).containsKey("Customer") ) {
-                final Object value = (values).remove("Customer");
+            if( (cloudSdkValues).containsKey("Customer") ) {
+                final Object value = (cloudSdkValues).remove("Customer");
                 if( value instanceof Map ) {
                     if( toCustomer == null ) {
                         toCustomer = new Customer();
@@ -291,7 +291,7 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -304,11 +304,11 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
     @Override
     protected Map<String, Object> toMapOfNavigationProperties()
     {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if( toCustomer != null ) {
-            (values).put("Customer", toCustomer);
+            (cloudSdkValues).put("Customer", toCustomer);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

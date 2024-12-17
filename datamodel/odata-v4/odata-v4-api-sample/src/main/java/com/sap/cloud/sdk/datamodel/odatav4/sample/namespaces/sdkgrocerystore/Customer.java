@@ -215,40 +215,40 @@ public class Customer extends VdmEntity<Customer> implements VdmEntitySet
     @Override
     protected Map<java.lang.String, Object> toMapOfFields()
     {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("Name", getName());
-        values.put("Email", getEmail());
-        values.put("AddressId", getAddressId());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("Name", getName());
+        cloudSdkValues.put("Email", getEmail());
+        cloudSdkValues.put("AddressId", getAddressId());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<java.lang.String, Object> inputValues )
     {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("Name") ) {
-                final Object value = values.remove("Name");
+            if( cloudSdkValues.containsKey("Name") ) {
+                final Object value = cloudSdkValues.remove("Name");
                 if( (value == null) || (!value.equals(getName())) ) {
                     setName(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("Email") ) {
-                final Object value = values.remove("Email");
+            if( cloudSdkValues.containsKey("Email") ) {
+                final Object value = cloudSdkValues.remove("Email");
                 if( (value == null) || (!value.equals(getEmail())) ) {
                     setEmail(((java.lang.String) value));
                 }
             }
-            if( values.containsKey("AddressId") ) {
-                final Object value = values.remove("AddressId");
+            if( cloudSdkValues.containsKey("AddressId") ) {
+                final Object value = cloudSdkValues.remove("AddressId");
                 if( (value == null) || (!value.equals(getAddressId())) ) {
                     setAddressId(((Integer) value));
                 }
@@ -259,8 +259,8 @@ public class Customer extends VdmEntity<Customer> implements VdmEntitySet
         }
         // navigation properties
         {
-            if( (values).containsKey("Address") ) {
-                final Object value = (values).remove("Address");
+            if( (cloudSdkValues).containsKey("Address") ) {
+                final Object value = (cloudSdkValues).remove("Address");
                 if( value instanceof Map ) {
                     if( toAddress == null ) {
                         toAddress = new Address();
@@ -271,7 +271,7 @@ public class Customer extends VdmEntity<Customer> implements VdmEntitySet
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -284,11 +284,11 @@ public class Customer extends VdmEntity<Customer> implements VdmEntitySet
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties()
     {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if( toAddress != null ) {
-            (values).put("Address", toAddress);
+            (cloudSdkValues).put("Address", toAddress);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**

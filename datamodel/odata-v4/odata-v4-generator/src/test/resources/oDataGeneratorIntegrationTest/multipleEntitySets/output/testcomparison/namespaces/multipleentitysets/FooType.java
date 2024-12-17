@@ -120,25 +120,25 @@ public class FooType
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Foo", getFoo());
-        values.put("Type", getType_2());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Foo", getFoo());
+        cloudSdkValues.put("Type", getType_2());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Foo")) {
-                final Object value = values.remove("Foo");
+            if (cloudSdkValues.containsKey("Foo")) {
+                final Object value = cloudSdkValues.remove("Foo");
                 if ((value == null)||(!value.equals(getFoo()))) {
                     setFoo(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("Type")) {
-                final Object value = values.remove("Type");
+            if (cloudSdkValues.containsKey("Type")) {
+                final Object value = cloudSdkValues.remove("Type");
                 if ((value == null)||(!value.equals(getType_2()))) {
                     setType_2(((java.lang.String) value));
                 }
@@ -150,7 +150,7 @@ public class FooType
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
