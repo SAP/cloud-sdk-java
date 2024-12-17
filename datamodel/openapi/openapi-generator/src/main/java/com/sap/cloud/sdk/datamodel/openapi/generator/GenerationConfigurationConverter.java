@@ -99,10 +99,10 @@ class GenerationConfigurationConverter
     private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
         if( configuration.isGenerateApis() ) {
-          GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
+            GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
         }
         if( configuration.isGenerateModels() ) {
-          GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
+            GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
         }
         if( configuration.isDebugModels() ) {
             GlobalSettings.setProperty("debugModels", "true");
