@@ -40,8 +40,8 @@ import javax.annotation.Nullable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = List&lt;String&gt;.class),
     @JsonSubTypes.Type(value = String.class),
+    @JsonSubTypes.Type(value = String[].class),
 })
 
 public interface FantaFlavor  {
