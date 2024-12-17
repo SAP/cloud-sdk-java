@@ -899,15 +899,15 @@ public class TestEntityV4
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("to_MultiLink")) {
-                final Object value = (cloudSdkValues).remove("to_MultiLink");
-                if (value instanceof Iterable) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_MultiLink");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toMultiLink == null) {
                         toMultiLink = Lists.newArrayList();
                     } else {
                         toMultiLink = Lists.newArrayList(toMultiLink);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -926,15 +926,15 @@ public class TestEntityV4
                 }
             }
             if ((cloudSdkValues).containsKey("to_OtherMultiLink")) {
-                final Object value = (cloudSdkValues).remove("to_OtherMultiLink");
-                if (value instanceof Iterable) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_OtherMultiLink");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toOtherMultiLink == null) {
                         toOtherMultiLink = Lists.newArrayList();
                     } else {
                         toOtherMultiLink = Lists.newArrayList(toOtherMultiLink);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -953,24 +953,24 @@ public class TestEntityV4
                 }
             }
             if ((cloudSdkValues).containsKey("to_SingleLink")) {
-                final Object value = (cloudSdkValues).remove("to_SingleLink");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_SingleLink");
+                if (cloudSdkValue instanceof Map) {
                     if (toSingleLink == null) {
                         toSingleLink = new TestEntitySingleLink();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toSingleLink.fromMap(inputMap);
                 }
             }
             if ((cloudSdkValues).containsKey("to_StreamLink")) {
-                final Object value = (cloudSdkValues).remove("to_StreamLink");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_StreamLink");
+                if (cloudSdkValue instanceof Map) {
                     if (toStreamLink == null) {
                         toStreamLink = new TestEntityStream();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toStreamLink.fromMap(inputMap);
                 }
             }
@@ -1022,17 +1022,17 @@ public class TestEntityV4
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>TestEntityMultiLink</b> entities.
      */
     public void setMultiLink(
         @Nonnull
-        final List<TestEntityMultiLink> value) {
+        final List<TestEntityMultiLink> cloudSdkValue) {
         if (toMultiLink == null) {
             toMultiLink = Lists.newArrayList();
         }
         toMultiLink.clear();
-        toMultiLink.addAll(value);
+        toMultiLink.addAll(cloudSdkValue);
     }
 
     /**
@@ -1072,17 +1072,17 @@ public class TestEntityV4
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>TestEntityMultiLink</b> entities.
      */
     public void setOtherMultiLink(
         @Nonnull
-        final List<TestEntityMultiLink> value) {
+        final List<TestEntityMultiLink> cloudSdkValue) {
         if (toOtherMultiLink == null) {
             toOtherMultiLink = Lists.newArrayList();
         }
         toOtherMultiLink.clear();
-        toOtherMultiLink.addAll(value);
+        toOtherMultiLink.addAll(cloudSdkValue);
     }
 
     /**
@@ -1118,11 +1118,11 @@ public class TestEntityV4
     /**
      * Overwrites the associated <b>TestEntitySingleLink</b> entity for the loaded navigation property <b>to_SingleLink</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>TestEntitySingleLink</b> entity.
      */
-    public void setSingleLink(final TestEntitySingleLink value) {
-        toSingleLink = value;
+    public void setSingleLink(final TestEntitySingleLink cloudSdkValue) {
+        toSingleLink = cloudSdkValue;
     }
 
     /**
@@ -1141,11 +1141,11 @@ public class TestEntityV4
     /**
      * Overwrites the associated <b>TestEntityStream</b> entity for the loaded navigation property <b>to_StreamLink</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>TestEntityStream</b> entity.
      */
-    public void setStreamLink(final TestEntityStream value) {
-        toStreamLink = value;
+    public void setStreamLink(final TestEntityStream cloudSdkValue) {
+        toStreamLink = cloudSdkValue;
     }
 
     /**
@@ -1384,76 +1384,76 @@ public class TestEntityV4
         private TestEntitySingleLink toSingleLink;
         private TestEntityStream toStreamLink;
 
-        private TestEntityV4 .TestEntityV4Builder toMultiLink(final List<TestEntityMultiLink> value) {
-            toMultiLink.addAll(value);
+        private TestEntityV4 .TestEntityV4Builder toMultiLink(final List<TestEntityMultiLink> cloudSdkValue) {
+            toMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_MultiLink</b> for <b>TestEntityV4</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder multiLink(TestEntityMultiLink... value) {
-            return toMultiLink(Lists.newArrayList(value));
+        public TestEntityV4 .TestEntityV4Builder multiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV4 .TestEntityV4Builder toOtherMultiLink(final List<TestEntityMultiLink> value) {
-            toOtherMultiLink.addAll(value);
+        private TestEntityV4 .TestEntityV4Builder toOtherMultiLink(final List<TestEntityMultiLink> cloudSdkValue) {
+            toOtherMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_OtherMultiLink</b> for <b>TestEntityV4</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder otherMultiLink(TestEntityMultiLink... value) {
-            return toOtherMultiLink(Lists.newArrayList(value));
+        public TestEntityV4 .TestEntityV4Builder otherMultiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toOtherMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV4 .TestEntityV4Builder toSingleLink(final TestEntitySingleLink value) {
-            toSingleLink = value;
+        private TestEntityV4 .TestEntityV4Builder toSingleLink(final TestEntitySingleLink cloudSdkValue) {
+            toSingleLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_SingleLink</b> for <b>TestEntityV4</b> to single <b>TestEntitySingleLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntitySingleLink to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder singleLink(final TestEntitySingleLink value) {
-            return toSingleLink(value);
+        public TestEntityV4 .TestEntityV4Builder singleLink(final TestEntitySingleLink cloudSdkValue) {
+            return toSingleLink(cloudSdkValue);
         }
 
-        private TestEntityV4 .TestEntityV4Builder toStreamLink(final TestEntityStream value) {
-            toStreamLink = value;
+        private TestEntityV4 .TestEntityV4Builder toStreamLink(final TestEntityStream cloudSdkValue) {
+            toStreamLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_StreamLink</b> for <b>TestEntityV4</b> to single <b>TestEntityStream</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityStream to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder streamLink(final TestEntityStream value) {
-            return toStreamLink(value);
+        public TestEntityV4 .TestEntityV4Builder streamLink(final TestEntityStream cloudSdkValue) {
+            return toStreamLink(cloudSdkValue);
         }
 
     }

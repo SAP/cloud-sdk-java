@@ -214,26 +214,26 @@ public class Shelf extends VdmEntity<Shelf>
         // navigation properties
         {
             if( (cloudSdkValues).containsKey("FloorPlan") ) {
-                final Object value = (cloudSdkValues).remove("FloorPlan");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("FloorPlan");
+                if( cloudSdkValue instanceof Map ) {
                     if( toFloorPlan == null ) {
                         toFloorPlan = new FloorPlan();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
                     toFloorPlan.fromMap(inputMap);
                 }
             }
             if( (cloudSdkValues).containsKey("Products") ) {
-                final Object value = (cloudSdkValues).remove("Products");
-                if( value instanceof Iterable ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Products");
+                if( cloudSdkValue instanceof Iterable ) {
                     if( toProducts == null ) {
                         toProducts = Lists.newArrayList();
                     } else {
                         toProducts = Lists.newArrayList(toProducts);
                     }
                     int i = 0;
-                    for( Object item : ((Iterable<?>) value) ) {
+                    for( Object item : ((Iterable<?>) cloudSdkValue) ) {
                         if( !(item instanceof Map) ) {
                             continue;
                         }
@@ -399,12 +399,12 @@ public class Shelf extends VdmEntity<Shelf>
     /**
      * Overwrites the associated <b>FloorPlan</b> entity for the loaded navigation property <b>FloorPlan</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>FloorPlan</b> entity.
      */
-    public void setFloorPlan( final FloorPlan value )
+    public void setFloorPlan( final FloorPlan cloudSdkValue )
     {
-        toFloorPlan = value;
+        toFloorPlan = cloudSdkValue;
     }
 
     /**
@@ -482,16 +482,16 @@ public class Shelf extends VdmEntity<Shelf>
      * first time and it has not yet been loaded, an OData query will be run in order to load the missing information
      * and its result will get cached for future invocations.
      *
-     * @param value
+     * @param cloudSdkValue
      *            List of <b>Product</b> entities.
      */
-    public void setProducts( @Nonnull final List<Product> value )
+    public void setProducts( @Nonnull final List<Product> cloudSdkValue )
     {
         if( toProducts == null ) {
             toProducts = Lists.newArrayList();
         }
         toProducts.clear();
-        toProducts.addAll(value);
+        toProducts.addAll(cloudSdkValue);
     }
 
     /**
@@ -527,42 +527,42 @@ public class Shelf extends VdmEntity<Shelf>
         private FloorPlan toFloorPlan;
         private List<Product> toProducts = Lists.newArrayList();
 
-        private Shelf.ShelfBuilder toFloorPlan( final FloorPlan value )
+        private Shelf.ShelfBuilder toFloorPlan( final FloorPlan cloudSdkValue )
         {
-            toFloorPlan = value;
+            toFloorPlan = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>FloorPlan</b> for <b>Shelf</b> to single <b>FloorPlan</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The FloorPlan to build this Shelf with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Shelf.ShelfBuilder floorPlan( final FloorPlan value )
+        public Shelf.ShelfBuilder floorPlan( final FloorPlan cloudSdkValue )
         {
-            return toFloorPlan(value);
+            return toFloorPlan(cloudSdkValue);
         }
 
-        private Shelf.ShelfBuilder toProducts( final List<Product> value )
+        private Shelf.ShelfBuilder toProducts( final List<Product> cloudSdkValue )
         {
-            toProducts.addAll(value);
+            toProducts.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>Products</b> for <b>Shelf</b> to multiple <b>Product</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Products to build this Shelf with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Shelf.ShelfBuilder products( Product... value )
+        public Shelf.ShelfBuilder products( Product... cloudSdkValue )
         {
-            return toProducts(Lists.newArrayList(value));
+            return toProducts(Lists.newArrayList(cloudSdkValue));
         }
 
     }
