@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
@@ -30,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 @Slf4j
-@Beta
 public final class ServiceBindingDestinationOptions
 {
     /**

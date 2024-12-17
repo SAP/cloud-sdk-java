@@ -14,11 +14,11 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.requestheader.DefaultRequestHeaderContainer;
 import com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderAccessor;
 import com.sap.cloud.sdk.cloudplatform.security.exception.BasicAuthenticationAccessException;

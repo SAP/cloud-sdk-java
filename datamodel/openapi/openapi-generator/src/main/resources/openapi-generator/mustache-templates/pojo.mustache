@@ -2,13 +2,30 @@
  * {{description}}{{^description}}{{classname}}{{/description}}{{#isDeprecated}}
  * @deprecated{{/isDeprecated}}
  */{{#isDeprecated}}
-@Deprecated{{/isDeprecated}}{{#discriminator}}
-{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}{{^isReleased}}
-@Beta{{/isReleased}}
-// CHECKSTYLE:OFF
-public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcelableModel}}implements Parcelable {{/parcelableModel}}{{^parcelableModel}}{{/parcelableModel}}
+@Deprecated{{/isDeprecated}}
+{{#swagger1AnnotationLibrary}}
+{{#description}}
+@ApiModel(description = "{{{.}}}")
+{{/description}}
+{{/swagger1AnnotationLibrary}}
+{{#swagger2AnnotationLibrary}}
+{{#description}}
+@Schema(description = "{{{.}}}")
+{{/description}}
+{{/swagger2AnnotationLibrary}}
+{{#jackson}}
+{{#isClassnameSanitized}}
+{{/isClassnameSanitized}}
+{{/jackson}}
+{{>additionalModelTypeAnnotations}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}{{^isReleased}}
+@Beta{{/isReleased}}// CHECKSTYLE:OFF
+public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtensions.x-implements}}{{#-first}}implements {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{#-last}} {{/-last}}{{/vendorExtensions.x-implements}}
 // CHECKSTYLE:ON
 {
+{{#serializableModel}}
+  private static final long serialVersionUID = 1L;
+
+{{/serializableModel}}
   {{#vars}}
     {{#isEnum}}
     {{^isContainer}}
@@ -22,40 +39,40 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     {{/isEnum}}
   {{#jackson}}
   @JsonProperty("{{baseName}}")
-  {{#withXml}}
-    {{^isContainer}}
-  @JacksonXmlProperty({{#isXmlAttribute}}isAttribute = true, {{/isXmlAttribute}}{{#xmlNamespace}}namespace="{{xmlNamespace}}", {{/xmlNamespace}}localName = "{{#xmlName}}{{xmlName}}{{/xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
-    {{/isContainer}}
-    {{#isContainer}}
-      {{#isXmlWrapped}}
-  // items.xmlName={{items.xmlName}}
-  @JacksonXmlElementWrapper(useWrapping = {{isXmlWrapped}}, {{#xmlNamespace}}namespace="{{xmlNamespace}}", {{/xmlNamespace}}localName = "{{#items.xmlName}}{{items.xmlName}}{{/items.xmlName}}{{^items.xmlName}}{{items.baseName}}{{/items.xmlName}}")
-      {{/isXmlWrapped}}
-    {{/isContainer}}
-  {{/withXml}}
   {{/jackson}}
   {{#withXml}}
-  {{#isXmlAttribute}}
-  @XmlAttribute(name = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
-  {{/isXmlAttribute}}
-  {{^isXmlAttribute}}
-    {{^isContainer}}
-  @XmlElement({{#xmlNamespace}}namespace="{{.}}", {{/xmlNamespace}}name = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
-    {{/isContainer}}
-    {{#isContainer}}
-  // Is a container wrapped={{isXmlWrapped}}
-      {{#items}}
-  // items.name={{name}} items.baseName={{baseName}} items.xmlName={{xmlName}} items.xmlNamespace={{xmlNamespace}}
-  // items.example={{example}} items.type={{dataType}}
-  @XmlElement({{#xmlNamespace}}namespace="{{.}}", {{/xmlNamespace}}name = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
-      {{/items}}
-      {{#isXmlWrapped}}
-  @XmlElementWrapper({{#xmlNamespace}}namespace="{{.}}", {{/xmlNamespace}}name = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}")
-      {{/isXmlWrapped}}
-    {{/isContainer}}
-  {{/isXmlAttribute}}
+  @Xml{{#isXmlAttribute}}Attribute{{/isXmlAttribute}}{{^isXmlAttribute}}Element{{/isXmlAttribute}}(name = "{{items.xmlName}}{{^items.xmlName}}{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}{{/items.xmlName}}"{{#xmlNamespace}}, namespace = "{{.}}"{{/xmlNamespace}})
+    {{#isXmlWrapped}}
+  @XmlElementWrapper(name = "{{xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}"{{#xmlNamespace}}, namespace = "{{.}}"{{/xmlNamespace}})
+    {{/isXmlWrapped}}
+    {{^isXmlAttribute}}
+      {{#isDateTime}}
+  @XmlJavaTypeAdapter(OffsetDateTimeXmlAdapter.class)
+      {{/isDateTime}}
+    {{/isXmlAttribute}}
   {{/withXml}}
-  private {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
+  {{#gson}}
+  @SerializedName(SERIALIZED_NAME_{{nameInSnakeCase}})
+  {{/gson}}
+  {{#vendorExtensions.x-field-extra-annotation}}
+  {{{vendorExtensions.x-field-extra-annotation}}}
+  {{/vendorExtensions.x-field-extra-annotation}}
+  {{#vendorExtensions.x-is-jackson-optional-nullable}}
+  {{#isContainer}}
+  {{#hasChildren}}protected{{/hasChildren}}{{^hasChildren}}private{{/hasChildren}} JsonNullable<{{{datatypeWithEnum}}}> {{name}} = JsonNullable.<{{{datatypeWithEnum}}}>undefined();
+  {{/isContainer}}
+  {{^isContainer}}
+  {{#hasChildren}}protected{{/hasChildren}}{{^hasChildren}}private{{/hasChildren}} JsonNullable<{{{datatypeWithEnum}}}> {{name}} = JsonNullable.<{{{datatypeWithEnum}}}>{{#defaultValue}}of({{{.}}}){{/defaultValue}}{{^defaultValue}}undefined(){{/defaultValue}};
+  {{/isContainer}}
+  {{/vendorExtensions.x-is-jackson-optional-nullable}}
+  {{^vendorExtensions.x-is-jackson-optional-nullable}}
+  {{#isContainer}}
+  {{#hasChildren}}protected{{/hasChildren}}{{^hasChildren}}private{{/hasChildren}} {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
+  {{/isContainer}}
+  {{^isContainer}}
+  {{#hasChildren}}protected{{/hasChildren}}{{^hasChildren}}private{{/hasChildren}} {{{datatypeWithEnum}}} {{name}}{{#defaultValue}} = {{{.}}}{{/defaultValue}};
+  {{/isContainer}}
+  {{/vendorExtensions.x-is-jackson-optional-nullable}}
 
   {{/vars}}
   @JsonAnySetter
@@ -63,32 +80,43 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
   {{#parcelableModel}}
   public {{classname}}() {
-  {{#parent}}
-    super();
-  {{/parent}}
+    {{#parent}}
+    {{#parcelableModel}}
+    super();{{/parcelableModel}}
+    {{/parent}}
+    {{#gson}}
+    {{#discriminator}}
+    {{#discriminator.isEnum}}
+    this.{{{discriminatorName}}} = this.getClass().getSimpleName();
+    {{/discriminator.isEnum}}
+    {{/discriminator}}
+    {{/gson}}
   }
   {{/parcelableModel}}
   {{^parcelableModel}}
   {{#pojoConstructorVisibility}}
+  /**
+   * Default constructor for {{classname}}.
+   */
   {{pojoConstructorVisibility}} {{classname}}() { {{#parent}}super();{{/parent}} }
   {{/pojoConstructorVisibility}}
   {{/parcelableModel}}
   {{#vars}}
   {{^isReadOnly}}
 
-   /**
-    * Set the {{name}} of this {@link {{classname}}} instance and return the same instance.
-    *
-    * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
-    {{#minimum}}
-    * Minimum: {{minimum}}
-    {{/minimum}}
-    {{#maximum}}
-    * Maximum: {{maximum}}
-    {{/maximum}}
-    * @return The same instance of this {@link {{classname}}} class
-    */
-   @Nonnull public {{classname}} {{name}}(@Nonnull final {{{datatypeWithEnum}}} {{name}}) {
+  /**
+   * Set the {{name}} of this {@link {{classname}}} instance and return the same instance.
+   *
+   * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
+   {{#minimum}}
+   * Minimum: {{minimum}}
+   {{/minimum}}
+   {{#maximum}}
+   * Maximum: {{maximum}}
+   {{/maximum}}
+   * @return The same instance of this {@link {{classname}}} class
+   */
+  @Nonnull public {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
     return this;
   }
@@ -99,54 +127,102 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * @return The same instance of type {@link {{classname}}}
    */
   @Nonnull public {{classname}} add{{nameInPascalCase}}Item( @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
+    {{#vendorExtensions.x-is-jackson-optional-nullable}}
+    if (this.{{name}} == null || !this.{{name}}.isPresent()) {
+      this.{{name}} = JsonNullable.<{{{datatypeWithEnum}}}>of({{{defaultValue}}}{{^defaultValue}}new {{#uniqueItems}}LinkedHashSet{{/uniqueItems}}{{^uniqueItems}}ArrayList{{/uniqueItems}}<>(){{/defaultValue}});
+    }
+    try {
+      this.{{name}}.get().add({{name}}Item);
+    } catch (java.util.NoSuchElementException e) {
+      // this can never happen, as we make sure above that the value is present
+    }
+    return this;
+    {{/vendorExtensions.x-is-jackson-optional-nullable}}
+    {{^vendorExtensions.x-is-jackson-optional-nullable}}
     if (this.{{name}} == null) {
       this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new {{#uniqueItems}}LinkedHashSet{{/uniqueItems}}{{^uniqueItems}}ArrayList{{/uniqueItems}}<>(){{/defaultValue}};
     }
     this.{{name}}.add({{name}}Item);
     return this;
+    {{/vendorExtensions.x-is-jackson-optional-nullable}}
   }
   {{/isArray}}
   {{#isMap}}
 
-   /**
-    * Put one {{nameInCamelCase}} instance to this {@link {{classname}}} instance.
-    * @param key The String key of this {{nameInCamelCase}} instance
-    * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
-    * @return The same instance of type {@link {{classname}}}
-    */
-   @Nonnull public {{classname}} put{{nameInCamelCase}}Item(@Nonnull final String key, @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
+  /**
+   * Put one {{nameInCamelCase}} instance to this {@link {{classname}}} instance.
+   * @param key The String key of this {{nameInCamelCase}} instance
+   * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
+   * @return The same instance of type {@link {{classname}}}
+   */
+  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
+    {{#vendorExtensions.x-is-jackson-optional-nullable}}
+    if (this.{{name}} == null || !this.{{name}}.isPresent()) {
+      this.{{name}} = JsonNullable.<{{{datatypeWithEnum}}}>of({{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}});
+    }
+    try {
+      this.{{name}}.get().put(key, {{name}}Item);
+    } catch (java.util.NoSuchElementException e) {
+      // this can never happen, as we make sure above that the value is present
+    }
+    return this;
+    {{/vendorExtensions.x-is-jackson-optional-nullable}}
+    {{^vendorExtensions.x-is-jackson-optional-nullable}}
+    {{^required}}
+    if (this.{{name}} == null) {
       this.{{name}} = {{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}};
+    }
+    {{/required}}
     this.{{name}}.put(key, {{name}}Item);
     return this;
+    {{/vendorExtensions.x-is-jackson-optional-nullable}}
   }
   {{/isMap}}
 
   {{/isReadOnly}}
-   /**
+  /**
   {{#description}}
-    * {{.}}
+   * {{.}}
   {{/description}}
   {{^description}}
-    * Get {{name}}
+   * Get {{name}}
   {{/description}}
   {{#minimum}}
-    * minimum: {{.}}
+   * minimum: {{.}}
   {{/minimum}}
   {{#maximum}}
-    * maximum: {{.}}
+   * maximum: {{.}}
   {{/maximum}}
-    * @return {{name}}  The {{name}} of this {@link {{classname}}} instance.
+   * @return {{name}}  The {{name}} of this {@link {{classname}}} instance.
    {{#deprecated}}
-    * @deprecated
+   * @deprecated
    {{/deprecated}}
-    */
-  {{#deprecated}}
-   @Deprecated
-  {{/deprecated}}
-{{#useBeanValidation}}{{>beanValidation}}{{/useBeanValidation}}{{#vendorExtensions.extraAnnotation}}
-  {{{vendorExtensions.extraAnnotation}}}
-{{/vendorExtensions.extraAnnotation}}
-  @Nonnull public {{{datatypeWithEnum}}} {{getter}}() {
+   */
+{{#deprecated}}
+  @Deprecated
+{{/deprecated}}
+{{#isNullable}}
+  @Nullable
+{{/isNullable}}
+{{^isNullable}}
+  @Nonnull
+{{/isNullable}}
+{{#jsonb}}
+  @JsonbProperty("{{baseName}}")
+{{/jsonb}}
+{{#useBeanValidation}}
+{{>beanValidation}}
+{{/useBeanValidation}}
+{{#swagger1AnnotationLibrary}}
+  @ApiModelProperty({{#example}}example = "{{{.}}}", {{/example}}{{#required}}required = {{required}}, {{/required}}value = "{{{description}}}")
+{{/swagger1AnnotationLibrary}}
+{{#swagger2AnnotationLibrary}}
+  @Schema({{#example}}example = "{{{.}}}", {{/example}}requiredMode = {{#required}}Schema.RequiredMode.REQUIRED{{/required}}{{^required}}Schema.RequiredMode.NOT_REQUIRED{{/required}}, description = "{{{description}}}")
+{{/swagger2AnnotationLibrary}}
+{{#vendorExtensions.x-extra-annotation}}
+  {{{vendorExtensions.x-extra-annotation}}}
+{{/vendorExtensions.x-extra-annotation}}
+  public {{{datatypeWithEnum}}} {{getter}}() {
     return {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
   }
   {{^isReadOnly}}
@@ -162,7 +238,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * Maximum: {{maximum}}
    {{/maximum}}
    */
-  public void {{setter}}( @Nonnull final {{{datatypeWithEnum}}} {{name}}) {
+  public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}};
   }
   {{/isReadOnly}}
@@ -185,7 +261,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("{{classname}} has no field with name '" + name + "'.");
     }
@@ -206,7 +282,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
 
 
   {{#parent}}
-  {{#allVars}}
+  {{#readWriteVars}}
   {{#isOverridden}}
   @Override
   public {{classname}} {{name}}({{{datatypeWithEnum}}} {{name}}) {
@@ -220,7 +296,7 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
   }
 
   {{/isOverridden}}
-  {{/allVars}}
+  {{/readWriteVars}}
   {{/parent}}
   @Override
   public boolean equals(@Nullable final java.lang.Object o) {
@@ -271,11 +347,22 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     {{/parent}}
     {{#vars}}
-    sb.append("    {{name}}: ").append(toIndentedString({{name}})).append("\n");
+    sb.append("    {{name}}: ").append({{#isPassword}}"*"{{/isPassword}}{{^isPassword}}toIndentedString({{name}}){{/isPassword}}).append("\n");
     {{/vars}}
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(final java.lang.Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
   }
 {{#supportUrlQuery}}
 
@@ -471,18 +558,6 @@ public class {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{{#parcela
     return joiner.toString();
   }
 {{/supportUrlQuery}}
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(final java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
-
 {{#parcelableModel}}
 
   public void writeToParcel(Parcel out, int flags) {

@@ -16,23 +16,21 @@
 
 package com.sap.cloud.sdk.services.apiclassvendorextension.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,22 +58,23 @@ public class UpdateSoda
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
-   /**
-    * Set the name of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param name  The name of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda name(@Nonnull final String name) {
+  /**
+   * Set the name of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param name  The name of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda name( @Nullable final String name) {
     this.name = name;
     return this;
   }
 
-   /**
-    * Get name
-    * @return name  The name of this {@link UpdateSoda} instance.
-    */
-  @Nonnull public String getName() {
+  /**
+   * Get name
+   * @return name  The name of this {@link UpdateSoda} instance.
+   */
+  @Nonnull
+  public String getName() {
     return name;
   }
 
@@ -84,26 +83,27 @@ public class UpdateSoda
    *
    * @param name  The name of this {@link UpdateSoda}
    */
-  public void setName( @Nonnull final String name) {
+  public void setName( @Nullable final String name) {
     this.name = name;
   }
 
-   /**
-    * Set the brand of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param brand  The brand of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda brand(@Nonnull final String brand) {
+  /**
+   * Set the brand of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param brand  The brand of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda brand( @Nullable final String brand) {
     this.brand = brand;
     return this;
   }
 
-   /**
-    * Get brand
-    * @return brand  The brand of this {@link UpdateSoda} instance.
-    */
-  @Nonnull public String getBrand() {
+  /**
+   * Get brand
+   * @return brand  The brand of this {@link UpdateSoda} instance.
+   */
+  @Nonnull
+  public String getBrand() {
     return brand;
   }
 
@@ -112,26 +112,27 @@ public class UpdateSoda
    *
    * @param brand  The brand of this {@link UpdateSoda}
    */
-  public void setBrand( @Nonnull final String brand) {
+  public void setBrand( @Nullable final String brand) {
     this.brand = brand;
   }
 
-   /**
-    * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param flavor  The flavor of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda flavor(@Nonnull final String flavor) {
+  /**
+   * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param flavor  The flavor of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda flavor( @Nullable final String flavor) {
     this.flavor = flavor;
     return this;
   }
 
-   /**
-    * Get flavor
-    * @return flavor  The flavor of this {@link UpdateSoda} instance.
-    */
-  @Nonnull public String getFlavor() {
+  /**
+   * Get flavor
+   * @return flavor  The flavor of this {@link UpdateSoda} instance.
+   */
+  @Nonnull
+  public String getFlavor() {
     return flavor;
   }
 
@@ -140,26 +141,27 @@ public class UpdateSoda
    *
    * @param flavor  The flavor of this {@link UpdateSoda}
    */
-  public void setFlavor( @Nonnull final String flavor) {
+  public void setFlavor( @Nullable final String flavor) {
     this.flavor = flavor;
   }
 
-   /**
-    * Set the price of this {@link UpdateSoda} instance and return the same instance.
-    *
-    * @param price  The price of this {@link UpdateSoda}
-    * @return The same instance of this {@link UpdateSoda} class
-    */
-   @Nonnull public UpdateSoda price(@Nonnull final Float price) {
+  /**
+   * Set the price of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param price  The price of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull public UpdateSoda price( @Nullable final Float price) {
     this.price = price;
     return this;
   }
 
-   /**
-    * Get price
-    * @return price  The price of this {@link UpdateSoda} instance.
-    */
-  @Nonnull public Float getPrice() {
+  /**
+   * Get price
+   * @return price  The price of this {@link UpdateSoda} instance.
+   */
+  @Nonnull
+  public Float getPrice() {
     return price;
   }
 
@@ -168,7 +170,7 @@ public class UpdateSoda
    *
    * @param price  The price of this {@link UpdateSoda}
    */
-  public void setPrice( @Nonnull final Float price) {
+  public void setPrice( @Nullable final Float price) {
     this.price = price;
   }
 
@@ -189,7 +191,7 @@ public class UpdateSoda
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("UpdateSoda has no field with name '" + name + "'.");
     }
@@ -253,7 +255,6 @@ public class UpdateSoda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 
 }
 

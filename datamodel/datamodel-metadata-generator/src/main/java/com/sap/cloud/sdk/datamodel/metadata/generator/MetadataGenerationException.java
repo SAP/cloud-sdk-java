@@ -4,12 +4,9 @@
 
 package com.sap.cloud.sdk.datamodel.metadata.generator;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Indicates an error during VDM metadata generation.
  */
-@Beta
 public class MetadataGenerationException extends RuntimeException
 {
     private static final long serialVersionUID = -199677362491505868L;

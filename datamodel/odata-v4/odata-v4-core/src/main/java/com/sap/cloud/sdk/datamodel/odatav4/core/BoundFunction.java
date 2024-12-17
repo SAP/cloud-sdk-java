@@ -149,6 +149,14 @@ public interface BoundFunction<BindingT, ResultT> extends BoundOperation<Binding
             super(src, target, name, args);
         }
 
+        /**
+         * Class representing a composable bound function
+         *
+         * @param <BindingT>
+         *            The type the function is bound to.
+         * @param <ResultT>
+         *            The type this function returns.
+         */
         public static final class Composable<BindingT, ResultT extends VdmEntity<ResultT>>
             extends
             SingleToSingleEntity<BindingT, ResultT>
@@ -156,6 +164,18 @@ public interface BoundFunction<BindingT, ResultT> extends BoundOperation<Binding
             BoundFunction.Composable<BindingT, ResultT>
         {
 
+            /**
+             * Create an instance of a bound function.
+             *
+             * @param src
+             *            The type this function is bound to.
+             * @param target
+             *            The type this function returns.
+             * @param name
+             *            The fully qualified name
+             * @param args
+             *            Key-value-pairs of function arguments names and their values
+             */
             public Composable(
                 @Nonnull final Class<BindingT> src,
                 @Nonnull final Class<ResultT> target,
@@ -271,6 +291,14 @@ public interface BoundFunction<BindingT, ResultT> extends BoundOperation<Binding
             super(src, target, name, args);
         }
 
+        /**
+         * Class representing a composable bound function
+         *
+         * @param <BindingT>
+         *            The type the function is bound to.
+         * @param <ResultT>
+         *            The type this function returns.
+         */
         public static final class Composable<BindingT, ResultT extends VdmEntity<ResultT>>
             extends
             SingleToCollectionEntity<BindingT, ResultT>
@@ -401,6 +429,14 @@ public interface BoundFunction<BindingT, ResultT> extends BoundOperation<Binding
             super(src, target, name, args);
         }
 
+        /**
+         * Class representing a composable bound function
+         *
+         * @param <BindingT>
+         *            The type the function is bound to.
+         * @param <ResultT>
+         *            The type this function returns.
+         */
         public static final class Composable<BindingT, ResultT extends VdmEntity<ResultT>>
             extends
             CollectionToSingleEntity<BindingT, ResultT>
@@ -534,6 +570,14 @@ public interface BoundFunction<BindingT, ResultT> extends BoundOperation<Binding
             super(src, target, name, args);
         }
 
+        /**
+         * Class representing a composable bound function
+         *
+         * @param <BindingT>
+         *            The type the function is bound to.
+         * @param <ResultT>
+         *            The type this function returns.
+         */
         public static final class Composable<BindingT, ResultT extends VdmEntity<ResultT>>
             extends
             CollectionToCollectionEntity<BindingT, ResultT>

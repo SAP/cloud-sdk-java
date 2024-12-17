@@ -17,9 +17,9 @@ Content-Transfer-Encoding: binary
 Content-ID: 2
 
 POST Entities HTTP/1.1
-header-create: create
 Accept: application/json
 Content-Type: application/json
+header-create: create
 
 {"IntegerValue":12}
 
@@ -45,8 +45,8 @@ Content-ID: 4
 
 PATCH Entities(13) HTTP/1.1
 Accept: application/json
-header-update: update
 Content-Type: application/json
+header-update: update
 
 {}
 

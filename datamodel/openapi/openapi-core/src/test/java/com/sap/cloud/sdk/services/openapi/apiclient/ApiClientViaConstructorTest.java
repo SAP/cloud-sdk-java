@@ -4,10 +4,18 @@
 
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,15 +25,24 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
+@WireMockTest
 class ApiClientViaConstructorTest
 {
     private static final String RELATIVE_PATH = "/apiEndpoint";
@@ -89,6 +106,74 @@ class ApiClientViaConstructorTest
         server.verify();
     }
 
+    @Test
+    void testApiClientWithQueryParams()
+    {
+        final String filterQueryValue = "emails.value eq \"my.email@test.com\"";
+        final String expectedFilterQuery = "emails.value%20eq%20%22my.email@test.com%22";
+        final String filterQueryParam = "filter";
+        MultiValueMap<String, String> execQueryParams = new LinkedMultiValueMap<>();
+        List<String> values = new ArrayList<>();
+        values.add(filterQueryValue);
+        execQueryParams.put("filter", values);
+
+        final ApiClient apiClient = new ApiClient().setBasePath(BASE_PATH);
+        final RestTemplate restTemplate = apiClient.getRestTemplate();
+        final MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+
+        server
+            .expect(
+                ExpectedCount.once(),
+                requestTo(BASE_PATH + RELATIVE_PATH + "?" + filterQueryParam + "=" + expectedFilterQuery))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(queryParam(filterQueryParam, expectedFilterQuery))
+            .andRespond(MockRestResponseCreators.withSuccess(SUCCESS_BODY, MediaType.TEXT_PLAIN));
+
+        final MyTestOpenApiService myTestOpenApiService = new MyTestOpenApiService(apiClient);
+        myTestOpenApiService.invokeApiEndpoint(HttpMethod.GET, null, execQueryParams);
+
+        server.verify();
+    }
+
+    @Test
+    void testHttpRequestConfigIsTransmitted( WireMockRuntimeInfo wm )
+    {
+        httpRequest(TlsUpgrade.DISABLED, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
+
+        httpRequest(TlsUpgrade.ENABLED, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withHeader("Upgrade", equalTo("TLS/1.2")));
+    }
+
+    private static void httpRequest( TlsUpgrade toggle, String url )
+    {
+        var sut = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(toggle).build();
+        var httpClient = sut.createHttpClient(DefaultHttpDestination.builder(url).build());
+        var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        var restTemplate = new RestTemplate(clientHttpRequestFactory);
+        var apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(url);
+
+        stubFor(get(anyUrl()).willReturn(ok("success")));
+
+        assertThat(
+            apiClient
+                .invokeAPI(
+                    "/apiEndpoint",
+                    HttpMethod.GET,
+                    null,
+                    null,
+                    new HttpHeaders(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    new ParameterizedTypeReference<String>()
+                    {
+                    }))
+            .isEqualTo("success");
+    }
+
     private static class MyDto
     {
         @JsonProperty( "Return" )
@@ -112,16 +197,19 @@ class ApiClientViaConstructorTest
             super(apiClient);
         }
 
-        void invokeApiEndpoint()
+        void invokeApiEndpoint( @Nullable Object body )
         {
-            invokeApiEndpoint(null);
+            invokeApiEndpoint(HttpMethod.POST, body, null);
         }
 
-        void invokeApiEndpoint( @Nullable Object body )
+        void invokeApiEndpoint(
+            HttpMethod method,
+            @Nullable Object body,
+            @Nullable MultiValueMap<String, String> queryParams )
         {
             assertThat(apiClient.getBasePath()).isEqualTo(BASE_PATH);
 
-            final ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<String>()
+            final ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>()
             {
             };
 
@@ -129,8 +217,8 @@ class ApiClientViaConstructorTest
                 apiClient
                     .invokeAPI(
                         UriComponentsBuilder.fromPath(RELATIVE_PATH).toUriString(),
-                        HttpMethod.POST,
-                        null,
+                        method,
+                        queryParams,
                         body,
                         new HttpHeaders(),
                         null,

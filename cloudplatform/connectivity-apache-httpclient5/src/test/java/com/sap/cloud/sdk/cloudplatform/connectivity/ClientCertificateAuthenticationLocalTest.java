@@ -86,7 +86,7 @@ class ClientCertificateAuthenticationLocalTest
 
         assertThat(context.getUserToken()).isNotNull();
         assertThat(context.getUserToken()).isInstanceOf(X500Principal.class);
-        assertThat(context.getUserToken(X500Principal.class).getName()).contains("CN=localhost");
+        assertThat(((X500Principal) context.getUserToken()).getName()).contains("CN=localhost");
 
         // assert keystore methods have been used
         Mockito.verify(destination).getKeyStorePassword();

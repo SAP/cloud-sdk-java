@@ -352,7 +352,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     {
         final URI proxyUrl = URI.create("http://proxyUrl:1234");
         final DefaultHttpDestination baseDestination =
-            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).build();
+            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).buildInternal();
 
         final DestinationHeaderProvider headerProviderMock = mock(DestinationHeaderProvider.class);
         when(headerProviderMock.getHeaders(any())).thenReturn(Collections.emptyList());
@@ -460,7 +460,7 @@ class OAuth2ServiceBindingDestinationLoaderTest
     {
         final URI proxyUrl = URI.create("http://proxyUrl:1234");
         final DefaultHttpDestination baseDestination =
-            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).build();
+            DefaultHttpDestination.builder(baseUrl).proxyType(ProxyType.ON_PREMISE).buildInternal();
         final ServiceBindingDestinationOptions options =
             ServiceBindingDestinationOptions
                 .forService(EMPTY_BINDING)

@@ -56,6 +56,9 @@ public class Order
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    /**
+     * Default constructor for Order.
+     */
     protected Order()
     {
     }
@@ -140,7 +143,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order totalPrice( @Nonnull final Float totalPrice )
+    public Order totalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
         return this;
@@ -163,7 +166,7 @@ public class Order
      * @param totalPrice
      *            The totalPrice of this {@link Order}
      */
-    public void setTotalPrice( @Nonnull final Float totalPrice )
+    public void setTotalPrice( @Nullable final Float totalPrice )
     {
         this.totalPrice = totalPrice;
     }
@@ -176,7 +179,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order typelessProperty( @Nonnull final Object typelessProperty )
+    public Order typelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
         return this;
@@ -187,7 +190,7 @@ public class Order
      *
      * @return typelessProperty The typelessProperty of this {@link Order} instance.
      */
-    @Nonnull
+    @Nullable
     public Object getTypelessProperty()
     {
         return typelessProperty;
@@ -199,7 +202,7 @@ public class Order
      * @param typelessProperty
      *            Some typeless property, interpreted by the generator as nullable by default (because typeless)
      */
-    public void setTypelessProperty( @Nonnull final Object typelessProperty )
+    public void setTypelessProperty( @Nullable final Object typelessProperty )
     {
         this.typelessProperty = typelessProperty;
     }
@@ -212,7 +215,7 @@ public class Order
      * @return The same instance of this {@link Order} class
      */
     @Nonnull
-    public Order nullableProperty( @Nonnull final String nullableProperty )
+    public Order nullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
         return this;
@@ -223,7 +226,7 @@ public class Order
      *
      * @return nullableProperty The nullableProperty of this {@link Order} instance.
      */
-    @Nonnull
+    @Nullable
     public String getNullableProperty()
     {
         return nullableProperty;
@@ -235,7 +238,7 @@ public class Order
      * @param nullableProperty
      *            Some typed property that is deliberately made nullable
      */
-    public void setNullableProperty( @Nonnull final String nullableProperty )
+    public void setNullableProperty( @Nullable final String nullableProperty )
     {
         this.nullableProperty = nullableProperty;
     }

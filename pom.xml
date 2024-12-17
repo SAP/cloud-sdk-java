@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.12.0-SNAPSHOT</version>
+	<version>5.15.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -44,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.12.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.15.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -83,8 +83,8 @@
 		<jacoco.executionDataFile>${project.build.directory}/coverage-reports/jacoco.exec</jacoco.executionDataFile>
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
-		<jco-api.version>4.81.7</jco-api.version>
-		<jackson.version>2.17.2</jackson.version>
+		<jco-api.version>4.87.9</jco-api.version>
+		<jackson.version>2.18.2</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20240303</json.version>
@@ -94,33 +94,35 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.1.11</spring.version>
+		<spring.version>6.2.0</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.13</slf4j.version>
+		<slf4j.version>2.0.16</slf4j.version>
 		<assertj-core.version>3.26.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.12.0</mockito.version>
+		<mockito.version>5.14.2</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.10.3</junit.jupiter.version>
+		<junit.jupiter.version>5.11.3</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.8</maven-plugin.version>
-		<maven-plugin-annotations.version>3.13.1</maven-plugin-annotations.version>
+		<maven-plugin.version>3.9.9</maven-plugin.version>
+		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.7.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.22</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.22</io-swagger-parser-v3.version>
+		<openapi-generator.version>7.10.0</openapi-generator.version>
+		<io-swagger-core-v3.version>2.2.26</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.24</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.78.1</bouncycastle.version>
+		<bouncycastle.version>1.79</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
-		<qdox.version>2.1.0</qdox.version>
-		<wiremock.version>3.9.1</wiremock.version>
-		<checkstyle.version>8.41</checkstyle.version>
-		<byte-buddy.version>1.14.18</byte-buddy.version>
+		<qdox.version>2.2.0</qdox.version>
+		<wiremock.version>3.10.0</wiremock.version>
+		<checkstyle.version>10.20.2</checkstyle.version>
+		<byte-buddy.version>1.15.11</byte-buddy.version>
+		<snakeyaml.version>2.3</snakeyaml.version>
+		<commons-codec.version>1.17.1</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
 	</properties>
 	<dependencyManagement>
@@ -246,11 +248,6 @@
 			<dependency>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator</artifactId>
-				<version>${openapi-generator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-core</artifactId>
 				<version>${openapi-generator.version}</version>
 			</dependency>
 			<dependency>
@@ -397,7 +394,13 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.17.1</version>
+				<version>${commons-codec.version}</version>
+			</dependency>
+			<!-- Added to resolve dependency convergence between openapi-generator, and jackson -->
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -645,7 +648,7 @@
 				<plugin>
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
-					<version>1.11.0</version>
+					<version>1.12.0</version>
 					<executions>
 						<execution>
 							<goals>
@@ -694,7 +697,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.7.1</version>
+					<version>3.8.1</version>
 					<executions>
 						<execution>
 							<id>analyze</id>
@@ -771,12 +774,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.1.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.1.3</version>
 					<configuration>
 						<retryFailedDeploymentCount>3</retryFailedDeploymentCount>
 					</configuration>
@@ -784,17 +787,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.21.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-archetype-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.13.1</version>
+					<version>3.15.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -854,7 +857,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.5.2</version>
 					<configuration>
 						<includes>
 							<include>${surefire.include}</include>
@@ -874,7 +877,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.6.0</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
@@ -893,7 +896,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.6.2</version>
+					<version>4.8.6.6</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -905,7 +908,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.24.0</version>
+					<version>3.26.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
@@ -954,7 +957,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.34</version>
+							<version>1.18.36</version>
 						</dependency>
 					</dependencies>
 					<configuration>
@@ -982,7 +985,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.8.0</version>
+					<version>3.11.2</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>

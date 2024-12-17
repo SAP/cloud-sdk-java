@@ -27,8 +27,10 @@ import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * SodaWithId
@@ -46,6 +48,85 @@ public class SodaWithId
     @JsonProperty( "quantity" )
     private Integer quantity;
 
+    /**
+     * Gets or Sets packaging
+     */
+    public enum PackagingEnum
+    {
+        /**
+         * The GLASS option of this SodaWithId
+         */
+        GLASS("glass"),
+
+        /**
+         * The CARTON option of this SodaWithId
+         */
+        CARTON("carton"),
+
+        /**
+         * The CAN option of this SodaWithId
+         */
+        CAN("can"),
+
+        /**
+         * The UNKNOWN_DEFAULT_OPEN_API option of this SodaWithId
+         */
+        UNKNOWN_DEFAULT_OPEN_API("unknown_default_open_api");
+
+        private String value;
+
+        PackagingEnum( String value )
+        {
+            this.value = value;
+        }
+
+        /**
+         * Get the value of the enum
+         *
+         * @return The enum value
+         */
+        @JsonValue
+        @Nonnull
+        public String getValue()
+        {
+            return value;
+        }
+
+        /**
+         * Get the String value of the enum value.
+         *
+         * @return The enum value as String
+         */
+        @Override
+        @Nonnull
+        public String toString()
+        {
+            return String.valueOf(value);
+        }
+
+        /**
+         * Get the enum value from a String value
+         *
+         * @param value
+         *            The String value
+         * @return The enum value of type SodaWithId
+         */
+        @JsonCreator
+        @Nonnull
+        public static PackagingEnum fromValue( @Nonnull final String value )
+        {
+            for( PackagingEnum b : PackagingEnum.values() ) {
+                if( b.value.equals(value) ) {
+                    return b;
+                }
+            }
+            return UNKNOWN_DEFAULT_OPEN_API;
+        }
+    }
+
+    @JsonProperty( "packaging" )
+    private PackagingEnum packaging;
+
     @JsonProperty( "price" )
     private Float price;
 
@@ -56,6 +137,9 @@ public class SodaWithId
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
+    /**
+     * Default constructor for SodaWithId.
+     */
     protected SodaWithId()
     {
     }
@@ -169,6 +253,42 @@ public class SodaWithId
     }
 
     /**
+     * Set the packaging of this {@link SodaWithId} instance and return the same instance.
+     *
+     * @param packaging
+     *            The packaging of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
+     */
+    @Nonnull
+    public SodaWithId packaging( @Nullable final PackagingEnum packaging )
+    {
+        this.packaging = packaging;
+        return this;
+    }
+
+    /**
+     * Get packaging
+     *
+     * @return packaging The packaging of this {@link SodaWithId} instance.
+     */
+    @Nonnull
+    public PackagingEnum getPackaging()
+    {
+        return packaging;
+    }
+
+    /**
+     * Set the packaging of this {@link SodaWithId} instance.
+     *
+     * @param packaging
+     *            The packaging of this {@link SodaWithId}
+     */
+    public void setPackaging( @Nullable final PackagingEnum packaging )
+    {
+        this.packaging = packaging;
+    }
+
+    /**
      * Set the price of this {@link SodaWithId} instance and return the same instance.
      *
      * @param price
@@ -212,7 +332,7 @@ public class SodaWithId
      * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public SodaWithId id( @Nonnull final Long id )
+    public SodaWithId id( @Nullable final Long id )
     {
         this.id = id;
         return this;
@@ -235,7 +355,7 @@ public class SodaWithId
      * @param id
      *            The id of this {@link SodaWithId}
      */
-    public void setId( @Nonnull final Long id )
+    public void setId( @Nullable final Long id )
     {
         this.id = id;
     }
@@ -300,6 +420,7 @@ public class SodaWithId
             && Objects.equals(this.name, sodaWithId.name)
             && Objects.equals(this.brand, sodaWithId.brand)
             && Objects.equals(this.quantity, sodaWithId.quantity)
+            && Objects.equals(this.packaging, sodaWithId.packaging)
             && Objects.equals(this.price, sodaWithId.price)
             && Objects.equals(this.id, sodaWithId.id);
     }
@@ -307,7 +428,7 @@ public class SodaWithId
     @Override
     public int hashCode()
     {
-        return Objects.hash(name, brand, quantity, price, id, cloudSdkCustomFields);
+        return Objects.hash(name, brand, quantity, packaging, price, id, cloudSdkCustomFields);
     }
 
     @Override
@@ -319,6 +440,7 @@ public class SodaWithId
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
+        sb.append("    packaging: ").append(toIndentedString(packaging)).append("\n");
         sb.append("    price: ").append(toIndentedString(price)).append("\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         cloudSdkCustomFields

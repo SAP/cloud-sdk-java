@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -18,7 +16,6 @@ import lombok.Value;
  * Metadata about OData API usage.
  */
 @Value
-@Beta
 @Builder
 public class ODataApiUsageMetadata implements ApiUsageMetadata
 {

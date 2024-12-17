@@ -9,7 +9,6 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 
 import lombok.AccessLevel;
@@ -23,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 4.20.0
  */
-@Beta
 public final class BtpServiceOptions
 {
     /**

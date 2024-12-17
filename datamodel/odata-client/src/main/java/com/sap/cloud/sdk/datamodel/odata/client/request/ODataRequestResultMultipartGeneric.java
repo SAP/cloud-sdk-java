@@ -14,7 +14,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
@@ -164,7 +163,6 @@ public class ODataRequestResultMultipartGeneric
      *
      * @since 5.5.0
      */
-    @Beta
     @Override
     public void close()
     {

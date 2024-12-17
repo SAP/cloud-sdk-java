@@ -5,6 +5,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -24,10 +25,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
+import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
+import com.sap.cloud.sdk.cloudplatform.security.principal.Principal;
+import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.testutil.TestContext;
 
 class DefaultApacheHttpClient5CacheTest
 {
+    private static final List<Tenant> TENANTS =
+        Arrays.asList(new DefaultTenant("tenant#1"), new DefaultTenant("tenant#2"), null);
+    private static final List<Principal> PRINCIPALS =
+        Arrays.asList(new DefaultPrincipal("principal#1"), new DefaultPrincipal("principal#2"), null);
     @RegisterExtension
     static final TestContext context = TestContext.withThreadContext();
 
@@ -42,7 +52,9 @@ class DefaultApacheHttpClient5CacheTest
         new DefaultApacheHttpClient5Factory(
             DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT,
             DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL,
-            DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
+            DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE,
+            null,
+            ApacheHttpClient5FactoryBuilder.TlsUpgrade.AUTOMATIC);
     private static final long NANOSECONDS_IN_MINUTE = 60_000_000_000L;
     private static final Duration TEN_MINUTES = Duration.ofMinutes(10L);
 
@@ -97,22 +109,12 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithoutDestinationUsesTenantAndPrincipalOptionalForIsolation()
     {
-        final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final String tenantId : tenantsToTest ) {
-            for( final String principalId : principalsToTest ) {
-                context.clearTenant();
-                context.clearPrincipal();
-
-                if( tenantId != null ) {
-                    context.setTenant(tenantId);
-                }
-
-                if( principalId != null ) {
-                    context.setPrincipal(principalId);
-                }
+        for( final Tenant tenant : TENANTS ) {
+            for( final Principal principal : PRINCIPALS ) {
+                context.setTenant(tenant);
+                context.setPrincipal(principal);
 
                 final HttpClient clientWithoutDestination = sut.tryGetHttpClient(FACTORY).get();
 
@@ -130,19 +132,20 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testGetClientWithUserTokenExchangeDestinationUsesPrincipalRequiredForIsolation()
     {
-        final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2");
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final String tenantId : tenantsToTest ) {
-            for( final String principalId : principalsToTest ) {
-                context.clearTenant();
+        for( final Tenant tenant : TENANTS ) {
+            for( final Principal principal : PRINCIPALS ) {
+                context.setTenant(tenant);
+                context.setPrincipal(principal);
 
-                if( tenantId != null ) {
-                    context.setTenant(tenantId);
+                if( tenant == null || principal == null ) {
+                    assertThatThrownBy(() -> sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
+                        .describedAs(
+                            "Without a tenant and principal http clients should not be cached for user based destinations")
+                        .isInstanceOf(HttpClientInstantiationException.class);
+                    continue;
                 }
-
-                context.setPrincipal(principalId);
 
                 final HttpClient clientWithDestination =
                     sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get();
@@ -156,34 +159,19 @@ class DefaultApacheHttpClient5CacheTest
 
                 clients.add(clientWithDestination);
             }
-            context.clearPrincipal();
-            assertThat(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
-                .describedAs("Without a principal http clients should not be cached for user based destinations")
-                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         }
-
     }
 
     @Test
     void testGetClientWithDestinationUsesTenantOptionalForIsolation()
     {
-        final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
         final Set<HttpClient> tenantClients = new HashSet<>();
 
-        for( final String tenantId : tenantsToTest ) {
-            for( final String principalId : principalsToTest ) {
-                context.clearTenant();
-                context.clearPrincipal();
-
-                if( tenantId != null ) {
-                    context.setTenant(tenantId);
-                }
-
-                if( principalId != null ) {
-                    context.setPrincipal(principalId);
-                }
+        for( final Tenant tenant : TENANTS ) {
+            for( final Principal principal : PRINCIPALS ) {
+                context.setTenant(tenant);
+                context.setPrincipal(principal);
 
                 final HttpClient clientWithDestination = sut.tryGetHttpClient(DESTINATION, FACTORY).get();
 
@@ -203,25 +191,20 @@ class DefaultApacheHttpClient5CacheTest
     }
 
     @Test
-    void testGetClientUsesTenantAndPrincipalOptionalForIsolation()
+    void testGetClientUsesTenantAndPrincipalRequiredForIsolation()
     {
-        final List<String> tenantsToTest = Arrays.asList("tenant#1", "tenant#2", null);
-        final List<String> principalsToTest = Arrays.asList("principal#1", "principal#2", null);
         final List<HttpClient> clients = new ArrayList<>();
 
-        for( final String tenantId : tenantsToTest ) {
-            for( final String principalId : principalsToTest ) {
-                context.clearTenant();
-                context.clearPrincipal();
+        for( final Tenant tenant : TENANTS ) {
+            for( final Principal principal : PRINCIPALS ) {
+                context.setTenant(tenant);
+                context.setPrincipal(principal);
 
-                if( tenantId != null ) {
-                    context.setTenant(tenantId);
-                }
-
-                if( principalId != null ) {
-                    context.setPrincipal(principalId);
-                } else {
-                    // covered by the last assertion
+                if( tenant == null || principal == null ) {
+                    assertThatThrownBy(() -> sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
+                        .describedAs(
+                            "Without a tenant and principal http clients should not be cached for user based destinations")
+                        .isInstanceOf(HttpClientInstantiationException.class);
                     continue;
                 }
 
@@ -230,7 +213,10 @@ class DefaultApacheHttpClient5CacheTest
 
                 // caching works: Requesting a second client with the same parameters yields the exact same instance
                 assertThat(clientWithDestination)
-                    .describedAs("Cache should hit for tenantId: %s, principalId: %s", tenantId, principalId)
+                    .describedAs(
+                        "Cache should hit for tenantId: %s, principalId: %s",
+                        tenant.getTenantId(),
+                        principal.getPrincipalId())
                     .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
 
                 // isolation works: None of the previously created clients is the same instance
@@ -248,10 +234,6 @@ class DefaultApacheHttpClient5CacheTest
 
                 clients.add(clientWithoutDestination);
             }
-            context.clearPrincipal();
-            assertThat(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get())
-                .describedAs("Without a principal http clients should not be cached for user based destinations")
-                .isNotSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         }
     }
 
@@ -418,6 +400,7 @@ class DefaultApacheHttpClient5CacheTest
     @Test
     void testPrincipalPropagationIsPrincipalIsolated()
     {
+        context.setTenant();
         final DefaultHttpDestination destination =
             DefaultHttpDestination
                 .builder("foo.com")
@@ -434,9 +417,8 @@ class DefaultApacheHttpClient5CacheTest
             .isSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
 
         context.clearPrincipal();
-        assertThat(client).isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
-        assertThat(sut.tryGetHttpClient(destination, FACTORY).get())
+        assertThatThrownBy(() -> sut.tryGetHttpClient(destination, FACTORY).get())
             .describedAs("Without a principal http clients should not be cached for user based destinations")
-            .isNotSameAs(sut.tryGetHttpClient(destination, FACTORY).get());
+            .isInstanceOf(HttpClientInstantiationException.class);
     }
 }

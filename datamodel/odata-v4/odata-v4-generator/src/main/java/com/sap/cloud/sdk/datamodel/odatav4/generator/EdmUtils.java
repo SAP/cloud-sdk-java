@@ -20,17 +20,12 @@ class EdmUtils
 
     static TypeKind convertTypeKind( final EdmTypeKind typeKind )
     {
-        switch( typeKind ) {
-            case PRIMITIVE:
-                return TypeKind.PRIMITIVE;
-            case COMPLEX:
-                return TypeKind.COMPLEX;
-            case ENTITY:
-                return TypeKind.ENTITY;
-            case ENUM:
-                return TypeKind.ENUM;
-            default:
-                throw new ODataGeneratorException("Encountered unknown type kind: " + typeKind);
-        }
+        return switch( typeKind ) {
+            case PRIMITIVE, DEFINITION -> TypeKind.PRIMITIVE;
+            case COMPLEX -> TypeKind.COMPLEX;
+            case ENTITY -> TypeKind.ENTITY;
+            case ENUM -> TypeKind.ENUM;
+            default -> throw new ODataGeneratorException("Encountered unknown type kind: " + typeKind);
+        };
     }
 }

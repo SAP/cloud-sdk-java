@@ -58,7 +58,7 @@ jobs:
           ci-run-id: ${{ needs.run-ci.outputs.ci-run-id }}
           repository-url: "https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk"
           repository-username: ${{ secrets.ARTIFACTORY_USER }}
-          repository-password: ${{ secrets.ARTIFACTORY_TOKEN }}
+          repository-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
           release-artifact-name: ${{ env.RELEASE_ARTIFACT_NAME }}
 
   notify-job:

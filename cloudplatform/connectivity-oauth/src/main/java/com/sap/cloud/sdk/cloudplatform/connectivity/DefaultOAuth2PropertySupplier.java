@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.environment.servicebinding.api.TypedMapView;
 import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 4.20.0
  */
-@Beta
 @Slf4j
 public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
 {
@@ -132,6 +130,15 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
             case X509_PROVIDED -> throw new DestinationAccessException(
                 "Credential type X509_PROVIDED is not supported. Please use X509_GENERATED or X509_ATTESTED instead.");
         };
+    }
+
+    @Nonnull
+    @Override
+    public OAuth2Options getOAuth2Options()
+    {
+        final OAuth2Options.Builder builder = OAuth2Options.builder();
+        options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
+        return builder.build();
     }
 
     /**
@@ -339,7 +346,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         }
         if( cls == CredentialType.class ) {
             try {
-                final T result = (T) SecurityLibWorkarounds.getCredentialType((String) value);
+                final T result = (T) CredentialType.from((String) value);
                 if( result == null ) {
                     throw new IllegalArgumentException();
                 }

@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.annotations.Beta;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.datamodel.odatav4.adapter.GsonVdmAdapterFactory;
@@ -39,7 +38,6 @@ import lombok.ToString;
  * generated VDM classes (POJOs, fluent helpers, service classes, etc.), which uses the SAP Cloud SDK to access OData
  * services.
  */
-@Beta
 public class DefaultAnnotationStrategy implements AnnotationStrategy
 {
     private static final Logger logger = MessageCollector.getLogger(DefaultAnnotationStrategy.class);

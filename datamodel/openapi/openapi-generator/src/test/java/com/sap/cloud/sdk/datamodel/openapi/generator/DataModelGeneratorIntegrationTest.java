@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.io.TempDir;
@@ -20,16 +21,24 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
 
 import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 class DataModelGeneratorIntegrationTest
 {
     @RequiredArgsConstructor
-    @AllArgsConstructor
     private enum TestCase
     {
+        API_CLASS_FOR_AI_SDK(
+            "api-class-for-ai-sdk",
+            "sodastore.json",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
+            ApiMaturity.RELEASED,
+            true,
+            true,
+            6,
+            Map.of("aiSdkConstructor", "true")),
         API_CLASS_VENDOR_EXTENSION_YAML(
             "api-class-vendor-extension-yaml",
             "sodastore.yaml",
@@ -37,7 +46,9 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
-            4),
+            true,
+            4,
+            Map.of()),
         API_CLASS_VENDOR_EXTENSION_JSON(
             "api-class-vendor-extension-json",
             "sodastore.json",
@@ -45,7 +56,9 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.apiclassvendorextension.model",
             ApiMaturity.RELEASED,
             false,
-            6),
+            true,
+            6,
+            Map.of()),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
             "sodastore.JSON",
@@ -53,15 +66,29 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.uppercasefileextension.model",
             ApiMaturity.RELEASED,
             false,
-            6),
-        INPUT_SPEC_WITH_ANYOF_ONEOF(
-            "input-spec-with-anyof-oneof",
-            "AggregatorNestedSchemaChild.json",
-            "com.sap.cloud.sdk.services.anyofoneof.api",
-            "com.sap.cloud.sdk.services.anyofoneof.model",
+            true,
+            6,
+            Map.of()),
+        ONE_OF_INTERFACES_DISABLED(
+            "oneof-interfaces-disabled",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            false,
+            true,
+            8,
+            Map.of()),
+        ONE_OF_INTERFACES_ENABLED(
+            "oneof-interfaces-enabled",
+            "sodastore.yaml",
+            "test",
+            "test",
             ApiMaturity.RELEASED,
             true,
-            7),
+            true,
+            8,
+            Map.of("useOneOfInterfaces", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
             "sodastore.JSON",
@@ -69,10 +96,43 @@ class DataModelGeneratorIntegrationTest
             "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
+            true,
             6,
-            "builder",
-            "build",
-            "private");
+            Map
+                .of(
+                    "pojoBuilderMethodName",
+                    "builder",
+                    "pojoBuildMethodName",
+                    "build",
+                    "pojoConstructorVisibility",
+                    "private")),
+        REMOVE_OPERATION_ID_PREFIX(
+            "remove-operation-id-prefix",
+            "sodastore.json",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
+            ApiMaturity.RELEASED,
+            true,
+            true,
+            6,
+            Map
+                .of(
+                    "removeOperationIdPrefix",
+                    "true",
+                    "removeOperationIdPrefixDelimiter",
+                    "\\.",
+                    "removeOperationIdPrefixCount",
+                    "3")),
+        GENERATE_APIS(
+            "generate-apis",
+            "sodastore.yaml",
+            "test",
+            "test",
+            ApiMaturity.RELEASED,
+            true,
+            false,
+            7,
+            Map.of());
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -80,10 +140,9 @@ class DataModelGeneratorIntegrationTest
         final String modelPackageName;
         final ApiMaturity apiMaturity;
         final boolean anyOfOneOfGenerationEnabled;
+        final boolean generateApis;
         final int expectedNumberOfGeneratedFiles;
-        String methodBuilder = null;
-        String methodBuild = null;
-        String constructorVisibility = null;
+        final Map<String, String> additionalProperties;
     }
 
     @ParameterizedTest
@@ -101,24 +160,23 @@ class DataModelGeneratorIntegrationTest
         assertThat(tempOutputDirectory).exists().isReadable().isDirectory();
         assertThat(comparisonDirectory).exists().isReadable().isDirectory();
 
-        final GenerationConfiguration generationConfiguration =
+        final var generationConfiguration =
             GenerationConfiguration
                 .builder()
+                // .debugModels(true) enable this for better mustache file debugging
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
                 .outputDirectory(tempOutputDirectory.toAbsolutePath().toString())
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
-                .additionalProperty("useAbstractionForFiles", "true")
-                .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
-                .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
-                .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
-                .build();
+                .additionalProperty("useAbstractionForFiles", "true");
+        testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
         final Try<GenerationResult> maybeGenerationResult =
-            new DataModelGenerator().generateDataModel(generationConfiguration);
+            new DataModelGenerator().generateDataModel(generationConfiguration.build());
 
         assertThat(maybeGenerationResult.get().getGeneratedFiles()).hasSize(testCase.expectedNumberOfGeneratedFiles);
 
@@ -135,12 +193,13 @@ class DataModelGeneratorIntegrationTest
         final Path outputDirectory = getComparisonDirectory(testCase);
 
         assertThat(inputDirectory).exists().isReadable().isDirectory();
-        assertThat(inputDirectory).exists().isReadable().isDirectory();
+        assertThat(outputDirectory).exists().isReadable().isDirectory();
 
-        final GenerationConfiguration generationConfiguration =
+        final var generationConfiguration =
             GenerationConfiguration
                 .builder()
                 .apiPackage(testCase.apiPackageName)
+                .generateApis(testCase.generateApis)
                 .modelPackage(testCase.modelPackageName)
                 .inputSpec(inputDirectory.resolve(testCase.inputSpecFileName).toAbsolutePath().toString())
                 .apiMaturity(testCase.apiMaturity)
@@ -148,13 +207,11 @@ class DataModelGeneratorIntegrationTest
                 .deleteOutputDirectory(true)
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
-                .additionalProperty("useAbstractionForFiles", "true")
-                .additionalProperty("pojoBuilderMethodName", testCase.methodBuilder)
-                .additionalProperty("pojoBuildMethodName", testCase.methodBuild)
-                .additionalProperty("pojoConstructorVisibility", testCase.constructorVisibility)
-                .build();
+                .additionalProperty("useAbstractionForFiles", "true");
+        testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
-        new DataModelGenerator().generateDataModel(generationConfiguration);
+        GenerationConfiguration build = generationConfiguration.build();
+        new DataModelGenerator().generateDataModel(build);
     }
 
     private static Path getInputDirectory( final TestCase testCase )

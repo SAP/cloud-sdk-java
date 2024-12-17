@@ -6,13 +6,10 @@ package com.sap.cloud.sdk.datamodel.odatav4.generator;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * NameFormattingStrategy that can be used in the {@link NamingContext} in the OData VDM generator. Implement this
  * interface to create a custom NameFormattingStrategy and set in the NamingContext's constructor.
  */
-@Beta
 public interface NameFormattingStrategy
 {
     /**

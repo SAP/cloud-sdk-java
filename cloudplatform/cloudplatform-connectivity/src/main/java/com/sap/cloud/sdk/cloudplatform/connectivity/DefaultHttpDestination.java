@@ -42,6 +42,8 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
@@ -549,13 +551,29 @@ public final class DefaultHttpDestination implements HttpDestination
     /**
      * Builder class to allow for easy creation of an immutable {@code DefaultHttpDestination} instance.
      */
+    @Accessors( fluent = true, chain = true )
     public static class Builder
     {
         final List<Header> headers = Lists.newArrayList();
+
         final DefaultDestination.Builder builder = DefaultDestination.builder();
-        final DefaultHttpDestinationBuilderProxyHandler proxyHandler = new DefaultHttpDestinationBuilderProxyHandler();
+
+        @Setter( onParam_ = @Nullable, value = AccessLevel.PACKAGE )
+        private DefaultHttpDestinationBuilderProxyHandler proxyHandler =
+            new DefaultHttpDestinationBuilderProxyHandler();
+
+        /**
+         * The {@link KeyStore} to be used when communicating over HTTP.
+         */
+        @Setter( onParam_ = @Nullable )
         KeyStore keyStore = null;
+
+        /**
+         * The trust store to be used when communicating over HTTP.
+         */
+        @Setter( onParam_ = @Nullable )
         KeyStore trustStore = null;
+
         final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
 
         /**
@@ -704,34 +722,6 @@ public final class DefaultHttpDestination implements HttpDestination
         public Builder keyStorePassword( @Nonnull final String value )
         {
             return property(DestinationProperty.KEY_STORE_PASSWORD, value);
-        }
-
-        /**
-         * Sets the {@link KeyStore} to be used when communicating over HTTP.
-         *
-         * @param keyStore
-         *            The keyStore that should be used for HTTP communication
-         * @return This builder.
-         */
-        @Nonnull
-        public Builder keyStore( @Nonnull final KeyStore keyStore )
-        {
-            this.keyStore = keyStore;
-            return this;
-        }
-
-        /**
-         * Sets the Trust Store to be used when communicating over HTTP.
-         *
-         * @param trustStore
-         *            The Trust Store that should be used. for HTTP communication
-         * @return This builder.
-         */
-        @Nonnull
-        public Builder trustStore( @Nonnull final KeyStore trustStore )
-        {
-            this.trustStore = trustStore;
-            return this;
         }
 
         /**
@@ -1009,20 +999,12 @@ public final class DefaultHttpDestination implements HttpDestination
                 property(DestinationProperty.TYPE, DestinationType.HTTP);
             }
 
-            if( builder.get(DestinationProperty.PROXY_TYPE).contains(ProxyType.ON_PREMISE) ) {
+            if( proxyHandler.canHandle(this) ) {
                 try {
                     return proxyHandler.handle(this);
                 }
                 catch( final Exception e ) {
-                    final String msg =
-                        """
-                            Unable to resolve proxy configuration for destination. \
-                            This destination cannot be used for anything other than reading its properties. \
-                            This is unexpected and will be changed to fail instead in a future version of Cloud SDK. \
-                            Please analyze the attached stack trace and resolve the issue. \
-                            In case only the properties of a destination should be accessed, without performing authorization flows, please use the 'getDestinationProperties'  method on 'DestinationService' instead.\
-                            """;
-                    log.error(msg, e);
+                    throw new DestinationAccessException("Unable to resolve proxy configuration for destination", e);
                 }
             }
             return buildInternal();
