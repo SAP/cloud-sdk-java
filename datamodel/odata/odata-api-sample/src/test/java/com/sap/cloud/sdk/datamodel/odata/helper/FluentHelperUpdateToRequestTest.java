@@ -217,7 +217,7 @@ class FluentHelperUpdateToRequestTest
         final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
         final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
 
-        final String expectedSerializedEntity = "{\"ProductCount1\":{\"Quantity\":\"20\"}}";
+        final String expectedSerializedEntity = "{\"ProductCount1\":{\"Quantity\":20}}";
 
         count1.setQuantity(20);
 
@@ -225,7 +225,7 @@ class FluentHelperUpdateToRequestTest
             FluentHelperFactory
                 .withServicePath(ODATA_ENDPOINT_URL)
                 .update(ENTITY_COLLECTION, receipt)
-                .modifyingEntity()
+                .modifyingEntity(true)
                 .toRequest();
 
         assertThat(receiptUpdate).isNotNull();

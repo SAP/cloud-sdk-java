@@ -17,5 +17,11 @@ public enum UpdateStrategy
     /**
      * Request to update the entity is sent with the HTTP method PATCH and its payload contains the changed fields only.
      */
-    MODIFY_WITH_PATCH;
+    MODIFY_WITH_PATCH,
+
+    /**
+     * Request to update the entity is sent with the HTTP method PATCH and its payload contains the changed fields
+     * including the complex fields .
+     */
+    MODIFY_WITH_PATCH_COMPLEX;
 }

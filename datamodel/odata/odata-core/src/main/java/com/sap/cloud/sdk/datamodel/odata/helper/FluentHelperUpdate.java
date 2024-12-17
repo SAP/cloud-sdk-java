@@ -144,23 +144,29 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     {
         final EntityT entity = getEntity();
         try {
+            final List<FieldReference> fieldsToExcludeUpdate =
+                excludedFields
+                    .stream()
+                    .map(EntitySelectable::getFieldName)
+                    .map(FieldReference::of)
+                    .collect(Collectors.toList());
+            
+            final List<FieldReference> fieldsToIncludeInUpdate =
+                includedFields
+                    .stream()
+                    .map(EntitySelectable::getFieldName)
+                    .map(FieldReference::of)
+                    .collect(Collectors.toList());
+            
             switch( updateStrategy ) {
                 case REPLACE_WITH_PUT:
-                    final List<FieldReference> fieldsToExcludeUpdate =
-                        excludedFields
-                            .stream()
-                            .map(EntitySelectable::getFieldName)
-                            .map(FieldReference::of)
-                            .collect(Collectors.toList());
                     return ODataEntitySerializer.serializeEntityForUpdatePut(entity, fieldsToExcludeUpdate);
                 case MODIFY_WITH_PATCH:
-                    final List<FieldReference> fieldsToIncludeInUpdate =
-                        includedFields
-                            .stream()
-                            .map(EntitySelectable::getFieldName)
-                            .map(FieldReference::of)
-                            .collect(Collectors.toList());
+                    
                     return ODataEntitySerializer.serializeEntityForUpdatePatch(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_COMPLEX:
+                    return ODataEntitySerializer
+                        .serializeEntityForUpdatePatchDeep(entity, fieldsToIncludeInUpdate);
                 default:
                     throw new IllegalStateException("Unexpected update strategy:" + updateStrategy);
             }
@@ -193,7 +199,6 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      *
      * @param fields
      *            The fields to be included in the update execution.
-     *
      * @return The same fluent helper which will include the specified fields in an update request.
      */
     @Nonnull
@@ -212,7 +217,6 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      *
      * @param fields
      *            The fields to be excluded in the update execution.
-     *
      * @return The same fluent helper which will exclude the specified fields in an update request.
      */
     @Nonnull
@@ -255,4 +259,16 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
         updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH;
         return getThis();
     }
+
+    @Nonnull
+    public final FluentHelperT modifyingEntity( boolean complexType )
+    {
+        if( !complexType ) {
+            return modifyingEntity();
+        }
+
+        updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX;
+        return getThis();
+    }
+
 }
