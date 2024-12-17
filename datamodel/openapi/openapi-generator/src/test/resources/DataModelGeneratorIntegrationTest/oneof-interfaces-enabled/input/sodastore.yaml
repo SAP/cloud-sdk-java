@@ -56,3 +56,17 @@ components:
       properties:
         sodaType:
           type: string
+        flavor:
+          oneOf:
+            - type: string
+              default: ""
+              example: This is a test.
+              nullable: true
+            - type: array
+              minItems: 1
+              maxItems: 2048
+              items:
+                type: string
+                minLength: 1
+                example: This is a test.
+                nullable: false
