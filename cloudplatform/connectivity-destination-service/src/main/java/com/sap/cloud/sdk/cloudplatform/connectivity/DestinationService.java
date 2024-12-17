@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Streams;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -174,6 +173,26 @@ public class DestinationService implements DestinationLoader
     }
 
     /**
+     * Fetches all destination properties from the BTP Destination Service on behalf of the current tenant.
+     * <p>
+     * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
+     * obtained this way should only be used for accessing the properties of the destination configuration. For
+     * obtaining full destination objects, use {@link #tryGetDestination(String, DestinationOptions)} instead.
+     * </p>
+     * In case there exists a destination with the same name on service instance and on sub-account level, the
+     * destination at service instance level takes precedence.
+     *
+     * @return A list of destination properties.
+     * @see DestinationService#getAllDestinationProperties(DestinationServiceRetrievalStrategy)
+     * @since 5.1.0
+     */
+    @Nonnull
+    public Collection<DestinationProperties> getAllDestinationProperties()
+    {
+        return getAllDestinationProperties(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
+    }
+
+    /**
      * Fetches all destination properties from the BTP Destination Service.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destinations.</strong> Destinations
@@ -184,21 +203,23 @@ public class DestinationService implements DestinationLoader
      * destination at service instance level takes precedence.
      *
      * @return A list of destination properties.
-     * @since 5.1.0
+     * @param retrievalStrategy
+     *            Strategy for loading destinations in a multi-tenant application.
+     * @since 5.12.0
      */
     @Nonnull
-    public Collection<DestinationProperties> getAllDestinationProperties()
+    public Collection<DestinationProperties> getAllDestinationProperties(
+        @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy )
     {
+        final var augmenter = DestinationServiceOptionsAugmenter.augmenter().retrievalStrategy(retrievalStrategy);
+        final var options = DestinationOptions.builder().augmentBuilder(augmenter).build();
         return new ArrayList<>(
-            Cache
-                .getOrComputeAllDestinations(
-                    DestinationOptions.builder().build(),
-                    this::getAllDestinationsByRetrievalStrategy)
-                .get());
+            Cache.getOrComputeAllDestinations(options, this::getAllDestinationsByRetrievalStrategy).get());
     }
 
     /**
-     * Fetches the properties of a specific destination from the BTP Destination Service.
+     * Fetches the properties of a specific destination from the BTP Destination Service on behalf of the current
+     * tenant.
      * <p>
      * <strong>Caution: This will not perform any authorization flows for the destination.</strong> Destinations
      * obtained this way should only be used for accessing the properties of the destination configuration. For
@@ -235,7 +256,8 @@ public class DestinationService implements DestinationLoader
      * @param options
      *            Destination configuration object.
      * @return A Try iterable of CF destinations.
-     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} instead.
+     * @deprecated since 5.1.0. Use {@link #getAllDestinationProperties()} and
+     *             {@link #getAllDestinationProperties(DestinationServiceRetrievalStrategy)} instead.
      */
     @Nonnull
     @Deprecated
@@ -366,7 +388,6 @@ public class DestinationService implements DestinationLoader
      * @since 4.3.0
      */
     @Slf4j
-    @Beta
     public static final class Cache
     {
         /**
@@ -634,7 +655,6 @@ public class DestinationService implements DestinationLoader
          *
          * @since 4.7.0
          */
-        @Beta
         @Deprecated
         public static void enableChangeDetection()
         {
@@ -673,7 +693,6 @@ public class DestinationService implements DestinationLoader
          *
          * @since 5.2.0
          */
-        @Beta
         public static void disableChangeDetection()
         {
             throwIfDisabled();
@@ -882,7 +901,6 @@ public class DestinationService implements DestinationLoader
      * @return A builder to prepare a customised instance.
      * @since 4.4.0
      */
-    @Beta
     @Nonnull
     public static Builder builder()
     {
@@ -894,7 +912,6 @@ public class DestinationService implements DestinationLoader
      *
      * @since 4.4.0
      */
-    @Beta
     @NoArgsConstructor( access = AccessLevel.PRIVATE )
     public static final class Builder
     {

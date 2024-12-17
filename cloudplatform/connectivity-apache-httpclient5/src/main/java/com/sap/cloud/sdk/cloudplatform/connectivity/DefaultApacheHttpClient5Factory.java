@@ -24,9 +24,10 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.io.SocketConfig;
@@ -49,28 +50,25 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     private final Timeout timeout;
     private final int maxConnectionsTotal;
     private final int maxConnectionsPerRoute;
-    // for testing purposes
+
     @Nullable
     private final HttpRequestInterceptor requestInterceptor;
 
-    DefaultApacheHttpClient5Factory(
-        @Nonnull final Duration timeout,
-        final int maxConnectionsTotal,
-        final int maxConnectionsPerRoute )
-    {
-        this(timeout, maxConnectionsTotal, maxConnectionsPerRoute, null);
-    }
+    @Nonnull
+    private final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade;
 
     DefaultApacheHttpClient5Factory(
         @Nonnull final Duration timeout,
         final int maxConnectionsTotal,
         final int maxConnectionsPerRoute,
-        @Nullable final HttpRequestInterceptor requestInterceptor )
+        @Nullable final HttpRequestInterceptor requestInterceptor,
+        @Nonnull final ApacheHttpClient5FactoryBuilder.TlsUpgrade tlsUpgrade )
     {
         this.timeout = toTimeout(timeout);
         this.maxConnectionsTotal = maxConnectionsTotal;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.requestInterceptor = requestInterceptor;
+        this.tlsUpgrade = tlsUpgrade;
     }
 
     @Nonnull
@@ -79,22 +77,25 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         throws DestinationAccessException,
             HttpClientInstantiationException
     {
-        final CloseableHttpClient httpClient = buildHttpClient(destination);
+        final var requestConfig = getRequestConfig(destination);
+        final CloseableHttpClient httpClient = buildHttpClient(destination, requestConfig);
         if( destination == null ) {
             return httpClient;
         }
 
-        return new ApacheHttpClient5Wrapper(httpClient, destination);
+        return new ApacheHttpClient5Wrapper(httpClient, destination, requestConfig);
     }
 
     @Nonnull
-    private CloseableHttpClient buildHttpClient( @Nullable final HttpDestinationProperties destination )
+    private CloseableHttpClient buildHttpClient(
+        @Nullable final HttpDestinationProperties destination,
+        @Nonnull final RequestConfig requestConfig )
     {
         final HttpClientBuilder builder =
             HttpClients
                 .custom()
                 .setConnectionManager(getConnectionManager(destination))
-                .setDefaultRequestConfig(getRequestConfig())
+                .setDefaultRequestConfig(requestConfig)
                 .setProxy(getProxy(destination));
 
         if( requestInterceptor != null ) {
@@ -110,7 +111,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         try {
             return PoolingHttpClientConnectionManagerBuilder
                 .create()
-                .setSSLSocketFactory(getConnectionSocketFactory(destination))
+                .setTlsSocketStrategy(getTlsSocketStrategy(destination))
                 .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(timeout).build())
                 .setDefaultConnectionConfig(
                     ConnectionConfig.custom().setConnectTimeout(timeout).setSocketTimeout(timeout).build())
@@ -130,8 +131,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     }
 
     @Nullable
-    private SSLConnectionSocketFactory getConnectionSocketFactory(
-        @Nullable final HttpDestinationProperties destination )
+    private TlsSocketStrategy getTlsSocketStrategy( @Nullable final HttpDestinationProperties destination )
         throws GeneralSecurityException,
             IOException
     {
@@ -144,7 +144,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
 
         final HostnameVerifier hostnameVerifier = getHostnameVerifier(destination);
 
-        return new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        return new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
     }
 
     private boolean supportsTls( @Nullable final HttpDestinationProperties destination )
@@ -162,9 +162,30 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     }
 
     @Nonnull
-    private RequestConfig getRequestConfig()
+    private RequestConfig getRequestConfig( @Nullable final HttpDestinationProperties destination )
     {
-        return RequestConfig.custom().setConnectionRequestTimeout(timeout).build();
+        return RequestConfig
+            .custom()
+            .setProtocolUpgradeEnabled(isProtocolUpgradeEnabled(destination))
+            .setConnectionRequestTimeout(timeout)
+            .build();
+    }
+
+    private boolean isProtocolUpgradeEnabled( @Nullable final HttpDestinationProperties destination )
+    {
+        return switch( tlsUpgrade ) {
+            case ENABLED -> true;
+            case DISABLED -> false;
+            case AUTOMATIC -> {
+                if( destination == null ) {
+                    yield true;
+                }
+                if( destination.getTlsVersion().isDefined() ) {
+                    yield false;
+                }
+                yield !destination.getProxyType().contains(ProxyType.ON_PREMISE);
+            }
+        };
     }
 
     @Nullable

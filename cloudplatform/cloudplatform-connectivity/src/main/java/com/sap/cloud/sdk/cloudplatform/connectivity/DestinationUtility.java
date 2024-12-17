@@ -11,8 +11,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @since 4.6.0
  */
-@Beta
 @Slf4j
 public final class DestinationUtility
 {

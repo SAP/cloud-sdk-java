@@ -83,7 +83,7 @@ jobs:
       - name: "Setup Java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Run Maven Plugins"
@@ -110,7 +110,7 @@ jobs:
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Restore Dependencies"
@@ -201,7 +201,7 @@ jobs:
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Restore Dependencies"
@@ -262,7 +262,7 @@ jobs:
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Restore Dependencies"
@@ -303,7 +303,7 @@ jobs:
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Restore Dependencies"
@@ -346,7 +346,7 @@ jobs:
       - name: "Setup java"
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: "sapmachine"
           java-version: 17
 
       - name: "Restore Dependencies"

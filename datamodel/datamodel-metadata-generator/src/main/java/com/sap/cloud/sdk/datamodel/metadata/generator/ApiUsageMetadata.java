@@ -11,14 +11,11 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import lombok.Value;
 
 /**
  * Metadata about API usage.
  */
-@Beta
 public interface ApiUsageMetadata
 {
     /**

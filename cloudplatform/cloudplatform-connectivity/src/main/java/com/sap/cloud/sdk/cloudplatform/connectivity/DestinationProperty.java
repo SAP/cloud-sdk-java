@@ -14,7 +14,6 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.servlet.LocaleAccessor;
 
 /**
@@ -139,7 +138,6 @@ public class DestinationProperty
     /**
      * Principal Propagation Strategy of destination, in case of Proxy Type = On-Premise.
      */
-    @Beta
     public static final DestinationPropertyKey<PrincipalPropagationMode> PRINCIPAL_PROPAGATION_MODE =
         createProperty(
             "cloudsdk.principalPropagationMode",

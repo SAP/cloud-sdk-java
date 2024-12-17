@@ -16,7 +16,6 @@ import javax.annotation.Nonnull;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.CodegenOperation;
-import org.openapitools.codegen.config.GeneratorSettings;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -50,7 +49,7 @@ class GenerationConfigurationConverter
     static final String SAP_COPYRIGHT_HEADER =
         "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. All rights reserved.";
     static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("mustache-templates").toString();
-    static final String LIBRARY_NAME = "resttemplate";
+    static final String LIBRARY_NAME = JavaClientCodegen.RESTTEMPLATE;
 
     @Nonnull
     static ClientOptInput convertGenerationConfiguration(
@@ -60,7 +59,23 @@ class GenerationConfigurationConverter
         setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = new JavaClientCodegen()
+        final var config = createCodegenConfig();
+        config.setOutputDir(generationConfiguration.getOutputDirectory());
+        config.setLibrary(LIBRARY_NAME);
+        config.setApiPackage(generationConfiguration.getApiPackage());
+        config.setModelPackage(generationConfiguration.getModelPackage());
+        config.setTemplateDir(TEMPLATE_DIRECTORY);
+        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
+
+        final var clientOptInput = new ClientOptInput();
+        clientOptInput.config(config);
+        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
+        return clientOptInput;
+    }
+
+    private static JavaClientCodegen createCodegenConfig()
+    {
+        return new JavaClientCodegen()
         {
             // Custom processor to inject "x-return-nullable" extension
             @Override
@@ -79,24 +94,19 @@ class GenerationConfigurationConverter
                 return super.postProcessOperationsWithModels(ops, allModels);
             }
         };
-        config.setOutputDir(generationConfiguration.getOutputDirectory());
-        config.setLibrary(LIBRARY_NAME);
-        config.setApiPackage(generationConfiguration.getApiPackage());
-        config.setModelPackage(generationConfiguration.getModelPackage());
-        config.setTemplateDir(TEMPLATE_DIRECTORY);
-        config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
-
-        final var clientOptInput = new ClientOptInput();
-        clientOptInput.config(config);
-        clientOptInput.generatorSettings(new GeneratorSettings());
-        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
-        return clientOptInput;
     }
 
     private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
-        GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
-        GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
+        if( configuration.isGenerateApis() ) {
+            GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
+        }
+        if( configuration.isGenerateModels() ) {
+            GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
+        }
+        if( configuration.isDebugModels() ) {
+            GlobalSettings.setProperty("debugModels", "true");
+        }
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
@@ -142,7 +152,7 @@ class GenerationConfigurationConverter
         if( !Strings.isNullOrEmpty(copyrightHeader) ) {
             result.put(COPYRIGHT_PROPERTY_KEY, copyrightHeader);
         }
-        result.put(CodegenConstants.SERIALIZABLE_MODEL, "true");
+        result.put(CodegenConstants.SERIALIZABLE_MODEL, "false");
         result.put(JAVA_8_PROPERTY_KEY, "true");
         result.put(DATE_LIBRARY_PROPERTY_KEY, "java8");
         result.put(BOOLEAN_GETTER_PREFIX_PROPERTY_KEY, "is");

@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 class BtpServicePropertySuppliers
 {
     static final OAuth2PropertySupplierResolver XSUAA =
-        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("xsuaa"), Xsuaa::new);
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.XSUAA, Xsuaa::new);
 
     static final OAuth2PropertySupplierResolver DESTINATION =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.DESTINATION, Destination::new);
@@ -43,12 +43,9 @@ class BtpServicePropertySuppliers
     static final OAuth2PropertySupplierResolver CONNECTIVITY =
         OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.CONNECTIVITY, ConnectivityProxy::new);
 
-    /**
-     * {@link ServiceIdentifier#IDENTITY_AUTHENTICATION} referenced indirectly for backwards compatibility.
-     */
     static final OAuth2PropertySupplierResolver IDENTITY_AUTHENTICATION =
         OAuth2PropertySupplierResolver
-            .forServiceIdentifier(ServiceIdentifier.of("identity"), IdentityAuthentication::new);
+            .forServiceIdentifier(ServiceIdentifier.IDENTITY_AUTHENTICATION, IdentityAuthentication::new);
 
     static final OAuth2PropertySupplierResolver WORKFLOW =
         OAuth2PropertySupplierResolver
@@ -82,7 +79,7 @@ class BtpServicePropertySuppliers
                     .withUrlKey(BusinessLoggingOptions.WRITE_API, "writeservice", REMOVE_PATH)
                     .factory());
     static final OAuth2PropertySupplierResolver AI_CORE =
-        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.of("aicore"), AiCore::new);
+        OAuth2PropertySupplierResolver.forServiceIdentifier(ServiceIdentifier.AI_CORE, AiCore::new);
 
     private static final List<OAuth2PropertySupplierResolver> DEFAULT_SERVICE_RESOLVERS = new ArrayList<>();
 
@@ -188,18 +185,18 @@ class BtpServicePropertySuppliers
         @Override
         public OAuth2Options getOAuth2Options()
         {
-            final OAuth2Options.Builder oAuth2OptionsBuilder = OAuth2Options.builder();
+            final OAuth2Options.Builder builder = OAuth2Options.builder();
+            options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
 
             if( skipTokenRetrieval() ) {
-                oAuth2OptionsBuilder.withSkipTokenRetrieval(true);
+                builder.withSkipTokenRetrieval(true);
             } else {
-                attachIasCommunicationOptions(oAuth2OptionsBuilder);
-                oAuth2OptionsBuilder
-                    .withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
+                attachIasCommunicationOptions(builder);
+                builder.withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
             }
-            attachClientKeyStore(oAuth2OptionsBuilder);
+            attachClientKeyStore(builder);
 
-            return oAuth2OptionsBuilder.build();
+            return builder.build();
         }
 
         private void attachIasCommunicationOptions( @Nonnull final OAuth2Options.Builder optionsBuilder )

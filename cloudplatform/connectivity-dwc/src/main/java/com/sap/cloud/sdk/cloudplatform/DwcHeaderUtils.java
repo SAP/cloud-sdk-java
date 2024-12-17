@@ -9,7 +9,6 @@ import java.util.Base64;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.sap.cloud.sdk.cloudplatform.exception.DwcHeaderNotFoundException;
@@ -22,7 +21,6 @@ import lombok.Value;
 /**
  * Utility class to extract specific values from the SAP Deploy with Confidence request headers.
  */
-@Beta
 public class DwcHeaderUtils
 {
     /**
@@ -41,6 +39,10 @@ public class DwcHeaderUtils
      * The name of the header that contains the Deploy with Confidence JWT token.
      */
     public static final String DWC_JWT_HEADER = "dwc-jwt";
+    /**
+     * The name of the header that contains the Deploy with Confidence JWT token issued by IAS.
+     */
+    public static final String DWC_IAS_JWT_HEADER = "dwc-ias-jwt";
 
     /**
      * This method fetches the value of the {@link #DWC_TENANT_HEADER} header or throws an
@@ -117,7 +119,21 @@ public class DwcHeaderUtils
     @Nonnull
     public static String getDwcJwtOrThrow()
     {
-        return getNonEmptyDwcHeaderValue(DWC_JWT_HEADER);
+        final RequestHeaderContainer container =
+            RequestHeaderAccessor
+                .tryGetHeaderContainer()
+                .getOrElseThrow(e -> new DwcHeaderNotFoundException("Unable to get current request headers.", e));
+
+        if( !container.containsHeader(DWC_JWT_HEADER) && !container.containsHeader(DWC_IAS_JWT_HEADER) ) {
+            throw new DwcHeaderNotFoundException(
+                "Unable to find the " + DWC_JWT_HEADER + " or " + DWC_IAS_JWT_HEADER + " in header.");
+        }
+
+        if( container.containsHeader(DWC_IAS_JWT_HEADER) ) {
+            return doGetNonEmptyDwcHeaderValue(container, DWC_IAS_JWT_HEADER);
+        }
+
+        return doGetNonEmptyDwcHeaderValue(container, DWC_JWT_HEADER);
     }
 
     @Nonnull
@@ -129,6 +145,13 @@ public class DwcHeaderUtils
                 .tryGetHeaderContainer()
                 .getOrElseThrow(e -> new DwcHeaderNotFoundException("Unable to read the " + key + " header value.", e));
 
+        return doGetNonEmptyDwcHeaderValue(container, key);
+    }
+
+    private static
+        String
+        doGetNonEmptyDwcHeaderValue( @Nonnull final RequestHeaderContainer container, final String key )
+    {
         return container
             .getHeaderValues(key)
             .stream()

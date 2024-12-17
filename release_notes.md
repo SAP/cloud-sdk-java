@@ -12,14 +12,16 @@
 
 ### ✨ New Functionality
 
-- 
+- Add support for `TypeDefinition` entries in OData V4 EDMX files.
+- Add `generateApis` and `generateModels` options to the `openapi-generator-maven-plugin` to
+  disable the generation of APIs and models respectively.
 
 ### 📈 Improvements
 
-- \[OpenAPI Generator\] Setting the Maven plugin configuration property `openapi.generate.deleteOutputDirectory` to `true` will no longer result in deletion of all files from the `outputDirectory` prior to generation.
-  Instead, only the `apiPackage`- and `apiPackage`-related directories will be cleaned.
-  This reduces the risk of deleting files unexpectedly and allows for reusing the same `outputDirectory` for multiple generator plugin invocations.
+- Stabilize most of the remaining experimental APIs without changes, e.g.
+  - RequestHeaderAccessor
+  - ServiceBindingDestinationLoader
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix ApacheHttpClient5Wrapper to propagate the configuration to Spring RestTemplate.

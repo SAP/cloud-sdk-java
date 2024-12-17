@@ -8,8 +8,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Option;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +77,6 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @return The same augmenter that called this method.
      * @since 5.9.0
      */
-    @Beta
     @Nonnull
     public DestinationServiceOptionsAugmenter refreshToken( @Nonnull final String refreshToken )
     {
@@ -95,7 +92,6 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @return The same augmenter that called this method.
      * @since 5.11.0
      */
-    @Beta
     @Nonnull
     public DestinationServiceOptionsAugmenter fragmentName( @Nonnull final String fragmentName )
     {

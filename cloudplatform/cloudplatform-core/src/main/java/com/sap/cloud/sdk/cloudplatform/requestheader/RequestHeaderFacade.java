@@ -6,15 +6,12 @@ package com.sap.cloud.sdk.cloudplatform.requestheader;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import io.vavr.control.Try;
 
 /**
  * This class provides access to the {@link RequestHeaderContainer} for the current context.
  */
 @FunctionalInterface
-@Beta
 public interface RequestHeaderFacade
 {
     /**

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.hc.client5.http.config.Configurable;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -30,11 +32,12 @@ import lombok.extern.slf4j.Slf4j;
  * and it will append the url configured in the destination.
  */
 @Slf4j
-class ApacheHttpClient5Wrapper extends CloseableHttpClient
+class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurable
 {
     private final CloseableHttpClient httpClient;
     @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
+    private final RequestConfig requestConfig;
 
     @Override
     public void close()
@@ -49,7 +52,10 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         httpClient.close(closeMode);
     }
 
-    ApacheHttpClient5Wrapper( final CloseableHttpClient httpClient, final HttpDestinationProperties destination )
+    ApacheHttpClient5Wrapper(
+        final CloseableHttpClient httpClient,
+        final HttpDestinationProperties destination,
+        final RequestConfig requestConfig )
     {
         this.httpClient = httpClient;
 
@@ -62,6 +68,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
                 """);
         }
         this.destination = destination;
+        this.requestConfig = requestConfig;
     }
 
     @Override
@@ -86,7 +93,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         if( destination == this.destination ) {
             return this;
         }
-        return new ApacheHttpClient5Wrapper(httpClient, destination);
+        return new ApacheHttpClient5Wrapper(httpClient, destination, requestConfig);
     }
 
     ClassicHttpRequest wrapRequest( final ClassicHttpRequest request )
@@ -118,5 +125,11 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient
         }
 
         return requestBuilder.build();
+    }
+
+    @Override
+    public RequestConfig getConfig()
+    {
+        return requestConfig;
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.helper.CollectionValuedFluentHelperFunction;
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperByKey;
 import com.sap.cloud.sdk.datamodel.odata.helper.FluentHelperRead;
@@ -102,7 +101,6 @@ public interface BatchResponse extends AutoCloseable
      *
      * @since 4.15.0
      */
-    @Beta
     @Override
     void close();
 }

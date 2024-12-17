@@ -64,6 +64,12 @@
             <Function Name="FunctionWithNewResultType">
                 <ReturnType Type="API_ACTIONS_FUNCTIONS_TEST_CASE.NewComplexResult"/>
             </Function>
+            <TypeDefinition Name="MyStringTypeDef" UnderlyingType="Edm.String"/>
+            <TypeDefinition Name="MyNumberTypeDef" UnderlyingType="Edm.Int32"/>
+            <Function Name="FunctionWithTypeDef">
+                <Parameter Name="FunctionParameter" Type="API_ACTIONS_FUNCTIONS_TEST_CASE.MyStringTypeDef"/>
+                <ReturnType Type="API_ACTIONS_FUNCTIONS_TEST_CASE.MyNumberTypeDef"/>
+            </Function>
             <EntityContainer Name="API_ACTIONS_FUNCTIONS_TEST_CASE_Entities" IsDefaultEntityContainer="true">
                 <EntitySet Name="SimplePersons" EntityType="API_ACTIONS_FUNCTIONS_TEST_CASE.SimplePerson"/>
                 <FunctionImport Name="GetPersonWithMostFriends"
@@ -72,6 +78,8 @@
                                 Function="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionWithUnassociatedEntityParameter"/>
                 <FunctionImport Name="FunctionWithNewResultType"
                                 Function="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionWithNewResultType"/>
+                <FunctionImport Name="FunctionWithTypeDef"
+                                Function="API_ACTIONS_FUNCTIONS_TEST_CASE.FunctionWithTypeDef"/>
                 <ActionImport Name="UnboundAction"
                               Action="API_ACTIONS_FUNCTIONS_TEST_CASE.UnboundAction"/>
                 <ActionImport Name="NoArgAction"

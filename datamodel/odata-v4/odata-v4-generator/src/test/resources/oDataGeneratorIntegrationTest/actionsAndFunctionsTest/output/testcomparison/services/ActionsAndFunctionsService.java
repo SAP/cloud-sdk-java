@@ -5,6 +5,7 @@
 package testcomparison.services;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.sap.cloud.sdk.datamodel.odatav4.core.BatchRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.core.CountRequestBuilder;
 import com.sap.cloud.sdk.datamodel.odatav4.core.CreateRequestBuilder;
@@ -138,6 +139,19 @@ public interface ActionsAndFunctionsService {
      */
     @Nonnull
     SingleValueFunctionRequestBuilder<NewComplexResult> functionWithNewResultType();
+
+    /**
+     * <p>Creates a request builder for the <b>FunctionWithTypeDef</b> OData function.</p>
+     * 
+     * @param functionParameter
+     *     Constraints: Nullable<p>Original parameter name from the Odata EDM: <b>FunctionParameter</b></p>
+     * @return
+     *     A request builder object that will execute the <b>FunctionWithTypeDef</b> OData function with the provided parameters. To perform execution, call the {@link com.sap.cloud.sdk.datamodel.odatav4.core.SingleValueFunctionRequestBuilder#execute execute} method on the request builder object.
+     */
+    @Nonnull
+    SingleValueFunctionRequestBuilder<Integer> functionWithTypeDef(
+        @Nullable
+        final String functionParameter);
 
     /**
      * <p>Creates a request builder for the <b>NoArgAction</b> OData action.</p>

@@ -16,11 +16,11 @@
 
 package com.sap.cloud.sdk.services.builder.model;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,12 +30,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,24 +63,28 @@ public class Soda
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
+  /**
+   * Default constructor for Soda.
+   */
   private Soda() {  }
 
-   /**
-    * Set the id of this {@link Soda} instance and return the same instance.
-    *
-    * @param id  The id of this {@link Soda}
-    * @return The same instance of this {@link Soda} class
-    */
-   @Nonnull public Soda id(@Nonnull final Long id) {
+  /**
+   * Set the id of this {@link Soda} instance and return the same instance.
+   *
+   * @param id  The id of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda id( @Nullable final Long id) {
     this.id = id;
     return this;
   }
 
-   /**
-    * Get id
-    * @return id  The id of this {@link Soda} instance.
-    */
-  @Nonnull public Long getId() {
+  /**
+   * Get id
+   * @return id  The id of this {@link Soda} instance.
+   */
+  @Nonnull
+  public Long getId() {
     return id;
   }
 
@@ -91,26 +93,27 @@ public class Soda
    *
    * @param id  The id of this {@link Soda}
    */
-  public void setId( @Nonnull final Long id) {
+  public void setId( @Nullable final Long id) {
     this.id = id;
   }
 
-   /**
-    * Set the name of this {@link Soda} instance and return the same instance.
-    *
-    * @param name  The name of this {@link Soda}
-    * @return The same instance of this {@link Soda} class
-    */
-   @Nonnull public Soda name(@Nonnull final String name) {
+  /**
+   * Set the name of this {@link Soda} instance and return the same instance.
+   *
+   * @param name  The name of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda name( @Nonnull final String name) {
     this.name = name;
     return this;
   }
 
-   /**
-    * Get name
-    * @return name  The name of this {@link Soda} instance.
-    */
-  @Nonnull public String getName() {
+  /**
+   * Get name
+   * @return name  The name of this {@link Soda} instance.
+   */
+  @Nonnull
+  public String getName() {
     return name;
   }
 
@@ -123,22 +126,23 @@ public class Soda
     this.name = name;
   }
 
-   /**
-    * Set the brand of this {@link Soda} instance and return the same instance.
-    *
-    * @param brand  The brand of this {@link Soda}
-    * @return The same instance of this {@link Soda} class
-    */
-   @Nonnull public Soda brand(@Nonnull final String brand) {
+  /**
+   * Set the brand of this {@link Soda} instance and return the same instance.
+   *
+   * @param brand  The brand of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda brand( @Nonnull final String brand) {
     this.brand = brand;
     return this;
   }
 
-   /**
-    * Get brand
-    * @return brand  The brand of this {@link Soda} instance.
-    */
-  @Nonnull public String getBrand() {
+  /**
+   * Get brand
+   * @return brand  The brand of this {@link Soda} instance.
+   */
+  @Nonnull
+  public String getBrand() {
     return brand;
   }
 
@@ -151,13 +155,13 @@ public class Soda
     this.brand = brand;
   }
 
-   /**
-    * Set the flavors of this {@link Soda} instance and return the same instance.
-    *
-    * @param flavors  The flavors of this {@link Soda}
-    * @return The same instance of this {@link Soda} class
-    */
-   @Nonnull public Soda flavors(@Nonnull final List<String> flavors) {
+  /**
+   * Set the flavors of this {@link Soda} instance and return the same instance.
+   *
+   * @param flavors  The flavors of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda flavors( @Nonnull final List<String> flavors) {
     this.flavors = flavors;
     return this;
   }
@@ -174,11 +178,12 @@ public class Soda
     return this;
   }
 
-   /**
-    * Get flavors
-    * @return flavors  The flavors of this {@link Soda} instance.
-    */
-  @Nonnull public List<String> getFlavors() {
+  /**
+   * Get flavors
+   * @return flavors  The flavors of this {@link Soda} instance.
+   */
+  @Nonnull
+  public List<String> getFlavors() {
     return flavors;
   }
 
@@ -191,22 +196,23 @@ public class Soda
     this.flavors = flavors;
   }
 
-   /**
-    * Set the price of this {@link Soda} instance and return the same instance.
-    *
-    * @param price  The price of this {@link Soda}
-    * @return The same instance of this {@link Soda} class
-    */
-   @Nonnull public Soda price(@Nonnull final Float price) {
+  /**
+   * Set the price of this {@link Soda} instance and return the same instance.
+   *
+   * @param price  The price of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda price( @Nonnull final Float price) {
     this.price = price;
     return this;
   }
 
-   /**
-    * Get price
-    * @return price  The price of this {@link Soda} instance.
-    */
-  @Nonnull public Float getPrice() {
+  /**
+   * Get price
+   * @return price  The price of this {@link Soda} instance.
+   */
+  @Nonnull
+  public Float getPrice() {
     return price;
   }
 
@@ -236,7 +242,7 @@ public class Soda
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
-  public Object getCustomField(@Nonnull final String name) throws NoSuchElementException {
+  public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("Soda has no field with name '" + name + "'.");
     }
@@ -302,7 +308,6 @@ public class Soda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
     /**
     * Create a type-safe, fluent-api builder object to construct a new {@link Soda} instance with all required arguments.
     */
