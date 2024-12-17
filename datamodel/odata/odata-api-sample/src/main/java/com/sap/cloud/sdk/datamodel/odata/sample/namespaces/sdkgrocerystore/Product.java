@@ -317,54 +317,54 @@ public class Product extends VdmMediaEntity<Product>
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("Name", getName());
-        values.put("ShelfId", getShelfId());
-        values.put("VendorId", getVendorId());
-        values.put("Price", getPrice());
-        values.put("Image", getImage());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("Name", getName());
+        cloudSdkValues.put("ShelfId", getShelfId());
+        cloudSdkValues.put("VendorId", getVendorId());
+        cloudSdkValues.put("Price", getPrice());
+        cloudSdkValues.put("Image", getImage());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("Name") ) {
-                final Object value = values.remove("Name");
+            if( cloudSdkValues.containsKey("Name") ) {
+                final Object value = cloudSdkValues.remove("Name");
                 if( (value == null) || (!value.equals(getName())) ) {
                     setName(((String) value));
                 }
             }
-            if( values.containsKey("ShelfId") ) {
-                final Object value = values.remove("ShelfId");
+            if( cloudSdkValues.containsKey("ShelfId") ) {
+                final Object value = cloudSdkValues.remove("ShelfId");
                 if( (value == null) || (!value.equals(getShelfId())) ) {
                     setShelfId(((Integer) value));
                 }
             }
-            if( values.containsKey("VendorId") ) {
-                final Object value = values.remove("VendorId");
+            if( cloudSdkValues.containsKey("VendorId") ) {
+                final Object value = cloudSdkValues.remove("VendorId");
                 if( (value == null) || (!value.equals(getVendorId())) ) {
                     setVendorId(((Integer) value));
                 }
             }
-            if( values.containsKey("Price") ) {
-                final Object value = values.remove("Price");
+            if( cloudSdkValues.containsKey("Price") ) {
+                final Object value = cloudSdkValues.remove("Price");
                 if( (value == null) || (!value.equals(getPrice())) ) {
                     setPrice(((BigDecimal) value));
                 }
             }
-            if( values.containsKey("Image") ) {
-                final Object value = values.remove("Image");
+            if( cloudSdkValues.containsKey("Image") ) {
+                final Object value = cloudSdkValues.remove("Image");
                 if( (value == null) || (!value.equals(getImage())) ) {
                     setImage(((byte[]) value));
                 }
@@ -375,8 +375,8 @@ public class Product extends VdmMediaEntity<Product>
         }
         // navigation properties
         {
-            if( (values).containsKey("Vendor") ) {
-                final Object value = (values).remove("Vendor");
+            if( (cloudSdkValues).containsKey("Vendor") ) {
+                final Object value = (cloudSdkValues).remove("Vendor");
                 if( value instanceof Map ) {
                     if( toVendor == null ) {
                         toVendor = new Vendor();
@@ -386,8 +386,8 @@ public class Product extends VdmMediaEntity<Product>
                     toVendor.fromMap(inputMap);
                 }
             }
-            if( (values).containsKey("Shelf") ) {
-                final Object value = (values).remove("Shelf");
+            if( (cloudSdkValues).containsKey("Shelf") ) {
+                final Object value = (cloudSdkValues).remove("Shelf");
                 if( value instanceof Iterable ) {
                     if( toShelf == null ) {
                         toShelf = Lists.newArrayList();
@@ -414,7 +414,7 @@ public class Product extends VdmMediaEntity<Product>
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**
@@ -484,14 +484,14 @@ public class Product extends VdmMediaEntity<Product>
     @Override
     protected Map<String, Object> toMapOfNavigationProperties()
     {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if( toVendor != null ) {
-            (values).put("Vendor", toVendor);
+            (cloudSdkValues).put("Vendor", toVendor);
         }
         if( toShelf != null ) {
-            (values).put("Shelf", toShelf);
+            (cloudSdkValues).put("Shelf", toShelf);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**
