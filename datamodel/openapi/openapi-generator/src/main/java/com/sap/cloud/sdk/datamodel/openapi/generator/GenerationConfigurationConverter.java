@@ -95,8 +95,8 @@ class GenerationConfigurationConverter
 
     private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
-        GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "includeApis"));
-        GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "includeModels"));
+        GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
+        GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
         GlobalSettings.setProperty(CodegenConstants.MODEL_TESTS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.MODEL_DOCS, Boolean.FALSE.toString());
         GlobalSettings.setProperty(CodegenConstants.API_TESTS, Boolean.FALSE.toString());
