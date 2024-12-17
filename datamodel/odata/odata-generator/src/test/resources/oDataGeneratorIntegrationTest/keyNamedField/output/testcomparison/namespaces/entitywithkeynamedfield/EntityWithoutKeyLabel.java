@@ -96,18 +96,18 @@ public class EntityWithoutKeyLabel
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("SomeField", getSomeField());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("SomeField", getSomeField());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("SomeField")) {
-                final Object value = values.remove("SomeField");
+            if (cloudSdkValues.containsKey("SomeField")) {
+                final Object value = cloudSdkValues.remove("SomeField");
                 if ((value == null)||(!value.equals(getSomeField()))) {
                     setSomeField(((String) value));
                 }
@@ -119,7 +119,7 @@ public class EntityWithoutKeyLabel
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**
