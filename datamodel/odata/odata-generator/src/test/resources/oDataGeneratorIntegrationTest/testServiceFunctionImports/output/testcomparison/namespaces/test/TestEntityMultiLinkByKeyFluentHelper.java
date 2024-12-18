@@ -19,7 +19,7 @@ public class TestEntityMultiLinkByKeyFluentHelper
     extends FluentHelperByKey<TestEntityMultiLinkByKeyFluentHelper, TestEntityMultiLink, TestEntityMultiLinkSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single {@link testcomparison.namespaces.test.TestEntityMultiLink TestEntityMultiLink} entity with the provided key field values. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.
