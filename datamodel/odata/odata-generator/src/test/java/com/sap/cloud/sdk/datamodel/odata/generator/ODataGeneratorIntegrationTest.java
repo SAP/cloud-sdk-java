@@ -159,7 +159,6 @@ class ODataGeneratorIntegrationTest
 
     @Test
     void testDeprecationNoticeAddition( @TempDir final Path path )
-        throws IOException
     {
         final Path inputDirectory =
             Paths.get("src/test/resources/oDataGeneratorIntegrationTest/minimalTestWithExplicitDeprecation/input");

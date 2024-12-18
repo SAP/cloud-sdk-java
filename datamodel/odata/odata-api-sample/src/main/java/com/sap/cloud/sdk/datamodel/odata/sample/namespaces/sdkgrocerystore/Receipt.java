@@ -667,13 +667,13 @@ public class Receipt extends VdmEntity<Receipt>
         // navigation properties
         {
             if( (cloudSdkValues).containsKey("Customer") ) {
-                final Object value = (cloudSdkValues).remove("Customer");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Customer");
+                if( cloudSdkValue instanceof Map ) {
                     if( toCustomer == null ) {
                         toCustomer = new Customer();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
                     toCustomer.fromMap(inputMap);
                 }
             }
@@ -821,12 +821,12 @@ public class Receipt extends VdmEntity<Receipt>
     /**
      * Overwrites the associated <b>Customer</b> entity for the loaded navigation property <b>Customer</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Customer</b> entity.
      */
-    public void setCustomer( final Customer value )
+    public void setCustomer( final Customer cloudSdkValue )
     {
-        toCustomer = value;
+        toCustomer = cloudSdkValue;
     }
 
     /**
@@ -838,23 +838,23 @@ public class Receipt extends VdmEntity<Receipt>
 
         private Customer toCustomer;
 
-        private Receipt.ReceiptBuilder toCustomer( final Customer value )
+        private Receipt.ReceiptBuilder toCustomer( final Customer cloudSdkValue )
         {
-            toCustomer = value;
+            toCustomer = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Customer</b> for <b>Receipt</b> to single <b>Customer</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Customer to build this Receipt with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Receipt.ReceiptBuilder customer( final Customer value )
+        public Receipt.ReceiptBuilder customer( final Customer cloudSdkValue )
         {
-            return toCustomer(value);
+            return toCustomer(cloudSdkValue);
         }
 
     }

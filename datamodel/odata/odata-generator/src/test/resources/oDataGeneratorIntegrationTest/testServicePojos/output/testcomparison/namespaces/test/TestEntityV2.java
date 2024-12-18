@@ -537,58 +537,58 @@ public class TestEntityV2
         private List<TestEntityOtherMultiLink> toOtherMultiLink = Lists.newArrayList();
         private TestEntitySingleLink toSingleLink;
 
-        private TestEntityV2 .TestEntityV2Builder toMultiLink(final List<TestEntityMultiLink> value) {
-            toMultiLink.addAll(value);
+        private TestEntityV2 .TestEntityV2Builder toMultiLink(final List<TestEntityMultiLink> cloudSdkValue) {
+            toMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_MultiLink</b> for <b>TestEntityV2</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV2 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV2 .TestEntityV2Builder multiLink(TestEntityMultiLink... value) {
-            return toMultiLink(Lists.newArrayList(value));
+        public TestEntityV2 .TestEntityV2Builder multiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV2 .TestEntityV2Builder toOtherMultiLink(final List<TestEntityOtherMultiLink> value) {
-            toOtherMultiLink.addAll(value);
+        private TestEntityV2 .TestEntityV2Builder toOtherMultiLink(final List<TestEntityOtherMultiLink> cloudSdkValue) {
+            toOtherMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_OtherMultiLink</b> for <b>TestEntityV2</b> to multiple <b>TestEntityOtherMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityOtherMultiLinks to build this TestEntityV2 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV2 .TestEntityV2Builder otherMultiLink(TestEntityOtherMultiLink... value) {
-            return toOtherMultiLink(Lists.newArrayList(value));
+        public TestEntityV2 .TestEntityV2Builder otherMultiLink(TestEntityOtherMultiLink... cloudSdkValue) {
+            return toOtherMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV2 .TestEntityV2Builder toSingleLink(final TestEntitySingleLink value) {
-            toSingleLink = value;
+        private TestEntityV2 .TestEntityV2Builder toSingleLink(final TestEntitySingleLink cloudSdkValue) {
+            toSingleLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_SingleLink</b> for <b>TestEntityV2</b> to single <b>TestEntitySingleLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntitySingleLink to build this TestEntityV2 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV2 .TestEntityV2Builder singleLink(final TestEntitySingleLink value) {
-            return toSingleLink(value);
+        public TestEntityV2 .TestEntityV2Builder singleLink(final TestEntitySingleLink cloudSdkValue) {
+            return toSingleLink(cloudSdkValue);
         }
 
     }
