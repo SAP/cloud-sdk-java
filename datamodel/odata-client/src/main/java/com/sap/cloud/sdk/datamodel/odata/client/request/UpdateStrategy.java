@@ -21,7 +21,15 @@ public enum UpdateStrategy
 
     /**
      * Request to update the entity is sent with the HTTP method PATCH and its payload contains the changed fields
-     * including the complex fields .
+     * including the complex fields. The request payload contains only the changed fields. Navigation properties are not
+     * supported.
      */
-    MODIFY_WITH_PATCH_COMPLEX;
+    MODIFY_WITH_PATCH_COMPLEX_DELTA,
+
+    /**
+     * Request to update the entity is sent with the HTTP method PATCH and its payload contains the changed fields
+     * including the complex fields. The request payload contains the full value of complex fields for changing any
+     * nested field. Navigation properties are not supported.
+     */
+    MODIFY_WITH_PATCH_COMPLEX_FULL;
 }

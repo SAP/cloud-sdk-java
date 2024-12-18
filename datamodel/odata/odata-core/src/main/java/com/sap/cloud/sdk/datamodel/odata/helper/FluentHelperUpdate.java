@@ -150,23 +150,26 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
                     .map(EntitySelectable::getFieldName)
                     .map(FieldReference::of)
                     .collect(Collectors.toList());
-            
+
             final List<FieldReference> fieldsToIncludeInUpdate =
                 includedFields
                     .stream()
                     .map(EntitySelectable::getFieldName)
                     .map(FieldReference::of)
                     .collect(Collectors.toList());
-            
+
             switch( updateStrategy ) {
                 case REPLACE_WITH_PUT:
                     return ODataEntitySerializer.serializeEntityForUpdatePut(entity, fieldsToExcludeUpdate);
                 case MODIFY_WITH_PATCH:
-                    
+
                     return ODataEntitySerializer.serializeEntityForUpdatePatch(entity, fieldsToIncludeInUpdate);
-                case MODIFY_WITH_PATCH_COMPLEX:
+                case MODIFY_WITH_PATCH_COMPLEX_DELTA:
                     return ODataEntitySerializer
-                        .serializeEntityForUpdatePatchDeep(entity, fieldsToIncludeInUpdate);
+                        .serializeEntityForUpdatePatchComplexPartial(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_COMPLEX_FULL:
+                    return ODataEntitySerializer
+                        .serializeEntityForUpdatePatchComplexFull(entity, fieldsToIncludeInUpdate);
                 default:
                     throw new IllegalStateException("Unexpected update strategy:" + updateStrategy);
             }
@@ -261,13 +264,20 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     }
 
     @Nonnull
-    public final FluentHelperT modifyingEntity( boolean complexType )
+    public final FluentHelperT modifyingEntity( ModifyPatchStrategy strategy )
     {
-        if( !complexType ) {
-            return modifyingEntity();
+        switch( strategy ) {
+            case PRIMITIVE:
+                return modifyingEntity();
+            case COMPLEX_DELTA:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX_DELTA;
+                break;
+            case COMPLEX_FULL:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX_FULL;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown ModifyPatchStrategy: " + strategy);
         }
-
-        updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX;
         return getThis();
     }
 

@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
@@ -125,39 +124,48 @@ final class ODataEntitySerializer
     }
 
     @Nonnull
-    static String serializeEntityForUpdatePatchComplex(
+    static String serializeEntityForUpdatePatchComplexFull(
         @Nonnull final VdmEntity<?> entity,
         @Nonnull final Collection<FieldReference> includedFields )
     {
-        final JsonObject fullEntity = GSON_SERIALIZING_NULLS.toJsonTree(entity).getAsJsonObject();
+        final JsonObject fullEntityJson = GSON_SERIALIZING_NULLS.toJsonTree(entity).getAsJsonObject();
+        final JsonObject patchObject = new JsonObject();
 
-        // find field names to be patched
-        final Set<String> fieldNamesToPatch = new HashSet<>(entity.getChangedFields().keySet());
+        final Set<String> changedFieldNames = new HashSet<>(entity.getChangedFields().keySet());
+        includedFields.stream().map(FieldReference::getFieldName).forEach(changedFieldNames::add);
+        changedFieldNames.forEach(key -> patchObject.add(key, fullEntityJson.get(key)));
 
-        final var complexFieldNamesToPatch =
-            entity
-                .toMapOfFields()
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue() instanceof VdmComplex<?>)
-                .filter(entry -> !((VdmComplex<?>) entry.getValue()).getChangedFields().isEmpty())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
+        entity
+            .toMapOfFields()
+            .entrySet()
+            .stream()
+            .filter(entry -> !patchObject.has(entry.getKey()))
+            .filter(entry -> entry.getValue() instanceof VdmComplex<?>)
+            .filter(entry -> containsNestedChangedFields((VdmComplex<?>) entry.getValue()))
+            .forEach(entry -> patchObject.add(entry.getKey(), fullEntityJson.get(entry.getKey())));
 
-        fieldNamesToPatch.addAll(complexFieldNamesToPatch);
-        includedFields.stream().map(FieldReference::getFieldName).forEach(fieldNamesToPatch::add);
+        return GSON_SERIALIZING_NULLS.toJson(patchObject);
+    }
 
-        log.debug("The following fields are marked for updates: {}.", fieldNamesToPatch);
+    private static boolean containsNestedChangedFields( VdmComplex<?> vdmComplex )
+    {
+        if( !vdmComplex.getChangedFields().isEmpty() ) {
+            return true;
+        }
 
-        final JsonObject partialEntity = new JsonObject();
+        vdmComplex
+            .toMapOfFields()
+            .values()
+            .stream()
+            .filter(complexField -> complexField instanceof VdmComplex<?>)
+            .map(complexField -> (VdmComplex<?>) complexField)
+            .forEach(ODataEntitySerializer::containsNestedChangedFields);
 
-        fieldNamesToPatch.forEach(key -> partialEntity.add(key, fullEntity.get(key)));
-
-        return GSON_SERIALIZING_NULLS.toJson(partialEntity);
+        return false;
     }
 
     @Nonnull
-    static String serializeEntityForUpdatePatchDeep(
+    static String serializeEntityForUpdatePatchComplexPartial(
         @Nonnull final VdmEntity<?> entity,
         @Nonnull final Collection<FieldReference> includedFields )
     {
@@ -165,7 +173,7 @@ final class ODataEntitySerializer
         final JsonObject patchObject = new JsonObject();
 
         // Recursively build patch object from changed fields
-        final JsonObject tempPatchObject = createPatchObjectRecursive(entity, fullEntityJson);
+        final JsonObject tempPatchObject = createPatchObjectRecursivePartial(entity, fullEntityJson);
 
         // Add included fields (from the root only)
         includedFields
@@ -180,6 +188,7 @@ final class ODataEntitySerializer
             .filter(entry -> !patchObject.has(entry.getKey()))
             .forEach(entry -> patchObject.add(entry.getKey(), entry.getValue()));
 
+        // TODO: log the fields that are being patched
         return GSON_SERIALIZING_NULLS.toJson(patchObject);
     }
 
@@ -196,7 +205,7 @@ final class ODataEntitySerializer
     @Nonnull
     private static
         JsonObject
-        createPatchObjectRecursive( @Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
+        createPatchObjectRecursivePartial( @Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
     {
         final JsonObject patch = new JsonObject();
 
@@ -211,7 +220,7 @@ final class ODataEntitySerializer
                 final VdmComplex<?> complexField = (VdmComplex<?>) entry.getValue();
                 // Recursively build patch for the complex field
                 final JsonObject childJsonObject =
-                    createPatchObjectRecursive(complexField, jsonObject.getAsJsonObject(fieldName));
+                    createPatchObjectRecursivePartial(complexField, jsonObject.getAsJsonObject(fieldName));
                 return Map.entry(fieldName, childJsonObject);
             })
             .filter(entry -> !entry.getValue().isEmpty())
