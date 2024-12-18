@@ -25,3 +25,5 @@
 ### 🐛 Fixed Issues
 
 - Fix ApacheHttpClient5Wrapper to propagate the configuration to Spring RestTemplate.
+- Fix OData v2 and v4 generators to work when property name is `value` or `values` and is of collection type.
+  - The internal variable is now respectively `cloudSdkValue` or `cloudSdkValues` to avoid conflicts with the `value` or `values` property.

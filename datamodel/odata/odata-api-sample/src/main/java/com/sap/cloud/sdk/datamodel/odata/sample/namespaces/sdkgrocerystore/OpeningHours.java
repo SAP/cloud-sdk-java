@@ -213,7 +213,7 @@ public class OpeningHours extends VdmEntity<OpeningHours>
     @Override
     protected Map<String, Object> getKey()
     {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -222,40 +222,40 @@ public class OpeningHours extends VdmEntity<OpeningHours>
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("DayOfWeek", getDayOfWeek());
-        values.put("OpenTime", getOpenTime());
-        values.put("CloseTime", getCloseTime());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("DayOfWeek", getDayOfWeek());
+        cloudSdkValues.put("OpenTime", getOpenTime());
+        cloudSdkValues.put("CloseTime", getCloseTime());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("DayOfWeek") ) {
-                final Object value = values.remove("DayOfWeek");
+            if( cloudSdkValues.containsKey("DayOfWeek") ) {
+                final Object value = cloudSdkValues.remove("DayOfWeek");
                 if( (value == null) || (!value.equals(getDayOfWeek())) ) {
                     setDayOfWeek(((Integer) value));
                 }
             }
-            if( values.containsKey("OpenTime") ) {
-                final Object value = values.remove("OpenTime");
+            if( cloudSdkValues.containsKey("OpenTime") ) {
+                final Object value = cloudSdkValues.remove("OpenTime");
                 if( (value == null) || (!value.equals(getOpenTime())) ) {
                     setOpenTime(((LocalTime) value));
                 }
             }
-            if( values.containsKey("CloseTime") ) {
-                final Object value = values.remove("CloseTime");
+            if( cloudSdkValues.containsKey("CloseTime") ) {
+                final Object value = cloudSdkValues.remove("CloseTime");
                 if( (value == null) || (!value.equals(getCloseTime())) ) {
                     setCloseTime(((LocalTime) value));
                 }
@@ -267,7 +267,7 @@ public class OpeningHours extends VdmEntity<OpeningHours>
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

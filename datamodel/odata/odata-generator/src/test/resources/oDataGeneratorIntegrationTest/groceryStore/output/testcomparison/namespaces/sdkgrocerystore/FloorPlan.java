@@ -120,7 +120,7 @@ public class FloorPlan
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -128,25 +128,25 @@ public class FloorPlan
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("ImageUri", getImageUri());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("ImageUri", getImageUri());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Id")) {
-                final Object value = values.remove("Id");
+            if (cloudSdkValues.containsKey("Id")) {
+                final Object value = cloudSdkValues.remove("Id");
                 if ((value == null)||(!value.equals(getId()))) {
                     setId(((Integer) value));
                 }
             }
-            if (values.containsKey("ImageUri")) {
-                final Object value = values.remove("ImageUri");
+            if (cloudSdkValues.containsKey("ImageUri")) {
+                final Object value = cloudSdkValues.remove("ImageUri");
                 if ((value == null)||(!value.equals(getImageUri()))) {
                     setImageUri(((String) value));
                 }
@@ -158,7 +158,7 @@ public class FloorPlan
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

@@ -25,7 +25,7 @@ public class TestFunctionImportUnprecedentedComplexReturnFluentHelper
     extends SingleValuedFluentHelperFunction<TestFunctionImportUnprecedentedComplexReturnFluentHelper, A_OtherTestComplexType, A_OtherTestComplexType>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>TestFunctionImportUnprecedentedComplexReturnType</b> OData function import with the provided parameters. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

@@ -91,7 +91,7 @@ public class BP
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Code", getCode());
         return result;
     }
@@ -99,18 +99,18 @@ public class BP
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Code", getCode());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Code", getCode());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Code")) {
-                final Object value = values.remove("Code");
+            if (cloudSdkValues.containsKey("Code")) {
+                final Object value = cloudSdkValues.remove("Code");
                 if ((value == null)||(!value.equals(getCode()))) {
                     setCode(((String) value));
                 }
@@ -122,7 +122,7 @@ public class BP
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

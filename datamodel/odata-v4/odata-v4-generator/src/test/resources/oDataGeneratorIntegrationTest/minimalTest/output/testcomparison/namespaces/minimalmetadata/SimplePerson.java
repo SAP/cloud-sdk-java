@@ -194,46 +194,46 @@ public class SimplePerson
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Person", getPerson());
-        values.put("EmailAddress", getEmailAddress());
-        values.put("Amount", getAmount());
-        values.put("Cost", getCost());
-        values.put("SSomeday", getSSomeday());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Person", getPerson());
+        cloudSdkValues.put("EmailAddress", getEmailAddress());
+        cloudSdkValues.put("Amount", getAmount());
+        cloudSdkValues.put("Cost", getCost());
+        cloudSdkValues.put("SSomeday", getSSomeday());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Person")) {
-                final Object value = values.remove("Person");
+            if (cloudSdkValues.containsKey("Person")) {
+                final Object value = cloudSdkValues.remove("Person");
                 if ((value == null)||(!value.equals(getPerson()))) {
                     setPerson(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("EmailAddress")) {
-                final Object value = values.remove("EmailAddress");
+            if (cloudSdkValues.containsKey("EmailAddress")) {
+                final Object value = cloudSdkValues.remove("EmailAddress");
                 if ((value == null)||(!value.equals(getEmailAddress()))) {
                     setEmailAddress(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("Amount")) {
-                final Object value = values.remove("Amount");
+            if (cloudSdkValues.containsKey("Amount")) {
+                final Object value = cloudSdkValues.remove("Amount");
                 if ((value == null)||(!value.equals(getAmount()))) {
                     setAmount(((BigDecimal) value));
                 }
             }
-            if (values.containsKey("Cost")) {
-                final Object value = values.remove("Cost");
+            if (cloudSdkValues.containsKey("Cost")) {
+                final Object value = cloudSdkValues.remove("Cost");
                 if ((value == null)||(!value.equals(getCost()))) {
                     setCost(((BigDecimal) value));
                 }
             }
-            if (values.containsKey("SSomeday")) {
-                final Object value = values.remove("SSomeday");
+            if (cloudSdkValues.containsKey("SSomeday")) {
+                final Object value = cloudSdkValues.remove("SSomeday");
                 if ((value == null)||(!value.equals(getSSomeday()))) {
                     setSSomeday(((LocalTime) value));
                 }
@@ -245,7 +245,7 @@ public class SimplePerson
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override

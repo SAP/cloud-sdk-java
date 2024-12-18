@@ -28,7 +28,7 @@ public class OrderProductFluentHelper
     SingleValuedFluentHelperFunction<OrderProductFluentHelper, Receipt, Receipt>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>OrderProduct</b> OData function import with the provided

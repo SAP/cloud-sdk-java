@@ -294,7 +294,7 @@ public class Address
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -302,67 +302,67 @@ public class Address
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("Street", getStreet());
-        values.put("City", getCity());
-        values.put("State", getState());
-        values.put("Country", getCountry());
-        values.put("PostalCode", getPostalCode());
-        values.put("Latitude", getLatitude());
-        values.put("Longitude", getLongitude());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("Street", getStreet());
+        cloudSdkValues.put("City", getCity());
+        cloudSdkValues.put("State", getState());
+        cloudSdkValues.put("Country", getCountry());
+        cloudSdkValues.put("PostalCode", getPostalCode());
+        cloudSdkValues.put("Latitude", getLatitude());
+        cloudSdkValues.put("Longitude", getLongitude());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Id")) {
-                final Object value = values.remove("Id");
+            if (cloudSdkValues.containsKey("Id")) {
+                final Object value = cloudSdkValues.remove("Id");
                 if ((value == null)||(!value.equals(getId()))) {
                     setId(((Integer) value));
                 }
             }
-            if (values.containsKey("Street")) {
-                final Object value = values.remove("Street");
+            if (cloudSdkValues.containsKey("Street")) {
+                final Object value = cloudSdkValues.remove("Street");
                 if ((value == null)||(!value.equals(getStreet()))) {
                     setStreet(((String) value));
                 }
             }
-            if (values.containsKey("City")) {
-                final Object value = values.remove("City");
+            if (cloudSdkValues.containsKey("City")) {
+                final Object value = cloudSdkValues.remove("City");
                 if ((value == null)||(!value.equals(getCity()))) {
                     setCity(((String) value));
                 }
             }
-            if (values.containsKey("State")) {
-                final Object value = values.remove("State");
+            if (cloudSdkValues.containsKey("State")) {
+                final Object value = cloudSdkValues.remove("State");
                 if ((value == null)||(!value.equals(getState()))) {
                     setState(((String) value));
                 }
             }
-            if (values.containsKey("Country")) {
-                final Object value = values.remove("Country");
+            if (cloudSdkValues.containsKey("Country")) {
+                final Object value = cloudSdkValues.remove("Country");
                 if ((value == null)||(!value.equals(getCountry()))) {
                     setCountry(((String) value));
                 }
             }
-            if (values.containsKey("PostalCode")) {
-                final Object value = values.remove("PostalCode");
+            if (cloudSdkValues.containsKey("PostalCode")) {
+                final Object value = cloudSdkValues.remove("PostalCode");
                 if ((value == null)||(!value.equals(getPostalCode()))) {
                     setPostalCode(((String) value));
                 }
             }
-            if (values.containsKey("Latitude")) {
-                final Object value = values.remove("Latitude");
+            if (cloudSdkValues.containsKey("Latitude")) {
+                final Object value = cloudSdkValues.remove("Latitude");
                 if ((value == null)||(!value.equals(getLatitude()))) {
                     setLatitude(((Double) value));
                 }
             }
-            if (values.containsKey("Longitude")) {
-                final Object value = values.remove("Longitude");
+            if (cloudSdkValues.containsKey("Longitude")) {
+                final Object value = cloudSdkValues.remove("Longitude");
                 if ((value == null)||(!value.equals(getLongitude()))) {
                     setLongitude(((Double) value));
                 }
@@ -374,7 +374,7 @@ public class Address
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

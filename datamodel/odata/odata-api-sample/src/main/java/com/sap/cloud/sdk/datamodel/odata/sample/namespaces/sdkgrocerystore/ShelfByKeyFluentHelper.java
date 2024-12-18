@@ -21,7 +21,7 @@ import com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore.selec
 public class ShelfByKeyFluentHelper extends FluentHelperByKey<ShelfByKeyFluentHelper, Shelf, ShelfSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single

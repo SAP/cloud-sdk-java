@@ -92,20 +92,20 @@ public class PurchaseHistoryItem extends VdmComplex<PurchaseHistoryItem>
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("ReceiptId", getReceiptId());
-        values.put("ProductCount", getProductCount());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("ReceiptId", getReceiptId());
+        cloudSdkValues.put("ProductCount", getProductCount());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("ReceiptId") ) {
-                final Object value = values.remove("ReceiptId");
+            if( cloudSdkValues.containsKey("ReceiptId") ) {
+                final Object value = cloudSdkValues.remove("ReceiptId");
                 if( (value == null) || (!value.equals(getReceiptId())) ) {
                     setReceiptId(((Integer) value));
                 }
@@ -113,8 +113,8 @@ public class PurchaseHistoryItem extends VdmComplex<PurchaseHistoryItem>
         }
         // structured properties
         {
-            if( values.containsKey("ProductCount") ) {
-                final Object value = values.remove("ProductCount");
+            if( cloudSdkValues.containsKey("ProductCount") ) {
+                final Object value = cloudSdkValues.remove("ProductCount");
                 if( value instanceof Map ) {
                     if( getProductCount() == null ) {
                         setProductCount(new ProductCount());
@@ -131,7 +131,7 @@ public class PurchaseHistoryItem extends VdmComplex<PurchaseHistoryItem>
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

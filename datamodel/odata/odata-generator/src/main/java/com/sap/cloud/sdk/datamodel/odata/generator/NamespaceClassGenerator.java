@@ -512,7 +512,7 @@ class NamespaceClassGenerator
                     JMod.FINAL,
                     fieldMapClass,
                     CommonConstants.INLINE_MAP_NAME,
-                    codeModel.ref(Maps.class).staticInvoke("newHashMap").arg(inputValues));
+                    codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap").arg(inputValues));
 
         body.block().directStatement("// simple properties");
         final JBlock simplePropertiesBlock = new JBlock(true, true);
@@ -600,7 +600,7 @@ class NamespaceClassGenerator
         getKeyMethod.annotate(Override.class);
         final JBlock body = getKeyMethod.body();
         final JVar v =
-            body.decl(JMod.FINAL, fieldMapClass, "result", codeModel.ref(Maps.class).staticInvoke("newHashMap"));
+            body.decl(JMod.FINAL, fieldMapClass, "result", codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap"));
         for( final Map.Entry<String, EntityPropertyModel> entry : entityClassFields.entrySet() ) {
             if( entry.getValue().isKeyField() ) {
                 final String javaFieldName = entry.getValue().getJavaFieldName();

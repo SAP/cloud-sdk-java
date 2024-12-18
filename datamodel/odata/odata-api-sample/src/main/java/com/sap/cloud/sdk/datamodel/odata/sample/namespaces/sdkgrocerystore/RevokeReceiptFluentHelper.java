@@ -28,7 +28,7 @@ public class RevokeReceiptFluentHelper
     SingleValuedFluentHelperFunction<RevokeReceiptFluentHelper, String, String>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>RevokeReceipt</b> OData function import with the provided

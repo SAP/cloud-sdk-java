@@ -72,25 +72,25 @@ public class Address
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Street", getStreet());
-        values.put("City", getCity());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Street", getStreet());
+        cloudSdkValues.put("City", getCity());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Street")) {
-                final Object value = values.remove("Street");
+            if (cloudSdkValues.containsKey("Street")) {
+                final Object value = cloudSdkValues.remove("Street");
                 if ((value == null)||(!value.equals(getStreet()))) {
                     setStreet(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("City")) {
-                final Object value = values.remove("City");
+            if (cloudSdkValues.containsKey("City")) {
+                final Object value = cloudSdkValues.remove("City");
                 if ((value == null)||(!value.equals(getCity()))) {
                     setCity(((java.lang.String) value));
                 }
@@ -102,7 +102,7 @@ public class Address
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull
