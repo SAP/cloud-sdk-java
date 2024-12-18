@@ -23,7 +23,7 @@ public class FloorPlanByKeyFluentHelper
     FluentHelperByKey<FloorPlanByKeyFluentHelper, FloorPlan, FloorPlanSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single

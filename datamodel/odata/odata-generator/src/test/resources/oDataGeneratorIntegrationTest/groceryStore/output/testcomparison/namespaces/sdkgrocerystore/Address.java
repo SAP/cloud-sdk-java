@@ -294,7 +294,7 @@ public class Address
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -316,7 +316,7 @@ public class Address
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
