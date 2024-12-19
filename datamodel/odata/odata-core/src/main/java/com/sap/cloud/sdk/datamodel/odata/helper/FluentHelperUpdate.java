@@ -27,6 +27,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.N;
 
 /**
  * Representation of an OData update request as a fluent interface for further configuring the request and
@@ -262,8 +263,18 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
         return getThis();
     }
 
+    /**
+     * Allows to control that the request to update the entity is sent with the HTTP method PATCH and its payload
+     * contains the changed fields only, with different strategies for handling nested fields.
+     *
+     * @param strategy
+     *            The strategy to use for the PATCH update.
+     * @return The same fluent helper which will modify the entity in the remote system.
+     * @throws IllegalArgumentException
+     *             If an unknown ModifyPatchStrategy is provided.
+     */
     @Nonnull
-    public final FluentHelperT modifyingEntity( ModifyPatchStrategy strategy )
+    public final FluentHelperT modifyingEntity( @Nonnull final ModifyPatchStrategy strategy )
     {
         switch( strategy ) {
             case SHALLOW:
