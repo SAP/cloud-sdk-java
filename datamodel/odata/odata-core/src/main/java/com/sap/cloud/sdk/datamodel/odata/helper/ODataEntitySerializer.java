@@ -200,7 +200,7 @@ final class ODataEntitySerializer
         final JsonObject patchObject = new JsonObject();
 
         // Recursively build patch object from changed fields
-        final JsonObject tempPatchObject = createPatchObjectRecursivePartial(entity, fullEntityJson);
+        final JsonObject tempPatchObject = createPatchObjectRecursiveDelta(entity, fullEntityJson);
 
         // Add included fields (from the root only)
         includedFields
@@ -222,7 +222,7 @@ final class ODataEntitySerializer
 
     /**
      * Recursively builds a patch object for a VdmObject by including only changed fields. Complex fields are traversed
-     * recursively. Primitive changed fields are added directly.
+     * recursively.
      *
      * @param vdmObject
      *            the VdmObject (entity or complex) to build the patch from
@@ -233,7 +233,7 @@ final class ODataEntitySerializer
     @Nonnull
     private static
         JsonObject
-        createPatchObjectRecursivePartial( @Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
+    createPatchObjectRecursiveDelta(@Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
     {
         final JsonObject patch = new JsonObject();
 
@@ -248,7 +248,7 @@ final class ODataEntitySerializer
                 final VdmComplex<?> complexField = (VdmComplex<?>) entry.getValue();
                 // Recursively build patch for the complex field
                 final JsonObject childJsonObject =
-                    createPatchObjectRecursivePartial(complexField, jsonObject.getAsJsonObject(fieldName));
+                    createPatchObjectRecursiveDelta(complexField, jsonObject.getAsJsonObject(fieldName));
                 return Map.entry(fieldName, childJsonObject);
             })
             .filter(entry -> !entry.getValue().isEmpty())
