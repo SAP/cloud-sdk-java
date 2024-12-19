@@ -318,7 +318,7 @@ public class Address extends VdmEntity<Address> implements VdmEntitySet
     @Override
     protected void fromMap( final Map<java.lang.String, Object> inputValues )
     {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {

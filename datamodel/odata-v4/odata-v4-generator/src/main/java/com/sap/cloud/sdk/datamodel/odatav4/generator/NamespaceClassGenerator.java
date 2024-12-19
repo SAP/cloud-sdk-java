@@ -625,7 +625,7 @@ class NamespaceClassGenerator
                     JMod.FINAL,
                     fieldMapClass,
                     CommonConstants.INLINE_MAP_NAME,
-                    codeModel.ref(Maps.class).staticInvoke("newHashMap").arg(inputValues));
+                    codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap").arg(inputValues));
 
         body.block().directStatement("// simple properties");
         final JBlock simplePropertiesBlock = new JBlock(true, true);

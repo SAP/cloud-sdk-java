@@ -21,6 +21,7 @@
 - Stabilize most of the remaining experimental APIs without changes, e.g.
   - RequestHeaderAccessor
   - ServiceBindingDestinationLoader
+- OData v2 and v4 generators now use `LinkedHashMap` for the properties of the generated classes to maintain the order of the properties.
 
 ### 🐛 Fixed Issues
 
