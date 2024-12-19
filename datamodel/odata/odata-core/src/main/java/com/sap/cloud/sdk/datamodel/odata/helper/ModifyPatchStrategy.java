@@ -1,5 +1,8 @@
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+/**
+ * Strategy to determine how a patch operation should be applied to an entity.
+ */
 public enum ModifyPatchStrategy
 {
     /** Only the top level fields can be patched */
