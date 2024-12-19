@@ -233,7 +233,7 @@ final class ODataEntitySerializer
     @Nonnull
     private static
         JsonObject
-    createPatchObjectRecursiveDelta(@Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
+        createPatchObjectRecursiveDelta( @Nonnull final VdmObject<?> vdmObject, @Nonnull final JsonObject jsonObject )
     {
         final JsonObject patch = new JsonObject();
 
