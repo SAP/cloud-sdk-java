@@ -195,7 +195,7 @@ public class Customer
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
@@ -229,13 +229,13 @@ public class Customer
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("Address")) {
-                final Object value = (cloudSdkValues).remove("Address");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Address");
+                if (cloudSdkValue instanceof Map) {
                     if (toAddress == null) {
                         toAddress = new Address();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toAddress.fromMap(inputMap);
                 }
             }
@@ -274,11 +274,11 @@ public class Customer
     /**
      * Overwrites the associated <b>Address</b> entity for the loaded navigation property <b>Address</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>Address</b> entity.
      */
-    public void setAddress(final Address value) {
-        toAddress = value;
+    public void setAddress(final Address cloudSdkValue) {
+        toAddress = cloudSdkValue;
     }
 
     /**
@@ -344,22 +344,22 @@ public class Customer
 
         private Address toAddress;
 
-        private Customer.CustomerBuilder toAddress(final Address value) {
-            toAddress = value;
+        private Customer.CustomerBuilder toAddress(final Address cloudSdkValue) {
+            toAddress = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Address</b> for <b>Customer</b> to single <b>Address</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Address to build this Customer with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Customer.CustomerBuilder address(final Address value) {
-            return toAddress(value);
+        public Customer.CustomerBuilder address(final Address cloudSdkValue) {
+            return toAddress(cloudSdkValue);
         }
 
     }

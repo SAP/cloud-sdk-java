@@ -25,7 +25,7 @@ public class BPDeleteFluentHelper_2
     extends SingleValuedFluentHelperFunction<BPDeleteFluentHelper_2, String, String>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>BPDelete</b> OData function import with the provided parameters. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

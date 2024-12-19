@@ -19,7 +19,7 @@ public class CustomerByKeyFluentHelper
     extends FluentHelperByKey<CustomerByKeyFluentHelper, Customer, CustomerSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single {@link testcomparison.namespaces.sdkgrocerystore.Customer Customer} entity with the provided key field values. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

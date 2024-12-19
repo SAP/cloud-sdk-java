@@ -26,7 +26,7 @@ public class IsStoreOpenFluentHelper
     extends SingleValuedFluentHelperFunction<IsStoreOpenFluentHelper, Boolean, Boolean>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>IsStoreOpen</b> OData function import with the provided parameters. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

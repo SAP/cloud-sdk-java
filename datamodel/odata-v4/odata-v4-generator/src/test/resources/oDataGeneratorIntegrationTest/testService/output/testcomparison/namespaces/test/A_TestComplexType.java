@@ -283,7 +283,7 @@ public class A_TestComplexType
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("BaseStringProperty")) {

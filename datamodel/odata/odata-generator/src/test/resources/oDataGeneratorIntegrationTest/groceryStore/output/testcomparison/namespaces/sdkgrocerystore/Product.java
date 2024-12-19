@@ -278,7 +278,7 @@ public class Product
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -298,7 +298,7 @@ public class Product
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
@@ -344,26 +344,26 @@ public class Product
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("Vendor")) {
-                final Object value = (cloudSdkValues).remove("Vendor");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Vendor");
+                if (cloudSdkValue instanceof Map) {
                     if (toVendor == null) {
                         toVendor = new Vendor();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<String, Object> inputMap = ((Map<String, Object> ) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
                     toVendor.fromMap(inputMap);
                 }
             }
             if ((cloudSdkValues).containsKey("Shelf")) {
-                final Object value = (cloudSdkValues).remove("Shelf");
-                if (value instanceof Iterable) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Shelf");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toShelf == null) {
                         toShelf = Lists.newArrayList();
                     } else {
                         toShelf = Lists.newArrayList(toShelf);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -520,11 +520,11 @@ public class Product
     /**
      * Overwrites the associated <b>Vendor</b> entity for the loaded navigation property <b>Vendor</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>Vendor</b> entity.
      */
-    public void setVendor(final Vendor value) {
-        toVendor = value;
+    public void setVendor(final Vendor cloudSdkValue) {
+        toVendor = cloudSdkValue;
     }
 
     /**
@@ -582,17 +582,17 @@ public class Product
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>Shelf</b> entities.
      */
     public void setShelf(
         @Nonnull
-        final List<Shelf> value) {
+        final List<Shelf> cloudSdkValue) {
         if (toShelf == null) {
             toShelf = Lists.newArrayList();
         }
         toShelf.clear();
-        toShelf.addAll(value);
+        toShelf.addAll(cloudSdkValue);
     }
 
     /**
@@ -622,40 +622,40 @@ public class Product
         private Vendor toVendor;
         private List<Shelf> toShelf = Lists.newArrayList();
 
-        private Product.ProductBuilder toVendor(final Vendor value) {
-            toVendor = value;
+        private Product.ProductBuilder toVendor(final Vendor cloudSdkValue) {
+            toVendor = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Vendor</b> for <b>Product</b> to single <b>Vendor</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Vendor to build this Product with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder vendor(final Vendor value) {
-            return toVendor(value);
+        public Product.ProductBuilder vendor(final Vendor cloudSdkValue) {
+            return toVendor(cloudSdkValue);
         }
 
-        private Product.ProductBuilder toShelf(final List<Shelf> value) {
-            toShelf.addAll(value);
+        private Product.ProductBuilder toShelf(final List<Shelf> cloudSdkValue) {
+            toShelf.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>Shelf</b> for <b>Product</b> to multiple <b>Shelf</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Shelfs to build this Product with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder shelf(Shelf... value) {
-            return toShelf(Lists.newArrayList(value));
+        public Product.ProductBuilder shelf(Shelf... cloudSdkValue) {
+            return toShelf(Lists.newArrayList(cloudSdkValue));
         }
 
     }

@@ -29,7 +29,7 @@ public class GetProductQuantitiesFluentHelper
     CollectionValuedFluentHelperFunction<GetProductQuantitiesFluentHelper, ProductCount, List<ProductCount>>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>GetProductQuantities</b> OData function import with the

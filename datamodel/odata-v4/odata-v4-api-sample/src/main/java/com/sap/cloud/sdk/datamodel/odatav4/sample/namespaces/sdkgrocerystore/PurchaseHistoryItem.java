@@ -101,7 +101,7 @@ public class PurchaseHistoryItem extends VdmComplex<PurchaseHistoryItem>
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if( cloudSdkValues.containsKey("ReceiptId") ) {

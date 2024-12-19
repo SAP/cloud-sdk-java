@@ -89,7 +89,7 @@ public class EntityWithoutKeyLabel
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         return result;
     }
 
@@ -103,7 +103,7 @@ public class EntityWithoutKeyLabel
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("SomeField")) {

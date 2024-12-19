@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.datamodel.odata.helper.SingleValuedFluentHelperFunction
 public class PrintReceiptFluentHelper extends SingleValuedFluentHelperFunction<PrintReceiptFluentHelper, String, String>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>PrintReceipt</b> OData function import with the provided

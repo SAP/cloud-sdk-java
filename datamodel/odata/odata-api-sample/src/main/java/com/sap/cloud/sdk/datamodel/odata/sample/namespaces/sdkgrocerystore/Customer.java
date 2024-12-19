@@ -249,7 +249,7 @@ public class Customer extends VdmEntity<Customer>
     @Override
     protected Map<String, Object> getKey()
     {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -269,7 +269,7 @@ public class Customer extends VdmEntity<Customer>
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {
@@ -303,13 +303,13 @@ public class Customer extends VdmEntity<Customer>
         // navigation properties
         {
             if( (cloudSdkValues).containsKey("Address") ) {
-                final Object value = (cloudSdkValues).remove("Address");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Address");
+                if( cloudSdkValue instanceof Map ) {
                     if( toAddress == null ) {
                         toAddress = new Address();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
                     toAddress.fromMap(inputMap);
                 }
             }
@@ -457,12 +457,12 @@ public class Customer extends VdmEntity<Customer>
     /**
      * Overwrites the associated <b>Address</b> entity for the loaded navigation property <b>Address</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Address</b> entity.
      */
-    public void setAddress( final Address value )
+    public void setAddress( final Address cloudSdkValue )
     {
-        toAddress = value;
+        toAddress = cloudSdkValue;
     }
 
     /**
@@ -474,23 +474,23 @@ public class Customer extends VdmEntity<Customer>
 
         private Address toAddress;
 
-        private Customer.CustomerBuilder toAddress( final Address value )
+        private Customer.CustomerBuilder toAddress( final Address cloudSdkValue )
         {
-            toAddress = value;
+            toAddress = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Address</b> for <b>Customer</b> to single <b>Address</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Address to build this Customer with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Customer.CustomerBuilder address( final Address value )
+        public Customer.CustomerBuilder address( final Address cloudSdkValue )
         {
-            return toAddress(value);
+            return toAddress(cloudSdkValue);
         }
 
     }

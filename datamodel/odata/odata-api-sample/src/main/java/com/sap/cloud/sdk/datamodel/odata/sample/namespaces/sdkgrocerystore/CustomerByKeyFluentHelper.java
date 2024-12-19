@@ -23,7 +23,7 @@ public class CustomerByKeyFluentHelper
     FluentHelperByKey<CustomerByKeyFluentHelper, Customer, CustomerSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single

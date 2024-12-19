@@ -145,7 +145,7 @@ public class SimplePerson
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("Person")) {
@@ -167,13 +167,13 @@ public class SimplePerson
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("Friend")) {
-                final Object value = (cloudSdkValues).remove("Friend");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Friend");
+                if (cloudSdkValue instanceof Map) {
                     if (toFriend_2 == null) {
                         toFriend_2 = new Friend();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toFriend_2 .fromMap(inputMap);
                 }
             }
@@ -212,11 +212,11 @@ public class SimplePerson
     /**
      * Overwrites the associated <b>Friend</b> entity for the loaded navigation property <b>Friend</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>Friend</b> entity.
      */
-    public void setFriend(final Friend value) {
-        toFriend_2 = value;
+    public void setFriend(final Friend cloudSdkValue) {
+        toFriend_2 = cloudSdkValue;
     }
 
 
@@ -228,22 +228,22 @@ public class SimplePerson
 
         private Friend toFriend_2;
 
-        private SimplePerson.SimplePersonBuilder toFriend_2(final Friend value) {
-            toFriend_2 = value;
+        private SimplePerson.SimplePersonBuilder toFriend_2(final Friend cloudSdkValue) {
+            toFriend_2 = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Friend</b> for <b>SimplePerson</b> to single <b>Friend</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Friend to build this SimplePerson with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public SimplePerson.SimplePersonBuilder friend(final Friend value) {
-            return toFriend_2(value);
+        public SimplePerson.SimplePersonBuilder friend(final Friend cloudSdkValue) {
+            return toFriend_2(cloudSdkValue);
         }
 
     }

@@ -121,7 +121,7 @@ public class TestEntityCircularLinkChild
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("KeyProperty")) {
@@ -137,13 +137,13 @@ public class TestEntityCircularLinkChild
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("to_Parent")) {
-                final Object value = (cloudSdkValues).remove("to_Parent");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_Parent");
+                if (cloudSdkValue instanceof Map) {
                     if (toParent == null) {
                         toParent = new TestEntityCircularLinkParent();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toParent.fromMap(inputMap);
                 }
             }
@@ -182,11 +182,11 @@ public class TestEntityCircularLinkChild
     /**
      * Overwrites the associated <b>TestEntityCircularLinkParent</b> entity for the loaded navigation property <b>to_Parent</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>TestEntityCircularLinkParent</b> entity.
      */
-    public void setParent(final TestEntityCircularLinkParent value) {
-        toParent = value;
+    public void setParent(final TestEntityCircularLinkParent cloudSdkValue) {
+        toParent = cloudSdkValue;
     }
 
 
@@ -198,22 +198,22 @@ public class TestEntityCircularLinkChild
 
         private TestEntityCircularLinkParent toParent;
 
-        private TestEntityCircularLinkChild.TestEntityCircularLinkChildBuilder toParent(final TestEntityCircularLinkParent value) {
-            toParent = value;
+        private TestEntityCircularLinkChild.TestEntityCircularLinkChildBuilder toParent(final TestEntityCircularLinkParent cloudSdkValue) {
+            toParent = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_Parent</b> for <b>TestEntityCircularLinkChild</b> to single <b>TestEntityCircularLinkParent</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityCircularLinkParent to build this TestEntityCircularLinkChild with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityCircularLinkChild.TestEntityCircularLinkChildBuilder parent(final TestEntityCircularLinkParent value) {
-            return toParent(value);
+        public TestEntityCircularLinkChild.TestEntityCircularLinkChildBuilder parent(final TestEntityCircularLinkParent cloudSdkValue) {
+            return toParent(cloudSdkValue);
         }
 
     }

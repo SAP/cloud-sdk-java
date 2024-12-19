@@ -192,7 +192,7 @@ public class Vendor extends VdmEntity<Vendor>
     @Override
     protected void fromMap( final Map<java.lang.String, Object> inputValues )
     {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {
@@ -220,13 +220,13 @@ public class Vendor extends VdmEntity<Vendor>
         // navigation properties
         {
             if( (cloudSdkValues).containsKey("Address") ) {
-                final Object value = (cloudSdkValues).remove("Address");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Address");
+                if( cloudSdkValue instanceof Map ) {
                     if( toAddress == null ) {
                         toAddress = new Address();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) cloudSdkValue);
                     toAddress.fromMap(inputMap);
                 }
             }
@@ -264,12 +264,12 @@ public class Vendor extends VdmEntity<Vendor>
     /**
      * Overwrites the associated <b>Address</b> entity for the loaded navigation property <b>Address</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Address</b> entity.
      */
-    public void setAddress( final Address value )
+    public void setAddress( final Address cloudSdkValue )
     {
-        toAddress = value;
+        toAddress = cloudSdkValue;
     }
 
     /**
@@ -281,23 +281,23 @@ public class Vendor extends VdmEntity<Vendor>
 
         private Address toAddress;
 
-        private Vendor.VendorBuilder toAddress( final Address value )
+        private Vendor.VendorBuilder toAddress( final Address cloudSdkValue )
         {
-            toAddress = value;
+            toAddress = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Address</b> for <b>Vendor</b> to single <b>Address</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Address to build this Vendor with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Vendor.VendorBuilder address( final Address value )
+        public Vendor.VendorBuilder address( final Address cloudSdkValue )
         {
-            return toAddress(value);
+            return toAddress(cloudSdkValue);
         }
 
     }

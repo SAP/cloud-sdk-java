@@ -303,7 +303,7 @@ public class Product extends VdmEntity<Product> implements VdmEntitySet
     @Override
     protected void fromMap( final Map<java.lang.String, Object> inputValues )
     {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {
@@ -362,24 +362,24 @@ public class Product extends VdmEntity<Product> implements VdmEntitySet
         // navigation properties
         {
             if( (cloudSdkValues).containsKey("Vendor") ) {
-                final Object value = (cloudSdkValues).remove("Vendor");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Vendor");
+                if( cloudSdkValue instanceof Map ) {
                     if( toVendor == null ) {
                         toVendor = new Vendor();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) cloudSdkValue);
                     toVendor.fromMap(inputMap);
                 }
             }
             if( (cloudSdkValues).containsKey("Shelf") ) {
-                final Object value = (cloudSdkValues).remove("Shelf");
-                if( value instanceof Map ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Shelf");
+                if( cloudSdkValue instanceof Map ) {
                     if( toShelf == null ) {
                         toShelf = new Shelf();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object>) cloudSdkValue);
                     toShelf.fromMap(inputMap);
                 }
             }
@@ -426,12 +426,12 @@ public class Product extends VdmEntity<Product> implements VdmEntitySet
     /**
      * Overwrites the associated <b>Vendor</b> entity for the loaded navigation property <b>Vendor</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Vendor</b> entity.
      */
-    public void setVendor( final Vendor value )
+    public void setVendor( final Vendor cloudSdkValue )
     {
-        toVendor = value;
+        toVendor = cloudSdkValue;
     }
 
     /**
@@ -453,12 +453,12 @@ public class Product extends VdmEntity<Product> implements VdmEntitySet
     /**
      * Overwrites the associated <b>Shelf</b> entity for the loaded navigation property <b>Shelf</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Shelf</b> entity.
      */
-    public void setShelf( final Shelf value )
+    public void setShelf( final Shelf cloudSdkValue )
     {
-        toShelf = value;
+        toShelf = cloudSdkValue;
     }
 
     /**
@@ -471,42 +471,42 @@ public class Product extends VdmEntity<Product> implements VdmEntitySet
         private Vendor toVendor;
         private Shelf toShelf;
 
-        private Product.ProductBuilder toVendor( final Vendor value )
+        private Product.ProductBuilder toVendor( final Vendor cloudSdkValue )
         {
-            toVendor = value;
+            toVendor = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Vendor</b> for <b>Product</b> to single <b>Vendor</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Vendor to build this Product with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder vendor( final Vendor value )
+        public Product.ProductBuilder vendor( final Vendor cloudSdkValue )
         {
-            return toVendor(value);
+            return toVendor(cloudSdkValue);
         }
 
-        private Product.ProductBuilder toShelf( final Shelf value )
+        private Product.ProductBuilder toShelf( final Shelf cloudSdkValue )
         {
-            toShelf = value;
+            toShelf = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Shelf</b> for <b>Product</b> to single <b>Shelf</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Shelf to build this Product with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder shelf( final Shelf value )
+        public Product.ProductBuilder shelf( final Shelf cloudSdkValue )
         {
-            return toShelf(value);
+            return toShelf(cloudSdkValue);
         }
 
     }

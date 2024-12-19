@@ -259,7 +259,7 @@ public class Product
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> cloudSdkValues = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
@@ -317,24 +317,24 @@ public class Product
         // navigation properties
         {
             if ((cloudSdkValues).containsKey("Vendor")) {
-                final Object value = (cloudSdkValues).remove("Vendor");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Vendor");
+                if (cloudSdkValue instanceof Map) {
                     if (toVendor == null) {
                         toVendor = new Vendor();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toVendor.fromMap(inputMap);
                 }
             }
             if ((cloudSdkValues).containsKey("Shelf")) {
-                final Object value = (cloudSdkValues).remove("Shelf");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Shelf");
+                if (cloudSdkValue instanceof Map) {
                     if (toShelf == null) {
                         toShelf = new Shelf();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toShelf.fromMap(inputMap);
                 }
             }
@@ -376,11 +376,11 @@ public class Product
     /**
      * Overwrites the associated <b>Vendor</b> entity for the loaded navigation property <b>Vendor</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>Vendor</b> entity.
      */
-    public void setVendor(final Vendor value) {
-        toVendor = value;
+    public void setVendor(final Vendor cloudSdkValue) {
+        toVendor = cloudSdkValue;
     }
 
     /**
@@ -399,11 +399,11 @@ public class Product
     /**
      * Overwrites the associated <b>Shelf</b> entity for the loaded navigation property <b>Shelf</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>Shelf</b> entity.
      */
-    public void setShelf(final Shelf value) {
-        toShelf = value;
+    public void setShelf(final Shelf cloudSdkValue) {
+        toShelf = cloudSdkValue;
     }
 
 
@@ -416,40 +416,40 @@ public class Product
         private Vendor toVendor;
         private Shelf toShelf;
 
-        private Product.ProductBuilder toVendor(final Vendor value) {
-            toVendor = value;
+        private Product.ProductBuilder toVendor(final Vendor cloudSdkValue) {
+            toVendor = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Vendor</b> for <b>Product</b> to single <b>Vendor</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Vendor to build this Product with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder vendor(final Vendor value) {
-            return toVendor(value);
+        public Product.ProductBuilder vendor(final Vendor cloudSdkValue) {
+            return toVendor(cloudSdkValue);
         }
 
-        private Product.ProductBuilder toShelf(final Shelf value) {
-            toShelf = value;
+        private Product.ProductBuilder toShelf(final Shelf cloudSdkValue) {
+            toShelf = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Shelf</b> for <b>Product</b> to single <b>Shelf</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The Shelf to build this Product with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Product.ProductBuilder shelf(final Shelf value) {
-            return toShelf(value);
+        public Product.ProductBuilder shelf(final Shelf cloudSdkValue) {
+            return toShelf(cloudSdkValue);
         }
 
     }

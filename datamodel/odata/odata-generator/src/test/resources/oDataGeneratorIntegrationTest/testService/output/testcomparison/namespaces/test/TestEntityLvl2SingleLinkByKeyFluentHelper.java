@@ -19,7 +19,7 @@ public class TestEntityLvl2SingleLinkByKeyFluentHelper
     extends FluentHelperByKey<TestEntityLvl2SingleLinkByKeyFluentHelper, TestEntityLvl2SingleLink, TestEntityLvl2SingleLinkSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single {@link testcomparison.namespaces.test.TestEntityLvl2SingleLink TestEntityLvl2SingleLink} entity with the provided key field values. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.
