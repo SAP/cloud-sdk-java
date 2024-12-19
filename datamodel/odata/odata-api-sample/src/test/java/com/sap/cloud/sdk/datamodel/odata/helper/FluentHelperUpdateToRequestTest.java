@@ -257,7 +257,6 @@ class FluentHelperUpdateToRequestTest
     @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
     void testIgnoreVersionIdentifier()
     {
-        // TODO: Enable test after checking thoroughly about Complex Type
         product.setVersionIdentifier(versionIdentifier);
         final ODataRequestUpdate updateQuery = fluentHelper.matchAnyVersionIdentifier().toRequest();
 
