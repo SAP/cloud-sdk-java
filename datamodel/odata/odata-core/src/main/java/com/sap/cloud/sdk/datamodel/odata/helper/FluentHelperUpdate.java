@@ -144,23 +144,31 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     {
         final EntityT entity = getEntity();
         try {
+            final List<FieldReference> fieldsToExcludeUpdate =
+                excludedFields
+                    .stream()
+                    .map(EntitySelectable::getFieldName)
+                    .map(FieldReference::of)
+                    .collect(Collectors.toList());
+
+            final List<FieldReference> fieldsToIncludeInUpdate =
+                includedFields
+                    .stream()
+                    .map(EntitySelectable::getFieldName)
+                    .map(FieldReference::of)
+                    .collect(Collectors.toList());
+
             switch( updateStrategy ) {
                 case REPLACE_WITH_PUT:
-                    final List<FieldReference> fieldsToExcludeUpdate =
-                        excludedFields
-                            .stream()
-                            .map(EntitySelectable::getFieldName)
-                            .map(FieldReference::of)
-                            .collect(Collectors.toList());
                     return ODataEntitySerializer.serializeEntityForUpdatePut(entity, fieldsToExcludeUpdate);
                 case MODIFY_WITH_PATCH:
-                    final List<FieldReference> fieldsToIncludeInUpdate =
-                        includedFields
-                            .stream()
-                            .map(EntitySelectable::getFieldName)
-                            .map(FieldReference::of)
-                            .collect(Collectors.toList());
-                    return ODataEntitySerializer.serializeEntityForUpdatePatch(entity, fieldsToIncludeInUpdate);
+                    return ODataEntitySerializer.serializeEntityForUpdatePatchShallow(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_RECURSIVE_DELTA:
+                    return ODataEntitySerializer
+                        .serializeEntityForUpdatePatchRecursiveDelta(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_RECURSIVE_FULL:
+                    return ODataEntitySerializer
+                        .serializeEntityForUpdatePatchRecursiveFull(entity, fieldsToIncludeInUpdate);
                 default:
                     throw new IllegalStateException("Unexpected update strategy:" + updateStrategy);
             }
@@ -193,7 +201,6 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      *
      * @param fields
      *            The fields to be included in the update execution.
-     *
      * @return The same fluent helper which will include the specified fields in an update request.
      */
     @Nonnull
@@ -212,7 +219,6 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      *
      * @param fields
      *            The fields to be excluded in the update execution.
-     *
      * @return The same fluent helper which will exclude the specified fields in an update request.
      */
     @Nonnull
@@ -255,4 +261,33 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
         updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH;
         return getThis();
     }
+
+    /**
+     * Allows to control that the request to update the entity is sent with the HTTP method PATCH and its payload
+     * contains the changed fields only, with different strategies for handling nested fields.
+     *
+     * @param strategy
+     *            The strategy to use for the PATCH update.
+     * @return The same fluent helper which will modify the entity in the remote system.
+     * @throws IllegalArgumentException
+     *             If an unknown ModifyPatchStrategy is provided.
+     */
+    @Nonnull
+    public final FluentHelperT modifyingEntity( ModifyPatchStrategy strategy )
+    {
+        switch( strategy ) {
+            case SHALLOW:
+                return modifyingEntity();
+            case RECURSIVE_DELTA:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_RECURSIVE_DELTA;
+                break;
+            case RECURSIVE_FULL:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_RECURSIVE_FULL;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown ModifyPatchStrategy: " + strategy);
+        }
+        return getThis();
+    }
+
 }
