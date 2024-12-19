@@ -212,8 +212,7 @@ class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
-    void testUpdatePatchComplexPropertyPartial()
+    void testUpdatePatchComplexPropertyDelta()
     {
         final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
         final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
@@ -226,7 +225,7 @@ class FluentHelperUpdateToRequestTest
             FluentHelperFactory
                 .withServicePath(ODATA_ENDPOINT_URL)
                 .update(ENTITY_COLLECTION, receipt)
-                .modifyingEntity(COMPLEX_DELTA)
+                .modifyingEntity(RECURSIVE_DELTA)
                 .toRequest();
 
         assertThat(receiptUpdate).isNotNull();
@@ -234,10 +233,8 @@ class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
     void testUpdatePatchComplexPropertyFull()
     {
-        // TODO: Enable test after checking thoroughly about Complex Type
         final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
         final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
 
@@ -249,7 +246,7 @@ class FluentHelperUpdateToRequestTest
             FluentHelperFactory
                 .withServicePath(ODATA_ENDPOINT_URL)
                 .update(ENTITY_COLLECTION, receipt)
-                .modifyingEntity(COMPLEX_FULL)
+                .modifyingEntity(RECURSIVE_FULL)
                 .toRequest();
 
         assertThat(receiptUpdate).isNotNull();

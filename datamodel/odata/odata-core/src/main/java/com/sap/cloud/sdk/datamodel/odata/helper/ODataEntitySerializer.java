@@ -105,7 +105,7 @@ final class ODataEntitySerializer
      * @return The serialized JSON string for entity update request.
      */
     @Nonnull
-    static String serializeEntityForUpdatePatch(
+    static String serializeEntityForUpdatePatchShallow(
         @Nonnull final VdmEntity<?> entity,
         @Nonnull final Collection<FieldReference> includedFields )
     {
@@ -123,8 +123,18 @@ final class ODataEntitySerializer
         return GSON_SERIALIZING_NULLS.toJson(partialEntity);
     }
 
+    /**
+     * Serializes an entity for update request (PATCH) including changes in nested properties. Allowing null values.
+     * Resulting JSON contains the full value of complex fields for changing any nested field.
+     *
+     * @param entity
+     *            The OData V2 entity reference.
+     * @param includedFields
+     *            Collection of fields to be included in the update (PATCH) request.
+     * @return The serialized JSON string for entity update request.
+     */
     @Nonnull
-    static String serializeEntityForUpdatePatchComplexFull(
+    static String serializeEntityForUpdatePatchRecursiveFull(
         @Nonnull final VdmEntity<?> entity,
         @Nonnull final Collection<FieldReference> includedFields )
     {
@@ -144,28 +154,45 @@ final class ODataEntitySerializer
             .filter(entry -> containsNestedChangedFields((VdmComplex<?>) entry.getValue()))
             .forEach(entry -> patchObject.add(entry.getKey(), fullEntityJson.get(entry.getKey())));
 
+        log.debug("The following object is serialized for update : {}.", patchObject);
+
         return GSON_SERIALIZING_NULLS.toJson(patchObject);
     }
 
+    /**
+     * Checks if the given complex object contains any changed fields in its nested fields.
+     *
+     * @param vdmComplex
+     *            the complex object to check
+     * @return true if the complex object contains any changed fields, false otherwise
+     */
     private static boolean containsNestedChangedFields( VdmComplex<?> vdmComplex )
     {
         if( !vdmComplex.getChangedFields().isEmpty() ) {
             return true;
         }
 
-        vdmComplex
+        return vdmComplex
             .toMapOfFields()
             .values()
             .stream()
             .filter(complexField -> complexField instanceof VdmComplex<?>)
             .map(complexField -> (VdmComplex<?>) complexField)
-            .forEach(ODataEntitySerializer::containsNestedChangedFields);
-
-        return false;
+            .anyMatch(ODataEntitySerializer::containsNestedChangedFields);
     }
 
+    /**
+     * Serializes an entity for update request (PATCH) including changes in nested properties. Allowing null values.
+     * Resulting JSON contains only the changed fields (including nested changes).
+     *
+     * @param entity
+     *            The OData V2 entity reference.
+     * @param includedFields
+     *            Collection of fields to be included in the update (PATCH) request.
+     * @return The serialized JSON string for entity update request.
+     */
     @Nonnull
-    static String serializeEntityForUpdatePatchComplexPartial(
+    static String serializeEntityForUpdatePatchRecursiveDelta(
         @Nonnull final VdmEntity<?> entity,
         @Nonnull final Collection<FieldReference> includedFields )
     {
@@ -188,7 +215,8 @@ final class ODataEntitySerializer
             .filter(entry -> !patchObject.has(entry.getKey()))
             .forEach(entry -> patchObject.add(entry.getKey(), entry.getValue()));
 
-        // TODO: log the fields that are being patched
+        log.debug("The following delta object is serialized for update : {}.", patchObject);
+
         return GSON_SERIALIZING_NULLS.toJson(patchObject);
     }
 

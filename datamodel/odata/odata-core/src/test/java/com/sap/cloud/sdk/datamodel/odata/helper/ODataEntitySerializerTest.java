@@ -59,7 +59,7 @@ class ODataEntitySerializerTest
         entity.setIntegerValue(42);
 
         final Collection<FieldReference> fields = Arrays.asList(FieldReference.of("a"), FieldReference.of("b"));
-        final String payload = ODataEntitySerializer.serializeEntityForUpdatePatch(entity, fields);
+        final String payload = ODataEntitySerializer.serializeEntityForUpdatePatchShallow(entity, fields);
         assertThat(payload).isEqualTo("{\"a\":null,\"b\":null,\"IntegerValue\":42}");
     }
 }

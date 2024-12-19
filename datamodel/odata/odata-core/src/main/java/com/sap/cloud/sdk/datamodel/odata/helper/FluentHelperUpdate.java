@@ -162,14 +162,13 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
                 case REPLACE_WITH_PUT:
                     return ODataEntitySerializer.serializeEntityForUpdatePut(entity, fieldsToExcludeUpdate);
                 case MODIFY_WITH_PATCH:
-
-                    return ODataEntitySerializer.serializeEntityForUpdatePatch(entity, fieldsToIncludeInUpdate);
-                case MODIFY_WITH_PATCH_COMPLEX_DELTA:
+                    return ODataEntitySerializer.serializeEntityForUpdatePatchShallow(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_RECURSIVE_DELTA:
                     return ODataEntitySerializer
-                        .serializeEntityForUpdatePatchComplexPartial(entity, fieldsToIncludeInUpdate);
-                case MODIFY_WITH_PATCH_COMPLEX_FULL:
+                        .serializeEntityForUpdatePatchRecursiveDelta(entity, fieldsToIncludeInUpdate);
+                case MODIFY_WITH_PATCH_RECURSIVE_FULL:
                     return ODataEntitySerializer
-                        .serializeEntityForUpdatePatchComplexFull(entity, fieldsToIncludeInUpdate);
+                        .serializeEntityForUpdatePatchRecursiveFull(entity, fieldsToIncludeInUpdate);
                 default:
                     throw new IllegalStateException("Unexpected update strategy:" + updateStrategy);
             }
@@ -267,13 +266,13 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     public final FluentHelperT modifyingEntity( ModifyPatchStrategy strategy )
     {
         switch( strategy ) {
-            case PRIMITIVE:
+            case SHALLOW:
                 return modifyingEntity();
-            case COMPLEX_DELTA:
-                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX_DELTA;
+            case RECURSIVE_DELTA:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_RECURSIVE_DELTA;
                 break;
-            case COMPLEX_FULL:
-                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_COMPLEX_FULL;
+            case RECURSIVE_FULL:
+                updateStrategy = UpdateStrategy.MODIFY_WITH_PATCH_RECURSIVE_FULL;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown ModifyPatchStrategy: " + strategy);
