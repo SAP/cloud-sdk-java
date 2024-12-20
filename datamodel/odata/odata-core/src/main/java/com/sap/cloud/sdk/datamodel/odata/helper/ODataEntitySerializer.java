@@ -170,7 +170,7 @@ final class ODataEntitySerializer
             if( !vdmComplex.getChangedFields().isEmpty() ) {
                 return true;
             }
-            for( Object complexField : vdmComplex.toMapOfFields().values() ) {
+            for( final Object complexField : vdmComplex.toMapOfFields().values() ) {
                 if( containsNestedChangedFields(complexField) ) {
                     return true;
                 }
