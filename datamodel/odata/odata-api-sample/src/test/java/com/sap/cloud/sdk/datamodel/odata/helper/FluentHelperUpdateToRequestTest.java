@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -254,7 +253,6 @@ class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
     void testIgnoreVersionIdentifier()
     {
         product.setVersionIdentifier(versionIdentifier);

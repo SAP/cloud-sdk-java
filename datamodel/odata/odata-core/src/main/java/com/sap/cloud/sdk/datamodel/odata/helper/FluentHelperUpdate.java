@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.client.HttpClient;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -271,7 +272,9 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
      * @return The same fluent helper which will modify the entity in the remote system.
      * @throws IllegalArgumentException
      *             If an unknown ModifyPatchStrategy is provided.
+     * @since 5.16.0
      */
+    @Beta
     @Nonnull
     public final FluentHelperT modifyingEntity( @Nonnull final ModifyPatchStrategy strategy )
     {

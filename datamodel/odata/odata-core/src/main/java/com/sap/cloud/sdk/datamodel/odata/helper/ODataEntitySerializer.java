@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -150,8 +149,7 @@ final class ODataEntitySerializer
             .entrySet()
             .stream()
             .filter(entry -> !patchObject.has(entry.getKey()))
-            .filter(entry -> entry.getValue() instanceof VdmComplex<?>)
-            .filter(entry -> containsNestedChangedFields((VdmComplex<?>) entry.getValue()))
+            .filter(entry -> containsNestedChangedFields(entry.getValue()))
             .forEach(entry -> patchObject.add(entry.getKey(), fullEntityJson.get(entry.getKey())));
 
         log.debug("The following object is serialized for update : {}.", patchObject);
@@ -162,23 +160,23 @@ final class ODataEntitySerializer
     /**
      * Checks if the given complex object contains any changed fields in its nested fields.
      *
-     * @param vdmComplex
+     * @param obj
      *            the complex object to check
      * @return true if the complex object contains any changed fields, false otherwise
      */
-    private static boolean containsNestedChangedFields( final VdmComplex<?> vdmComplex )
+    private static boolean containsNestedChangedFields( final Object obj )
     {
-        if( !vdmComplex.getChangedFields().isEmpty() ) {
-            return true;
+        if( obj instanceof VdmComplex<?> vdmComplex ) {
+            if( !vdmComplex.getChangedFields().isEmpty() ) {
+                return true;
+            }
+            for( Object complexField : vdmComplex.toMapOfFields().values() ) {
+                if( containsNestedChangedFields(complexField) ) {
+                    return true;
+                }
+            }
         }
-
-        return vdmComplex
-            .toMapOfFields()
-            .values()
-            .stream()
-            .filter(complexField -> complexField instanceof VdmComplex<?>)
-            .map(complexField -> (VdmComplex<?>) complexField)
-            .anyMatch(ODataEntitySerializer::containsNestedChangedFields);
+        return false;
     }
 
     /**
@@ -237,24 +235,18 @@ final class ODataEntitySerializer
     {
         final JsonObject patch = new JsonObject();
 
-        // Process all complex fields
-        vdmObject
-            .toMapOfFields()
-            .entrySet()
-            .stream()
-            .filter(entry -> entry.getValue() instanceof VdmComplex<?>)
-            .map(entry -> {
-                final String fieldName = entry.getKey();
-                final VdmComplex<?> complexField = (VdmComplex<?>) entry.getValue();
-                // Recursively build patch for the complex field
-                final JsonObject childJsonObject =
-                    createPatchObjectRecursiveDelta(complexField, jsonObject.getAsJsonObject(fieldName));
-                return Map.entry(fieldName, childJsonObject);
-            })
-            .filter(entry -> !entry.getValue().isEmpty())
-            .forEach(entry -> patch.add(entry.getKey(), entry.getValue()));
+        // Process all complex fields and recursively build patch for the complex field
+        vdmObject.toMapOfFields().forEach(( fieldName, val ) -> {
+            if( val instanceof VdmComplex<?> complexField ) {
+                final var childJsonObject = jsonObject.getAsJsonObject(fieldName);
+                final var childJsonObjectDelta = createPatchObjectRecursiveDelta(complexField, childJsonObject);
+                if( !childJsonObjectDelta.isEmpty() ) {
+                    patch.add(fieldName, childJsonObjectDelta);
+                }
+            }
+        });
 
-        // Add changed primitive fields
+        // Add explicitly changed fields
         vdmObject.getChangedFields().keySet().forEach(key -> patch.add(key, jsonObject.get(key)));
 
         return patch;
