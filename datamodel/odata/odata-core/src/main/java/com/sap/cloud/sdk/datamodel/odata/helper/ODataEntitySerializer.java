@@ -166,7 +166,7 @@ final class ODataEntitySerializer
      *            the complex object to check
      * @return true if the complex object contains any changed fields, false otherwise
      */
-    private static boolean containsNestedChangedFields(final VdmComplex<?> vdmComplex )
+    private static boolean containsNestedChangedFields( final VdmComplex<?> vdmComplex )
     {
         if( !vdmComplex.getChangedFields().isEmpty() ) {
             return true;

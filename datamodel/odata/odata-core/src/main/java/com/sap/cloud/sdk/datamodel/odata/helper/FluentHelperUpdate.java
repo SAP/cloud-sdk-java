@@ -27,7 +27,6 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.N;
 
 /**
  * Representation of an OData update request as a fluent interface for further configuring the request and
