@@ -12,7 +12,8 @@
 
 ### ✨ New Functionality
 
-- 
+- Added support for updating nested fields in OData V2 complex types via PATCH requests
+  - Introduces the `UpdateStrategy` enum to control updates with delta or full entity payloads.
 
 ### 📈 Improvements
 
