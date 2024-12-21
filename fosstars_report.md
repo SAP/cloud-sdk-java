@@ -1,8 +1,8 @@
-**Rating**: **UNCLEAR**
+**Rating**: **MODERATE**
 
-**Score**: **4.24**, max score value is 10.0
+**Score**: **5.09**, max score value is 10.0
 
-**Confidence**: Low (7.5, max confidence value is 10.0)
+**Confidence**: High (9.65, max confidence value is 10.0)
 
 ## Details
 
@@ -43,7 +43,7 @@ It used the following sub-scores:
         
 1.  **[Security awareness](#security-awareness)**: **3.5** (weight is 0.9)
     
-1.  **[Vulnerability discovery and security testing](#vulnerability-discovery-and-security-testing)**: **0.0** (weight is 0.6)
+1.  **[Vulnerability discovery and security testing](#vulnerability-discovery-and-security-testing)**: **2.0** (weight is 0.6)
     1.  **[Security testing](#security-testing)**: **6.57** (weight is 1.0)
         1.  **[Dependency testing](#dependency-testing)**: **10.0** (weight is 1.0)
             1.  **[Dependabot score](#dependabot-score)**: **10.0** (weight is 1.0)
@@ -71,13 +71,13 @@ It used the following sub-scores:
             
         1.  **[nohttp tool](#nohttp-tool)**: **0.0** (weight is 0.2)
             
-1.  **[Unpatched vulnerabilities](#unpatched-vulnerabilities)**: **unknown** (weight is 0.5)
+1.  **[Unpatched vulnerabilities](#unpatched-vulnerabilities)**: **10.0** (weight is 0.5)
     
 1.  **[Community commitment](#community-commitment)**: **8.0** (weight is 0.5)
     
 1.  **[Project activity](#project-activity)**: **8.0** (weight is 0.5)
     
-1.  **[Project popularity](#project-popularity)**: **0.22** (weight is 0.5)
+1.  **[Project popularity](#project-popularity)**: **0.04** (weight is 0.5)
     
 1.  **[Security reviews](#security-reviews)**: **0.0** (weight is 0.2)
     
@@ -214,7 +214,7 @@ This sub-score is based on 18 features:
 
 ### Vulnerability discovery and security testing
 
-Score: **0.0**, confidence is 5.0 (low), weight is 0.6 (medium)
+Score: **2.0**, confidence is 10.0 (max), weight is 0.6 (medium)
 
 The scores checks how security testing is done and how many vulnerabilities were recently discovered. If testing is good, and there are no recent vulnerabilities, then the score value is max. If there are vulnerabilities, then the score value is high. If testing is bad, and there are no recent vulnerabilities, then the score value is low. If there are vulnerabilities, then the score is min.
 
@@ -257,22 +257,22 @@ This sub-score is based on 1 feature:
 
 
 
-1.  **Info about vulnerabilities in the project:** unknown
+1.  **Info about vulnerabilities in the project:** Not found
 
 
 ### Unpatched vulnerabilities
 
-Score: **unknown**, confidence is 0.0 (min), weight is 0.5 (medium)
+Score: **10.0**, confidence is 10.0 (max), weight is 0.5 (medium)
 
 
 
-
+No unpatched vulnerabilities found which is good
 
 This sub-score is based on 1 feature:
 
 
 
-1.  **Info about vulnerabilities in the project:** unknown
+1.  **Info about vulnerabilities in the project:** Not found
 
 
 ### Community commitment
@@ -310,7 +310,7 @@ This sub-score is based on 2 features:
 
 ### Project popularity
 
-Score: **0.22**, confidence is 10.0 (max), weight is 0.5 (medium)
+Score: **0.04**, confidence is 6.67 (low), weight is 0.5 (medium)
 
 This scoring function is based on number of stars, watchers and dependent projects.
 
@@ -320,7 +320,7 @@ This sub-score is based on 3 features:
 
 
 
-1.  **Number of projects on GitHub that use an open source project:** 278
+1.  **Number of projects on GitHub that use an open source project:** unknown
 1.  **Number of stars for a GitHub repository:** 22
 1.  **Number of watchers for a GitHub repository:** 4
 
