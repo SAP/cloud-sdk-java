@@ -12,7 +12,8 @@
 
 ### ✨ New Functionality
 
-- 
+- Add experimental support for updating nested fields in OData V2 complex types via PATCH requests
+  - Use optional argument `FluentHelperUpdate#modifyingEntity( ModifyPatchStrategy )` to control updates with delta or full complex property payloads.
 
 ### 📈 Improvements
 

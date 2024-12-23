@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+import static com.sap.cloud.sdk.datamodel.odata.helper.ModifyPatchStrategy.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -19,7 +20,6 @@ import java.util.List;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
@@ -211,13 +211,12 @@ class FluentHelperUpdateToRequestTest
     }
 
     @Test
-    @Disabled( " Test is failing as the getChangedFields() method on Complex Type is not working as expected." )
-    void testUpdatePatchComplexProperty()
+    void testUpdatePatchComplexPropertyDelta()
     {
         final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
         final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
 
-        final String expectedSerializedEntity = "{\"ProductCount1\":{\"Quantity\":\"20\"}}";
+        final String expectedSerializedEntity = "{\"ProductCount1\":{\"Quantity\":20}}";
 
         count1.setQuantity(20);
 
@@ -225,7 +224,28 @@ class FluentHelperUpdateToRequestTest
             FluentHelperFactory
                 .withServicePath(ODATA_ENDPOINT_URL)
                 .update(ENTITY_COLLECTION, receipt)
-                .modifyingEntity()
+                .modifyingEntity(RECURSIVE_DELTA)
+                .toRequest();
+
+        assertThat(receiptUpdate).isNotNull();
+        assertThat(receiptUpdate.getSerializedEntity()).isEqualTo(expectedSerializedEntity);
+    }
+
+    @Test
+    void testUpdatePatchComplexPropertyFull()
+    {
+        final ProductCount count1 = ProductCount.builder().productId(123).quantity(10).build();
+        final Receipt receipt = Receipt.builder().id(1001).customerId(9001).productCount1(count1).build();
+
+        final String expectedSerializedEntity = "{\"ProductCount1\":{\"ProductId\":123,\"Quantity\":20}}";
+
+        count1.setQuantity(20);
+
+        final ODataRequestUpdate receiptUpdate =
+            FluentHelperFactory
+                .withServicePath(ODATA_ENDPOINT_URL)
+                .update(ENTITY_COLLECTION, receipt)
+                .modifyingEntity(RECURSIVE_FULL)
                 .toRequest();
 
         assertThat(receiptUpdate).isNotNull();

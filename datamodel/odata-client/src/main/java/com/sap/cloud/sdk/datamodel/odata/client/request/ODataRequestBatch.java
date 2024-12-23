@@ -278,7 +278,19 @@ public class ODataRequestBatch extends ODataRequestGeneric
         {
             final String versionIdentifier = request.getVersionIdentifier();
             request.addVersionIdentifierToHeaderIfPresent(versionIdentifier);
-            final String httpMethod = request.getUpdateStrategy() == UpdateStrategy.MODIFY_WITH_PATCH ? "PATCH" : "PUT";
+
+            final String httpMethod;
+            switch( request.getUpdateStrategy() ) {
+                case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
+                    httpMethod = "PATCH";
+                    break;
+                case REPLACE_WITH_PUT:
+                    httpMethod = "PUT";
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected update strategy: " + request.getUpdateStrategy());
+            }
+
             final BatchItemSingle item =
                 new BatchItemSingle(originalRequest, request, httpMethod, request::getSerializedEntity);
             queries.add(item);
