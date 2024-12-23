@@ -173,8 +173,8 @@ public class ODataRequestUpdate extends ODataRequestGeneric
     {
         final ODataHttpRequest request = ODataHttpRequest.forHttpEntity(this, httpClient, requestHttpEntity);
         addVersionIdentifierToHeaderIfPresent(versionIdentifier);
-        
-        switch (updateStrategy) {
+
+        switch( updateStrategy ) {
             case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
                 return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
             case REPLACE_WITH_PUT:
