@@ -174,12 +174,13 @@ public class ODataRequestUpdate extends ODataRequestGeneric
         final ODataHttpRequest request = ODataHttpRequest.forHttpEntity(this, httpClient, requestHttpEntity);
         addVersionIdentifierToHeaderIfPresent(versionIdentifier);
 
-        if( updateStrategy == UpdateStrategy.MODIFY_WITH_PATCH ) {
-            return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
-        } else if( updateStrategy == UpdateStrategy.REPLACE_WITH_PUT ) {
-            return tryExecuteWithCsrfToken(httpClient, request::requestPut).get();
-        } else {
-            throw new IllegalStateException("Unexpected update Strategy: " + updateStrategy);
+        switch( updateStrategy ) {
+            case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
+                return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
+            case REPLACE_WITH_PUT:
+                return tryExecuteWithCsrfToken(httpClient, request::requestPut).get();
+            default:
+                throw new IllegalStateException("Unexpected update Strategy: " + updateStrategy);
         }
     }
 
