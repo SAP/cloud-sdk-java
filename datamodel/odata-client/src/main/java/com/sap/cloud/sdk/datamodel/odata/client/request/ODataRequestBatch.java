@@ -280,7 +280,7 @@ public class ODataRequestBatch extends ODataRequestGeneric
             request.addVersionIdentifierToHeaderIfPresent(versionIdentifier);
 
             final String httpMethod;
-            switch( request.getUpdateStrategy() ) {
+            switch(request.getUpdateStrategy()) {
                 case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
                     httpMethod = "PATCH";
                     break;
