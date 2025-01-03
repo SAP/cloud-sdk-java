@@ -8,13 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -27,6 +30,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +79,7 @@ class GenerationConfigurationConverter
 
     private static JavaClientCodegen createCodegenConfig()
     {
+        var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
         return new JavaClientCodegen()
         {
             // Custom processor to inject "x-return-nullable" extension
@@ -92,6 +97,40 @@ class GenerationConfigurationConverter
                     op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
+            }
+
+            @SuppressWarnings( { "rawtypes" } )
+            @Override
+            protected
+                void
+                updateModelForComposedSchema( CodegenModel m, Schema schema, Map<String, Schema> allDefinitions )
+            {
+                super.updateModelForComposedSchema(m, schema, allDefinitions);
+                if( m.discriminator != null ) {
+                    return;
+                }
+                boolean useCreators = false;
+                for( Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
+                    Set<String> candidatesSingle = new HashSet<>();
+                    Set<String> candidatesMultiple = new HashSet<>();
+
+                    for( String candidate : candidates ) {
+                        if( candidate.startsWith("List<") ) {
+                            var c1 = candidate.substring(5, candidate.length() - 1);
+                            candidatesMultiple.add(c1);
+                            useCreators = true;
+                        } else {
+                            candidatesSingle.add(candidate);
+                            useCreators |= primitives.contains(candidate);
+                        }
+                    }
+                    if( useCreators ) {
+                        candidates.clear();
+                        var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
+                        m.vendorExtensions.put("x-monads", monads);
+                        m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
+                    }
+                }
             }
         };
     }

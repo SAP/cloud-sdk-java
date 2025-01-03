@@ -3,9 +3,25 @@
  * @deprecated{{/isDeprecated}}
  */{{#isDeprecated}}
 @Deprecated{{/isDeprecated}}
+{{^model.vendorExtensions.x-monads}}
 {{>additionalOneOfTypeAnnotations}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+{{/model.vendorExtensions.x-monads}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();
     {{/discriminator}}
+{{#model.vendorExtensions.x-monads.single}}
+    record Inner{{.}}(@com.fasterxml.jackson.annotation.JsonValue {{.}} value) implements {{classname}} {}
+
+    @com.fasterxml.jackson.annotation.JsonCreator
+    static Inner{{.}} create( {{.}} val) { return new Inner{{.}}(val); }
+
+{{/model.vendorExtensions.x-monads.single}}
+{{#model.vendorExtensions.x-monads.multiple}}
+    record Inner{{.}}s(@com.fasterxml.jackson.annotation.JsonValue List<{{.}}> values) implements {{classname}} {}
+
+    @com.fasterxml.jackson.annotation.JsonCreator
+    static Inner{{.}}s create( List<{{.}}> val) { return new Inner{{.}}s(val); }
+
+{{/model.vendorExtensions.x-monads.multiple}}
 }
