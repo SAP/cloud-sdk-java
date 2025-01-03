@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import test.FantaFlavor;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,6 +45,9 @@ public class AllOf
 {
   @JsonProperty("sodaType")
   private String sodaType;
+
+  @JsonProperty("flavor")
+  private FantaFlavor flavor;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -76,6 +80,35 @@ public class AllOf
    */
   public void setSodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
+  }
+
+  /**
+   * Set the flavor of this {@link AllOf} instance and return the same instance.
+   *
+   * @param flavor  The flavor of this {@link AllOf}
+   * @return The same instance of this {@link AllOf} class
+   */
+  @Nonnull public AllOf flavor( @Nullable final FantaFlavor flavor) {
+    this.flavor = flavor;
+    return this;
+  }
+
+  /**
+   * Get flavor
+   * @return flavor  The flavor of this {@link AllOf} instance.
+   */
+  @Nonnull
+  public FantaFlavor getFlavor() {
+    return flavor;
+  }
+
+  /**
+   * Set the flavor of this {@link AllOf} instance.
+   *
+   * @param flavor  The flavor of this {@link AllOf}
+   */
+  public void setFlavor( @Nullable final FantaFlavor flavor) {
+    this.flavor = flavor;
   }
 
   /**
@@ -125,12 +158,13 @@ public class AllOf
     }
     final AllOf allOf = (AllOf) o;
     return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields) &&
-        Objects.equals(this.sodaType, allOf.sodaType);
+        Objects.equals(this.sodaType, allOf.sodaType) &&
+        Objects.equals(this.flavor, allOf.flavor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sodaType, cloudSdkCustomFields);
+    return Objects.hash(sodaType, flavor, cloudSdkCustomFields);
   }
 
   @Override
@@ -138,6 +172,7 @@ public class AllOf
     final StringBuilder sb = new StringBuilder();
     sb.append("class AllOf {\n");
     sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
+    sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

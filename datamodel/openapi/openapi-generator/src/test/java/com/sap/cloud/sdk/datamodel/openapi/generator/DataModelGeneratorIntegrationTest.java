@@ -87,7 +87,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            8,
+            9,
             Map.of("useOneOfInterfaces", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
