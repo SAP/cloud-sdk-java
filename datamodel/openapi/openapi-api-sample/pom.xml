@@ -127,6 +127,7 @@
 						<useOneOfInterfaces>true</useOneOfInterfaces>
 						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
 					</additionalProperties>
+					<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
 				</configuration>
 			</plugin>
 			<!-- Enable formatter to always run on the generated code -->
