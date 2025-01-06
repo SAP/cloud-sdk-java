@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.odata.sample;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
