@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -19,7 +21,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.gson.annotations.JsonAdapter;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -81,7 +82,7 @@ class ModificationResponseTest
         final HttpResponse response = mock(HttpResponse.class);
         doReturn(responseHeaders).when(response).getAllHeaders();
         doReturn(responseHeaders).when(response).getHeaders("ETag");
-        doReturn(new StringEntity("{\"foo\":\"bar\"}", Charsets.UTF_8)).when(response).getEntity();
+        doReturn(new StringEntity("{\"foo\":\"bar\"}", UTF_8)).when(response).getEntity();
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
@@ -146,7 +147,7 @@ class ModificationResponseTest
         final HttpResponse response = mock(HttpResponse.class);
         doReturn(responseHeaders).when(response).getAllHeaders();
         doReturn(responseHeaders).when(response).getHeaders("ETag");
-        doReturn(new StringEntity("{\"foo\":\"bar\"}", Charsets.UTF_8)).when(response).getEntity();
+        doReturn(new StringEntity("{\"foo\":\"bar\"}", UTF_8)).when(response).getEntity();
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);

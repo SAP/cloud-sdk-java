@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
@@ -21,7 +23,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.entity.StringEntity;
 
-import com.google.common.base.Charsets;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 
@@ -54,7 +55,7 @@ class ODataHttpRequest
         @Nonnull final HttpClient httpClient,
         @Nonnull final String json )
     {
-        final StringEntity requestBody = new StringEntity(json, Charsets.UTF_8);
+        final StringEntity requestBody = new StringEntity(json, UTF_8);
         requestBody.setContentType("application/json");
         return forHttpEntity(requestGeneric, httpClient, requestBody);
     }
@@ -64,7 +65,7 @@ class ODataHttpRequest
         @Nonnull final HttpClient httpClient,
         @Nonnull final String text )
     {
-        return forHttpEntity(requestGeneric, httpClient, new StringEntity(text, Charsets.UTF_8));
+        return forHttpEntity(requestGeneric, httpClient, new StringEntity(text, UTF_8));
     }
 
     static ODataHttpRequest forHttpEntity(
