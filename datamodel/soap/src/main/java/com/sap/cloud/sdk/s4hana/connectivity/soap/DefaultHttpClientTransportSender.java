@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.s4hana.connectivity.soap;
 
 import org.apache.axis2.transport.http.AbstractHTTPSender;
