@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import com.google.common.base.Charsets;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -47,7 +48,7 @@ class MegacliteConnectivityProxyInformationResolverTest
         doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"))
             .when(successResponse)
             .getStatusLine();
-        doReturn(new StringEntity("{ \"proxy\":\"http://some.proxy\", \"proxyAuth\":\"Bearer 1234\"}", Charsets.UTF_8))
+        doReturn(new StringEntity("{ \"proxy\":\"http://some.proxy\", \"proxyAuth\":\"Bearer 1234\"}", UTF_8))
             .when(successResponse)
             .getEntity();
 
