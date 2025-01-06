@@ -4,6 +4,8 @@
 
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
@@ -19,14 +21,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.google.common.base.Charsets.UTF_8;
 import static com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy.REPLACE_WITH_PUT;
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
 
@@ -128,7 +128,7 @@ class ODataQueryPropertyTest
     void getStreamPropertyV2()
     {
         final String payloadV2 = "<xml>This is a large document</xml>";
-        final byte[] payloadBytes = payloadV2.getBytes(StandardCharsets.UTF_8);
+        final byte[] payloadBytes = payloadV2.getBytes(UTF_8);
         stubFor(get(WireMock.anyUrl()).willReturn(ok().withBody(payloadBytes).withHeader(CONTENT_TYPE, XML)));
 
         // user code
@@ -153,7 +153,7 @@ class ODataQueryPropertyTest
 
         // user code
         final String payloadV2 = "<xml>This is a large document</xml>";
-        final ByteArrayInputStream payloadBytes = new ByteArrayInputStream(payloadV2.getBytes(StandardCharsets.UTF_8));
+        final ByteArrayInputStream payloadBytes = new ByteArrayInputStream(payloadV2.getBytes(UTF_8));
         final HttpEntity httpEntity = new InputStreamEntity(payloadBytes, ContentType.create(XML, UTF_8));
 
         final ODataRequestResultGeneric result =
@@ -224,7 +224,7 @@ class ODataQueryPropertyTest
     void getStreamPropertyV4()
     {
         final String payloadV4 = "<xml>This is a large document</xml>";
-        final byte[] payloadBytes = payloadV4.getBytes(StandardCharsets.UTF_8);
+        final byte[] payloadBytes = payloadV4.getBytes(UTF_8);
         stubFor(get(WireMock.anyUrl()).willReturn(ok().withBody(payloadBytes).withHeader(CONTENT_TYPE, XML)));
 
         // user code
@@ -249,7 +249,7 @@ class ODataQueryPropertyTest
 
         // user code
         final String payloadV4 = "<xml>This is a large document</xml>";
-        final ByteArrayInputStream payloadBytes = new ByteArrayInputStream(payloadV4.getBytes(StandardCharsets.UTF_8));
+        final ByteArrayInputStream payloadBytes = new ByteArrayInputStream(payloadV4.getBytes(UTF_8));
         final HttpEntity httpEntity = new InputStreamEntity(payloadBytes, ContentType.create(XML, UTF_8));
 
         final ODataRequestResultGeneric result =
