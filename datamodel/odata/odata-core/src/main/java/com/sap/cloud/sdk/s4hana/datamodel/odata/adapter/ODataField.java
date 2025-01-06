@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.s4hana.datamodel.odata.adapter;
 
 import java.lang.annotation.Documented;
