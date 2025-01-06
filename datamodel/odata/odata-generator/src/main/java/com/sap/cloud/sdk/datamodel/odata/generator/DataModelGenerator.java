@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package com.sap.cloud.sdk.datamodel.odata.generator;
@@ -128,7 +128,7 @@ public class DataModelGenerator implements DataModelGeneratorConfig
      * An SAP copyright header that can be added to generated files.
      */
     public static final String SAP_COPYRIGHT_HEADER =
-        "/*\n * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.\n */\n";
+        "/*\n * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.\n */\n";
 
     private File inputDirectory = new File(DEFAULT_INPUT_DIRECTORY_NAME);
     private File outputDirectory = new File(DEFAULT_OUTPUT_DIRECTORY_NAME);
