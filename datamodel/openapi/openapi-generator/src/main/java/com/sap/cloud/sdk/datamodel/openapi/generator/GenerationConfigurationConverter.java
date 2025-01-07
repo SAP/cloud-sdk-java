@@ -59,7 +59,7 @@ class GenerationConfigurationConverter
         setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = createCodegenConfig();
+        final var config = createCodegenConfig(generationConfiguration);
         config.setOutputDir(generationConfiguration.getOutputDirectory());
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
@@ -73,7 +73,7 @@ class GenerationConfigurationConverter
         return clientOptInput;
     }
 
-    private static JavaClientCodegen createCodegenConfig()
+    private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
     {
         var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
         return new JavaClientCodegen()
@@ -95,18 +95,28 @@ class GenerationConfigurationConverter
                 return super.postProcessOperationsWithModels(ops, allModels);
             }
 
-            @SuppressWarnings( { "rawtypes" } )
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
             @Override
             protected
                 void
                 updateModelForComposedSchema( CodegenModel m, Schema schema, Map<String, Schema> allDefinitions )
             {
                 super.updateModelForComposedSchema(m, schema, allDefinitions);
+
+                final var checkCreators = config.getAdditionalProperties().getOrDefault("useOneOfCreators", "false");
+                if( Boolean.parseBoolean(checkCreators) ) {
+                    useCreatorsForInterfaceSubtypes(m);
+                }
+            }
+
+            private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
+            {
                 if( m.discriminator != null ) {
                     return;
                 }
                 boolean useCreators = false;
                 for( Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
+                    int nonPrimitives = 0;
                     Set<String> candidatesSingle = new HashSet<>();
                     Set<String> candidatesMultiple = new HashSet<>();
 
@@ -118,9 +128,17 @@ class GenerationConfigurationConverter
                         } else {
                             candidatesSingle.add(candidate);
                             useCreators |= primitives.contains(candidate);
+                            if( !primitives.contains(candidate) ) {
+                                nonPrimitives++;
+                            }
                         }
                     }
                     if( useCreators ) {
+                        if( nonPrimitives > 1 ) {
+                            final var msg =
+                                "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
+                            log.warn(msg, m.name);
+                        }
                         candidates.clear();
                         var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
                         m.vendorExtensions.put("x-monads", monads);
