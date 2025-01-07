@@ -125,6 +125,7 @@
 						<pojoBuildMethodName />
 						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
 						<useOneOfInterfaces>true</useOneOfInterfaces>
+						<useOneOfCreators>true</useOneOfCreators>
 						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
 					</additionalProperties>
 					<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>

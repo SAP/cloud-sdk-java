@@ -84,7 +84,7 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             9,
-            Map.of("useOneOfInterfaces", "true")),
+            Map.of("useOneOfInterfaces", "true", "useOneOfCreators", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
             "sodastore.JSON",
