@@ -41,18 +41,45 @@ import javax.annotation.Nullable;
  * FantaFlavor
  */
 public interface FantaFlavor  {
+    /**
+     * Helper class to create a Cola that implements {@link FantaFlavor}.
+     */
     record InnerCola(@com.fasterxml.jackson.annotation.JsonValue Cola value) implements FantaFlavor {}
 
+    /**
+     * Creator to enable deserialization of a Cola.
+     *
+     * @param val the value to use
+     * @return a new instance of {@link InnerCola}.
+     */
     @com.fasterxml.jackson.annotation.JsonCreator
     static InnerCola create( Cola val) { return new InnerCola(val); }
 
+    /**
+     * Helper class to create a String that implements {@link FantaFlavor}.
+     */
     record InnerString(@com.fasterxml.jackson.annotation.JsonValue String value) implements FantaFlavor {}
 
+    /**
+     * Creator to enable deserialization of a String.
+     *
+     * @param val the value to use
+     * @return a new instance of {@link InnerString}.
+     */
     @com.fasterxml.jackson.annotation.JsonCreator
     static InnerString create( String val) { return new InnerString(val); }
 
+    /**
+    * Helper class to create a list of String that implements {@link FantaFlavor}.
+    */
     record InnerStrings(@com.fasterxml.jackson.annotation.JsonValue List<String> values) implements FantaFlavor {}
 
+    /**
+    * Creator to enable deserialization of a list of String.
+    *
+    * @param val the value to use
+    * @return a new instance of {@link InnerStrings}.
+    */
     @com.fasterxml.jackson.annotation.JsonCreator
     static InnerStrings create( List<String> val) { return new InnerStrings(val); }
 
