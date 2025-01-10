@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.STOP_ADDITIONAL_PROPERTIES;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
@@ -11,6 +13,7 @@ import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -23,6 +26,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +59,7 @@ class GenerationConfigurationConverter
         setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = createCodegenConfig();
+        final var config = createCodegenConfig(generationConfiguration);
         config.setOutputDir(generationConfiguration.getOutputDirectory());
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
@@ -69,7 +73,7 @@ class GenerationConfigurationConverter
         return clientOptInput;
     }
 
-    private static JavaClientCodegen createCodegenConfig()
+    private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
     {
         return new JavaClientCodegen()
         {
@@ -88,6 +92,16 @@ class GenerationConfigurationConverter
                     op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
+            }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updateModelForObject( CodegenModel m, Schema schema )
+            {
+                if( STOP_ADDITIONAL_PROPERTIES.isEnabled(config) ) {
+                    schema.setAdditionalProperties(Boolean.FALSE);
+                }
+                super.updateModelForObject(m, schema);
             }
         };
     }
