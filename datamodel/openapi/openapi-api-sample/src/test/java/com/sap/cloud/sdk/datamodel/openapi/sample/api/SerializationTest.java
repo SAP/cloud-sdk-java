@@ -15,6 +15,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.Order;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.SodaWithId;
 
 @WireMockTest
@@ -52,7 +53,7 @@ class SerializationTest
     }
 
     @Test
-    void testJacksonSerialization()
+    void testJacksonSerializeSodaWithId()
         throws JsonProcessingException
     {
         expected = """
@@ -77,6 +78,25 @@ class SerializationTest
                 .packaging(SodaWithId.PackagingEnum.CAN);
 
         assertThat(new ObjectMapper().writeValueAsString(obj)).isEqualToIgnoringWhitespace(expected);
+    }
+
+    @Test
+    void testJacksonSerializeOrder()
+        throws JsonProcessingException
+    {
+        expected = """
+            {
+              "productId": 100,
+              "quantity": 5,
+              "totalPrice": 6.0,
+              "typelessProperty":null,
+              "nullableProperty":null,
+              "shoesize": 44
+            }
+            """;
+        final Order order = Order.create().productId(100L).quantity(5).totalPrice(6.0f);
+        order.setCustomField("shoesize", 44);
+        assertThat(new ObjectMapper().writeValueAsString(order)).isEqualToIgnoringWhitespace(expected);
     }
 
     private void verify( String requestBody )
