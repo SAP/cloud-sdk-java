@@ -77,7 +77,7 @@ class GenerationConfigurationConverter
 
     private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
     {
-        final var PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
+        final var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
         return new JavaClientCodegen()
         {
             // Custom processor to inject "x-return-nullable" extension
@@ -135,8 +135,8 @@ class GenerationConfigurationConverter
                             useCreators = true;
                         } else {
                             candidatesSingle.add(candidate);
-                            useCreators |= PRIMITIVES.contains(candidate);
-                            if( !PRIMITIVES.contains(candidate) ) {
+                            useCreators |= primitives.contains(candidate);
+                            if( !primitives.contains(candidate) ) {
                                 nonPrimitives++;
                             }
                         }
