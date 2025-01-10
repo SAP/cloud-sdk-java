@@ -96,7 +96,7 @@ class GenerationConfigurationConverter
 
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
             @Override
-            protected void updateModelForObject( CodegenModel m, Schema schema )
+            protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
             {
                 if( STOP_ADDITIONAL_PROPERTIES.isEnabled(config) ) {
                     schema.setAdditionalProperties(Boolean.FALSE);
