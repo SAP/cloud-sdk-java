@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 /**
  * OneOfWithDiscriminator
  */
+@Beta
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "sodaType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = Cola.class, name = "Cola"),

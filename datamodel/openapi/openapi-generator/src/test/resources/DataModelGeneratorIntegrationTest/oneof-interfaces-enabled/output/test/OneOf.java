@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 /**
  * OneOf
  */
+@Beta
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Cola.class),
