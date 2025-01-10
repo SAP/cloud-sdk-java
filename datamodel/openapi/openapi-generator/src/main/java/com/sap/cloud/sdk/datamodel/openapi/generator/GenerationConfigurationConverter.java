@@ -123,14 +123,14 @@ class GenerationConfigurationConverter
                     return;
                 }
                 boolean useCreators = false;
-                for( Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
+                for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
                     int nonPrimitives = 0;
-                    Set<String> candidatesSingle = new HashSet<>();
-                    Set<String> candidatesMultiple = new HashSet<>();
+                    final var candidatesSingle = new HashSet<String>();
+                    final var candidatesMultiple = new HashSet<String>();
 
-                    for( String candidate : candidates ) {
+                    for( final String candidate : candidates ) {
                         if( candidate.startsWith("List<") ) {
-                            var c1 = candidate.substring(5, candidate.length() - 1);
+                            final var c1 = candidate.substring(5, candidate.length() - 1);
                             candidatesMultiple.add(c1);
                             useCreators = true;
                         } else {
@@ -148,7 +148,7 @@ class GenerationConfigurationConverter
                             log.warn(msg, m.name);
                         }
                         candidates.clear();
-                        var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
+                        final var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
                         m.vendorExtensions.put("x-monads", monads);
                         m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
                     }
