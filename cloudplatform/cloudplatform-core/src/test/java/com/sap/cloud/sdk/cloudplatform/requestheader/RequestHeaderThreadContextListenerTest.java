@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.cloudplatform.requestheader;
 
 import static com.sap.cloud.sdk.cloudplatform.requestheader.RequestHeaderThreadContextListener.PROPERTY_REQUEST_HEADERS;

@@ -1,7 +1,6 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
 package com.sap.cloud.sdk.datamodel.odata.client.request;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 
@@ -17,7 +16,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -193,7 +191,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
     public String getSerializedEntity()
     {
         return Try
-            .of(() -> EntityUtils.toString(requestHttpEntity, Charsets.UTF_8))
+            .of(() -> EntityUtils.toString(requestHttpEntity, UTF_8))
             .getOrElseThrow(e -> new ODataRequestException(this, "Unable to serialize request payload.", e));
     }
 
