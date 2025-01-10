@@ -14,7 +14,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     /**
      * Helper class to create a {{.}} that implements {@link {{classname}}}.
      */
-    record Inner{{.}}(@com.fasterxml.jackson.annotation.JsonValue {{.}} value) implements {{classname}} {}
+    record Inner{{.}}(@com.fasterxml.jackson.annotation.JsonValue @Nonnull {{.}} value) implements {{classname}} {}
 
     /**
      * Creator to enable deserialization of a {{.}}.
@@ -23,14 +23,15 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      * @return a new instance of {@link Inner{{.}}}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
-    static Inner{{.}} create( {{.}} val) { return new Inner{{.}}(val); }
+    @Nonnull
+    static Inner{{.}} create( @Nonnull final {{.}} val) { return new Inner{{.}}(val); }
 
 {{/model.vendorExtensions.x-monads.single}}
 {{#model.vendorExtensions.x-monads.multiple}}
     /**
     * Helper class to create a list of {{.}} that implements {@link {{classname}}}.
     */
-    record Inner{{.}}s(@com.fasterxml.jackson.annotation.JsonValue List<{{.}}> values) implements {{classname}} {}
+    record Inner{{.}}s(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<{{.}}> values) implements {{classname}} {}
 
     /**
     * Creator to enable deserialization of a list of {{.}}.
@@ -39,7 +40,8 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     * @return a new instance of {@link Inner{{.}}s}.
     */
     @com.fasterxml.jackson.annotation.JsonCreator
-    static Inner{{.}}s create( List<{{.}}> val) { return new Inner{{.}}s(val); }
+    @Nonnull
+    static Inner{{.}}s create( @Nonnull final List<{{.}}> val) { return new Inner{{.}}s(val); }
 
 {{/model.vendorExtensions.x-monads.multiple}}
 }
