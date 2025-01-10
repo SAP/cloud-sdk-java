@@ -1,7 +1,6 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GenerationConfigurationConverter.CustomGeneratorProperties.STOP_ADDITIONAL_PROPERTIES;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GenerationConfigurationConverter.CustomGeneratorProperties.USE_ONE_OF_CREATORS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +31,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,54 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class GenerationConfigurationConverter
 {
-    /**
-     * Optional feature toggles, may be used internally only.
-     */
-    @RequiredArgsConstructor
-    enum CustomGeneratorProperties
-    {
-        /**
-         * Use JsonCreator instead of sub-type deduction for oneOf and anyOf schemas.
-         */
-        USE_ONE_OF_CREATORS("useOneOfCreators", "false"),
-
-        /**
-         * Disable additional properties in generated models. They resolve to model classes extending from HashMap,
-         * effectively disabling serialization. Jackson by default only serializes the map entries and will ignore all
-         * fields from the model class.
-         */
-        STOP_ADDITIONAL_PROPERTIES("stopAdditionalProperties", "false");
-
-        final String key;
-        final String defaultValue;
-
-        /**
-         * Check if the feature is enabled.
-         *
-         * @param config
-         *            The generation configuration.
-         * @return True if the feature is enabled, false otherwise.
-         */
-        public boolean isEnabled( GenerationConfiguration config )
-        {
-            final var value = getValue(config);
-            return !value.isEmpty() && !"false".equalsIgnoreCase(value.trim());
-        }
-
-        /**
-         * Get the value of the feature.
-         *
-         * @param config
-         *            The generation configuration.
-         * @return The value of the feature.
-         */
-        @Nonnull
-        public String getValue( GenerationConfiguration config )
-        {
-            return config.getAdditionalProperties().getOrDefault(key, defaultValue);
-        }
-    }
-
     private static final String IS_RELEASED_PROPERTY_KEY = "isReleased";
     private static final String JAVA_8_PROPERTY_KEY = "java8";
     private static final String DATE_LIBRARY_PROPERTY_KEY = "dateLibrary";
@@ -147,20 +97,12 @@ class GenerationConfigurationConverter
                 return super.postProcessOperationsWithModels(ops, allModels);
             }
 
-            @Override
-            protected void updateModelForObject( CodegenModel m, Schema schema )
-            {
-                if( STOP_ADDITIONAL_PROPERTIES.isEnabled(config) ) {
-                    schema.setAdditionalProperties(Boolean.FALSE);
-                }
-                super.updateModelForObject(m, schema);
-            }
-
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
             @Override
-            protected
-                void
-                updateModelForComposedSchema( CodegenModel m, Schema schema, Map<String, Schema> allDefinitions )
+            protected void updateModelForComposedSchema(
+                @Nonnull final CodegenModel m,
+                @Nonnull final Schema schema,
+                @Nonnull final Map<String, Schema> allDefinitions )
             {
                 super.updateModelForComposedSchema(m, schema, allDefinitions);
 
@@ -169,6 +111,12 @@ class GenerationConfigurationConverter
                 }
             }
 
+            /**
+             * Use JsonCreator for interface sub-types in case there are any primitives.
+             *
+             * @param m
+             *            The model to update.
+             */
             private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
             {
                 if( m.discriminator != null ) {
