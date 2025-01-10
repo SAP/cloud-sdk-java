@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -34,14 +34,15 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * Fanta
  */
-// CHECKSTYLE:OFF
+
+@Beta// CHECKSTYLE:OFF
 public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminatorAndMapping 
 // CHECKSTYLE:ON
 {
