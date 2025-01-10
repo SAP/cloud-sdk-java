@@ -16,7 +16,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -35,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Order
  */
 // CHECKSTYLE:OFF
-public class Order extends HashMap<String, Object>
+public class Order
 // CHECKSTYLE:ON
 {
     @JsonProperty( "productId" )
@@ -62,7 +61,6 @@ public class Order extends HashMap<String, Object>
      */
     protected Order()
     {
-        super();
     }
 
     /**
@@ -306,22 +304,13 @@ public class Order extends HashMap<String, Object>
             && Objects.equals(this.quantity, order.quantity)
             && Objects.equals(this.totalPrice, order.totalPrice)
             && Objects.equals(this.typelessProperty, order.typelessProperty)
-            && Objects.equals(this.nullableProperty, order.nullableProperty)
-            && super.equals(o);
+            && Objects.equals(this.nullableProperty, order.nullableProperty);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects
-            .hash(
-                productId,
-                quantity,
-                totalPrice,
-                typelessProperty,
-                nullableProperty,
-                cloudSdkCustomFields,
-                super.hashCode());
+        return Objects.hash(productId, quantity, totalPrice, typelessProperty, nullableProperty, cloudSdkCustomFields);
     }
 
     @Override
@@ -330,7 +319,6 @@ public class Order extends HashMap<String, Object>
     {
         final StringBuilder sb = new StringBuilder();
         sb.append("class Order {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("    productId: ").append(toIndentedString(productId)).append("\n");
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("    totalPrice: ").append(toIndentedString(totalPrice)).append("\n");
