@@ -16,6 +16,8 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
+import javax.annotation.Nonnull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -27,7 +29,7 @@ public interface FantaFlavor
     /**
      * Helper class to create a Integer that implements {@link FantaFlavor}.
      */
-    record InnerInteger(@com.fasterxml.jackson.annotation.JsonValue Integer value) implements FantaFlavor {}
+    record InnerInteger(@com.fasterxml.jackson.annotation.JsonValue @Nonnull Integer value) implements FantaFlavor {}
 
     /**
      * Creator to enable deserialization of a Integer.
@@ -37,7 +39,8 @@ public interface FantaFlavor
      * @return a new instance of {@link InnerInteger}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
-    static InnerInteger create( Integer val )
+    @Nonnull
+    static InnerInteger create( @Nonnull final Integer val )
     {
         return new InnerInteger(val);
     }
@@ -45,7 +48,7 @@ public interface FantaFlavor
     /**
      * Helper class to create a FantaFlavorOneOf that implements {@link FantaFlavor}.
      */
-    record InnerFantaFlavorOneOf(@com.fasterxml.jackson.annotation.JsonValue FantaFlavorOneOf value) implements FantaFlavor {}
+    record InnerFantaFlavorOneOf(@com.fasterxml.jackson.annotation.JsonValue @Nonnull FantaFlavorOneOf value) implements FantaFlavor {}
 
     /**
      * Creator to enable deserialization of a FantaFlavorOneOf.
@@ -55,7 +58,8 @@ public interface FantaFlavor
      * @return a new instance of {@link InnerFantaFlavorOneOf}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
-    static InnerFantaFlavorOneOf create( FantaFlavorOneOf val )
+    @Nonnull
+    static InnerFantaFlavorOneOf create( @Nonnull final FantaFlavorOneOf val )
     {
         return new InnerFantaFlavorOneOf(val);
     }
@@ -63,7 +67,7 @@ public interface FantaFlavor
     /**
      * Helper class to create a String that implements {@link FantaFlavor}.
      */
-    record InnerString(@com.fasterxml.jackson.annotation.JsonValue String value) implements FantaFlavor {}
+    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements FantaFlavor {}
 
     /**
      * Creator to enable deserialization of a String.
@@ -73,7 +77,8 @@ public interface FantaFlavor
      * @return a new instance of {@link InnerString}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
-    static InnerString create( String val )
+    @Nonnull
+    static InnerString create( @Nonnull final String val )
     {
         return new InnerString(val);
     }
