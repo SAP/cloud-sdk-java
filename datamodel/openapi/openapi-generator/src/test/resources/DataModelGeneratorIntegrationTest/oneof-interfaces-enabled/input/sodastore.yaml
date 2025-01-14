@@ -56,3 +56,10 @@ components:
       properties:
         sodaType:
           type: string
+        flavor:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/Cola'
+            - type: array
+              items:
+                type: string

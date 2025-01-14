@@ -18,6 +18,8 @@ import com.sap.cloud.sdk.datamodel.openapi.sample.model.AllOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AnyOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Cola;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Fanta;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavor;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavorOneOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminator;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminatorAndMapping;
@@ -27,7 +29,12 @@ class OneOfDeserializationTest
     private static final ObjectMapper objectMapper = newDefaultObjectMapper();
 
     private static final Cola COLA_OBJECT = Cola.create().caffeine(true).sodaType("Cola");
-    private static final Fanta FANTA_OBJECT = Fanta.create().color("orange").sodaType("Fanta");
+    private static final Fanta FANTA_OBJECT =
+        Fanta
+            .create()
+            .color("orange")
+            .sodaType("Fanta")
+            .flavor(new FantaFlavor.InnerFantaFlavorOneOf(FantaFlavorOneOf.create().intensity(3).nuance("wood")));
     private static final String COLA_JSON = """
         {
           "sodaType": "Cola",
@@ -36,7 +43,8 @@ class OneOfDeserializationTest
     private static final String FANTA_JSON = """
         {
           "sodaType": "Fanta",
-          "color": "orange"
+          "color": "orange",
+          "flavor": {"intensity":3,"nuance":"wood"}
         }""";
     private static final String UNKNOWN_JSON = """
         {
