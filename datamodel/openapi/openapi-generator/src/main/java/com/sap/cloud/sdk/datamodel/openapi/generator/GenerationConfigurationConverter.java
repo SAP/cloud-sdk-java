@@ -95,10 +95,10 @@ class GenerationConfigurationConverter
     private static void setGlobalSettings( @Nonnull final GenerationConfiguration configuration )
     {
         if( configuration.isGenerateApis() ) {
-            GlobalSettings.setProperty(CodegenConstants.APIS, "");
+            GlobalSettings.setProperty(CodegenConstants.APIS, getAllowedIds(configuration, "apisToGenerate"));
         }
         if( configuration.isGenerateModels() ) {
-            GlobalSettings.setProperty(CodegenConstants.MODELS, "");
+            GlobalSettings.setProperty(CodegenConstants.MODELS, getAllowedIds(configuration, "modelsToGenerate"));
         }
         if( configuration.isDebugModels() ) {
             GlobalSettings.setProperty("debugModels", "true");
@@ -109,6 +109,15 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.API_DOCS, Boolean.FALSE.toString());
         GlobalSettings.clearProperty(CodegenConstants.SUPPORTING_FILES);
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
+    }
+
+    private static String getAllowedIds( @Nonnull final GenerationConfiguration config, @Nonnull final String property )
+    {
+        final var allowIds = config.getAdditionalProperties().get(property);
+        if( allowIds == null || allowIds.isBlank() ) {
+            return "";
+        }
+        return String.join(",", allowIds.trim().split("\\s+"));
     }
 
     private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
