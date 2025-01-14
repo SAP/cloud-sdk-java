@@ -36,13 +36,14 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * OneOfWithDiscriminator
  */
+@Beta
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "sodaType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = Cola.class, name = "Cola"),

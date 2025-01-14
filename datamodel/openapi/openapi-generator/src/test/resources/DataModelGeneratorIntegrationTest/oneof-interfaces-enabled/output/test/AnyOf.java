@@ -33,14 +33,15 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * AnyOf
  */
-// CHECKSTYLE:OFF
+
+@Beta// CHECKSTYLE:OFF
 public class AnyOf 
 // CHECKSTYLE:ON
 {
