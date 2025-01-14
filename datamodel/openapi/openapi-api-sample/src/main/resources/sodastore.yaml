@@ -60,6 +60,7 @@ components:
               example: 123
     Order:
       type: object
+      additionalProperties: true
       required:
         - productId
         - quantity
