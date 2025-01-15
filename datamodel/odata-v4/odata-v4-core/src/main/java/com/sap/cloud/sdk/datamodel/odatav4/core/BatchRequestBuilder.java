@@ -33,7 +33,9 @@ import lombok.Getter;
  * Representation of an OData Batch request as a fluent interface for combining multiple data reading and modifying
  * operations in one HTTP request.
  */
-public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuilder, BatchResponse> implements ModificationRequestBuilder<BatchResponse>
+public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuilder, BatchResponse>
+    implements
+    ModificationRequestBuilder<BatchResponse>
 {
     private final ODataRequestBatch delegate;
 

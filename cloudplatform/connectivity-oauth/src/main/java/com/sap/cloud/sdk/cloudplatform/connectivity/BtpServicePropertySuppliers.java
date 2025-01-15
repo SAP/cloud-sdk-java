@@ -63,7 +63,6 @@ class BtpServicePropertySuppliers
                     .withUrlKey(BusinessRulesOptions.EXECUTION_API, "rule_runtime_url")
                     .factory());
 
-
     static final OAuth2PropertySupplierResolver BUSINESS_LOGGING =
         OAuth2PropertySupplierResolver
             .forServiceIdentifier(
