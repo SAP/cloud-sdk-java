@@ -34,6 +34,8 @@ import lombok.Getter;
  * operations in one HTTP request.
  */
 public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuilder, BatchResponse>
+    implements
+    ModificationRequestBuilder<BatchResponse>
 {
     private final ODataRequestBatch delegate;
 
@@ -125,12 +127,7 @@ public class BatchRequestBuilder extends AbstractRequestBuilder<BatchRequestBuil
         return this;
     }
 
-    /**
-     * Deactivates the CSRF token retrieval for this OData request. This is useful if the server does not support or
-     * require CSRF tokens as part of the request.
-     *
-     * @return The same builder
-     */
+    @Override
     @Nonnull
     public BatchRequestBuilder withoutCsrfToken()
     {
