@@ -20,15 +20,15 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * OneOfWithDiscriminatorAndMapping
+ * OneOfWithEnumDiscriminator
  */
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "sodaType", visible = true )
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "disc", visible = true )
 @JsonSubTypes( {
-    @JsonSubTypes.Type( value = Cola.class, name = "cool_cola" ),
-    @JsonSubTypes.Type( value = Fanta.class, name = "fancy_fanta" ),
-    @JsonSubTypes.Type( value = Cola.class, name = "Cola" ),
-    @JsonSubTypes.Type( value = Fanta.class, name = "Fanta" ), } )
+    @JsonSubTypes.Type( value = Bar.class, name = "disc_bar" ),
+    @JsonSubTypes.Type( value = Foo.class, name = "disc_foo" ),
+    @JsonSubTypes.Type( value = Bar.class, name = "Bar" ),
+    @JsonSubTypes.Type( value = Foo.class, name = "Foo" ), } )
 
-public interface OneOfWithDiscriminatorAndMapping
+public interface OneOfWithEnumDiscriminator
 {
 }
