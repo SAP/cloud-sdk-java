@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.sap.cloud.sdk.services.apiclassvendorextension.model.Internal;
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -59,6 +60,9 @@ public class UpdateSoda
 
   @JsonProperty("price")
   private Float price;
+
+  @JsonProperty("internal")
+  private Internal internal;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -239,6 +243,35 @@ public class UpdateSoda
   }
 
   /**
+   * Set the internal of this {@link UpdateSoda} instance and return the same instance.
+   *
+   * @param internal  The internal of this {@link UpdateSoda}
+   * @return The same instance of this {@link UpdateSoda} class
+   */
+  @Nonnull  UpdateSoda internal( @Nullable final Internal internal) {
+    this.internal = internal;
+    return this;
+  }
+
+  /**
+   * Get internal
+   * @return internal  The internal of this {@link UpdateSoda} instance.
+   */
+  @Nonnull
+   Internal getInternal() {
+    return internal;
+  }
+
+  /**
+   * Set the internal of this {@link UpdateSoda} instance.
+   *
+   * @param internal  The internal of this {@link UpdateSoda}
+   */
+   void setInternal( @Nullable final Internal internal) {
+    this.internal = internal;
+  }
+
+  /**
    * Get the names of the unrecognizable properties of the {@link UpdateSoda}.
    * @return The set of properties names
    */
@@ -290,12 +323,13 @@ public class UpdateSoda
         Objects.equals(this.since, updateSoda.since) &&
         Objects.equals(this.brand, updateSoda.brand) &&
         Objects.equals(this.flavor, updateSoda.flavor) &&
-        Objects.equals(this.price, updateSoda.price);
+        Objects.equals(this.price, updateSoda.price) &&
+        Objects.equals(this.internal, updateSoda.internal);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, zero, since, brand, flavor, price, cloudSdkCustomFields);
+    return Objects.hash(name, zero, since, brand, flavor, price, internal, cloudSdkCustomFields);
   }
 
   @Override
@@ -308,6 +342,7 @@ public class UpdateSoda
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
+    sb.append("    internal: ").append(toIndentedString(internal)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

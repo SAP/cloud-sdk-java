@@ -19,7 +19,7 @@
 {{/jackson}}
 {{>additionalModelTypeAnnotations}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{>xmlAnnotation}}{{^isReleased}}
 @Beta{{/isReleased}}// CHECKSTYLE:OFF
-public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtensions.x-implements}}{{#-first}}implements {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{#-last}} {{/-last}}{{/vendorExtensions.x-implements}}
+{{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtensions.x-implements}}{{#-first}}implements {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{#-last}} {{/-last}}{{/vendorExtensions.x-implements}}
 // CHECKSTYLE:ON
 {
 {{#serializableModel}}
@@ -116,7 +116,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    {{/maximum}}
    * @return The same instance of this {@link {{classname}}} class
    */
-  @Nonnull public {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
+  @Nonnull {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} {{classname}} {{name}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
     return this;
   }
@@ -126,7 +126,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    * @param {{name}}Item The {{nameInCamelCase}} that should be added
    * @return The same instance of type {@link {{classname}}}
    */
-  @Nonnull public {{classname}} add{{nameInPascalCase}}Item( @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
+  @Nonnull {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} {{classname}} add{{nameInPascalCase}}Item( @Nonnull final {{{items.datatypeWithEnum}}} {{name}}Item) {
     {{#vendorExtensions.x-is-jackson-optional-nullable}}
     if (this.{{name}} == null || !this.{{name}}.isPresent()) {
       this.{{name}} = JsonNullable.<{{{datatypeWithEnum}}}>of({{{defaultValue}}}{{^defaultValue}}new {{#uniqueItems}}LinkedHashSet{{/uniqueItems}}{{^uniqueItems}}ArrayList{{/uniqueItems}}<>(){{/defaultValue}});
@@ -155,7 +155,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    * @param {{name}}Item The {{nameInCamelCase}} that should be added under the given key
    * @return The same instance of type {@link {{classname}}}
    */
-  @Nonnull public {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
+  @Nonnull {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} {{classname}} put{{nameInCamelCase}}Item( @Nonnull final String key, {{#items.isNullable}}@Nullable{{/items.isNullable}}{{^items.isNullable}}@Nonnull{{/items.isNullable}} final {{{items.datatypeWithEnum}}} {{name}}Item) {
     {{#vendorExtensions.x-is-jackson-optional-nullable}}
     if (this.{{name}} == null || !this.{{name}}.isPresent()) {
       this.{{name}} = JsonNullable.<{{{datatypeWithEnum}}}>of({{{defaultValue}}}{{^defaultValue}}new HashMap<>(){{/defaultValue}});
@@ -222,7 +222,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
 {{#vendorExtensions.x-extra-annotation}}
   {{{vendorExtensions.x-extra-annotation}}}
 {{/vendorExtensions.x-extra-annotation}}
-  public {{{datatypeWithEnum}}} {{getter}}() {
+  {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} {{{datatypeWithEnum}}} {{getter}}() {
     return {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
   }
   {{^isReadOnly}}
@@ -238,7 +238,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    * Maximum: {{maximum}}
    {{/maximum}}
    */
-  public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
+  {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {
     this.{{name}} = {{name}};
   }
   {{/isReadOnly}}

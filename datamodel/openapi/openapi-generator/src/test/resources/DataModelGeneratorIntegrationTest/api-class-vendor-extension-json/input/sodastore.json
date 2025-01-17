@@ -227,6 +227,19 @@
           "price": {
             "type": "number",
             "format": "float"
+          },
+          "internal": {
+            "$ref": "#/components/schemas/Internal",
+            "x-sap-cloud-sdk-internal": true
+          }
+        }
+      },
+      "Internal": {
+        "type": "object",
+        "x-sap-cloud-sdk-internal": true,
+        "properties": {
+          "secret": {
+            "type": "string"
           }
         }
       }

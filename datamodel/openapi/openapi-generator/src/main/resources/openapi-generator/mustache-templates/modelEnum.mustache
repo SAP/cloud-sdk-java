@@ -23,7 +23,7 @@ import java.net.URI;
 @JsonbTypeSerializer({{datatypeWithEnum}}.Serializer.class)
 @JsonbTypeDeserializer({{datatypeWithEnum}}.Deserializer.class)
 {{/jsonb}}
-{{>additionalEnumTypeAnnotations}}public enum {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}} {
+{{>additionalEnumTypeAnnotations}}{{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} enum {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}} {
   {{#allowableValues}}{{#enumVars}}
     {{#enumDescription}}
   /**

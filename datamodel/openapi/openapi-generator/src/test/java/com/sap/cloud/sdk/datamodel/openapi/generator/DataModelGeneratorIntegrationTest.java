@@ -180,9 +180,9 @@ class DataModelGeneratorIntegrationTest
     }
 
     // Add these annotations to regenerate all sources
-    // @ParameterizedTest
+    @ParameterizedTest
     // @EnumSource( TestCase.class ) // use this to regenerate all...
-    // @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
+    @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_JSON" } ) // ...and this one to only generate specific ones
     void generateDataModelForComparison( final TestCase testCase )
     {
         final Path inputDirectory = getInputDirectory(testCase);
