@@ -17,7 +17,7 @@
 
 ### 📈 Improvements
 
-- Improved the OData V4 class `BatchRequestBuilder` to now also implement the `ModificationRequestBuilder` interface. 
+- Improve the OData V4 class `BatchRequestBuilder` to now also implement the `ModificationRequestBuilder` interface. 
 
 ### 🐛 Fixed Issues
 
