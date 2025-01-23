@@ -53,5 +53,6 @@ import javax.annotation.Nullable;
 })
 
 public interface OneOfWithDiscriminatorAndMapping  {
+    Object getSodaType();
 }
 

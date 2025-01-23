@@ -6,4 +6,7 @@
 @Beta{{/isReleased}}
 {{>additionalOneOfTypeAnnotations}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
+{{#discriminator}}
+    Object {{propertyGetter}}();
+{{/discriminator}}
 }
