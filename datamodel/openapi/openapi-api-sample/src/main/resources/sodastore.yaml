@@ -107,6 +107,33 @@ components:
         - $ref: '#/components/schemas/Fanta'
       discriminator:
         propertyName: sodaType
+    OneOfWithEnumDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/Foo'
+        - $ref: '#/components/schemas/Bar'
+      discriminator:
+        propertyName: disc
+        mapping:
+          disc_foo: '#/components/schemas/Foo'
+          disc_bar: '#/components/schemas/Bar'
+    Foo:
+      type: object
+      properties:
+        foo:
+          type: string
+        disc:
+          type: string
+          enum:
+            - disc_foo
+    Bar:
+      type: object
+      properties:
+        bar:
+          type: string
+        disc:
+          type: string
+          enum:
+            - disc_bar
     OneOf:
       oneOf:
         - $ref: '#/components/schemas/Cola'
@@ -140,7 +167,7 @@ paths:
       tags:
         - Sodas
       security:
-        - apiKeyAuth: []
+        - apiKeyAuth: [ ]
       responses:
         '200':
           description: A list of soda products
@@ -155,7 +182,7 @@ paths:
       tags:
         - Sodas
       security:
-        - apiKeyAuth: []
+        - apiKeyAuth: [ ]
       requestBody:
         description: The updated soda product
         required: true
@@ -180,7 +207,7 @@ paths:
       tags:
         - Sodas
       security:
-        - apiKeyAuth: []
+        - apiKeyAuth: [ ]
       parameters:
         - name: id
           in: path
@@ -204,7 +231,7 @@ paths:
       tags:
         - Orders
       security:
-        - apiKeyAuth: []
+        - apiKeyAuth: [ ]
       requestBody:
         description: The order details
         required: true
@@ -220,5 +247,5 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
 security:
-  - apiKeyAuth: []
-  - bearerAuth: []
+  - apiKeyAuth: [ ]
+  - bearerAuth: [ ]
