@@ -7,6 +7,6 @@
 {{>additionalOneOfTypeAnnotations}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 {{^vendorExtensions.x-sap-cloud-sdk-internal}}public{{/vendorExtensions.x-sap-cloud-sdk-internal}} interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
-    {{propertyType}} {{propertyGetter}}();
+    Object {{propertyGetter}}();
     {{/discriminator}}
 }

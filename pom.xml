@@ -94,10 +94,10 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.1</spring.version>
+		<spring.version>6.2.2</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.16</slf4j.version>
-		<assertj-core.version>3.27.2</assertj-core.version>
+		<assertj-core.version>3.27.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.15.2</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
@@ -108,19 +108,19 @@
 		<maven-plugin.version>3.9.9</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
-		<caffeine.version>3.1.8</caffeine.version>
-		<openapi-generator.version>7.10.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.27</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.24</io-swagger-parser-v3.version>
+		<caffeine.version>3.2.0</caffeine.version>
+		<openapi-generator.version>7.11.0</openapi-generator.version>
+		<io-swagger-core-v3.version>2.2.28</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.25</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.79</bouncycastle.version>
+		<bouncycastle.version>1.80</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.10.0</wiremock.version>
-		<checkstyle.version>10.21.1</checkstyle.version>
-		<byte-buddy.version>1.15.11</byte-buddy.version>
+		<checkstyle.version>10.21.2</checkstyle.version>
+		<byte-buddy.version>1.16.1</byte-buddy.version>
 		<snakeyaml.version>2.3</snakeyaml.version>
 		<commons-codec.version>1.17.2</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
