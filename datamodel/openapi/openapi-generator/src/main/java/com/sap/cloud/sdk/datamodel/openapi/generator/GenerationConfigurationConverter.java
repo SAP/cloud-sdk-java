@@ -1,7 +1,5 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.STOP_ADDITIONAL_PROPERTIES;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
@@ -98,9 +96,9 @@ class GenerationConfigurationConverter
             @Override
             protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
             {
-                if( STOP_ADDITIONAL_PROPERTIES.isEnabled(config) ) {
-                    schema.setAdditionalProperties(Boolean.FALSE);
-                }
+                // disable additional attributes to prevent model classes from extending "HashMap"
+                // SAP Cloud SDK offers custom field APIs to handle additional attributes already
+                schema.setAdditionalProperties(Boolean.FALSE);
                 super.updateModelForObject(m, schema);
             }
         };
