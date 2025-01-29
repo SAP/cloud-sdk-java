@@ -16,13 +16,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AllOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AnyOf;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.Bar;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Cola;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Fanta;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavor;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavorOneOf;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.Foo;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminator;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminatorAndMapping;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithEnumDiscriminator;
 
 class OneOfDeserializationTest
 {
@@ -174,6 +177,31 @@ class OneOfDeserializationTest
         var actual = objectMapper.valueToTree(expected);
 
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void testDeserializationWithEnumDiscriminator()
+        throws JsonProcessingException
+    {
+        var json = """
+            {
+              "foo": "asdf",
+              "disc": "disc_foo"
+            }""";
+        assertThat(objectMapper.readValue(json, OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(Foo.class)
+            .isEqualTo(Foo.create().foo("asdf").disc(Foo.DiscEnum.DISC_FOO));
+        json = """
+            {
+              "bar": "asdf",
+              "disc": "disc_bar"
+            }""";
+        assertThat(objectMapper.readValue(json, OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(Bar.class)
+            .isEqualTo(Bar.create().bar("asdf").disc(Bar.DiscEnum.DISC_BAR));
+
+        assertThatThrownBy(() -> objectMapper.readValue("{ \"type\": \"unknown\" }", OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(JsonProcessingException.class);
     }
 
     /**
