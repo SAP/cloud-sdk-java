@@ -21,4 +21,5 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix non-compilable code using OpenAPI generator with schema definitions having `additionalProperties: true`.
+  Previously they would result in model classes extending `HashMap`, which disabled proper deserialization and serialization.

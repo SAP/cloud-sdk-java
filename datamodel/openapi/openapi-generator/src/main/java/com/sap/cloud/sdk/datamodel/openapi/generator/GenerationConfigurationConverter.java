@@ -154,6 +154,16 @@ class GenerationConfigurationConverter
                     }
                 }
             }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
+            {
+                // Disable additional attributes to prevent model classes from extending "HashMap"
+                // SAP Cloud SDK offers custom field APIs to handle additional attributes already
+                schema.setAdditionalProperties(Boolean.FALSE);
+                super.updateModelForObject(m, schema);
+            }
         };
     }
 
