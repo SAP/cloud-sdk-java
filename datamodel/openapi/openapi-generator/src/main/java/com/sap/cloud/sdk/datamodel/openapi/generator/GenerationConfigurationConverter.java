@@ -57,7 +57,7 @@ class GenerationConfigurationConverter
         setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = createCodegenConfig(generationConfiguration);
+        final var config = createCodegenConfig();
         config.setOutputDir(generationConfiguration.getOutputDirectory());
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
@@ -71,7 +71,7 @@ class GenerationConfigurationConverter
         return clientOptInput;
     }
 
-    private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
+    private static JavaClientCodegen createCodegenConfig()
     {
         return new JavaClientCodegen()
         {
@@ -96,7 +96,7 @@ class GenerationConfigurationConverter
             @Override
             protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
             {
-                // disable additional attributes to prevent model classes from extending "HashMap"
+                // Disable additional attributes to prevent model classes from extending "HashMap"
                 // SAP Cloud SDK offers custom field APIs to handle additional attributes already
                 schema.setAdditionalProperties(Boolean.FALSE);
                 super.updateModelForObject(m, schema);
