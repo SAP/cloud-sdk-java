@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.actionsandfunctions;
@@ -72,25 +72,25 @@ public class NewComplexResult
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Foo", getFoo());
-        values.put("Bar", getBar());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Foo", getFoo());
+        cloudSdkValues.put("Bar", getBar());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Foo")) {
-                final Object value = values.remove("Foo");
+            if (cloudSdkValues.containsKey("Foo")) {
+                final Object value = cloudSdkValues.remove("Foo");
                 if ((value == null)||(!value.equals(getFoo()))) {
                     setFoo(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("Bar")) {
-                final Object value = values.remove("Bar");
+            if (cloudSdkValues.containsKey("Bar")) {
+                final Object value = cloudSdkValues.remove("Bar");
                 if ((value == null)||(!value.equals(getBar()))) {
                     setBar(((java.lang.String) value));
                 }
@@ -102,7 +102,7 @@ public class NewComplexResult
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -209,7 +209,7 @@ public class TestEntityLvl2MultiLink
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("KeyProperty", getKeyProperty());
         return result;
     }
@@ -217,46 +217,46 @@ public class TestEntityLvl2MultiLink
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("KeyProperty", getKeyProperty());
-        values.put("StringProperty", getStringProperty());
-        values.put("BooleanProperty", getBooleanProperty());
-        values.put("GuidProperty", getGuidProperty());
-        values.put("Int16Property", getInt16Property());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyProperty", getKeyProperty());
+        cloudSdkValues.put("StringProperty", getStringProperty());
+        cloudSdkValues.put("BooleanProperty", getBooleanProperty());
+        cloudSdkValues.put("GuidProperty", getGuidProperty());
+        cloudSdkValues.put("Int16Property", getInt16Property());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyProperty")) {
-                final Object value = values.remove("KeyProperty");
+            if (cloudSdkValues.containsKey("KeyProperty")) {
+                final Object value = cloudSdkValues.remove("KeyProperty");
                 if ((value == null)||(!value.equals(getKeyProperty()))) {
                     setKeyProperty(((String) value));
                 }
             }
-            if (values.containsKey("StringProperty")) {
-                final Object value = values.remove("StringProperty");
+            if (cloudSdkValues.containsKey("StringProperty")) {
+                final Object value = cloudSdkValues.remove("StringProperty");
                 if ((value == null)||(!value.equals(getStringProperty()))) {
                     setStringProperty(((String) value));
                 }
             }
-            if (values.containsKey("BooleanProperty")) {
-                final Object value = values.remove("BooleanProperty");
+            if (cloudSdkValues.containsKey("BooleanProperty")) {
+                final Object value = cloudSdkValues.remove("BooleanProperty");
                 if ((value == null)||(!value.equals(getBooleanProperty()))) {
                     setBooleanProperty(((Boolean) value));
                 }
             }
-            if (values.containsKey("GuidProperty")) {
-                final Object value = values.remove("GuidProperty");
+            if (cloudSdkValues.containsKey("GuidProperty")) {
+                final Object value = cloudSdkValues.remove("GuidProperty");
                 if ((value == null)||(!value.equals(getGuidProperty()))) {
                     setGuidProperty(((UUID) value));
                 }
             }
-            if (values.containsKey("Int16Property")) {
-                final Object value = values.remove("Int16Property");
+            if (cloudSdkValues.containsKey("Int16Property")) {
+                final Object value = cloudSdkValues.remove("Int16Property");
                 if ((value == null)||(!value.equals(getInt16Property()))) {
                     setInt16Property(((Short) value));
                 }
@@ -268,7 +268,7 @@ public class TestEntityLvl2MultiLink
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

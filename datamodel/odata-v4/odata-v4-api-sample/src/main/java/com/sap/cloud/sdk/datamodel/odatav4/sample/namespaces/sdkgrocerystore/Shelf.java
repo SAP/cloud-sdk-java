@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package com.sap.cloud.sdk.datamodel.odatav4.sample.namespaces.sdkgrocerystore;
@@ -177,26 +177,26 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("FloorPlanId", getFloorPlanId());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("FloorPlanId", getFloorPlanId());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("FloorPlanId") ) {
-                final Object value = values.remove("FloorPlanId");
+            if( cloudSdkValues.containsKey("FloorPlanId") ) {
+                final Object value = cloudSdkValues.remove("FloorPlanId");
                 if( (value == null) || (!value.equals(getFloorPlanId())) ) {
                     setFloorPlanId(((Integer) value));
                 }
@@ -207,27 +207,27 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
         }
         // navigation properties
         {
-            if( (values).containsKey("FloorPlan") ) {
-                final Object value = (values).remove("FloorPlan");
-                if( value instanceof Map ) {
+            if( (cloudSdkValues).containsKey("FloorPlan") ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("FloorPlan");
+                if( cloudSdkValue instanceof Map ) {
                     if( toFloorPlan == null ) {
                         toFloorPlan = new FloorPlan();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
                     toFloorPlan.fromMap(inputMap);
                 }
             }
-            if( (values).containsKey("Products") ) {
-                final Object value = (values).remove("Products");
-                if( value instanceof Iterable ) {
+            if( (cloudSdkValues).containsKey("Products") ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Products");
+                if( cloudSdkValue instanceof Iterable ) {
                     if( toProducts == null ) {
                         toProducts = Lists.newArrayList();
                     } else {
                         toProducts = Lists.newArrayList(toProducts);
                     }
                     int i = 0;
-                    for( Object item : ((Iterable<?>) value) ) {
+                    for( Object item : ((Iterable<?>) cloudSdkValue) ) {
                         if( !(item instanceof Map) ) {
                             continue;
                         }
@@ -246,7 +246,7 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -259,14 +259,14 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
     @Override
     protected Map<String, Object> toMapOfNavigationProperties()
     {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if( toFloorPlan != null ) {
-            (values).put("FloorPlan", toFloorPlan);
+            (cloudSdkValues).put("FloorPlan", toFloorPlan);
         }
         if( toProducts != null ) {
-            (values).put("Products", toProducts);
+            (cloudSdkValues).put("Products", toProducts);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**
@@ -289,12 +289,12 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
     /**
      * Overwrites the associated <b>FloorPlan</b> entity for the loaded navigation property <b>FloorPlan</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>FloorPlan</b> entity.
      */
-    public void setFloorPlan( final FloorPlan value )
+    public void setFloorPlan( final FloorPlan cloudSdkValue )
     {
-        toFloorPlan = value;
+        toFloorPlan = cloudSdkValue;
     }
 
     /**
@@ -324,16 +324,16 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
      * first time and it has not yet been loaded, an OData query will be run in order to load the missing information
      * and its result will get cached for future invocations.
      *
-     * @param value
+     * @param cloudSdkValue
      *            List of <b>Product</b> entities.
      */
-    public void setProducts( @Nonnull final List<Product> value )
+    public void setProducts( @Nonnull final List<Product> cloudSdkValue )
     {
         if( toProducts == null ) {
             toProducts = Lists.newArrayList();
         }
         toProducts.clear();
-        toProducts.addAll(value);
+        toProducts.addAll(cloudSdkValue);
     }
 
     /**
@@ -390,42 +390,42 @@ public class Shelf extends VdmEntity<Shelf> implements VdmEntitySet
         private FloorPlan toFloorPlan;
         private List<Product> toProducts = Lists.newArrayList();
 
-        private Shelf.ShelfBuilder toFloorPlan( final FloorPlan value )
+        private Shelf.ShelfBuilder toFloorPlan( final FloorPlan cloudSdkValue )
         {
-            toFloorPlan = value;
+            toFloorPlan = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>FloorPlan</b> for <b>Shelf</b> to single <b>FloorPlan</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The FloorPlan to build this Shelf with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Shelf.ShelfBuilder floorPlan( final FloorPlan value )
+        public Shelf.ShelfBuilder floorPlan( final FloorPlan cloudSdkValue )
         {
-            return toFloorPlan(value);
+            return toFloorPlan(cloudSdkValue);
         }
 
-        private Shelf.ShelfBuilder toProducts( final List<Product> value )
+        private Shelf.ShelfBuilder toProducts( final List<Product> cloudSdkValue )
         {
-            toProducts.addAll(value);
+            toProducts.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>Products</b> for <b>Shelf</b> to multiple <b>Product</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Products to build this Shelf with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Shelf.ShelfBuilder products( Product... value )
+        public Shelf.ShelfBuilder products( Product... cloudSdkValue )
         {
-            return toProducts(Lists.newArrayList(value));
+            return toProducts(Lists.newArrayList(cloudSdkValue));
         }
 
     }

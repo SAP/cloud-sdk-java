@@ -12,16 +12,13 @@
 
 ### ✨ New Functionality
 
-- Add support for `TypeDefinition` entries in OData V4 EDMX files.
-- Add `generateApis` and `generateModels` options to the `openapi-generator-maven-plugin` to
-  disable the generation of APIs and models respectively.
+- Add experimental support for updating nested fields in OData V2 complex types via PATCH requests
+  - Use optional argument `FluentHelperUpdate#modifyingEntity( ModifyPatchStrategy )` to control updates with delta or full complex property payloads.
 
 ### 📈 Improvements
 
-- Stabilize most of the remaining experimental APIs without changes, e.g.
-  - RequestHeaderAccessor
-  - ServiceBindingDestinationLoader
+- Improve the OData V4 class `BatchRequestBuilder` to now also implement the `ModificationRequestBuilder` interface. 
 
 ### 🐛 Fixed Issues
 
-- Fix ApacheHttpClient5Wrapper to propagate the configuration to Spring RestTemplate.
+- 

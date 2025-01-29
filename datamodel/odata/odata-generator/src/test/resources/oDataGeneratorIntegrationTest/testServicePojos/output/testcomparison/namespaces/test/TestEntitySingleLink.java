@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -199,40 +199,40 @@ public class TestEntitySingleLink
         private List<TestEntityLvl2MultiLink> toMultiLink = Lists.newArrayList();
         private TestEntityLvl2SingleLink toSingleLink;
 
-        private TestEntitySingleLink.TestEntitySingleLinkBuilder toMultiLink(final List<TestEntityLvl2MultiLink> value) {
-            toMultiLink.addAll(value);
+        private TestEntitySingleLink.TestEntitySingleLinkBuilder toMultiLink(final List<TestEntityLvl2MultiLink> cloudSdkValue) {
+            toMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_MultiLink</b> for <b>TestEntitySingleLink</b> to multiple <b>TestEntityLvl2MultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityLvl2MultiLinks to build this TestEntitySingleLink with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntitySingleLink.TestEntitySingleLinkBuilder multiLink(TestEntityLvl2MultiLink... value) {
-            return toMultiLink(Lists.newArrayList(value));
+        public TestEntitySingleLink.TestEntitySingleLinkBuilder multiLink(TestEntityLvl2MultiLink... cloudSdkValue) {
+            return toMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntitySingleLink.TestEntitySingleLinkBuilder toSingleLink(final TestEntityLvl2SingleLink value) {
-            toSingleLink = value;
+        private TestEntitySingleLink.TestEntitySingleLinkBuilder toSingleLink(final TestEntityLvl2SingleLink cloudSdkValue) {
+            toSingleLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_SingleLink</b> for <b>TestEntitySingleLink</b> to single <b>TestEntityLvl2SingleLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityLvl2SingleLink to build this TestEntitySingleLink with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntitySingleLink.TestEntitySingleLinkBuilder singleLink(final TestEntityLvl2SingleLink value) {
-            return toSingleLink(value);
+        public TestEntitySingleLink.TestEntitySingleLinkBuilder singleLink(final TestEntityLvl2SingleLink cloudSdkValue) {
+            return toSingleLink(cloudSdkValue);
         }
 
     }

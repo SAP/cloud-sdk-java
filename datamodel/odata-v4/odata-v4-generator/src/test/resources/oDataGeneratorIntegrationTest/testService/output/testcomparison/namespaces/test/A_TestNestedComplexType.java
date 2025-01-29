@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -76,19 +76,19 @@ public class A_TestNestedComplexType
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("StringProperty", getStringProperty());
-        values.put("ComplexTypeProperty", getComplexTypeProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("StringProperty", getStringProperty());
+        cloudSdkValues.put("ComplexTypeProperty", getComplexTypeProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("StringProperty")) {
-                final Object value = values.remove("StringProperty");
+            if (cloudSdkValues.containsKey("StringProperty")) {
+                final Object value = cloudSdkValues.remove("StringProperty");
                 if ((value == null)||(!value.equals(getStringProperty()))) {
                     setStringProperty(((java.lang.String) value));
                 }
@@ -96,8 +96,8 @@ public class A_TestNestedComplexType
         }
         // structured properties
         {
-            if (values.containsKey("ComplexTypeProperty")) {
-                final Object value = values.remove("ComplexTypeProperty");
+            if (cloudSdkValues.containsKey("ComplexTypeProperty")) {
+                final Object value = cloudSdkValues.remove("ComplexTypeProperty");
                 if (value instanceof Map) {
                     if (getComplexTypeProperty() == null) {
                         setComplexTypeProperty(new A_TestLvl2NestedComplexType());
@@ -114,7 +114,7 @@ public class A_TestNestedComplexType
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

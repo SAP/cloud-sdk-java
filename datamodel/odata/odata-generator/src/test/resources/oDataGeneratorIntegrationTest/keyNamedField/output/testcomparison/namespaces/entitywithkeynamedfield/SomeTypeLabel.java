@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.entitywithkeynamedfield;
@@ -92,7 +92,7 @@ public class SomeTypeLabel
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("KeyFieldWithKeyLabel", getKey_2());
         return result;
     }
@@ -100,18 +100,18 @@ public class SomeTypeLabel
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("KeyFieldWithKeyLabel", getKey_2());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyFieldWithKeyLabel", getKey_2());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyFieldWithKeyLabel")) {
-                final Object value = values.remove("KeyFieldWithKeyLabel");
+            if (cloudSdkValues.containsKey("KeyFieldWithKeyLabel")) {
+                final Object value = cloudSdkValues.remove("KeyFieldWithKeyLabel");
                 if ((value == null)||(!value.equals(getKey_2()))) {
                     setKey_2(((UUID) value));
                 }
@@ -123,7 +123,7 @@ public class SomeTypeLabel
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

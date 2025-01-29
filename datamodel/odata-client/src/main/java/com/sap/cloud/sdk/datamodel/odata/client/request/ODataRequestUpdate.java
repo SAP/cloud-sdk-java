@@ -1,7 +1,6 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
 package com.sap.cloud.sdk.datamodel.odata.client.request;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 
@@ -17,7 +16,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -174,12 +172,13 @@ public class ODataRequestUpdate extends ODataRequestGeneric
         final ODataHttpRequest request = ODataHttpRequest.forHttpEntity(this, httpClient, requestHttpEntity);
         addVersionIdentifierToHeaderIfPresent(versionIdentifier);
 
-        if( updateStrategy == UpdateStrategy.MODIFY_WITH_PATCH ) {
-            return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
-        } else if( updateStrategy == UpdateStrategy.REPLACE_WITH_PUT ) {
-            return tryExecuteWithCsrfToken(httpClient, request::requestPut).get();
-        } else {
-            throw new IllegalStateException("Unexpected update Strategy: " + updateStrategy);
+        switch( updateStrategy ) {
+            case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
+                return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
+            case REPLACE_WITH_PUT:
+                return tryExecuteWithCsrfToken(httpClient, request::requestPut).get();
+            default:
+                throw new IllegalStateException("Unexpected update Strategy: " + updateStrategy);
         }
     }
 
@@ -192,7 +191,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
     public String getSerializedEntity()
     {
         return Try
-            .of(() -> EntityUtils.toString(requestHttpEntity, Charsets.UTF_8))
+            .of(() -> EntityUtils.toString(requestHttpEntity, UTF_8))
             .getOrElseThrow(e -> new ODataRequestException(this, "Unable to serialize request payload.", e));
     }
 

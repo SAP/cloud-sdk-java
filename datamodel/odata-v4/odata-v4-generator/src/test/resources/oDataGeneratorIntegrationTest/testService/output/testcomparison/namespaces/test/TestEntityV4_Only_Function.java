@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -94,18 +94,18 @@ public class TestEntityV4_Only_Function
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("KeyProperty", getKeyProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyProperty", getKeyProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyProperty")) {
-                final Object value = values.remove("KeyProperty");
+            if (cloudSdkValues.containsKey("KeyProperty")) {
+                final Object value = cloudSdkValues.remove("KeyProperty");
                 if ((value == null)||(!value.equals(getKeyProperty()))) {
                     setKeyProperty(((java.lang.String) value));
                 }
@@ -117,14 +117,14 @@ public class TestEntityV4_Only_Function
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
+        return cloudSdkValues;
     }
 
 }

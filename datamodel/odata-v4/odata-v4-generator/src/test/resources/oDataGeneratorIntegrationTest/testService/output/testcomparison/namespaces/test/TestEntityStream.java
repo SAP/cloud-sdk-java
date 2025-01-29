@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -93,18 +93,18 @@ public class TestEntityStream
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("StreamProperty", getStreamProperty());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("StreamProperty", getStreamProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("StreamProperty")) {
-                final Object value = values.remove("StreamProperty");
+            if (cloudSdkValues.containsKey("StreamProperty")) {
+                final Object value = cloudSdkValues.remove("StreamProperty");
                 if ((value == null)||(!value.equals(getStreamProperty()))) {
                     setStreamProperty(((URI) value));
                 }
@@ -116,14 +116,14 @@ public class TestEntityStream
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfNavigationProperties() {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
+        return cloudSdkValues;
     }
 
 }

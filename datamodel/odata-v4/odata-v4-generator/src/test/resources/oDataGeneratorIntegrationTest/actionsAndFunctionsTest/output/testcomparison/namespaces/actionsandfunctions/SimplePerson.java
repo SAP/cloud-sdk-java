@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.actionsandfunctions;
@@ -122,25 +122,25 @@ public class SimplePerson
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Person", getPerson());
-        values.put("EmailAddress", getEmailAddress());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Person", getPerson());
+        cloudSdkValues.put("EmailAddress", getEmailAddress());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Person")) {
-                final Object value = values.remove("Person");
+            if (cloudSdkValues.containsKey("Person")) {
+                final Object value = cloudSdkValues.remove("Person");
                 if ((value == null)||(!value.equals(getPerson()))) {
                     setPerson(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("EmailAddress")) {
-                final Object value = values.remove("EmailAddress");
+            if (cloudSdkValues.containsKey("EmailAddress")) {
+                final Object value = cloudSdkValues.remove("EmailAddress");
                 if ((value == null)||(!value.equals(getEmailAddress()))) {
                     setEmailAddress(((java.lang.String) value));
                 }
@@ -152,7 +152,7 @@ public class SimplePerson
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override

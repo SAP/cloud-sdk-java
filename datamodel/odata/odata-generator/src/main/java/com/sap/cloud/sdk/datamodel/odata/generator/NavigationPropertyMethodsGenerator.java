@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.odata.generator;
 
 import java.util.HashMap;
@@ -300,7 +296,7 @@ class NavigationPropertyMethodsGenerator
                             associatedEntity.name(),
                             navigationProperty.getEdmName()));
             setterMethod.javadoc().add(JavadocUtils.getLazyWarningMessage(navigationProperty, entityClass));
-            final JVar setterParam = setterMethod.param(JMod.FINAL, returnType, "value");
+            final JVar setterParam = setterMethod.param(JMod.FINAL, returnType, "cloudSdkValue");
             setterMethod
                 .javadoc()
                 .addParam(setterParam)
@@ -325,7 +321,7 @@ class NavigationPropertyMethodsGenerator
                             "Overwrites the associated <b>%s</b> entity for the loaded navigation property <b>%s</b>.",
                             associatedEntity.name(),
                             navigationProperty.getEdmName()));
-            final JVar setterParam = setterMethod.param(JMod.FINAL, returnType, "value");
+            final JVar setterParam = setterMethod.param(JMod.FINAL, returnType, "cloudSdkValue");
             setterMethod
                 .javadoc()
                 .addParam(setterParam)
@@ -559,7 +555,7 @@ class NavigationPropertyMethodsGenerator
                 .decl(
                     JMod.FINAL,
                     codeModel.ref(Object.class),
-                    "value",
+                    "cloudSdkValue",
                     JExpr
                         .direct(CommonConstants.INLINE_MAP_NAME)
                         .invoke("remove")
@@ -622,7 +618,7 @@ class NavigationPropertyMethodsGenerator
         final JType returnType = classMemberField.type();
         final JFieldVar buildField = builderClass.field(JMod.PRIVATE, returnType, classMemberName, init);
         final JMethod origMethod = builderClass.method(JMod.PRIVATE, builderClass, classMemberName);
-        final JVar origMethodVal = origMethod.param(JMod.FINAL, returnType, "value");
+        final JVar origMethodVal = origMethod.param(JMod.FINAL, returnType, "cloudSdkValue");
         if( isOneToMany ) {
             origMethod.body().invoke(buildField, "addAll").arg(origMethodVal);
         } else {
@@ -640,7 +636,7 @@ class NavigationPropertyMethodsGenerator
 
             final JInvocation invocation;
             if( isOneToMany ) {
-                final JVar fixedMethodParam = fixedMethod.varParam(associatedEntity, "value");
+                final JVar fixedMethodParam = fixedMethod.varParam(associatedEntity, "cloudSdkValue");
                 invocation =
                     JExpr
                         .invoke(origMethod)
@@ -651,7 +647,7 @@ class NavigationPropertyMethodsGenerator
                     .addParam(fixedMethodParam)
                     .add(String.format("The %ss to build this %s with.", associatedEntity.name(), entityClass.name()));
             } else {
-                final JVar fixedMethodParam = fixedMethod.param(JMod.FINAL, associatedEntity, "value");
+                final JVar fixedMethodParam = fixedMethod.param(JMod.FINAL, associatedEntity, "cloudSdkValue");
                 invocation = JExpr.invoke(origMethod).arg(fixedMethodParam);
 
                 fixedMethod
@@ -709,7 +705,7 @@ class NavigationPropertyMethodsGenerator
         final String origName = originalField.name();
         final JMethod originalMethod = builderClass.method(JMod.PUBLIC, builderClass, origName);
         final JFieldVar origBuildField = builderClass.field(JMod.PRIVATE, origType, origName, JExpr._null());
-        final JVar originalMethodParameter = originalMethod.param(JMod.FINAL, origType, "value");
+        final JVar originalMethodParameter = originalMethod.param(JMod.FINAL, origType, "cloudSdkValue");
 
         originalMethod.javadoc().add(originalField.javadoc());
 

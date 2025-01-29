@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore;
@@ -24,7 +24,7 @@ public class OpeningHoursByKeyFluentHelper
     FluentHelperByKey<OpeningHoursByKeyFluentHelper, OpeningHours, OpeningHoursSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single

@@ -3,7 +3,7 @@
 ![build](https://github.com/SAP/cloud-sdk-java/actions/workflows/continuous-integration.yaml/badge.svg?branch=main)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-java)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java)
 [![Fosstars security rating](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_badge.svg)](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_report.md)
-[![Maven Central](https://img.shields.io/badge/maven_central-5.14.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.14.0)
+[![Maven Central](https://img.shields.io/badge/maven_central-5.15.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.15.0)
 
 # SAP Cloud SDK for Java
 
@@ -59,7 +59,7 @@ Please refer to the [Connectivity section of our documentation](https://sap.gith
 
 ## Licensing
 
-Copyright 2024 SAP SE or an SAP affiliate company and cloud-sdk-java contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java).
+Copyright 2025 SAP SE or an SAP affiliate company and cloud-sdk-java contributors. Please see our [LICENSE](LICENSE) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java).
 
 ## Support, Feedback, Contributing
 

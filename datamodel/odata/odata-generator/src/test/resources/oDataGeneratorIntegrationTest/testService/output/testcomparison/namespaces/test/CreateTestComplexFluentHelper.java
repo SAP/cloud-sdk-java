@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -25,7 +25,7 @@ public class CreateTestComplexFluentHelper
     extends SingleValuedFluentHelperFunction<CreateTestComplexFluentHelper, A_TestComplexType, A_TestComplexType>
 {
 
-    private final Map<String, Object> values = Maps.newHashMap();
+    private final Map<String, Object> values = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will execute the <b>CreateTestComplexType</b> OData function import with the provided parameters. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

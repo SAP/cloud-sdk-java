@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.odata.generator;
 
 import java.net.URI;
@@ -187,7 +183,7 @@ class FluentHelperClassGenerator
                     JMod.PRIVATE | JMod.FINAL,
                     keyClass,
                     "key",
-                    codeModel.ref(Maps.class).staticInvoke("newHashMap"));
+                    codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap"));
 
         // constructor with service path and entity collection parameter
         final JMethod constructor =
@@ -298,7 +294,7 @@ class FluentHelperClassGenerator
                     JMod.PRIVATE | JMod.FINAL,
                     codeModel.ref(Map.class).narrow(String.class, Object.class),
                     "values",
-                    codeModel.ref(Maps.class).staticInvoke("newHashMap"));
+                    codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap"));
 
         createGetEntityClass(functionImportFluentHelperClass, returnTypeClass);
 

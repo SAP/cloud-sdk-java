@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -258,126 +258,126 @@ public class A_TestComplexType
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("BaseStringProperty", getBaseStringProperty());
-        values.put("StringProperty", getStringProperty());
-        values.put("BooleanProperty", getBooleanProperty());
-        values.put("GuidProperty", getGuidProperty());
-        values.put("Int16Property", getInt16Property());
-        values.put("Int32Property", getInt32Property());
-        values.put("Int64Property", getInt64Property());
-        values.put("DecimalProperty", getDecimalProperty());
-        values.put("SingleProperty", getSingleProperty());
-        values.put("DoubleProperty", getDoubleProperty());
-        values.put("TimeProperty", getTimeProperty());
-        values.put("DateTimeProperty", getDateTimeProperty());
-        values.put("DateTimeOffSetProperty", getDateTimeOffSetProperty());
-        values.put("ByteProperty", getByteProperty());
-        values.put("SByteProperty", getSByteProperty());
-        values.put("EnumProperty", getEnumProperty());
-        values.put("ComplexTypeProperty", getComplexTypeProperty());
-        values.put("CollectionStringProperty", getCollectionStringProperty());
-        values.put("CollectionComplexTypeProperty", getCollectionComplexTypeProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("BaseStringProperty", getBaseStringProperty());
+        cloudSdkValues.put("StringProperty", getStringProperty());
+        cloudSdkValues.put("BooleanProperty", getBooleanProperty());
+        cloudSdkValues.put("GuidProperty", getGuidProperty());
+        cloudSdkValues.put("Int16Property", getInt16Property());
+        cloudSdkValues.put("Int32Property", getInt32Property());
+        cloudSdkValues.put("Int64Property", getInt64Property());
+        cloudSdkValues.put("DecimalProperty", getDecimalProperty());
+        cloudSdkValues.put("SingleProperty", getSingleProperty());
+        cloudSdkValues.put("DoubleProperty", getDoubleProperty());
+        cloudSdkValues.put("TimeProperty", getTimeProperty());
+        cloudSdkValues.put("DateTimeProperty", getDateTimeProperty());
+        cloudSdkValues.put("DateTimeOffSetProperty", getDateTimeOffSetProperty());
+        cloudSdkValues.put("ByteProperty", getByteProperty());
+        cloudSdkValues.put("SByteProperty", getSByteProperty());
+        cloudSdkValues.put("EnumProperty", getEnumProperty());
+        cloudSdkValues.put("ComplexTypeProperty", getComplexTypeProperty());
+        cloudSdkValues.put("CollectionStringProperty", getCollectionStringProperty());
+        cloudSdkValues.put("CollectionComplexTypeProperty", getCollectionComplexTypeProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("BaseStringProperty")) {
-                final Object value = values.remove("BaseStringProperty");
+            if (cloudSdkValues.containsKey("BaseStringProperty")) {
+                final Object value = cloudSdkValues.remove("BaseStringProperty");
                 if ((value == null)||(!value.equals(getBaseStringProperty()))) {
                     setBaseStringProperty(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("StringProperty")) {
-                final Object value = values.remove("StringProperty");
+            if (cloudSdkValues.containsKey("StringProperty")) {
+                final Object value = cloudSdkValues.remove("StringProperty");
                 if ((value == null)||(!value.equals(getStringProperty()))) {
                     setStringProperty(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("BooleanProperty")) {
-                final Object value = values.remove("BooleanProperty");
+            if (cloudSdkValues.containsKey("BooleanProperty")) {
+                final Object value = cloudSdkValues.remove("BooleanProperty");
                 if ((value == null)||(!value.equals(getBooleanProperty()))) {
                     setBooleanProperty(((java.lang.Boolean) value));
                 }
             }
-            if (values.containsKey("GuidProperty")) {
-                final Object value = values.remove("GuidProperty");
+            if (cloudSdkValues.containsKey("GuidProperty")) {
+                final Object value = cloudSdkValues.remove("GuidProperty");
                 if ((value == null)||(!value.equals(getGuidProperty()))) {
                     setGuidProperty(((UUID) value));
                 }
             }
-            if (values.containsKey("Int16Property")) {
-                final Object value = values.remove("Int16Property");
+            if (cloudSdkValues.containsKey("Int16Property")) {
+                final Object value = cloudSdkValues.remove("Int16Property");
                 if ((value == null)||(!value.equals(getInt16Property()))) {
                     setInt16Property(((Short) value));
                 }
             }
-            if (values.containsKey("Int32Property")) {
-                final Object value = values.remove("Int32Property");
+            if (cloudSdkValues.containsKey("Int32Property")) {
+                final Object value = cloudSdkValues.remove("Int32Property");
                 if ((value == null)||(!value.equals(getInt32Property()))) {
                     setInt32Property(((Integer) value));
                 }
             }
-            if (values.containsKey("Int64Property")) {
-                final Object value = values.remove("Int64Property");
+            if (cloudSdkValues.containsKey("Int64Property")) {
+                final Object value = cloudSdkValues.remove("Int64Property");
                 if ((value == null)||(!value.equals(getInt64Property()))) {
                     setInt64Property(((Long) value));
                 }
             }
-            if (values.containsKey("DecimalProperty")) {
-                final Object value = values.remove("DecimalProperty");
+            if (cloudSdkValues.containsKey("DecimalProperty")) {
+                final Object value = cloudSdkValues.remove("DecimalProperty");
                 if ((value == null)||(!value.equals(getDecimalProperty()))) {
                     setDecimalProperty(((BigDecimal) value));
                 }
             }
-            if (values.containsKey("SingleProperty")) {
-                final Object value = values.remove("SingleProperty");
+            if (cloudSdkValues.containsKey("SingleProperty")) {
+                final Object value = cloudSdkValues.remove("SingleProperty");
                 if ((value == null)||(!value.equals(getSingleProperty()))) {
                     setSingleProperty(((Float) value));
                 }
             }
-            if (values.containsKey("DoubleProperty")) {
-                final Object value = values.remove("DoubleProperty");
+            if (cloudSdkValues.containsKey("DoubleProperty")) {
+                final Object value = cloudSdkValues.remove("DoubleProperty");
                 if ((value == null)||(!value.equals(getDoubleProperty()))) {
                     setDoubleProperty(((Double) value));
                 }
             }
-            if (values.containsKey("TimeProperty")) {
-                final Object value = values.remove("TimeProperty");
+            if (cloudSdkValues.containsKey("TimeProperty")) {
+                final Object value = cloudSdkValues.remove("TimeProperty");
                 if ((value == null)||(!value.equals(getTimeProperty()))) {
                     setTimeProperty(((LocalTime) value));
                 }
             }
-            if (values.containsKey("DateTimeProperty")) {
-                final Object value = values.remove("DateTimeProperty");
+            if (cloudSdkValues.containsKey("DateTimeProperty")) {
+                final Object value = cloudSdkValues.remove("DateTimeProperty");
                 if ((value == null)||(!value.equals(getDateTimeProperty()))) {
                     setDateTimeProperty(((OffsetDateTime) value));
                 }
             }
-            if (values.containsKey("DateTimeOffSetProperty")) {
-                final Object value = values.remove("DateTimeOffSetProperty");
+            if (cloudSdkValues.containsKey("DateTimeOffSetProperty")) {
+                final Object value = cloudSdkValues.remove("DateTimeOffSetProperty");
                 if ((value == null)||(!value.equals(getDateTimeOffSetProperty()))) {
                     setDateTimeOffSetProperty(((OffsetDateTime) value));
                 }
             }
-            if (values.containsKey("ByteProperty")) {
-                final Object value = values.remove("ByteProperty");
+            if (cloudSdkValues.containsKey("ByteProperty")) {
+                final Object value = cloudSdkValues.remove("ByteProperty");
                 if ((value == null)||(!value.equals(getByteProperty()))) {
                     setByteProperty(((Short) value));
                 }
             }
-            if (values.containsKey("SByteProperty")) {
-                final Object value = values.remove("SByteProperty");
+            if (cloudSdkValues.containsKey("SByteProperty")) {
+                final Object value = cloudSdkValues.remove("SByteProperty");
                 if ((value == null)||(!value.equals(getSByteProperty()))) {
                     setSByteProperty(((Byte) value));
                 }
             }
-            if (values.containsKey("EnumProperty")) {
-                final Object value = values.remove("EnumProperty");
+            if (cloudSdkValues.containsKey("EnumProperty")) {
+                final Object value = cloudSdkValues.remove("EnumProperty");
                 if ((value instanceof java.lang.String)||(value == null)) {
                     final A_TestEnumType enumProperty = VdmEnum.getConstant(A_TestEnumType.class, ((java.lang.String) value));
                     if (!Objects.equals(enumProperty, getEnumProperty())) {
@@ -385,8 +385,8 @@ public class A_TestComplexType
                     }
                 }
             }
-            if (values.containsKey("CollectionStringProperty")) {
-                final Object value = values.remove("CollectionStringProperty");
+            if (cloudSdkValues.containsKey("CollectionStringProperty")) {
+                final Object value = cloudSdkValues.remove("CollectionStringProperty");
                 if (value instanceof Iterable) {
                     final LinkedList<java.lang.String> collectionStringProperty = new LinkedList<java.lang.String>();
                     for (Object item: ((Iterable<?> ) value)) {
@@ -398,8 +398,8 @@ public class A_TestComplexType
         }
         // structured properties
         {
-            if (values.containsKey("ComplexTypeProperty")) {
-                final Object value = values.remove("ComplexTypeProperty");
+            if (cloudSdkValues.containsKey("ComplexTypeProperty")) {
+                final Object value = cloudSdkValues.remove("ComplexTypeProperty");
                 if (value instanceof Map) {
                     if (getComplexTypeProperty() == null) {
                         setComplexTypeProperty(new A_TestNestedComplexType());
@@ -412,8 +412,8 @@ public class A_TestComplexType
                     setComplexTypeProperty(null);
                 }
             }
-            if (values.containsKey("CollectionComplexTypeProperty")) {
-                final Object value = values.remove("CollectionComplexTypeProperty");
+            if (cloudSdkValues.containsKey("CollectionComplexTypeProperty")) {
+                final Object value = cloudSdkValues.remove("CollectionComplexTypeProperty");
                 if (value instanceof Iterable) {
                     final LinkedList<A_TestNestedComplexType> collectionComplexTypeProperty = new LinkedList<A_TestNestedComplexType>();
                     for (Object properties: ((Iterable<?> ) value)) {
@@ -435,7 +435,7 @@ public class A_TestComplexType
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

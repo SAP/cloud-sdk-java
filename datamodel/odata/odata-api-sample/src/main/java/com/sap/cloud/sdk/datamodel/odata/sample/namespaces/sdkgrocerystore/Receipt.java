@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package com.sap.cloud.sdk.datamodel.odata.sample.namespaces.sdkgrocerystore;
@@ -470,7 +470,7 @@ public class Receipt extends VdmEntity<Receipt>
     @Override
     protected Map<String, Object> getKey()
     {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Id", getId());
         return result;
     }
@@ -479,43 +479,43 @@ public class Receipt extends VdmEntity<Receipt>
     @Override
     protected Map<String, Object> toMapOfFields()
     {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Id", getId());
-        values.put("CustomerId", getCustomerId());
-        values.put("TotalAmount", getTotalAmount());
-        values.put("ProductCount1", getProductCount1());
-        values.put("ProductCount2", getProductCount2());
-        values.put("ProductCount3", getProductCount3());
-        values.put("ProductCount4", getProductCount4());
-        values.put("ProductCount5", getProductCount5());
-        values.put("ProductCount6", getProductCount6());
-        values.put("ProductCount7", getProductCount7());
-        values.put("ProductCount8", getProductCount8());
-        values.put("ProductCount9", getProductCount9());
-        values.put("ProductCount10", getProductCount10());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Id", getId());
+        cloudSdkValues.put("CustomerId", getCustomerId());
+        cloudSdkValues.put("TotalAmount", getTotalAmount());
+        cloudSdkValues.put("ProductCount1", getProductCount1());
+        cloudSdkValues.put("ProductCount2", getProductCount2());
+        cloudSdkValues.put("ProductCount3", getProductCount3());
+        cloudSdkValues.put("ProductCount4", getProductCount4());
+        cloudSdkValues.put("ProductCount5", getProductCount5());
+        cloudSdkValues.put("ProductCount6", getProductCount6());
+        cloudSdkValues.put("ProductCount7", getProductCount7());
+        cloudSdkValues.put("ProductCount8", getProductCount8());
+        cloudSdkValues.put("ProductCount9", getProductCount9());
+        cloudSdkValues.put("ProductCount10", getProductCount10());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap( final Map<String, Object> inputValues )
     {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if( values.containsKey("Id") ) {
-                final Object value = values.remove("Id");
+            if( cloudSdkValues.containsKey("Id") ) {
+                final Object value = cloudSdkValues.remove("Id");
                 if( (value == null) || (!value.equals(getId())) ) {
                     setId(((Integer) value));
                 }
             }
-            if( values.containsKey("CustomerId") ) {
-                final Object value = values.remove("CustomerId");
+            if( cloudSdkValues.containsKey("CustomerId") ) {
+                final Object value = cloudSdkValues.remove("CustomerId");
                 if( (value == null) || (!value.equals(getCustomerId())) ) {
                     setCustomerId(((Integer) value));
                 }
             }
-            if( values.containsKey("TotalAmount") ) {
-                final Object value = values.remove("TotalAmount");
+            if( cloudSdkValues.containsKey("TotalAmount") ) {
+                final Object value = cloudSdkValues.remove("TotalAmount");
                 if( (value == null) || (!value.equals(getTotalAmount())) ) {
                     setTotalAmount(((BigDecimal) value));
                 }
@@ -523,8 +523,8 @@ public class Receipt extends VdmEntity<Receipt>
         }
         // structured properties
         {
-            if( values.containsKey("ProductCount1") ) {
-                final Object value = values.remove("ProductCount1");
+            if( cloudSdkValues.containsKey("ProductCount1") ) {
+                final Object value = cloudSdkValues.remove("ProductCount1");
                 if( value instanceof Map ) {
                     if( getProductCount1() == null ) {
                         setProductCount1(new ProductCount());
@@ -537,8 +537,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount1(null);
                 }
             }
-            if( values.containsKey("ProductCount2") ) {
-                final Object value = values.remove("ProductCount2");
+            if( cloudSdkValues.containsKey("ProductCount2") ) {
+                final Object value = cloudSdkValues.remove("ProductCount2");
                 if( value instanceof Map ) {
                     if( getProductCount2() == null ) {
                         setProductCount2(new ProductCount());
@@ -551,8 +551,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount2(null);
                 }
             }
-            if( values.containsKey("ProductCount3") ) {
-                final Object value = values.remove("ProductCount3");
+            if( cloudSdkValues.containsKey("ProductCount3") ) {
+                final Object value = cloudSdkValues.remove("ProductCount3");
                 if( value instanceof Map ) {
                     if( getProductCount3() == null ) {
                         setProductCount3(new ProductCount());
@@ -565,8 +565,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount3(null);
                 }
             }
-            if( values.containsKey("ProductCount4") ) {
-                final Object value = values.remove("ProductCount4");
+            if( cloudSdkValues.containsKey("ProductCount4") ) {
+                final Object value = cloudSdkValues.remove("ProductCount4");
                 if( value instanceof Map ) {
                     if( getProductCount4() == null ) {
                         setProductCount4(new ProductCount());
@@ -579,8 +579,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount4(null);
                 }
             }
-            if( values.containsKey("ProductCount5") ) {
-                final Object value = values.remove("ProductCount5");
+            if( cloudSdkValues.containsKey("ProductCount5") ) {
+                final Object value = cloudSdkValues.remove("ProductCount5");
                 if( value instanceof Map ) {
                     if( getProductCount5() == null ) {
                         setProductCount5(new ProductCount());
@@ -593,8 +593,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount5(null);
                 }
             }
-            if( values.containsKey("ProductCount6") ) {
-                final Object value = values.remove("ProductCount6");
+            if( cloudSdkValues.containsKey("ProductCount6") ) {
+                final Object value = cloudSdkValues.remove("ProductCount6");
                 if( value instanceof Map ) {
                     if( getProductCount6() == null ) {
                         setProductCount6(new ProductCount());
@@ -607,8 +607,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount6(null);
                 }
             }
-            if( values.containsKey("ProductCount7") ) {
-                final Object value = values.remove("ProductCount7");
+            if( cloudSdkValues.containsKey("ProductCount7") ) {
+                final Object value = cloudSdkValues.remove("ProductCount7");
                 if( value instanceof Map ) {
                     if( getProductCount7() == null ) {
                         setProductCount7(new ProductCount());
@@ -621,8 +621,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount7(null);
                 }
             }
-            if( values.containsKey("ProductCount8") ) {
-                final Object value = values.remove("ProductCount8");
+            if( cloudSdkValues.containsKey("ProductCount8") ) {
+                final Object value = cloudSdkValues.remove("ProductCount8");
                 if( value instanceof Map ) {
                     if( getProductCount8() == null ) {
                         setProductCount8(new ProductCount());
@@ -635,8 +635,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount8(null);
                 }
             }
-            if( values.containsKey("ProductCount9") ) {
-                final Object value = values.remove("ProductCount9");
+            if( cloudSdkValues.containsKey("ProductCount9") ) {
+                final Object value = cloudSdkValues.remove("ProductCount9");
                 if( value instanceof Map ) {
                     if( getProductCount9() == null ) {
                         setProductCount9(new ProductCount());
@@ -649,8 +649,8 @@ public class Receipt extends VdmEntity<Receipt>
                     setProductCount9(null);
                 }
             }
-            if( values.containsKey("ProductCount10") ) {
-                final Object value = values.remove("ProductCount10");
+            if( cloudSdkValues.containsKey("ProductCount10") ) {
+                final Object value = cloudSdkValues.remove("ProductCount10");
                 if( value instanceof Map ) {
                     if( getProductCount10() == null ) {
                         setProductCount10(new ProductCount());
@@ -666,19 +666,19 @@ public class Receipt extends VdmEntity<Receipt>
         }
         // navigation properties
         {
-            if( (values).containsKey("Customer") ) {
-                final Object value = (values).remove("Customer");
-                if( value instanceof Map ) {
+            if( (cloudSdkValues).containsKey("Customer") ) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("Customer");
+                if( cloudSdkValue instanceof Map ) {
                     if( toCustomer == null ) {
                         toCustomer = new Customer();
                     }
                     @SuppressWarnings( "unchecked" )
-                    final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object>) cloudSdkValue);
                     toCustomer.fromMap(inputMap);
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**
@@ -748,11 +748,11 @@ public class Receipt extends VdmEntity<Receipt>
     @Override
     protected Map<String, Object> toMapOfNavigationProperties()
     {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if( toCustomer != null ) {
-            (values).put("Customer", toCustomer);
+            (cloudSdkValues).put("Customer", toCustomer);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**
@@ -821,12 +821,12 @@ public class Receipt extends VdmEntity<Receipt>
     /**
      * Overwrites the associated <b>Customer</b> entity for the loaded navigation property <b>Customer</b>.
      *
-     * @param value
+     * @param cloudSdkValue
      *            New <b>Customer</b> entity.
      */
-    public void setCustomer( final Customer value )
+    public void setCustomer( final Customer cloudSdkValue )
     {
-        toCustomer = value;
+        toCustomer = cloudSdkValue;
     }
 
     /**
@@ -838,23 +838,23 @@ public class Receipt extends VdmEntity<Receipt>
 
         private Customer toCustomer;
 
-        private Receipt.ReceiptBuilder toCustomer( final Customer value )
+        private Receipt.ReceiptBuilder toCustomer( final Customer cloudSdkValue )
         {
-            toCustomer = value;
+            toCustomer = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>Customer</b> for <b>Receipt</b> to single <b>Customer</b>.
          *
-         * @param value
+         * @param cloudSdkValue
          *            The Customer to build this Receipt with.
          * @return This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public Receipt.ReceiptBuilder customer( final Customer value )
+        public Receipt.ReceiptBuilder customer( final Customer cloudSdkValue )
         {
-            return toCustomer(value);
+            return toCustomer(cloudSdkValue);
         }
 
     }

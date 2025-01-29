@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.metadata;
@@ -82,32 +82,32 @@ public class Relationship
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Description", getDescription());
-        values.put("FirstName", getFirstName());
-        values.put("LastName", getLastName());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Description", getDescription());
+        cloudSdkValues.put("FirstName", getFirstName());
+        cloudSdkValues.put("LastName", getLastName());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Description")) {
-                final Object value = values.remove("Description");
+            if (cloudSdkValues.containsKey("Description")) {
+                final Object value = cloudSdkValues.remove("Description");
                 if ((value == null)||(!value.equals(getDescription()))) {
                     setDescription(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("FirstName")) {
-                final Object value = values.remove("FirstName");
+            if (cloudSdkValues.containsKey("FirstName")) {
+                final Object value = cloudSdkValues.remove("FirstName");
                 if ((value == null)||(!value.equals(getFirstName()))) {
                     setFirstName(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("LastName")) {
-                final Object value = values.remove("LastName");
+            if (cloudSdkValues.containsKey("LastName")) {
+                final Object value = cloudSdkValues.remove("LastName");
                 if ((value == null)||(!value.equals(getLastName()))) {
                     setLastName(((java.lang.String) value));
                 }
@@ -119,7 +119,7 @@ public class Relationship
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull

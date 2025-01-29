@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.nameclash;
@@ -173,7 +173,7 @@ public class TestEntityV2
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("KeyPropertyGuid", getKeyPropertyGuid());
         return result;
     }
@@ -181,32 +181,32 @@ public class TestEntityV2
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("KeyPropertyGuid", getKeyPropertyGuid());
-        values.put("MultiLink", getMultiLink());
-        values.put("toMultiLink", getToMultiLink());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyPropertyGuid", getKeyPropertyGuid());
+        cloudSdkValues.put("MultiLink", getMultiLink());
+        cloudSdkValues.put("toMultiLink", getToMultiLink());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyPropertyGuid")) {
-                final Object value = values.remove("KeyPropertyGuid");
+            if (cloudSdkValues.containsKey("KeyPropertyGuid")) {
+                final Object value = cloudSdkValues.remove("KeyPropertyGuid");
                 if ((value == null)||(!value.equals(getKeyPropertyGuid()))) {
                     setKeyPropertyGuid(((UUID) value));
                 }
             }
-            if (values.containsKey("MultiLink")) {
-                final Object value = values.remove("MultiLink");
+            if (cloudSdkValues.containsKey("MultiLink")) {
+                final Object value = cloudSdkValues.remove("MultiLink");
                 if ((value == null)||(!value.equals(getMultiLink()))) {
                     setMultiLink(((String) value));
                 }
             }
-            if (values.containsKey("toMultiLink")) {
-                final Object value = values.remove("toMultiLink");
+            if (cloudSdkValues.containsKey("toMultiLink")) {
+                final Object value = cloudSdkValues.remove("toMultiLink");
                 if ((value == null)||(!value.equals(getToMultiLink()))) {
                     setToMultiLink(((String) value));
                 }
@@ -217,16 +217,16 @@ public class TestEntityV2
         }
         // navigation properties
         {
-            if ((values).containsKey("to_MultiLink")) {
-                final Object value = (values).remove("to_MultiLink");
-                if (value instanceof Iterable) {
+            if ((cloudSdkValues).containsKey("to_MultiLink")) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_MultiLink");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toMultiLink_2 == null) {
                         toMultiLink_2 = Lists.newArrayList();
                     } else {
                         toMultiLink_2 = Lists.newArrayList(toMultiLink_2);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -245,7 +245,7 @@ public class TestEntityV2
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**
@@ -322,11 +322,11 @@ public class TestEntityV2
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfNavigationProperties() {
-        final Map<String, Object> values = super.toMapOfNavigationProperties();
+        final Map<String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toMultiLink_2 != null) {
-            (values).put("to_MultiLink", toMultiLink_2);
+            (cloudSdkValues).put("to_MultiLink", toMultiLink_2);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**
@@ -384,17 +384,17 @@ public class TestEntityV2
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>TestEntityMultiLink</b> entities.
      */
     public void setMultiLink(
         @Nonnull
-        final List<TestEntityMultiLink> value) {
+        final List<TestEntityMultiLink> cloudSdkValue) {
         if (toMultiLink_2 == null) {
             toMultiLink_2 = Lists.newArrayList();
         }
         toMultiLink_2 .clear();
-        toMultiLink_2 .addAll(value);
+        toMultiLink_2 .addAll(cloudSdkValue);
     }
 
     /**
@@ -424,35 +424,35 @@ public class TestEntityV2
         private List<TestEntityMultiLink> toMultiLink_2 = Lists.newArrayList();
         private String multiLink = null;
 
-        private TestEntityV2 .TestEntityV2Builder toMultiLink_2(final List<TestEntityMultiLink> value) {
-            toMultiLink_2 .addAll(value);
+        private TestEntityV2 .TestEntityV2Builder toMultiLink_2(final List<TestEntityMultiLink> cloudSdkValue) {
+            toMultiLink_2 .addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_MultiLink</b> for <b>TestEntityV2</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV2 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV2 .TestEntityV2Builder multiLink(TestEntityMultiLink... value) {
-            return toMultiLink_2(Lists.newArrayList(value));
+        public TestEntityV2 .TestEntityV2Builder multiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toMultiLink_2(Lists.newArrayList(cloudSdkValue));
         }
 
         /**
          * Constraints: Not nullable, Maximum length: 80 <p>Original property name from the Odata EDM: <b>MultiLink</b></p>
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The multiLink to build this TestEntityV2 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV2 .TestEntityV2Builder multiLink(final String value) {
-            multiLink = value;
+        public TestEntityV2 .TestEntityV2Builder multiLink(final String cloudSdkValue) {
+            multiLink = cloudSdkValue;
             return this;
         }
 

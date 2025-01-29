@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.test;
@@ -682,148 +682,148 @@ public class TestEntityV4
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("KeyPropertyGuid", getKeyPropertyGuid());
-        values.put("KeyPropertyString", getKeyPropertyString());
-        values.put("StringProperty", getStringProperty());
-        values.put("BooleanProperty", getBooleanProperty());
-        values.put("GuidProperty", getGuidProperty());
-        values.put("Int16Property", getInt16Property());
-        values.put("Int32Property", getInt32Property());
-        values.put("Int64Property", getInt64Property());
-        values.put("DecimalProperty", getDecimalProperty());
-        values.put("SingleProperty", getSingleProperty());
-        values.put("DoubleProperty", getDoubleProperty());
-        values.put("TimeOfDayProperty", getTimeOfDayProperty());
-        values.put("DateProperty", getDateProperty());
-        values.put("DateTimeOffSetProperty", getDateTimeOffSetProperty());
-        values.put("DurationProperty", getDurationProperty());
-        values.put("ByteProperty", getByteProperty());
-        values.put("SByteProperty", getSByteProperty());
-        values.put("BinaryProperty", getBinaryProperty());
-        values.put("CollectionProperty", getCollectionProperty());
-        values.put("ComplexTypeProperty", getComplexTypeProperty());
-        values.put("ComplexTypeCollectionProperty", getComplexTypeCollectionProperty());
-        values.put("EnumProperty", getEnumProperty());
-        values.put("EnumCollectionProperty", getEnumCollectionProperty());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("KeyPropertyGuid", getKeyPropertyGuid());
+        cloudSdkValues.put("KeyPropertyString", getKeyPropertyString());
+        cloudSdkValues.put("StringProperty", getStringProperty());
+        cloudSdkValues.put("BooleanProperty", getBooleanProperty());
+        cloudSdkValues.put("GuidProperty", getGuidProperty());
+        cloudSdkValues.put("Int16Property", getInt16Property());
+        cloudSdkValues.put("Int32Property", getInt32Property());
+        cloudSdkValues.put("Int64Property", getInt64Property());
+        cloudSdkValues.put("DecimalProperty", getDecimalProperty());
+        cloudSdkValues.put("SingleProperty", getSingleProperty());
+        cloudSdkValues.put("DoubleProperty", getDoubleProperty());
+        cloudSdkValues.put("TimeOfDayProperty", getTimeOfDayProperty());
+        cloudSdkValues.put("DateProperty", getDateProperty());
+        cloudSdkValues.put("DateTimeOffSetProperty", getDateTimeOffSetProperty());
+        cloudSdkValues.put("DurationProperty", getDurationProperty());
+        cloudSdkValues.put("ByteProperty", getByteProperty());
+        cloudSdkValues.put("SByteProperty", getSByteProperty());
+        cloudSdkValues.put("BinaryProperty", getBinaryProperty());
+        cloudSdkValues.put("CollectionProperty", getCollectionProperty());
+        cloudSdkValues.put("ComplexTypeProperty", getComplexTypeProperty());
+        cloudSdkValues.put("ComplexTypeCollectionProperty", getComplexTypeCollectionProperty());
+        cloudSdkValues.put("EnumProperty", getEnumProperty());
+        cloudSdkValues.put("EnumCollectionProperty", getEnumCollectionProperty());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("KeyPropertyGuid")) {
-                final Object value = values.remove("KeyPropertyGuid");
+            if (cloudSdkValues.containsKey("KeyPropertyGuid")) {
+                final Object value = cloudSdkValues.remove("KeyPropertyGuid");
                 if ((value == null)||(!value.equals(getKeyPropertyGuid()))) {
                     setKeyPropertyGuid(((UUID) value));
                 }
             }
-            if (values.containsKey("KeyPropertyString")) {
-                final Object value = values.remove("KeyPropertyString");
+            if (cloudSdkValues.containsKey("KeyPropertyString")) {
+                final Object value = cloudSdkValues.remove("KeyPropertyString");
                 if ((value == null)||(!value.equals(getKeyPropertyString()))) {
                     setKeyPropertyString(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("StringProperty")) {
-                final Object value = values.remove("StringProperty");
+            if (cloudSdkValues.containsKey("StringProperty")) {
+                final Object value = cloudSdkValues.remove("StringProperty");
                 if ((value == null)||(!value.equals(getStringProperty()))) {
                     setStringProperty(((java.lang.String) value));
                 }
             }
-            if (values.containsKey("BooleanProperty")) {
-                final Object value = values.remove("BooleanProperty");
+            if (cloudSdkValues.containsKey("BooleanProperty")) {
+                final Object value = cloudSdkValues.remove("BooleanProperty");
                 if ((value == null)||(!value.equals(getBooleanProperty()))) {
                     setBooleanProperty(((java.lang.Boolean) value));
                 }
             }
-            if (values.containsKey("GuidProperty")) {
-                final Object value = values.remove("GuidProperty");
+            if (cloudSdkValues.containsKey("GuidProperty")) {
+                final Object value = cloudSdkValues.remove("GuidProperty");
                 if ((value == null)||(!value.equals(getGuidProperty()))) {
                     setGuidProperty(((UUID) value));
                 }
             }
-            if (values.containsKey("Int16Property")) {
-                final Object value = values.remove("Int16Property");
+            if (cloudSdkValues.containsKey("Int16Property")) {
+                final Object value = cloudSdkValues.remove("Int16Property");
                 if ((value == null)||(!value.equals(getInt16Property()))) {
                     setInt16Property(((Short) value));
                 }
             }
-            if (values.containsKey("Int32Property")) {
-                final Object value = values.remove("Int32Property");
+            if (cloudSdkValues.containsKey("Int32Property")) {
+                final Object value = cloudSdkValues.remove("Int32Property");
                 if ((value == null)||(!value.equals(getInt32Property()))) {
                     setInt32Property(((Integer) value));
                 }
             }
-            if (values.containsKey("Int64Property")) {
-                final Object value = values.remove("Int64Property");
+            if (cloudSdkValues.containsKey("Int64Property")) {
+                final Object value = cloudSdkValues.remove("Int64Property");
                 if ((value == null)||(!value.equals(getInt64Property()))) {
                     setInt64Property(((Long) value));
                 }
             }
-            if (values.containsKey("DecimalProperty")) {
-                final Object value = values.remove("DecimalProperty");
+            if (cloudSdkValues.containsKey("DecimalProperty")) {
+                final Object value = cloudSdkValues.remove("DecimalProperty");
                 if ((value == null)||(!value.equals(getDecimalProperty()))) {
                     setDecimalProperty(((BigDecimal) value));
                 }
             }
-            if (values.containsKey("SingleProperty")) {
-                final Object value = values.remove("SingleProperty");
+            if (cloudSdkValues.containsKey("SingleProperty")) {
+                final Object value = cloudSdkValues.remove("SingleProperty");
                 if ((value == null)||(!value.equals(getSingleProperty()))) {
                     setSingleProperty(((Float) value));
                 }
             }
-            if (values.containsKey("DoubleProperty")) {
-                final Object value = values.remove("DoubleProperty");
+            if (cloudSdkValues.containsKey("DoubleProperty")) {
+                final Object value = cloudSdkValues.remove("DoubleProperty");
                 if ((value == null)||(!value.equals(getDoubleProperty()))) {
                     setDoubleProperty(((Double) value));
                 }
             }
-            if (values.containsKey("TimeOfDayProperty")) {
-                final Object value = values.remove("TimeOfDayProperty");
+            if (cloudSdkValues.containsKey("TimeOfDayProperty")) {
+                final Object value = cloudSdkValues.remove("TimeOfDayProperty");
                 if ((value == null)||(!value.equals(getTimeOfDayProperty()))) {
                     setTimeOfDayProperty(((LocalTime) value));
                 }
             }
-            if (values.containsKey("DateProperty")) {
-                final Object value = values.remove("DateProperty");
+            if (cloudSdkValues.containsKey("DateProperty")) {
+                final Object value = cloudSdkValues.remove("DateProperty");
                 if ((value == null)||(!value.equals(getDateProperty()))) {
                     setDateProperty(((LocalDate) value));
                 }
             }
-            if (values.containsKey("DateTimeOffSetProperty")) {
-                final Object value = values.remove("DateTimeOffSetProperty");
+            if (cloudSdkValues.containsKey("DateTimeOffSetProperty")) {
+                final Object value = cloudSdkValues.remove("DateTimeOffSetProperty");
                 if ((value == null)||(!value.equals(getDateTimeOffSetProperty()))) {
                     setDateTimeOffSetProperty(((OffsetDateTime) value));
                 }
             }
-            if (values.containsKey("DurationProperty")) {
-                final Object value = values.remove("DurationProperty");
+            if (cloudSdkValues.containsKey("DurationProperty")) {
+                final Object value = cloudSdkValues.remove("DurationProperty");
                 if ((value == null)||(!value.equals(getDurationProperty()))) {
                     setDurationProperty(((BigDecimal) value));
                 }
             }
-            if (values.containsKey("ByteProperty")) {
-                final Object value = values.remove("ByteProperty");
+            if (cloudSdkValues.containsKey("ByteProperty")) {
+                final Object value = cloudSdkValues.remove("ByteProperty");
                 if ((value == null)||(!value.equals(getByteProperty()))) {
                     setByteProperty(((Short) value));
                 }
             }
-            if (values.containsKey("SByteProperty")) {
-                final Object value = values.remove("SByteProperty");
+            if (cloudSdkValues.containsKey("SByteProperty")) {
+                final Object value = cloudSdkValues.remove("SByteProperty");
                 if ((value == null)||(!value.equals(getSByteProperty()))) {
                     setSByteProperty(((Byte) value));
                 }
             }
-            if (values.containsKey("BinaryProperty")) {
-                final Object value = values.remove("BinaryProperty");
+            if (cloudSdkValues.containsKey("BinaryProperty")) {
+                final Object value = cloudSdkValues.remove("BinaryProperty");
                 if ((value == null)||(!value.equals(getBinaryProperty()))) {
                     setBinaryProperty(((byte[]) value));
                 }
             }
-            if (values.containsKey("CollectionProperty")) {
-                final Object value = values.remove("CollectionProperty");
+            if (cloudSdkValues.containsKey("CollectionProperty")) {
+                final Object value = cloudSdkValues.remove("CollectionProperty");
                 if (value instanceof Iterable) {
                     final LinkedList<java.lang.String> collectionProperty = new LinkedList<java.lang.String>();
                     for (Object item: ((Iterable<?> ) value)) {
@@ -832,8 +832,8 @@ public class TestEntityV4
                     setCollectionProperty(collectionProperty);
                 }
             }
-            if (values.containsKey("EnumProperty")) {
-                final Object value = values.remove("EnumProperty");
+            if (cloudSdkValues.containsKey("EnumProperty")) {
+                final Object value = cloudSdkValues.remove("EnumProperty");
                 if ((value instanceof java.lang.String)||(value == null)) {
                     final A_TestEnumType enumProperty = VdmEnum.getConstant(A_TestEnumType.class, ((java.lang.String) value));
                     if (!Objects.equals(enumProperty, getEnumProperty())) {
@@ -841,8 +841,8 @@ public class TestEntityV4
                     }
                 }
             }
-            if (values.containsKey("EnumCollectionProperty")) {
-                final Object value = values.remove("EnumCollectionProperty");
+            if (cloudSdkValues.containsKey("EnumCollectionProperty")) {
+                final Object value = cloudSdkValues.remove("EnumCollectionProperty");
                 if ((value == null)&&(getEnumCollectionProperty()!= null)) {
                     setEnumCollectionProperty(null);
                 }
@@ -862,8 +862,8 @@ public class TestEntityV4
         }
         // structured properties
         {
-            if (values.containsKey("ComplexTypeProperty")) {
-                final Object value = values.remove("ComplexTypeProperty");
+            if (cloudSdkValues.containsKey("ComplexTypeProperty")) {
+                final Object value = cloudSdkValues.remove("ComplexTypeProperty");
                 if (value instanceof Map) {
                     if (getComplexTypeProperty() == null) {
                         setComplexTypeProperty(new A_TestComplexType());
@@ -876,8 +876,8 @@ public class TestEntityV4
                     setComplexTypeProperty(null);
                 }
             }
-            if (values.containsKey("ComplexTypeCollectionProperty")) {
-                final Object value = values.remove("ComplexTypeCollectionProperty");
+            if (cloudSdkValues.containsKey("ComplexTypeCollectionProperty")) {
+                final Object value = cloudSdkValues.remove("ComplexTypeCollectionProperty");
                 if (value instanceof Iterable) {
                     final LinkedList<A_TestComplexType> complexTypeCollectionProperty = new LinkedList<A_TestComplexType>();
                     for (Object properties: ((Iterable<?> ) value)) {
@@ -898,16 +898,16 @@ public class TestEntityV4
         }
         // navigation properties
         {
-            if ((values).containsKey("to_MultiLink")) {
-                final Object value = (values).remove("to_MultiLink");
-                if (value instanceof Iterable) {
+            if ((cloudSdkValues).containsKey("to_MultiLink")) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_MultiLink");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toMultiLink == null) {
                         toMultiLink = Lists.newArrayList();
                     } else {
                         toMultiLink = Lists.newArrayList(toMultiLink);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -925,16 +925,16 @@ public class TestEntityV4
                     }
                 }
             }
-            if ((values).containsKey("to_OtherMultiLink")) {
-                final Object value = (values).remove("to_OtherMultiLink");
-                if (value instanceof Iterable) {
+            if ((cloudSdkValues).containsKey("to_OtherMultiLink")) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_OtherMultiLink");
+                if (cloudSdkValue instanceof Iterable) {
                     if (toOtherMultiLink == null) {
                         toOtherMultiLink = Lists.newArrayList();
                     } else {
                         toOtherMultiLink = Lists.newArrayList(toOtherMultiLink);
                     }
                     int i = 0;
-                    for (Object item: ((Iterable<?> ) value)) {
+                    for (Object item: ((Iterable<?> ) cloudSdkValue)) {
                         if (!(item instanceof Map)) {
                             continue;
                         }
@@ -952,30 +952,30 @@ public class TestEntityV4
                     }
                 }
             }
-            if ((values).containsKey("to_SingleLink")) {
-                final Object value = (values).remove("to_SingleLink");
-                if (value instanceof Map) {
+            if ((cloudSdkValues).containsKey("to_SingleLink")) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_SingleLink");
+                if (cloudSdkValue instanceof Map) {
                     if (toSingleLink == null) {
                         toSingleLink = new TestEntitySingleLink();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toSingleLink.fromMap(inputMap);
                 }
             }
-            if ((values).containsKey("to_StreamLink")) {
-                final Object value = (values).remove("to_StreamLink");
-                if (value instanceof Map) {
+            if ((cloudSdkValues).containsKey("to_StreamLink")) {
+                final Object cloudSdkValue = (cloudSdkValues).remove("to_StreamLink");
+                if (cloudSdkValue instanceof Map) {
                     if (toStreamLink == null) {
                         toStreamLink = new TestEntityStream();
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     toStreamLink.fromMap(inputMap);
                 }
             }
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Override
@@ -986,20 +986,20 @@ public class TestEntityV4
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
         if (toMultiLink!= null) {
-            (values).put("to_MultiLink", toMultiLink);
+            (cloudSdkValues).put("to_MultiLink", toMultiLink);
         }
         if (toOtherMultiLink!= null) {
-            (values).put("to_OtherMultiLink", toOtherMultiLink);
+            (cloudSdkValues).put("to_OtherMultiLink", toOtherMultiLink);
         }
         if (toSingleLink!= null) {
-            (values).put("to_SingleLink", toSingleLink);
+            (cloudSdkValues).put("to_SingleLink", toSingleLink);
         }
         if (toStreamLink!= null) {
-            (values).put("to_StreamLink", toStreamLink);
+            (cloudSdkValues).put("to_StreamLink", toStreamLink);
         }
-        return values;
+        return cloudSdkValues;
     }
 
     /**
@@ -1022,17 +1022,17 @@ public class TestEntityV4
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>TestEntityMultiLink</b> entities.
      */
     public void setMultiLink(
         @Nonnull
-        final List<TestEntityMultiLink> value) {
+        final List<TestEntityMultiLink> cloudSdkValue) {
         if (toMultiLink == null) {
             toMultiLink = Lists.newArrayList();
         }
         toMultiLink.clear();
-        toMultiLink.addAll(value);
+        toMultiLink.addAll(cloudSdkValue);
     }
 
     /**
@@ -1072,17 +1072,17 @@ public class TestEntityV4
      * <p>
      * Please note: <i>Lazy</i> loading of OData entity associations is the process of asynchronous retrieval and persisting of items from a navigation property. If a <i>lazy</i> property is requested by the application for the first time and it has not yet been loaded, an OData query will be run in order to load the missing information and its result will get cached for future invocations.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     List of <b>TestEntityMultiLink</b> entities.
      */
     public void setOtherMultiLink(
         @Nonnull
-        final List<TestEntityMultiLink> value) {
+        final List<TestEntityMultiLink> cloudSdkValue) {
         if (toOtherMultiLink == null) {
             toOtherMultiLink = Lists.newArrayList();
         }
         toOtherMultiLink.clear();
-        toOtherMultiLink.addAll(value);
+        toOtherMultiLink.addAll(cloudSdkValue);
     }
 
     /**
@@ -1118,11 +1118,11 @@ public class TestEntityV4
     /**
      * Overwrites the associated <b>TestEntitySingleLink</b> entity for the loaded navigation property <b>to_SingleLink</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>TestEntitySingleLink</b> entity.
      */
-    public void setSingleLink(final TestEntitySingleLink value) {
-        toSingleLink = value;
+    public void setSingleLink(final TestEntitySingleLink cloudSdkValue) {
+        toSingleLink = cloudSdkValue;
     }
 
     /**
@@ -1141,11 +1141,11 @@ public class TestEntityV4
     /**
      * Overwrites the associated <b>TestEntityStream</b> entity for the loaded navigation property <b>to_StreamLink</b>.
      * 
-     * @param value
+     * @param cloudSdkValue
      *     New <b>TestEntityStream</b> entity.
      */
-    public void setStreamLink(final TestEntityStream value) {
-        toStreamLink = value;
+    public void setStreamLink(final TestEntityStream cloudSdkValue) {
+        toStreamLink = cloudSdkValue;
     }
 
     /**
@@ -1384,76 +1384,76 @@ public class TestEntityV4
         private TestEntitySingleLink toSingleLink;
         private TestEntityStream toStreamLink;
 
-        private TestEntityV4 .TestEntityV4Builder toMultiLink(final List<TestEntityMultiLink> value) {
-            toMultiLink.addAll(value);
+        private TestEntityV4 .TestEntityV4Builder toMultiLink(final List<TestEntityMultiLink> cloudSdkValue) {
+            toMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_MultiLink</b> for <b>TestEntityV4</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder multiLink(TestEntityMultiLink... value) {
-            return toMultiLink(Lists.newArrayList(value));
+        public TestEntityV4 .TestEntityV4Builder multiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV4 .TestEntityV4Builder toOtherMultiLink(final List<TestEntityMultiLink> value) {
-            toOtherMultiLink.addAll(value);
+        private TestEntityV4 .TestEntityV4Builder toOtherMultiLink(final List<TestEntityMultiLink> cloudSdkValue) {
+            toOtherMultiLink.addAll(cloudSdkValue);
             return this;
         }
 
         /**
          * Navigation property <b>to_OtherMultiLink</b> for <b>TestEntityV4</b> to multiple <b>TestEntityMultiLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityMultiLinks to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder otherMultiLink(TestEntityMultiLink... value) {
-            return toOtherMultiLink(Lists.newArrayList(value));
+        public TestEntityV4 .TestEntityV4Builder otherMultiLink(TestEntityMultiLink... cloudSdkValue) {
+            return toOtherMultiLink(Lists.newArrayList(cloudSdkValue));
         }
 
-        private TestEntityV4 .TestEntityV4Builder toSingleLink(final TestEntitySingleLink value) {
-            toSingleLink = value;
+        private TestEntityV4 .TestEntityV4Builder toSingleLink(final TestEntitySingleLink cloudSdkValue) {
+            toSingleLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_SingleLink</b> for <b>TestEntityV4</b> to single <b>TestEntitySingleLink</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntitySingleLink to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder singleLink(final TestEntitySingleLink value) {
-            return toSingleLink(value);
+        public TestEntityV4 .TestEntityV4Builder singleLink(final TestEntitySingleLink cloudSdkValue) {
+            return toSingleLink(cloudSdkValue);
         }
 
-        private TestEntityV4 .TestEntityV4Builder toStreamLink(final TestEntityStream value) {
-            toStreamLink = value;
+        private TestEntityV4 .TestEntityV4Builder toStreamLink(final TestEntityStream cloudSdkValue) {
+            toStreamLink = cloudSdkValue;
             return this;
         }
 
         /**
          * Navigation property <b>to_StreamLink</b> for <b>TestEntityV4</b> to single <b>TestEntityStream</b>.
          * 
-         * @param value
+         * @param cloudSdkValue
          *     The TestEntityStream to build this TestEntityV4 with.
          * @return
          *     This Builder to allow for a fluent interface.
          */
         @Nonnull
-        public TestEntityV4 .TestEntityV4Builder streamLink(final TestEntityStream value) {
-            return toStreamLink(value);
+        public TestEntityV4 .TestEntityV4Builder streamLink(final TestEntityStream cloudSdkValue) {
+            return toStreamLink(cloudSdkValue);
         }
 
     }

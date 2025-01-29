@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.multipleentitysets;
@@ -120,7 +120,7 @@ public class FooType
     @Nonnull
     @Override
     protected Map<String, Object> getKey() {
-        final Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newLinkedHashMap();
         result.put("Foo", getFoo());
         return result;
     }
@@ -128,25 +128,25 @@ public class FooType
     @Nonnull
     @Override
     protected Map<String, Object> toMapOfFields() {
-        final Map<String, Object> values = super.toMapOfFields();
-        values.put("Foo", getFoo());
-        values.put("Type", getType_2());
-        return values;
+        final Map<String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Foo", getFoo());
+        cloudSdkValues.put("Type", getType_2());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<String, Object> inputValues) {
-        final Map<String, Object> values = Maps.newHashMap(inputValues);
+        final Map<String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Foo")) {
-                final Object value = values.remove("Foo");
+            if (cloudSdkValues.containsKey("Foo")) {
+                final Object value = cloudSdkValues.remove("Foo");
                 if ((value == null)||(!value.equals(getFoo()))) {
                     setFoo(((String) value));
                 }
             }
-            if (values.containsKey("Type")) {
-                final Object value = values.remove("Type");
+            if (cloudSdkValues.containsKey("Type")) {
+                final Object value = cloudSdkValues.remove("Type");
                 if ((value == null)||(!value.equals(getType_2()))) {
                     setType_2(((String) value));
                 }
@@ -158,7 +158,7 @@ public class FooType
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     /**

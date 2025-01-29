@@ -2,10 +2,11 @@
  * {{description}}{{^description}}{{classname}}{{/description}}{{#isDeprecated}}
  * @deprecated{{/isDeprecated}}
  */{{#isDeprecated}}
-@Deprecated{{/isDeprecated}}
+@Deprecated{{/isDeprecated}}{{^isReleased}}
+@Beta{{/isReleased}}
 {{>additionalOneOfTypeAnnotations}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
-    {{#discriminator}}
-    {{propertyType}} {{propertyGetter}}();
-    {{/discriminator}}
+{{#discriminator}}
+    Object {{propertyGetter}}();
+{{/discriminator}}
 }

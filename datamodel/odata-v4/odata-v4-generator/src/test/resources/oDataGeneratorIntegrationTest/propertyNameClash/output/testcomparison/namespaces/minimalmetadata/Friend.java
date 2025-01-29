@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.minimalmetadata;
@@ -93,18 +93,18 @@ public class Friend
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfFields() {
-        final Map<java.lang.String, Object> values = super.toMapOfFields();
-        values.put("Name", getName());
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfFields();
+        cloudSdkValues.put("Name", getName());
+        return cloudSdkValues;
     }
 
     @Override
     protected void fromMap(final Map<java.lang.String, Object> inputValues) {
-        final Map<java.lang.String, Object> values = Maps.newHashMap(inputValues);
+        final Map<java.lang.String, Object> cloudSdkValues = Maps.newLinkedHashMap(inputValues);
         // simple properties
         {
-            if (values.containsKey("Name")) {
-                final Object value = values.remove("Name");
+            if (cloudSdkValues.containsKey("Name")) {
+                final Object value = cloudSdkValues.remove("Name");
                 if ((value == null)||(!value.equals(getName()))) {
                     setName(((java.lang.String) value));
                 }
@@ -116,14 +116,14 @@ public class Friend
         // navigation properties
         {
         }
-        super.fromMap(values);
+        super.fromMap(cloudSdkValues);
     }
 
     @Nonnull
     @Override
     protected Map<java.lang.String, Object> toMapOfNavigationProperties() {
-        final Map<java.lang.String, Object> values = super.toMapOfNavigationProperties();
-        return values;
+        final Map<java.lang.String, Object> cloudSdkValues = super.toMapOfNavigationProperties();
+        return cloudSdkValues;
     }
 
 }

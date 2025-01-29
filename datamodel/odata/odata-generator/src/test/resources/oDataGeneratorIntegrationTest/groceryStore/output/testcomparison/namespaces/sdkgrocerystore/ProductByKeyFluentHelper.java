@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 package testcomparison.namespaces.sdkgrocerystore;
@@ -19,7 +19,7 @@ public class ProductByKeyFluentHelper
     extends FluentHelperByKey<ProductByKeyFluentHelper, Product, ProductSelectable>
 {
 
-    private final Map<String, Object> key = Maps.newHashMap();
+    private final Map<String, Object> key = Maps.newLinkedHashMap();
 
     /**
      * Creates a fluent helper object that will fetch a single {@link testcomparison.namespaces.sdkgrocerystore.Product Product} entity with the provided key field values. To perform execution, call the {@link #executeRequest executeRequest} method on the fluent helper object.

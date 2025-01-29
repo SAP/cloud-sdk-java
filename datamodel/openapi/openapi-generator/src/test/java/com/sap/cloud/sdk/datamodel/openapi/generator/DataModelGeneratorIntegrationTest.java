@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static java.util.Map.entry;
@@ -87,7 +83,7 @@ class DataModelGeneratorIntegrationTest
             "sodastore.yaml",
             "test",
             "test",
-            ApiMaturity.RELEASED,
+            ApiMaturity.BETA,
             true,
             true,
             8,

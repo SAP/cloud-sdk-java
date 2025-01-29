@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.odatav4.generator;
 
 import java.time.Duration;
@@ -625,7 +621,7 @@ class NamespaceClassGenerator
                     JMod.FINAL,
                     fieldMapClass,
                     CommonConstants.INLINE_MAP_NAME,
-                    codeModel.ref(Maps.class).staticInvoke("newHashMap").arg(inputValues));
+                    codeModel.ref(Maps.class).staticInvoke("newLinkedHashMap").arg(inputValues));
 
         body.block().directStatement("// simple properties");
         final JBlock simplePropertiesBlock = new JBlock(true, true);

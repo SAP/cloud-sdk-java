@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static com.sap.cloud.sdk.datamodel.metadata.generator.ApiUsageMetadata.arg;
