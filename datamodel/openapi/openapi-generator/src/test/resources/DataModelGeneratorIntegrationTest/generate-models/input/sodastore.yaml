@@ -19,7 +19,7 @@ paths:
                   $ref: '#/components/schemas/OneOf'
 components:
   schemas:
-    OneOfWithDiscriminatorAndMapping:
+    ShouldNotBeGenerated:
       oneOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
