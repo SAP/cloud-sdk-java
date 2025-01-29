@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
 class GenerationConfigurationConverterTest
@@ -33,6 +34,37 @@ class GenerationConfigurationConverterTest
         assertThat(resultSapHeader).isEqualTo(GenerationConfigurationConverter.SAP_COPYRIGHT_HEADER);
         assertThat(resultCustomHeader).isEqualTo(customHeader);
         assertThat(resultNoHeader).isNull();
+    }
+
+    @Test
+    void testGetAllowedIds()
+    {
+        // assertion definition: given input -> expected output
+        final var assertions =
+            ImmutableMap
+                .<String, String> builder()
+                .put("", "") // empty
+                .put("\n", "") // newline
+                .put("Foo", "Foo") // single
+                .put("Foo,Bar", "Foo,Bar") // list
+                .put("Foo;Bar", "Foo,Bar") // custom separator
+                .put("Foo  Bar", "Foo,Bar") // space separator
+                .put("Foo \n Bar", "Foo,Bar") // new-line separator
+                .build();
+
+        // feed the assertion input arguments into the config
+        var configBuilder = GenerationConfiguration.builder();
+        int i = 0;
+        for( String input : assertions.keySet() ) {
+            configBuilder.additionalProperty("property" + (i++), input);
+        }
+        var config = configBuilder.build();
+
+        // run the test
+        int j = 0;
+        for( String output : assertions.values() ) {
+            assertThat(GenerationConfigurationConverter.getAllowedIds(config, "property" + (j++))).isEqualTo(output);
+        }
     }
 
     private GenerationConfiguration.GenerationConfigurationBuilder createBasicConfig()

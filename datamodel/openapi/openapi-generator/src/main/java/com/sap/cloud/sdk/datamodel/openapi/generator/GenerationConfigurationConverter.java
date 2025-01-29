@@ -111,13 +111,13 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
     }
 
-    private static String getAllowedIds( @Nonnull final GenerationConfiguration config, @Nonnull final String property )
+    static String getAllowedIds( @Nonnull final GenerationConfiguration config, @Nonnull final String property )
     {
         final var allowIds = config.getAdditionalProperties().get(property);
         if( allowIds == null || allowIds.isBlank() ) {
             return "";
         }
-        return String.join(",", allowIds.trim().split("\\s+"));
+        return String.join(",", allowIds.trim().split("\\W+"));
     }
 
     private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
