@@ -126,7 +126,6 @@
 						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
 						<useOneOfInterfaces>true</useOneOfInterfaces>
 						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
-						<stopAdditionalProperties>true</stopAdditionalProperties>
 					</additionalProperties>
 				</configuration>
 			</plugin>
