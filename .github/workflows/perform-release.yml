@@ -26,9 +26,7 @@ jobs:
       release-notes-branch: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
       release-tag: ${{ steps.determine-branch-names.outputs.RELEASE_TAG }}
       release-commit: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
-    permissions:
-      pull-requests: read
-      contents: read
+    permissions: write-all # contents and push are needed to see the draft release
     runs-on: ubuntu-latest
     steps:
       - name: "Determine Branch Names"
