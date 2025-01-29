@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -23,6 +24,7 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfigurati
 
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +90,16 @@ class GenerationConfigurationConverter
                     op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
+            }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
+            {
+                // Disable additional attributes to prevent model classes from extending "HashMap"
+                // SAP Cloud SDK offers custom field APIs to handle additional attributes already
+                schema.setAdditionalProperties(Boolean.FALSE);
+                super.updateModelForObject(m, schema);
             }
         };
     }
