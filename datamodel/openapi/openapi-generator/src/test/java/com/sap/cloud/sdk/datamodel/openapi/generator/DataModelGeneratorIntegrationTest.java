@@ -133,7 +133,9 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             3,
-            ofEntries(entry("apisToGenerate", "Default, NotExist"), entry("modelsToGenerate", "Cola, Fanta, NotExist")));
+            ofEntries(
+                entry("apisToGenerate", "Default, NotExist"),
+                entry("modelsToGenerate", "Cola, Fanta, NotExist")));
 
         final String testCaseName;
         final String inputSpecFileName;
