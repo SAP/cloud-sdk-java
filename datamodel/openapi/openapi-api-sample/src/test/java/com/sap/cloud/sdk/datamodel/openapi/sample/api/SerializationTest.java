@@ -93,6 +93,7 @@ class SerializationTest
         final Order order = Order.create().productId(100L).quantity(5).totalPrice(6.0f);
         order.setCustomField("shoesize", 44);
         assertThat(new ObjectMapper().writeValueAsString(order)).isEqualToIgnoringWhitespace(expected);
+        assertThat(new ObjectMapper().readValue(expected, Order.class)).isEqualTo(order);
     }
 
     private void verify( String requestBody )
