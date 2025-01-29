@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import test.Cola;
 import test.Fanta;
+import test.FantaFlavor;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,6 +47,9 @@ public class AnyOf
 {
   @JsonProperty("sodaType")
   private String sodaType;
+
+  @JsonProperty("flavor")
+  private FantaFlavor flavor;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -78,6 +82,35 @@ public class AnyOf
    */
   public void setSodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
+  }
+
+  /**
+   * Set the flavor of this {@link AnyOf} instance and return the same instance.
+   *
+   * @param flavor  The flavor of this {@link AnyOf}
+   * @return The same instance of this {@link AnyOf} class
+   */
+  @Nonnull public AnyOf flavor( @Nullable final FantaFlavor flavor) {
+    this.flavor = flavor;
+    return this;
+  }
+
+  /**
+   * Get flavor
+   * @return flavor  The flavor of this {@link AnyOf} instance.
+   */
+  @Nonnull
+  public FantaFlavor getFlavor() {
+    return flavor;
+  }
+
+  /**
+   * Set the flavor of this {@link AnyOf} instance.
+   *
+   * @param flavor  The flavor of this {@link AnyOf}
+   */
+  public void setFlavor( @Nullable final FantaFlavor flavor) {
+    this.flavor = flavor;
   }
 
   /**
@@ -127,12 +160,13 @@ public class AnyOf
     }
     final AnyOf anyOf = (AnyOf) o;
     return Objects.equals(this.cloudSdkCustomFields, anyOf.cloudSdkCustomFields) &&
-        Objects.equals(this.sodaType, anyOf.sodaType);
+        Objects.equals(this.sodaType, anyOf.sodaType) &&
+        Objects.equals(this.flavor, anyOf.flavor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sodaType, cloudSdkCustomFields);
+    return Objects.hash(sodaType, flavor, cloudSdkCustomFields);
   }
 
   @Override
@@ -140,6 +174,7 @@ public class AnyOf
     final StringBuilder sb = new StringBuilder();
     sb.append("class AnyOf {\n");
     sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
+    sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

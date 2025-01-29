@@ -4,9 +4,45 @@
  */{{#isDeprecated}}
 @Deprecated{{/isDeprecated}}{{^isReleased}}
 @Beta{{/isReleased}}
+{{^model.vendorExtensions.x-monads}}
 {{>additionalOneOfTypeAnnotations}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+{{/model.vendorExtensions.x-monads}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
 {{#discriminator}}
     Object {{propertyGetter}}();
 {{/discriminator}}
+{{#model.vendorExtensions.x-monads.single}}
+    /**
+     * Helper class to create a {{.}} that implements {@link {{classname}}}.
+     */
+    record Inner{{.}}(@com.fasterxml.jackson.annotation.JsonValue @Nonnull {{.}} value) implements {{classname}} {}
+
+    /**
+     * Creator to enable deserialization of a {{.}}.
+     *
+     * @param val the value to use
+     * @return a new instance of {@link Inner{{.}}}.
+     */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    @Nonnull
+    static Inner{{.}} create( @Nonnull final {{.}} val) { return new Inner{{.}}(val); }
+
+{{/model.vendorExtensions.x-monads.single}}
+{{#model.vendorExtensions.x-monads.multiple}}
+    /**
+    * Helper class to create a list of {{.}} that implements {@link {{classname}}}.
+    */
+    record Inner{{.}}s(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<{{.}}> values) implements {{classname}} {}
+
+    /**
+    * Creator to enable deserialization of a list of {{.}}.
+    *
+    * @param val the value to use
+    * @return a new instance of {@link Inner{{.}}s}.
+    */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    @Nonnull
+    static Inner{{.}}s create( @Nonnull final List<{{.}}> val) { return new Inner{{.}}s(val); }
+
+{{/model.vendorExtensions.x-monads.multiple}}
 }

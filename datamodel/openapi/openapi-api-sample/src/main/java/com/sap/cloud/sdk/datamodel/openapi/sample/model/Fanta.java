@@ -42,6 +42,9 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
     @JsonProperty( "color" )
     private String color;
 
+    @JsonProperty( "flavor" )
+    private FantaFlavor flavor;
+
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
@@ -126,6 +129,42 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
     }
 
     /**
+     * Set the flavor of this {@link Fanta} instance and return the same instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link Fanta}
+     * @return The same instance of this {@link Fanta} class
+     */
+    @Nonnull
+    public Fanta flavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+        return this;
+    }
+
+    /**
+     * Get flavor
+     *
+     * @return flavor The flavor of this {@link Fanta} instance.
+     */
+    @Nonnull
+    public FantaFlavor getFlavor()
+    {
+        return flavor;
+    }
+
+    /**
+     * Set the flavor of this {@link Fanta} instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link Fanta}
+     */
+    public void setFlavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+    }
+
+    /**
      * Get the names of the unrecognizable properties of the {@link Fanta}.
      *
      * @return The set of properties names
@@ -183,13 +222,14 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
         final Fanta fanta = (Fanta) o;
         return Objects.equals(this.cloudSdkCustomFields, fanta.cloudSdkCustomFields)
             && Objects.equals(this.sodaType, fanta.sodaType)
-            && Objects.equals(this.color, fanta.color);
+            && Objects.equals(this.color, fanta.color)
+            && Objects.equals(this.flavor, fanta.flavor);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, color, cloudSdkCustomFields);
+        return Objects.hash(sodaType, color, flavor, cloudSdkCustomFields);
     }
 
     @Override
@@ -200,6 +240,7 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
         sb.append("class Fanta {\n");
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    color: ").append(toIndentedString(color)).append("\n");
+        sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");

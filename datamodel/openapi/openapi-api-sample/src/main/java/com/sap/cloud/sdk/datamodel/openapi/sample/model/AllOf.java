@@ -45,6 +45,9 @@ public class AllOf
     @JsonProperty( "color" )
     private String color;
 
+    @JsonProperty( "flavor" )
+    private FantaFlavor flavor;
+
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
@@ -165,6 +168,42 @@ public class AllOf
     }
 
     /**
+     * Set the flavor of this {@link AllOf} instance and return the same instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
+     */
+    @Nonnull
+    public AllOf flavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+        return this;
+    }
+
+    /**
+     * Get flavor
+     *
+     * @return flavor The flavor of this {@link AllOf} instance.
+     */
+    @Nonnull
+    public FantaFlavor getFlavor()
+    {
+        return flavor;
+    }
+
+    /**
+     * Set the flavor of this {@link AllOf} instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link AllOf}
+     */
+    public void setFlavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+    }
+
+    /**
      * Get the names of the unrecognizable properties of the {@link AllOf}.
      *
      * @return The set of properties names
@@ -223,13 +262,14 @@ public class AllOf
         return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields)
             && Objects.equals(this.sodaType, allOf.sodaType)
             && Objects.equals(this.caffeine, allOf.caffeine)
-            && Objects.equals(this.color, allOf.color);
+            && Objects.equals(this.color, allOf.color)
+            && Objects.equals(this.flavor, allOf.flavor);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, color, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, color, flavor, cloudSdkCustomFields);
     }
 
     @Override
@@ -241,6 +281,7 @@ public class AllOf
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
         sb.append("    color: ").append(toIndentedString(color)).append("\n");
+        sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");

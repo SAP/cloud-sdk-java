@@ -161,6 +161,16 @@ components:
           type: string
         color:
           type: string
+        flavor:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: object
+              properties:
+                intensity:
+                  type: integer
+                nuance:
+                  type: string
 paths:
   /sodas:
     get:

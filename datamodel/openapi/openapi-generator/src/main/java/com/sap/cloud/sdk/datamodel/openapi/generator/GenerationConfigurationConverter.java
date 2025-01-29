@@ -1,11 +1,15 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -57,7 +61,7 @@ class GenerationConfigurationConverter
         setGlobalSettings(generationConfiguration);
         final var inputSpecFile = inputSpec.toString();
 
-        final var config = createCodegenConfig();
+        final var config = createCodegenConfig(generationConfiguration);
         config.setOutputDir(generationConfiguration.getOutputDirectory());
         config.setLibrary(LIBRARY_NAME);
         config.setApiPackage(generationConfiguration.getApiPackage());
@@ -71,8 +75,9 @@ class GenerationConfigurationConverter
         return clientOptInput;
     }
 
-    private static JavaClientCodegen createCodegenConfig()
+    private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
     {
+        final var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
         return new JavaClientCodegen()
         {
             // Custom processor to inject "x-return-nullable" extension
@@ -90,6 +95,64 @@ class GenerationConfigurationConverter
                     op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
                 }
                 return super.postProcessOperationsWithModels(ops, allModels);
+            }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updateModelForComposedSchema(
+                @Nonnull final CodegenModel m,
+                @Nonnull final Schema schema,
+                @Nonnull final Map<String, Schema> allDefinitions )
+            {
+                super.updateModelForComposedSchema(m, schema, allDefinitions);
+
+                if( USE_ONE_OF_CREATORS.isEnabled(config) ) {
+                    useCreatorsForInterfaceSubtypes(m);
+                }
+            }
+
+            /**
+             * Use JsonCreator for interface sub-types in case there are any primitives.
+             *
+             * @param m
+             *            The model to update.
+             */
+            private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
+            {
+                if( m.discriminator != null ) {
+                    return;
+                }
+                boolean useCreators = false;
+                for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
+                    int nonPrimitives = 0;
+                    final var candidatesSingle = new HashSet<String>();
+                    final var candidatesMultiple = new HashSet<String>();
+
+                    for( final String candidate : candidates ) {
+                        if( candidate.startsWith("List<") ) {
+                            final var c1 = candidate.substring(5, candidate.length() - 1);
+                            candidatesMultiple.add(c1);
+                            useCreators = true;
+                        } else {
+                            candidatesSingle.add(candidate);
+                            useCreators |= primitives.contains(candidate);
+                            if( !primitives.contains(candidate) ) {
+                                nonPrimitives++;
+                            }
+                        }
+                    }
+                    if( useCreators ) {
+                        if( nonPrimitives > 1 ) {
+                            final var msg =
+                                "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
+                            log.warn(msg, m.name);
+                        }
+                        candidates.clear();
+                        final var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
+                        m.vendorExtensions.put("x-monads", monads);
+                        m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
+                    }
+                }
             }
 
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
