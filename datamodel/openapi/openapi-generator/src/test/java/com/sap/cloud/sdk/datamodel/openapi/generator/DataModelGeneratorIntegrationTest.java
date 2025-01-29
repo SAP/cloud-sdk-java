@@ -80,7 +80,7 @@ class DataModelGeneratorIntegrationTest
             "sodastore.yaml",
             "test",
             "test",
-            ApiMaturity.RELEASED,
+            ApiMaturity.BETA,
             true,
             true,
             8,
