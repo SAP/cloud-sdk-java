@@ -1,8 +1,10 @@
 package com.sap.cloud.sdk.datamodel.odata.helper;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -335,9 +337,12 @@ public abstract class VdmObject<ObjectT>
             final Object originalValue = changedOriginalField.getValue();
             final Object currentValue = currentFields.get(changedOriginalField.getKey());
 
-            if( originalValue != null && !originalValue.equals(currentValue)
-                || originalValue == null && currentValue != null ) {
-
+            if( currentValue instanceof BigDecimal currentDecimal
+                && originalValue instanceof BigDecimal originalDecimal ) {
+                if( currentDecimal.compareTo(originalDecimal) != 0 ) {
+                    changedFields.put(changedOriginalField.getKey(), currentDecimal);
+                }
+            } else if( !Objects.equals(currentValue, originalValue) ) {
                 changedFields.put(changedOriginalField.getKey(), currentValue);
             }
         }

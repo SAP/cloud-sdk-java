@@ -20,4 +20,5 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix OData `VDMObject.getChangedFields()` to use `BigDecimal.compareTo()` instead of `BigDecimal.equals()`.
+  - Example: a `BigDecimal` field updated from `1` to `1.0` will not be considered as changed anymore.

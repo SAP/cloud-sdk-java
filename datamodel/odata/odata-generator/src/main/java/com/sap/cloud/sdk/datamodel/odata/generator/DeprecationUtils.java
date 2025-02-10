@@ -63,16 +63,6 @@ final class DeprecationUtils
      *            The class to add information to.
      * @param service
      *            The service to take the status information from.
-     *
-     */
-
-    /**
-     * Adds javadoc and annotations regarding states such as deprecation if necessary.
-     *
-     * @param affectedClass
-     *            The class to add information to.
-     * @param service
-     *            The service to take the status information from.
      * @param customDeprecationNotice
      *            The custom deprecation notice that is added as a comment
      */
