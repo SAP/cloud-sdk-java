@@ -5,8 +5,8 @@ updates:
     target-branch: main
     directory: '/'
     schedule:
-      interval: weekly
-      time: '08:00'
+      day: tuseday
+      time: '00:00'
       timezone: 'Europe/Berlin'
     open-pull-requests-limit: 5
     commit-message:
