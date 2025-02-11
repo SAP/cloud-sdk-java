@@ -5,6 +5,7 @@ updates:
     target-branch: main
     directory: '/'
     schedule:
+      interval: weekly
       day: tuesday
       time: '00:00'
       timezone: 'Europe/Berlin'
