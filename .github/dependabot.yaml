@@ -5,7 +5,7 @@ updates:
     target-branch: main
     directory: '/'
     schedule:
-      day: tuseday
+      day: tuesday
       time: '00:00'
       timezone: 'Europe/Berlin'
     open-pull-requests-limit: 5
