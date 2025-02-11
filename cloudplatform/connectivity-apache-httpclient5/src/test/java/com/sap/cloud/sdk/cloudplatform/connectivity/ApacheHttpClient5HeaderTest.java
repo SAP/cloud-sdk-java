@@ -104,7 +104,7 @@ class ApacheHttpClient5HeaderTest
     {
         stubFor(get(anyUrl()).willReturn(ok()));
 
-        var sut = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(testCase.tlsFlag).build();
+        var sut = new ApacheHttpClient5FactoryBuilder().build();
         var dest = testCase.destination.destinationBuilder.apply(server.getHttpBaseUrl());
         sut.createHttpClient(dest).execute(new HttpGet("/foo"), new BasicHttpClientResponseHandler());
 

@@ -74,6 +74,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             HttpClientInstantiationException
     {
         final var requestConfig = getRequestConfig(destination);
+        System.out.println(requestConfig);
         final CloseableHttpClient httpClient = buildHttpClient(destination, requestConfig);
         if( destination == null ) {
             return httpClient;
