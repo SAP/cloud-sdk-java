@@ -58,7 +58,9 @@ class ApacheHttpClient5HeaderTest
     @RequiredArgsConstructor
     enum TestAssertion
     {
-        DEFAULT(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"), Map.of()),
+        NONE(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"), Map.of()),
+        KEEP_ALIVE(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"),
+            Map.of("Connection", "keep-alive")),
         UPGRADE(
             List.of("Connection", "Host", "User-Agent", "Accept-Encoding", "Upgrade"),
             Map.of("Connection", "Upgrade", "Upgrade", "TLS/1.2"));
@@ -79,22 +81,22 @@ class ApacheHttpClient5HeaderTest
     private static final TestCase[] TEST_CASES =
         {
             // Forced HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, ENABLED, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.INTERNET, ENABLED, TestAssertion.KEEP_ALIVE),
             new TestCase(TestDestination.PROXY, ENABLED, TestAssertion.UPGRADE),
             new TestCase(TestDestination.ON_PREMISE, ENABLED, TestAssertion.UPGRADE),
-            new TestCase(TestDestination.TLS_VERSION, ENABLED, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.TLS_VERSION, ENABLED, TestAssertion.KEEP_ALIVE),
 
             // Disabled HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.PROXY, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.ON_PREMISE, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.TLS_VERSION, DISABLED, TestAssertion.DEFAULT),
+            new TestCase(TestDestination.INTERNET, DISABLED, TestAssertion.NONE),
+            new TestCase(TestDestination.PROXY, DISABLED, TestAssertion.NONE),
+            new TestCase(TestDestination.ON_PREMISE, DISABLED, TestAssertion.NONE),
+            new TestCase(TestDestination.TLS_VERSION, DISABLED, TestAssertion.KEEP_ALIVE),
 
             // Automatic HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, AUTOMATIC, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.INTERNET, AUTOMATIC, TestAssertion.KEEP_ALIVE),
             new TestCase(TestDestination.PROXY, AUTOMATIC, TestAssertion.UPGRADE),
-            new TestCase(TestDestination.ON_PREMISE, AUTOMATIC, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.TLS_VERSION, AUTOMATIC, TestAssertion.DEFAULT) };
+            new TestCase(TestDestination.ON_PREMISE, AUTOMATIC, TestAssertion.NONE),
+            new TestCase(TestDestination.TLS_VERSION, AUTOMATIC, TestAssertion.KEEP_ALIVE) };
 
     @SneakyThrows
     @ParameterizedTest
