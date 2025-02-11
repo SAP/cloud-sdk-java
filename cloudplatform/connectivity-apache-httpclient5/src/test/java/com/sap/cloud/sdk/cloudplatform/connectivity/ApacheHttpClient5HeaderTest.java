@@ -59,8 +59,7 @@ class ApacheHttpClient5HeaderTest
     enum TestAssertion
     {
         NONE(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"), Map.of()),
-        KEEP_ALIVE(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"),
-            Map.of("Connection", "keep-alive")),
+        KEEP_ALIVE(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"), Map.of("Connection", "keep-alive")),
         UPGRADE(
             List.of("Connection", "Host", "User-Agent", "Accept-Encoding", "Upgrade"),
             Map.of("Connection", "Upgrade", "Upgrade", "TLS/1.2"));
