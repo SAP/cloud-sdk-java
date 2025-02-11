@@ -1,6 +1,5 @@
 package com.sap.cloud.sdk.datamodel.odatav4.core;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -357,14 +356,8 @@ public abstract class VdmObject<ObjectT>
             return false;
         }
 
-        if( changedOriginalFields.containsKey(fieldName) ) {
-            if( currentValue instanceof BigDecimal currentDecimal
-                && overriddenValue instanceof BigDecimal overridenDecimal ) {
-                return currentDecimal.compareTo(overridenDecimal) != 0;
-            }
-            if( !Objects.equals(currentValue, overriddenValue) ) {
-                return true;
-            }
+        if( changedOriginalFields.containsKey(fieldName) && !Objects.equals(currentValue, overriddenValue) ) {
+            return true;
         }
 
         // property was either not updated directly, or the values are still "equal" (according to Objects.equals)

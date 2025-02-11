@@ -3,8 +3,6 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -115,14 +113,6 @@ class ODataChangedFieldsTest
         final TestVdmEntity testEntity = new TestVdmEntity();
         final TestVdmEntity child1 = TestVdmEntity.builder().stringValue("Foo").build();
         testEntity.addToChildren(child1);
-        assertThat(testEntity.getChangedFields()).isEmpty();
-    }
-
-    @Test
-    void testBigDecimalEquals()
-    {
-        final TestVdmEntity testEntity = TestVdmEntity.builder().decimalValue(new BigDecimal("1.0")).build();
-        testEntity.setDecimalValue(new BigDecimal("1"));
         assertThat(testEntity.getChangedFields()).isEmpty();
     }
 }

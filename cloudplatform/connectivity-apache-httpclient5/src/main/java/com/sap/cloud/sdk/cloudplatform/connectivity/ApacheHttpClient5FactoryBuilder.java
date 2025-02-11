@@ -111,8 +111,12 @@ public class ApacheHttpClient5FactoryBuilder
     }
 
     /**
-     * Sets the automatic TLS upgrade strategy. This strategy controls whether insecure connections should be
-     * automatically upgraded.
+     * Sets the {@code Upgrade} header. Only {@link ProxyType#INTERNET} has the {@code Upgrade} header
+     * by default.
+     * <p>
+     * <b>{@link TlsUpgrade#DISABLED} only works for {@link ProxyType#INTERNET}</b>
+     * <p>
+     * <b>{@link TlsUpgrade#ENABLED} only works for {@link ProxyType#ON_PREMISE}</b>
      *
      * @since 5.14.0
      */

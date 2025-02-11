@@ -137,8 +137,8 @@ class ApiClientViaConstructorTest
         httpRequest(TlsUpgrade.DISABLED, wm.getHttpBaseUrl());
         verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
 
-        httpRequest(TlsUpgrade.ENABLED, wm.getHttpBaseUrl());
-        verify(getRequestedFor(anyUrl()).withHeader("Upgrade", equalTo("TLS/1.2")));
+        httpRequest(TlsUpgrade.AUTOMATIC, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
     }
 
     private static void httpRequest( TlsUpgrade toggle, String url )
