@@ -40,7 +40,7 @@ public class ApacheHttpClient5FactoryBuilder
         /**
          * Automatic TLS upgrade is enabled only for {@link ProxyType#INTERNET}, default.
          */
-        AUTOMATIC;
+        AUTOMATIC
     }
 
     /**
@@ -111,8 +111,7 @@ public class ApacheHttpClient5FactoryBuilder
     }
 
     /**
-     * Sets the {@code Upgrade} header. Only {@link ProxyType#INTERNET} has the {@code Upgrade} header
-     * by default.
+     * Sets the {@code Upgrade} header. Only {@link ProxyType#INTERNET} has the {@code Upgrade} header by default.
      * <p>
      * <b>{@link TlsUpgrade#DISABLED} only works for {@link ProxyType#INTERNET}</b>
      * <p>
