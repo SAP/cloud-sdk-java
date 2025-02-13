@@ -8,7 +8,7 @@
 
 ### 🔧 Compatibility Notes
 
-- The TLS `Upgrade` header changes thanks to [Apache httpclient5 5.4.2](https://github.com/apache/httpcomponents-client/commit/5ab09ea39fed1c39ea35905532ba1567c785330a)
+- Changes regarding the TLS `Upgrade` header thanks to [Apache httpclient5 5.4.2](https://github.com/apache/httpcomponents-client/commit/5ab09ea39fed1c39ea35905532ba1567c785330a)
   - `TlsUpgrade.DISABLED` no changes
   - `TlsUpgrade.ENABLED` will not send the `Upgrade` header for non-proxy connections anymore
   - `TlsUpgrade.AUTOMATIC` **Default behaviour** will not send the `Upgrade` header anymore
