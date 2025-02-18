@@ -16,7 +16,7 @@
 
 ### ✨ New Functionality
 
-- 
+- OpenAPI: Add `getAllFields()` and deprecate `getCustomField(String)` on generated model classes.
 
 ### 📈 Improvements
 

@@ -15,6 +15,7 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -218,6 +219,7 @@ public class AnyOf
     /**
      * Get the value of an unrecognizable property of this {@link AnyOf} instance.
      *
+     * @deprecated Use {@link #getAllFields()} instead.
      * @param name
      *            The name of the property
      * @return The value of the property
@@ -225,6 +227,7 @@ public class AnyOf
      *             If no property with the given name could be found.
      */
     @Nullable
+    @Deprecated
     public Object getCustomField( @Nonnull final String name )
         throws NoSuchElementException
     {
@@ -232,6 +235,33 @@ public class AnyOf
             throw new NoSuchElementException("AnyOf has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
+    }
+
+    /**
+     * Get the value of all properties of this {@link AnyOf} instance including unrecognized properties.
+     *
+     * @return The map of all properties
+     */
+    @JsonIgnore
+    @Nonnull
+    public Map<String, Object> getAllFields()
+    {
+        final Map<String, Object> declaredFields =
+            Arrays.stream(getClass().getDeclaredFields()).collect(LinkedHashMap::new, ( map, field ) -> {
+                Object value = null;
+                try {
+                    value = field.get(this);
+                }
+                catch( IllegalAccessException e ) {
+                    // do nothing, value will not be added
+                }
+                final String name = field.getName();
+                if( value != null && !name.equals("cloudSdkCustomFields") ) {
+                    map.put(name, value);
+                }
+            }, Map::putAll);
+        declaredFields.putAll(cloudSdkCustomFields);
+        return declaredFields;
     }
 
     /**
