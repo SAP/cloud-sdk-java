@@ -108,9 +108,9 @@ class DeserializationTest
         final SodaWithId actual = sut.sodasIdGet(1L);
 
         assertThat(actual.getName()).isEqualTo("Cola");
-        assertThat(actual.getAllFields())
+        assertThat(actual.toMap())
             .containsExactlyInAnyOrderEntriesOf(Map.of("name", "Cola", "unexpectedField", List.of()));
-        assertThat(actual.getAllFields().get("doesNotExist")).isNull();
+        assertThat(actual.toMap().get("doesNotExist")).isNull();
         assertThat(actual.getCustomFieldNames()).containsExactly("unexpectedField");
         assertThat(actual.getCustomField("unexpectedField")).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
     }

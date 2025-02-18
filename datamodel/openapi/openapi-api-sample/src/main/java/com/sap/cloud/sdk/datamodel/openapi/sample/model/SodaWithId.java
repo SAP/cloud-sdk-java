@@ -375,7 +375,7 @@ public class SodaWithId
     /**
      * Get the value of an unrecognizable property of this {@link SodaWithId} instance.
      *
-     * @deprecated Use {@link #getAllFields()} instead.
+     * @deprecated Use {@link #toMap()} instead.
      * @param name
      *            The name of the property
      * @return The value of the property
@@ -400,7 +400,7 @@ public class SodaWithId
      */
     @JsonIgnore
     @Nonnull
-    public Map<String, Object> getAllFields()
+    public Map<String, Object> toMap()
     {
         final Map<String, Object> declaredFields =
             Arrays.stream(getClass().getDeclaredFields()).collect(LinkedHashMap::new, ( map, field ) -> {
