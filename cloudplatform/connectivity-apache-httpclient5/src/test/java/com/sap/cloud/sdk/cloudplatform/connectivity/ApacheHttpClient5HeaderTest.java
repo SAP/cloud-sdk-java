@@ -58,12 +58,21 @@ class ApacheHttpClient5HeaderTest
     @RequiredArgsConstructor
     enum TestAssertion
     {
-        DEFAULT(List.of("Connection", "Host", "User-Agent", "Accept-Encoding"), Map.of()),
+        NONE(
+            List.of("Connection", "Host", "User-Agent", "Accept-Encoding"),
+            List.of("Connection", "Upgrade"),
+            Map.of()),
+        KEEP_ALIVE(
+            List.of("Connection", "Host", "User-Agent", "Accept-Encoding"),
+            List.of("Upgrade"),
+            Map.of("Connection", "keep-alive")),
         UPGRADE(
             List.of("Connection", "Host", "User-Agent", "Accept-Encoding", "Upgrade"),
+            List.of(),
             Map.of("Connection", "Upgrade", "Upgrade", "TLS/1.2"));
 
         private final List<String> headersAllowed;
+        private final List<String> headersForbidden;
         private final Map<String, String> headersRequired;
     }
 
@@ -79,22 +88,22 @@ class ApacheHttpClient5HeaderTest
     private static final TestCase[] TEST_CASES =
         {
             // Forced HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, ENABLED, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.INTERNET, ENABLED, TestAssertion.KEEP_ALIVE),
             new TestCase(TestDestination.PROXY, ENABLED, TestAssertion.UPGRADE),
             new TestCase(TestDestination.ON_PREMISE, ENABLED, TestAssertion.UPGRADE),
-            new TestCase(TestDestination.TLS_VERSION, ENABLED, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.TLS_VERSION, ENABLED, TestAssertion.KEEP_ALIVE),
 
             // Disabled HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.PROXY, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.ON_PREMISE, DISABLED, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.TLS_VERSION, DISABLED, TestAssertion.DEFAULT),
+            new TestCase(TestDestination.INTERNET, DISABLED, TestAssertion.KEEP_ALIVE),
+            new TestCase(TestDestination.PROXY, DISABLED, TestAssertion.NONE),
+            new TestCase(TestDestination.ON_PREMISE, DISABLED, TestAssertion.NONE),
+            new TestCase(TestDestination.TLS_VERSION, DISABLED, TestAssertion.KEEP_ALIVE),
 
             // Automatic HTTP/TLS upgrade
-            new TestCase(TestDestination.INTERNET, AUTOMATIC, TestAssertion.UPGRADE),
+            new TestCase(TestDestination.INTERNET, AUTOMATIC, TestAssertion.KEEP_ALIVE),
             new TestCase(TestDestination.PROXY, AUTOMATIC, TestAssertion.UPGRADE),
-            new TestCase(TestDestination.ON_PREMISE, AUTOMATIC, TestAssertion.DEFAULT),
-            new TestCase(TestDestination.TLS_VERSION, AUTOMATIC, TestAssertion.DEFAULT) };
+            new TestCase(TestDestination.ON_PREMISE, AUTOMATIC, TestAssertion.NONE),
+            new TestCase(TestDestination.TLS_VERSION, AUTOMATIC, TestAssertion.KEEP_ALIVE) };
 
     @SneakyThrows
     @ParameterizedTest
@@ -108,6 +117,7 @@ class ApacheHttpClient5HeaderTest
         sut.createHttpClient(dest).execute(new HttpGet("/foo"), new BasicHttpClientResponseHandler());
 
         var request = getRequestedFor(anyUrl()).andMatching(allowedHeaders(testCase.assertion.headersAllowed));
+        testCase.assertion.headersForbidden.forEach(request::withoutHeader);
         testCase.assertion.headersRequired.forEach(( k, v ) -> request.withHeader(k, equalTo(v)));
         verify(request);
     }

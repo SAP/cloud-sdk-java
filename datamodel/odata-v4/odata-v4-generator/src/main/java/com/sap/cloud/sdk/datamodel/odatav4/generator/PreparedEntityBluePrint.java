@@ -24,27 +24,6 @@ final class PreparedEntityBluePrint
     private final JDefinedClass entityClass;
 
     /**
-     * The more concrete sub-interface of the {@link com.sap.cloud.sdk.datamodel.odata.helper.EntitySelectable
-     * EntitySelectable} interface for this entity.
-     */
-    /*@Nullable // in case of "POJO only"
-    private final JDefinedClass selectableInterface;*/
-
-    /**
-     * The concrete sub-class of the {@link com.sap.cloud.sdk.datamodel.odata.helper.EntityLink EntityLink} class for
-     * this entity used for one-to-many links.
-     */
-    /*@Nullable // in case of "POJO only"
-    private final JDefinedClass entityOneToManyLinkClass;
-    */
-    /**
-     * The concrete sub-class of the {@link com.sap.cloud.sdk.datamodel.odata.helper.EntityLink EntityLink} class for
-     * this entity used for one-to–one links.
-     */
-    /*@Nullable // in case of "POJO only"
-    private final JDefinedClass entityOneToOneLinkClass;*/
-
-    /**
      * A list containing all navigation properties that should be added to the entity.
      */
     @Nonnull

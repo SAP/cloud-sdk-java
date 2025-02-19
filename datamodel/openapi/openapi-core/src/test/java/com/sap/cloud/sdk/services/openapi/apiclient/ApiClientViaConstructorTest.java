@@ -1,7 +1,6 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -137,8 +136,8 @@ class ApiClientViaConstructorTest
         httpRequest(TlsUpgrade.DISABLED, wm.getHttpBaseUrl());
         verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
 
-        httpRequest(TlsUpgrade.ENABLED, wm.getHttpBaseUrl());
-        verify(getRequestedFor(anyUrl()).withHeader("Upgrade", equalTo("TLS/1.2")));
+        httpRequest(TlsUpgrade.AUTOMATIC, wm.getHttpBaseUrl());
+        verify(getRequestedFor(anyUrl()).withoutHeader("Upgrade"));
     }
 
     private static void httpRequest( TlsUpgrade toggle, String url )
