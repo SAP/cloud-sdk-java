@@ -124,6 +124,8 @@
 		<snakeyaml.version>2.3</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -748,7 +750,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.13.0</version>
+					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
 						<release>${java.version}</release>
 						<showWarnings>true</showWarnings>
