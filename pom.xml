@@ -120,7 +120,7 @@
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.11.0</wiremock.version>
 		<checkstyle.version>10.21.2</checkstyle.version>
-		<byte-buddy.version>1.17.0</byte-buddy.version>
+		<byte-buddy.version>1.17.1</byte-buddy.version>
 		<snakeyaml.version>2.3</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
@@ -902,7 +902,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.6.6</version>
+					<version>4.9.1.0</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
