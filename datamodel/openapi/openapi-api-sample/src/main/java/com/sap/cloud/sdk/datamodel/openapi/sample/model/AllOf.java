@@ -218,6 +218,7 @@ public class AllOf
     /**
      * Get the value of an unrecognizable property of this {@link AllOf} instance.
      *
+     * @deprecated Use {@link #toMap()} instead.
      * @param name
      *            The name of the property
      * @return The value of the property
@@ -225,6 +226,7 @@ public class AllOf
      *             If no property with the given name could be found.
      */
     @Nullable
+    @Deprecated
     public Object getCustomField( @Nonnull final String name )
         throws NoSuchElementException
     {
@@ -232,6 +234,27 @@ public class AllOf
             throw new NoSuchElementException("AllOf has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
+    }
+
+    /**
+     * Get the value of all properties of this {@link AllOf} instance including unrecognized properties.
+     *
+     * @return The map of all properties
+     */
+    @JsonIgnore
+    @Nonnull
+    public Map<String, Object> toMap()
+    {
+        final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+        if( sodaType != null )
+            declaredFields.put("sodaType", sodaType);
+        if( caffeine != null )
+            declaredFields.put("caffeine", caffeine);
+        if( color != null )
+            declaredFields.put("color", color);
+        if( flavor != null )
+            declaredFields.put("flavor", flavor);
+        return declaredFields;
     }
 
     /**

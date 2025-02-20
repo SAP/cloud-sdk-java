@@ -125,16 +125,33 @@ public class AnyOf
 
   /**
    * Get the value of an unrecognizable property of this {@link AnyOf} instance.
+   * @deprecated Use {@link #toMap()} instead.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
+  @Deprecated
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("AnyOf has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
+  }
+
+  /**
+   * Get the value of all properties of this {@link AnyOf} instance including unrecognized properties.
+   *
+   * @return The map of all properties
+   */
+  @JsonIgnore
+  @Nonnull
+  public Map<String, Object> toMap()
+  {
+    final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+    if( sodaType != null ) declaredFields.put("sodaType", sodaType);
+    if( flavor != null ) declaredFields.put("flavor", flavor);
+    return declaredFields;
   }
 
   /**

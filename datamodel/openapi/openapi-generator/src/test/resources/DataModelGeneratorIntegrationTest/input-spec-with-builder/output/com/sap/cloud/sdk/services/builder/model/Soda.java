@@ -236,16 +236,36 @@ public class Soda
 
   /**
    * Get the value of an unrecognizable property of this {@link Soda} instance.
+   * @deprecated Use {@link #toMap()} instead.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
+  @Deprecated
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("Soda has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
+  }
+
+  /**
+   * Get the value of all properties of this {@link Soda} instance including unrecognized properties.
+   *
+   * @return The map of all properties
+   */
+  @JsonIgnore
+  @Nonnull
+  public Map<String, Object> toMap()
+  {
+    final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+    if( id != null ) declaredFields.put("id", id);
+    if( name != null ) declaredFields.put("name", name);
+    if( brand != null ) declaredFields.put("brand", brand);
+    if( flavors != null ) declaredFields.put("flavors", flavors);
+    if( price != null ) declaredFields.put("price", price);
+    return declaredFields;
   }
 
   /**

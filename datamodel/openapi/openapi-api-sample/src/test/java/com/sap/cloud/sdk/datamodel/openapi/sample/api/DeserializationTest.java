@@ -3,6 +3,9 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,6 +94,7 @@ class DeserializationTest
     }
 
     @Test
+    @SuppressWarnings( "deprecation" )
     void testUnexpectedAdditionalField()
     {
         responseBody = """
@@ -104,6 +108,9 @@ class DeserializationTest
         final SodaWithId actual = sut.sodasIdGet(1L);
 
         assertThat(actual.getName()).isEqualTo("Cola");
+        assertThat(actual.toMap())
+            .containsExactlyInAnyOrderEntriesOf(Map.of("name", "Cola", "unexpectedField", List.of()));
+        assertThat(actual.toMap().get("doesNotExist")).isNull();
         assertThat(actual.getCustomFieldNames()).containsExactly("unexpectedField");
         assertThat(actual.getCustomField("unexpectedField")).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
     }

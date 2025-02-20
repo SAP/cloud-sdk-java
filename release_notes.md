@@ -16,7 +16,7 @@
 
 ### ✨ New Functionality
 
-- 
+- OpenAPI: Add `toMap()` and deprecate `getCustomField(String)` on generated model classes.
 
 ### 📈 Improvements
 

@@ -250,16 +250,37 @@ public class OrderWithTimestamp
 
   /**
    * Get the value of an unrecognizable property of this {@link OrderWithTimestamp} instance.
+   * @deprecated Use {@link #toMap()} instead.
    * @param name  The name of the property
    * @return The value of the property
    * @throws NoSuchElementException  If no property with the given name could be found.
    */
   @Nullable
+  @Deprecated
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
         throw new NoSuchElementException("OrderWithTimestamp has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
+  }
+
+  /**
+   * Get the value of all properties of this {@link OrderWithTimestamp} instance including unrecognized properties.
+   *
+   * @return The map of all properties
+   */
+  @JsonIgnore
+  @Nonnull
+  public Map<String, Object> toMap()
+  {
+    final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+    if( productId != null ) declaredFields.put("productId", productId);
+    if( quantity != null ) declaredFields.put("quantity", quantity);
+    if( totalPrice != null ) declaredFields.put("totalPrice", totalPrice);
+    if( typelessProperty != null ) declaredFields.put("typelessProperty", typelessProperty);
+    if( nullableProperty != null ) declaredFields.put("nullableProperty", nullableProperty);
+    if( timestamp != null ) declaredFields.put("timestamp", timestamp);
+    return declaredFields;
   }
 
   /**
