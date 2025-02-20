@@ -94,7 +94,7 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.2</spring.version>
+		<spring.version>6.2.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.16</slf4j.version>
 		<assertj-core.version>3.27.3</assertj-core.version>
@@ -118,12 +118,14 @@
 		<bouncycastle.version>1.80</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
-		<wiremock.version>3.11.0</wiremock.version>
+		<wiremock.version>3.12.0</wiremock.version>
 		<checkstyle.version>10.21.2</checkstyle.version>
-		<byte-buddy.version>1.17.0</byte-buddy.version>
-		<snakeyaml.version>2.3</snakeyaml.version>
+		<byte-buddy.version>1.17.1</byte-buddy.version>
+		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -748,7 +750,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.13.0</version>
+					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
 						<release>${java.version}</release>
 						<showWarnings>true</showWarnings>
@@ -897,7 +899,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.8.6.6</version>
+					<version>4.9.1.0</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
