@@ -757,7 +757,6 @@
 						<showDeprecation>true</showDeprecation>
 						<failOnWarning>${java.failOnWarning}</failOnWarning>
 						<compilerArgument>${java.compilerArgument}</compilerArgument>
-						<proc>full</proc>
 						<compilerArgs combine.children="append">
 							<arg>-Xlint:all</arg>
 							<arg>-Xlint:-processing</arg>
