@@ -273,20 +273,13 @@ public class NewSoda
   @Nonnull
   public Map<String, Object> toMap()
   {
-    final Map<String, Object> declaredFields = Arrays.stream(getClass().getDeclaredFields())
-        .collect(LinkedHashMap::new, ( map, field ) -> {
-          Object value = null;
-          try {
-            value = field.get(this);
-          } catch (IllegalAccessException e) {
-            // do nothing, value will not be added
-          }
-          final String name = field.getName();
-          if (value != null && !name.equals("cloudSdkCustomFields")) {
-            map.put(name, value);
-          }
-        }, Map::putAll);
-    declaredFields.putAll(cloudSdkCustomFields);
+    final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+    if( name != null ) declaredFields.put("name", name);
+    if( brand != null ) declaredFields.put("brand", brand);
+    if( zero != null ) declaredFields.put("zero", zero);
+    if( since != null ) declaredFields.put("since", since);
+    if( flavor != null ) declaredFields.put("flavor", flavor);
+    if( price != null ) declaredFields.put("price", price);
     return declaredFields;
   }
 

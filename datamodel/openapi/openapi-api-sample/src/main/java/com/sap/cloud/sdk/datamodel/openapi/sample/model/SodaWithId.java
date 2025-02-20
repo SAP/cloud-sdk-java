@@ -15,7 +15,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -402,21 +401,19 @@ public class SodaWithId
     @Nonnull
     public Map<String, Object> toMap()
     {
-        final Map<String, Object> declaredFields =
-            Arrays.stream(getClass().getDeclaredFields()).collect(LinkedHashMap::new, ( map, field ) -> {
-                Object value = null;
-                try {
-                    value = field.get(this);
-                }
-                catch( IllegalAccessException e ) {
-                    // do nothing, value will not be added
-                }
-                final String name = field.getName();
-                if( value != null && !name.equals("cloudSdkCustomFields") ) {
-                    map.put(name, value);
-                }
-            }, Map::putAll);
-        declaredFields.putAll(cloudSdkCustomFields);
+        final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+        if( name != null )
+            declaredFields.put("name", name);
+        if( brand != null )
+            declaredFields.put("brand", brand);
+        if( quantity != null )
+            declaredFields.put("quantity", quantity);
+        if( packaging != null )
+            declaredFields.put("packaging", packaging);
+        if( price != null )
+            declaredFields.put("price", price);
+        if( id != null )
+            declaredFields.put("id", id);
         return declaredFields;
     }
 

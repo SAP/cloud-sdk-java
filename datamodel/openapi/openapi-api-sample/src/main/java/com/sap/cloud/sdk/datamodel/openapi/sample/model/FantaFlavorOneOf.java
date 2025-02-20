@@ -15,7 +15,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -168,21 +167,11 @@ public class FantaFlavorOneOf
     @Nonnull
     public Map<String, Object> toMap()
     {
-        final Map<String, Object> declaredFields =
-            Arrays.stream(getClass().getDeclaredFields()).collect(LinkedHashMap::new, ( map, field ) -> {
-                Object value = null;
-                try {
-                    value = field.get(this);
-                }
-                catch( IllegalAccessException e ) {
-                    // do nothing, value will not be added
-                }
-                final String name = field.getName();
-                if( value != null && !name.equals("cloudSdkCustomFields") ) {
-                    map.put(name, value);
-                }
-            }, Map::putAll);
-        declaredFields.putAll(cloudSdkCustomFields);
+        final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+        if( intensity != null )
+            declaredFields.put("intensity", intensity);
+        if( nuance != null )
+            declaredFields.put("nuance", nuance);
         return declaredFields;
     }
 

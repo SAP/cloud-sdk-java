@@ -15,7 +15,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -285,21 +284,17 @@ public class Order
     @Nonnull
     public Map<String, Object> toMap()
     {
-        final Map<String, Object> declaredFields =
-            Arrays.stream(getClass().getDeclaredFields()).collect(LinkedHashMap::new, ( map, field ) -> {
-                Object value = null;
-                try {
-                    value = field.get(this);
-                }
-                catch( IllegalAccessException e ) {
-                    // do nothing, value will not be added
-                }
-                final String name = field.getName();
-                if( value != null && !name.equals("cloudSdkCustomFields") ) {
-                    map.put(name, value);
-                }
-            }, Map::putAll);
-        declaredFields.putAll(cloudSdkCustomFields);
+        final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+        if( productId != null )
+            declaredFields.put("productId", productId);
+        if( quantity != null )
+            declaredFields.put("quantity", quantity);
+        if( totalPrice != null )
+            declaredFields.put("totalPrice", totalPrice);
+        if( typelessProperty != null )
+            declaredFields.put("typelessProperty", typelessProperty);
+        if( nullableProperty != null )
+            declaredFields.put("nullableProperty", nullableProperty);
         return declaredFields;
     }
 

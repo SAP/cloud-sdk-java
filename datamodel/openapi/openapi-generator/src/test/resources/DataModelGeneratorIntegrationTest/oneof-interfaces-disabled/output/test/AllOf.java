@@ -112,20 +112,8 @@ public class AllOf
   @Nonnull
   public Map<String, Object> toMap()
   {
-    final Map<String, Object> declaredFields = Arrays.stream(getClass().getDeclaredFields())
-        .collect(LinkedHashMap::new, ( map, field ) -> {
-          Object value = null;
-          try {
-            value = field.get(this);
-          } catch (IllegalAccessException e) {
-            // do nothing, value will not be added
-          }
-          final String name = field.getName();
-          if (value != null && !name.equals("cloudSdkCustomFields")) {
-            map.put(name, value);
-          }
-        }, Map::putAll);
-    declaredFields.putAll(cloudSdkCustomFields);
+    final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
+    if( sodaType != null ) declaredFields.put("sodaType", sodaType);
     return declaredFields;
   }
 
