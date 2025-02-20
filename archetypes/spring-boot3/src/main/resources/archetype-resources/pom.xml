@@ -15,7 +15,7 @@
         <spring-boot.version>3.3.0</spring-boot.version>
 
         <java.version>17</java.version>
-        <cloud-sdk.version>5.17.0</cloud-sdk.version>
+        <cloud-sdk.version>5.18.0-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
