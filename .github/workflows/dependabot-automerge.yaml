@@ -3,7 +3,7 @@ name: dependabot merger
 on:
   workflow_dispatch:
   schedule:
-    - cron: '13 10 * * Mon' # trigger every Monday at 10:13, as our dependabot is configured to raise PRs every Monday at 8:00 a.m.
+    - cron: '13 10 * * Tue' # trigger every Tuesday at 10:13, as our dependabot is configured to raise PRs every Tuesday at 8:00 a.m.
 
 env:
   DEPENDABOT_GROUPS: |
