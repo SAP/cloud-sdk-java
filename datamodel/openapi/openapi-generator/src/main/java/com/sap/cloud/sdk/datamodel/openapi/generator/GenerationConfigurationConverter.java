@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
 import java.nio.file.Path;
@@ -17,6 +18,7 @@ import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -80,6 +82,29 @@ class GenerationConfigurationConverter
         final var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
         return new JavaClientCodegen()
         {
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updatePropertyForArray( CodegenProperty property, CodegenProperty innerProperty )
+            {
+                super.updatePropertyForArray(property, innerProperty);
+
+                if( USE_FLOAT_ARRAYS.isEnabled(config) && innerProperty.isNumber && property.isArray ) {
+                    property.dataType = "float[]";
+                    property.datatypeWithEnum = "float[]";
+                    property.isArray = false; // set false to omit `add{{nameInPascalCase}}Item(...)` convenience method
+                }
+            }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            public String toDefaultValue( CodegenProperty cp, Schema schema )
+            {
+                if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.dataType) ) {
+                    return null;
+                }
+                return super.toDefaultValue(cp, schema);
+            }
+
             // Custom processor to inject "x-return-nullable" extension
             @Override
             @Nonnull

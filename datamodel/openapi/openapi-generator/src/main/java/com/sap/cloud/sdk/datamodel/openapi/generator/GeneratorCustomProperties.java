@@ -15,7 +15,12 @@ enum GeneratorCustomProperties
     /**
      * Use JsonCreator instead of sub-type deduction for oneOf and anyOf schemas.
      */
-    USE_ONE_OF_CREATORS("useOneOfCreators", "false");
+     USE_ONE_OF_CREATORS("useOneOfCreators", "false"),
+
+    /**
+     * Use float arrays instead of big-decimal lists.
+     */
+    USE_FLOAT_ARRAYS("useFloatArrays", "false");
 
     private final String key;
     private final String defaultValue;
