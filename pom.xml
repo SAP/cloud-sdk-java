@@ -124,7 +124,7 @@
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
-		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
@@ -745,7 +745,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
