@@ -28,13 +28,13 @@ class DataModelGeneratorIntegrationTest
         API_CLASS_FOR_AI_SDK(
             "api-class-for-ai-sdk",
             "sodastore.json",
-            "com.sap.cloud.sdk.services.builder.api",
-            "com.sap.cloud.sdk.services.builder.model",
+            "com.sap.cloud.sdk.services.openai.api",
+            "com.sap.cloud.sdk.services.openai.model",
             ApiMaturity.RELEASED,
             true,
             true,
             6,
-            Map.of("aiSdkConstructor", "true")),
+            Map.of("aiSdkConstructor", "true", "useFloatArrays", "true")),
         API_CLASS_VENDOR_EXTENSION_YAML(
             "api-class-vendor-extension-yaml",
             "sodastore.yaml",

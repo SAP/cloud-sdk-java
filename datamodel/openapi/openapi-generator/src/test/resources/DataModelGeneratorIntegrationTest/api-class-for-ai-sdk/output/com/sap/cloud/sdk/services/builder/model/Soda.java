@@ -26,6 +26,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,6 +59,9 @@ public class Soda
 
   @JsonProperty("price")
   private Float price;
+
+  @JsonProperty("embedding")
+  private float[] embedding;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -206,6 +213,35 @@ public class Soda
   }
 
   /**
+   * Set the embedding of this {@link Soda} instance and return the same instance.
+   *
+   * @param embedding  The embedding of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda embedding( @Nonnull final float[] embedding) {
+    this.embedding = embedding;
+    return this;
+  }
+
+  /**
+   * Get embedding
+   * @return embedding  The embedding of this {@link Soda} instance.
+   */
+  @Nonnull
+  public float[] getEmbedding() {
+    return embedding;
+  }
+
+  /**
+   * Set the embedding of this {@link Soda} instance.
+   *
+   * @param embedding  The embedding of this {@link Soda}
+   */
+  public void setEmbedding( @Nonnull final float[] embedding) {
+    this.embedding = embedding;
+  }
+
+  /**
    * Get the names of the unrecognizable properties of the {@link Soda}.
    * @return The set of properties names
    */
@@ -246,6 +282,7 @@ public class Soda
     if( brand != null ) declaredFields.put("brand", brand);
     if( flavor != null ) declaredFields.put("flavor", flavor);
     if( price != null ) declaredFields.put("price", price);
+    if( embedding != null ) declaredFields.put("embedding", embedding);
     return declaredFields;
   }
 
@@ -276,12 +313,13 @@ public class Soda
         Objects.equals(this.name, soda.name) &&
         Objects.equals(this.brand, soda.brand) &&
         Objects.equals(this.flavor, soda.flavor) &&
-        Objects.equals(this.price, soda.price);
+        Objects.equals(this.price, soda.price) &&
+        Objects.equals(this.embedding, soda.embedding);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, flavor, price, cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, flavor, price, embedding, cloudSdkCustomFields);
   }
 
   @Override
@@ -293,6 +331,7 @@ public class Soda
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
+    sb.append("    embedding: ").append(toIndentedString(embedding)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();
