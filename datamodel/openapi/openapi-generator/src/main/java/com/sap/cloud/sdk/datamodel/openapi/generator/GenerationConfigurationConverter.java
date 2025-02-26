@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
@@ -84,9 +85,10 @@ class GenerationConfigurationConverter
         return new JavaClientCodegen()
         {
             @Override
-            public String toBooleanGetter( String name )
+            @Nullable
+            public String toBooleanGetter( @Nullable final String name )
             {
-                String result = super.toBooleanGetter(name);
+                final String result = super.toBooleanGetter(name);
                 if( FIX_REDUNDANT_IS_BOOLEAN_PREFIX.isEnabled(config) && result != null && doubleIs.test(result) ) {
                     return "is" + result.substring(4);
                 }
