@@ -34,7 +34,7 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             6,
-            Map.of("aiSdkConstructor", "true")),
+            Map.of("aiSdkConstructor", "true", "fixRedundantIsBooleanPrefix", "true")),
         API_CLASS_VENDOR_EXTENSION_YAML(
             "api-class-vendor-extension-yaml",
             "sodastore.yaml",

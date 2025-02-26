@@ -166,7 +166,7 @@ public class Soda
    * @return isAvailable  The isAvailable of this {@link Soda} instance.
    */
   @Nonnull
-  public Boolean isIsAvailable() {
+  public Boolean isAvailable() {
     return isAvailable;
   }
 

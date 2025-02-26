@@ -15,7 +15,12 @@ enum GeneratorCustomProperties
     /**
      * Use JsonCreator instead of sub-type deduction for oneOf and anyOf schemas.
      */
-    USE_ONE_OF_CREATORS("useOneOfCreators", "false");
+    USE_ONE_OF_CREATORS("useOneOfCreators", "false"),
+
+    /**
+     * Fix isIsBoolean() to isBoolean() for fields specified as `"isBoolean":{"type":"boolean"}`.
+     */
+    FIX_REDUNDANT_IS_BOOLEAN_PREFIX("fixRedundantIsBooleanPrefix", "false");
 
     private final String key;
     private final String defaultValue;
