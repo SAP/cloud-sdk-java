@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
@@ -84,7 +85,9 @@ class GenerationConfigurationConverter
         {
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
             @Override
-            protected void updatePropertyForArray( CodegenProperty property, CodegenProperty innerProperty )
+            protected void updatePropertyForArray(
+                @Nonnull final CodegenProperty property,
+                @Nonnull final CodegenProperty innerProperty )
             {
                 super.updatePropertyForArray(property, innerProperty);
 
@@ -97,7 +100,8 @@ class GenerationConfigurationConverter
 
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
             @Override
-            public String toDefaultValue( CodegenProperty cp, Schema schema )
+            @Nullable
+            public String toDefaultValue( @Nonnull final CodegenProperty cp, @Nonnull final Schema schema )
             {
                 if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.dataType) ) {
                     return null;
