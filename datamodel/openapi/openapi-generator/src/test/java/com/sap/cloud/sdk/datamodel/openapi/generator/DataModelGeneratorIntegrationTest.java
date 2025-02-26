@@ -28,8 +28,8 @@ class DataModelGeneratorIntegrationTest
         API_CLASS_FOR_AI_SDK(
             "api-class-for-ai-sdk",
             "sodastore.json",
-            "com.sap.cloud.sdk.services.openai.api",
-            "com.sap.cloud.sdk.services.openai.model",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
             ApiMaturity.RELEASED,
             true,
             true,
@@ -182,7 +182,7 @@ class DataModelGeneratorIntegrationTest
     // Add these annotations to regenerate all sources
     // @ParameterizedTest
     // @EnumSource( TestCase.class ) // use this to regenerate all...
-    // @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
+    //@EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
     void generateDataModelForComparison( final TestCase testCase )
     {
         final Path inputDirectory = getInputDirectory(testCase);
