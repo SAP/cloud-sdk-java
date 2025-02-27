@@ -219,7 +219,7 @@ public class Soda
    * @return The same instance of this {@link Soda} class
    */
   @Nonnull public Soda embedding( @Nonnull final float[] embedding) {
-    this.embedding = embedding;
+    this.embedding = embedding.clone();
     return this;
   }
 
@@ -229,7 +229,7 @@ public class Soda
    */
   @Nonnull
   public float[] getEmbedding() {
-    return embedding;
+    return embedding.clone();
   }
 
   /**
@@ -314,12 +314,12 @@ public class Soda
         Objects.equals(this.brand, soda.brand) &&
         Objects.equals(this.flavor, soda.flavor) &&
         Objects.equals(this.price, soda.price) &&
-        Objects.equals(this.embedding, soda.embedding);
+        Arrays.equals(this.embedding, soda.embedding);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, flavor, price, embedding, cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, flavor, price, Arrays.hashCode(embedding), cloudSdkCustomFields);
   }
 
   @Override
