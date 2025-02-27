@@ -54,6 +54,9 @@ public class Soda
   @JsonProperty("brand")
   private String brand;
 
+  @JsonProperty("isAvailable")
+  private Boolean isAvailable;
+
   @JsonProperty("flavor")
   private String flavor;
 
@@ -152,6 +155,35 @@ public class Soda
    */
   public void setBrand( @Nonnull final String brand) {
     this.brand = brand;
+  }
+
+  /**
+   * Set the isAvailable of this {@link Soda} instance and return the same instance.
+   *
+   * @param isAvailable  The isAvailable of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda isAvailable( @Nullable final Boolean isAvailable) {
+    this.isAvailable = isAvailable;
+    return this;
+  }
+
+  /**
+   * Get isAvailable
+   * @return isAvailable  The isAvailable of this {@link Soda} instance.
+   */
+  @Nonnull
+  public Boolean isAvailable() {
+    return isAvailable;
+  }
+
+  /**
+   * Set the isAvailable of this {@link Soda} instance.
+   *
+   * @param isAvailable  The isAvailable of this {@link Soda}
+   */
+  public void setIsAvailable( @Nullable final Boolean isAvailable) {
+    this.isAvailable = isAvailable;
   }
 
   /**
@@ -280,6 +312,7 @@ public class Soda
     if( id != null ) declaredFields.put("id", id);
     if( name != null ) declaredFields.put("name", name);
     if( brand != null ) declaredFields.put("brand", brand);
+    if( isAvailable != null ) declaredFields.put("isAvailable", isAvailable);
     if( flavor != null ) declaredFields.put("flavor", flavor);
     if( price != null ) declaredFields.put("price", price);
     if( embedding != null ) declaredFields.put("embedding", embedding);
@@ -312,6 +345,7 @@ public class Soda
         Objects.equals(this.id, soda.id) &&
         Objects.equals(this.name, soda.name) &&
         Objects.equals(this.brand, soda.brand) &&
+        Objects.equals(this.isAvailable, soda.isAvailable) &&
         Objects.equals(this.flavor, soda.flavor) &&
         Objects.equals(this.price, soda.price) &&
         Arrays.equals(this.embedding, soda.embedding);
@@ -329,6 +363,7 @@ public class Soda
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
+    sb.append("    isAvailable: ").append(toIndentedString(isAvailable)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
     sb.append("    embedding: ").append(toIndentedString(embedding)).append("\n");
