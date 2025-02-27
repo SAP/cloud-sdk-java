@@ -169,6 +169,9 @@
           "brand": {
             "type": "string"
           },
+          "isAvailable": {
+            "type": "boolean"
+          },
           "flavor": {
             "type": "string"
           },

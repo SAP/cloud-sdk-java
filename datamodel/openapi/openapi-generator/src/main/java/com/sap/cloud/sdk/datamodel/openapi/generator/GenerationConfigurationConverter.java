@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,6 +83,7 @@ class GenerationConfigurationConverter
     private static JavaClientCodegen createCodegenConfig( @Nonnull final GenerationConfiguration config )
     {
         final var primitives = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
+        final var doubleIs = Pattern.compile("^isIs[A-Z]").asPredicate();
         return new JavaClientCodegen()
         {
             @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
@@ -107,6 +110,17 @@ class GenerationConfigurationConverter
                     return null;
                 }
                 return super.toDefaultValue(cp, schema);
+            }
+
+            @Override
+            @Nullable
+            public String toBooleanGetter( @Nullable final String name )
+            {
+              final String result = super.toBooleanGetter(name);
+              if( FIX_REDUNDANT_IS_BOOLEAN_PREFIX.isEnabled(config) && result != null && doubleIs.test(result) ) {
+                return "is" + result.substring(4);
+              }
+              return result;
             }
 
             // Custom processor to inject "x-return-nullable" extension

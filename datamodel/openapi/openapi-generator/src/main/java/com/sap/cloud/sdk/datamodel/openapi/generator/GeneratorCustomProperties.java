@@ -18,6 +18,11 @@ enum GeneratorCustomProperties
     USE_ONE_OF_CREATORS("useOneOfCreators", "false"),
 
     /**
+     * Fix isIsBoolean() to isBoolean() for fields specified as `"isBoolean":{"type":"boolean"}`.
+     */
+    FIX_REDUNDANT_IS_BOOLEAN_PREFIX("fixRedundantIsBooleanPrefix", "false"),
+
+    /**
      * Use float arrays instead of big-decimal lists.
      */
     USE_FLOAT_ARRAYS("useFloatArrays", "false");
