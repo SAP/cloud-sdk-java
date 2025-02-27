@@ -1,6 +1,14 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
+import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
+import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
+import io.vavr.control.Try;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,17 +16,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-
-import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
-import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
-import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationResult;
-
-import io.vavr.control.Try;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DataModelGeneratorIntegrationTest
 {
