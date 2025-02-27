@@ -116,11 +116,11 @@ class GenerationConfigurationConverter
             @Nullable
             public String toBooleanGetter( @Nullable final String name )
             {
-              final String result = super.toBooleanGetter(name);
-              if( FIX_REDUNDANT_IS_BOOLEAN_PREFIX.isEnabled(config) && result != null && doubleIs.test(result) ) {
-                return "is" + result.substring(4);
-              }
-              return result;
+                final String result = super.toBooleanGetter(name);
+                if( FIX_REDUNDANT_IS_BOOLEAN_PREFIX.isEnabled(config) && result != null && doubleIs.test(result) ) {
+                    return "is" + result.substring(4);
+                }
+                return result;
             }
 
             // Custom processor to inject "x-return-nullable" extension
