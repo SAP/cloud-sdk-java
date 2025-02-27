@@ -219,7 +219,7 @@ public class Soda
    * @return The same instance of this {@link Soda} class
    */
   @Nonnull public Soda embedding( @Nonnull final float[] embedding) {
-    this.embedding = embedding.clone();
+    this.embedding = embedding;
     return this;
   }
 
@@ -229,7 +229,7 @@ public class Soda
    */
   @Nonnull
   public float[] getEmbedding() {
-    return embedding.clone();
+    return embedding;
   }
 
   /**
