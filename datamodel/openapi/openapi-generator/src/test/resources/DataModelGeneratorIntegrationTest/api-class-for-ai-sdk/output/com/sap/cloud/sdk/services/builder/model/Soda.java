@@ -353,7 +353,7 @@ public class Soda
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, flavor, price, Arrays.hashCode(embedding), cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, isAvailable, flavor, price, Arrays.hashCode(embedding), cloudSdkCustomFields);
   }
 
   @Override

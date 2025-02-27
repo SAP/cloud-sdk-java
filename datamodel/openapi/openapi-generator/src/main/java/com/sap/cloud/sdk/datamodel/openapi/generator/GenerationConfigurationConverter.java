@@ -1,26 +1,9 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import com.google.common.base.Strings;
-import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
-import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
-import io.swagger.parser.OpenAPIParser;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.parser.core.models.AuthorizationValue;
-import io.swagger.v3.parser.core.models.ParseOptions;
-import lombok.extern.slf4j.Slf4j;
-import org.openapitools.codegen.ClientOptInput;
-import org.openapitools.codegen.CodegenConstants;
-import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.CodegenOperation;
-import org.openapitools.codegen.CodegenProperty;
-import org.openapitools.codegen.config.GlobalSettings;
-import org.openapitools.codegen.languages.JavaClientCodegen;
-import org.openapitools.codegen.model.ModelMap;
-import org.openapitools.codegen.model.OperationsMap;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
@@ -31,9 +14,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.openapitools.codegen.ClientOptInput;
+import org.openapitools.codegen.CodegenConstants;
+import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.CodegenProperty;
+import org.openapitools.codegen.config.GlobalSettings;
+import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.OperationsMap;
+
+import com.google.common.base.Strings;
+import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
+import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
+
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.parser.core.models.AuthorizationValue;
+import io.swagger.v3.parser.core.models.ParseOptions;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Converts a {@link GenerationConfiguration} instance to a {@link ClientOptInput} instance which the OpenAPI Generator
