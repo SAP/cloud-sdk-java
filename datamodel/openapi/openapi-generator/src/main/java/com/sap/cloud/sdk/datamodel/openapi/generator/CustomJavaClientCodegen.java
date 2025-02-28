@@ -1,7 +1,11 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,6 +18,7 @@ import org.openapitools.codegen.model.OperationsMap;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +30,129 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     public CustomJavaClientCodegen( final GenerationConfiguration config )
     {
         this.customizations = GeneratorCustomization.getCustomizations(config);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked", "ReplaceInefficientStreamCount"})
+    @Override
+    public void preprocessOpenAPI( OpenAPI openAPI )
+    {
+        super.preprocessOpenAPI(openAPI);
+
+        // remove selected properties
+        final var removeProperties =
+            Arrays
+                .asList(
+                    "chatCompletionResponseMessage.context", // removes azureChatExtensionsMessageContext
+                    "createChatCompletionRequest.data_sources" // removes azureChatExtensionConfiguration
+                );
+        for( final var removeProperty : removeProperties ) {
+            final var split = removeProperty.split("\\.", 2);
+            final var schema = openAPI.getComponents().getSchemas().get(split[0]);
+
+            boolean removed = false;
+
+            final Predicate<Schema> remove =
+                s -> s != null && s.getProperties() != null && s.getProperties().remove(split[1]) != null;
+            final var schemasToCheck = new LinkedHashSet<Schema>();
+            schemasToCheck.add(schema);
+            while( !schemasToCheck.isEmpty() ) {
+                final var sit = schemasToCheck.iterator();
+                final var s = sit.next();
+                sit.remove();
+                removed |= remove.test(s);
+                if( s.getAllOf() != null ) {
+                    removed |= s.getAllOf().stream().filter(remove).count() > 0;
+                    schemasToCheck.addAll(s.getAllOf());
+                }
+                if( s.getAnyOf() != null ) {
+                    removed |= s.getAnyOf().stream().filter(remove).count() > 0;
+                    schemasToCheck.addAll(s.getAnyOf());
+                }
+                if( s.getOneOf() != null ) {
+                    removed |= s.getOneOf().stream().filter(remove).count() > 0;
+                    schemasToCheck.addAll(s.getOneOf());
+                }
+            }
+            if( !removed ) {
+                log.error("Could not remove property {}", removeProperty);
+            }
+        }
+
+        // remove some path
+        final var removePaths =
+            Arrays
+                .asList(
+                    "/deployments/{deployment-id}/completions",
+                    "/deployments/{deployment-id}/embeddings",
+                    "/deployments/{deployment-id}/audio/transcriptions",
+                    "/deployments/{deployment-id}/audio/translations",
+                    "/deployments/{deployment-id}/images/generations");
+        for( final var removePath : removePaths ) {
+            if( !openAPI.getPaths().keySet().remove(removePath) ) {
+                log.error("Could not remove path {}", removePath);
+            }
+        }
+
+        // delete redundant components
+        final var queue = new LinkedHashSet<Schema>();
+        final var schemas = new LinkedHashSet<Schema>();
+        final var refs = new LinkedHashSet<String>();
+        final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
+        for( final var path : openAPI.getPaths().values() ) {
+            final var m = pattern.matcher(path.toString());
+            while( m.find() ) {
+                final var name = m.group(1);
+                final var schema = openAPI.getComponents().getSchemas().get(name);
+                queue.add(schema);
+                refs.add(m.group(0).split(" ")[1]);
+            }
+        }
+
+        while( !queue.isEmpty() ) {
+            final var qit = queue.iterator();
+            final var s = qit.next();
+            qit.remove();
+            if( !schemas.add(s) ) {
+                continue;
+            }
+            final var ref = s.get$ref();
+            if( ref != null ) {
+                refs.add(ref);
+                final var refName = ref.substring(ref.lastIndexOf('/') + 1);
+                queue.add(openAPI.getComponents().getSchemas().get(refName));
+            }
+            if( s.getProperties() != null ) {
+                for( final var s1 : s.getProperties().values() ) {
+                    queue.add((Schema) s1);
+                }
+            }
+            if( s.getItems() != null ) {
+                queue.add(s.getItems());
+            }
+            if( s.getAllOf() != null ) {
+                for( final var s1 : s.getAllOf() ) {
+                    queue.add((Schema) s1);
+                }
+            }
+            if( s.getAnyOf() != null ) {
+                for( final var s1 : s.getAnyOf() ) {
+                    queue.add((Schema) s1);
+                }
+            }
+            if( s.getOneOf() != null ) {
+                for( final var s1 : s.getOneOf() ) {
+                    queue.add((Schema) s1);
+                }
+            }
+        }
+
+        openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
+            if( !refs.contains("#/components/schemas/" + schema) ) {
+                log.error("Removing unused schema {}", schema);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
