@@ -121,6 +121,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return this;
   }
   {{#isArray}}
+  {{^vendorExtensions.isPrimitiveArray}}
   /**
    * Add one {{nameInCamelCase}} instance to this {@link {{classname}}}.
    * @param {{name}}Item The {{nameInCamelCase}} that should be added
@@ -146,6 +147,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return this;
     {{/vendorExtensions.x-is-jackson-optional-nullable}}
   }
+  {{/vendorExtensions.isPrimitiveArray}}
   {{/isArray}}
   {{#isMap}}
 
