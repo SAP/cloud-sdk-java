@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
