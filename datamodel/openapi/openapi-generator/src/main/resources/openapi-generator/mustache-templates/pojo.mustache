@@ -120,7 +120,8 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     this.{{name}} = {{name}}{{#isByteArray}}.clone(){{/isByteArray}};
     return this;
   }
-  {{^vendorExtensions.isPrimitiveArray}}{{#isArray}}
+  {{#isArray}}
+  {{^vendorExtensions.isPrimitiveArray}}
   /**
    * Add one {{nameInCamelCase}} instance to this {@link {{classname}}}.
    * @param {{name}}Item The {{nameInCamelCase}} that should be added
@@ -146,7 +147,8 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return this;
     {{/vendorExtensions.x-is-jackson-optional-nullable}}
   }
-  {{/isArray}}{{/vendorExtensions.isPrimitiveArray}}
+  {{/vendorExtensions.isPrimitiveArray}}
+  {{/isArray}}
   {{#isMap}}
 
   /**
