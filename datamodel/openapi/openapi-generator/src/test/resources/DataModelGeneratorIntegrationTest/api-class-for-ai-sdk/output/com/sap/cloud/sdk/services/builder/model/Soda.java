@@ -348,12 +348,12 @@ public class Soda
         Objects.equals(this.isAvailable, soda.isAvailable) &&
         Objects.equals(this.flavor, soda.flavor) &&
         Objects.equals(this.price, soda.price) &&
-        Objects.equals(this.embedding, soda.embedding);
+        Arrays.equals(this.embedding, soda.embedding);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, isAvailable, flavor, price, embedding, cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, isAvailable, flavor, price, Arrays.hashCode(embedding), cloudSdkCustomFields);
   }
 
   @Override

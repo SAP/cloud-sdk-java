@@ -98,6 +98,7 @@ class GenerationConfigurationConverter
                     property.dataType = "float[]";
                     property.datatypeWithEnum = "float[]";
                     property.isArray = false; // set false to omit `add{{nameInPascalCase}}Item(...)` convenience method
+                    property.vendorExtensions.put("isPrimitiveArray", true);
                 }
             }
 
