@@ -121,6 +121,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return this;
   }
   {{#isArray}}
+  {{^vendorExtensions.isPrimitiveArray}}
   /**
    * Add one {{nameInCamelCase}} instance to this {@link {{classname}}}.
    * @param {{name}}Item The {{nameInCamelCase}} that should be added
@@ -146,6 +147,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return this;
     {{/vendorExtensions.x-is-jackson-optional-nullable}}
   }
+  {{/vendorExtensions.isPrimitiveArray}}
   {{/isArray}}
   {{#isMap}}
 
@@ -328,7 +330,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     }
     final {{classname}} {{classVarName}} = ({{classname}}) o;
     return Objects.equals(this.cloudSdkCustomFields, {{classVarName}}.cloudSdkCustomFields){{#hasVars}} &&
-        {{#vars}}{{#vendorExtensions.x-is-jackson-optional-nullable}}equalsNullable(this.{{name}}, {{classVarName}}.{{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^vendorExtensions.x-is-jackson-optional-nullable}}{{#isByteArray}}Arrays{{/isByteArray}}{{^isByteArray}}Objects{{/isByteArray}}.equals(this.{{name}}, {{classVarName}}.{{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^-last}} &&
+        {{#vars}}{{#vendorExtensions.x-is-jackson-optional-nullable}}equalsNullable(this.{{name}}, {{classVarName}}.{{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^vendorExtensions.x-is-jackson-optional-nullable}}{{#isByteArray}}Arrays{{/isByteArray}}{{^isByteArray}}{{^vendorExtensions.isPrimitiveArray}}Objects{{/vendorExtensions.isPrimitiveArray}}{{#vendorExtensions.isPrimitiveArray}}Arrays{{/vendorExtensions.isPrimitiveArray}}{{/isByteArray}}.equals(this.{{name}}, {{classVarName}}.{{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^-last}} &&
         {{/-last}}{{/vars}}{{/hasVars}}{{#parent}} &&
         super.equals(o){{/parent}};
   {{/useReflectionEqualsHashCode}}
@@ -344,7 +346,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
     return HashCodeBuilder.reflectionHashCode(this);
   {{/useReflectionEqualsHashCode}}
   {{^useReflectionEqualsHashCode}}
-    return Objects.hash({{#vars}}{{#vendorExtensions.x-is-jackson-optional-nullable}}hashCodeNullable({{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^vendorExtensions.x-is-jackson-optional-nullable}}{{^isByteArray}}{{name}}{{/isByteArray}}{{#isByteArray}}Arrays.hashCode({{name}}){{/isByteArray}}{{/vendorExtensions.x-is-jackson-optional-nullable}}{{^-last}}, {{/-last}}{{/vars}}{{#hasVars}}, {{/hasVars}}cloudSdkCustomFields{{#parent}}, super.hashCode(){{/parent}});
+    return Objects.hash({{#vars}}{{#vendorExtensions.x-is-jackson-optional-nullable}}hashCodeNullable({{name}}){{/vendorExtensions.x-is-jackson-optional-nullable}}{{^vendorExtensions.x-is-jackson-optional-nullable}}{{^isByteArray}}{{^vendorExtensions.isPrimitiveArray}}{{name}}{{/vendorExtensions.isPrimitiveArray}}{{#vendorExtensions.isPrimitiveArray}}Arrays.hashCode({{name}}){{/vendorExtensions.isPrimitiveArray}}{{/isByteArray}}{{#isByteArray}}Arrays.hashCode({{name}}){{/isByteArray}}{{/vendorExtensions.x-is-jackson-optional-nullable}}{{^-last}}, {{/-last}}{{/vars}}{{#hasVars}}, {{/hasVars}}cloudSdkCustomFields{{#parent}}, super.hashCode(){{/parent}});
   {{/useReflectionEqualsHashCode}}
   }{{#vendorExtensions.x-jackson-optional-nullable-helpers}}
 

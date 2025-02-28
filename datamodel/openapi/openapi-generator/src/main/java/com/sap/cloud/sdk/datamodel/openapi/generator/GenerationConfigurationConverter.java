@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
 import java.nio.file.Path;
@@ -20,6 +21,7 @@ import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.config.GlobalSettings;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -84,6 +86,31 @@ class GenerationConfigurationConverter
         final var doubleIs = Pattern.compile("^isIs[A-Z]").asPredicate();
         return new JavaClientCodegen()
         {
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            protected void updatePropertyForArray(
+                @Nonnull final CodegenProperty property,
+                @Nonnull final CodegenProperty innerProperty )
+            {
+                super.updatePropertyForArray(property, innerProperty);
+
+                if( USE_FLOAT_ARRAYS.isEnabled(config) && innerProperty.isNumber && property.isArray ) {
+                    property.datatypeWithEnum = "float[]";
+                    property.vendorExtensions.put("isPrimitiveArray", true);
+                }
+            }
+
+            @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
+            @Override
+            @Nullable
+            public String toDefaultValue( @Nonnull final CodegenProperty cp, @Nonnull final Schema schema )
+            {
+                if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.datatypeWithEnum) ) {
+                    return null;
+                }
+                return super.toDefaultValue(cp, schema);
+            }
+
             @Override
             @Nullable
             public String toBooleanGetter( @Nullable final String name )

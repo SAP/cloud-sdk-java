@@ -178,9 +178,15 @@
           "price": {
             "type": "number",
             "format": "float"
+          },
+          "embedding":{
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
           }
         },
-        "required": ["name", "brand", "flavor", "price"]
+        "required": ["name", "brand", "flavor", "price", "embedding"]
       },
       "NewSoda": {
         "type": "object",
