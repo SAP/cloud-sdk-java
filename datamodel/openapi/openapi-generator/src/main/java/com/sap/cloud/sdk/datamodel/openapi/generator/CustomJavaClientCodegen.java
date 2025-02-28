@@ -27,7 +27,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CustomJavaClientCodegen extends JavaClientCodegen
+class CustomJavaClientCodegen extends JavaClientCodegen
 {
 
     private final GenerationConfiguration config;
