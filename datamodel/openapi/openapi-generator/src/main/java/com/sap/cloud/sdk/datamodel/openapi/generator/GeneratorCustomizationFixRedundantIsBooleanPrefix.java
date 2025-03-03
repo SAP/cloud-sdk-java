@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.openapitools.codegen.languages.JavaClientCodegen;
-
 import lombok.Getter;
 
 /**
@@ -23,12 +21,14 @@ public class GeneratorCustomizationFixRedundantIsBooleanPrefix
 
     private final String configKey = "fixRedundantIsBooleanPrefix";
 
+    @Nullable
     @Override
-    public String toBooleanGetter(
-        @Nonnull final JavaClientCodegen ref,
-        @Nullable final String superValue,
-        @Nullable final String name )
+    public
+        String
+        toBooleanGetter( @Nonnull final ContextReturn<ToBooleanGetter, String> chain, @Nullable final String name )
     {
+        final String superValue = chain.doNext(next -> next.get().toBooleanGetter(next, name));
+
         if( superValue != null && DOUBLE_IS_PATTERN.test(superValue) ) {
             return "is" + superValue.substring(4);
         }

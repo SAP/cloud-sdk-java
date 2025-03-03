@@ -1,11 +1,9 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,133 +24,49 @@ import lombok.extern.slf4j.Slf4j;
 class CustomJavaClientCodegen extends JavaClientCodegen
 {
     private final List<GeneratorCustomization> customizations;
+    private final GenerationConfiguration config;
 
     public CustomJavaClientCodegen( final GenerationConfiguration config )
     {
+        this.config = config;
         this.customizations = GeneratorCustomization.getCustomizations(config);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked", "ReplaceInefficientStreamCount"})
-    @Override
-    public void preprocessOpenAPI( OpenAPI openAPI )
+    private <HandlerT extends GeneratorCustomization.ContextualReturn<HandlerT>, ValueT> ValueT chainedContextReturn(
+        @Nonnull final Class<? extends HandlerT> handlerClass,
+        @Nonnull final HandlerT rootHandler,
+        @Nonnull final Function<GeneratorCustomization.ContextReturn<HandlerT, ValueT>, ValueT> initiator )
     {
-        super.preprocessOpenAPI(openAPI);
-
-        // remove selected properties
-        final var removeProperties =
-            Arrays
-                .asList(
-                    "chatCompletionResponseMessage.context", // removes azureChatExtensionsMessageContext
-                    "createChatCompletionRequest.data_sources" // removes azureChatExtensionConfiguration
-                );
-        for( final var removeProperty : removeProperties ) {
-            final var split = removeProperty.split("\\.", 2);
-            final var schema = openAPI.getComponents().getSchemas().get(split[0]);
-
-            boolean removed = false;
-
-            final Predicate<Schema> remove =
-                s -> s != null && s.getProperties() != null && s.getProperties().remove(split[1]) != null;
-            final var schemasToCheck = new LinkedHashSet<Schema>();
-            schemasToCheck.add(schema);
-            while( !schemasToCheck.isEmpty() ) {
-                final var sit = schemasToCheck.iterator();
-                final var s = sit.next();
-                sit.remove();
-                removed |= remove.test(s);
-                if( s.getAllOf() != null ) {
-                    removed |= s.getAllOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getAllOf());
-                }
-                if( s.getAnyOf() != null ) {
-                    removed |= s.getAnyOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getAnyOf());
-                }
-                if( s.getOneOf() != null ) {
-                    removed |= s.getOneOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getOneOf());
-                }
-            }
-            if( !removed ) {
-                log.error("Could not remove property {}", removeProperty);
+        var chainedContext = rootHandler.<ValueT> createContext(config, null);
+        for( final GeneratorCustomization customization : customizations ) {
+            if( handlerClass.isInstance(customization) ) {
+                chainedContext = handlerClass.cast(customization).createContext(config, chainedContext);
             }
         }
+        return initiator.apply(chainedContext);
+    }
 
-        // remove some path
-        final var removePaths =
-            Arrays
-                .asList(
-                    "/deployments/{deployment-id}/completions",
-                    "/deployments/{deployment-id}/embeddings",
-                    "/deployments/{deployment-id}/audio/transcriptions",
-                    "/deployments/{deployment-id}/audio/translations",
-                    "/deployments/{deployment-id}/images/generations");
-        for( final var removePath : removePaths ) {
-            if( !openAPI.getPaths().keySet().remove(removePath) ) {
-                log.error("Could not remove path {}", removePath);
+    private <HandlerT extends GeneratorCustomization.ContextualVoid<HandlerT>> void chainedContextVoid(
+        @Nonnull final Class<? extends HandlerT> handlerClass,
+        @Nonnull final HandlerT rootHandler,
+        @Nonnull final Consumer<GeneratorCustomization.ContextVoid<HandlerT>> initiator )
+    {
+        var chainedContext = rootHandler.createContext(config, null);
+        for( final GeneratorCustomization customization : customizations ) {
+            if( handlerClass.isInstance(customization) ) {
+                chainedContext = handlerClass.cast(customization).createContext(config, chainedContext);
             }
         }
+        initiator.accept(chainedContext);
+    }
 
-        // delete redundant components
-        final var queue = new LinkedHashSet<Schema>();
-        final var schemas = new LinkedHashSet<Schema>();
-        final var refs = new LinkedHashSet<String>();
-        final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
-        for( final var path : openAPI.getPaths().values() ) {
-            final var m = pattern.matcher(path.toString());
-            while( m.find() ) {
-                final var name = m.group(1);
-                final var schema = openAPI.getComponents().getSchemas().get(name);
-                queue.add(schema);
-                refs.add(m.group(0).split(" ")[1]);
-            }
-        }
-
-        while( !queue.isEmpty() ) {
-            final var qit = queue.iterator();
-            final var s = qit.next();
-            qit.remove();
-            if( !schemas.add(s) ) {
-                continue;
-            }
-            final var ref = s.get$ref();
-            if( ref != null ) {
-                refs.add(ref);
-                final var refName = ref.substring(ref.lastIndexOf('/') + 1);
-                queue.add(openAPI.getComponents().getSchemas().get(refName));
-            }
-            if( s.getProperties() != null ) {
-                for( final var s1 : s.getProperties().values() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getItems() != null ) {
-                queue.add(s.getItems());
-            }
-            if( s.getAllOf() != null ) {
-                for( final var s1 : s.getAllOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getAnyOf() != null ) {
-                for( final var s1 : s.getAnyOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getOneOf() != null ) {
-                for( final var s1 : s.getOneOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-        }
-
-        openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
-            if( !refs.contains("#/components/schemas/" + schema) ) {
-                log.error("Removing unused schema {}", schema);
-                return true;
-            }
-            return false;
-        });
+    @Override
+    public void preprocessOpenAPI( @Nonnull final OpenAPI openAPI )
+    {
+        chainedContextVoid(
+            GeneratorCustomization.PreProcessOpenAPI.class,
+            ( context, openAPI1 ) -> super.preprocessOpenAPI(openAPI1),
+            context -> context.get().preprocessOpenAPI(context, openAPI));
     }
 
     @Override
@@ -160,12 +74,10 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         void
         updatePropertyForArray( @Nonnull final CodegenProperty property, @Nonnull final CodegenProperty innerProperty )
     {
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.UpdatePropertyForArray custom ) {
-                custom.updatePropertyForArray(this, property, innerProperty);
-            }
-        }
-        super.updatePropertyForArray(property, innerProperty);
+        chainedContextVoid(
+            GeneratorCustomization.UpdatePropertyForArray.class,
+            ( context, property1, innerProperty1 ) -> super.updatePropertyForArray(property1, innerProperty1),
+            context -> context.get().updatePropertyForArray(context, property, innerProperty));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
@@ -173,40 +85,32 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Nullable
     public String toDefaultValue( @Nonnull final CodegenProperty cp, @Nonnull final Schema schema )
     {
-        final String superValue = super.toDefaultValue(cp, schema);
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.ToDefaultValue custom ) {
-                return custom.toDefaultValue(this, superValue, cp, schema);
-            }
-        }
-        return superValue;
+        return chainedContextReturn(
+            GeneratorCustomization.ToDefaultValue.class,
+            ( context, cp1, schema1 ) -> super.toDefaultValue(cp1, schema1),
+            context -> context.get().toDefaultValue(context, cp, schema));
     }
 
     @Override
     @Nullable
     public String toBooleanGetter( @Nullable final String name )
     {
-        final String superValue = super.toBooleanGetter(name);
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.ToBooleanGetter custom ) {
-                return custom.toBooleanGetter(this, superValue, name);
-            }
-        }
-        return superValue;
+        return chainedContextReturn(
+            GeneratorCustomization.ToBooleanGetter.class,
+            ( context, name1 ) -> super.toBooleanGetter(name1),
+            context -> context.get().toBooleanGetter(context, name));
     }
 
     @Override
     @Nonnull
     public
         OperationsMap
-        postProcessOperationsWithModels( @Nonnull OperationsMap ops, @Nonnull final List<ModelMap> allModels )
+        postProcessOperationsWithModels( @Nonnull final OperationsMap ops, @Nonnull final List<ModelMap> allModels )
     {
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.PostProcessOperationsWithModels custom ) {
-                ops = custom.postProcessOperationsWithModels(this, ops, allModels);
-            }
-        }
-        return super.postProcessOperationsWithModels(ops, allModels);
+        return chainedContextReturn(
+            GeneratorCustomization.PostProcessOperationsWithModels.class,
+            ( context, ops1, allModels1 ) -> super.postProcessOperationsWithModels(ops1, allModels1),
+            context -> context.get().postProcessOperationsWithModels(context, ops, allModels));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
@@ -216,23 +120,22 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         @Nonnull final Schema schema,
         @Nonnull final Map<String, Schema> allDefinitions )
     {
-        super.updateModelForComposedSchema(m, schema, allDefinitions);
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.UpdateModelForComposedSchema custom ) {
-                custom.updateModelForComposedSchema(this, m, schema, allDefinitions);
-            }
-        }
+        chainedContextVoid(
+            GeneratorCustomization.UpdateModelForComposedSchema.class,
+            ( context, m1, schema1, allDefinitions1 ) -> super.updateModelForComposedSchema(
+                m1,
+                schema1,
+                allDefinitions1),
+            context -> context.get().updateModelForComposedSchema(context, m, schema, allDefinitions));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
     @Override
     protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
     {
-        for( final GeneratorCustomization customization : customizations ) {
-            if( customization instanceof final GeneratorCustomization.UpdateModelForObject custom ) {
-                custom.updateModelForObject(this, m, schema);
-            }
-        }
-        super.updateModelForObject(m, schema);
+        chainedContextVoid(
+            GeneratorCustomization.UpdateModelForObject.class,
+            ( context, m1, schema1 ) -> super.updateModelForObject(m1, schema1),
+            context -> context.get().updateModelForObject(context, m, schema));
     }
 }

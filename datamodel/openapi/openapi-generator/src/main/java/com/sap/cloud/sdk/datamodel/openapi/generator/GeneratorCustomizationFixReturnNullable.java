@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.CodegenOperation;
-import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.OperationsMap;
 
@@ -26,18 +25,21 @@ public class GeneratorCustomizationFixReturnNullable
     private final String configValueDefault = "true";
 
     @Override
-    public @Nonnull OperationsMap postProcessOperationsWithModels(
-        @Nonnull final JavaClientCodegen ref,
+    @Nonnull
+    public OperationsMap postProcessOperationsWithModels(
+        @Nonnull final ContextReturn<PostProcessOperationsWithModels, OperationsMap> chain,
         @Nonnull final OperationsMap ops,
         @Nonnull final List<ModelMap> allModels )
     {
-        for( final CodegenOperation op : ops.getOperations().getOperation() ) {
+        final OperationsMap superOps =
+            chain.doNext(next -> next.get().postProcessOperationsWithModels(next, ops, allModels));
+        for( final CodegenOperation op : superOps.getOperations().getOperation() ) {
             final var noContent =
                 op.isResponseOptional
                     || op.responses == null
                     || op.responses.stream().anyMatch(r -> "204".equals(r.code));
             op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
         }
-        return ops;
+        return superOps;
     }
 }

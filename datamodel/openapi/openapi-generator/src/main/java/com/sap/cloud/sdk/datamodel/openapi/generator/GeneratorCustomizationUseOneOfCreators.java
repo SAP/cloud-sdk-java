@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.languages.JavaClientCodegen;
 
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
@@ -31,11 +30,14 @@ public class GeneratorCustomizationUseOneOfCreators
     @Override
     @SuppressWarnings( "rawtypes" )
     public void updateModelForComposedSchema(
-        @Nonnull final JavaClientCodegen ref,
+        @Nonnull final ContextVoid<UpdateModelForComposedSchema> chain,
         @Nonnull final CodegenModel m,
         @Nonnull final Schema schema,
         @Nonnull final Map<String, Schema> allDefinitions )
     {
+        // run chain first
+        chain.doNext(next -> next.get().updateModelForComposedSchema(next, m, schema, allDefinitions));
+
         if( m.discriminator != null ) {
             return;
         }

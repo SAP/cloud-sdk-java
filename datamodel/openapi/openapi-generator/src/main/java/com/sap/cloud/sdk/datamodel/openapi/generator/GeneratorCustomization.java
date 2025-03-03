@@ -3,6 +3,8 @@ package com.sap.cloud.sdk.datamodel.openapi.generator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
@@ -10,12 +12,12 @@ import javax.annotation.Nullable;
 
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
-import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.OperationsMap;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 
 /**
@@ -95,22 +97,164 @@ interface GeneratorCustomization
     }
 
     /**
+     * Context for customization.
+     */
+    interface Context<HandlerT>
+    {
+        /**
+         * Get the customization handler.
+         *
+         * @return The customization handler.
+         */
+        @Nonnull
+        HandlerT get();
+
+        /**
+         * Get the generation configuration.
+         *
+         * @return The generation configuration.
+         */
+        @Nonnull
+        GenerationConfiguration config();
+    }
+
+    /**
+     * Context for customization using chained methods without return type.
+     */
+    interface ContextVoid<HandlerT extends ContextualVoid<HandlerT>> extends Context<HandlerT>
+    {
+        /**
+         * Get next customization handler.
+         *
+         * @return The customization handler.
+         */
+        @Nullable
+        ContextVoid<HandlerT> next();
+
+        /**
+         * Continue with the next customization.
+         *
+         * @param next
+         *            The next customization.
+         */
+        default void doNext( @Nonnull final Consumer<ContextVoid<HandlerT>> next )
+        {
+            next.accept(next());
+        }
+    }
+
+    /**
+     * Context for customizationusing chained methods with return type.
+     */
+    interface ContextReturn<HandlerT extends ContextualReturn<HandlerT>, ValueT> extends Context<HandlerT>
+    {
+        /**
+         * Get next customization handler.
+         *
+         * @return The customization handler.
+         */
+        @Nullable
+        ContextReturn<HandlerT, ValueT> next();
+
+        /**
+         * Continue with the next customization.
+         *
+         * @param next
+         *            The next customization.
+         * @return The return value.
+         */
+        @SuppressWarnings( "PMD.NullAnnotationMissingOnPublicMethod" )
+        default ValueT doNext( @Nonnull final Function<ContextReturn<HandlerT, ValueT>, ValueT> next )
+        {
+            return next.apply(next());
+        }
+    }
+
+    interface ContextualReturn<HandlerT extends ContextualReturn<HandlerT>>
+    {
+        default <ValueT> ContextReturn<HandlerT, ValueT> createContext(
+            @Nonnull final GenerationConfiguration config,
+            @Nullable final ContextReturn<HandlerT, ValueT> next )
+        {
+            @SuppressWarnings( "unchecked" )
+            final HandlerT self = (HandlerT) this;
+            return new ContextReturn<>()
+            {
+                @Nonnull
+                @Override
+                public HandlerT get()
+                {
+                    return self;
+                }
+
+                @Nullable
+                @Override
+                public ContextReturn<HandlerT, ValueT> next()
+                {
+                    return next;
+                }
+
+                @Nonnull
+                @Override
+                public GenerationConfiguration config()
+                {
+                    return config;
+                }
+            };
+        }
+    }
+
+    interface ContextualVoid<HandlerT extends ContextualVoid<HandlerT>>
+    {
+        default
+            ContextVoid<HandlerT>
+            createContext( @Nonnull final GenerationConfiguration config, @Nullable final ContextVoid<HandlerT> next )
+        {
+            @SuppressWarnings( "unchecked" )
+            final HandlerT self = (HandlerT) this;
+            return new ContextVoid<>()
+            {
+                @Nonnull
+                @Override
+                public HandlerT get()
+                {
+                    return self;
+                }
+
+                @Nullable
+                @Override
+                public ContextVoid<HandlerT> next()
+                {
+                    return next;
+                }
+
+                @Nonnull
+                @Override
+                public GenerationConfiguration config()
+                {
+                    return config;
+                }
+            };
+        }
+    }
+
+    /**
      * Update the model for a composed schema.
      */
-    interface UpdatePropertyForArray
+    interface UpdatePropertyForArray extends ContextualVoid<UpdatePropertyForArray>
     {
         /**
          * Update the model for a composed schema.
          *
-         * @param ref
-         *            The codegen reference.
+         * @param chain
+         *            The customization chain.
          * @param property
          *            The property.
          * @param innerProperty
          *            The inner property.
          */
         void updatePropertyForArray(
-            @Nonnull final JavaClientCodegen ref,
+            @Nonnull final ContextVoid<UpdatePropertyForArray> chain,
             @Nonnull final CodegenProperty property,
             @Nonnull final CodegenProperty innerProperty );
     }
@@ -118,15 +262,13 @@ interface GeneratorCustomization
     /**
      * Get the default value.
      */
-    interface ToDefaultValue
+    interface ToDefaultValue extends ContextualReturn<ToDefaultValue>
     {
         /**
          * Get the default value.
          *
-         * @param ref
-         *            The codegen reference.
-         * @param superValue
-         *            The default value.
+         * @param chain
+         *            The customization chain.
          * @param cp
          *            The codegen property.
          * @param schema
@@ -136,8 +278,7 @@ interface GeneratorCustomization
         @Nullable
         @SuppressWarnings( "rawtypes" )
         String toDefaultValue(
-            @Nonnull final JavaClientCodegen ref,
-            String superValue,
+            @Nonnull final ContextReturn<ToDefaultValue, String> chain,
             @Nonnull final CodegenProperty cp,
             @Nonnull final Schema schema );
     }
@@ -145,33 +286,32 @@ interface GeneratorCustomization
     /**
      * Get the boolean getter.
      */
-    interface ToBooleanGetter
+    interface ToBooleanGetter extends ContextualReturn<ToBooleanGetter>
     {
         /**
          * Get the boolean getter.
          *
-         * @param ref
-         *            The codegen reference.
-         * @param superValue
-         *            The default value.
+         * @param chain
+         *            The customization chain.
          * @param name
          *            The name.
          * @return The boolean getter.
          */
         @Nullable
-        String toBooleanGetter( @Nonnull final JavaClientCodegen ref, String superValue, @Nullable final String name );
+        String
+            toBooleanGetter( @Nonnull final ContextReturn<ToBooleanGetter, String> chain, @Nullable final String name );
     }
 
     /**
      * Update the model for a composed schema.
      */
-    interface UpdateModelForComposedSchema
+    interface UpdateModelForComposedSchema extends ContextualVoid<UpdateModelForComposedSchema>
     {
         /**
          * Update the model for a composed schema.
          *
-         * @param ref
-         *            The codegen reference.
+         * @param chain
+         *            The customization chain.
          * @param m
          *            The model.
          * @param schema
@@ -181,7 +321,7 @@ interface GeneratorCustomization
          */
         @SuppressWarnings( "rawtypes" )
         void updateModelForComposedSchema(
-            @Nonnull final JavaClientCodegen ref,
+            @Nonnull final ContextVoid<UpdateModelForComposedSchema> chain,
             @Nonnull final CodegenModel m,
             @Nonnull final Schema schema,
             @Nonnull final Map<String, Schema> allDefinitions );
@@ -190,13 +330,13 @@ interface GeneratorCustomization
     /**
      * Post-process operations with models.
      */
-    interface PostProcessOperationsWithModels
+    interface PostProcessOperationsWithModels extends ContextualReturn<PostProcessOperationsWithModels>
     {
         /**
          * Post-process operations with models.
          *
-         * @param ref
-         *            The codegen reference.
+         * @param chain
+         *            The customization chain.
          * @param ops
          *            The operations.
          * @param allModels
@@ -205,7 +345,7 @@ interface GeneratorCustomization
          */
         @Nonnull
         OperationsMap postProcessOperationsWithModels(
-            @Nonnull final JavaClientCodegen ref,
+            @Nonnull final ContextReturn<PostProcessOperationsWithModels, OperationsMap> chain,
             @Nonnull final OperationsMap ops,
             @Nonnull final List<ModelMap> allModels );
     }
@@ -213,13 +353,13 @@ interface GeneratorCustomization
     /**
      * Update the model for an object.
      */
-    interface UpdateModelForObject
+    interface UpdateModelForObject extends ContextualVoid<UpdateModelForObject>
     {
         /**
          * Update the model for an object.
          *
-         * @param ref
-         *            The codegen reference.
+         * @param chain
+         *            The customization chain.
          * @param m
          *            The model.
          * @param schema
@@ -227,8 +367,24 @@ interface GeneratorCustomization
          */
         @SuppressWarnings( "rawtypes" )
         void updateModelForObject(
-            @Nonnull final JavaClientCodegen ref,
+            @Nonnull final ContextVoid<UpdateModelForObject> chain,
             @Nonnull final CodegenModel m,
             @Nonnull final Schema schema );
+    }
+
+    /**
+     * Pre-process the OpenAPI model.
+     */
+    interface PreProcessOpenAPI extends ContextualVoid<PreProcessOpenAPI>
+    {
+        /**
+         * Preprocess the OpenAPI model.
+         *
+         * @param chain
+         *            The customization chain.
+         * @param openAPI
+         *            The OpenAPI model.
+         */
+        void preprocessOpenAPI( @Nonnull final ContextVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI );
     }
 }
