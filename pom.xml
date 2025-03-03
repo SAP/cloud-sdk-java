@@ -84,7 +84,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.18.2</jackson.version>
+		<jackson.version>2.18.3</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250107</json.version>
@@ -96,10 +96,10 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.2.3</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.16</slf4j.version>
+		<slf4j.version>2.0.17</slf4j.version>
 		<assertj-core.version>3.27.3</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.15.2</mockito.version>
+		<mockito.version>5.16.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
 		<junit.jupiter.version>5.12.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -109,7 +109,7 @@
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.0</caffeine.version>
-		<openapi-generator.version>7.11.0</openapi-generator.version>
+		<openapi-generator.version>7.12.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.28</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.25</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
@@ -118,7 +118,7 @@
 		<bouncycastle.version>1.80</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
-		<wiremock.version>3.12.0</wiremock.version>
+		<wiremock.version>3.12.1</wiremock.version>
 		<checkstyle.version>10.21.3</checkstyle.version>
 		<byte-buddy.version>1.17.1</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
