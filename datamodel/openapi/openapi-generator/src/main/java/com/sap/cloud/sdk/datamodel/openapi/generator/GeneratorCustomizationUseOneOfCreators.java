@@ -30,7 +30,7 @@ public class GeneratorCustomizationUseOneOfCreators
     @Override
     @SuppressWarnings( "rawtypes" )
     public void updateModelForComposedSchema(
-        @Nonnull final ContextVoid<UpdateModelForComposedSchema> chain,
+        @Nonnull final ChainElementVoid<UpdateModelForComposedSchema> chain,
         @Nonnull final CodegenModel m,
         @Nonnull final Schema schema,
         @Nonnull final Map<String, Schema> allDefinitions )

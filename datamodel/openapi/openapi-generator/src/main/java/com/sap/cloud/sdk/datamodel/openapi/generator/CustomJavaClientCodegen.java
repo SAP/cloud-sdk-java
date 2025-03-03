@@ -32,29 +32,29 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         this.customizations = GeneratorCustomization.getCustomizations(config);
     }
 
-    private <HandlerT extends GeneratorCustomization.ContextualReturn<HandlerT>, ValueT> ValueT chainedContextReturn(
+    private <HandlerT extends GeneratorCustomization.ChainableReturn<HandlerT>, ValueT> ValueT chainedContextReturn(
         @Nonnull final Class<? extends HandlerT> handlerClass,
         @Nonnull final HandlerT rootHandler,
-        @Nonnull final Function<GeneratorCustomization.ContextReturn<HandlerT, ValueT>, ValueT> initiator )
+        @Nonnull final Function<GeneratorCustomization.ChainElementReturn<HandlerT, ValueT>, ValueT> initiator )
     {
-        var chainedContext = rootHandler.<ValueT> createContext(config, null);
+        var chainedContext = rootHandler.<ValueT> chained(config, null);
         for( final GeneratorCustomization customization : customizations ) {
             if( handlerClass.isInstance(customization) ) {
-                chainedContext = handlerClass.cast(customization).createContext(config, chainedContext);
+                chainedContext = handlerClass.cast(customization).chained(config, chainedContext);
             }
         }
         return initiator.apply(chainedContext);
     }
 
-    private <HandlerT extends GeneratorCustomization.ContextualVoid<HandlerT>> void chainedContextVoid(
+    private <HandlerT extends GeneratorCustomization.ChainableVoid<HandlerT>> void chainedContextVoid(
         @Nonnull final Class<? extends HandlerT> handlerClass,
         @Nonnull final HandlerT rootHandler,
-        @Nonnull final Consumer<GeneratorCustomization.ContextVoid<HandlerT>> initiator )
+        @Nonnull final Consumer<GeneratorCustomization.ChainElementVoid<HandlerT>> initiator )
     {
-        var chainedContext = rootHandler.createContext(config, null);
+        var chainedContext = rootHandler.chained(config, null);
         for( final GeneratorCustomization customization : customizations ) {
             if( handlerClass.isInstance(customization) ) {
-                chainedContext = handlerClass.cast(customization).createContext(config, chainedContext);
+                chainedContext = handlerClass.cast(customization).chained(config, chainedContext);
             }
         }
         initiator.accept(chainedContext);

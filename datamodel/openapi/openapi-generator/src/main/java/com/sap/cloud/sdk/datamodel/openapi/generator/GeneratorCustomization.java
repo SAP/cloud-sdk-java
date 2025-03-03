@@ -99,7 +99,7 @@ interface GeneratorCustomization
     /**
      * Context for customization.
      */
-    interface Context<HandlerT>
+    interface ChainElement<HandlerT>
     {
         /**
          * Get the customization handler.
@@ -121,7 +121,7 @@ interface GeneratorCustomization
     /**
      * Context for customization using chained methods without return type.
      */
-    interface ContextVoid<HandlerT extends ContextualVoid<HandlerT>> extends Context<HandlerT>
+    interface ChainElementVoid<HandlerT extends ChainableVoid<HandlerT>> extends ChainElement<HandlerT>
     {
         /**
          * Get next customization handler.
@@ -129,7 +129,7 @@ interface GeneratorCustomization
          * @return The customization handler.
          */
         @Nullable
-        ContextVoid<HandlerT> next();
+        ChainElementVoid<HandlerT> next();
 
         /**
          * Continue with the next customization.
@@ -137,7 +137,7 @@ interface GeneratorCustomization
          * @param next
          *            The next customization.
          */
-        default void doNext( @Nonnull final Consumer<ContextVoid<HandlerT>> next )
+        default void doNext( @Nonnull final Consumer<ChainElementVoid<HandlerT>> next )
         {
             next.accept(next());
         }
@@ -146,7 +146,7 @@ interface GeneratorCustomization
     /**
      * Context for customizationusing chained methods with return type.
      */
-    interface ContextReturn<HandlerT extends ContextualReturn<HandlerT>, ValueT> extends Context<HandlerT>
+    interface ChainElementReturn<HandlerT extends ChainableReturn<HandlerT>, ValueT> extends ChainElement<HandlerT>
     {
         /**
          * Get next customization handler.
@@ -154,7 +154,7 @@ interface GeneratorCustomization
          * @return The customization handler.
          */
         @Nullable
-        ContextReturn<HandlerT, ValueT> next();
+        ChainElementReturn<HandlerT, ValueT> next();
 
         /**
          * Continue with the next customization.
@@ -164,21 +164,21 @@ interface GeneratorCustomization
          * @return The return value.
          */
         @SuppressWarnings( "PMD.NullAnnotationMissingOnPublicMethod" )
-        default ValueT doNext( @Nonnull final Function<ContextReturn<HandlerT, ValueT>, ValueT> next )
+        default ValueT doNext( @Nonnull final Function<ChainElementReturn<HandlerT, ValueT>, ValueT> next )
         {
             return next.apply(next());
         }
     }
 
-    interface ContextualReturn<HandlerT extends ContextualReturn<HandlerT>>
+    interface ChainableReturn<HandlerT extends ChainableReturn<HandlerT>>
     {
-        default <ValueT> ContextReturn<HandlerT, ValueT> createContext(
+        default <ValueT> ChainElementReturn<HandlerT, ValueT> chained(
             @Nonnull final GenerationConfiguration config,
-            @Nullable final ContextReturn<HandlerT, ValueT> next )
+            @Nullable final ChainElementReturn<HandlerT, ValueT> next )
         {
             @SuppressWarnings( "unchecked" )
             final HandlerT self = (HandlerT) this;
-            return new ContextReturn<>()
+            return new ChainElementReturn<>()
             {
                 @Nonnull
                 @Override
@@ -189,7 +189,7 @@ interface GeneratorCustomization
 
                 @Nullable
                 @Override
-                public ContextReturn<HandlerT, ValueT> next()
+                public ChainElementReturn<HandlerT, ValueT> next()
                 {
                     return next;
                 }
@@ -204,15 +204,15 @@ interface GeneratorCustomization
         }
     }
 
-    interface ContextualVoid<HandlerT extends ContextualVoid<HandlerT>>
+    interface ChainableVoid<HandlerT extends ChainableVoid<HandlerT>>
     {
         default
-            ContextVoid<HandlerT>
-            createContext( @Nonnull final GenerationConfiguration config, @Nullable final ContextVoid<HandlerT> next )
+            ChainElementVoid<HandlerT>
+            chained( @Nonnull final GenerationConfiguration config, @Nullable final ChainElementVoid<HandlerT> next )
         {
             @SuppressWarnings( "unchecked" )
             final HandlerT self = (HandlerT) this;
-            return new ContextVoid<>()
+            return new ChainElementVoid<>()
             {
                 @Nonnull
                 @Override
@@ -223,7 +223,7 @@ interface GeneratorCustomization
 
                 @Nullable
                 @Override
-                public ContextVoid<HandlerT> next()
+                public ChainElementVoid<HandlerT> next()
                 {
                     return next;
                 }
@@ -241,7 +241,7 @@ interface GeneratorCustomization
     /**
      * Update the model for a composed schema.
      */
-    interface UpdatePropertyForArray extends ContextualVoid<UpdatePropertyForArray>
+    interface UpdatePropertyForArray extends ChainableVoid<UpdatePropertyForArray>
     {
         /**
          * Update the model for a composed schema.
@@ -254,7 +254,7 @@ interface GeneratorCustomization
          *            The inner property.
          */
         void updatePropertyForArray(
-            @Nonnull final ContextVoid<UpdatePropertyForArray> chain,
+            @Nonnull final ChainElementVoid<UpdatePropertyForArray> chain,
             @Nonnull final CodegenProperty property,
             @Nonnull final CodegenProperty innerProperty );
     }
@@ -262,7 +262,7 @@ interface GeneratorCustomization
     /**
      * Get the default value.
      */
-    interface ToDefaultValue extends ContextualReturn<ToDefaultValue>
+    interface ToDefaultValue extends ChainableReturn<ToDefaultValue>
     {
         /**
          * Get the default value.
@@ -278,7 +278,7 @@ interface GeneratorCustomization
         @Nullable
         @SuppressWarnings( "rawtypes" )
         String toDefaultValue(
-            @Nonnull final ContextReturn<ToDefaultValue, String> chain,
+            @Nonnull final ChainElementReturn<ToDefaultValue, String> chain,
             @Nonnull final CodegenProperty cp,
             @Nonnull final Schema schema );
     }
@@ -286,7 +286,7 @@ interface GeneratorCustomization
     /**
      * Get the boolean getter.
      */
-    interface ToBooleanGetter extends ContextualReturn<ToBooleanGetter>
+    interface ToBooleanGetter extends ChainableReturn<ToBooleanGetter>
     {
         /**
          * Get the boolean getter.
@@ -298,14 +298,15 @@ interface GeneratorCustomization
          * @return The boolean getter.
          */
         @Nullable
-        String
-            toBooleanGetter( @Nonnull final ContextReturn<ToBooleanGetter, String> chain, @Nullable final String name );
+        String toBooleanGetter(
+            @Nonnull final ChainElementReturn<ToBooleanGetter, String> chain,
+            @Nullable final String name );
     }
 
     /**
      * Update the model for a composed schema.
      */
-    interface UpdateModelForComposedSchema extends ContextualVoid<UpdateModelForComposedSchema>
+    interface UpdateModelForComposedSchema extends ChainableVoid<UpdateModelForComposedSchema>
     {
         /**
          * Update the model for a composed schema.
@@ -321,7 +322,7 @@ interface GeneratorCustomization
          */
         @SuppressWarnings( "rawtypes" )
         void updateModelForComposedSchema(
-            @Nonnull final ContextVoid<UpdateModelForComposedSchema> chain,
+            @Nonnull final ChainElementVoid<UpdateModelForComposedSchema> chain,
             @Nonnull final CodegenModel m,
             @Nonnull final Schema schema,
             @Nonnull final Map<String, Schema> allDefinitions );
@@ -330,7 +331,7 @@ interface GeneratorCustomization
     /**
      * Post-process operations with models.
      */
-    interface PostProcessOperationsWithModels extends ContextualReturn<PostProcessOperationsWithModels>
+    interface PostProcessOperationsWithModels extends ChainableReturn<PostProcessOperationsWithModels>
     {
         /**
          * Post-process operations with models.
@@ -345,7 +346,7 @@ interface GeneratorCustomization
          */
         @Nonnull
         OperationsMap postProcessOperationsWithModels(
-            @Nonnull final ContextReturn<PostProcessOperationsWithModels, OperationsMap> chain,
+            @Nonnull final ChainElementReturn<PostProcessOperationsWithModels, OperationsMap> chain,
             @Nonnull final OperationsMap ops,
             @Nonnull final List<ModelMap> allModels );
     }
@@ -353,7 +354,7 @@ interface GeneratorCustomization
     /**
      * Update the model for an object.
      */
-    interface UpdateModelForObject extends ContextualVoid<UpdateModelForObject>
+    interface UpdateModelForObject extends ChainableVoid<UpdateModelForObject>
     {
         /**
          * Update the model for an object.
@@ -367,7 +368,7 @@ interface GeneratorCustomization
          */
         @SuppressWarnings( "rawtypes" )
         void updateModelForObject(
-            @Nonnull final ContextVoid<UpdateModelForObject> chain,
+            @Nonnull final ChainElementVoid<UpdateModelForObject> chain,
             @Nonnull final CodegenModel m,
             @Nonnull final Schema schema );
     }
@@ -375,7 +376,7 @@ interface GeneratorCustomization
     /**
      * Pre-process the OpenAPI model.
      */
-    interface PreProcessOpenAPI extends ContextualVoid<PreProcessOpenAPI>
+    interface PreProcessOpenAPI extends ChainableVoid<PreProcessOpenAPI>
     {
         /**
          * Preprocess the OpenAPI model.
@@ -385,6 +386,8 @@ interface GeneratorCustomization
          * @param openAPI
          *            The OpenAPI model.
          */
-        void preprocessOpenAPI( @Nonnull final ContextVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI );
+        void preprocessOpenAPI(
+            @Nonnull final ChainElementVoid<PreProcessOpenAPI> chain,
+            @Nonnull final OpenAPI openAPI );
     }
 }

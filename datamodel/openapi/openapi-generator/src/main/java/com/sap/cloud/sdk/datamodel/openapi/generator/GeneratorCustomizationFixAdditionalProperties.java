@@ -25,7 +25,7 @@ public class GeneratorCustomizationFixAdditionalProperties
     @SuppressWarnings( "rawtypes" )
     @Override
     public void updateModelForObject(
-        @Nonnull final ContextVoid<UpdateModelForObject> chain,
+        @Nonnull final ChainElementVoid<UpdateModelForObject> chain,
         @Nonnull final CodegenModel m,
         @Nonnull final Schema schema )
     {

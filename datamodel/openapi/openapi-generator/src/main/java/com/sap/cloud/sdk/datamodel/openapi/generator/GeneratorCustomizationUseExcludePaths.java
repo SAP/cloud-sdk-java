@@ -8,6 +8,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Remove selected paths from the OpenAPI specification.
+ */
 @Getter
 @Slf4j
 public class GeneratorCustomizationUseExcludePaths
@@ -18,9 +21,9 @@ public class GeneratorCustomizationUseExcludePaths
     private final String configKey = "excludePaths";
 
     @Override
-    public void preprocessOpenAPI(
-        @Nonnull final ContextVoid<GeneratorCustomization.PreProcessOpenAPI> chain,
-        @Nonnull final OpenAPI openAPI )
+    public
+        void
+        preprocessOpenAPI( @Nonnull final ChainElementVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI )
     {
         // remove selected properties
         final String excludePathsRaw = Objects.requireNonNull(getConfigValue(chain.config()));

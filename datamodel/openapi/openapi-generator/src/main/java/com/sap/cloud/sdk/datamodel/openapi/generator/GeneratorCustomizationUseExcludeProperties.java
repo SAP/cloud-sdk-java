@@ -11,6 +11,9 @@ import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Remove selected properties from the OpenAPI specification.
+ */
 @Getter
 @Slf4j
 public class GeneratorCustomizationUseExcludeProperties
@@ -20,15 +23,15 @@ public class GeneratorCustomizationUseExcludeProperties
 {
     private final String configKey = "excludeProperties";
 
-    // TODO chatCompletionResponseMessage.context, createChatCompletionRequest.data_sources
-
     @SuppressWarnings( { "rawtypes", "unchecked", "ReplaceInefficientStreamCount" } )
     @Override
-    public void preprocessOpenAPI( @Nonnull final ContextVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI )
+    public
+        void
+        preprocessOpenAPI( @Nonnull final ChainElementVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI )
     {
         // remove selected properties
         final String excludePropertiesRaw = Objects.requireNonNull(getConfigValue(chain.config()));
-        final String[] excludeProperties = excludePropertiesRaw.split("[,\\s]+");
+        final String[] excludeProperties = excludePropertiesRaw.trim().split("[,\\s]+");
 
         for( final var removeProperty : excludeProperties ) {
             final var split = removeProperty.split("\\.", 2);

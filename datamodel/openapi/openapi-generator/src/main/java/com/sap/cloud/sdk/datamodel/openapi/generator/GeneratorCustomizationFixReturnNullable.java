@@ -27,7 +27,7 @@ public class GeneratorCustomizationFixReturnNullable
     @Override
     @Nonnull
     public OperationsMap postProcessOperationsWithModels(
-        @Nonnull final ContextReturn<PostProcessOperationsWithModels, OperationsMap> chain,
+        @Nonnull final ChainElementReturn<PostProcessOperationsWithModels, OperationsMap> chain,
         @Nonnull final OperationsMap ops,
         @Nonnull final List<ModelMap> allModels )
     {

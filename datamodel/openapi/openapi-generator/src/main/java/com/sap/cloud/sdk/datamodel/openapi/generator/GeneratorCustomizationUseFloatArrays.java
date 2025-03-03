@@ -22,7 +22,7 @@ public class GeneratorCustomizationUseFloatArrays
 
     @Override
     public void updatePropertyForArray(
-        @Nonnull final ContextVoid<UpdatePropertyForArray> chain,
+        @Nonnull final ChainElementVoid<UpdatePropertyForArray> chain,
         @Nonnull final CodegenProperty property,
         @Nonnull final CodegenProperty innerProperty )
     {
@@ -39,7 +39,7 @@ public class GeneratorCustomizationUseFloatArrays
     @SuppressWarnings( "rawtypes" )
     @Nullable
     public String toDefaultValue(
-        @Nonnull final ContextReturn<ToDefaultValue, String> chain,
+        @Nonnull final ChainElementReturn<ToDefaultValue, String> chain,
         @Nonnull final CodegenProperty cp,
         @Nonnull final Schema schema )
     {

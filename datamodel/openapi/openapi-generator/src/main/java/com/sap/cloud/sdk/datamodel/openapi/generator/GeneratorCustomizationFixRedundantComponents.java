@@ -10,6 +10,9 @@ import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Remove unused schema components.
+ */
 @Slf4j
 @Getter
 public class GeneratorCustomizationFixRedundantComponents
@@ -21,7 +24,9 @@ public class GeneratorCustomizationFixRedundantComponents
 
     @SuppressWarnings( { "rawtypes" } )
     @Override
-    public void preprocessOpenAPI( @Nonnull final ContextVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI )
+    public
+        void
+        preprocessOpenAPI( @Nonnull final ChainElementVoid<PreProcessOpenAPI> chain, @Nonnull final OpenAPI openAPI )
     {
         // process rest of the chain
         chain.doNext(next -> next.get().preprocessOpenAPI(next, openAPI));

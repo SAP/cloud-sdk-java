@@ -25,7 +25,7 @@ public class GeneratorCustomizationFixRedundantIsBooleanPrefix
     @Override
     public
         String
-        toBooleanGetter( @Nonnull final ContextReturn<ToBooleanGetter, String> chain, @Nullable final String name )
+        toBooleanGetter( @Nonnull final ChainElementReturn<ToBooleanGetter, String> chain, @Nullable final String name )
     {
         final String superValue = chain.doNext(next -> next.get().toBooleanGetter(next, name));
 
