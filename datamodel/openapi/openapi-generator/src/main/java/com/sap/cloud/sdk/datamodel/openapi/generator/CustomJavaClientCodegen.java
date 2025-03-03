@@ -46,9 +46,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         super.updatePropertyForArray(property, innerProperty);
 
         if( USE_FLOAT_ARRAYS.isEnabled(config) && innerProperty.isNumber && property.isArray ) {
-            property.dataType = "float[]";
             property.datatypeWithEnum = "float[]";
-            property.isArray = false; // set false to omit `add{{nameInPascalCase}}Item(...)` convenience method
             property.vendorExtensions.put("isPrimitiveArray", true);
         }
     }
@@ -58,7 +56,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Nullable
     public String toDefaultValue( @Nonnull final CodegenProperty cp, @Nonnull final Schema schema )
     {
-        if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.dataType) ) {
+        if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.datatypeWithEnum) ) {
             return null;
         }
         return super.toDefaultValue(cp, schema);
