@@ -51,10 +51,10 @@ public class FixRedundantComponents implements GeneratorCustomization.PreProcess
             if( !schemas.add(s) ) {
                 continue;
             }
-            final var $ref = s.get$ref();
-            if( $ref != null ) {
-                refs.add($ref);
-                final var refName = $ref.substring($ref.lastIndexOf('/') + 1);
+            final var ref = s.get$ref();
+            if( ref != null ) {
+                refs.add(ref);
+                final var refName = ref.substring(ref.lastIndexOf('/') + 1);
                 queue.add(openAPI.getComponents().getSchemas().get(refName));
             }
             if( s.getProperties() != null ) {
