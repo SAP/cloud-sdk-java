@@ -85,7 +85,7 @@ public class GeneratorCustomizationFixRedundantComponents
 
         openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
             if( !refs.contains("#/components/schemas/" + schema) ) {
-                log.error("Removing unused schema {}", schema);
+                log.info("Removing unused schema {}", schema);
                 return true;
             }
             return false;
