@@ -37,10 +37,10 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
 // CHECKSTYLE:ON
 {
     @JsonProperty( "sodaType" )
-    private String sodaType;
+    private String sodaType = null /* empty */;
 
     @JsonProperty( "color" )
-    private String color;
+    private String color = null /* empty */;
 
     @JsonProperty( "flavor" )
     private FantaFlavor flavor;

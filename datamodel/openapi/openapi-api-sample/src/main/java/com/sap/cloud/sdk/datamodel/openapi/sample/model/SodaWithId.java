@@ -39,10 +39,10 @@ public class SodaWithId
 // CHECKSTYLE:ON
 {
     @JsonProperty( "name" )
-    private String name;
+    private String name = null /* empty */;
 
     @JsonProperty( "brand" )
-    private String brand;
+    private String brand = null /* empty */;
 
     @JsonProperty( "quantity" )
     private Integer quantity;

@@ -40,7 +40,7 @@ public class FantaFlavorOneOf
     private Integer intensity;
 
     @JsonProperty( "nuance" )
-    private String nuance;
+    private String nuance = null /* empty */;
 
     @JsonAnySetter
     @JsonAnyGetter

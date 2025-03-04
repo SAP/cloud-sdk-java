@@ -37,7 +37,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
 // CHECKSTYLE:ON
 {
     @JsonProperty( "sodaType" )
-    private String sodaType;
+    private String sodaType = null /* empty */;
 
     @JsonProperty( "caffeine" )
     private Boolean caffeine;

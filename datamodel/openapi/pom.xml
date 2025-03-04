@@ -34,6 +34,7 @@
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
 		<module>openapi-api-sample</module>
+		<module>openapi-api-sample-extension</module>
 	</modules>
 	<scm>
 		<connection />

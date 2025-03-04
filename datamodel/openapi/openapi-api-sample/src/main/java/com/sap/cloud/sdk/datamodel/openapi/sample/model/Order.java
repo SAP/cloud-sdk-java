@@ -49,7 +49,7 @@ public class Order
     private Object typelessProperty = null;
 
     @JsonProperty( "nullableProperty" )
-    private String nullableProperty;
+    private String nullableProperty = null /* empty */;
 
     @JsonAnySetter
     @JsonAnyGetter

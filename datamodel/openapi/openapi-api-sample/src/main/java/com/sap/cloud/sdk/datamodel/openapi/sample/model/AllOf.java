@@ -37,13 +37,13 @@ public class AllOf
 // CHECKSTYLE:ON
 {
     @JsonProperty( "sodaType" )
-    private String sodaType;
+    private String sodaType = null /* empty */;
 
     @JsonProperty( "caffeine" )
     private Boolean caffeine;
 
     @JsonProperty( "color" )
-    private String color;
+    private String color = null /* empty */;
 
     @JsonProperty( "flavor" )
     private FantaFlavor flavor;

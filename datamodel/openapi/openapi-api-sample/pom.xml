@@ -112,6 +112,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.sap.cloud.sdk.datamodel</groupId>
+						<artifactId>openapi-api-sample-estension</artifactId>
+						<version>5.18.0-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
 					<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>

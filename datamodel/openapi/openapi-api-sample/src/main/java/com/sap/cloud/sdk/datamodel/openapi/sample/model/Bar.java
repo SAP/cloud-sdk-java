@@ -39,7 +39,7 @@ public class Bar implements OneOfWithEnumDiscriminator
 // CHECKSTYLE:ON
 {
     @JsonProperty( "bar" )
-    private String bar;
+    private String bar = null /* empty */;
 
     /**
      * Gets or Sets disc

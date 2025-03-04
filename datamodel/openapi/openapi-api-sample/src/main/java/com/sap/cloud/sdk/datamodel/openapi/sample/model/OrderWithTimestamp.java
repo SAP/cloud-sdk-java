@@ -50,7 +50,7 @@ public class OrderWithTimestamp
     private Object typelessProperty;
 
     @JsonProperty( "nullableProperty" )
-    private String nullableProperty;
+    private String nullableProperty = null /* empty */;
 
     @JsonProperty( "timestamp" )
     private OffsetDateTime timestamp;
