@@ -189,6 +189,15 @@ public interface GeneratorCustomization
      */
     interface ChainableVoid<HandlerT extends ChainableVoid<HandlerT>>
     {
+        /**
+         * Helper method to attach a chain the customization.
+         *
+         * @param config
+         *            The generation configuration.
+         * @param next
+         *            The next customization.
+         * @return The customization chain.
+         */
         @Nonnull
         default
             ChainElementVoid<HandlerT>
@@ -230,6 +239,17 @@ public interface GeneratorCustomization
      */
     interface ChainableReturn<HandlerT extends ChainableReturn<HandlerT>>
     {
+        /**
+         * Helper method to attach a chain the customization.
+         *
+         * @param config
+         *            The generation configuration.
+         * @param next
+         *            The next customization.
+         * @param <ValueT>
+         *            The return value type.
+         * @return The customization chain.
+         */
         @Nonnull
         default <ValueT> ChainElementReturn<HandlerT, ValueT> chained(
             @Nonnull final GenerationConfiguration config,
