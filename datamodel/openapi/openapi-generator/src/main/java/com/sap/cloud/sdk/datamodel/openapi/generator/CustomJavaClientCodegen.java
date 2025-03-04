@@ -33,7 +33,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
     private static final Set<String> PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
 
-    public CustomJavaClientCodegen( GenerationConfiguration config )
+    public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
         this.config = config;
     }
