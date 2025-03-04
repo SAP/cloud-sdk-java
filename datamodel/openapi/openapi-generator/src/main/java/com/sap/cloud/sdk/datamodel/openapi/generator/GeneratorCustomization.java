@@ -46,31 +46,6 @@ public interface GeneratorCustomization
     }
 
     /**
-     * Get the available customizations.
-     *
-     * @return The customizations.
-     */
-    @Nonnull
-    static List<GeneratorCustomization> getCustomizations()
-    {
-        final var customizationLoader = ServiceLoader.load(GeneratorCustomization.class);
-        return StreamSupport.stream(customizationLoader.spliterator(), false).toList();
-    }
-
-    /**
-     * Get the customizations for the given configuration.
-     *
-     * @param config
-     *            The generation configuration.
-     * @return The customizations.
-     */
-    @Nonnull
-    static List<GeneratorCustomization> getCustomizations( @Nonnull final GenerationConfiguration config )
-    {
-        return getCustomizations().stream().filter(c -> c.isConfigEnabled(config)).toList();
-    }
-
-    /**
      * Check if the feature is enabled.
      *
      * @param config
@@ -97,7 +72,35 @@ public interface GeneratorCustomization
     }
 
     /**
+     * Get the available customizations.
+     *
+     * @return The customizations.
+     */
+    @Nonnull
+    static List<GeneratorCustomization> getCustomizations()
+    {
+        final var customizationLoader = ServiceLoader.load(GeneratorCustomization.class);
+        return StreamSupport.stream(customizationLoader.spliterator(), false).toList();
+    }
+
+    /**
+     * Get the customizations for the given configuration.
+     *
+     * @param config
+     *            The generation configuration.
+     * @return The customizations.
+     */
+    @Nonnull
+    static List<GeneratorCustomization> getCustomizations( @Nonnull final GenerationConfiguration config )
+    {
+        return getCustomizations().stream().filter(c -> c.isConfigEnabled(config)).toList();
+    }
+
+    /**
      * Context for customization.
+     *
+     * @param <HandlerT>
+     *            The customization handler type.
      */
     interface ChainElement<HandlerT>
     {
@@ -120,6 +123,9 @@ public interface GeneratorCustomization
 
     /**
      * Context for customization using chained methods without return type.
+     *
+     * @param <HandlerT>
+     *            The customization handler type.
      */
     interface ChainElementVoid<HandlerT extends ChainableVoid<HandlerT>> extends ChainElement<HandlerT>
     {
@@ -145,6 +151,11 @@ public interface GeneratorCustomization
 
     /**
      * Context for customizationusing chained methods with return type.
+     *
+     * @param <HandlerT>
+     *            The customization handler type.
+     * @param <ValueT>
+     *            The return value type.
      */
     interface ChainElementReturn<HandlerT extends ChainableReturn<HandlerT>, ValueT> extends ChainElement<HandlerT>
     {
@@ -170,42 +181,15 @@ public interface GeneratorCustomization
         }
     }
 
-    interface ChainableReturn<HandlerT extends ChainableReturn<HandlerT>>
-    {
-        default <ValueT> ChainElementReturn<HandlerT, ValueT> chained(
-            @Nonnull final GenerationConfiguration config,
-            @Nullable final ChainElementReturn<HandlerT, ValueT> next )
-        {
-            @SuppressWarnings( "unchecked" )
-            final HandlerT self = (HandlerT) this;
-            return new ChainElementReturn<>()
-            {
-                @Nonnull
-                @Override
-                public HandlerT get()
-                {
-                    return self;
-                }
-
-                @Nullable
-                @Override
-                public ChainElementReturn<HandlerT, ValueT> next()
-                {
-                    return next;
-                }
-
-                @Nonnull
-                @Override
-                public GenerationConfiguration config()
-                {
-                    return config;
-                }
-            };
-        }
-    }
-
+    /**
+     * Marker interface to chain customizations without return type.
+     *
+     * @param <HandlerT>
+     *            The customization handler type.
+     */
     interface ChainableVoid<HandlerT extends ChainableVoid<HandlerT>>
     {
+        @Nonnull
         default
             ChainElementVoid<HandlerT>
             chained( @Nonnull final GenerationConfiguration config, @Nullable final ChainElementVoid<HandlerT> next )
@@ -224,6 +208,47 @@ public interface GeneratorCustomization
                 @Nullable
                 @Override
                 public ChainElementVoid<HandlerT> next()
+                {
+                    return next;
+                }
+
+                @Nonnull
+                @Override
+                public GenerationConfiguration config()
+                {
+                    return config;
+                }
+            };
+        }
+    }
+
+    /**
+     * Marker interface to chain customizations with return type.
+     *
+     * @param <HandlerT>
+     *            The customization handler type.
+     */
+    interface ChainableReturn<HandlerT extends ChainableReturn<HandlerT>>
+    {
+        @Nonnull
+        default <ValueT> ChainElementReturn<HandlerT, ValueT> chained(
+            @Nonnull final GenerationConfiguration config,
+            @Nullable final ChainElementReturn<HandlerT, ValueT> next )
+        {
+            @SuppressWarnings( "unchecked" )
+            final HandlerT self = (HandlerT) this;
+            return new ChainElementReturn<>()
+            {
+                @Nonnull
+                @Override
+                public HandlerT get()
+                {
+                    return self;
+                }
+
+                @Nullable
+                @Override
+                public ChainElementReturn<HandlerT, ValueT> next()
                 {
                     return next;
                 }
