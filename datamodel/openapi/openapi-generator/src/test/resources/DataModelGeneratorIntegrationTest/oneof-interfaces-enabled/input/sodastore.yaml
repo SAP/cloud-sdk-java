@@ -46,6 +46,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/Cola'
         - $ref: '#/components/schemas/Fanta'
+    ColaTemperature:
+      enum:
+        - COOL
+        - WARM
     Cola:
       type: object
       properties:
