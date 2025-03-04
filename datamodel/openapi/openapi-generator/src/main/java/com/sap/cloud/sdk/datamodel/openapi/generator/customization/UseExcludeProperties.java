@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public class UseExcludeProperties implements GeneratorCustomization, GeneratorCustomization.PreProcessOpenAPI
+public class UseExcludeProperties implements GeneratorCustomization.PreProcessOpenAPI
 {
     private final String configKey = "excludeProperties";
 

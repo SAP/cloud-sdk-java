@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class FixRedundantComponents implements GeneratorCustomization, GeneratorCustomization.PreProcessOpenAPI
+public class FixRedundantComponents implements GeneratorCustomization.PreProcessOpenAPI
 {
     private final String configKey = "fixRedundantComponents";
 

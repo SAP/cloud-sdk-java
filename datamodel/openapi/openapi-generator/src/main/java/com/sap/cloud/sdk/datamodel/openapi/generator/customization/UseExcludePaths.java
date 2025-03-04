@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public class UseExcludePaths implements GeneratorCustomization, GeneratorCustomization.PreProcessOpenAPI
+public class UseExcludePaths implements GeneratorCustomization.PreProcessOpenAPI
 {
     private final String configKey = "excludePaths";
 

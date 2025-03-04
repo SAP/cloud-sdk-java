@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class FixReturnNullable implements GeneratorCustomization, GeneratorCustomization.PostProcessOperationsWithModels
+public class FixReturnNullable implements GeneratorCustomization.PostProcessOperationsWithModels
 {
     private final String configKey = "fixReturnNullable";
     private final String configValueDefault = "true";

@@ -266,7 +266,7 @@ public interface GeneratorCustomization
     /**
      * Update the model for a composed schema.
      */
-    interface UpdatePropertyForArray extends ChainableVoid<UpdatePropertyForArray>
+    interface UpdatePropertyForArray extends GeneratorCustomization, ChainableVoid<UpdatePropertyForArray>
     {
         /**
          * Update the model for a composed schema.
@@ -287,7 +287,7 @@ public interface GeneratorCustomization
     /**
      * Get the default value.
      */
-    interface ToDefaultValue extends ChainableReturn<ToDefaultValue>
+    interface ToDefaultValue extends GeneratorCustomization, ChainableReturn<ToDefaultValue>
     {
         /**
          * Get the default value.
@@ -311,7 +311,7 @@ public interface GeneratorCustomization
     /**
      * Get the boolean getter.
      */
-    interface ToBooleanGetter extends ChainableReturn<ToBooleanGetter>
+    interface ToBooleanGetter extends GeneratorCustomization, ChainableReturn<ToBooleanGetter>
     {
         /**
          * Get the boolean getter.
@@ -331,7 +331,7 @@ public interface GeneratorCustomization
     /**
      * Update the model for a composed schema.
      */
-    interface UpdateModelForComposedSchema extends ChainableVoid<UpdateModelForComposedSchema>
+    interface UpdateModelForComposedSchema extends GeneratorCustomization, ChainableVoid<UpdateModelForComposedSchema>
     {
         /**
          * Update the model for a composed schema.
@@ -356,7 +356,10 @@ public interface GeneratorCustomization
     /**
      * Post-process operations with models.
      */
-    interface PostProcessOperationsWithModels extends ChainableReturn<PostProcessOperationsWithModels>
+    interface PostProcessOperationsWithModels
+        extends
+        GeneratorCustomization,
+        ChainableReturn<PostProcessOperationsWithModels>
     {
         /**
          * Post-process operations with models.
@@ -379,7 +382,7 @@ public interface GeneratorCustomization
     /**
      * Update the model for an object.
      */
-    interface UpdateModelForObject extends ChainableVoid<UpdateModelForObject>
+    interface UpdateModelForObject extends GeneratorCustomization, ChainableVoid<UpdateModelForObject>
     {
         /**
          * Update the model for an object.
@@ -401,7 +404,7 @@ public interface GeneratorCustomization
     /**
      * Pre-process the OpenAPI model.
      */
-    interface PreProcessOpenAPI extends ChainableVoid<PreProcessOpenAPI>
+    interface PreProcessOpenAPI extends GeneratorCustomization, ChainableVoid<PreProcessOpenAPI>
     {
         /**
          * Preprocess the OpenAPI model.

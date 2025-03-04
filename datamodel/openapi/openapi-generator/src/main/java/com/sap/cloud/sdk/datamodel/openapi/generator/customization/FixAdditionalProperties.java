@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class FixAdditionalProperties implements GeneratorCustomization, GeneratorCustomization.UpdateModelForObject
+public class FixAdditionalProperties implements GeneratorCustomization.UpdateModelForObject
 {
     private final String configKey = "fixAdditionalProperties";
     private final String configValueDefault = "true";

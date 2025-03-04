@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class UseOneOfCreators implements GeneratorCustomization, GeneratorCustomization.UpdateModelForComposedSchema
+public class UseOneOfCreators implements GeneratorCustomization.UpdateModelForComposedSchema
 {
     private static final Set<String> PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
 

@@ -16,7 +16,6 @@ import lombok.Getter;
 @Getter
 public class UseFloatArrays
     implements
-    GeneratorCustomization,
     GeneratorCustomization.ToDefaultValue,
     GeneratorCustomization.UpdatePropertyForArray
 {
