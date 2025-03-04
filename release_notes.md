@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- OpenAPI: When `apiMaturity` is set to `beta`, generated enums will now be `@Beta` annotated.
