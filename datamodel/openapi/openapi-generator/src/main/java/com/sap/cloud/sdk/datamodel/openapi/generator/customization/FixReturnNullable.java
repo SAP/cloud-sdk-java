@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.OperationsMap;
 
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class GeneratorCustomizationFixReturnNullable
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.PostProcessOperationsWithModels
+public class FixReturnNullable implements GeneratorCustomization, GeneratorCustomization.PostProcessOperationsWithModels
 {
     private final String configKey = "fixReturnNullable";
     private final String configValueDefault = "true";

@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.CodegenModel;
 
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
+
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class GeneratorCustomizationUseOneOfCreators
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.UpdateModelForComposedSchema
+public class UseOneOfCreators implements GeneratorCustomization, GeneratorCustomization.UpdateModelForComposedSchema
 {
     private static final Set<String> PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
 

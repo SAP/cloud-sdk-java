@@ -23,7 +23,7 @@ import io.swagger.v3.oas.models.media.Schema;
 /**
  * Optional feature toggles, may be used internally only.
  */
-interface GeneratorCustomization
+public interface GeneratorCustomization
 {
     /**
      * Get the configuration key.

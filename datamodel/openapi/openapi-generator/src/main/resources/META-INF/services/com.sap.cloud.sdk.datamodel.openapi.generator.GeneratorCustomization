@@ -1,8 +1,8 @@
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationFixAdditionalProperties
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationFixRedundantIsBooleanPrefix
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationFixReturnNullable
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationFixRedundantComponents
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationUseFloatArrays
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationUseOneOfCreators
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationUseExcludePaths
-com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomizationUseExcludeProperties
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixAdditionalProperties
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixRedundantIsBooleanPrefix
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixReturnNullable
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixRedundantComponents
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseFloatArrays
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseOneOfCreators
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseExcludePaths
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseExcludeProperties

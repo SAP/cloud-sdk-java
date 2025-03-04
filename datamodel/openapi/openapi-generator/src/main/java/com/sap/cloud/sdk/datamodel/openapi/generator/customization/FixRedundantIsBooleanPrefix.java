@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -6,16 +6,15 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
+
 import lombok.Getter;
 
 /**
  * Fix isIsBoolean() to isBoolean() for fields specified as `"isBoolean":{"type":"boolean"}`.
  */
 @Getter
-public class GeneratorCustomizationFixRedundantIsBooleanPrefix
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.ToBooleanGetter
+public class FixRedundantIsBooleanPrefix implements GeneratorCustomization, GeneratorCustomization.ToBooleanGetter
 {
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
 

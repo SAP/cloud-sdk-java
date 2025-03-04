@@ -1,8 +1,10 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import javax.annotation.Nonnull;
 
 import org.openapitools.codegen.CodegenModel;
+
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
 
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
@@ -14,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class GeneratorCustomizationFixAdditionalProperties
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.UpdateModelForObject
+public class FixAdditionalProperties implements GeneratorCustomization, GeneratorCustomization.UpdateModelForObject
 {
     private final String configKey = "fixAdditionalProperties";
     private final String configValueDefault = "true";

@@ -1,9 +1,11 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
@@ -15,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class GeneratorCustomizationFixRedundantComponents
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.PreProcessOpenAPI
+public class FixRedundantComponents implements GeneratorCustomization, GeneratorCustomization.PreProcessOpenAPI
 {
     private final String configKey = "fixRedundantComponents";
 

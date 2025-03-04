@@ -1,10 +1,12 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
@@ -16,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public class GeneratorCustomizationUseExcludeProperties
-    implements
-    GeneratorCustomization,
-    GeneratorCustomization.PreProcessOpenAPI
+public class UseExcludeProperties implements GeneratorCustomization, GeneratorCustomization.PreProcessOpenAPI
 {
     private final String configKey = "excludeProperties";
 

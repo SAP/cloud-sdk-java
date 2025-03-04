@@ -1,9 +1,11 @@
-package com.sap.cloud.sdk.datamodel.openapi.generator;
+package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.openapitools.codegen.CodegenProperty;
+
+import com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomization;
 
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import lombok.Getter;
  * Use float arrays instead of big-decimal lists.
  */
 @Getter
-public class GeneratorCustomizationUseFloatArrays
+public class UseFloatArrays
     implements
     GeneratorCustomization,
     GeneratorCustomization.ToDefaultValue,

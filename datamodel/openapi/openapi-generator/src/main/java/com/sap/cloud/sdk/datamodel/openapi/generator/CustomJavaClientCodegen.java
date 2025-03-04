@@ -1,10 +1,5 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -14,7 +9,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -31,8 +25,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 {
     private final List<GeneratorCustomization> customizations;
     private final GenerationConfiguration config;
-    private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
-    private static final Set<String> PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
@@ -131,10 +123,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     {
         chainedContextVoid(
             GeneratorCustomization.UpdateModelForComposedSchema.class,
-            ( context, m1, schema1, allDefinitions1 ) -> super.updateModelForComposedSchema(
-                m1,
-                schema1,
-                allDefinitions1),
+            ( context, m1, schema1, allDef1 ) -> super.updateModelForComposedSchema(m1, schema1, allDef1),
             context -> context.get().updateModelForComposedSchema(context, m, schema, allDefinitions));
     }
 
