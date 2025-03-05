@@ -112,7 +112,7 @@ public class Soda
     * @return The enum value of type Soda
     */
     @JsonCreator
-    @Nonnull public static DietEnum fromValue(@Nonnull final String value) {
+    @Nullable public static DietEnum fromValue(@Nonnull final String value) {
       for (DietEnum b : DietEnum.values()) {
         if (b.value.equals(value)) {
           return b;
