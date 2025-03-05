@@ -179,6 +179,11 @@
             "type": "number",
             "format": "float"
           },
+          "diet": {
+            "type": "string",
+            "enum": ["sugar", "zero", "light"],
+            "nullable": true
+          },
           "embedding":{
             "type": "array",
             "items": {
