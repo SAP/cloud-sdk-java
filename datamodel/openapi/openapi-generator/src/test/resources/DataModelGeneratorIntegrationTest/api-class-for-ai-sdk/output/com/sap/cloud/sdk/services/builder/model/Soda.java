@@ -63,6 +63,68 @@ public class Soda
   @JsonProperty("price")
   private Float price;
 
+  /**
+   * Gets or Sets diet
+   */
+  public enum DietEnum {
+    /**
+    * The SUGAR option of this Soda
+    */
+    SUGAR("sugar"),
+    
+    /**
+    * The ZERO option of this Soda
+    */
+    ZERO("zero"),
+    
+    /**
+    * The LIGHT option of this Soda
+    */
+    LIGHT("light");
+
+    private String value;
+
+    DietEnum(String value) {
+      this.value = value;
+    }
+
+    /**
+    * Get the value of the enum
+    * @return The enum value
+    */
+    @JsonValue
+    @Nonnull public String getValue() {
+      return value;
+    }
+
+    /**
+    * Get the String value of the enum value.
+    * @return The enum value as String
+    */
+    @Override
+    @Nonnull public String toString() {
+      return String.valueOf(value);
+    }
+
+    /**
+    * Get the enum value from a String value
+    * @param value The String value
+    * @return The enum value of type Soda
+    */
+    @JsonCreator
+    @Nonnull public static DietEnum fromValue(@Nonnull final String value) {
+      for (DietEnum b : DietEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("diet")
+  private DietEnum diet;
+
   @JsonProperty("embedding")
   private float[] embedding;
 
@@ -245,6 +307,35 @@ public class Soda
   }
 
   /**
+   * Set the diet of this {@link Soda} instance and return the same instance.
+   *
+   * @param diet  The diet of this {@link Soda}
+   * @return The same instance of this {@link Soda} class
+   */
+  @Nonnull public Soda diet( @Nullable final DietEnum diet) {
+    this.diet = diet;
+    return this;
+  }
+
+  /**
+   * Get diet
+   * @return diet  The diet of this {@link Soda} instance.
+   */
+  @Nullable
+  public DietEnum getDiet() {
+    return diet;
+  }
+
+  /**
+   * Set the diet of this {@link Soda} instance.
+   *
+   * @param diet  The diet of this {@link Soda}
+   */
+  public void setDiet( @Nullable final DietEnum diet) {
+    this.diet = diet;
+  }
+
+  /**
    * Set the embedding of this {@link Soda} instance and return the same instance.
    *
    * @param embedding  The embedding of this {@link Soda}
@@ -315,6 +406,7 @@ public class Soda
     if( isAvailable != null ) declaredFields.put("isAvailable", isAvailable);
     if( flavor != null ) declaredFields.put("flavor", flavor);
     if( price != null ) declaredFields.put("price", price);
+    if( diet != null ) declaredFields.put("diet", diet);
     if( embedding != null ) declaredFields.put("embedding", embedding);
     return declaredFields;
   }
@@ -348,12 +440,13 @@ public class Soda
         Objects.equals(this.isAvailable, soda.isAvailable) &&
         Objects.equals(this.flavor, soda.flavor) &&
         Objects.equals(this.price, soda.price) &&
+        Objects.equals(this.diet, soda.diet) &&
         Arrays.equals(this.embedding, soda.embedding);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, isAvailable, flavor, price, Arrays.hashCode(embedding), cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, isAvailable, flavor, price, diet, Arrays.hashCode(embedding), cloudSdkCustomFields);
   }
 
   @Override
@@ -366,6 +459,7 @@ public class Soda
     sb.append("    isAvailable: ").append(toIndentedString(isAvailable)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
+    sb.append("    diet: ").append(toIndentedString(diet)).append("\n");
     sb.append("    embedding: ").append(toIndentedString(embedding)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
