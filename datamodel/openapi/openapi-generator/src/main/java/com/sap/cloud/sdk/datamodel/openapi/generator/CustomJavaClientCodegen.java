@@ -31,6 +31,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
+@SuppressWarnings( "PMD.TooManyStaticImports" )
 @Slf4j
 class CustomJavaClientCodegen extends JavaClientCodegen
 {
