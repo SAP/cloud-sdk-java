@@ -1,25 +1,14 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_COMPONENTS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PATHS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PROPERTIES;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
-
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -34,40 +23,50 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class CustomJavaClientCodegen extends JavaClientCodegen
 {
+    private final List<GeneratorCustomization> customizations;
     private final GenerationConfiguration config;
-    private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
-    private static final Set<String> PRIMITIVES = Set.of("String", "Integer", "Long", "Double", "Float", "Byte");
 
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
         this.config = config;
+        this.customizations = GeneratorCustomization.getCustomizations(config);
+    }
+
+    private <HandlerT extends GeneratorCustomization.ChainableReturn<HandlerT>, ValueT> ValueT chainedContextReturn(
+        @Nonnull final Class<? extends HandlerT> handlerClass,
+        @Nonnull final HandlerT rootHandler,
+        @Nonnull final Function<GeneratorCustomization.ChainElementReturn<HandlerT, ValueT>, ValueT> initiator )
+    {
+        var chainedContext = rootHandler.<ValueT> chained(config, null);
+        for( final GeneratorCustomization customization : customizations ) {
+            if( handlerClass.isInstance(customization) ) {
+                chainedContext = handlerClass.cast(customization).chained(config, chainedContext);
+            }
+        }
+        return initiator.apply(chainedContext);
+    }
+
+    private <HandlerT extends GeneratorCustomization.ChainableVoid<HandlerT>> void chainedContextVoid(
+        @Nonnull final Class<? extends HandlerT> handlerClass,
+        @Nonnull final HandlerT rootHandler,
+        @Nonnull final Consumer<GeneratorCustomization.ChainElementVoid<HandlerT>> initiator )
+    {
+        var chainedContext = rootHandler.chained(config, null);
+        for( final GeneratorCustomization customization : customizations ) {
+            if( handlerClass.isInstance(customization) ) {
+                chainedContext = handlerClass.cast(customization).chained(config, chainedContext);
+            }
+        }
+        initiator.accept(chainedContext);
     }
 
     @Override
     public void preprocessOpenAPI( @Nonnull final OpenAPI openAPI )
     {
-        if( USE_EXCLUDE_PROPERTIES.isEnabled(config) ) {
-            final String[] exclusions = USE_EXCLUDE_PROPERTIES.getValue(config).trim().split("[,\\s]+");
-            for( final String exclusion : exclusions ) {
-                final String[] split = exclusion.split("\\.", 2);
-                preprocessRemoveProperty(openAPI, split[0], split[1]);
-            }
-        }
-
-        if( USE_EXCLUDE_PATHS.isEnabled(config) ) {
-            final String[] exclusions = USE_EXCLUDE_PATHS.getValue(config).trim().split("[,\\s]+");
-            for( final String exclusion : exclusions ) {
-                if( !openAPI.getPaths().keySet().remove(exclusion) ) {
-                    log.error("Could not remove path {}", exclusion);
-                }
-            }
-        }
-
-        super.preprocessOpenAPI(openAPI);
-
-        if( FIX_REDUNDANT_COMPONENTS.isEnabled(config) ) {
-            preprocessRemoveRedundancies(openAPI);
-        }
+        chainedContextVoid(
+            GeneratorCustomization.PreProcessOpenAPI.class,
+            ( context, openAPI1 ) -> super.preprocessOpenAPI(openAPI1),
+            context -> context.get().preprocessOpenAPI(context, openAPI));
     }
 
     @Override
@@ -75,12 +74,10 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         void
         updatePropertyForArray( @Nonnull final CodegenProperty property, @Nonnull final CodegenProperty innerProperty )
     {
-        super.updatePropertyForArray(property, innerProperty);
-
-        if( USE_FLOAT_ARRAYS.isEnabled(config) && innerProperty.isNumber && property.isArray ) {
-            property.datatypeWithEnum = "float[]";
-            property.vendorExtensions.put("isPrimitiveArray", true);
-        }
+        chainedContextVoid(
+            GeneratorCustomization.UpdatePropertyForArray.class,
+            ( context, property1, innerProperty1 ) -> super.updatePropertyForArray(property1, innerProperty1),
+            context -> context.get().updatePropertyForArray(context, property, innerProperty));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
@@ -88,21 +85,20 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     @Nullable
     public String toDefaultValue( @Nonnull final CodegenProperty cp, @Nonnull final Schema schema )
     {
-        if( USE_FLOAT_ARRAYS.isEnabled(config) && "float[]".equals(cp.datatypeWithEnum) ) {
-            return null;
-        }
-        return super.toDefaultValue(cp, schema);
+        return chainedContextReturn(
+            GeneratorCustomization.ToDefaultValue.class,
+            ( context, cp1, schema1 ) -> super.toDefaultValue(cp1, schema1),
+            context -> context.get().toDefaultValue(context, cp, schema));
     }
 
     @Override
     @Nullable
     public String toBooleanGetter( @Nullable final String name )
     {
-        final String result = super.toBooleanGetter(name);
-        if( FIX_REDUNDANT_IS_BOOLEAN_PREFIX.isEnabled(config) && result != null && DOUBLE_IS_PATTERN.test(result) ) {
-            return "is" + result.substring(4);
-        }
-        return result;
+        return chainedContextReturn(
+            GeneratorCustomization.ToBooleanGetter.class,
+            ( context, name1 ) -> super.toBooleanGetter(name1),
+            context -> context.get().toBooleanGetter(context, name));
     }
 
     // Custom processor to inject "x-return-nullable" extension
@@ -112,14 +108,10 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         OperationsMap
         postProcessOperationsWithModels( @Nonnull final OperationsMap ops, @Nonnull final List<ModelMap> allModels )
     {
-        for( final CodegenOperation op : ops.getOperations().getOperation() ) {
-            final var noContent =
-                op.isResponseOptional
-                    || op.responses == null
-                    || op.responses.stream().anyMatch(r -> "204".equals(r.code));
-            op.vendorExtensions.put("x-return-nullable", op.returnType != null && noContent);
-        }
-        return super.postProcessOperationsWithModels(ops, allModels);
+        return chainedContextReturn(
+            GeneratorCustomization.PostProcessOperationsWithModels.class,
+            ( context, ops1, allModels1 ) -> super.postProcessOperationsWithModels(ops1, allModels1),
+            context -> context.get().postProcessOperationsWithModels(context, ops, allModels));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
@@ -129,180 +121,19 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         @Nonnull final Schema schema,
         @Nonnull final Map<String, Schema> allDefinitions )
     {
-        super.updateModelForComposedSchema(m, schema, allDefinitions);
-
-        if( USE_ONE_OF_CREATORS.isEnabled(config) ) {
-            useCreatorsForInterfaceSubtypes(m);
-        }
-    }
-
-    /**
-     * remove property from specification.
-     *
-     * @param openAPI
-     *            The OpenAPI specification to update.
-     * @param schemaName
-     *            The name of the schema to update.
-     * @param propertyName
-     *            The name of the property to remove.
-     */
-    @SuppressWarnings( { "rawtypes", "unchecked", "ReplaceInefficientStreamCount" } )
-    private void preprocessRemoveProperty(
-        @Nonnull final OpenAPI openAPI,
-        @Nonnull final String schemaName,
-        @Nonnull final String propertyName )
-    {
-        final var schema = openAPI.getComponents().getSchemas().get(schemaName);
-        boolean removed = false;
-
-        final Predicate<Schema> remove =
-            s -> s != null && s.getProperties() != null && s.getProperties().remove(propertyName) != null;
-        final var schemasToCheck = new LinkedHashSet<Schema>();
-        schemasToCheck.add(schema);
-        while( !schemasToCheck.isEmpty() ) {
-            final var sit = schemasToCheck.iterator();
-            final var s = sit.next();
-            sit.remove();
-            removed |= remove.test(s);
-            if( s.getAllOf() != null ) {
-                removed |= s.getAllOf().stream().filter(remove).count() > 0;
-                schemasToCheck.addAll(s.getAllOf());
-            }
-            if( s.getAnyOf() != null ) {
-                removed |= s.getAnyOf().stream().filter(remove).count() > 0;
-                schemasToCheck.addAll(s.getAnyOf());
-            }
-            if( s.getOneOf() != null ) {
-                removed |= s.getOneOf().stream().filter(remove).count() > 0;
-                schemasToCheck.addAll(s.getOneOf());
-            }
-        }
-        if( !removed ) {
-            log.error("Could not remove property {} from schema {}.", propertyName, schemaName);
-        }
-    }
-
-    /**
-     * Remove unused schema components.
-     *
-     * @param openAPI
-     *            The OpenAPI specification to update.
-     */
-    @SuppressWarnings( "rawtypes" )
-    private void preprocessRemoveRedundancies( @Nonnull final OpenAPI openAPI )
-    {
-        final var queue = new LinkedHashSet<Schema>();
-        final var schemas = new LinkedHashSet<Schema>();
-        final var refs = new LinkedHashSet<String>();
-        final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
-        for( final var path : openAPI.getPaths().values() ) {
-            final var m = pattern.matcher(path.toString());
-            while( m.find() ) {
-                final var name = m.group(1);
-                final var schema = openAPI.getComponents().getSchemas().get(name);
-                queue.add(schema);
-                refs.add(m.group(0).split(" ")[1]);
-            }
-        }
-
-        while( !queue.isEmpty() ) {
-            final var qit = queue.iterator();
-            final var s = qit.next();
-            qit.remove();
-            if( !schemas.add(s) ) {
-                continue;
-            }
-            final var ref = s.get$ref();
-            if( ref != null ) {
-                refs.add(ref);
-                final var refName = ref.substring(ref.lastIndexOf('/') + 1);
-                queue.add(openAPI.getComponents().getSchemas().get(refName));
-            }
-            if( s.getProperties() != null ) {
-                for( final var s1 : s.getProperties().values() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getItems() != null ) {
-                queue.add(s.getItems());
-            }
-            if( s.getAllOf() != null ) {
-                for( final var s1 : s.getAllOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getAnyOf() != null ) {
-                for( final var s1 : s.getAnyOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getOneOf() != null ) {
-                for( final var s1 : s.getOneOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-        }
-
-        openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
-            if( !refs.contains("#/components/schemas/" + schema) ) {
-                log.info("Removing unused schema {}", schema);
-                return true;
-            }
-            return false;
-        });
-    }
-
-    /**
-     * Use JsonCreator for interface sub-types in case there are any primitives.
-     *
-     * @param m
-     *            The model to update.
-     */
-    private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
-    {
-        if( m.discriminator != null ) {
-            return;
-        }
-        boolean useCreators = false;
-        for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
-            int nonPrimitives = 0;
-            final var candidatesSingle = new HashSet<String>();
-            final var candidatesMultiple = new HashSet<String>();
-
-            for( final String candidate : candidates ) {
-                if( candidate.startsWith("List<") ) {
-                    final var c1 = candidate.substring(5, candidate.length() - 1);
-                    candidatesMultiple.add(c1);
-                    useCreators = true;
-                } else {
-                    candidatesSingle.add(candidate);
-                    useCreators |= PRIMITIVES.contains(candidate);
-                    if( !PRIMITIVES.contains(candidate) ) {
-                        nonPrimitives++;
-                    }
-                }
-            }
-            if( useCreators ) {
-                if( nonPrimitives > 1 ) {
-                    final var msg =
-                        "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
-                    log.warn(msg, m.name);
-                }
-                candidates.clear();
-                final var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
-                m.vendorExtensions.put("x-monads", monads);
-                m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
-            }
-        }
+        chainedContextVoid(
+            GeneratorCustomization.UpdateModelForComposedSchema.class,
+            ( context, m1, schema1, allDef1 ) -> super.updateModelForComposedSchema(m1, schema1, allDef1),
+            context -> context.get().updateModelForComposedSchema(context, m, schema, allDefinitions));
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )
     @Override
     protected void updateModelForObject( @Nonnull final CodegenModel m, @Nonnull final Schema schema )
     {
-        // Disable additional attributes to prevent model classes from extending "HashMap"
-        // SAP Cloud SDK offers custom field APIs to handle additional attributes already
-        schema.setAdditionalProperties(Boolean.FALSE);
-        super.updateModelForObject(m, schema);
+        chainedContextVoid(
+            GeneratorCustomization.UpdateModelForObject.class,
+            ( context, m1, schema1 ) -> super.updateModelForObject(m1, schema1),
+            context -> context.get().updateModelForObject(context, m, schema));
     }
 }
