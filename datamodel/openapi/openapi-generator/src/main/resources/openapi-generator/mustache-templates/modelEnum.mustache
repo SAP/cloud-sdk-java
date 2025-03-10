@@ -22,7 +22,8 @@ import java.net.URI;
 {{#jsonb}}
 @JsonbTypeSerializer({{datatypeWithEnum}}.Serializer.class)
 @JsonbTypeDeserializer({{datatypeWithEnum}}.Deserializer.class)
-{{/jsonb}}
+{{/jsonb}}{{^isReleased}}
+@Beta{{/isReleased}}
 {{>additionalEnumTypeAnnotations}}public enum {{{datatypeWithEnum}}}{{^datatypeWithEnum}}{{{classname}}}{{/datatypeWithEnum}} {
   {{#allowableValues}}{{#enumVars}}
     {{#enumDescription}}
