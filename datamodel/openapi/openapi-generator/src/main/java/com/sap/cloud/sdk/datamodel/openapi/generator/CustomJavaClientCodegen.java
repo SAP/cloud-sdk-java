@@ -154,6 +154,10 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         @Nonnull final String propertyName )
     {
         final var schema = openAPI.getComponents().getSchemas().get(schemaName);
+        if( schema == null ) {
+            log.error("Could not find schema {} to remove property {} from.", schemaName, propertyName);
+            return;
+        }
         boolean removed = false;
 
         final Predicate<Schema> remove =
