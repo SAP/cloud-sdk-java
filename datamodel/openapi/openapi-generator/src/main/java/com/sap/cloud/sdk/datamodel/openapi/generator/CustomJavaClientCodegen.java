@@ -1,6 +1,6 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_COMPONENTS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REMOVE_UNUSED_COMPONENTS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PATHS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PROPERTIES;
@@ -66,7 +66,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
         super.preprocessOpenAPI(openAPI);
 
-        if( FIX_REDUNDANT_COMPONENTS.isEnabled(config) ) {
+        if( FIX_REMOVE_UNUSED_COMPONENTS.isEnabled(config) ) {
             preprocessRemoveRedundancies(openAPI);
         }
     }
@@ -138,7 +138,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     }
 
     /**
-     * remove property from specification.
+     * Remove property from specification.
      *
      * @param openAPI
      *            The OpenAPI specification to update.

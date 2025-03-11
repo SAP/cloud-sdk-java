@@ -40,7 +40,7 @@ enum GeneratorCustomProperties
     /**
      * Remove schema components that are unused, before generating them.
      */
-    FIX_REDUNDANT_COMPONENTS("fixRedundantComponents", "false");
+    FIX_REMOVE_UNUSED_COMPONENTS("removeUnusedComponents", "false");
 
     private final String key;
     private final String defaultValue;
