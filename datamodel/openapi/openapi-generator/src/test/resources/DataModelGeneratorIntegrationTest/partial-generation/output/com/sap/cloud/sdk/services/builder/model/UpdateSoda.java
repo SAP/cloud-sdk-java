@@ -54,9 +54,6 @@ public class UpdateSoda
   @JsonProperty("brand")
   private String brand;
 
-  @JsonProperty("flavor")
-  private String flavor;
-
   @JsonProperty("price")
   private Float price;
 
@@ -181,35 +178,6 @@ public class UpdateSoda
   }
 
   /**
-   * Set the flavor of this {@link UpdateSoda} instance and return the same instance.
-   *
-   * @param flavor  The flavor of this {@link UpdateSoda}
-   * @return The same instance of this {@link UpdateSoda} class
-   */
-  @Nonnull public UpdateSoda flavor( @Nullable final String flavor) {
-    this.flavor = flavor;
-    return this;
-  }
-
-  /**
-   * Get flavor
-   * @return flavor  The flavor of this {@link UpdateSoda} instance.
-   */
-  @Nonnull
-  public String getFlavor() {
-    return flavor;
-  }
-
-  /**
-   * Set the flavor of this {@link UpdateSoda} instance.
-   *
-   * @param flavor  The flavor of this {@link UpdateSoda}
-   */
-  public void setFlavor( @Nullable final String flavor) {
-    this.flavor = flavor;
-  }
-
-  /**
    * Set the price of this {@link UpdateSoda} instance and return the same instance.
    *
    * @param price  The price of this {@link UpdateSoda}
@@ -278,7 +246,6 @@ public class UpdateSoda
     if( zero != null ) declaredFields.put("zero", zero);
     if( since != null ) declaredFields.put("since", since);
     if( brand != null ) declaredFields.put("brand", brand);
-    if( flavor != null ) declaredFields.put("flavor", flavor);
     if( price != null ) declaredFields.put("price", price);
     return declaredFields;
   }
@@ -310,13 +277,12 @@ public class UpdateSoda
         Objects.equals(this.zero, updateSoda.zero) &&
         Objects.equals(this.since, updateSoda.since) &&
         Objects.equals(this.brand, updateSoda.brand) &&
-        Objects.equals(this.flavor, updateSoda.flavor) &&
         Objects.equals(this.price, updateSoda.price);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, zero, since, brand, flavor, price, cloudSdkCustomFields);
+    return Objects.hash(name, zero, since, brand, price, cloudSdkCustomFields);
   }
 
   @Override
@@ -327,7 +293,6 @@ public class UpdateSoda
     sb.append("    zero: ").append(toIndentedString(zero)).append("\n");
     sb.append("    since: ").append(toIndentedString(since)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
-    sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");

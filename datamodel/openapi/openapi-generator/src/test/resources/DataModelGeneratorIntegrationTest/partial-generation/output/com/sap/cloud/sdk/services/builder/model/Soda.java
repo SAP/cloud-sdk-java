@@ -26,10 +26,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -57,14 +53,8 @@ public class Soda
   @JsonProperty("isAvailable")
   private Boolean isAvailable;
 
-  @JsonProperty("flavor")
-  private String flavor;
-
   @JsonProperty("price")
   private Float price;
-
-  @JsonProperty("embedding")
-  private List<BigDecimal> embedding = new ArrayList<>();
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -187,35 +177,6 @@ public class Soda
   }
 
   /**
-   * Set the flavor of this {@link Soda} instance and return the same instance.
-   *
-   * @param flavor  The flavor of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
-  @Nonnull public Soda flavor( @Nonnull final String flavor) {
-    this.flavor = flavor;
-    return this;
-  }
-
-  /**
-   * Get flavor
-   * @return flavor  The flavor of this {@link Soda} instance.
-   */
-  @Nonnull
-  public String getFlavor() {
-    return flavor;
-  }
-
-  /**
-   * Set the flavor of this {@link Soda} instance.
-   *
-   * @param flavor  The flavor of this {@link Soda}
-   */
-  public void setFlavor( @Nonnull final String flavor) {
-    this.flavor = flavor;
-  }
-
-  /**
    * Set the price of this {@link Soda} instance and return the same instance.
    *
    * @param price  The price of this {@link Soda}
@@ -242,47 +203,6 @@ public class Soda
    */
   public void setPrice( @Nonnull final Float price) {
     this.price = price;
-  }
-
-  /**
-   * Set the embedding of this {@link Soda} instance and return the same instance.
-   *
-   * @param embedding  The embedding of this {@link Soda}
-   * @return The same instance of this {@link Soda} class
-   */
-  @Nonnull public Soda embedding( @Nonnull final List<BigDecimal> embedding) {
-    this.embedding = embedding;
-    return this;
-  }
-  /**
-   * Add one embedding instance to this {@link Soda}.
-   * @param embeddingItem The embedding that should be added
-   * @return The same instance of type {@link Soda}
-   */
-  @Nonnull public Soda addEmbeddingItem( @Nonnull final BigDecimal embeddingItem) {
-    if (this.embedding == null) {
-      this.embedding = new ArrayList<>();
-    }
-    this.embedding.add(embeddingItem);
-    return this;
-  }
-
-  /**
-   * Get embedding
-   * @return embedding  The embedding of this {@link Soda} instance.
-   */
-  @Nonnull
-  public List<BigDecimal> getEmbedding() {
-    return embedding;
-  }
-
-  /**
-   * Set the embedding of this {@link Soda} instance.
-   *
-   * @param embedding  The embedding of this {@link Soda}
-   */
-  public void setEmbedding( @Nonnull final List<BigDecimal> embedding) {
-    this.embedding = embedding;
   }
 
   /**
@@ -325,9 +245,7 @@ public class Soda
     if( name != null ) declaredFields.put("name", name);
     if( brand != null ) declaredFields.put("brand", brand);
     if( isAvailable != null ) declaredFields.put("isAvailable", isAvailable);
-    if( flavor != null ) declaredFields.put("flavor", flavor);
     if( price != null ) declaredFields.put("price", price);
-    if( embedding != null ) declaredFields.put("embedding", embedding);
     return declaredFields;
   }
 
@@ -358,14 +276,12 @@ public class Soda
         Objects.equals(this.name, soda.name) &&
         Objects.equals(this.brand, soda.brand) &&
         Objects.equals(this.isAvailable, soda.isAvailable) &&
-        Objects.equals(this.flavor, soda.flavor) &&
-        Objects.equals(this.price, soda.price) &&
-        Objects.equals(this.embedding, soda.embedding);
+        Objects.equals(this.price, soda.price);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, isAvailable, flavor, price, embedding, cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, isAvailable, price, cloudSdkCustomFields);
   }
 
   @Override
@@ -376,9 +292,7 @@ public class Soda
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    isAvailable: ").append(toIndentedString(isAvailable)).append("\n");
-    sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
-    sb.append("    embedding: ").append(toIndentedString(embedding)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

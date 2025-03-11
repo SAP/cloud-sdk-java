@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static java.util.Map.entry;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Files;
@@ -63,8 +65,12 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            6,
-            Map.of()),
+            3,
+            Map
+                .ofEntries(
+                    entry("excludePaths", "/sodas,/foobar/{baz}"),
+                    entry("excludeProperties", "Foo.bar,Soda.embedding,Soda.flavor,UpdateSoda.flavor"),
+                    entry("removeUnusedComponents", "true"))),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
             "sodastore.JSON",
