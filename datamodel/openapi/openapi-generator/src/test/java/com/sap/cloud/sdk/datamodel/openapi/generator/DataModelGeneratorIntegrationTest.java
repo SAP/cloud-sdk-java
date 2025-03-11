@@ -55,6 +55,16 @@ class DataModelGeneratorIntegrationTest
             true,
             6,
             Map.of()),
+        PARTIAL_GENERATION(
+            "partial-generation",
+            "sodastore.json",
+            "com.sap.cloud.sdk.services.builder.api",
+            "com.sap.cloud.sdk.services.builder.model",
+            ApiMaturity.RELEASED,
+            true,
+            true,
+            6,
+            Map.of()),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
             "sodastore.JSON",
@@ -207,7 +217,7 @@ class DataModelGeneratorIntegrationTest
         testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
         GenerationConfiguration build = generationConfiguration.build();
-        new DataModelGenerator().generateDataModel(build);
+        new DataModelGenerator().generateDataModel(build).onFailure(Throwable::printStackTrace);
     }
 
     private static Path getInputDirectory( final TestCase testCase )
