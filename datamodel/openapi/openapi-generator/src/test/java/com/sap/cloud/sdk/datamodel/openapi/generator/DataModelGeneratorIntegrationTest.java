@@ -65,7 +65,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            3,
+            4,
             Map
                 .ofEntries(
                     entry("excludePaths", "/sodas,/foobar/{baz}"),
