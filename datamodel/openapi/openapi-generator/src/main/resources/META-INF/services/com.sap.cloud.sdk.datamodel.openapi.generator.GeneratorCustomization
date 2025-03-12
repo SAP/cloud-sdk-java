@@ -1,7 +1,7 @@
 com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixAdditionalProperties
-com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixRedundantIsBooleanPrefix
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixIsIsBooleanPrefix
 com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixReturnNullable
-com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixRedundantComponents
+com.sap.cloud.sdk.datamodel.openapi.generator.customization.FixRemoveUnusedComponents
 com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseFloatArrays
 com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseOneOfCreators
 com.sap.cloud.sdk.datamodel.openapi.generator.customization.UseExcludePaths

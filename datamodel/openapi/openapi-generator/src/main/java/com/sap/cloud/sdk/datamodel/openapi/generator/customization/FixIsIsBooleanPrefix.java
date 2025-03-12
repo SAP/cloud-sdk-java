@@ -14,7 +14,7 @@ import lombok.Getter;
  * Fix isIsBoolean() to isBoolean() for fields specified as `"isBoolean":{"type":"boolean"}`.
  */
 @Getter
-public class FixRedundantIsBooleanPrefix implements GeneratorCustomization.ToBooleanGetter
+public class FixIsIsBooleanPrefix implements GeneratorCustomization.ToBooleanGetter
 {
     private static final Predicate<String> DOUBLE_IS_PATTERN = Pattern.compile("^isIs[A-Z]").asPredicate();
 
