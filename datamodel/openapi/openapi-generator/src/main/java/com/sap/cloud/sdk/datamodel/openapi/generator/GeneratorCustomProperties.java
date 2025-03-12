@@ -25,7 +25,22 @@ enum GeneratorCustomProperties
     /**
      * Use float arrays instead of big-decimal lists.
      */
-    USE_FLOAT_ARRAYS("useFloatArrays", "false");
+    USE_FLOAT_ARRAYS("useFloatArrays", "false"),
+
+    /**
+     * Exclude generation of properties, e.g. `schemaName1.propertyNameA, schemaName2.propertyNameB`.
+     */
+    USE_EXCLUDE_PROPERTIES("excludeProperties", "false"),
+
+    /**
+     * Exclude generation of APIs that match a provided path, e.g. `/api/v1/health, /deployments/{id}/completions`.
+     */
+    USE_EXCLUDE_PATHS("excludePaths", "false"),
+
+    /**
+     * Remove schema components that are unused, before generating them.
+     */
+    FIX_REMOVE_UNUSED_COMPONENTS("removeUnusedComponents", "false");
 
     private final String key;
     private final String defaultValue;

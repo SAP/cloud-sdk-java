@@ -1,10 +1,16 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REMOVE_UNUSED_COMPONENTS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PATHS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PROPERTIES;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
 import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,9 +29,11 @@ import org.openapitools.codegen.model.OperationsMap;
 
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 
+@SuppressWarnings( "PMD.TooManyStaticImports" )
 @Slf4j
 class CustomJavaClientCodegen extends JavaClientCodegen
 {
@@ -36,6 +44,33 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     public CustomJavaClientCodegen( @Nonnull final GenerationConfiguration config )
     {
         this.config = config;
+    }
+
+    @Override
+    public void preprocessOpenAPI( @Nonnull final OpenAPI openAPI )
+    {
+        if( USE_EXCLUDE_PROPERTIES.isEnabled(config) ) {
+            final String[] exclusions = USE_EXCLUDE_PROPERTIES.getValue(config).trim().split("[,\\s]+");
+            for( final String exclusion : exclusions ) {
+                final String[] split = exclusion.split("\\.", 2);
+                preprocessRemoveProperty(openAPI, split[0], split[1]);
+            }
+        }
+
+        if( USE_EXCLUDE_PATHS.isEnabled(config) ) {
+            final String[] exclusions = USE_EXCLUDE_PATHS.getValue(config).trim().split("[,\\s]+");
+            for( final String exclusion : exclusions ) {
+                if( !openAPI.getPaths().keySet().remove(exclusion) ) {
+                    log.error("Could not remove path {}", exclusion);
+                }
+            }
+        }
+
+        super.preprocessOpenAPI(openAPI);
+
+        if( FIX_REMOVE_UNUSED_COMPONENTS.isEnabled(config) ) {
+            preprocessRemoveRedundancies(openAPI);
+        }
     }
 
     @Override
@@ -102,6 +137,124 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         if( USE_ONE_OF_CREATORS.isEnabled(config) ) {
             useCreatorsForInterfaceSubtypes(m);
         }
+    }
+
+    /**
+     * Remove property from specification.
+     *
+     * @param openAPI
+     *            The OpenAPI specification to update.
+     * @param schemaName
+     *            The name of the schema to update.
+     * @param propertyName
+     *            The name of the property to remove.
+     */
+    @SuppressWarnings( { "rawtypes", "unchecked", "ReplaceInefficientStreamCount" } )
+    private void preprocessRemoveProperty(
+        @Nonnull final OpenAPI openAPI,
+        @Nonnull final String schemaName,
+        @Nonnull final String propertyName )
+    {
+        final var schema = openAPI.getComponents().getSchemas().get(schemaName);
+        if( schema == null ) {
+            log.error("Could not find schema {} to remove property {} from.", schemaName, propertyName);
+            return;
+        }
+        boolean removed = false;
+
+        final Predicate<Schema> remove =
+            s -> s != null && s.getProperties() != null && s.getProperties().remove(propertyName) != null;
+        final var schemasQueued = new LinkedList<Schema>();
+        final var schemasDone = new HashSet<Schema>();
+        schemasQueued.add(schema);
+
+        while( !schemasQueued.isEmpty() ) {
+            final var s = schemasQueued.remove();
+            if( s == null || !schemasDone.add(s) ) {
+                continue;
+            }
+            // check removal of direct schema property
+            removed |= remove.test(s);
+
+            // check for allOf, anyOf, oneOf
+            for( final List<Schema> list : Arrays.asList(s.getAllOf(), s.getAnyOf(), s.getOneOf()) ) {
+                if( list != null ) {
+                    schemasQueued.addAll(list);
+                }
+            }
+        }
+        if( !removed ) {
+            log.error("Could not remove property {} from schema {}.", propertyName, schemaName);
+        }
+    }
+
+    /**
+     * Remove unused schema components.
+     *
+     * @param openAPI
+     *            The OpenAPI specification to update.
+     */
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
+    private void preprocessRemoveRedundancies( @Nonnull final OpenAPI openAPI )
+    {
+        final var queue = new LinkedList<Schema>();
+        final var done = new HashSet<Schema>();
+        final var refs = new LinkedHashSet<String>();
+        final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
+
+        // find and queue schemas nested in paths
+        for( final var path : openAPI.getPaths().values() ) {
+            final var m = pattern.matcher(path.toString());
+            while( m.find() ) {
+                final var name = m.group(1);
+                final var schema = openAPI.getComponents().getSchemas().get(name);
+                queue.add(schema);
+                refs.add(m.group(0).split(" ")[1]);
+            }
+        }
+
+        while( !queue.isEmpty() ) {
+            final var s = queue.remove();
+            if( s == null || !done.add(s) ) {
+                continue;
+            }
+
+            // check for $ref attribute
+            final var ref = s.get$ref();
+            if( ref != null ) {
+                refs.add(ref);
+                final var refName = ref.substring(ref.lastIndexOf('/') + 1);
+                queue.add(openAPI.getComponents().getSchemas().get(refName));
+            }
+
+            // check for direct properties
+            if( s.getProperties() != null ) {
+                for( final var s1 : s.getProperties().values() ) {
+                    queue.add((Schema) s1);
+                }
+            }
+
+            // check for array items
+            if( s.getItems() != null ) {
+                queue.add(s.getItems());
+            }
+
+            // check for allOf, anyOf, oneOf
+            for( final List<Schema> list : Arrays.asList(s.getAllOf(), s.getAnyOf(), s.getOneOf()) ) {
+                if( list != null ) {
+                    queue.addAll(list);
+                }
+            }
+        }
+
+        // remove all schemas that have not been marked "used"
+        openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
+            if( !refs.contains("#/components/schemas/" + schema) ) {
+                log.info("Removing unused schema {}", schema);
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
