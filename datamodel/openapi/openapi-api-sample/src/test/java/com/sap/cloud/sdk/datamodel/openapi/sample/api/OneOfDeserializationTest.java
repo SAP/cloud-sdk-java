@@ -164,6 +164,7 @@ class OneOfDeserializationTest
         var flavorTypes = (FantaFlavor.InnerFlavorTypes) fanta.getFlavor();
         assertThat(flavorTypes.values())
             .describedAs("Flavor should be deserialized as a list of FlavorType instances")
+            .isNotEmpty()
             .allMatch(FlavorType.class::isInstance);
 
     }
