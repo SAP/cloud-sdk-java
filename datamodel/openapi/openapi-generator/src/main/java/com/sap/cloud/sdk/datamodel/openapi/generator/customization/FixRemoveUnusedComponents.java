@@ -1,6 +1,10 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -21,7 +25,7 @@ public class FixRemoveUnusedComponents implements GeneratorCustomization.PreProc
 {
     private final String configKey = "removeUnusedComponents";
 
-    @SuppressWarnings( { "rawtypes" } )
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public
         void
@@ -30,8 +34,8 @@ public class FixRemoveUnusedComponents implements GeneratorCustomization.PreProc
         // process rest of the chain
         chain.doNext(next -> next.get().preprocessOpenAPI(next, openAPI));
 
-        final var queue = new LinkedHashSet<Schema>();
-        final var schemas = new LinkedHashSet<Schema>();
+        final var queue = new LinkedList<Schema>();
+        final var done = new HashSet<Schema>();
         final var refs = new LinkedHashSet<String>();
         final var pattern = Pattern.compile("\\$ref: #/components/schemas/(\\w+)");
         for( final var path : openAPI.getPaths().values() ) {
@@ -45,43 +49,40 @@ public class FixRemoveUnusedComponents implements GeneratorCustomization.PreProc
         }
 
         while( !queue.isEmpty() ) {
-            final var qit = queue.iterator();
-            final var s = qit.next();
-            qit.remove();
-            if( !schemas.add(s) ) {
+            final var s = queue.remove();
+            if( s == null || !done.add(s) ) {
                 continue;
             }
+
+            // collect $ref attributes to mark schema used
             final var ref = s.get$ref();
             if( ref != null ) {
                 refs.add(ref);
                 final var refName = ref.substring(ref.lastIndexOf('/') + 1);
                 queue.add(openAPI.getComponents().getSchemas().get(refName));
             }
+
+            // check for direct properties
             if( s.getProperties() != null ) {
                 for( final var s1 : s.getProperties().values() ) {
                     queue.add((Schema) s1);
                 }
             }
+
+            // check for array items
             if( s.getItems() != null ) {
                 queue.add(s.getItems());
             }
-            if( s.getAllOf() != null ) {
-                for( final var s1 : s.getAllOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getAnyOf() != null ) {
-                for( final var s1 : s.getAnyOf() ) {
-                    queue.add((Schema) s1);
-                }
-            }
-            if( s.getOneOf() != null ) {
-                for( final var s1 : s.getOneOf() ) {
-                    queue.add((Schema) s1);
+
+            // check for allOf, anyOf, oneOf
+            for( final List<Schema> list : Arrays.asList(s.getAllOf(), s.getAnyOf(), s.getOneOf()) ) {
+                if( list != null ) {
+                    queue.addAll(list);
                 }
             }
         }
 
+        // remove all schemas that have not been marked "used"
         openAPI.getComponents().getSchemas().keySet().removeIf(schema -> {
             if( !refs.contains("#/components/schemas/" + schema) ) {
                 log.info("Removing unused schema {}", schema);
@@ -90,5 +91,4 @@ public class FixRemoveUnusedComponents implements GeneratorCustomization.PreProc
             return false;
         });
     }
-
 }
