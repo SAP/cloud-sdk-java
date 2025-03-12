@@ -140,7 +140,6 @@ class OneOfDeserializationTest
 
         assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminatorAndMapping.class))
             .isInstanceOf(JsonProcessingException.class);
-
     }
 
     static Stream<Class<?>> oneOfStrategiesProvider()
@@ -182,6 +181,13 @@ class OneOfDeserializationTest
         assertThat(anyOfFanta.getSodaType()).isEqualTo("Fanta");
         assertThat(anyOfFanta.getColor()).isEqualTo("orange");
         assertThat(anyOfFanta.isCaffeine()).isNull();
+
+        AnyOf actual = objectMapper.readValue(FANTA_FLAVOR_ARRAY_JSON, AnyOf.class);
+
+        assertThat(actual.getSodaType()).isEqualTo("Fanta");
+        assertThat(actual.getColor()).isEqualTo("orange");
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
+        assertThat(((FantaFlavor.InnerFlavorTypes) actual.getFlavor()).values()).allMatch(FlavorType.class::isInstance);
     }
 
     @Test
