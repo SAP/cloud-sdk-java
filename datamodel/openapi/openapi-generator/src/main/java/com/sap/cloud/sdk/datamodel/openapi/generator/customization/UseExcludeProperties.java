@@ -1,6 +1,10 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -35,29 +39,31 @@ public class UseExcludeProperties implements GeneratorCustomization.PreProcessOp
         for( final var removeProperty : excludeProperties ) {
             final var split = removeProperty.split("\\.", 2);
             final var schema = openAPI.getComponents().getSchemas().get(split[0]);
-
+            if( schema == null ) {
+                log.error("Could not find schema {} to remove property {} from.", split[0], split[1]);
+                continue;
+            }
             boolean removed = false;
 
-            final Predicate<Schema> remove =
-                s -> s != null && s.getProperties() != null && s.getProperties().remove(split[1]) != null;
-            final var schemasToCheck = new LinkedHashSet<Schema>();
-            schemasToCheck.add(schema);
-            while( !schemasToCheck.isEmpty() ) {
-                final var sit = schemasToCheck.iterator();
-                final var s = sit.next();
-                sit.remove();
-                removed |= remove.test(s);
-                if( s.getAllOf() != null ) {
-                    removed |= s.getAllOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getAllOf());
+            final var schemasQueued = new LinkedList<Schema>();
+            final var schemasDone = new HashSet<Schema>();
+            schemasQueued.add(schema);
+            while( !schemasQueued.isEmpty() ) {
+                final var s = schemasQueued.remove();
+                if( s == null || !schemasDone.add(s) ) {
+                    continue;
                 }
-                if( s.getAnyOf() != null ) {
-                    removed |= s.getAnyOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getAnyOf());
+
+                // check removal of direct schema property
+                if(s.getProperties() != null && s.getProperties().remove(split[1]) != null) {
+                    removed = true;
                 }
-                if( s.getOneOf() != null ) {
-                    removed |= s.getOneOf().stream().filter(remove).count() > 0;
-                    schemasToCheck.addAll(s.getOneOf());
+
+                // check for allOf, anyOf, oneOf
+                for( final List<Schema> list : Arrays.asList(s.getAllOf(), s.getAnyOf(), s.getOneOf()) ) {
+                    if( list != null ) {
+                        schemasQueued.addAll(list);
+                    }
                 }
             }
             if( !removed ) {
