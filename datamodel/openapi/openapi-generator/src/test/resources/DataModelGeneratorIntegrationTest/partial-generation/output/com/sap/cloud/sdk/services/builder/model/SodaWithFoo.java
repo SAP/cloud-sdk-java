@@ -56,9 +56,6 @@ public class SodaWithFoo
   @JsonProperty("price")
   private Float price;
 
-  @JsonProperty("foo")
-  private Long foo;
-
   @JsonAnySetter
   @JsonAnyGetter
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
@@ -209,35 +206,6 @@ public class SodaWithFoo
   }
 
   /**
-   * Set the foo of this {@link SodaWithFoo} instance and return the same instance.
-   *
-   * @param foo  The foo of this {@link SodaWithFoo}
-   * @return The same instance of this {@link SodaWithFoo} class
-   */
-  @Nonnull public SodaWithFoo foo( @Nullable final Long foo) {
-    this.foo = foo;
-    return this;
-  }
-
-  /**
-   * Get foo
-   * @return foo  The foo of this {@link SodaWithFoo} instance.
-   */
-  @Nonnull
-  public Long getFoo() {
-    return foo;
-  }
-
-  /**
-   * Set the foo of this {@link SodaWithFoo} instance.
-   *
-   * @param foo  The foo of this {@link SodaWithFoo}
-   */
-  public void setFoo( @Nullable final Long foo) {
-    this.foo = foo;
-  }
-
-  /**
    * Get the names of the unrecognizable properties of the {@link SodaWithFoo}.
    * @return The set of properties names
    */
@@ -278,7 +246,6 @@ public class SodaWithFoo
     if( brand != null ) declaredFields.put("brand", brand);
     if( isAvailable != null ) declaredFields.put("isAvailable", isAvailable);
     if( price != null ) declaredFields.put("price", price);
-    if( foo != null ) declaredFields.put("foo", foo);
     return declaredFields;
   }
 
@@ -309,13 +276,12 @@ public class SodaWithFoo
         Objects.equals(this.name, sodaWithFoo.name) &&
         Objects.equals(this.brand, sodaWithFoo.brand) &&
         Objects.equals(this.isAvailable, sodaWithFoo.isAvailable) &&
-        Objects.equals(this.price, sodaWithFoo.price) &&
-        Objects.equals(this.foo, sodaWithFoo.foo);
+        Objects.equals(this.price, sodaWithFoo.price);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brand, isAvailable, price, foo, cloudSdkCustomFields);
+    return Objects.hash(id, name, brand, isAvailable, price, cloudSdkCustomFields);
   }
 
   @Override
@@ -327,7 +293,6 @@ public class SodaWithFoo
     sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
     sb.append("    isAvailable: ").append(toIndentedString(isAvailable)).append("\n");
     sb.append("    price: ").append(toIndentedString(price)).append("\n");
-    sb.append("    foo: ").append(toIndentedString(foo)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

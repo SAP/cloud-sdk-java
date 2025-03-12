@@ -69,7 +69,7 @@ class DataModelGeneratorIntegrationTest
             Map
                 .ofEntries(
                     entry("excludePaths", "/sodas,/foobar/{baz}"),
-                    entry("excludeProperties", "Foo.bar,Soda.embedding,Soda.flavor,UpdateSoda.flavor"),
+                    entry("excludeProperties", "Foo.bar,Soda.embedding,Soda.flavor,UpdateSoda.flavor,SodaWithFoo.foo"),
                     entry("removeUnusedComponents", "true"))),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
