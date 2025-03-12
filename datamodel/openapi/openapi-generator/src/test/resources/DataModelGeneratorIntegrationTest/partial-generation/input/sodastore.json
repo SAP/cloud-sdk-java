@@ -77,7 +77,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Soda"
+                  "$ref": "#/components/schemas/SodaWithFoo"
                 }
               }
             }
@@ -213,6 +213,23 @@
           }
         },
         "required": ["name", "brand", "flavor", "price"]
+      },
+      "SodaWithFoo": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Soda"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "foo": {
+                "type": "integer",
+                "format": "int64",
+                "example": 123
+              }
+            }
+          }
+        ]
       },
       "UpdateSoda": {
         "type": "object",

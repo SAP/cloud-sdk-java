@@ -10,6 +10,7 @@ import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
 import com.sap.cloud.sdk.services.builder.model.Soda;
+import com.sap.cloud.sdk.services.builder.model.SodaWithFoo;
 import com.sap.cloud.sdk.services.builder.model.UpdateSoda;
 
 import java.util.HashMap;
@@ -106,11 +107,11 @@ public class DefaultApi extends AbstractOpenApiService {
      * <p><b>404</b> - Soda not found
      * @param sodaId
      *      ID of the soda to retrieve
-     * @return Soda
+     * @return SodaWithFoo
      * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
      */
     @Nonnull
-    public Soda getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
+    public SodaWithFoo getSodaById( @Nonnull final Long sodaId) throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
         // verify the required parameter 'sodaId' is set
@@ -136,7 +137,7 @@ public class DefaultApi extends AbstractOpenApiService {
 
         final String[] localVarAuthNames = new String[] {  };
 
-        final ParameterizedTypeReference<Soda> localVarReturnType = new ParameterizedTypeReference<Soda>() {};
+        final ParameterizedTypeReference<SodaWithFoo> localVarReturnType = new ParameterizedTypeReference<SodaWithFoo>() {};
         return apiClient.invokeAPI(localVarPath, HttpMethod.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
     /**
