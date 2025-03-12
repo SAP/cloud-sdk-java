@@ -170,7 +170,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
         while( !schemasQueued.isEmpty() ) {
             final var s = schemasQueued.remove();
-            if( !schemasDone.add(s) ) {
+            if( s == null || !schemasDone.add(s) ) {
                 continue;
             }
             // check removal of direct schema property
@@ -179,7 +179,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             // check for allOf, anyOf, oneOf
             for( final List<Schema> list : Arrays.asList(s.getAllOf(), s.getAnyOf(), s.getOneOf()) ) {
                 if( list != null ) {
-                    removed |= list.stream().filter(remove).count() > 0;
                     schemasQueued.addAll(list);
                 }
             }
@@ -216,7 +215,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
         while( !queue.isEmpty() ) {
             final var s = queue.remove();
-            if( !done.add(s) ) {
+            if( s == null || !done.add(s) ) {
                 continue;
             }
 
