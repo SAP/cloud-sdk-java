@@ -2,11 +2,9 @@ package com.sap.cloud.sdk.datamodel.openapi.generator.customization;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -55,7 +53,7 @@ public class UseExcludeProperties implements GeneratorCustomization.PreProcessOp
                 }
 
                 // check removal of direct schema property
-                if(s.getProperties() != null && s.getProperties().remove(split[1]) != null) {
+                if( s.getProperties() != null && s.getProperties().remove(split[1]) != null ) {
                     removed = true;
                 }
 

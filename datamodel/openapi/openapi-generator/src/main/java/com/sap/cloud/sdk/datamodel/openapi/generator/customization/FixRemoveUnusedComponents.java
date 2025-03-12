@@ -25,7 +25,7 @@ public class FixRemoveUnusedComponents implements GeneratorCustomization.PreProc
 {
     private final String configKey = "removeUnusedComponents";
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings( { "rawtypes", "unchecked" } )
     @Override
     public
         void
