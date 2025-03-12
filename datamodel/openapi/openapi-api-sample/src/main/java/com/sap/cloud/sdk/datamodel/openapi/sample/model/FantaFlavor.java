@@ -15,6 +15,8 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -45,22 +47,22 @@ public interface FantaFlavor
     }
 
     /**
-     * Helper class to create a FantaFlavorOneOf that implements {@link FantaFlavor}.
+     * Helper class to create a FlavorType that implements {@link FantaFlavor}.
      */
-    record InnerFantaFlavorOneOf(@com.fasterxml.jackson.annotation.JsonValue @Nonnull FantaFlavorOneOf value) implements FantaFlavor {}
+    record InnerFlavorType(@com.fasterxml.jackson.annotation.JsonValue @Nonnull FlavorType value) implements FantaFlavor {}
 
     /**
-     * Creator to enable deserialization of a FantaFlavorOneOf.
+     * Creator to enable deserialization of a FlavorType.
      *
      * @param val
      *            the value to use
-     * @return a new instance of {@link InnerFantaFlavorOneOf}.
+     * @return a new instance of {@link InnerFlavorType}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static InnerFantaFlavorOneOf create( @Nonnull final FantaFlavorOneOf val )
+    static InnerFlavorType create( @Nonnull final FlavorType val )
     {
-        return new InnerFantaFlavorOneOf(val);
+        return new InnerFlavorType(val);
     }
 
     /**
@@ -80,6 +82,25 @@ public interface FantaFlavor
     static InnerString create( @Nonnull final String val )
     {
         return new InnerString(val);
+    }
+
+    /**
+    * Helper class to create a list of FlavorType that implements {@link FantaFlavor}.
+    */
+    record InnerFlavorTypes(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<FlavorType> values) implements FantaFlavor {}
+
+    /**
+     * Creator to enable deserialization of a list of FlavorType.
+     *
+     * @param val
+     *            the value to use
+     * @return a new instance of {@link InnerFlavorTypes}.
+     */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    @Nonnull
+    static InnerFlavorTypes create( @Nonnull final List<FlavorType> val )
+    {
+        return new InnerFlavorTypes(val);
     }
 
 }
