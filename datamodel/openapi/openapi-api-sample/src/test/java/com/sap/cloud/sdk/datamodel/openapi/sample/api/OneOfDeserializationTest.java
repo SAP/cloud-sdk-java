@@ -1,11 +1,15 @@
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -20,7 +24,7 @@ import com.sap.cloud.sdk.datamodel.openapi.sample.model.Bar;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Cola;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Fanta;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavor;
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavorOneOf;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.FlavorType;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Foo;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminator;
@@ -37,7 +41,7 @@ class OneOfDeserializationTest
             .create()
             .color("orange")
             .sodaType("Fanta")
-            .flavor(new FantaFlavor.InnerFantaFlavorOneOf(FantaFlavorOneOf.create().intensity(3).nuance("wood")));
+            .flavor(new FantaFlavor.InnerFlavorType(FlavorType.create().intensity(3).nuance("wood")));
     private static final String COLA_JSON = """
         {
           "sodaType": "Cola",
@@ -48,6 +52,15 @@ class OneOfDeserializationTest
           "sodaType": "Fanta",
           "color": "orange",
           "flavor": {"intensity":3,"nuance":"wood"}
+        }""";
+    private static final String FANTA_FLAVOR_ARRAY_JSON = """
+        {
+          "sodaType": "Fanta",
+          "color": "orange",
+          "flavor": [
+            {"intensity":3,"nuance":"wood"},
+            {"intensity":5,"nuance":"citrus"}
+          ]
         }""";
     private static final String UNKNOWN_JSON = """
         {
@@ -93,7 +106,8 @@ class OneOfDeserializationTest
             .isInstanceOf(Fanta.class)
             .isEqualTo(FANTA_OBJECT);
 
-        assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminator.class));
+        assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminator.class))
+            .isInstanceOf(JsonProcessingException.class);
     }
 
     @Test
@@ -126,6 +140,32 @@ class OneOfDeserializationTest
 
         assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminatorAndMapping.class))
             .isInstanceOf(JsonProcessingException.class);
+    }
+
+    static Stream<Class<?>> oneOfStrategiesProvider()
+    {
+        return Stream.of(OneOf.class, OneOfWithDiscriminator.class, OneOfWithDiscriminatorAndMapping.class);
+    }
+
+    @ParameterizedTest( name = "Deserialization with strategy: {0}" )
+    @MethodSource( "oneOfStrategiesProvider" )
+    void oneOfWithNestedArrayOfObjects( Class<?> strategy )
+        throws JsonProcessingException
+    {
+        Object actual = objectMapper.readValue(FANTA_FLAVOR_ARRAY_JSON, strategy);
+
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Fanta with JSON subtype deduction")
+            .isInstanceOf(Fanta.class);
+        var fanta = (Fanta) actual;
+        assertThat(fanta.getFlavor())
+            .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
+            .isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
+        var flavorTypes = (FantaFlavor.InnerFlavorTypes) fanta.getFlavor();
+        assertThat(flavorTypes.values())
+            .describedAs("Flavor should be deserialized as a list of FlavorType instances")
+            .isNotEmpty()
+            .allMatch(FlavorType.class::isInstance);
 
     }
 
@@ -142,6 +182,13 @@ class OneOfDeserializationTest
         assertThat(anyOfFanta.getSodaType()).isEqualTo("Fanta");
         assertThat(anyOfFanta.getColor()).isEqualTo("orange");
         assertThat(anyOfFanta.isCaffeine()).isNull();
+
+        AnyOf actual = objectMapper.readValue(FANTA_FLAVOR_ARRAY_JSON, AnyOf.class);
+
+        assertThat(actual.getSodaType()).isEqualTo("Fanta");
+        assertThat(actual.getColor()).isEqualTo("orange");
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
+        assertThat(((FantaFlavor.InnerFlavorTypes) actual.getFlavor()).values()).allMatch(FlavorType.class::isInstance);
     }
 
     @Test
