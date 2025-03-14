@@ -602,6 +602,21 @@ public final class ApiClient
     }
 
     /**
+     * Select the Accept header's value from the given accepts array: if JSON exists in the given array, use it;
+     * otherwise use all of them (joining into a string)
+     *
+     * @param accepts
+     *            The accepts array to select from
+     * @return List The list of MediaTypes to use for the Accept header
+     */
+    @Nullable
+    public List<String> getHeaderAccept( @Nonnull final String[] accepts )
+    {
+        final List<MediaType> mediaTypes = selectHeaderAccept(accepts);
+        return mediaTypes == null ? null : mediaTypes.stream().map(MediaType::toString).toList();
+    }
+
+    /**
      * Select the Content-Type header's value from the given array: if JSON exists in the given array, use it; otherwise
      * use the first one of the array.
      *
