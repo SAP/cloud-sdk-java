@@ -16,19 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.nio.charset.StandardCharsets;
+import java.net.URI;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.annotations.Beta;
 
 import com.sap.ai.sdk.core.AiCoreService;
 
@@ -75,24 +71,24 @@ public class AwesomeSodaApi extends AbstractOpenApiService {
             throw new OpenApiRequestException("Missing the required parameter 'newSoda' when calling addSoda");
         }
         
-        final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
+        String path = "/sodas";
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final String[] localVarAccepts = { 
+        final List<String> localVarAccept = Arrays.asList(
             "application/json"
-        };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        );
         final String[] localVarContentTypes = { 
             "application/json"
         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] {  };
 
-        final ParameterizedTypeReference<Soda> localVarReturnType = new ParameterizedTypeReference<Soda>() {};
-        return apiClient.invokeAPI(localVarPath, HttpMethod.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        final TypeReference<Soda> localVarReturnType = new TypeReference<>() {};
+        return apiClient.invokeAPI(localVarPath, "POST", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 }

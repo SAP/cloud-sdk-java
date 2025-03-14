@@ -16,19 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.nio.charset.StandardCharsets;
+import java.net.URI;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.annotations.Beta;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
@@ -54,7 +50,7 @@ public class SodasApi extends AbstractOpenApiService {
      * @param apiClient
      *            ApiClient to invoke the API on
      */
-    @Beta
+    @com.google.common.annotations.Beta
     public SodasApi( @Nonnull final ApiClient apiClient )
     {
          super(apiClient);
@@ -71,23 +67,23 @@ public class SodasApi extends AbstractOpenApiService {
     public List<SodaWithId> get() throws OpenApiRequestException {
         final Object localVarPostBody = null;
         
-        final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
+        String path = "/sodas";
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final String[] localVarAccepts = { 
+        final List<String> localVarAccept = Arrays.asList(
             "application/json"
-        };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        );
         final String[] localVarContentTypes = { };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { "apiKeyAuth" };
 
-        final ParameterizedTypeReference<List<SodaWithId>> localVarReturnType = new ParameterizedTypeReference<List<SodaWithId>>() {};
-        return apiClient.invokeAPI(localVarPath, HttpMethod.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        final TypeReference<List<SodaWithId>> localVarReturnType = new TypeReference<>() {};
+        return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
     /**
      * <p>Get a specific soda product by ID</p>
@@ -108,26 +104,25 @@ public class SodasApi extends AbstractOpenApiService {
             throw new OpenApiRequestException("Missing the required parameter 'id' when calling sodasIdGet");
         }
         
-        // create path and map variables
-        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();
-        localVarPathParams.put("id", id);
-        final String localVarPath = UriComponentsBuilder.fromPath("/sodas/{id}").buildAndExpand(localVarPathParams).toUriString();
+        String path = "/sodas/{id}";
+        // alter path and map variables
+        path = path.replaceAll("[{]id[}]", id+"");
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final String[] localVarAccepts = { 
+        final List<String> localVarAccept = Arrays.asList(
             "application/json"
-        };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        );
         final String[] localVarContentTypes = { };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { "apiKeyAuth" };
 
-        final ParameterizedTypeReference<SodaWithId> localVarReturnType = new ParameterizedTypeReference<SodaWithId>() {};
-        return apiClient.invokeAPI(localVarPath, HttpMethod.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        final TypeReference<SodaWithId> localVarReturnType = new TypeReference<>() {};
+        return apiClient.invokeAPI(localVarPath, "GET", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
     /**
      * <p>Update a specific soda product by ID</p>
@@ -149,24 +144,24 @@ public class SodasApi extends AbstractOpenApiService {
             throw new OpenApiRequestException("Missing the required parameter 'sodaWithId' when calling sodasPut");
         }
         
-        final String localVarPath = UriComponentsBuilder.fromPath("/sodas").build().toUriString();
+        String path = "/sodas";
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final String[] localVarAccepts = { 
+        final List<String> localVarAccept = Arrays.asList(
             "application/json"
-        };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        );
         final String[] localVarContentTypes = { 
             "application/json"
         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { "apiKeyAuth" };
 
-        final ParameterizedTypeReference<Soda> localVarReturnType = new ParameterizedTypeReference<Soda>() {};
-        return apiClient.invokeAPI(localVarPath, HttpMethod.PUT, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        final TypeReference<Soda> localVarReturnType = new TypeReference<>() {};
+        return apiClient.invokeAPI(localVarPath, "PUT", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 }
