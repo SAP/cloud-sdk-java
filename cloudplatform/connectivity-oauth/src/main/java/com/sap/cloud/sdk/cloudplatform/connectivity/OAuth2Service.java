@@ -40,12 +40,12 @@ import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 
 import io.vavr.CheckedFunction0;
-import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This interface handles the communication with an OAuth2 service.
@@ -230,15 +230,16 @@ class OAuth2Service
             return null;
         }
 
-        if( tenant instanceof TenantWithSubdomain tenantWithSubdomain ) {
-            return Option
-                .of(tenantWithSubdomain.getSubdomain())
-                .getOrElseThrow(
-                    () -> new DestinationAccessException(
-                        "The given tenant '%s' does not have a subdomain defined.".formatted(tenant)));
+        if( !(tenant instanceof TenantWithSubdomain tenantWithSubdomain) ) {
+            final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
+            throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
         }
-        final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
-        throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
+        val subdomain = tenantWithSubdomain.getSubdomain();
+        if( subdomain == null ) {
+            throw new DestinationAccessException(
+                "The given tenant '%s' does not have a subdomain defined.".formatted(tenant));
+        }
+        return subdomain;
     }
 
     @Nullable
