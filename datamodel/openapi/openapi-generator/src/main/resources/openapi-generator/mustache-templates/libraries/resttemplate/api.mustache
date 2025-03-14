@@ -16,19 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.nio.charset.StandardCharsets;
+import java.net.URI;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.annotations.Beta;
 
 {{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 {{/aiSdkConstructor}}
@@ -40,7 +36,7 @@ import com.google.common.annotations.Beta;
  *
  * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
  */{{^isReleased}}
-@Beta{{/isReleased}}
+@com.google.common.annotations.Beta{{/isReleased}}
 {{#operations}}
 public class {{classname}} extends AbstractOpenApiService {
 {{^aiSdkConstructor}}
@@ -60,7 +56,7 @@ public class {{classname}} extends AbstractOpenApiService {
      * @param apiClient
      *            ApiClient to invoke the API on
      */
-    @Beta
+    @com.google.common.annotations.Beta
     public {{classname}}( @Nonnull final ApiClient apiClient )
     {
          super(apiClient);
@@ -129,15 +125,15 @@ public class {{classname}} extends AbstractOpenApiService {
         if ({{paramName}} == null) {
             throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}");
         }
-        {{/required}}{{/allParams}}{{#hasPathParams}}
-        // create path and map variables
-        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();{{#pathParams}}
-        localVarPathParams.put("{{baseName}}", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
-        final String localVarPath = UriComponentsBuilder.fromPath("{{{path}}}"){{#hasPathParams}}.buildAndExpand(localVarPathParams){{/hasPathParams}}{{^hasPathParams}}.build(){{/hasPathParams}}.toUriString();
+        {{/required}}{{/allParams}}
+        String path = "{{{path}}}";{{#hasPathParams}}
+        // alter path and map variables{{#pathParams}}
+        path = path.replaceAll("[{]{{baseName}}[}]", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}+""{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();{{#hasQueryParams}}
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();{{#hasQueryParams}}
 
         {{#queryParams}}{{#isExplode}}{{#hasVars}}{{#vars}}        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{.}}}".toUpperCase(Locale.ROOT)){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}.{{getter}}()));
         {{/vars}}{{/hasVars}}{{^hasVars}}        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{.}}}".toUpperCase(Locale.ROOT)){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}));
@@ -145,26 +141,25 @@ public class {{classname}} extends AbstractOpenApiService {
         {{/isExplode}}{{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
 
         {{#headerParams}}if ({{paramName}} != null)
-            localVarHeaderParams.add("{{baseName}}", apiClient.parameterToString({{paramName}}));{{^-last}}
+        localVarHeaderParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add(apiClient.parameterToString({{paramName}}));{{^-last}}
         {{/-last}}{{/headerParams}}{{/hasHeaderParams}}{{#hasFormParams}}
 
         {{#formParams}}if ({{paramName}} != null)
-            localVarFormParams.add("{{baseName}}", {{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
+        localVarFormParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add({{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
         {{/-last}}{{/formParams}}{{/hasFormParams}}
 
-        final String[] localVarAccepts = { {{#hasProduces}}
+        final List<String> localVarAccept = Arrays.asList({{#hasProduces}}
             {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
-        {{/hasProduces}}};
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        {{/hasProduces}});
         final String[] localVarContentTypes = { {{#hasConsumes}}
             {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
         {{/hasConsumes}}};
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
 
-        final {{#returnType}}ParameterizedTypeReference<{{{returnType}}}> localVarReturnType = new ParameterizedTypeReference<{{{returnType}}}>() {};{{/returnType}}{{^returnType}}ParameterizedTypeReference<Void> localVarReturnType = new ParameterizedTypeReference<Void>() {};{{/returnType}}
-        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, HttpMethod.{{httpMethod}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
+        final TypeReference<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> localVarReturnType = new TypeReference<>() {};
+        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, "{{httpMethod}}", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
         return new OpenApiResponse(apiClient);{{/returnType}}
     }
 
@@ -213,40 +208,39 @@ public class {{classname}} extends AbstractOpenApiService {
         if ({{paramName}} == null) {
             throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}");
         }
-        {{/required}}{{/allParams}}{{#hasPathParams}}
-        // create path and map variables
-        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();{{#pathParams}}
-        localVarPathParams.put("{{baseName}}", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
-        final String localVarPath = UriComponentsBuilder.fromPath("{{{path}}}"){{#hasPathParams}}.buildAndExpand(localVarPathParams){{/hasPathParams}}{{^hasPathParams}}.build(){{/hasPathParams}}.toUriString();
+        {{/required}}{{/allParams}}
+        String path = "{{{path}}}";{{#hasPathParams}}
+        // alter path and map variables{{#pathParams}}
+        path = path.replaceAll("[{]{{baseName}}[}]", {{#collectionFormat}}apiClient.collectionPathParameterToString(ApiClient.CollectionFormat.valueOf("{{{collectionFormat}}}".toUpperCase()), {{{paramName}}}){{/collectionFormat}}{{^collectionFormat}}{{{paramName}}}+""{{/collectionFormat}});{{/pathParams}}{{/hasPathParams}}
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();{{#hasQueryParams}}
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();{{#hasQueryParams}}
 
         {{#queryParams}}localVarQueryParams.putAll(apiClient.parameterToMultiValueMap({{#collectionFormat}}ApiClient.CollectionFormat.valueOf("{{{.}}}".toUpperCase(Locale.ROOT)){{/collectionFormat}}{{^collectionFormat}}null{{/collectionFormat}}, "{{baseName}}", {{paramName}}));{{^-last}}
         {{/-last}}{{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
 
         {{#headerParams}}if ({{paramName}} != null)
-        localVarHeaderParams.add("{{baseName}}", apiClient.parameterToString({{paramName}}));{{^-last}}
+        localVarHeaderParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add(apiClient.parameterToString({{paramName}}));{{^-last}}
         {{/-last}}{{/headerParams}}{{/hasHeaderParams}}{{#hasFormParams}}
 
         {{#formParams}}if ({{paramName}} != null)
-            localVarFormParams.add("{{baseName}}", {{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
+        localVarFormParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add({{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
         {{/-last}}{{/formParams}}{{/hasFormParams}}
 
-        final String[] localVarAccepts = { {{#hasProduces}}
+        final List<String> localVarAccept = Arrays.asList({{#hasProduces}}
             {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
-        {{/hasProduces}}};
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        {{/hasProduces}});
         final String[] localVarContentTypes = { {{#hasConsumes}}
             {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
         {{/hasConsumes}}};
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
 
-        final {{#returnType}}ParameterizedTypeReference<{{{returnType}}}> localVarReturnType = new ParameterizedTypeReference<{{{returnType}}}>() {};{{/returnType}}{{^returnType}}ParameterizedTypeReference<Void> localVarReturnType = new ParameterizedTypeReference<Void>() {};{{/returnType}}
-        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, HttpMethod.{{httpMethod}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
+        final TypeReference<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> localVarReturnType = new TypeReference<>() {};
+        {{#returnType}}return {{/returnType}}apiClient.invokeAPI(localVarPath, "{{httpMethod}}", localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);{{^returnType}}
         return new OpenApiResponse(apiClient);{{/returnType}}
         {{/hasOptionalParams}}
     }
