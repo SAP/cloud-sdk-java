@@ -74,9 +74,10 @@ public class SodasApi extends AbstractOpenApiService {
         final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
         final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final List<String> localVarAccept = Arrays.asList(
+        final String[] localVarAccepts = { 
             "application/json"
-        );
+        };
+        final List<String> localVarAccept = apiClient.getHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { };
         final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
@@ -113,9 +114,10 @@ public class SodasApi extends AbstractOpenApiService {
         final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
         final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final List<String> localVarAccept = Arrays.asList(
+        final String[] localVarAccepts = { 
             "application/json"
-        );
+        };
+        final List<String> localVarAccept = apiClient.getHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { };
         final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
@@ -151,9 +153,10 @@ public class SodasApi extends AbstractOpenApiService {
         final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
         final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final List<String> localVarAccept = Arrays.asList(
+        final String[] localVarAccepts = { 
             "application/json"
-        );
+        };
+        final List<String> localVarAccept = apiClient.getHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
             "application/json"
         };
