@@ -148,9 +148,10 @@ public class {{classname}} extends AbstractOpenApiService {
         localVarFormParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add({{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
         {{/-last}}{{/formParams}}{{/hasFormParams}}
 
-        final List<String> localVarAccept = Arrays.asList({{#hasProduces}}
+        final String[] localVarAccepts = { {{#hasProduces}}
             {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
-        {{/hasProduces}});
+        {{/hasProduces}}};
+        final List<String> localVarAccept = apiClient.getHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { {{#hasConsumes}}
             {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
         {{/hasConsumes}}};
@@ -229,9 +230,10 @@ public class {{classname}} extends AbstractOpenApiService {
         localVarFormParams.computeIfAbsent("{{baseName}}", k -> new ArrayList<>()).add({{#isFile}}{{^collectionFormat}}{{#useAbstractionForFiles}}{{paramName}}{{/useAbstractionForFiles}}{{^useAbstractionForFiles}}new FileSystemResource({{paramName}}){{/useAbstractionForFiles}}{{/collectionFormat}}{{/isFile}}{{#isFile}}{{#collectionFormat}}{{paramName}}.stream(){{^useAbstractionForFiles}}.map(FileSystemResource::new){{/useAbstractionForFiles}}.collect(Collectors.toList()){{/collectionFormat}}{{/isFile}}{{^isFile}}{{paramName}}{{/isFile}});{{^-last}}
         {{/-last}}{{/formParams}}{{/hasFormParams}}
 
-        final List<String> localVarAccept = Arrays.asList({{#hasProduces}}
+        final String[] localVarAccepts = { {{#hasProduces}}
             {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
-        {{/hasProduces}});
+        {{/hasProduces}}};
+        final List<String> localVarAccept = apiClient.getHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { {{#hasConsumes}}
             {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
         {{/hasConsumes}}};
