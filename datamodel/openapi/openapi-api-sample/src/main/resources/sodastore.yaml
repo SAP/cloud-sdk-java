@@ -165,12 +165,19 @@ components:
           oneOf:
             - type: string
             - type: integer
-            - type: object
-              properties:
-                intensity:
-                  type: integer
-                nuance:
-                  type: string
+            - type: array
+              items:
+                $ref: '#/components/schemas/FlavorType'
+            - $ref: '#/components/schemas/FlavorType'
+    FlavorType:
+      type: object
+      properties:
+        intensity:
+          type: integer
+          description: The intensity of the flavor
+        nuance:
+          type: string
+          description: The nuance of the flavor
 paths:
   /sodas:
     get:

@@ -30,10 +30,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * FantaFlavorOneOf
+ * FlavorType
  */
 // CHECKSTYLE:OFF
-public class FantaFlavorOneOf
+public class FlavorType
 // CHECKSTYLE:ON
 {
     @JsonProperty( "intensity" )
@@ -47,30 +47,30 @@ public class FantaFlavorOneOf
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
-     * Default constructor for FantaFlavorOneOf.
+     * Default constructor for FlavorType.
      */
-    protected FantaFlavorOneOf()
+    protected FlavorType()
     {
     }
 
     /**
-     * Set the intensity of this {@link FantaFlavorOneOf} instance and return the same instance.
+     * Set the intensity of this {@link FlavorType} instance and return the same instance.
      *
      * @param intensity
-     *            The intensity of this {@link FantaFlavorOneOf}
-     * @return The same instance of this {@link FantaFlavorOneOf} class
+     *            The intensity of the flavor
+     * @return The same instance of this {@link FlavorType} class
      */
     @Nonnull
-    public FantaFlavorOneOf intensity( @Nullable final Integer intensity )
+    public FlavorType intensity( @Nullable final Integer intensity )
     {
         this.intensity = intensity;
         return this;
     }
 
     /**
-     * Get intensity
+     * The intensity of the flavor
      *
-     * @return intensity The intensity of this {@link FantaFlavorOneOf} instance.
+     * @return intensity The intensity of this {@link FlavorType} instance.
      */
     @Nonnull
     public Integer getIntensity()
@@ -79,10 +79,10 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Set the intensity of this {@link FantaFlavorOneOf} instance.
+     * Set the intensity of this {@link FlavorType} instance.
      *
      * @param intensity
-     *            The intensity of this {@link FantaFlavorOneOf}
+     *            The intensity of the flavor
      */
     public void setIntensity( @Nullable final Integer intensity )
     {
@@ -90,23 +90,23 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Set the nuance of this {@link FantaFlavorOneOf} instance and return the same instance.
+     * Set the nuance of this {@link FlavorType} instance and return the same instance.
      *
      * @param nuance
-     *            The nuance of this {@link FantaFlavorOneOf}
-     * @return The same instance of this {@link FantaFlavorOneOf} class
+     *            The nuance of the flavor
+     * @return The same instance of this {@link FlavorType} class
      */
     @Nonnull
-    public FantaFlavorOneOf nuance( @Nullable final String nuance )
+    public FlavorType nuance( @Nullable final String nuance )
     {
         this.nuance = nuance;
         return this;
     }
 
     /**
-     * Get nuance
+     * The nuance of the flavor
      *
-     * @return nuance The nuance of this {@link FantaFlavorOneOf} instance.
+     * @return nuance The nuance of this {@link FlavorType} instance.
      */
     @Nonnull
     public String getNuance()
@@ -115,10 +115,10 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Set the nuance of this {@link FantaFlavorOneOf} instance.
+     * Set the nuance of this {@link FlavorType} instance.
      *
      * @param nuance
-     *            The nuance of this {@link FantaFlavorOneOf}
+     *            The nuance of the flavor
      */
     public void setNuance( @Nullable final String nuance )
     {
@@ -126,7 +126,7 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Get the names of the unrecognizable properties of the {@link FantaFlavorOneOf}.
+     * Get the names of the unrecognizable properties of the {@link FlavorType}.
      *
      * @return The set of properties names
      */
@@ -138,7 +138,7 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Get the value of an unrecognizable property of this {@link FantaFlavorOneOf} instance.
+     * Get the value of an unrecognizable property of this {@link FlavorType} instance.
      *
      * @deprecated Use {@link #toMap()} instead.
      * @param name
@@ -153,13 +153,13 @@ public class FantaFlavorOneOf
         throws NoSuchElementException
     {
         if( !cloudSdkCustomFields.containsKey(name) ) {
-            throw new NoSuchElementException("FantaFlavorOneOf has no field with name '" + name + "'.");
+            throw new NoSuchElementException("FlavorType has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
     }
 
     /**
-     * Get the value of all properties of this {@link FantaFlavorOneOf} instance including unrecognized properties.
+     * Get the value of all properties of this {@link FlavorType} instance including unrecognized properties.
      *
      * @return The map of all properties
      */
@@ -176,8 +176,8 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Set an unrecognizable property of this {@link FantaFlavorOneOf} instance. If the map previously contained a
-     * mapping for the key, the old value is replaced by the specified value.
+     * Set an unrecognizable property of this {@link FlavorType} instance. If the map previously contained a mapping for
+     * the key, the old value is replaced by the specified value.
      *
      * @param customFieldName
      *            The name of the property
@@ -199,10 +199,10 @@ public class FantaFlavorOneOf
         if( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        final FantaFlavorOneOf fantaFlavorOneOf = (FantaFlavorOneOf) o;
-        return Objects.equals(this.cloudSdkCustomFields, fantaFlavorOneOf.cloudSdkCustomFields)
-            && Objects.equals(this.intensity, fantaFlavorOneOf.intensity)
-            && Objects.equals(this.nuance, fantaFlavorOneOf.nuance);
+        final FlavorType flavorType = (FlavorType) o;
+        return Objects.equals(this.cloudSdkCustomFields, flavorType.cloudSdkCustomFields)
+            && Objects.equals(this.intensity, flavorType.intensity)
+            && Objects.equals(this.nuance, flavorType.nuance);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class FantaFlavorOneOf
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class FantaFlavorOneOf {\n");
+        sb.append("class FlavorType {\n");
         sb.append("    intensity: ").append(toIndentedString(intensity)).append("\n");
         sb.append("    nuance: ").append(toIndentedString(nuance)).append("\n");
         cloudSdkCustomFields
@@ -237,11 +237,11 @@ public class FantaFlavorOneOf
     }
 
     /**
-     * Create a new {@link FantaFlavorOneOf} instance. No arguments are required.
+     * Create a new {@link FlavorType} instance. No arguments are required.
      */
-    public static FantaFlavorOneOf create()
+    public static FlavorType create()
     {
-        return new FantaFlavorOneOf();
+        return new FlavorType();
     }
 
 }
