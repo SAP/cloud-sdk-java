@@ -4,19 +4,15 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import com.google.common.annotations.Beta;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Order;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
@@ -47,7 +43,7 @@ public class OrdersApi extends AbstractOpenApiService
      * @param apiClient
      *            ApiClient to invoke the API on
      */
-    @Beta
+    @com.google.common.annotations.Beta
     public OrdersApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);
@@ -79,26 +75,26 @@ public class OrdersApi extends AbstractOpenApiService
             throw new OpenApiRequestException("Missing the required parameter 'order' when calling ordersPost");
         }
 
-        final String localVarPath = UriComponentsBuilder.fromPath("/orders").build().toUriString();
+        String path = "/orders";
+        final String localVarPath = URI.create(path).toString();
 
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final Map<String, List<String>> localVarQueryParams = new LinkedHashMap<>();
+        final Map<String, List<String>> localVarHeaderParams = new LinkedHashMap<>();
+        final Map<String, List<Object>> localVarFormParams = new LinkedHashMap<>();
 
-        final String[] localVarAccepts = { "application/json" };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final List<String> localVarAccept = Arrays.asList("application/json");
         final String[] localVarContentTypes = { "application/json" };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = apiClient.getHeaderContentType(localVarContentTypes);
 
         final String[] localVarAuthNames = new String[] { "apiKeyAuth" };
 
-        final ParameterizedTypeReference<Order> localVarReturnType = new ParameterizedTypeReference<Order>()
+        final TypeReference<Order> localVarReturnType = new TypeReference<>()
         {
         };
         return apiClient
             .invokeAPI(
                 localVarPath,
-                HttpMethod.POST,
+                "POST",
                 localVarQueryParams,
                 localVarPostBody,
                 localVarHeaderParams,
