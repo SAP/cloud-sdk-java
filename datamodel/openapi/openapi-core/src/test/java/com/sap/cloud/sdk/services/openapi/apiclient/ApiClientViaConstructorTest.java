@@ -153,7 +153,7 @@ class ApiClientViaConstructorTest
 
         assertThat(
             apiClient
-                .invokeAPI(
+                .<String> invokeAPI(
                     "/apiEndpoint",
                     HttpMethod.GET,
                     null,

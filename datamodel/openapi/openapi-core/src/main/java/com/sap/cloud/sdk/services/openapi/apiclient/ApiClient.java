@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
@@ -38,6 +40,7 @@ import org.springframework.web.util.UriUtils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
@@ -476,7 +479,7 @@ public final class ApiClient
      * @return a Map containing the String value(s) of the input parameter
      */
     @Nonnull
-    public MultiValueMap<String, String> parameterToMultiValueMap(
+    public Map<String, List<String>> parameterToMultiValueMap(
         @Nullable CollectionFormat collectionFormat,
         @Nullable final String name,
         @Nullable final Object value )
@@ -623,6 +626,20 @@ public final class ApiClient
     }
 
     /**
+     * Select the Content-Type header's value from the given array: if JSON exists in the given array, use it; otherwise
+     * use the first one of the array.
+     *
+     * @param contentTypes
+     *            The Content-Type array to select from
+     * @return MediaType The Content-Type header to use. If the given array is empty, JSON will be used.
+     */
+    @Nonnull
+    public String getHeaderContentType( @Nonnull final String[] contentTypes )
+    {
+        return selectHeaderContentType(contentTypes).toString();
+    }
+
+    /**
      * Select the body to use for the request
      *
      * @param obj
@@ -632,14 +649,19 @@ public final class ApiClient
      * @param contentType
      *            the content type of the request
      * @return Object the selected body
+     * @deprecated Avoid using Spring dependent classes.
      */
-    private
-        Object
-        selectBody( final Object obj, final MultiValueMap<String, Object> formParams, final MediaType contentType )
+    @Deprecated
+    @Nullable
+    private Object selectBody(
+        @Nullable final Object obj,
+        @Nullable final Map<String, List<Object>> formParams,
+        @Nullable final Object contentType )
     {
+        final MediaType mediaType = contentType == null ? null : MediaType.valueOf(contentType.toString());
         final boolean isForm =
-            MediaType.MULTIPART_FORM_DATA.isCompatibleWith(contentType)
-                || MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType);
+            MediaType.MULTIPART_FORM_DATA.isCompatibleWith(mediaType)
+                || MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType);
         return isForm ? formParams : obj;
     }
 
@@ -651,7 +673,7 @@ public final class ApiClient
      * @param path
      *            The sub-path of the HTTP URL
      * @param method
-     *            The request method
+     *            The request method. `toString()` resolves to e.g. `"GET"` or `"POST"`
      * @param queryParams
      *            The query parameters
      * @param body
@@ -661,29 +683,30 @@ public final class ApiClient
      * @param formParams
      *            The form parameters
      * @param accept
-     *            The request's Accept header
+     *            The request's Accept header. `toString()` on list items resolve to e.g. `"application/json"`
      * @param contentType
-     *            The request's Content-Type header
+     *            The request's Content-Type header. `toString()` resolves to e.g. `"application/json, application/xml"`
      * @param authNames
-     *            The authentications to apply
+     *            The authentications to apply. Not used in this implementation.
      * @param returnType
-     *            The return type into which to deserialize the response
+     *            The return type into which to deserialize the response, e.g. `FooBar.class`
      * @return The response body in chosen type
      * @throws OpenApiRequestException
      *             Thrown in case an exception occurs during invocation of the REST API
      */
+    @SuppressWarnings( "unchecked" )
     @Nullable
     public <T> T invokeAPI(
         @Nonnull final String path,
-        @Nonnull final HttpMethod method,
-        @Nullable final MultiValueMap<String, String> queryParams,
+        @Nonnull final Object method,
+        @Nullable final Map<String, List<String>> queryParams,
         @Nullable final Object body,
-        @Nullable final HttpHeaders headerParams,
-        @Nullable final MultiValueMap<String, Object> formParams,
-        @Nullable final List<MediaType> accept,
-        @Nullable final MediaType contentType,
+        @Nullable final Map<String, List<String>> headerParams,
+        @Nullable final Map<String, List<Object>> formParams,
+        @Nullable final List<?> accept,
+        @Nullable final Object contentType,
         @Nullable final String[] authNames,
-        @Nonnull final ParameterizedTypeReference<T> returnType )
+        @Nonnull final Object returnType )
         throws OpenApiRequestException
     {
         // auth headers are added automatically by the SDK
@@ -698,7 +721,7 @@ public final class ApiClient
                     values.replaceAll(queryParam -> UriUtils.encodeQueryParam(queryParam, "utf8"));
                 }
             }
-            builder.queryParams(queryParams);
+            builder.queryParams(MultiValueMap.fromMultiValue(queryParams));
         }
 
         final URI uri;
@@ -709,20 +732,37 @@ public final class ApiClient
             throw new OpenApiRequestException("Could not build URL: " + builder.toUriString(), ex);
         }
 
-        final BodyBuilder requestBuilder = RequestEntity.method(method, uri);
+        final BodyBuilder requestBuilder = RequestEntity.method(HttpMethod.valueOf(method.toString()), uri);
         if( accept != null ) {
-            requestBuilder.accept(accept.toArray(new MediaType[0]));
+            requestBuilder
+                .accept(accept.stream().map(Object::toString).map(MediaType::valueOf).toArray(MediaType[]::new));
         }
         if( contentType != null ) {
-            requestBuilder.contentType(contentType);
+            requestBuilder.contentType(MediaType.valueOf(contentType.toString()));
         }
 
         addHeadersToRequest(headerParams, requestBuilder);
         addHeadersToRequest(defaultHeaders, requestBuilder);
 
+        @SuppressWarnings( "DataFlowIssue" )
         final RequestEntity<Object> requestEntity = requestBuilder.body(selectBody(body, formParams, contentType));
 
-        final ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, returnType);
+        final ResponseEntity<T> responseEntity;
+        if( returnType instanceof final ParameterizedTypeReference<?> returnTypeRef ) {
+            responseEntity = (ResponseEntity<T>) restTemplate.exchange(requestEntity, returnTypeRef);
+        } else if( returnType instanceof final TypeReference<?> returnTypeRefJackson ) {
+            final ParameterizedTypeReference<T> returnTypeRefSpring =
+                ParameterizedTypeReference.forType(returnTypeRefJackson.getType());
+            responseEntity = restTemplate.exchange(requestEntity, returnTypeRefSpring);
+        } else if( returnType instanceof final Class<?> returnTypeClass ) {
+            responseEntity = restTemplate.exchange(requestEntity, (Class<T>) returnTypeClass);
+        } else if( returnType instanceof final Type returnTypeType ) {
+            final ParameterizedTypeReference<T> returnTypeRefSpring =
+                ParameterizedTypeReference.forType(returnTypeType);
+            responseEntity = restTemplate.exchange(requestEntity, returnTypeRefSpring);
+        } else {
+            throw new IllegalArgumentException("Unsupported return type argument: " + returnType);
+        }
 
         statusCode = responseEntity.getStatusCode().value();
         responseHeaders = responseEntity.getHeaders();
@@ -746,7 +786,9 @@ public final class ApiClient
      * @param requestBuilder
      *            The current request
      */
-    private void addHeadersToRequest( @Nullable final HttpHeaders headers, final BodyBuilder requestBuilder )
+    private
+        void
+        addHeadersToRequest( @Nullable final Map<String, List<String>> headers, final BodyBuilder requestBuilder )
     {
         if( headers != null ) {
             for( final Entry<String, List<String>> entry : headers.entrySet() ) {
