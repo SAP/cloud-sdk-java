@@ -229,12 +229,16 @@ class OAuth2Service
             return null;
         }
 
-        if( !(tenant instanceof TenantWithSubdomain) ) {
+        if( !(tenant instanceof TenantWithSubdomain tenantWithSubdomain) ) {
             final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
             throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
         }
-
-        return ((TenantWithSubdomain) tenant).getSubdomain();
+        final var subdomain = tenantWithSubdomain.getSubdomain();
+        if( subdomain == null ) {
+            throw new DestinationAccessException(
+                "The given tenant '%s' does not have a subdomain defined.".formatted(tenant));
+        }
+        return subdomain;
     }
 
     @Nullable

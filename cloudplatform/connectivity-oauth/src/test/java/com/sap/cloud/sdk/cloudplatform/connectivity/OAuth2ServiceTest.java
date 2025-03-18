@@ -175,6 +175,11 @@ class OAuth2ServiceTest
             TenantAccessor.executeWithTenant(new DefaultTenant("t1", "localhost"), service::retrieveAccessToken);
             TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
 
+            // if a tenant is explicitly defined, the subdomain is mandatory for the subdomain strategy
+            assertThatThrownBy(
+                () -> TenantAccessor.executeWithTenant(new DefaultTenant("t3"), service::retrieveAccessToken))
+                .hasMessageContaining("does not have a subdomain");
+
             SERVER_1
                 .verify(
                     1,
