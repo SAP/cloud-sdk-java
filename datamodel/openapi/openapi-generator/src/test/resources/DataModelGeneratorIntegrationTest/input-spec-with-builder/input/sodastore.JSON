@@ -218,6 +218,54 @@
             "format": "float"
           }
         }
+      },
+      "Mate": {
+        "type": "object",
+        "properties": {
+          "vendor": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "vendor",
+          "mapping": {
+            "miomio": "#/components/schemas/MioMate",
+            "loscher": "#/components/schemas/ClubMate"
+          }
+        },
+        "required": [
+          "vendor"
+        ]
+      },
+      "ClubMate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Mate"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isWinterEdition": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "MioMate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Mate"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "specialFlavor": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       }
     }
   }

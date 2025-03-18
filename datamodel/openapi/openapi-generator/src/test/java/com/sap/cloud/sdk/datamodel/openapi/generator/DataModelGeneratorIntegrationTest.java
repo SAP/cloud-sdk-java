@@ -109,7 +109,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            6,
+             9,
             Map
                 .of(
                     "pojoBuilderMethodName",
