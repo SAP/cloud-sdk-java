@@ -25,7 +25,7 @@ public final class ApacheHttpClient5Accessor
      * Configures the {@code HttpClient5Cache} that is used by the {@code #getHttpClient(String)} and
      * {@code #getHttpClient(Destination)} methods.
      * <p>
-     * By default, this uses an implementation, which caches the {@link HttpClient} for 5 minutes.
+     * By default, this uses an implementation, which caches the {@link HttpClient} for 1 hour.
      * <p>
      * <strong>CAUTION:</strong> This factory is accessed concurrently. Therefore, you have to make sure that you do not
      * introduce any concurrency issues when changing the factory. Furthermore, be aware that setting a custom factory

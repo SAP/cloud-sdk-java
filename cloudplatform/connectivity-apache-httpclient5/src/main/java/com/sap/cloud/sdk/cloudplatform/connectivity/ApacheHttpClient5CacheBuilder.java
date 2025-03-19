@@ -21,7 +21,7 @@ public class ApacheHttpClient5CacheBuilder
     /**
      * Sets the duration for which {@link HttpClient} instances will be cached.
      * <p>
-     * This is an <b>optional</b> parameter. By default, the cache duration is set to 5 minutes.
+     * This is an <b>optional</b> parameter. By default, the cache duration is set to 1 hour.
      * </p>
      *
      * @param durationInMilliseconds
@@ -38,7 +38,7 @@ public class ApacheHttpClient5CacheBuilder
     /**
      * Sets the duration for which {@link HttpClient} instances will be cached.
      * <p>
-     * This is an <b>optional</b> parameter. By default, the cache duration is set to 5 minutes.
+     * This is an <b>optional</b> parameter. By default, the cache duration is set to 1 hour.
      * </p>
      *
      * @param duration

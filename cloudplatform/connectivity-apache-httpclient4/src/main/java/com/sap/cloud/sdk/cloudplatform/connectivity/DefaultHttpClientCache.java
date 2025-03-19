@@ -29,7 +29,7 @@ public class DefaultHttpClientCache extends AbstractHttpClientCache
     private final Cache<CacheKey, HttpClient> cache;
 
     /**
-     * Caches the {@code HttpClient} for the default duration of 5 minutes.
+     * Caches the {@code HttpClient} for the default duration of 1 hour.
      */
     DefaultHttpClientCache()
     {
