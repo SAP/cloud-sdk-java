@@ -16,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class ResultElementJsonDeserializer implements JsonDeserializer<ResultElement>
 {
+    /**
+     * The factory used to create the {@link ResultElement} instances.
+     */
     protected final GsonResultElementFactory resultElementFactory;
 
     /**

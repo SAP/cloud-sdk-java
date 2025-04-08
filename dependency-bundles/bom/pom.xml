@@ -40,7 +40,7 @@
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.3.4</httpcore5.version>
-		<httpclient5.version>5.4.2</httpclient5.version>
+		<httpclient5.version>5.4.3</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
 		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
 		<!-- XSUAA -->
@@ -50,11 +50,11 @@
 		<java-jwt.version>4.5.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.17</slf4j.version>
-		<lombok.version>1.18.36</lombok.version>
+		<lombok.version>1.18.38</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
 		<vavr.version>0.10.6</vavr.version>
-		<guava.version>33.4.5-jre</guava.version>
+		<guava.version>33.4.6-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
 		<commons-io.version>2.18.0</commons-io.version>
 		<!-- Apache file utils -->
@@ -264,7 +264,7 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.49.1</version>
+				<version>3.49.2</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
