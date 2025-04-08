@@ -28,22 +28,6 @@ public final class DestinationAccessor
     @Nonnull
     private static DestinationLoader loader = initDestinationLoader();
 
-    /**
-     * Sets the loader to be used for all future method invocations on this {@code DestinationAccessor}.
-     * <p>
-     * If {@code null} is provided this will fallback to the default loader, which has the following priority list:
-     * <ol>
-     * <li>Read the destination from the <i>destinations</i> environment variable</li>
-     * <li>Read the destination with the loader found via the {@link java.util.ServiceLoader} pattern</li>
-     * </ol>
-     *
-     * If the {@code ServiceLoader} finds multiple {@link DestinationLoader} it will behave as if none was given, as no
-     * deterministic order of resolution could be identified. Use the {@link DestinationLoaderChain} to create your own
-     * priority.
-     *
-     * @param loader
-     *            The new loader to be used. If {@code null} is provided the default loader will be used instead.
-     */
     public static void setLoader( @Nullable final DestinationLoader loader )
     {
         if( log.isInfoEnabled() ) {
