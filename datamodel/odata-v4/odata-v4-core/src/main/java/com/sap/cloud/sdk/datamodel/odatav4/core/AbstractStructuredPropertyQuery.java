@@ -32,6 +32,9 @@ abstract class AbstractStructuredPropertyQuery<ParentEntityT extends VdmObject<?
     ProtocolQueryRead<EntityT>,
     StructuredProperty<ParentEntityT, EntityT>
 {
+    /**
+     * The delegate query.
+     */
     @Getter( AccessLevel.PROTECTED )
     protected final StructuredQuery delegateQuery;
 

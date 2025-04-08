@@ -21,6 +21,9 @@ import lombok.EqualsAndHashCode;
 @Data
 class SoapGsonResultPrimitive extends GsonResultPrimitive
 {
+    /**
+     * @deprecated This module will be discontinued, along with its classes and methods.
+     */
     protected final GsonResultElementFactory resultElementFactory;
 
     /**

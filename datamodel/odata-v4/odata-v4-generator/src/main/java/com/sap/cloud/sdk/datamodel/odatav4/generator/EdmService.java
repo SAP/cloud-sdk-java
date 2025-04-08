@@ -1060,6 +1060,9 @@ class EdmService implements Service
     @RequiredArgsConstructor
     private abstract class AbstractBoundOperationAdapter implements ServiceBoundOperation
     {
+        /**
+         * The EdmOperation that this adapter wraps.
+         */
         @Getter
         protected final EdmOperation operation;
 

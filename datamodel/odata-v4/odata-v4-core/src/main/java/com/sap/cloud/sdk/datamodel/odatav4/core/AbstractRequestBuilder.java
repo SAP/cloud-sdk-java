@@ -61,6 +61,9 @@ abstract class AbstractRequestBuilder<BuilderT extends RequestBuilder<ResultT>, 
     @Nonnull
     private final List<ODataRequestListener> listeners = new ArrayList<>();
 
+    /**
+     * A token retriever.
+     */
     @Nonnull
     protected CsrfTokenRetriever csrfTokenRetriever = CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER;
 

@@ -16,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class ResultElementJsonDeserializer implements JsonDeserializer<ResultElement>
 {
+    /**
+     * @deprecated This module will be discontinued, along with its classes and methods.
+     */
     protected final GsonResultElementFactory resultElementFactory;
 
     /**

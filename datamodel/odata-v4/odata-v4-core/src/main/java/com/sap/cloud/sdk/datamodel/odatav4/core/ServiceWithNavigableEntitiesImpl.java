@@ -13,12 +13,21 @@ class ServiceWithNavigableEntitiesImpl
     @RequiredArgsConstructor
     static class EntitySingle<EntityT extends VdmEntity<EntityT>> implements NavigableEntitySingle<EntityT>
     {
+        /**
+         * The service path of the entity.
+         */
         @Nonnull
         protected final String servicePath;
 
+        /**
+         * The path to the entity.
+         */
         @Nonnull
         protected final ODataResourcePath entityPath;
 
+        /**
+         * The entity to be navigated.
+         */
         @Nonnull
         protected final Option<EntityT> maybeEntity;
 
