@@ -21,6 +21,9 @@ import lombok.EqualsAndHashCode;
 @Data
 class SoapGsonResultPrimitive extends GsonResultPrimitive
 {
+    /**
+     * A factory used to create a result element instances.
+     */
     protected final GsonResultElementFactory resultElementFactory;
 
     /**
