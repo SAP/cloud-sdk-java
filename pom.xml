@@ -84,7 +84,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.18.3</jackson.version>
+		<jackson.version>2.19.0</jackson.version>
 		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250107</json.version>
@@ -109,7 +109,7 @@
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.0</caffeine.version>
-		<openapi-generator.version>7.12.0</openapi-generator.version>
+		<openapi-generator.version>7.13.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.30</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.26</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
@@ -118,8 +118,8 @@
 		<bouncycastle.version>1.80</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
-		<wiremock.version>3.12.1</wiremock.version>
-		<checkstyle.version>10.23.0</checkstyle.version>
+		<wiremock.version>3.13.0</wiremock.version>
+		<checkstyle.version>10.23.1</checkstyle.version>
 		<byte-buddy.version>1.17.5</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
