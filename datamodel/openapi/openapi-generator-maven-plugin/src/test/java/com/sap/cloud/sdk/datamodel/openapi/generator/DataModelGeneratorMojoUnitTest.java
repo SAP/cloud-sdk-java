@@ -8,8 +8,7 @@ import java.net.URL;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.MojoRule;
-// import org.junit.jupiter.api.Test;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
