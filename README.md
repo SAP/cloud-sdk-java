@@ -7,6 +7,8 @@
 
 # SAP Cloud SDK for Java
 
+🆕 Documentation portal for the [SAP Cloud SDK for AI](https://sap.github.io/ai-sdk/).
+
 ## Contents
 
 1. [About This Project](#about-this-project)
