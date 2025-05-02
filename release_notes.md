@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fixed OData V2 error: Disable Validation in the absense of DOCTYPE
