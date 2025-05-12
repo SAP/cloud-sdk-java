@@ -50,8 +50,13 @@ class DefaultDestinationTest
                 .property("some_password", "bar")
                 .property("some_secret", "baz")
                 .build();
-        assertThat(dest)
-            .hasToString("DefaultDestination(properties={some_password=(hidden), some_secret=(hidden), Name=foo})");
+
+        assertThat(dest.toString())
+            .startsWith("DefaultDestination(properties={")
+            .contains("some_password=(hidden)")
+            .contains("some_secret=(hidden)")
+            .contains("Name=foo")
+            .endsWith("})");
     }
 
     @Test
