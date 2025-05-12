@@ -18,7 +18,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.slf4j.event.Level;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
@@ -146,37 +145,31 @@ class DestinationServiceAdapter
         final int statusCode = status.getStatusCode();
         final String reasonPhrase = status.getReasonPhrase();
 
+        log.debug("Destination service returned HTTP status {} ({})", statusCode, reasonPhrase);
+
         Try<String> maybeBody = Try.of(() -> HttpEntityUtil.getResponseBody(response));
-        String logMessage = "Destination service returned HTTP status %s (%s)";
         if( maybeBody.isFailure() ) {
             final var ex =
                 new DestinationAccessException("Failed to read body from HTTP response", maybeBody.getCause());
             maybeBody = Try.failure(ex);
-            logMessage = String.format(logMessage, statusCode, reasonPhrase);
-        } else {
-            logMessage = String.format(logMessage + "and body '%s'", statusCode, reasonPhrase, maybeBody.get());
         }
 
         if( statusCode == HttpStatus.SC_OK ) {
             final var ex = new DestinationAccessException("Failed to get destinations: no body returned in response.");
             maybeBody = maybeBody.filter(it -> !Strings.isNullOrEmpty(it), () -> ex);
-            log.atLevel(maybeBody.isSuccess() ? Level.DEBUG : Level.ERROR).log(logMessage);
             return maybeBody.get();
         }
 
-        log.error(logMessage);
         final String requestUri = request.getURI().getPath();
         if( statusCode == HttpStatus.SC_NOT_FOUND ) {
             throw new DestinationNotFoundException(null, "Destination could not be found for path " + requestUri + ".");
         }
-        throw new DestinationAccessException(
-            String
-                .format(
-                    "Failed to get destinations: destination service returned HTTP status %s (%S) at '%s'.,",
-                    statusCode,
-                    reasonPhrase,
-                    requestUri));
-
+        final String message =
+            "Failed to get destinations: destination service responded with HTTP status %s (%S) at '%s'."
+                .formatted(statusCode, reasonPhrase, requestUri);
+        final String messageWithBody = message + " Body: %s".formatted(maybeBody.getOrElseGet(Throwable::getMessage));
+        log.error(messageWithBody);
+        throw new DestinationAccessException(message);
     }
 
     private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
