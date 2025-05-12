@@ -2,9 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
 import java.security.KeyStore;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -68,8 +66,10 @@ public final class DefaultDestination implements Destination
     {
         final Map<String, Object> nonSensitiveProperties = Maps.newHashMap(properties);
         final Set<String> sensitivePropertyIndicators = Set.of("password", "secret");
-        final Predicate<String> sensitivePropertyFilter = key -> sensitivePropertyIndicators.stream()
-            .anyMatch(indicator -> key.toLowerCase(Locale.ENGLISH).contains(indicator));
+        final Predicate<String> sensitivePropertyFilter =
+            key -> sensitivePropertyIndicators
+                .stream()
+                .anyMatch(indicator -> key.toLowerCase(Locale.ENGLISH).contains(indicator));
 
         for( final Map.Entry<String, Object> entry : nonSensitiveProperties.entrySet() ) {
             if( sensitivePropertyFilter.test(entry.getKey()) ) {
