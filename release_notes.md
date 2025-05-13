@@ -22,3 +22,4 @@
 ### 🐛 Fixed Issues
 
 - OpenAPI: When `apiMaturity` is set to `beta`, generated enums will now be `@Beta` annotated.
+- OData: String values for entity keys in URL path segments have the plus-sign (`+`) percentage-encoded.
