@@ -26,7 +26,7 @@ public enum UriEncodingStrategy
      * Regular request. Consider allowed characters safe.
      */
     REGULAR(
-        UrlEscapers.urlPathSegmentEscaper(), // path
+        new PercentEscaper("-._~!$'()*,;&=@:", false), // path
         new PercentEscaper("_*-:,/'().", false) // query
     ),
 
