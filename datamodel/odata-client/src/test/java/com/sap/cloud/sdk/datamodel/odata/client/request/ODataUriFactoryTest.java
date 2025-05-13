@@ -97,11 +97,11 @@ class ODataUriFactoryTest
     void testNoDoubleEncodingInParameter()
     {
         final String specialEntityPath = "A$_?En&ti t%y#";
-        final String parameters = "('%25abc')";
+        final String parameters = "('%25abc%2B')";
         final String expected = servicePath + "/A$_%3FEn&ti%20t%25y%23" + parameters;
 
         final ODataResourcePath path =
-            ODataResourcePath.of(specialEntityPath, new ODataEntityKey(ODataProtocol.V4).addKeyProperty("key", "%abc"));
+            ODataResourcePath.of(specialEntityPath, new ODataEntityKey(ODataProtocol.V4).addKeyProperty("key", "%abc+"));
 
         final URI actual = ODataUriFactory.createAndEncodeUri(servicePath, path, null, REGULAR);
         assertThat(actual.toString()).isEqualTo(expected);
