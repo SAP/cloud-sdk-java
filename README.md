@@ -3,9 +3,11 @@
 ![build](https://github.com/SAP/cloud-sdk-java/actions/workflows/continuous-integration.yaml/badge.svg?branch=main)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-java)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java)
 [![Fosstars security rating](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_badge.svg)](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_report.md)
-[![Maven Central](https://img.shields.io/badge/maven_central-5.17.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.17.0)
+[![Maven Central](https://img.shields.io/badge/maven_central-5.18.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.18.0)
 
 # SAP Cloud SDK for Java
+
+🆕 Documentation portal for the [SAP Cloud SDK for AI](https://sap.github.io/ai-sdk/docs/java/overview-cloud-sdk-for-ai-java).
 
 ## Contents
 
