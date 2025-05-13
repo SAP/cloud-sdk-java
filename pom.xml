@@ -111,7 +111,7 @@
 		<caffeine.version>3.2.0</caffeine.version>
 		<openapi-generator.version>7.13.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.30</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.26</io-swagger-parser-v3.version>
+		<io-swagger-parser-v3.version>2.1.27</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
