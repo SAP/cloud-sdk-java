@@ -16,7 +16,7 @@
 
 ### 📈 Improvements
 
-- 
+- Improve the detection and masking of secrets when logging data to debug.
 
 ### 🐛 Fixed Issues
 

@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -63,9 +65,11 @@ public final class DefaultDestination implements Destination
     public String toString()
     {
         final Map<String, Object> nonSensitiveProperties = Maps.newHashMap(properties);
+        final Predicate<String> sensitivePropertyFilter =
+            key -> Stream.of("password", "secret").anyMatch(key::contains);
 
         for( final Map.Entry<String, Object> entry : nonSensitiveProperties.entrySet() ) {
-            if( entry.getKey().toLowerCase(Locale.ENGLISH).contains("password") ) {
+            if( sensitivePropertyFilter.test(entry.getKey().toLowerCase(Locale.ENGLISH)) ) {
                 entry.setValue("(hidden)");
             }
         }
