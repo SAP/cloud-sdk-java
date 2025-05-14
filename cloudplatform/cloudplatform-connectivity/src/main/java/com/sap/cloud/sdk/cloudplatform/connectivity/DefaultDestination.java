@@ -5,10 +5,10 @@ import java.security.KeyStore;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -65,14 +65,11 @@ public final class DefaultDestination implements Destination
     public String toString()
     {
         final Map<String, Object> nonSensitiveProperties = Maps.newHashMap(properties);
-        final Set<String> sensitivePropertyIndicators = Set.of("password", "secret");
         final Predicate<String> sensitivePropertyFilter =
-            key -> sensitivePropertyIndicators
-                .stream()
-                .anyMatch(indicator -> key.toLowerCase(Locale.ENGLISH).contains(indicator));
+            key -> Stream.of("password", "secret").anyMatch(key::contains);
 
         for( final Map.Entry<String, Object> entry : nonSensitiveProperties.entrySet() ) {
-            if( sensitivePropertyFilter.test(entry.getKey()) ) {
+            if( sensitivePropertyFilter.test(entry.getKey().toLowerCase(Locale.ENGLISH)) ) {
                 entry.setValue("(hidden)");
             }
         }
