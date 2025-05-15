@@ -1,8 +1,8 @@
 **Rating**: **MODERATE**
 
-**Score**: **4.98**, max score value is 10.0
+**Score**: **4.99**, max score value is 10.0
 
-**Confidence**: Max (10.0, max confidence value is 10.0)
+**Confidence**: High (9.65, max confidence value is 10.0)
 
 ## Details
 
@@ -75,9 +75,9 @@ It used the following sub-scores:
     
 1.  **[Community commitment](#community-commitment)**: **8.0** (weight is 0.5)
     
-1.  **[Project activity](#project-activity)**: **6.77** (weight is 0.5)
+1.  **[Project activity](#project-activity)**: **7.08** (weight is 0.5)
     
-1.  **[Project popularity](#project-popularity)**: **0.23** (weight is 0.5)
+1.  **[Project popularity](#project-popularity)**: **0.04** (weight is 0.5)
     
 1.  **[Security reviews](#security-reviews)**: **0.0** (weight is 0.2)
     
@@ -294,23 +294,23 @@ This sub-score is based on 3 features:
 
 ### Project activity
 
-Score: **6.77**, confidence is 10.0 (max), weight is 0.5 (medium)
+Score: **7.08**, confidence is 10.0 (max), weight is 0.5 (medium)
 
 The score evaluates how active a project is. It's based on number of commits and contributors in the last 3 months.
 
-44 commits in the last 3 months results to 6.77 points
+46 commits in the last 3 months results to 7.08 points
 
 This sub-score is based on 2 features:
 
 
 
-1.  **Number of commits in the last three months:** 44
+1.  **Number of commits in the last three months:** 46
 1.  **Number of contributors in the last three months:** 1
 
 
 ### Project popularity
 
-Score: **0.23**, confidence is 10.0 (max), weight is 0.5 (medium)
+Score: **0.04**, confidence is 6.67 (low), weight is 0.5 (medium)
 
 This scoring function is based on number of stars, watchers and dependent projects.
 
@@ -320,8 +320,8 @@ This sub-score is based on 3 features:
 
 
 
-1.  **Number of projects on GitHub that use an open source project:** 292
-1.  **Number of stars for a GitHub repository:** 24
+1.  **Number of projects on GitHub that use an open source project:** unknown
+1.  **Number of stars for a GitHub repository:** 25
 1.  **Number of watchers for a GitHub repository:** 4
 
 
