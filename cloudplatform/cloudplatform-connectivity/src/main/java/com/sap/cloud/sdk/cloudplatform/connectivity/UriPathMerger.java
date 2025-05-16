@@ -67,7 +67,7 @@ public class UriPathMerger
             Stream
                 .of(primaryUri.getRawQuery(), secondaryUri.getRawQuery())
                 .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining("&"));
+                .collect(Collectors.joining("&")); // TODO check for overwriting query parameters + LOG debug overwriting
 
         try {
             final URI mergedUri =

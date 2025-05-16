@@ -16,12 +16,14 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
@@ -561,6 +563,23 @@ public class ODataRequestResultGeneric
             }
         }
         log.debug("Result does not reference any further pages.");
+
+        // check destination contains URL.queries.foo=bar ? and then remove it from nextLink
+
+        // not odata:
+        // dest contains URL.queries.foo=baz
+
+        Destination d = DestinationAccessor.getDestination("dest");
+        HttpClient client = HttpClientAccessor.getHttpClient(d);
+        HttpGet request = new HttpGet("my-endpoint/hi/?foo=bar");
+        client.execute(request);
+        // what is the expected request url?
+        // "dest/my-endpoint/hi/?foo=bar" <---
+        // "dest/my-endpoint/hi/?foo=baz"
+        // "dest/my-endpoint/hi/?foo=bar&foo=baz"
+
+
+
         return Option.none();
     }
 

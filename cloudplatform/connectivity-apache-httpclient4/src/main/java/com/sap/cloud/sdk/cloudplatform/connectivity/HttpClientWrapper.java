@@ -110,15 +110,15 @@ class HttpClientWrapper extends CloseableHttpClient
     HttpUriRequest wrapRequest( final HttpUriRequest request )
     {
         final UriPathMerger merger = new UriPathMerger();
-        URI requestUri = merger.merge(destination.getUri(), request.getURI());
+        URI combinedUri = merger.merge(destination.getUri(), request.getURI());
 
-        final String queryString = Joiner.on("&").join(QueryParamGetter.getQueryParameters(destination));
-        requestUri = merger.merge(requestUri, URI.create("/?" + queryString));
+        final String destinationQueryString = Joiner.on("&").join(QueryParamGetter.getQueryParameters(destination));
+        combinedUri = merger.merge(combinedUri, URI.create("/?" + destinationQueryString));
 
         final RequestBuilder requestBuilder = RequestBuilder.copy(request);
-        requestBuilder.setUri(requestUri);
+        requestBuilder.setUri(combinedUri);
 
-        for( final Header header : destination.getHeaders(requestUri) ) {
+        for( final Header header : destination.getHeaders(combinedUri) ) {
             requestBuilder.addHeader(new ApacheHttpHeader(header));
 
             log
