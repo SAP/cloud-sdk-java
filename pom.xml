@@ -94,7 +94,7 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.6</spring.version>
+		<spring.version>6.2.7</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<assertj-core.version>3.27.3</assertj-core.version>
@@ -110,8 +110,8 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.0</caffeine.version>
 		<openapi-generator.version>7.13.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.30</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.27</io-swagger-parser-v3.version>
+		<io-swagger-core-v3.version>2.2.32</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.28</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
