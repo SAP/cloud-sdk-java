@@ -125,6 +125,7 @@
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+		<commons-beanutils.version>1.10.1</commons-beanutils.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
@@ -188,7 +189,7 @@
 				<artifactId>neo-java-web-api</artifactId>
 				<version>${jco-api.version}</version>
 				<!-- we need it at compile time, but NOT at runtime.
-				At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
+        At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -239,6 +240,11 @@
 				<groupId>org.apache.olingo</groupId>
 				<artifactId>olingo-odata2-core</artifactId>
 				<version>${olingo-v2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons-beanutils.version}</version>
 			</dependency>
 			<!--Used in datamodel-metadata-generator and odata-generator-utility-->
 			<dependency>
@@ -594,7 +600,7 @@
 								<rules>
 									<bannedDependencies>
 										<message>Do not reference generated API modules (or modules transitively
-											referencing generated API modules), as they might be removed by profiles.</message>
+                      referencing generated API modules), as they might be removed by profiles.</message>
 										<excludes>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
@@ -1014,9 +1020,9 @@
 							<group>
 								<title>Utility Packages</title>
 								<packages>com.sap.cloud.sdk.datamodel* :com.sap.cloud.sdk.result*:*
-									:com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
-									:com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
-									:org.eclipse*</packages>
+                  :com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
+                  :com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
+                  :org.eclipse*</packages>
 							</group>
 							<group>
 								<title>SAP S/4HANA</title>

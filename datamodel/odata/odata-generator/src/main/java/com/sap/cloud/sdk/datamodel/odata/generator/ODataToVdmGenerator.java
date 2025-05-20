@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -321,6 +320,7 @@ class ODataToVdmGenerator
                 configurationBuilder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
             }
             serviceNameMappings = configurationBuilder.getConfiguration();
+
         }
         catch( final ConfigurationException e ) {
             throw new ODataGeneratorReadException(e);
@@ -333,10 +333,10 @@ class ODataToVdmGenerator
 
     private void sanitizeConfiguration( final Configuration configuration )
     {
-//        configuration.key
-        for( final Iterator<String> it = configuration.getKeys(); it.hasNext(); ) {
-            final String key = it.next();
+        final var keys = new ArrayList<String>();
+        configuration.getKeys().forEachRemaining(keys::add);
 
+        for( final String key : keys ) {
             if( key.endsWith(Service.SERVICE_MAPPINGS_CLASS_SUFFIX) ) {
                 final String javaClassName = configuration.getString(key);
                 final String sanitizedJavaClassName = NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
