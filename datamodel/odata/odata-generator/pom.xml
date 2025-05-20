@@ -147,6 +147,11 @@
 			<!-- required for code generation at runtime -->
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.10.1</version> <!-- Use latest stable version -->
+		</dependency>
 		<!-- scope "test" -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
