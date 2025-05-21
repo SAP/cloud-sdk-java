@@ -294,7 +294,7 @@ class ODataToVdmGenerator
 
     private PropertiesConfiguration loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder =
+        final FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder =
             loadPropertiesConfigurationBuilder(serviceMappingsFile);
         final PropertiesConfiguration serviceNameMappings;
         try {
@@ -310,7 +310,7 @@ class ODataToVdmGenerator
         final File serviceMappingsFile )
     {
         final PropertiesConfiguration serviceNameMappings;
-        FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder;
+        final FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder;
         try {
             if( serviceMappingsFile.exists() ) {
                 configurationBuilder =
