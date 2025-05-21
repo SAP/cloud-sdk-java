@@ -14,7 +14,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotationAttribute;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingUtils;
+import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 
 import io.vavr.control.Option;
 import lombok.AccessLevel;
@@ -57,7 +57,7 @@ class EdmService implements Service
     private static final String sapNamespace = "http://www.sap.com/Protocols/SAPData";
 
     private final String name;
-    private final PropertiesConfiguration serviceNameMappings;
+    private final ServiceNameMappings serviceNameMappings;
     private final ServiceDetails details;
     private final Function<String, Collection<ApiFunction>> allowedFunctionsByEntity;
     private final boolean linkToApiBusinessHub;
@@ -69,7 +69,7 @@ class EdmService implements Service
 
     EdmService(
         @Nonnull final String name,
-        @Nonnull final PropertiesConfiguration serviceNameMappings,
+        @Nonnull final ServiceNameMappings serviceNameMappings,
         @Nonnull final Edm metadata,
         @Nonnull final ServiceDetails details,
         @Nonnull final Multimap<String, ApiFunction> allowedFunctionsByEntity,
@@ -160,12 +160,12 @@ class EdmService implements Service
     public String getJavaPackageName()
     {
         final String javaPackageNameKey = name + SERVICE_MAPPINGS_PACKAGE_SUFFIX;
-        String javaPackageName = serviceNameMappings.getString(javaPackageNameKey);
+        final String javaPackageName = serviceNameMappings.getString(javaPackageNameKey);
 
         if( javaPackageName == null ) {
-            javaPackageName = NamingUtils.serviceNameToJavaPackageName(getTitle());
+            return NamingUtils.serviceNameToJavaPackageName(getTitle());
         }
-        return javaPackageName;
+        return NamingUtils.serviceNameToJavaPackageName(javaPackageName);
     }
 
     @Override
@@ -178,12 +178,12 @@ class EdmService implements Service
     public String getJavaClassName()
     {
         final String javaClassNameKey = name + SERVICE_MAPPINGS_CLASS_SUFFIX;
-        String javaClassName = serviceNameMappings.getString(javaClassNameKey);
+        final String javaClassName = serviceNameMappings.getString(javaClassNameKey);
 
         if( javaClassName == null ) {
-            javaClassName = NamingUtils.serviceNameToBaseJavaClassName(getTitle());
+            return NamingUtils.serviceNameToBaseJavaClassName(getTitle());
         }
-        return javaClassName;
+        return NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
     }
 
     @Override
