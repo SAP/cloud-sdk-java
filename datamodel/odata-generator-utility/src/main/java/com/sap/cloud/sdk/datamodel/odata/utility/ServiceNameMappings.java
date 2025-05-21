@@ -1,7 +1,10 @@
 package com.sap.cloud.sdk.datamodel.odata.utility;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,13 +71,7 @@ public class ServiceNameMappings
             text.append(entry.getKey().key()).append(DELIMITER_LONG).append(entry.getValue().value());
             text.append(System.lineSeparator());
         }
-        Files
-            .writeString(
-                file,
-                text,
-                StandardCharsets.UTF_8,
-                java.nio.file.StandardOpenOption.CREATE,
-                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(file, text, UTF_8, CREATE, TRUNCATE_EXISTING);
     }
 
     /**
@@ -108,7 +105,7 @@ public class ServiceNameMappings
     private void populateMappings()
     {
         try {
-            final List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+            final List<String> lines = Files.readAllLines(file, UTF_8);
             final List<String> comment = new ArrayList<>();
             for( final String line : lines ) {
                 if( line.startsWith("#") ) {
