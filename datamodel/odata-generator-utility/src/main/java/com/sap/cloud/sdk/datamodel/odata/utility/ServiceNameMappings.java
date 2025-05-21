@@ -79,12 +79,12 @@ public class ServiceNameMappings
      *
      * @param key
      *            the key to get the value for
-     * @return the value of the key, or null if the key does not exist
+     * @return the optional value of the key.
      */
-    @Nullable
-    public String getString( @Nonnull final String key )
+    @Nonnull
+    public Optional<String> getString( @Nonnull final String key )
     {
-        return Optional.ofNullable(mappings.get(new Key(key))).map(Value::value).orElse(null);
+        return Optional.ofNullable(mappings.get(new Key(key))).map(Value::value);
     }
 
     /**

@@ -247,11 +247,7 @@ class EdmService implements Service
     public String getJavaPackageName()
     {
         final String javaPackageNameKey = name + SERVICE_MAPPINGS_PACKAGE_SUFFIX;
-        final String javaPackageName = serviceNameMappings.getString(javaPackageNameKey);
-
-        if( javaPackageName == null ) {
-            return NamingUtils.serviceNameToJavaPackageName(getTitle());
-        }
+        final String javaPackageName = serviceNameMappings.getString(javaPackageNameKey).orElseGet(this::getTitle);
         return NamingUtils.serviceNameToJavaPackageName(javaPackageName);
     }
 
@@ -265,11 +261,7 @@ class EdmService implements Service
     public String getJavaClassName()
     {
         final String javaClassNameKey = name + SERVICE_MAPPINGS_CLASS_SUFFIX;
-        final String javaClassName = serviceNameMappings.getString(javaClassNameKey);
-
-        if( javaClassName == null ) {
-            return NamingUtils.serviceNameToBaseJavaClassName(getTitle());
-        }
+        final String javaClassName = serviceNameMappings.getString(javaClassNameKey).orElseGet(this::getTitle);
         return NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
     }
 
