@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 class HttpClientWrapper extends CloseableHttpClient implements UriQueryMerger
 {
     private final CloseableHttpClient httpClient;
-
-    @Getter
+    @Getter( AccessLevel.PACKAGE )
     private final HttpDestinationProperties destination;
 
     @Override
