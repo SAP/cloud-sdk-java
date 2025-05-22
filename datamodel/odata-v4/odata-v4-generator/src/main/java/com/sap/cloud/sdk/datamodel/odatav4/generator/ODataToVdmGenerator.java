@@ -23,11 +23,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +38,7 @@ import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Multimap;
 import com.sap.cloud.sdk.datamodel.odata.utility.EdmxValidator;
-import com.sap.cloud.sdk.datamodel.odata.utility.NamingUtils;
+import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 
 import io.vavr.control.Try;
 
@@ -149,8 +144,7 @@ class ODataToVdmGenerator
         @Nonnull final Collection<File> inputFiles )
     {
         final Collection<EdmxFile> allEdmxFiles = new LinkedList<>();
-        final PropertiesConfiguration serviceNameMappings =
-            loadPropertiesConfiguration(config.getServiceNameMappings());
+        final ServiceNameMappings serviceNameMappings = loadPropertiesConfiguration(config.getServiceNameMappings());
         final List<CsdlSchema> edmxTerms = loadEdmxSchemas();
 
         for( final File inputFile : inputFiles ) {
@@ -227,7 +221,7 @@ class ODataToVdmGenerator
 
     private Service buildService(
         final String serviceName,
-        final PropertiesConfiguration serviceNameMappings,
+        final ServiceNameMappings serviceNameMappings,
         final List<CsdlSchema> edmxTerms,
         @Nullable final String defaultBasePath,
         final File serviceMetadataFile,
@@ -297,43 +291,9 @@ class ODataToVdmGenerator
         }
     }
 
-    private PropertiesConfiguration loadPropertiesConfiguration( final File serviceMappingsFile )
+    private ServiceNameMappings loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        final FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder =
-            loadPropertiesConfigurationBuilder(serviceMappingsFile);
-        final PropertiesConfiguration serviceNameMappings;
-        try {
-            serviceNameMappings = configurationBuilder.getConfiguration();
-        }
-        catch( final ConfigurationException e ) {
-            throw new ODataGeneratorReadException(e);
-        }
-        return serviceNameMappings;
-    }
-
-    private FileBasedConfigurationBuilder<PropertiesConfiguration> loadPropertiesConfigurationBuilder(
-        final File serviceMappingsFile )
-    {
-        final PropertiesConfiguration serviceNameMappings;
-        final FileBasedConfigurationBuilder<PropertiesConfiguration> configurationBuilder;
-        try {
-            if( serviceMappingsFile.exists() ) {
-                configurationBuilder =
-                    new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
-                        .configure(new Parameters().fileBased().setFile(serviceMappingsFile));
-            } else {
-                configurationBuilder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
-            }
-            serviceNameMappings = configurationBuilder.getConfiguration();
-
-        }
-        catch( final ConfigurationException e ) {
-            throw new ODataGeneratorReadException(e);
-        }
-
-        sanitizeConfiguration(serviceNameMappings);
-
-        return configurationBuilder;
+        return new ServiceNameMappings(serviceMappingsFile.toPath());
     }
 
     // Schema definitions are necessary to make the EDMX properties explorable through Olingo API at runtime, example:
@@ -371,51 +331,23 @@ class ODataToVdmGenerator
         return termSchemas;
     }
 
-    private void sanitizeConfiguration( final Configuration configuration )
-    {
-        final var keys = new ArrayList<String>();
-        configuration.getKeys().forEachRemaining(keys::add);
-
-        for( final String key : keys ) {
-            if( key.endsWith(Service.SERVICE_MAPPINGS_CLASS_SUFFIX) ) {
-                final String javaClassName = configuration.getString(key);
-                final String sanitizedJavaClassName = NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
-                configuration.setProperty(key, sanitizedJavaClassName);
-            }
-            if( key.endsWith(Service.SERVICE_MAPPINGS_PACKAGE_SUFFIX) ) {
-                final String javaPackageName = configuration.getString(key);
-                final String sanitizedJavaPackageName = NamingUtils.serviceNameToJavaPackageName(javaPackageName);
-                configuration.setProperty(key, sanitizedJavaPackageName);
-            }
-        }
-    }
-
     private void storeConfiguration( final File serviceMappingsFile, final Iterable<Service> allODataServices )
     {
         ensureFileExists(serviceMappingsFile);
-        final var configurationBuilder = loadPropertiesConfigurationBuilder(serviceMappingsFile);
-        final PropertiesConfiguration serviceNameMappings;
-        try {
-            serviceNameMappings = configurationBuilder.getConfiguration();
-        }
-        catch( final ConfigurationException e ) {
-            throw new ODataGeneratorReadException(e);
-        }
+        final ServiceNameMappings mappings = new ServiceNameMappings(serviceMappingsFile.toPath());
 
         for( final Service oDataService : allODataServices ) {
             final String javaClassNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_CLASS_SUFFIX;
-            serviceNameMappings.setProperty(javaClassNameKey, oDataService.getJavaClassName());
-            serviceNameMappings.getLayout().setComment(javaClassNameKey, oDataService.getTitle());
-            serviceNameMappings.getLayout().setBlankLinesBefore(javaClassNameKey, 1);
+            mappings.putString(javaClassNameKey, oDataService.getJavaClassName(), oDataService.getTitle());
 
             final String javaPackageNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_PACKAGE_SUFFIX;
-            serviceNameMappings.setProperty(javaPackageNameKey, oDataService.getJavaPackageName());
+            mappings.putString(javaPackageNameKey, oDataService.getJavaPackageName());
         }
 
         try {
-            configurationBuilder.save();
+            mappings.save();
         }
-        catch( final ConfigurationException e ) {
+        catch( final IOException e ) {
             throw new ODataGeneratorWriteException(e);
         }
     }
