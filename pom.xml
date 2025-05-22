@@ -85,7 +85,6 @@
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.19.0</jackson.version>
-		<commons-configuration2.version>2.12.0</commons-configuration2.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250107</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -125,7 +124,6 @@
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-		<commons-beanutils.version>1.10.1</commons-beanutils.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
@@ -192,11 +190,6 @@
         At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
 				<scope>provided</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-configuration2</artifactId>
-				<version>${commons-configuration2.version}</version>
-			</dependency>
 			<!--Used in odata-generator-->
 			<dependency>
 				<groupId>com.sun.codemodel</groupId>
@@ -240,11 +233,6 @@
 				<groupId>org.apache.olingo</groupId>
 				<artifactId>olingo-odata2-core</artifactId>
 				<version>${olingo-v2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${commons-beanutils.version}</version>
 			</dependency>
 			<!--Used in datamodel-metadata-generator and odata-generator-utility-->
 			<dependency>
