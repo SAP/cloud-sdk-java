@@ -754,7 +754,7 @@ public class ODataRequestResultGeneric
     }
 
     @Nonnull
-    private String removeDuplicateQueryParameters( @Nonnull String nextLink )
+    private String removeDuplicateQueryParameters( @Nonnull final String nextLink )
     {
         if( !(httpClient instanceof UriQueryMerger) ) {
             return nextLink;
@@ -763,18 +763,20 @@ public class ODataRequestResultGeneric
         if( query == null ) {
             return nextLink;
         }
-        boolean changed = false;
+        final String[] segments = nextLink.split("\\?", 2);
         final String[] queryArguments = query.split("&");
         for( final String argument : queryArguments ) {
-            if( nextLink.contains(argument) ) {
-                changed = true;
-                nextLink = nextLink.replace(argument, "");
+            if( segments[1].contains(argument) ) {
+                segments[1] = segments[1].replace(argument, "");
             }
         }
-        if( changed ) {
-            nextLink = nextLink.replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
-            log.debug("Altered reference to next link: {}", nextLink);
+        if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
+            return nextLink;
         }
-        return nextLink;
+        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "foo=bar&"
+        segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
+        final String updatedLink = segments[0] + "?" + segments[1];
+        log.debug("Altered reference to next link: {}", nextLink);
+        return updatedLink;
     }
 }
