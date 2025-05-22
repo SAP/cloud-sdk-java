@@ -34,6 +34,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonToken;
+import com.sap.cloud.sdk.cloudplatform.connectivity.UriQueryMerger;
 import com.sap.cloud.sdk.datamodel.odata.client.JsonPath;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataResponseDeserializer;
@@ -554,10 +555,10 @@ public class ODataRequestResultGeneric
         for( final JsonPath path : getODataRequest().getProtocol().getPathToNextLink().getPaths() ) {
             final ResultElement resultElement = getResultElement(path);
             if( resultElement != null ) {
-                return Option
-                    .of(resultElement)
-                    .map(ResultElement::asString)
-                    .peek(link -> log.debug("Found reference to next page: {}", link));
+                String nextLink = resultElement.asString();
+                log.debug("Found reference to next page: {}", nextLink);
+                nextLink = removeDuplicateQueryParameters(nextLink);
+                return Option.of(nextLink);
             }
         }
         log.debug("Result does not reference any further pages.");
@@ -750,5 +751,26 @@ public class ODataRequestResultGeneric
             throw new IllegalArgumentException("Interpreting results as Void is not allowed.");
         }
 
+    }
+
+    @Nonnull
+    private String removeDuplicateQueryParameters( @Nonnull String nextLink )
+    {
+        boolean changed = false;
+        if( httpClient instanceof UriQueryMerger ) {
+            final URI baseUri = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create(""));
+            final String[] queryArguments = baseUri.getRawQuery().split("&");
+            for( final String argument : queryArguments ) {
+                if( nextLink.contains(argument) ) {
+                    changed = true;
+                    nextLink = nextLink.replace(argument, "");
+                }
+            }
+        }
+        if( changed ) {
+            nextLink = nextLink.replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
+            log.debug("Altered reference to next link: {}", nextLink);
+        }
+        return nextLink;
     }
 }
