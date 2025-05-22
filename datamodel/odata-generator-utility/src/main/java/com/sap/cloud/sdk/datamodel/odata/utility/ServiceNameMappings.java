@@ -25,6 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceNameMappings
 {
+    private static final String DELIMITER_SHORT = "=";
+    private static final String DELIMITER_LONG = " = ";
+    private final Path file;
+    private final Map<Key, Value> mappings = new LinkedHashMap<>();
+
     private record Key( @Nonnull String key )
     {
     }
@@ -32,11 +37,6 @@ public class ServiceNameMappings
     private record Value( @Nonnull String value, @Nonnull String comment )
     {
     }
-
-    private static final String DELIMITER_SHORT = "=";
-    private static final String DELIMITER_LONG = " = ";
-    private final Path file;
-    private final Map<Key, Value> mappings = new LinkedHashMap<>();
 
     /**
      * Creates a new instance of {@link ServiceNameMappings} with the specified file.
