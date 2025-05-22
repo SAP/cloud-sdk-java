@@ -756,15 +756,19 @@ public class ODataRequestResultGeneric
     @Nonnull
     private String removeDuplicateQueryParameters( @Nonnull String nextLink )
     {
+        if( !(httpClient instanceof UriQueryMerger) ) {
+            return nextLink;
+        }
+        final String query = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create("")).getRawQuery();
+        if( query == null ) {
+            return nextLink;
+        }
         boolean changed = false;
-        if( httpClient instanceof UriQueryMerger ) {
-            final URI baseUri = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create(""));
-            final String[] queryArguments = baseUri.getRawQuery().split("&");
-            for( final String argument : queryArguments ) {
-                if( nextLink.contains(argument) ) {
-                    changed = true;
-                    nextLink = nextLink.replace(argument, "");
-                }
+        final String[] queryArguments = query.split("&");
+        for( final String argument : queryArguments ) {
+            if( nextLink.contains(argument) ) {
+                changed = true;
+                nextLink = nextLink.replace(argument, "");
             }
         }
         if( changed ) {
