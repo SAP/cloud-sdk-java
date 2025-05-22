@@ -773,10 +773,10 @@ public class ODataRequestResultGeneric
         if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
             return nextLink;
         }
-        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "foo=bar&"
+        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "?foo=bar&"
         segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
         final String updatedLink = segments[0] + "?" + segments[1];
-        log.debug("Altered reference to next link: {}", nextLink);
+        log.debug("Updated reference to next page: {}", updatedLink);
         return updatedLink;
     }
 }
