@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 @FunctionalInterface
 public interface UriQueryMerger
 {
-
     /**
      * Returns the request URI for the given request. This method is used to resolve the request URI
      *
