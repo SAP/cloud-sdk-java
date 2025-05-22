@@ -4,13 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 class ODataNextLinkTest
@@ -23,6 +27,22 @@ class ODataNextLinkTest
           }
         }
         """;
+
+    @Test
+    void testRemoveDuplicateQueryArguments()
+    {
+        final ODataRequestGeneric request =
+            new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
+        final Destination dest =
+            DefaultHttpDestination.builder("http://blub/?high=five").property("URL.queries.foo", "bar").build();
+        final HttpClient client = HttpClientAccessor.getHttpClient(dest);
+
+        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
+        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse, client);
+
+        assertThat(result.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
+    }
 
     @Test
     void testNotParsedNextLinkV4()
