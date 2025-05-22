@@ -33,15 +33,23 @@ class ODataNextLinkTest
     {
         final ODataRequestGeneric request =
             new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
-        final Destination dest =
-            DefaultHttpDestination.builder("http://blub/?high=five").property("URL.queries.foo", "bar").build();
-        final HttpClient client = HttpClientAccessor.getHttpClient(dest);
 
         final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
-        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse, client);
 
-        assertThat(result.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
+        final String baseUrl = "http://blub/?high=five";
+
+        // case 1: query parameters are EQUAL in destination and in nextLink -> remove redundant query parameter
+        final Destination dest1 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "bar").build();
+        final HttpClient client1 = HttpClientAccessor.getHttpClient(dest1);
+        final ODataRequestResultGeneric result1 = new ODataRequestResultGeneric(request, httpResponse, client1);
+        assertThat(result1.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
+
+        // case 2: query parameters are NOT EQUAL in destination and in nextLink -> retain query parameter
+        final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "baz").build();
+        final HttpClient client2 = HttpClientAccessor.getHttpClient(dest2);
+        final ODataRequestResultGeneric result2 = new ODataRequestResultGeneric(request, httpResponse, client2);
+        assertThat(result2.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
     }
 
     @Test
