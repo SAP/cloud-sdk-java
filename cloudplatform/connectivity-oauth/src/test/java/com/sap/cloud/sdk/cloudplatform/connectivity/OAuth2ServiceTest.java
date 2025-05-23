@@ -243,7 +243,7 @@ class OAuth2ServiceTest
                 .verify(
                     2,
                     postRequestedFor(urlEqualTo("/oauth/token"))
-                        .withRequestBody(containing("app_tid="+tenant.getTenantId()))
+                        .withRequestBody(containing("app_tid=" + tenant.getTenantId()))
                         .withRequestBody(
                             containing("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer".replace(":", "%3A")))
                         .withRequestBody(containing("assertion=")));
