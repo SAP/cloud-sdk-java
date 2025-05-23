@@ -86,7 +86,7 @@
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.19.0</jackson.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20250107</json.version>
+		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
