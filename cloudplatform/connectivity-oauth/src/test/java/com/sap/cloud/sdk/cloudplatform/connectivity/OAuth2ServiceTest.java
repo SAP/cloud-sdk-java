@@ -45,6 +45,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTo
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
 import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
+import com.sap.cloud.sdk.cloudplatform.security.principal.DefaultPrincipal;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.testutil.TestContext;
@@ -209,26 +210,43 @@ class OAuth2ServiceTest
 
             assertThatThrownBy(service::retrieveAccessToken);
 
-            context.setTenant(new DefaultTenant("tenant", "localhost"));
-            context.setPrincipal();
-            final String token =
+            final var tenant = new DefaultTenant("tenant", "ma");
+            var principal = new DefaultPrincipal("user1");
+            context.setTenant(tenant);
+            context.setPrincipal(principal);
+            var token =
                 JwtGenerator
                     .getInstance(Service.IAS, "clientid")
-                    .withClaimValue("app_tid", "tenant")
+                    .withClaimValue("app_tid", tenant.getTenantId())
+                    .withClaimValue("user_uuid", principal.getPrincipalId())
                     .createToken()
                     .getTokenValue();
             context.setAuthToken(new AuthToken(JWT.decode(token)));
 
             service.retrieveAccessToken();
+            service.retrieveAccessToken();
+
+            principal = new DefaultPrincipal("user2");
+            token =
+                JwtGenerator
+                    .getInstance(Service.IAS, "clientid")
+                    .withClaimValue("app_tid", tenant.getTenantId())
+                    .withClaimValue("user_uuid", principal.getPrincipalId())
+                    .createToken()
+                    .getTokenValue();
+            context.setAuthToken(new AuthToken(JWT.decode(token)));
+
+            service.retrieveAccessToken();
+            service.retrieveAccessToken();
 
             SERVER_1
                 .verify(
-                    1,
+                    2,
                     postRequestedFor(urlEqualTo("/oauth/token"))
-                        .withRequestBody(containing("app_tid=tenant"))
+                        .withRequestBody(containing("app_tid="+tenant.getTenantId()))
                         .withRequestBody(
                             containing("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer".replace(":", "%3A")))
-                        .withRequestBody(containing("assertion=" + token)));
+                        .withRequestBody(containing("assertion=")));
         }
     }
 
