@@ -93,9 +93,9 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
-                        .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two") // parsed next-link with removed redundant query parameters
-                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two") // destination parameters + next-link parameters + properties parameters
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two")
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two")
                         .build()),
 
             // case 2: query-parameters from destination uri, destination properties, next-link and odata-request with equal values
@@ -112,9 +112,9 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
-                        .nextLinkQueryParsed("$skiptoken=42&next1=one&odata1=one") // parsed next-link with removed redundant query parameters
-                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&odata1=one&prop1=one&prop2=two") // destination parameters + next-link parameters + properties parameters
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&odata1=one")
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&odata1=one&prop1=one&prop2=two")
                         .build()),
 
             // case 3: query-parameters from next link may be in conflict with destination uri or destination properties
@@ -131,8 +131,8 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
-                        .nextLinkQueryParsed("$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins") // parsed next-link with conflicting parameter values
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins")
                         .nextLinkQuerySent(
                             "dest1=one&dest2=two" // destination parameters
                                 + "&$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins" // next-link parameters
@@ -154,9 +154,9 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("foo=bar&foo=bar&foo=bar") // destination parameters + odata-request parameters + properties parameters
-                        .nextLinkQueryParsed("$skiptoken=42") // parsed next-link with removed redundant query parameters
-                        .nextLinkQuerySent("foo=bar&$skiptoken=42&foo=bar") // destination parameters + next-link parameters + properties parameters
+                        .initialQuerySent("foo=bar&foo=bar&foo=bar") // 3x due to initial OData request parameter
+                        .nextLinkQueryParsed("$skiptoken=42")
+                        .nextLinkQuerySent("foo=bar&$skiptoken=42&foo=bar")
                         .build()),
 
         };
