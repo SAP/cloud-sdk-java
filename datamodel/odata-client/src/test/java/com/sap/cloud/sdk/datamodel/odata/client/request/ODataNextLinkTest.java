@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -51,6 +52,7 @@ class ODataNextLinkTest
     @AllArgsConstructor
     @Accessors( fluent = true )
     @Setter
+    @ToString( includeFieldNames = false, exclude = { "with", "expects" } )
     static class QueryParameterCase
     {
         final String label;
@@ -75,26 +77,68 @@ class ODataNextLinkTest
         }
     }
 
-static QueryParameterCase[] QUERY_PARAMETERS_CASES =
-{
-// case 1: query-parameters from destination uri, destination properties, next-link and odata-request are distinct
-QueryParameterCase
-    .named("DISTINCT")
-    .with(
-        QueryParameterCase.Setup
-            .builder()
-            .destinationQuery("dest1=one&dest2=two")
-            .propertiesQuery("prop1=one&prop2=two")
-            .initialQuery("odata1=one&odata2=two")
-            .nextLinkQuery("next1=one&next2=two")
-            .build())
-    .expects(
-        QueryParameterCase.Expectation
-            .builder()
-            .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
-            .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two")
-            .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two")
-            .build()) };
+    private static QueryParameterCase[] QUERY_PARAMETERS_CASES =
+        {
+            // case 1: query-parameters from destination uri, destination properties, next-link and odata-request are distinct
+            QueryParameterCase
+                .named("DISTINCT")
+                .with(
+                    QueryParameterCase.Setup
+                        .builder()
+                        .destinationQuery("dest1=one&dest2=two")
+                        .propertiesQuery("prop1=one&prop2=two")
+                        .initialQuery("odata1=one&odata2=two")
+                        .nextLinkQuery("next1=one&next2=two")
+                        .build())
+                .expects(
+                    QueryParameterCase.Expectation
+                        .builder()
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two")
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two")
+                        .build()),
+            // case 2: query-parameters from destination uri, destination properties, next-link and odata-request with equal values
+            QueryParameterCase
+                .named("EQUAL")
+                .with(
+                    QueryParameterCase.Setup
+                        .builder()
+                        .destinationQuery("dest1=one&dest2=two")
+                        .propertiesQuery("prop1=one&prop2=two")
+                        .initialQuery("odata1=one&odata2=two")
+                        .nextLinkQuery("next1=one&dest1=one&prop1=one&odata1=one")
+                        .build())
+                .expects(
+                    QueryParameterCase.Expectation
+                        .builder()
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&odata1=one")
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&odata1=one&prop1=one&prop2=two")
+                        .build()),
+            // case 3: query-parameters from next link may be in conflict with destination uri or destination properties
+            QueryParameterCase
+                .named("CONFLICT")
+                .with(
+                    QueryParameterCase.Setup
+                        .builder()
+                        .destinationQuery("dest1=one&dest2=two")
+                        .propertiesQuery("prop1=one&prop2=two")
+                        .initialQuery("odata1=one&odata2=two")
+                        .nextLinkQuery("next1=eins&dest1=eins&prop1=eins&odata1=eins")
+                        .build())
+                .expects(
+                    QueryParameterCase.Expectation
+                        .builder()
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
+                        .nextLinkQueryParsed("$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins")
+                        .nextLinkQuerySent(
+                            "dest1=one&dest2=two" // destination parameters
+                                + "&$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins" // next-link parameters
+                                + "&prop1=one&prop2=two" // properties parameters
+                        )
+                        .build()),
+
+        };
 
     @ParameterizedTest
     @FieldSource( "QUERY_PARAMETERS_CASES" )
@@ -119,7 +163,7 @@ QueryParameterCase
         // TEST SETUP: construct destination and HttpClient
         final String destinationUrl = wiremock.baseUrl() + "/?" + testCase.with.destinationQuery;
         final DefaultHttpDestination.Builder destinationBuilder = DefaultHttpDestination.builder(destinationUrl);
-        for (final String queryArg : testCase.with.propertiesQuery.split("&")) {
+        for( final String queryArg : testCase.with.propertiesQuery.split("&") ) {
             final String[] queryArgParts = queryArg.split("=", 2);
             destinationBuilder.property("URL.queries." + queryArgParts[0], queryArgParts[1]);
         }
@@ -147,7 +191,7 @@ QueryParameterCase
     void testRemoveDuplicateQueryArguments()
     {
         final ODataRequestGeneric request =
-            new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
+            new ODataRequestRead("/v1/path/to/", "endpoint", "blub=42", ODataProtocol.V2);
 
         final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
@@ -158,13 +202,13 @@ QueryParameterCase
         final Destination dest1 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "bar").build();
         final HttpClient client1 = HttpClientAccessor.getHttpClient(dest1);
         final ODataRequestResultGeneric result1 = new ODataRequestResultGeneric(request, httpResponse, client1);
-        assertThat(result1.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
+        assertThat(result1.getNextLink()).contains("/v1/path/to/endpoint?$skiptoken=s3cReT-t0k3n");
 
         // case 2: query parameters are NOT EQUAL in destination and in nextLink -> retain query parameter
         final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "baz").build();
         final HttpClient client2 = HttpClientAccessor.getHttpClient(dest2);
         final ODataRequestResultGeneric result2 = new ODataRequestResultGeneric(request, httpResponse, client2);
-        assertThat(result2.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
+        assertThat(result2.getNextLink()).contains("/v1/path/to/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
     }
 
     @Test
