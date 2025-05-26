@@ -3,7 +3,6 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -11,15 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -27,15 +19,23 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.FieldSource;
 
-import javax.annotation.Nonnull;
+import io.vavr.control.Try;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 class ODataNextLinkTest
 {
@@ -93,10 +93,11 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
-                        .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two")
-                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two")
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&next2=two") // parsed next-link with removed redundant query parameters
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&next2=two&prop1=one&prop2=two") // destination parameters + next-link parameters + properties parameters
                         .build()),
+
             // case 2: query-parameters from destination uri, destination properties, next-link and odata-request with equal values
             QueryParameterCase
                 .named("EQUAL")
@@ -111,10 +112,11 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
-                        .nextLinkQueryParsed("$skiptoken=42&next1=one&odata1=one")
-                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&odata1=one&prop1=one&prop2=two")
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
+                        .nextLinkQueryParsed("$skiptoken=42&next1=one&odata1=one") // parsed next-link with removed redundant query parameters
+                        .nextLinkQuerySent("dest1=one&dest2=two&$skiptoken=42&next1=one&odata1=one&prop1=one&prop2=two") // destination parameters + next-link parameters + properties parameters
                         .build()),
+
             // case 3: query-parameters from next link may be in conflict with destination uri or destination properties
             QueryParameterCase
                 .named("CONFLICT")
@@ -129,13 +131,32 @@ class ODataNextLinkTest
                 .expects(
                     QueryParameterCase.Expectation
                         .builder()
-                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two")
-                        .nextLinkQueryParsed("$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins")
+                        .initialQuerySent("dest1=one&dest2=two&odata1=one&odata2=two&prop1=one&prop2=two") // destination parameters + odata-request parameters + properties parameters
+                        .nextLinkQueryParsed("$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins") // parsed next-link with conflicting parameter values
                         .nextLinkQuerySent(
                             "dest1=one&dest2=two" // destination parameters
                                 + "&$skiptoken=42&next1=eins&dest1=eins&prop1=eins&odata1=eins" // next-link parameters
                                 + "&prop1=one&prop2=two" // properties parameters
                         )
+                        .build()),
+
+            // case 4: sanity check for same query-parameters
+            QueryParameterCase
+                .named("SANITY")
+                .with(
+                    QueryParameterCase.Setup
+                        .builder()
+                        .destinationQuery("foo=bar")
+                        .propertiesQuery("foo=bar")
+                        .initialQuery("foo=bar")
+                        .nextLinkQuery("foo=bar")
+                        .build())
+                .expects(
+                    QueryParameterCase.Expectation
+                        .builder()
+                        .initialQuerySent("foo=bar&foo=bar&foo=bar") // destination parameters + odata-request parameters + properties parameters
+                        .nextLinkQueryParsed("$skiptoken=42") // parsed next-link with removed redundant query parameters
+                        .nextLinkQuerySent("foo=bar&$skiptoken=42&foo=bar") // destination parameters + next-link parameters + properties parameters
                         .build()),
 
         };
@@ -191,7 +212,7 @@ class ODataNextLinkTest
     void testRemoveDuplicateQueryArguments()
     {
         final ODataRequestGeneric request =
-            new ODataRequestRead("/v1/path/to/", "endpoint", "blub=42", ODataProtocol.V2);
+            new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
 
         final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
@@ -202,13 +223,13 @@ class ODataNextLinkTest
         final Destination dest1 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "bar").build();
         final HttpClient client1 = HttpClientAccessor.getHttpClient(dest1);
         final ODataRequestResultGeneric result1 = new ODataRequestResultGeneric(request, httpResponse, client1);
-        assertThat(result1.getNextLink()).contains("/v1/path/to/endpoint?$skiptoken=s3cReT-t0k3n");
+        assertThat(result1.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
 
         // case 2: query parameters are NOT EQUAL in destination and in nextLink -> retain query parameter
-        final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "baz").build();
+        final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "SAP").build();
         final HttpClient client2 = HttpClientAccessor.getHttpClient(dest2);
         final ODataRequestResultGeneric result2 = new ODataRequestResultGeneric(request, httpResponse, client2);
-        assertThat(result2.getNextLink()).contains("/v1/path/to/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
+        assertThat(result2.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
     }
 
     @Test
