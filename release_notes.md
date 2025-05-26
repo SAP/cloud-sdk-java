@@ -16,8 +16,8 @@
 
 ### 📈 Improvements
 
-- Improve the detection and masking of secrets when logging data to debug.
+- 
 
 ### 🐛 Fixed Issues
 
-- Fixed OData V2 error: Disable Validation in the absense of DOCTYPE
+- 

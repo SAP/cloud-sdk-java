@@ -34,6 +34,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonToken;
+import com.sap.cloud.sdk.cloudplatform.connectivity.UriQueryMerger;
 import com.sap.cloud.sdk.datamodel.odata.client.JsonPath;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataResponseDeserializer;
@@ -554,10 +555,10 @@ public class ODataRequestResultGeneric
         for( final JsonPath path : getODataRequest().getProtocol().getPathToNextLink().getPaths() ) {
             final ResultElement resultElement = getResultElement(path);
             if( resultElement != null ) {
-                return Option
-                    .of(resultElement)
-                    .map(ResultElement::asString)
-                    .peek(link -> log.debug("Found reference to next page: {}", link));
+                String nextLink = resultElement.asString();
+                log.debug("Found reference to next page: {}", nextLink);
+                nextLink = removeDuplicateQueryParameters(nextLink);
+                return Option.of(nextLink);
             }
         }
         log.debug("Result does not reference any further pages.");
@@ -750,5 +751,32 @@ public class ODataRequestResultGeneric
             throw new IllegalArgumentException("Interpreting results as Void is not allowed.");
         }
 
+    }
+
+    @Nonnull
+    private String removeDuplicateQueryParameters( @Nonnull final String nextLink )
+    {
+        if( !(httpClient instanceof UriQueryMerger) ) {
+            return nextLink;
+        }
+        final String query = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create("")).getRawQuery();
+        if( query == null ) {
+            return nextLink;
+        }
+        final String[] segments = nextLink.split("\\?", 2);
+        final String[] queryArguments = query.split("&");
+        for( final String argument : queryArguments ) {
+            if( segments[1].contains(argument) ) {
+                segments[1] = segments[1].replace(argument, "");
+            }
+        }
+        if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
+            return nextLink;
+        }
+        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "?foo=bar&"
+        segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
+        final String updatedLink = segments[0] + "?" + segments[1];
+        log.debug("Updated reference to next page: {}", updatedLink);
+        return updatedLink;
     }
 }

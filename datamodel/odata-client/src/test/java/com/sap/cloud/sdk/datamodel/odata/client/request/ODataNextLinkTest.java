@@ -21,11 +21,15 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -137,6 +141,30 @@ QueryParameterCase
         wiremock.verify(getRequestedFor(urlEqualTo(secondRequest)));
 
         wiremock.shutdown();
+    }
+
+    @Test
+    void testRemoveDuplicateQueryArguments()
+    {
+        final ODataRequestGeneric request =
+            new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
+
+        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
+
+        final String baseUrl = "http://blub/?high=five";
+
+        // case 1: query parameters are EQUAL in destination and in nextLink -> remove redundant query parameter
+        final Destination dest1 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "bar").build();
+        final HttpClient client1 = HttpClientAccessor.getHttpClient(dest1);
+        final ODataRequestResultGeneric result1 = new ODataRequestResultGeneric(request, httpResponse, client1);
+        assertThat(result1.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
+
+        // case 2: query parameters are NOT EQUAL in destination and in nextLink -> retain query parameter
+        final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "baz").build();
+        final HttpClient client2 = HttpClientAccessor.getHttpClient(dest2);
+        final ODataRequestResultGeneric result2 = new ODataRequestResultGeneric(request, httpResponse, client2);
+        assertThat(result2.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
     }
 
     @Test

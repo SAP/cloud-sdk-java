@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.19.0-SNAPSHOT</version>
+	<version>5.20.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -44,7 +44,7 @@
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.19.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.20.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -85,9 +85,8 @@
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.19.0</jackson.version>
-		<commons-configuration.version>1.10</commons-configuration.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20250107</json.version>
+		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
@@ -188,13 +187,8 @@
 				<artifactId>neo-java-web-api</artifactId>
 				<version>${jco-api.version}</version>
 				<!-- we need it at compile time, but NOT at runtime.
-				At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
+        At runtime, the actual JCo artifacts from the buildpack take effect, not this dependency.-->
 				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>commons-configuration</groupId>
-				<artifactId>commons-configuration</artifactId>
-				<version>${commons-configuration.version}</version>
 			</dependency>
 			<!--Used in odata-generator-->
 			<dependency>
@@ -594,7 +588,7 @@
 								<rules>
 									<bannedDependencies>
 										<message>Do not reference generated API modules (or modules transitively
-											referencing generated API modules), as they might be removed by profiles.</message>
+                      referencing generated API modules), as they might be removed by profiles.</message>
 										<excludes>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
@@ -1014,9 +1008,9 @@
 							<group>
 								<title>Utility Packages</title>
 								<packages>com.sap.cloud.sdk.datamodel* :com.sap.cloud.sdk.result*:*
-									:com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
-									:com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
-									:org.eclipse*</packages>
+                  :com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
+                  :com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
+                  :org.eclipse*</packages>
 							</group>
 							<group>
 								<title>SAP S/4HANA</title>
