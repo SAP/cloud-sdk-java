@@ -108,6 +108,7 @@ class HttpClientWrapper extends CloseableHttpClient implements UriQueryMerger
     }
 
     @Nonnull
+    @Override
     public URI mergeRequestUri( @Nonnull final URI requestUri )
     {
         final UriPathMerger merger = new UriPathMerger();
