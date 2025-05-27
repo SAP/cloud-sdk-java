@@ -40,7 +40,7 @@
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
 		<httpcore5.version>5.3.4</httpcore5.version>
-		<httpclient5.version>5.4.4</httpclient5.version>
+		<httpclient5.version>5.5</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
 		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
 		<!-- XSUAA -->
