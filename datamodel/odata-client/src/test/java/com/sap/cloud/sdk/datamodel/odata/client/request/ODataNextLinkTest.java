@@ -163,7 +163,7 @@ class ODataNextLinkTest
 
     @ParameterizedTest
     @FieldSource( "QUERY_PARAMETERS_CASES" )
-    void testRemoveDuplicateQueryArguments1( @Nonnull final QueryParameterCase testCase )
+    void testQueryArgumentMerging( @Nonnull final QueryParameterCase testCase )
     {
         final WireMockConfiguration wiremockConfig = wireMockConfig().dynamicPort();
         final WireMockServer wiremock = new WireMockServer(wiremockConfig);
