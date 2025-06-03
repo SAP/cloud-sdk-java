@@ -169,6 +169,11 @@ components:
               items:
                 $ref: '#/components/schemas/FlavorType'
             - $ref: '#/components/schemas/FlavorType'
+            - type: array
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlavorType'
     FlavorType:
       type: object
       properties:

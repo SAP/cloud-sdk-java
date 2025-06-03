@@ -272,12 +272,28 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
             int nonPrimitives = 0;
             final var candidatesSingle = new HashSet<String>();
-            final var candidatesMultiple = new HashSet<String>();
+            final var candidatesMultiple1D = new HashSet<String>();
+            final var candidatesMultipleND = new HashSet<Map<String, String>>();
 
             for( final String candidate : candidates ) {
                 if( candidate.startsWith("List<") ) {
-                    final var c1 = candidate.substring(5, candidate.length() - 1);
-                    candidatesMultiple.add(c1);
+
+                    int depth = 0;
+                    String sub = candidate;
+
+                    while( sub.startsWith("List<") ) {
+                        sub = sub.substring(5, sub.length() - 1);
+                        depth++;
+                    }
+
+                    final String innerType = sub;
+
+                    if( depth == 1 ) {
+                        candidatesMultiple1D.add(innerType);
+                    } else {
+                        candidatesMultipleND
+                            .add(Map.of("innerType", innerType, "depth", String.valueOf(depth), "fullType", candidate));
+                    }
                     useCreators = true;
                 } else {
                     candidatesSingle.add(candidate);
@@ -294,7 +310,15 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                     log.warn(msg, m.name);
                 }
                 candidates.clear();
-                final var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
+                final var monads =
+                    Map
+                        .of(
+                            "single",
+                            candidatesSingle,
+                            "multiple1D",
+                            candidatesMultiple1D,
+                            "multipleND",
+                            candidatesMultipleND);
                 m.vendorExtensions.put("x-monads", monads);
                 m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
             }
