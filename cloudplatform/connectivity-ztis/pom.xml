@@ -51,12 +51,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- resolve vulnerability CVE-2025-48734 -->
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.11.0</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
