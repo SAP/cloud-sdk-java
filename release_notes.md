@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix `CVE-2025-48734` by transitive dependency update in `connectivity-ztis`.
