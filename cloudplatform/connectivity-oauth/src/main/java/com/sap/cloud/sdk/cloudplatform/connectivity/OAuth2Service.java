@@ -190,7 +190,7 @@ class OAuth2Service
                         tenantSubdomain,
                         additionalParameters,
                         false))
-            .getOrElseThrow(e -> buildException(e, tenant)); // thrown here
+            .getOrElseThrow(e -> buildException(e, tenant));
     }
 
     private TokenRequestFailedException buildException( Throwable e, Tenant tenant )
