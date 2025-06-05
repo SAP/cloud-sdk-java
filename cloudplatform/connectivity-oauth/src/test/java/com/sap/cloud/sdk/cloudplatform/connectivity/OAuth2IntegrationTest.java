@@ -8,10 +8,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingTestUtility.bindingWithCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,11 +35,13 @@ import org.junit.jupiter.api.Test;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 
 import io.vavr.control.Try;
 
@@ -149,6 +153,47 @@ class OAuth2IntegrationTest
                     .withRequestBody(containing("client_id=myClientId"))
                     .withRequestBody(containing("client_secret=myClientSecret"))
                     .withRequestBody(containing("app_tid=subscriber")));
+        }
+    }
+
+    @Test
+    void testExtended401ErrorMessage()
+    {
+        final ServiceBinding binding =
+            bindingWithCredentials(
+                ServiceIdentifier.IDENTITY_AUTHENTICATION,
+                entry("credential-type", "binding-secret"),
+                entry("clientid", "myClientId"),
+                entry("clientsecret", "myClientSecret"),
+                entry("url", "http://provider.ias.domain"),
+                entry("app_tid", "provider"));
+        final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
+
+        final Try<HttpDestination> maybeDestination =
+            new OAuth2ServiceBindingDestinationLoader().tryGetDestination(options);
+        assertThat(maybeDestination.isSuccess()).isTrue();
+        final HttpDestination destination = maybeDestination.get();
+
+        {
+            // provider case - no tenant:
+            // Here, the short error message is returned.
+            stubFor(post("/oauth2/token").withHost(equalTo("provider.ias.domain")).willReturn(unauthorized()));
+            assertThatCode(destination::getHeaders)
+                .isInstanceOf(DestinationAccessException.class)
+                .hasMessageEndingWith("Failed to resolve access token.")
+                .hasRootCauseInstanceOf(OAuth2ServiceException.class);
+        }
+        {
+            // subscriber tenant:
+            // Here, the error message contains a note about the SaaS registry.
+            stubFor(post("/oauth2/token").withHost(equalTo("subscriber.ias.domain")).willReturn(unauthorized()));
+
+            TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
+                assertThatCode(destination::getHeaders)
+                    .isInstanceOf(DestinationAccessException.class)
+                    .hasMessageEndingWith("wrongly set up dependencies in your SaaS registry.")
+                    .hasRootCauseInstanceOf(OAuth2ServiceException.class);
+            });
         }
     }
 
