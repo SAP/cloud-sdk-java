@@ -193,7 +193,7 @@ class OAuth2Service
             .getOrElseThrow(e -> buildException(e, tenant));
     }
 
-    private TokenRequestFailedException buildException( Throwable e, Tenant tenant )
+    private TokenRequestFailedException buildException(@Nonnull final Throwable e, @Nullable final Tenant tenant )
     {
         String msg = "Failed to resolve access token.";
         //        In case where tenant is subscriber, and we get 401 error, add hint to error message.
