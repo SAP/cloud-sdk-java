@@ -190,7 +190,17 @@ class OAuth2Service
                         tenantSubdomain,
                         additionalParameters,
                         false))
-            .getOrElseThrow(e -> new TokenRequestFailedException("Failed to resolve access token.", e));
+            .getOrElseThrow(e -> buildException(e, tenant)); // thrown here
+    }
+
+    private TokenRequestFailedException buildException( Throwable e, Tenant tenant )
+    {
+        String msg = "Failed to resolve access token.";
+        //        In case where tenant is subscriber, and we get 401 error, add hint to error message.
+        if( e.getMessage().contains("Http status code 401") && tenant != null ) {
+            msg += " This might be due to missing or wrongly set up dependencies in your SaaS registry.";
+        }
+        return new TokenRequestFailedException(msg, e);
     }
 
     private void setAppTidInCaseOfIAS( @Nullable final String tenantId )
