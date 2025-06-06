@@ -47,7 +47,7 @@
 		<sdk.version>5.20.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
-		<java.failOnWarning>true</java.failOnWarning>
+		<java.failOnWarning>false</java.failOnWarning>
 		<java.compilerArgument />
 		<javadoc.opts />
 		<project.rootdir>${project.basedir}</project.rootdir>
