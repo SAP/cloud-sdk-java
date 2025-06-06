@@ -191,7 +191,7 @@ class OAuth2IntegrationTest
             TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
                 assertThatCode(destination::getHeaders)
                     .isInstanceOf(DestinationAccessException.class)
-                    .hasMessageEndingWith("wrongly set up dependencies in your SaaS registry.")
+                    .hasMessageEndingWith("subscribed for the current tenant.")
                     .hasRootCauseInstanceOf(OAuth2ServiceException.class);
             });
         }
