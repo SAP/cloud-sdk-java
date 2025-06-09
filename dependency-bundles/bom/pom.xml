@@ -63,7 +63,7 @@
 		<commons-lang3.version>3.17.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
-		<caffeine.version>3.2.0</caffeine.version>
+		<caffeine.version>3.2.1</caffeine.version>
 		<jcache.version>1.1.1</jcache.version>
 		<resilience4j.version>2.3.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
