@@ -191,6 +191,7 @@ class OAuth2IntegrationTest
             TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
                 assertThatCode(destination::getHeaders)
                     .isInstanceOf(DestinationAccessException.class)
+                    .hasMessageContaining("identity service")
                     .hasMessageEndingWith("subscribed for the current tenant.")
                     .hasRootCauseInstanceOf(OAuth2ServiceException.class);
             });
