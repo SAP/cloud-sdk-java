@@ -100,21 +100,21 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.18.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.13.0</junit.jupiter.version>
+		<junit.jupiter.version>5.13.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.9</maven-plugin.version>
+		<maven-plugin.version>3.9.10</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
-		<caffeine.version>3.2.0</caffeine.version>
+		<caffeine.version>3.2.1</caffeine.version>
 		<openapi-generator.version>7.13.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.32</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.29</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.80</bouncycastle.version>
+		<bouncycastle.version>1.81</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.0</wiremock.version>
