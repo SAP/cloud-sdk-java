@@ -163,8 +163,8 @@ class OAuth2IntegrationTest
             bindingWithCredentials(
                 ServiceIdentifier.IDENTITY_AUTHENTICATION,
                 entry("credential-type", "binding-secret"),
-                entry("clientid", "myClientId"),
-                entry("clientsecret", "myClientSecret"),
+                entry("clientid", "myClientId2"),
+                entry("clientsecret", "myClientSecret2"),
                 entry("url", "http://provider.ias.domain"),
                 entry("app_tid", "provider"));
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
