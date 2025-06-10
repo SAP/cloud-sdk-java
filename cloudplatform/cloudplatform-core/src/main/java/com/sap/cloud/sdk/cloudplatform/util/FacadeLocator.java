@@ -1,13 +1,17 @@
 package com.sap.cloud.sdk.cloudplatform.util;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.cloudplatform.exception.ObjectLookupFailedException;
 
 import io.vavr.control.Try;
@@ -50,10 +54,23 @@ public class FacadeLocator
          *            The generic facade type.
          */
         @Nonnull
-        public <FacadeT> Collection<FacadeT> getFacades( @Nonnull final Class<FacadeT> facadeInterface )
+        public <FacadeT> List<FacadeT> getFacades( @Nonnull final Class<FacadeT> facadeInterface )
         {
-            final ServiceLoader<FacadeT> serviceLoader = ServiceLoader.load(facadeInterface, classLoader);
-            final List<FacadeT> result = Lists.newArrayList(serviceLoader);
+            final TreeMap<Class<? extends FacadeT>, FacadeT> sortedByName = new TreeMap<>(comparing(Class::getName));
+            final TreeMap<Class<? extends FacadeT>, FacadeT> sortedByPriority =
+                new TreeMap<>(comparingInt(f -> f.getAnnotation(Priority.class).value()));
+
+            ServiceLoader.load(facadeInterface, classLoader).stream().forEach(facade -> {
+                if( facade.type().isAnnotationPresent(Priority.class) ) {
+                    sortedByPriority.put(facade.type(), facade.get());
+                } else {
+                    sortedByName.put(facade.type(), facade.get());
+                }
+            });
+
+            final List<FacadeT> result = new ArrayList<>(sortedByPriority.values());
+            result.addAll(sortedByName.values());
+
             log.debug("Located the following extensions of {}: {}", facadeInterface, result);
             return result;
         }
@@ -144,7 +161,7 @@ public class FacadeLocator
      *            The generic facade type.
      */
     @Nonnull
-    public static <FacadeT> Collection<FacadeT> getFacades( @Nonnull final Class<FacadeT> facadeInterface )
+    public static <FacadeT> List<FacadeT> getFacades( @Nonnull final Class<FacadeT> facadeInterface )
     {
         return mockableInstance.getFacades(facadeInterface);
     }
