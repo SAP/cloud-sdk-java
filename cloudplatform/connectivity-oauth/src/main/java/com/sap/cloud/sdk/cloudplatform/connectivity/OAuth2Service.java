@@ -205,7 +205,7 @@ class OAuth2Service
         if( e instanceof OAuth2ServiceException
             && ((OAuth2ServiceException) e).getHttpStatusCode().equals(401)
             && tenant != null ) {
-            String extension;
+            final String extension;
             if( serviceIdentifier != null ) {
                 extension =
                     " In case you are accessing a multi-tenant BTP service on behalf of a subscriber tenant, ensure that the service instance (here, of the "
