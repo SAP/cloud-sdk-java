@@ -23,14 +23,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * OneOfWithMultipleArrays
+ * EmbeddingInputText
  */
-public interface OneOfWithMultipleArrays
+public interface EmbeddingInputText
 {
     /**
-     * Helper class to create a EmbeddingsInputTextById that implements {@link OneOfWithMultipleArrays}.
+     * Helper class to create a EmbeddingsInputTextById that implements {@link EmbeddingInputText}.
      */
-    record InnerEmbeddingsInputTextById(@com.fasterxml.jackson.annotation.JsonValue @Nonnull EmbeddingsInputTextById value) implements OneOfWithMultipleArrays {}
+    record InnerEmbeddingsInputTextById(@com.fasterxml.jackson.annotation.JsonValue @Nonnull EmbeddingsInputTextById value) implements EmbeddingInputText {}
 
     /**
      * Creator to enable deserialization of a EmbeddingsInputTextById.
@@ -47,9 +47,9 @@ public interface OneOfWithMultipleArrays
     }
 
     /**
-     * Helper class to create a String that implements {@link OneOfWithMultipleArrays}.
+     * Helper class to create a String that implements {@link EmbeddingInputText}.
      */
-    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements OneOfWithMultipleArrays {}
+    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements EmbeddingInputText {}
 
     /**
      * Creator to enable deserialization of a String.
@@ -66,9 +66,9 @@ public interface OneOfWithMultipleArrays
     }
 
     /**
-    * Helper class to create a list of String that implements {@link OneOfWithMultipleArrays}.
+    * Helper class to create a list of String that implements {@link EmbeddingInputText}.
     */
-    record InnerStrings(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<String> values) implements OneOfWithMultipleArrays {}
+    record InnerStrings(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<String> values) implements EmbeddingInputText {}
 
     /**
      * Creator to enable deserialization of a list of String.

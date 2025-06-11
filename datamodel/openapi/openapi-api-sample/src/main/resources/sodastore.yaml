@@ -117,7 +117,7 @@ components:
         mapping:
           disc_foo: '#/components/schemas/Foo'
           disc_bar: '#/components/schemas/Bar'
-    OneOfWithMultipleArrays:
+    EmbeddingInputText:
       oneOf:
         - type: string
           description: The string that will be turned into an embedding.
