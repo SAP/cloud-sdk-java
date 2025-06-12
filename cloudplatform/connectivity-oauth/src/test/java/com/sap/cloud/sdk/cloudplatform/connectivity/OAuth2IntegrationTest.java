@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static java.util.Map.entry;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.absent;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
@@ -161,12 +162,12 @@ class OAuth2IntegrationTest
     {
         final ServiceBinding binding =
             bindingWithCredentials(
-                ServiceIdentifier.IDENTITY_AUTHENTICATION,
+                ServiceIdentifier.DESTINATION,
                 entry("credential-type", "binding-secret"),
                 entry("clientid", "myClientId2"),
                 entry("clientsecret", "myClientSecret2"),
-                entry("url", "http://provider.ias.domain"),
-                entry("app_tid", "provider"));
+                entry("uri", "http://provider.destination.domain"),
+                entry("url", "http://provider.destination.domain"));
         final ServiceBindingDestinationOptions options = ServiceBindingDestinationOptions.forService(binding).build();
 
         final Try<HttpDestination> maybeDestination =
@@ -177,7 +178,11 @@ class OAuth2IntegrationTest
         {
             // provider case - no tenant:
             // Here, the short error message is returned.
-            stubFor(post("/oauth2/token").withHost(equalTo("provider.ias.domain")).willReturn(unauthorized()));
+            stubFor(
+                post("/oauth/token")
+                    .withHost(equalTo("provider.destination.domain"))
+                    .withHeader("X-zid", absent())
+                    .willReturn(unauthorized()));
             assertThatCode(destination::getHeaders)
                 .isInstanceOf(DestinationAccessException.class)
                 .hasMessageEndingWith("Failed to resolve access token.")
@@ -185,13 +190,16 @@ class OAuth2IntegrationTest
         }
         {
             // subscriber tenant:
-            // Here, the error message contains a note about the SaaS registry.
-            stubFor(post("/oauth2/token").withHost(equalTo("subscriber.ias.domain")).willReturn(unauthorized()));
+            // Here, the error message contains a note about updating the SaaS registry.
+            stubFor(
+                post("/oauth/token")
+                    .withHost(equalTo("provider.destination.domain"))
+                    .withHeader("X-zid", equalTo("subscriber"))
+                    .willReturn(unauthorized()));
 
             TenantAccessor.executeWithTenant(new DefaultTenant("subscriber", "subscriber"), () -> {
                 assertThatCode(destination::getHeaders)
                     .isInstanceOf(DestinationAccessException.class)
-                    .hasMessageContaining("identity service")
                     .hasMessageEndingWith("subscribed for the current tenant.")
                     .hasRootCauseInstanceOf(OAuth2ServiceException.class);
             });

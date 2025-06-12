@@ -43,7 +43,6 @@ import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +51,6 @@ import lombok.extern.slf4j.Slf4j;
  * This interface handles the communication with an OAuth2 service.
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
-@AllArgsConstructor( access = AccessLevel.PRIVATE )
 @Slf4j
 class OAuth2Service
 {
@@ -91,8 +89,6 @@ class OAuth2Service
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfiguration;
-    @Nullable
-    private ServiceIdentifier serviceIdentifier;
 
     // package-private for testing
     @Nonnull
@@ -205,18 +201,9 @@ class OAuth2Service
         if( e instanceof OAuth2ServiceException
             && ((OAuth2ServiceException) e).getHttpStatusCode().equals(401)
             && tenant != null ) {
-            final String extension;
-            if( serviceIdentifier != null ) {
-                extension =
-                    " In case you are accessing a multi-tenant BTP service on behalf of a subscriber tenant, ensure that the service instance (here, of the "
-                        + serviceIdentifier
-                        + " service) is declared as dependency to SaaS Provisioning Service or Subscription Manager (SMS) and subscribed for the current tenant.";
-            } else {
-                extension =
-                    " In case you are accessing a multi-tenant BTP service on behalf of a subscriber tenant, ensure that the service instance"
-                        + " is declared as dependency to SaaS Provisioning Service or Subscription Manager (SMS) and subscribed for the current tenant.";
-            }
-            message += extension;
+            message +=
+                " In case you are accessing a multi-tenant BTP service on behalf of a subscriber tenant, ensure that the service instance"
+                    + " is declared as dependency to SaaS Provisioning Service or Subscription Manager (SMS) and subscribed for the current tenant.";
         }
         return new TokenRequestFailedException(message, e);
     }
@@ -348,7 +335,6 @@ class OAuth2Service
         private TenantPropagationStrategy tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
         private final Map<String, String> additionalParameters = new HashMap<>();
         private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
-        private ServiceIdentifier serviceIdentifier;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -394,7 +380,6 @@ class OAuth2Service
         @Nonnull
         Builder withTenantPropagationStrategyFrom( @Nullable final ServiceIdentifier serviceIdentifier )
         {
-            this.serviceIdentifier = serviceIdentifier;
             final TenantPropagationStrategy tenantPropagationStrategy;
             if( ServiceIdentifier.IDENTITY_AUTHENTICATION.equals(serviceIdentifier) ) {
                 tenantPropagationStrategy = TenantPropagationStrategy.TENANT_SUBDOMAIN;
@@ -455,8 +440,7 @@ class OAuth2Service
                 onBehalfOf,
                 tenantPropagationStrategy,
                 additionalParameters,
-                resilienceConfig,
-                serviceIdentifier);
+                resilienceConfig);
         }
     }
 
