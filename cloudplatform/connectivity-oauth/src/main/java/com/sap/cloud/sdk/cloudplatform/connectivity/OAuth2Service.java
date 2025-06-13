@@ -36,6 +36,7 @@ import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.token.Token;
 import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
 
@@ -190,7 +191,21 @@ class OAuth2Service
                         tenantSubdomain,
                         additionalParameters,
                         false))
-            .getOrElseThrow(e -> new TokenRequestFailedException("Failed to resolve access token.", e));
+            .getOrElseThrow(e -> buildException(e, tenant));
+    }
+
+    private TokenRequestFailedException buildException( @Nonnull final Throwable e, @Nullable final Tenant tenant )
+    {
+        String message = "Failed to resolve access token.";
+        //        In case where tenant is not the provider tenant, and we get 401 error, add hint to error message.
+        if( e instanceof OAuth2ServiceException
+            && ((OAuth2ServiceException) e).getHttpStatusCode().equals(401)
+            && tenant != null ) {
+            message +=
+                " In case you are accessing a multi-tenant BTP service on behalf of a subscriber tenant, ensure that the service instance"
+                    + " is declared as dependency to SaaS Provisioning Service or Subscription Manager (SMS) and subscribed for the current tenant.";
+        }
+        return new TokenRequestFailedException(message, e);
     }
 
     private void setAppTidInCaseOfIAS( @Nullable final String tenantId )
