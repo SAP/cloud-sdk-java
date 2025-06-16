@@ -129,18 +129,22 @@ class GenerationConfigurationConverter
         void
         preprocessSpecification( @Nonnull final OpenAPI openAPI, @Nonnull final GenerationConfiguration config )
     {
-        if( !FIX_RESPONSE_SCHEMA_TITLES.isEnabled(config) )
+        if( !FIX_RESPONSE_SCHEMA_TITLES.isEnabled(config) ) {
             return;
+        }
         final Components components = openAPI.getComponents();
-        if( components == null )
+        if( components == null ) {
             return;
+        }
         final Map<String, ApiResponse> responses = components.getResponses();
-        if( responses == null )
+        if( responses == null ) {
             return;
+        }
         responses.forEach(( key, value ) -> {
             final Content mediaContent = value.getContent();
-            if( mediaContent == null )
+            if( mediaContent == null ) {
                 return;
+            }
             mediaContent.forEach(( mediaType, content ) -> {
                 final Schema<?> schema = content.getSchema();
                 if( schema != null && schema.getTitle() == null ) {
