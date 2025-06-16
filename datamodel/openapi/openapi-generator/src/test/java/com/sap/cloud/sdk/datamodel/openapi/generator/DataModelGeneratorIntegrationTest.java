@@ -57,6 +57,16 @@ class DataModelGeneratorIntegrationTest
             true,
             6,
             Map.of()),
+        INLINEOBJECT_SCHEMA_NAME(
+            "inlineobject-schemas-enabled",
+            "sodastore.yaml",
+            "com.sap.cloud.sdk.services.inlineobject.api",
+            "com.sap.cloud.sdk.services.inlineobject.model",
+            ApiMaturity.RELEASED,
+            true,
+            true,
+            4,
+            Map.of("fixResponseSchemaTitles", "true")),
         PARTIAL_GENERATION(
             "partial-generation",
             "sodastore.json",
