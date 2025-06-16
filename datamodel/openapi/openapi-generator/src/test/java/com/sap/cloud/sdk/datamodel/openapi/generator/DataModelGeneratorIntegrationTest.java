@@ -65,7 +65,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             true,
             true,
-            4,
+            5,
             Map.of("fixResponseSchemaTitles", "true")),
         PARTIAL_GENERATION(
             "partial-generation",
