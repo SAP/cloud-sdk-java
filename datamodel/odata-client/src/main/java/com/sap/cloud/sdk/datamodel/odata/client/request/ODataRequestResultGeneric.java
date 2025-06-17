@@ -744,14 +744,15 @@ public class ODataRequestResultGeneric
             if( !bufferingEnabled.getAsBoolean() || isAlreadyBuffered() ) {
                 return originalEntity;
             }
-
-            final Try<HttpEntity> entity = Try.of(() -> new BufferedHttpEntity(originalEntity));
-            if( entity.isFailure() ) {
-                log.warn("Failed to buffer HTTP response. Unable to buffer HTTP entity.", entity.getCause());
+            try {
+                final BufferedHttpEntity entity = new BufferedHttpEntity(originalEntity);
+                httpResponse.setEntity(entity);
+                return entity;
+            }
+            catch( final Exception e ) {
+                log.warn("Failed to buffer HTTP response. Unable to buffer HTTP entity.", e);
                 return originalEntity;
             }
-            httpResponse.setEntity(entity.get());
-            return entity.get();
         }
 
         public boolean isAlreadyBuffered()
