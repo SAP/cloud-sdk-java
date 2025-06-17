@@ -119,7 +119,7 @@ public class ODataRequestResultGeneric
         @Nullable final HttpClient httpClient )
     {
         this.oDataRequest = oDataRequest;
-        this.httpResponse = new BufferableHttpResponse(httpResponse, () -> isBufferHttpResponse);
+        this.httpResponse = BufferableHttpResponse.infer(httpResponse, this);
         this.httpClient = httpClient;
         this.protocol = oDataRequest.getProtocol();
 
@@ -733,8 +733,21 @@ public class ODataRequestResultGeneric
     @RequiredArgsConstructor
     private static class BufferableHttpResponse implements HttpResponse
     {
-        final @Delegate @Nonnull HttpResponse httpResponse;
-        final @Nonnull BooleanSupplier bufferingEnabled;
+        private final @Delegate @Nonnull HttpResponse httpResponse;
+        private final @Nonnull BooleanSupplier bufferingEnabled;
+
+        @Nonnull
+        private static
+            HttpResponse
+            infer( final @Nonnull HttpResponse httpResponse, final @Nonnull ODataRequestResultGeneric result )
+        {
+            if( httpResponse instanceof BufferableHttpResponse
+                || httpResponse.getEntity() == null
+                || httpResponse.getEntity().isRepeatable() ) {
+                return httpResponse;
+            }
+            return new BufferableHttpResponse(httpResponse, () -> result.isBufferHttpResponse);
+        }
 
         @Override
         public HttpEntity getEntity()
