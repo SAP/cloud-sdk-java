@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import javax.annotation.Nonnull;
 
-import lombok.SneakyThrows;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -38,6 +37,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 class ModificationResponseTest
