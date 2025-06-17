@@ -149,7 +149,9 @@ public class ODataRequestResultGeneric
     public void disableBufferingHttpResponse()
     {
         isBufferHttpResponse = false;
-        if( httpResponse instanceof final BufferableHttpResponse resp && resp.isAlreadyBuffered() ) {
+        if( !(httpResponse instanceof final BufferableHttpResponse resp) ) {
+            log.warn("Buffering the HTTP response cannot be disabled! The content cannot be buffered.");
+        } else if( resp.isAlreadyBuffered() ) {
             log.warn("Buffering the HTTP response cannot be disabled! The content has already been buffered.");
         }
     }
@@ -730,12 +732,24 @@ public class ODataRequestResultGeneric
         return updatedLink;
     }
 
+    /**
+     * A wrapper for {@link HttpResponse} that returns a buffered entity only if buffering is enabled.
+     */
     @RequiredArgsConstructor
     private static class BufferableHttpResponse implements HttpResponse
     {
         private final @Delegate @Nonnull HttpResponse httpResponse;
         private final @Nonnull BooleanSupplier bufferingEnabled;
 
+        /**
+         * Infers whether the {@link HttpResponse} can be buffered based on the original response.
+         *
+         * @param httpResponse
+         *            The original HTTP response
+         * @param result
+         *            The OData result object to read the buffering flag from
+         * @return A {@link HttpResponse} that is either the original response or a buffered version of it.
+         */
         @Nonnull
         private static
             HttpResponse
@@ -767,7 +781,7 @@ public class ODataRequestResultGeneric
             }
         }
 
-        public boolean isAlreadyBuffered()
+        private boolean isAlreadyBuffered()
         {
             return httpResponse.getEntity() instanceof BufferedHttpEntity;
         }
