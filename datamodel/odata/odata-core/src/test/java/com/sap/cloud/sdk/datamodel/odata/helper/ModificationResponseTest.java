@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +36,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 class ModificationResponseTest
@@ -134,6 +137,7 @@ class ModificationResponseTest
         assertThat(modification.getResponseHeaders()).isEmpty();
     }
 
+    @SneakyThrows
     @Test
     void testResponseIsOnlyEvaluatedOnce()
     {
@@ -142,13 +146,9 @@ class ModificationResponseTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final Header[] responseHeaders = {};
-
-        final HttpResponse response = mock(HttpResponse.class);
-        doReturn(responseHeaders).when(response).getAllHeaders();
-        doReturn(responseHeaders).when(response).getHeaders("ETag");
-        doReturn(new StringEntity("{\"foo\":\"bar\"}", UTF_8)).when(response).getEntity();
-        doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
+        final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        final StringEntity entity = spy(new StringEntity("{\"foo\":\"bar\"}", UTF_8));
+        response.setEntity(entity);
 
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
         final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject, destination);
@@ -161,6 +161,6 @@ class ModificationResponseTest
         final TestObject modifiedEntity = modification.getModifiedEntity();
         assertThat(modifiedEntity).isNotNull();
 
-        verify(response, times(1)).getEntity();
+        verify(entity, times(1)).getContent();
     }
 }
