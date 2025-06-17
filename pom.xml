@@ -84,7 +84,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.19.0</jackson.version>
+		<jackson.version>2.19.1</jackson.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -119,7 +119,7 @@
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.0</wiremock.version>
 		<checkstyle.version>10.25.0</checkstyle.version>
-		<byte-buddy.version>1.17.5</byte-buddy.version>
+		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
