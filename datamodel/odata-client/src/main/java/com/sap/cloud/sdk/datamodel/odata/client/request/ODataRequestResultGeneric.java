@@ -68,7 +68,6 @@ public class ODataRequestResultGeneric
 {
     private final ODataResponseDeserializer deserializer;
 
-    @Nullable
     private volatile boolean isBufferHttpResponse = true;
 
     @Getter
