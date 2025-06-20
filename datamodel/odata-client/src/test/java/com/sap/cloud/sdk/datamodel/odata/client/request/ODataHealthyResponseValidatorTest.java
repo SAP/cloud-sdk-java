@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -26,15 +27,8 @@ class ODataHealthyResponseValidatorTest
     @Test
     void testSuccess()
     {
-        final ODataRequestResult odataResult = new ODataRequestResult()
-        {
-            @Getter
-            private final ODataRequestGeneric oDataRequest = REQUEST;
-
-            @Getter
-            private final HttpResponse httpResponse =
-                new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        };
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_OK, "OK");
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         ODataHealthyResponseValidator.requireHealthyResponse(odataResult);
     }
@@ -42,15 +36,8 @@ class ODataHealthyResponseValidatorTest
     @Test
     void testNotFound()
     {
-        final ODataRequestResult odataResult = new ODataRequestResult()
-        {
-            @Getter
-            private final ODataRequestGeneric oDataRequest = REQUEST;
-
-            @Getter
-            private final HttpResponse httpResponse =
-                new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not Found");
-        };
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not Found");
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> ODataHealthyResponseValidator.requireHealthyResponse(odataResult))
@@ -81,18 +68,9 @@ class ODataHealthyResponseValidatorTest
             }
             """;
 
-        final ODataRequestResult odataResult = new ODataRequestResult()
-        {
-            @Getter
-            private final ODataRequestGeneric oDataRequest = REQUEST;
-
-            @Getter
-            private final HttpResponse httpResponse =
-                new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
-            {
-                httpResponse.setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
-            }
-        };
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
+        httpResponse.setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> ODataHealthyResponseValidator.requireHealthyResponse(odataResult))
