@@ -11,7 +11,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -20,6 +23,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpResponse;
@@ -161,5 +165,36 @@ class ODataRequestResultGenericTest
 
         final Map<String, Collection<String>> lastRequestHeaders = nextResult.getODataRequest().getHeaders();
         assertThat(lastRequestHeaders).containsExactly(entry("Accept", Collections.singletonList("application/json")));
+    }
+
+    @Test
+    @SneakyThrows
+    void testDisabledBuffer()
+    {
+        // test setup for request
+        final ODataRequestGeneric oDataRequest =
+            new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
+
+        // test setup for streamed http response
+        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "OK");
+        final String json = "{\"value\":[]}";
+        final InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+        httpResponse.setEntity(new InputStreamEntity(inputStream, json.length()));
+
+        // system under test
+        final ODataRequestResultGeneric testResult = new ODataRequestResultGeneric(oDataRequest, httpResponse);
+        testResult.disableBufferingHttpResponse();
+
+        // sanity checks do not consume the response
+        assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
+        assertThat(testResult.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+
+        // true-positive, successfully read once
+        assertThat(testResult.asListOfMaps()).isEmpty();
+
+        // true-negative, no second read possible
+        assertThatThrownBy(testResult::asListOfMaps)
+            .isInstanceOf(ODataDeserializationException.class)
+            .hasMessageContaining("Unable to read OData 4.0 response.");
     }
 }

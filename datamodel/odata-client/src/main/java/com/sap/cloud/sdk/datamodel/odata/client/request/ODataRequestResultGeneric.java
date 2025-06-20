@@ -126,6 +126,13 @@ public class ODataRequestResultGeneric
         deserializer = new ODataResponseDeserializer(protocol);
     }
 
+    @Nullable
+    @Override
+    public StatusLine getStatusLine()
+    {
+        return httpResponse.getStatusLine();
+    }
+
     /**
      * Set the default number deserialization strategy for generic JSON numbers without target type mapping.
      *
