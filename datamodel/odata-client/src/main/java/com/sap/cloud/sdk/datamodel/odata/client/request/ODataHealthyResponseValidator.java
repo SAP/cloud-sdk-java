@@ -38,13 +38,13 @@ class ODataHealthyResponseValidator
     static void requireHealthyResponse( @Nonnull final ODataRequestResult result )
     {
         final ODataRequestGeneric originalRequest = result.getODataRequest();
-        final HttpResponse httpResponse = result.getHttpResponse();
-        final StatusLine statusLine = httpResponse.getStatusLine();
+        final StatusLine statusLine = result.getStatusLine();
 
         if( statusLine != null && statusLine.getStatusCode() < HttpStatus.SC_BAD_REQUEST ) { // code < 400
             return;
         }
 
+        final HttpResponse httpResponse = result.getHttpResponse();
         final ODataRequestGeneric requestRelevantForException =
             findPotentialBatchItem(httpResponse, originalRequest).getOrElse(originalRequest);
 

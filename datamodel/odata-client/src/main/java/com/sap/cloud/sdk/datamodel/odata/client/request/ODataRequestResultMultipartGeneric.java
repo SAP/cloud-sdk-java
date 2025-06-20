@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.util.EntityUtils;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
@@ -59,6 +60,13 @@ public class ODataRequestResultMultipartGeneric
     {
         batchRequest = oDataRequest;
         this.httpResponse = httpResponse;
+    }
+
+    @Nullable
+    @Override
+    public StatusLine getStatusLine()
+    {
+        return httpResponse.getStatusLine(); // not trigger buffer
     }
 
     /**
