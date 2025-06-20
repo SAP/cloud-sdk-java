@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
-
-import lombok.Getter;
 
 class ODataHealthyResponseValidatorTest
 {
