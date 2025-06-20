@@ -88,15 +88,10 @@ class ODataHealthyResponseValidatorTest
 
             @Getter
             private final HttpResponse httpResponse =
-                new BasicHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                    "Internal Server Error")
-                {
-                    {
-                        setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
-                    }
-                };
+                new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
+            {
+                httpResponse.setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
+            }
         };
 
         assertThatExceptionOfType(ODataServiceErrorException.class)
