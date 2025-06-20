@@ -84,7 +84,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.19.0</jackson.version>
+		<jackson.version>2.19.1</jackson.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -93,7 +93,7 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.7</spring.version>
+		<spring.version>6.2.8</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<assertj-core.version>3.27.3</assertj-core.version>
@@ -109,7 +109,7 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.1</caffeine.version>
 		<openapi-generator.version>7.13.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.32</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.33</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.29</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
@@ -117,9 +117,9 @@
 		<bouncycastle.version>1.81</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
-		<wiremock.version>3.13.0</wiremock.version>
+		<wiremock.version>3.13.1</wiremock.version>
 		<checkstyle.version>10.25.0</checkstyle.version>
-		<byte-buddy.version>1.17.5</byte-buddy.version>
+		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>

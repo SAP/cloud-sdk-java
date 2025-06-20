@@ -130,7 +130,7 @@ public class ODataRequestResultGeneric
     @Override
     public StatusLine getStatusLine()
     {
-        return httpResponse.getStatusLine(); // not trigger buffer
+        return httpResponse.getStatusLine();
     }
 
     /**
