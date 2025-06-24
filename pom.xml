@@ -109,8 +109,8 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.1</caffeine.version>
 		<openapi-generator.version>7.13.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.33</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.29</io-swagger-parser-v3.version>
+		<io-swagger-core-v3.version>2.2.34</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.30</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
@@ -118,7 +118,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.1</wiremock.version>
-		<checkstyle.version>10.25.0</checkstyle.version>
+		<checkstyle.version>10.25.1</checkstyle.version>
 		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
