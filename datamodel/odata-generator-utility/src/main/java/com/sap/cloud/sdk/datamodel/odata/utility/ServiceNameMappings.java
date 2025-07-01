@@ -38,17 +38,17 @@ public class ServiceNameMappings
     {
     }
 
+    private ServiceNameMappings( @Nonnull final Path file )
+    {
+        this.file = file;
+    }
+
     /**
      * Creates a new instance of {@link ServiceNameMappings} with the specified file.
      *
      * @param file
      *            the file to read and write mappings from/to
      */
-    private ServiceNameMappings( @Nonnull final Path file )
-    {
-        this.file = file;
-    }
-
     public static ServiceNameMappings load( @Nonnull final Path file )
     {
         ServiceNameMappings mappings = new ServiceNameMappings(file);
