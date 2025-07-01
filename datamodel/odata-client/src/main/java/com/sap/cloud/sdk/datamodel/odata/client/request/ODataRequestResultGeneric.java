@@ -22,9 +22,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
-import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.collect.Streams;
@@ -67,15 +65,12 @@ public class ODataRequestResultGeneric
 {
     private final ODataResponseDeserializer deserializer;
 
-    @Nullable
-    private volatile HttpResponse bufferedHttpResponse;
-    private volatile boolean isBufferHttpResponse = true;
-
     @Getter
     @Nonnull
     private final ODataRequestGeneric oDataRequest;
 
     @Nonnull
+    @Getter
     private final HttpResponse httpResponse;
 
     private NumberDeserializationStrategy numberStrategy = NumberDeserializationStrategy.DOUBLE;
@@ -152,63 +147,11 @@ public class ODataRequestResultGeneric
      * Method that allows consumers to disable buffering HTTP response entity. Note that once this is disabled, HTTP
      * responses can only be streamed/read once
      *
+     * @deprecated Please use {@link ODataRequestGeneric#disableHttpResponseBuffering()} instead.
      */
+    @Deprecated
     public void disableBufferingHttpResponse()
     {
-        if( bufferedHttpResponse == null ) {
-            isBufferHttpResponse = false;
-        } else {
-            log.warn("Buffering the HTTP response cannot be disabled! The content has already been buffered.");
-        }
-    }
-
-    /**
-     * Method that creates a {@link BufferedHttpEntity} from the {@link HttpEntity} if buffering the HTTP response is
-     * not turned off by using {@link ODataRequestResultGeneric#disableBufferingHttpResponse()}.
-     *
-     * @return An HttpResponse
-     */
-    @Nonnull
-    @Override
-    public HttpResponse getHttpResponse()
-    {
-        if( !isBufferHttpResponse ) {
-            log.debug("Buffering is disabled, returning unbuffered http response");
-            return httpResponse;
-        }
-
-        if( bufferedHttpResponse != null ) {
-            return Objects.requireNonNull(bufferedHttpResponse);
-        }
-
-        synchronized( this ) {
-            if( bufferedHttpResponse != null ) {
-                return Objects.requireNonNull(bufferedHttpResponse);
-            }
-
-            final StatusLine statusLine = httpResponse.getStatusLine();
-            final HttpEntity httpEntity = httpResponse.getEntity();
-            if( statusLine == null || httpEntity == null ) {
-                log
-                    .debug(
-                        "skipping buffering of http entity as either there is no http entity or response does not include a status-line.");
-                return httpResponse;
-            }
-
-            final Try<HttpEntity> entity = Try.of(() -> new BufferedHttpEntity(httpEntity));
-            if( entity.isFailure() ) {
-                log.warn("Failed to buffer HTTP response. Unable to buffer HTTP entity.", entity.getCause());
-                return httpResponse;
-            }
-
-            final BasicHttpResponse proxyResponse = new BasicHttpResponse(statusLine);
-            proxyResponse.setHeaders(httpResponse.getAllHeaders());
-            proxyResponse.setEntity(entity.get());
-            Option.of(httpResponse.getLocale()).peek(proxyResponse::setLocale);
-            bufferedHttpResponse = proxyResponse;
-        }
-
-        return Objects.requireNonNull(bufferedHttpResponse);
     }
 
     @Override
