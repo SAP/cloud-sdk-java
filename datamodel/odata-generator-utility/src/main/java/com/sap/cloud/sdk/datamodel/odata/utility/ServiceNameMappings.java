@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Joiner;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This class is used to read and write service name mappings from a file.
@@ -49,9 +50,10 @@ public class ServiceNameMappings
      * @param file
      *            the file to read and write mappings from/to
      */
+    @Nonnull
     public static ServiceNameMappings load( @Nonnull final Path file )
     {
-        ServiceNameMappings mappings = new ServiceNameMappings(file);
+        val mappings = new ServiceNameMappings(file);
         if( Files.exists(file) ) {
             mappings.populateMappings();
         }
