@@ -409,11 +409,3 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
-
-      - name: "Notify"
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.event.inputs.branch }}
