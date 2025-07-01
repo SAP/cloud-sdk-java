@@ -100,7 +100,7 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.18.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.13.1</junit.jupiter.version>
+		<junit.jupiter.version>5.13.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -108,7 +108,7 @@
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.1</caffeine.version>
-		<openapi-generator.version>7.13.0</openapi-generator.version>
+		<openapi-generator.version>7.14.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.34</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.30</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
@@ -118,7 +118,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.1</wiremock.version>
-		<checkstyle.version>10.25.1</checkstyle.version>
+		<checkstyle.version>10.26.1</checkstyle.version>
 		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
@@ -899,7 +899,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.3.0</version>
+					<version>4.9.3.2</version>
 					<configuration>
 						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -911,7 +911,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.26.0</version>
+					<version>3.27.0</version>
 					<configuration>
 						<rulesets>
 							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>

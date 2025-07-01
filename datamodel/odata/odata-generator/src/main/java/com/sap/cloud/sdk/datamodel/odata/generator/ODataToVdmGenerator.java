@@ -288,13 +288,13 @@ class ODataToVdmGenerator
 
     private ServiceNameMappings loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        return new ServiceNameMappings(serviceMappingsFile.toPath());
+        return ServiceNameMappings.load(serviceMappingsFile.toPath());
     }
 
     private void storeConfiguration( final File serviceMappingsFile, final Iterable<Service> allODataServices )
     {
         ensureFileExists(serviceMappingsFile);
-        final ServiceNameMappings mappings = new ServiceNameMappings(serviceMappingsFile.toPath());
+        final ServiceNameMappings mappings = ServiceNameMappings.load(serviceMappingsFile.toPath());
 
         for( final Service oDataService : allODataServices ) {
             final String javaClassNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_CLASS_SUFFIX;
