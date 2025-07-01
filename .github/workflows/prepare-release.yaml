@@ -100,7 +100,6 @@ jobs:
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-blackduck-scan=true
             -f run-security-rating=true
 
       - name: "Await CI Workflow"

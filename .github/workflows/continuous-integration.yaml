@@ -19,11 +19,6 @@ on:
         required: false
         type: boolean
         default: false
-      run-blackduck-scan:
-        description: "Run BlackDuck Scan"
-        required: false
-        type: boolean
-        default: false
       run-security-rating:
         description: "Run Security Rating"
         required: false
