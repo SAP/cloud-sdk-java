@@ -1,6 +1,5 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -311,8 +310,8 @@ class ODataResponseParsingIntegrationTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);
 
+        request.disableHttpResponseBuffering();
         final ODataRequestResultGeneric result = request.execute(httpClient);
-        result.disableBufferingHttpResponse();
         assertThat(result.asMap()).containsKeys("value", "@odata.count");
         assertThatExceptionOfType(ODataDeserializationException.class).isThrownBy(() -> result.getInlineCount());
     }
@@ -323,9 +322,9 @@ class ODataResponseParsingIntegrationTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);
 
+        request.disableHttpResponseBuffering();
         final ODataRequestResultGeneric result = request.execute(httpClient);
         assertThat(result.asMap()).containsKeys("value", "@odata.count");
-        result.disableBufferingHttpResponse();
         assertThat(result.getInlineCount()).isEqualTo(20);
     }
 }

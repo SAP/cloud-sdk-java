@@ -182,8 +182,8 @@ class ODataRequestResultGenericTest
         httpResponse.setEntity(new InputStreamEntity(inputStream, json.length()));
 
         // system under test
+        oDataRequest.disableHttpResponseBuffering();
         final ODataRequestResultGeneric testResult = new ODataRequestResultGeneric(oDataRequest, httpResponse);
-        testResult.disableBufferingHttpResponse();
 
         // sanity checks do not consume the response
         assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
