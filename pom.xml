@@ -788,6 +788,17 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.sonatype.central</groupId>
+					<artifactId>central-publishing-maven-plugin</artifactId>
+					<version>0.8.0</version>
+					<extensions>true</extensions>
+					<configuration>
+						<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
+						<publishingServerId>central</publishingServerId>
+						<autoPublish>false</autoPublish>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.21.0</version>
@@ -1107,15 +1118,6 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>disable-doclint-java8</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
-			</properties>
-		</profile>
 		<profile>
 			<id>docs</id>
 			<activation>
