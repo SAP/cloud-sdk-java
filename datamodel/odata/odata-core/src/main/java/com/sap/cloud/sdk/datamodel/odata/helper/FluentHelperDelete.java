@@ -95,7 +95,9 @@ public abstract class FluentHelperDelete<FluentHelperT, EntityT extends VdmEntit
     public ModificationResponse<EntityT> executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
         final ODataRequestResultGeneric result = toRequest().execute(httpClient);
+        result.getHttpResponse(); // ensure HTTP response consumption
 
         return ModificationResponse.of(result, getEntity(), destination);
     }
