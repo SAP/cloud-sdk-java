@@ -98,7 +98,10 @@ public class SingleValueActionRequestBuilder<ResultT>
     public ActionResponseSingle<ResultT> execute( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
+        response.getHttpResponse(); // ensure HTTP response consumption
+
         return ActionResponseSingle.of(response, resultClass);
     }
 }
