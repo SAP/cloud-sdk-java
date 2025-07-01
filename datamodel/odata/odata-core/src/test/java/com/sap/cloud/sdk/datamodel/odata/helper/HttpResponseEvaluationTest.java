@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +35,12 @@ import lombok.SneakyThrows;
 
 public class HttpResponseEvaluationTest
 {
-
     private static final Destination DESTINATION = DefaultHttpDestination.builder("foo").build();
 
     private HttpClient httpClient;
-    private InputStreamEntity httpEntity;
     private BasicHttpResponse httpResponse;
+    private InputStreamEntity httpEntity;
+    private InputStream inputStream;
 
     @SneakyThrows
     @BeforeEach
@@ -48,8 +49,8 @@ public class HttpResponseEvaluationTest
         httpClient = mock(HttpClient.class);
 
         final String payload = "{\"d\": {\"results\": []}}";
-        final ByteArrayInputStream payloadBytes = new ByteArrayInputStream(payload.getBytes(UTF_8));
-        httpEntity = spy(new InputStreamEntity(payloadBytes, ContentType.APPLICATION_JSON));
+        inputStream = spy(new ByteArrayInputStream(payload.getBytes(UTF_8)));
+        httpEntity = spy(new InputStreamEntity(inputStream, ContentType.APPLICATION_JSON));
         httpResponse = spy(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         httpResponse.setEntity(httpEntity);
 
@@ -78,6 +79,7 @@ public class HttpResponseEvaluationTest
         verify(httpClient, times(1)).execute(any(HttpUriRequest.class));
         verify(httpResponse, times(1)).getEntity();
         verify(httpEntity, times(1)).writeTo(any(OutputStream.class));
+        verify(inputStream, times(1)).close();
 
         assertThat(result.getResponseStatusCode()).isEqualTo(200);
     }
@@ -99,6 +101,7 @@ public class HttpResponseEvaluationTest
         verify(httpClient, times(1)).execute(any(HttpUriRequest.class));
         verify(httpResponse, times(1)).getEntity();
         verify(httpEntity, times(1)).writeTo(any(OutputStream.class));
+        verify(inputStream, times(1)).close();
 
         assertThat(result.getResponseStatusCode()).isEqualTo(200);
     }
@@ -117,6 +120,7 @@ public class HttpResponseEvaluationTest
         verify(httpClient, times(1)).execute(any(HttpUriRequest.class));
         verify(httpResponse, times(1)).getEntity();
         verify(httpEntity, times(1)).writeTo(any(OutputStream.class));
+        verify(inputStream, times(1)).close();
 
         assertThat(result.getResponseStatusCode()).isEqualTo(200);
     }
@@ -136,6 +140,7 @@ public class HttpResponseEvaluationTest
         verify(httpClient, times(1)).execute(any(HttpUriRequest.class));
         verify(httpResponse, times(1)).getEntity();
         verify(httpEntity, times(1)).writeTo(any(OutputStream.class));
+        verify(inputStream, times(1)).close();
     }
 
     @SneakyThrows
@@ -153,5 +158,6 @@ public class HttpResponseEvaluationTest
         verify(httpClient, times(1)).execute(any(HttpUriRequest.class));
         verify(httpResponse, times(1)).getEntity();
         verify(httpEntity, times(1)).writeTo(any(OutputStream.class));
+        verify(inputStream, times(1)).close();
     }
 }
