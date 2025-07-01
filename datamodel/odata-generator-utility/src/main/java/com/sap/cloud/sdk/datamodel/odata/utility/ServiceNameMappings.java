@@ -44,12 +44,18 @@ public class ServiceNameMappings
      * @param file
      *            the file to read and write mappings from/to
      */
-    public ServiceNameMappings( @Nonnull final Path file )
+    private ServiceNameMappings( @Nonnull final Path file )
     {
         this.file = file;
+    }
+
+    public static ServiceNameMappings load( @Nonnull final Path file )
+    {
+        ServiceNameMappings mappings = new ServiceNameMappings(file);
         if( Files.exists(file) ) {
-            populateMappings();
+            mappings.populateMappings();
         }
+        return mappings;
     }
 
     /**
