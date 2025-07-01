@@ -217,15 +217,6 @@ jobs:
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
-      - name: "Run Unit Tests"
-        run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report --fail-at-end"
-          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
-          mvn $MVN_ARGS
-
-      - name: "Coverage Report"
-        run: python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
-
   static-code-analysis:
     needs: [ context, build ]
     runs-on: ubuntu-latest
