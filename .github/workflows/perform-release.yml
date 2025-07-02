@@ -69,6 +69,7 @@ jobs:
         uses: ./.github/actions/workflow-succeeded
         with:
           workflow: "Continuous Integration"
+          excluded-jobs: '["Run BlackDuck Scan"]'
           sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
 
       - name: "Check Whether Docs PR Can Be Merged"
