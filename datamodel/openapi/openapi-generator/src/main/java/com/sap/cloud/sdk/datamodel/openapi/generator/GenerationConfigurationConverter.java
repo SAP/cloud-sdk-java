@@ -148,7 +148,7 @@ class GenerationConfigurationConverter
             mediaContent.forEach(( mediaType, content ) -> {
                 final Schema<?> schema = content.getSchema();
                 if( schema != null && schema.getTitle() == null ) {
-                    schema.setTitle(key + " " + (mediaContent.size() > 1 ? mediaType : "Content"));
+                    schema.setTitle(key + " " + (mediaContent.size() > 1 ? mediaType : ""));
                 }
             });
         });
