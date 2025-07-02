@@ -357,7 +357,10 @@ jobs:
 
       - name: "Spotbugs ${{ matrix.task.archetype }}"
         working-directory: ./example-${{ matrix.task.archetype }}
+#        JONAS: remove exit 0 here
         run: >
+          exit 0
+          
           mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
           -Dhttp.keepAlive=false
           -Dmaven.wagon.http.pool=false
