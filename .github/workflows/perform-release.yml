@@ -83,7 +83,6 @@ jobs:
         run: |
           gh release download ${{ needs.prerequisites.outputs.release-tag }} --dir ./ --repo "${{ github.repository }}"
           # x=extract v=verbose z=decompress f=file C=destination directory
-          tar -xvzf apidocs-*.tar.gz -C .
           tar -xvzf release-*.tar.gz -C .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
