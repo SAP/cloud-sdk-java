@@ -72,30 +72,6 @@ jobs:
           excluded-jobs: '["Run BlackDuck Scan"]'
           sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
 
-      - name: "Check Whether Docs PR Can Be Merged"
-        if: ${{ inputs.skip-pr-merge != 'true' }}
-        uses: ./.github/actions/pr-is-mergeable
-        with:
-          pr-ref: ${{ steps.determine-branch-names.outputs.DOCS_BRANCH_NAME }}
-          repo: ${{ env.DOCS_REPO }}
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-          excluded-check-runs: |
-            {
-              \"Build Cloud SDK Documentation\": [\"dependabot\"]
-            }
-
-      - name: "Check Whether Release Notes PR Can Be Merged"
-        if: ${{ inputs.skip-pr-merge != 'true' }}
-        uses: ./.github/actions/pr-is-mergeable
-        with:
-          pr-ref: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
-          repo: ${{ env.DOCS_REPO }}
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-          excluded-check-runs: |
-            {
-              \"Build Cloud SDK Documentation\": [\"dependabot\"]
-            }
-
   release:
     name: "Release"
     needs: [ prerequisites ]
@@ -145,28 +121,5 @@ jobs:
 
       - name: "Publish the Draft Release"
         run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      - name: "Merge Docs PR"
-        if: ${{ inputs.skip-pr-merge != 'true' }}
-        run: gh pr merge --squash "${{ needs.prerequisites.outputs.docs-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-
-      - name: "Merge Release Notes PR"
-        if: ${{ inputs.skip-pr-merge != 'true' }}
-        run: |
-          # https://github.com/cli/cli/issues/8092#issuecomment-1814439651
-          # The Release Notes mergeability computation hasn't completed yet
-          # Because the base branch just changed from merging the Javadoc.
-          # Sleep and retry to work around "Base branch was modified." error.
-          for i in {1..3}; do
-            sleep 5
-            if gh pr merge --squash "${{ needs.prerequisites.outputs.release-notes-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"; then
-              exit 0
-            fi
-          done
-          exit 1
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
