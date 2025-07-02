@@ -45,12 +45,7 @@
 			<id>central</id>
 			<url>https://central.sonatype.com</url>
 		</repository>
-<!--		<snapshotRepository>-->
-<!--			<id>artifactory-snapshots</id>-->
-<!--			<url>https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</url>-->
-<!--		</snapshotRepository>-->
 	</distributionManagement>
-
 	<properties>
 		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Stable</x-sap-release-maturity>
