@@ -9,7 +9,7 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiResponse;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
 
-import com.sap.cloud.sdk.services.inlineobject.model.NotFoundContent;
+import com.sap.cloud.sdk.services.inlineobject.model.NotFound;
 import com.sap.cloud.sdk.services.inlineobject.model.ServiceUnavailableApplicationJson;
 import com.sap.cloud.sdk.services.inlineobject.model.ServiceUnavailableApplicationXml;
 import com.sap.cloud.sdk.services.inlineobject.model.Soda;

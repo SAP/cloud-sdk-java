@@ -35,10 +35,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * NotFoundContent
+ * NotFound
  */
 // CHECKSTYLE:OFF
-public class NotFoundContent 
+public class NotFound 
 // CHECKSTYLE:ON
 {
   @JsonProperty("message")
@@ -49,19 +49,19 @@ public class NotFoundContent
   private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
   /**
-   * Set the message of this {@link NotFoundContent} instance and return the same instance.
+   * Set the message of this {@link NotFound} instance and return the same instance.
    *
-   * @param message  The message of this {@link NotFoundContent}
-   * @return The same instance of this {@link NotFoundContent} class
+   * @param message  The message of this {@link NotFound}
+   * @return The same instance of this {@link NotFound} class
    */
-  @Nonnull public NotFoundContent message( @Nullable final String message) {
+  @Nonnull public NotFound message( @Nullable final String message) {
     this.message = message;
     return this;
   }
 
   /**
    * Get message
-   * @return message  The message of this {@link NotFoundContent} instance.
+   * @return message  The message of this {@link NotFound} instance.
    */
   @Nonnull
   public String getMessage() {
@@ -69,16 +69,16 @@ public class NotFoundContent
   }
 
   /**
-   * Set the message of this {@link NotFoundContent} instance.
+   * Set the message of this {@link NotFound} instance.
    *
-   * @param message  The message of this {@link NotFoundContent}
+   * @param message  The message of this {@link NotFound}
    */
   public void setMessage( @Nullable final String message) {
     this.message = message;
   }
 
   /**
-   * Get the names of the unrecognizable properties of the {@link NotFoundContent}.
+   * Get the names of the unrecognizable properties of the {@link NotFound}.
    * @return The set of properties names
    */
   @JsonIgnore
@@ -88,7 +88,7 @@ public class NotFoundContent
   }
 
   /**
-   * Get the value of an unrecognizable property of this {@link NotFoundContent} instance.
+   * Get the value of an unrecognizable property of this {@link NotFound} instance.
    * @deprecated Use {@link #toMap()} instead.
    * @param name  The name of the property
    * @return The value of the property
@@ -98,13 +98,13 @@ public class NotFoundContent
   @Deprecated
   public Object getCustomField( @Nonnull final String name ) throws NoSuchElementException {
     if( !cloudSdkCustomFields.containsKey(name) ) {
-        throw new NoSuchElementException("NotFoundContent has no field with name '" + name + "'.");
+        throw new NoSuchElementException("NotFound has no field with name '" + name + "'.");
     }
     return cloudSdkCustomFields.get(name);
   }
 
   /**
-   * Get the value of all properties of this {@link NotFoundContent} instance including unrecognized properties.
+   * Get the value of all properties of this {@link NotFound} instance including unrecognized properties.
    *
    * @return The map of all properties
    */
@@ -118,7 +118,7 @@ public class NotFoundContent
   }
 
   /**
-   * Set an unrecognizable property of this {@link NotFoundContent} instance. If the map previously contained a mapping
+   * Set an unrecognizable property of this {@link NotFound} instance. If the map previously contained a mapping
    * for the key, the old value is replaced by the specified value.
    * @param customFieldName The name of the property
    * @param customFieldValue The value of the property
@@ -138,9 +138,9 @@ public class NotFoundContent
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final NotFoundContent notFoundContent = (NotFoundContent) o;
-    return Objects.equals(this.cloudSdkCustomFields, notFoundContent.cloudSdkCustomFields) &&
-        Objects.equals(this.message, notFoundContent.message);
+    final NotFound notFound = (NotFound) o;
+    return Objects.equals(this.cloudSdkCustomFields, notFound.cloudSdkCustomFields) &&
+        Objects.equals(this.message, notFound.message);
   }
 
   @Override
@@ -151,7 +151,7 @@ public class NotFoundContent
   @Override
   @Nonnull public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("class NotFoundContent {\n");
+    sb.append("class NotFound {\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
