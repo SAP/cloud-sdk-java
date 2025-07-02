@@ -20,5 +20,5 @@
 
 ### 🐛 Fixed Issues
 
-- Fix `CVE-2025-48734` by transitive dependency update in `connectivity-ztis`.
-- For OData Generic Client: Fix `disableBufferingHttpResponse()` in `ODataRequestResultGeneric`.
+- OData v2 and OData v4: Fixes eager HTTP response evaluation for _Create_, _Update_, and _Delete_ request builders in convenience APIs.
+  Previous change of `5.20.0` may have resulted in the HTTP connection being left open after the request was executed.
