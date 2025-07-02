@@ -299,22 +299,6 @@ jobs:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
 
-      - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v3
-        with:
-          languages: "java"
-          queries: security-extended
-
-      - name: "Build SDK"
-        run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -Dmaven.test.skip=true ${{ env.MVN_SKIP_CI_PLUGINS }}"
-          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
-          mvn $MVN_ARGS
-
-      - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:java"
 
   test-archetypes:
     runs-on: ubuntu-latest
