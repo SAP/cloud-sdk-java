@@ -147,7 +147,6 @@ jobs:
       - name: "Create Release"
         id: create-release
         run: |
-          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/reports/apidocs/ .
           tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
           
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
@@ -157,7 +156,6 @@ jobs:
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
-          apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
           release-${{ needs.bump-version.outputs.release-version }}.tar.gz)
           
           echo "RELEASE_URL=$RELEASE_URL" >> $GITHUB_OUTPUT
@@ -203,7 +201,9 @@ jobs:
 
       - name: "Replace JavaDoc"
         id: replace-javadoc
+#        JONAS: remove first "exit 0" in following run
         run: |
+          exit 0 
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
           rm -rf $TARGET_DIR
