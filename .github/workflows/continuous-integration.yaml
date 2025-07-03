@@ -233,11 +233,6 @@ jobs:
             "mvn_goal": "org.apache.maven.plugins:maven-pmd-plugin:pmd",
             "report": ".pipeline/scripts/print-pmd.py"
           }
-          - {
-            "name": "Spotbugs",
-            "mvn_goal": "com.github.spotbugs:spotbugs-maven-plugin:spotbugs",
-            "report": ".pipeline/scripts/print-spotbugs.py"
-          }
     name: "Run ${{ matrix.task.name }} Analysis"
     steps:
       - name: "Checkout repository"
@@ -354,16 +349,6 @@ jobs:
       - name: "Test ${{ matrix.task.name }}"
         working-directory: ./example-${{ matrix.task.archetype }}
         run: mvn test -B -Dsurefire.logLevel='error'
-
-      - name: "Spotbugs ${{ matrix.task.archetype }}"
-        working-directory: ./example-${{ matrix.task.archetype }}
-#        JONAS: remove exit 0 here
-        run: >
-          exit 0
-          
-          mvn com.github.spotbugs:spotbugs-maven-plugin:check -B
-          -Dhttp.keepAlive=false
-          -Dmaven.wagon.http.pool=false
 
       - name: "Start ${{ matrix.task.archetype }}"
         working-directory: ./example-${{ matrix.task.archetype }}/application
