@@ -101,7 +101,7 @@ jobs:
       - name: "Deploy"
         run: >
           mvn
-          $MVN_CLI_ARGS -Drelease -s settings.xml 
+          $MVN_CLI_ARGS -Drelease
           -e 
           -DserverId=central -Durl=https://central.sonatype.com/api/v1/publisher/upload 
           -Dgpg.passphrase="$MAVEN_GPG_PASSPHRASE" -Dgpg.keyname="$MAVEN_CENTRAL_USER"
