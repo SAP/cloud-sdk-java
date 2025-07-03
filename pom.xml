@@ -43,7 +43,7 @@
 	<distributionManagement>
 		<repository>
 			<id>central</id>
-			<url>https://central.sonatype.com</url>
+			<url>https://central.sonatype.com/api/v1/publisher/upload</url>
 		</repository>
 	</distributionManagement>
 	<properties>
