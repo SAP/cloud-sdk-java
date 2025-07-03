@@ -90,9 +90,9 @@ jobs:
 
       - name: "Import GPG Key"
         run: |
-          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase "$PASSPHRASE" --import
+          echo "${{ secrets.PGP_PRIVATE_KEY }}" | gpg --batch --passphrase "$MAVEN_GPG_PASSPHRASE" --import
         env:
-          PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
       - name: "Create settings.xml"
         run: |
@@ -108,8 +108,8 @@ jobs:
           deploy
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          MAVEN_CENTRAL_USER: ${{ secrets.SONATYPE_TOKEN_NAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.SONATYPE_TOKEN_PASS }}
+          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
       - name: "Merge Code PR"
         if: ${{ inputs.skip-pr-merge != 'true' }}
