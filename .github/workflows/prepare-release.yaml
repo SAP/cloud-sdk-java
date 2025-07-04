@@ -123,21 +123,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
-      - name: "Download Release Artifacts"
-        uses: actions/download-artifact@v4
+
+      - name: "Setup java"
+        uses: actions/setup-java@v4
         with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .release-artifacts/
-      # needed to get the aggregated JavaDocs
-      - name: "Download SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .targets/
+          distribution: "sapmachine"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: "Build SDK"
+        run: |
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests"
+          mvn $MVN_ARGS
 
       - name: "Prepare git"
         run: |
