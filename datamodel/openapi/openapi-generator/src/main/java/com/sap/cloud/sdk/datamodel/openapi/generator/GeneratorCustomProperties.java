@@ -40,7 +40,12 @@ enum GeneratorCustomProperties
     /**
      * Remove schema components that are unused, before generating them.
      */
-    FIX_REMOVE_UNUSED_COMPONENTS("removeUnusedComponents", "false");
+    FIX_REMOVE_UNUSED_COMPONENTS("removeUnusedComponents", "false"),
+
+    /**
+     * Fix inconsistent "InlineObject\d*" class names for unnamed inline schemas of `//components/responses`.
+     */
+    FIX_RESPONSE_SCHEMA_TITLES("fixResponseSchemaTitles", "false");
 
     private final String key;
     private final String defaultValue;
