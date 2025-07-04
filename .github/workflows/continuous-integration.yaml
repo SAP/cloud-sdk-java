@@ -127,28 +127,6 @@ jobs:
 
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
           mvn $MVN_ARGS
-          
-          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
-            VERSION=$(cat latest.json | jq -r .version)
-            mkdir -p $HOME/.sdk-release
-          
-            PYTHON_ARGS="--version $VERSION --path-prefix $HOME/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}"
-            if [[ "${{ github.event.inputs.sign-release-artifacts }}" == "true" ]]; then
-              echo "[DEBUG] Signing release artifacts"
-              PYTHON_ARGS="$PYTHON_ARGS --with-signing"
-            fi
-          
-            python .pipeline/scripts/generate-release-artifacts.py $PYTHON_ARGS
-          else
-            echo "[DEBUG] Skipping release artifact generation"
-          fi
-
-      - name: "Build Module Inventory"
-        run: >
-          python ./scripts/create_module_inventory_file.py 
-          --sdk-root-directory ./ 
-          --output-file ./module-inventory.json 
-          --script-config ./scripts/common/_maven_module/maven_module_reader_configuration.json
 
       - name: "Verify Local Changes"
         run: |
@@ -160,28 +138,6 @@ jobs:
               git --no-pager diff
               exit 1
           fi
-
-      - name: "Upload Release Artifacts"
-        if: ${{ github.event.inputs.build-release-artifacts == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          path: ~/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}
-          retention-days: 1
-
-      - name: "Upload SDK M2"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.SDK_M2_PATH }}
-          retention-days: 1
-
-      - name: "Upload SDK Targets"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          path: ${{ env.SDK_TARGETS_PATH }}
-          retention-days: 1
 
   test:
     name: "Test"

@@ -99,17 +99,11 @@ jobs:
           echo '${{ secrets.CENTRAL_SONATYPE_SETTINGS_XML }}' > settings.xml
 
       - name: "Deploy"
-        run: >
-          mvn
-          $MVN_CLI_ARGS -Drelease
-          -e 
-          -DserverId=central -Durl=https://central.sonatype.com/api/v1/publisher/upload 
-          -Dgpg.passphrase="$MAVEN_GPG_PASSPHRASE" -Dgpg.keyname="$MAVEN_CENTRAL_USER"
-          deploy
+        run: |
+          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml"
+          mvn deploy $MVN_ARGS
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          MAVEN_CENTRAL_USER: ${{ secrets.MAVEN_CENTRAL_USER }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
       - name: "Merge Code PR"
         if: ${{ inputs.skip-pr-merge != 'true' }}
