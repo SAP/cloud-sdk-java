@@ -1194,10 +1194,10 @@
 							<executions>
 								<execution>
 									<id>attach-sources</id>
+									<phase>package</phase>
 									<goals>
 										<goal>jar-no-fork</goal>
 									</goals>
-									<phase>package</phase>
 								</execution>
 							</executions>
 						</plugin>
@@ -1205,9 +1205,19 @@
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok-maven-plugin</artifactId>
 							<version>1.18.20.0</version>
-							<configuration>
-								<addOutputDirectory>false</addOutputDirectory>
-							</configuration>
+							<executions>
+								<execution>
+									<id>delombok</id>
+									<phase>process-sources</phase>
+									<goals>
+										<goal>delombok</goal>
+									</goals>
+									<configuration>
+										<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+										<outputDirectory>${project.build.directory}/delombok</outputDirectory>
+									</configuration>
+								</execution>
+							</executions>
 							<dependencies>
 								<dependency>
 									<groupId>org.projectlombok</groupId>
@@ -1215,30 +1225,14 @@
 									<version>1.18.38</version>
 								</dependency>
 							</dependencies>
-							<executions>
-								<execution>
-									<id>delombok</id>
-									<goals>
-										<goal>delombok</goal>
-									</goals>
-									<phase>process-sources</phase>
-									<configuration>
-										<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-										<outputDirectory>${project.build.directory}/delombok</outputDirectory>
-									</configuration>
-								</execution>
-							</executions>
+							<configuration>
+								<addOutputDirectory>false</addOutputDirectory>
+							</configuration>
 						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
 							<version>3.11.2</version>
-							<configuration>
-								<quiet>true</quiet>
-								<additionalOptions>-Xdoclint:none</additionalOptions>
-								<show>protected</show>
-								<sourcepath>${project.basedir}/target/delombok</sourcepath>
-							</configuration>
 							<executions>
 								<execution>
 									<id>javadoc-jar</id>
@@ -1247,6 +1241,12 @@
 									</goals>
 								</execution>
 							</executions>
+							<configuration>
+								<quiet>true</quiet>
+								<additionalOptions>-Xdoclint:none</additionalOptions>
+								<show>protected</show>
+								<sourcepath>${project.basedir}/target/delombok</sourcepath>
+							</configuration>
 						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
@@ -1255,10 +1255,10 @@
 							<executions>
 								<execution>
 									<id>sign-artifacts</id>
+									<phase>verify</phase>
 									<goals>
 										<goal>sign</goal>
 									</goals>
-									<phase>verify</phase>
 								</execution>
 							</executions>
 						</plugin>
@@ -1268,10 +1268,10 @@
 							<version>3.1.4</version>
 							<executions>
 								<execution>
+									<phase>install</phase>
 									<goals>
 										<goal>install-file</goal>
 									</goals>
-									<phase>install</phase>
 									<configuration>
 										<file>${project.basedir}/target/${project.artifactId}-${project.version}.jar</file>
 										<sources>${project.basedir}/target/${project.artifactId}-${project.version}-sources.jar</sources>
@@ -1285,7 +1285,7 @@
 								</execution>
 							</executions>
 						</plugin>
-                        <!-- Skip default deploy plugin in favor of central-publishing-maven-plugin -->
+						<!-- Skip default deploy plugin in favor of central-publishing-maven-plugin -->
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-deploy-plugin</artifactId>
@@ -1350,7 +1350,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-install-plugin</artifactId>
-						<inherited>false</inherited>
 						<executions>
 							<execution>
 								<configuration>
@@ -1361,6 +1360,7 @@
 								</configuration>
 							</execution>
 						</executions>
+						<inherited>false</inherited>
 					</plugin>
 					<plugin>
 						<groupId>org.sonatype.central</groupId>
