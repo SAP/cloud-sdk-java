@@ -89,6 +89,12 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     @Setter
     protected CsrfTokenRetriever csrfTokenRetriever;
 
+    /**
+     * The response buffer strategy to use for this request.
+     */
+    @Nonnull
+    ResponseBufferStrategy bufferStrategy = ResponseBufferStrategy.ENABLED;
+
     ODataRequestGeneric(
         @Nonnull final String servicePath,
         @Nonnull final ODataResourcePath resourcePath,
@@ -141,6 +147,14 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     public void addListener( @Nonnull final ODataRequestListener listener )
     {
         listeners.add(listener);
+    }
+
+    /**
+     * Disable pre-buffering of http response entity.
+     */
+    public void disableHttpResponseBuffering()
+    {
+        bufferStrategy = ResponseBufferStrategy.DISABLED;
     }
 
     /**
@@ -229,6 +243,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     {
         return Try
             .ofSupplier(httpOperation)
+            .map(bufferStrategy.getHandler())
             .map(response -> new ODataRequestResultGeneric(this, response, httpClient))
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
