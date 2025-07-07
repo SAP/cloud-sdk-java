@@ -302,6 +302,10 @@
 								</goals>
 								<configuration>
 									<file>${project.basedir}/pom.xml</file>
+									<groupId>com.sap.cloud.sdk</groupId>
+									<artifactId>sdk-bom</artifactId>
+									<version>${sdk.version}</version>
+									<packaging>pom</packaging>
 									<!-- The parent has no sources -->
 									<sources>${empty.property}</sources>
 									<javadoc>${empty.property}</javadoc>
