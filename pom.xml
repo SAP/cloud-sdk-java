@@ -1049,21 +1049,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.1</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<forceCreation>true</forceCreation>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>com.sap.cloud.sdk.datamodel</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${sdk.version}</version>
