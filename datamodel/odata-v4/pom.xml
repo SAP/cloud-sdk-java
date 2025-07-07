@@ -46,4 +46,37 @@
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 		<japicmp.skip>true</japicmp.skip>
 	</properties>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<property>
+					<name>release</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<version>3.1.4</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>install-file</goal>
+								</goals>
+								<configuration>
+									<file>${project.basedir}/pom.xml</file>
+									<!-- The parent has no sources -->
+									<sources>${empty.property}</sources>
+									<javadoc>${empty.property}</javadoc>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

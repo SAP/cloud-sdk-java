@@ -101,7 +101,12 @@
 								<goals>
 									<goal>install-file</goal>
 								</goals>
-								<configuration />
+								<configuration>
+									<file>${project.basedir}/pom.xml</file>
+									<!-- The parent has no sources -->
+									<sources>${empty.property}</sources>
+									<javadoc>${empty.property}</javadoc>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

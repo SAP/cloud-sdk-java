@@ -80,14 +80,10 @@
 									<goal>install-file</goal>
 								</goals>
 								<configuration>
-									<file>${project.basedir}/target/${project.artifactId}-----${project.version}.jar</file>
-									<sources>${project.basedir}/target/${project.artifactId}-${project.version}-sources.jar</sources>
-									<javadoc>${project.basedir}/target/${project.artifactId}-${project.version}-javadoc.jar</javadoc>
-									<pomFile>${project.basedir}/pom.xml</pomFile>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<packaging>${project.packaging}</packaging>
+									<file>${project.basedir}/pom.xml</file>
+									<!-- The parent has no sources -->
+									<sources>${empty.property}</sources>
+									<javadoc>${empty.property}</javadoc>
 								</configuration>
 							</execution>
 						</executions>
