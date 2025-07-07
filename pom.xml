@@ -839,17 +839,6 @@
 					<version>3.6.1</version>
 					<executions>
 						<execution>
-							<id>remove-old-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>remove-project-artifact</goal>
-							</goals>
-							<configuration>
-								<removeAll>false</removeAll>
-								<failOnError>false</failOnError>
-							</configuration>
-						</execution>
-						<execution>
 							<id>add-source</id>
 							<phase>generate-sources</phase>
 							<goals>
