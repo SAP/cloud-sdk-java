@@ -100,7 +100,7 @@ jobs:
 
       - name: "Deploy"
         run: |
-          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -e"
+          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -X"
           mvn clean deploy $MVN_ARGS
         working-directory: ./
         env:
