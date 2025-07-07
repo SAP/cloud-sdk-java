@@ -1308,6 +1308,23 @@
 					</plugins>
 				</pluginManagement>
 				<plugins>
+					<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<executions>
+					<execution>
+						<id>remove-old-artifacts</id>
+						<phase>none</phase>
+						<goals>
+							<goal>remove-project-artifact</goal>
+						</goals>
+						<configuration>
+							<removeAll>false</removeAll>
+							<failOnError>false</failOnError>
+						</configuration>
+					</execution>
+					</executions>
+					</plugin>
 					<!-- The release artifacts don't contain our custom config files for these plugins -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
