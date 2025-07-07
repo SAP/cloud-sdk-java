@@ -100,7 +100,7 @@ jobs:
 
       - name: "Deploy"
         run: |
-          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml"
+          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -e"
           mvn deploy $MVN_ARGS
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
