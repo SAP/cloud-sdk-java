@@ -31,7 +31,6 @@
 		<module>dependency-bundles/modules-bom</module>
 		<module>cloudplatform</module>
 		<module>testutil</module>
-		<module>dependency-bundles/sdk-core</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
