@@ -32,6 +32,8 @@
 	</developers>
 	<modules>
 		<module>cloudplatform-core</module>
+		<module>security</module>
+		<module>tenant</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
