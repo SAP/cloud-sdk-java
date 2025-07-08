@@ -1298,7 +1298,7 @@
 								</execution>
 							</executions>
 							<configuration>
-								<flattenMode>resolveCiFriendliesOnly</flattenMode>
+								<flattenMode>oss</flattenMode>
 							</configuration>
 						</plugin>
 					</plugins>
