@@ -781,35 +781,6 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.4</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.4</version>
-					<configuration>
-						<retryFailedDeploymentCount>3</retryFailedDeploymentCount>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.sonatype.central</groupId>
-					<artifactId>central-publishing-maven-plugin</artifactId>
-					<version>0.8.0</version>
-					<extensions>true</extensions>
-					<configuration>
-						<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
-						<publishingServerId>central</publishingServerId>
-						<autoPublish>false</autoPublish>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.21.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-archetype-plugin</artifactId>
 					<version>3.4.0</version>
 				</plugin>
@@ -818,20 +789,7 @@
 					<artifactId>maven-plugin-plugin</artifactId>
 					<version>3.15.1</version>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.2.7</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+				<!-- JONAS: Is this needed? -->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
@@ -1301,6 +1259,7 @@
 								</execution>
 							</executions>
 							<configuration>
+								<!-- pre-defined config for open source projects -->
 								<flattenMode>oss</flattenMode>
 							</configuration>
 						</plugin>
