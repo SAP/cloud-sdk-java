@@ -29,7 +29,7 @@
 	<modules>
 		<module>dependency-bundles/bom</module>
 		<module>dependency-bundles/modules-bom</module>
-		<module>s4hana</module>
+		<module>cloudplatform</module>
 		<module>testutil</module>
 		<module>dependency-bundles/sdk-core</module>
 	</modules>
