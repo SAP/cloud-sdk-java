@@ -1280,6 +1280,32 @@
 								<autoPublish>false</autoPublish>
 							</configuration>
 						</plugin>
+						<!--						flatten the pom files to resolve version information stored in BOMs-->
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>flatten-maven-plugin</artifactId>
+							<version>1.7.1</version>
+							<executions>
+								<!-- enable flattening -->
+								<execution>
+									<id>flatten</id>
+									<phase>process-resources</phase>
+									<goals>
+										<goal>flatten</goal>
+									</goals>
+								</execution>
+								<!-- ensure proper cleanup -->
+								<execution>
+									<id>flatten.clean</id>
+									<goals>
+										<goal>clean</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<flattenMode>resolveCiFriendliesOnly</flattenMode>
+							</configuration>
+						</plugin>
 					</plugins>
 				</pluginManagement>
 				<plugins>
@@ -1320,6 +1346,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>flatten-maven-plugin</artifactId>
 					</plugin>
 					<!-- The plugins configuration below will not be inherited by children projects, they are specific to the parent pom -->
 					<plugin>
