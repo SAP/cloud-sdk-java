@@ -1280,7 +1280,7 @@
 								<autoPublish>false</autoPublish>
 							</configuration>
 						</plugin>
-						<!--						flatten the pom files to resolve version information stored in BOMs-->
+						<!-- flatten POM files to resolve dependency version information stored in BOMs -->
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>flatten-maven-plugin</artifactId>
