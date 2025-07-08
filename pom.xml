@@ -125,6 +125,7 @@
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
+		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
@@ -421,12 +422,14 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
 			<optional>${jsr305.optional}</optional>
+			<version>${findbugs-jsr305.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
