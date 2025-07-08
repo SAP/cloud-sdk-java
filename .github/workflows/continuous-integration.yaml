@@ -280,9 +280,6 @@ jobs:
       matrix:
         task:
           - {
-            "archetype": "spring-boot3",
-            "javaVersion": 17,
-            "startCommand": "mvn spring-boot:run -B",
           }
     name: "Test ${{ matrix.task.archetype }} Archetype"
     steps:
