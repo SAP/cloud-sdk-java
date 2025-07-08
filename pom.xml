@@ -428,8 +428,8 @@
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
-			<optional>${jsr305.optional}</optional>
 			<version>${findbugs-jsr305.version}</version>
+			<optional>${jsr305.optional}</optional>
 		</dependency>
 	</dependencies>
 	<build>
