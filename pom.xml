@@ -30,7 +30,6 @@
 		<module>dependency-bundles/bom</module>
 		<module>dependency-bundles/modules-bom</module>
 		<module>cloudplatform</module>
-		<module>testutil</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
