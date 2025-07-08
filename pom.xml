@@ -1275,7 +1275,7 @@
 							<version>0.8.0</version>
 							<extensions>true</extensions>
 							<configuration>
-								<deploymentName>SAP AI SDK ${project.version}</deploymentName>
+								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
 								<publishingServerId>central</publishingServerId>
 								<autoPublish>false</autoPublish>
 							</configuration>
