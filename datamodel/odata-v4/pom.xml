@@ -33,7 +33,6 @@
 		<module>odata-v4-core</module>
 		<module>odata-v4-generator</module>
 		<module>odata-v4-generator-maven-plugin</module>
-		<module>odata-v4-api-sample</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -48,6 +47,17 @@
 		<japicmp.skip>true</japicmp.skip>
 	</properties>
 	<profiles>
+		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
+			<modules>
+				<module>odata-v4-api-sample</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>release</id>
 			<activation>

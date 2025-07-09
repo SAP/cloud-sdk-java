@@ -33,7 +33,6 @@
 		<module>odata-core</module>
 		<module>odata-generator</module>
 		<module>odata-generator-maven-plugin</module>
-		<module>odata-api-sample</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -46,6 +45,17 @@
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 	</properties>
 	<profiles>
+		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
+			<modules>
+				<module>odata-api-sample</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>release</id>
 			<activation>

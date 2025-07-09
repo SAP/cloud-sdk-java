@@ -33,7 +33,6 @@
 		<module>openapi-core</module>
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
-		<module>openapi-api-sample</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -56,6 +55,17 @@
 		</dependencies>
 	</dependencyManagement>
 	<profiles>
+		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
+			<modules>
+				<module>openapi-api-sample</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>release</id>
 			<activation>
