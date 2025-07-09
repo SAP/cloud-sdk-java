@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.21.0-SNAPSHOT</version>
+		<version>0.21.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-dwc</artifactId>
 	<name>Deploy with Confidence Connectivity</name>
