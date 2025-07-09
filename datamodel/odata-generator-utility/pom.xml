@@ -36,7 +36,6 @@
 	<properties>
 		<!-- allow scope compile for lombok -->
 		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
-		<x-sap-release-audience>Public</x-sap-release-audience>
 		<x-sap-release-maturity>Beta</x-sap-release-maturity>
 	</properties>
 	<dependencies>
