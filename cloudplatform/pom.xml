@@ -31,24 +31,9 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>scp-cf</module>
 		<module>cloudplatform-core</module>
-		<module>caching</module>
-		<module>cloudplatform-connectivity</module>
-		<module>cloudplatform-connectivity-scp-cf</module>
-		<module>connectivity-destination-service</module>
-		<module>connectivity-dwc</module>
-		<module>connectivity-ztis</module>
-		<module>connectivity-oauth</module>
-		<module>connectivity-apache-httpclient4</module>
-		<module>connectivity-apache-httpclient5</module>
-		<module>resilience</module>
-		<module>resilience-api</module>
-		<module>resilience4j</module>
 		<module>security</module>
-		<module>servlet-jakarta</module>
 		<module>tenant</module>
-		<module>dwc-cf</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
