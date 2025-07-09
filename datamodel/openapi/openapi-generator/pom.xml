@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>5.21.0-SNAPSHOT</version>
+		<version>0.27.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-generator</artifactId>
 	<packaging>jar</packaging>
