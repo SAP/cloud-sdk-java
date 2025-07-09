@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk</groupId>
 		<artifactId>sdk-parent</artifactId>
-		<version>0.27.0-SNAPSHOT</version>
+		<version>5.21.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.sap.cloud.sdk.archetypes</groupId>
 	<artifactId>archetypes-parent</artifactId>

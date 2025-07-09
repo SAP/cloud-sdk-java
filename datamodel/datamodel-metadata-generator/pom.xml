@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>datamodel-parent</artifactId>
-		<version>0.27.0-SNAPSHOT</version>
+		<version>5.21.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>datamodel-metadata-generator</artifactId>
 	<name>Data Model - Metadata Generator (Beta)</name>
