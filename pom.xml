@@ -921,17 +921,6 @@
 								<outputDirectory>${project.build.directory}/delombok</outputDirectory>
 							</configuration>
 						</execution>
-						<execution>
-							<id>test-delombok</id>
-							<phase>generate-test-sources</phase>
-							<goals>
-								<goal>testDelombok</goal>
-							</goals>
-							<configuration>
-								<sourceDirectory>${project.basedir}/src/test/java</sourceDirectory>
-								<outputDirectory>${project.build.directory}/delombok-test</outputDirectory>
-							</configuration>
-						</execution>
 					</executions>
 					<dependencies>
 						<dependency>
@@ -1242,7 +1231,6 @@
 							<artifactId>flatten-maven-plugin</artifactId>
 							<version>1.7.1</version>
 							<executions>
-								<!-- enable flattening -->
 								<execution>
 									<id>flatten</id>
 									<phase>process-resources</phase>
@@ -1250,7 +1238,6 @@
 										<goal>flatten</goal>
 									</goals>
 								</execution>
-								<!-- ensure proper cleanup -->
 								<execution>
 									<id>flatten.clean</id>
 									<goals>
