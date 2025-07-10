@@ -1,86 +1,50 @@
-name: Deploy Snapshot to Maven Central
+name: Deploy Snapshot to common SAP Artifactory
 
 on:
   workflow_dispatch:
-    inputs:
-      skip_blackduck_scan:
-        description: "Skip Blackduck Scan"
-        type: boolean
-        default: false
-        required: false
-
-env:
-  CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI builds
-  RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI build workflow
-
-  MVN_CLI_ARGS: "--batch-mode --no-transfer-progress --fail-at-end --show-version"
+  schedule:
+    - cron: 0 20 * * 1-5
 
 jobs:
-  run-ci:
-    name: "Continuous Integration"
-    runs-on: ubuntu-latest
-    outputs:
-      ci-run-id: ${{ steps.trigger-ci.outputs.run-id }}
-    permissions:
-      actions: write # needed to trigger the ci-build workflow
-      statuses: write # needed to update the commit status
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-      - name: "Get Commit SHA"
-        run: echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: "Get Branch Name"
-        run: echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-
-      - name: "Trigger CI Workflow"
-        id: trigger-ci
-        uses: ./.github/actions/trigger-workflow
-        with:
-          workflow: ${{ env.CI_BUILD_WORKFLOW }}
-          workflow-ref: ${{ env.BRANCH_NAME }}
-          commit-sha: ${{ env.COMMIT_SHA }}
-          parameters: >
-            -f commit=${{ env.COMMIT_SHA }}
-            -f build-release-artifacts=true
-            -f run-blackduck-scan=${{ !github.event.inputs.skip_blackduck_scan }}
-
-      - name: "Await CI Workflow"
-        uses: ./.github/actions/await-workflow
-        with:
-          run-id: ${{ steps.trigger-ci.outputs.run-id }}
-          commit-status: "Continuous Integration Workflow"
-
   deploy-snapshot:
     name: Deploy Snapshot
-    needs: [ run-ci ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      actions: read # needed to download the artifacts from the ci-build workflow
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: "Deploy Snapshot"
-        uses: ./.github/actions/deploy-snapshot
+      - name: "Setup java"
+        uses: actions/setup-java@v4
         with:
-          ci-run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          repository-url: "https://oss.sonatype.org/content/repositories/snapshots"
-          repository-username: ${{ secrets.MAVEN_CENTRAL_USER }}
-          repository-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          release-artifact-name: ${{ env.RELEASE_ARTIFACT_NAME }}
+          distribution: "sapmachine"
+          java-version: "17"
+          server-id: artifactory-snapshots
+          server-username: DEPLOYMENT_USER
+          server-password: DEPLOYMENT_PASS
 
-  notify-job:
-    runs-on: ubuntu-latest
-    needs: [ run-ci, deploy-snapshot ]
-    if: ${{ failure() && github.ref == 'refs/heads/main' }}
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-      - name: "Notify"
-        run: python .pipeline/scripts/notify.py
+      - name: "Publish Snapshot"
+        run: >
+          mvn 
+          --batch-mode
+          --no-transfer-progress
+          --threads 1C
+          --show-version
+          -DrepositoryId=artifactory-snapshots
+          -Dmaven.compiler.showCompilationChanges
+          -Dhttp.keepAlive=false
+          clean package deploy
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.ref_name }}
+          DEPLOYMENT_USER: ${{ secrets.ARTIFACTORY_COMMON_USER }}
+          DEPLOYMENT_PASS: ${{ secrets.ARTIFACTORY_COMMON_PASSWORD }}
+
+      - name: "Slack Notification"
+        if: failure()
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "⚠️ Cloud SDK Snapshot Deployment failed! 😬 Please inspect & fix by clicking <https://github.com/SAP/cloud-sdk-java/actions/runs/${{ github.run_id }}|here>"
+            }

@@ -1,8 +1,7 @@
 name: "Main Build"
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI builds
