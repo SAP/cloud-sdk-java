@@ -163,7 +163,8 @@ jobs:
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
-          release-artifacts.tar.gz)
+          apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
+          release-${{ needs.bump-version.outputs.release-version }}.tar.gz)
           
           echo "RELEASE_URL=$RELEASE_URL" >> $GITHUB_OUTPUT
         env:
