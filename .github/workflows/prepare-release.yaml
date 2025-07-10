@@ -136,6 +136,14 @@ jobs:
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests"
           mvn $MVN_ARGS
 
+      - name: "Download SDK Targets"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_TARGETS_NAME }}
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
+          path: .targets/
+
       - name: "Prepare git"
         run: |
           git config --global user.email "cloudsdk@sap.com"
@@ -145,7 +153,8 @@ jobs:
         id: create-release
         run: |
           # Create a tarball of the whole repository into release-artifacts.tar.gz
-          tar --exclude=./release-artifacts.tar.gz -czf release-artifacts.tar.gz *
+          tar --exclude=./release-artifacts.tar.gz --exclude=./targets/ -czf release-${{ needs.bump-version.outputs.release-version }}.tar.gz *
+          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/reports/apidocs/ .
 
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT

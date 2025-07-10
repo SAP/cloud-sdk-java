@@ -64,6 +64,13 @@ jobs:
               \"dependabot merger\": [] 
             }
 
+      - name: "Check Code Release Commit Continuous Integration"
+        if: ${{ inputs.skip-pr-merge != 'true' }}
+        uses: ./.github/actions/workflow-succeeded
+        with:
+          workflow: "Continuous Integration"
+          sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
+
   release:
     name: "Release"
     needs: [ prerequisites ]
@@ -84,6 +91,7 @@ jobs:
         run: |
           gh release download ${{ needs.prerequisites.outputs.release-tag }} --dir ./ --repo "${{ github.repository }}"
           # x=extract v=verbose z=decompress f=file C=destination directory
+          tar -xvzf apidocs-*.tar.gz -C .
           tar -xvzf release-*.tar.gz -C .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,7 +110,6 @@ jobs:
         run: |
           MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -e"
           mvn clean deploy $MVN_ARGS
-        working-directory: ./
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
