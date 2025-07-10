@@ -70,6 +70,11 @@ jobs:
         with:
           workflow: "Continuous Integration"
           sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
+          # JONAS: remove following line again
+          excluded-check-runs: |
+            {
+              \"Continuous Integration\": [\"Run BlackDuck Scan\"]
+            }
 
   release:
     name: "Release"
