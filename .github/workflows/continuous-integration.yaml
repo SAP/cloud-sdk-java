@@ -129,7 +129,7 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -DskipTests -DskipFormatting"
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} install -DskipTests -DskipFormatting"
           
           if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
