@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>0.29.0-SNAPSHOT</version>
+		<version>5.21.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-apache-httpclient4</artifactId>
 	<name>Connectivity - Apache HTTP Client 4</name>
