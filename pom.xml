@@ -1186,25 +1186,7 @@
 								<addOutputDirectory>false</addOutputDirectory>
 							</configuration>
 						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
-							<executions>
-								<execution>
-									<id>javadoc-jar</id>
-									<goals>
-										<goal>jar</goal>
-									</goals>
-								</execution>
-							</executions>
-							<configuration>
-								<quiet>true</quiet>
-								<additionalOptions>-Xdoclint:none</additionalOptions>
-								<show>protected</show>
-								<sourcepath>${project.basedir}/target/delombok</sourcepath>
-							</configuration>
-						</plugin>
+						<!-- JONAS: removed maven-javadoc-plugin here -->
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-gpg-plugin</artifactId>
