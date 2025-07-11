@@ -42,7 +42,7 @@ env:
     ~/.m2/repository/archetype-catalog.xml
   SDK_TARGETS_NAME: "sdk-targets" # used for the SDK's target directories
   SDK_TARGETS_PATH: |
-    ./**/target/**
+    ./
 
   # keep the following two variables in sync with our 'cache-maven-dependencies.yaml' workflow
   MAVEN_CACHE_KEY: maven-dependencies
