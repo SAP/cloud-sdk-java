@@ -9,6 +9,7 @@ on:
     inputs:
       commit:
         # this commit is what is actually going to be checked out
+        # JONAS: Do I need all of these?
         description: "Commit SHA of the code to be built"
         required: true
       build-release-artifacts:

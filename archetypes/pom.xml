@@ -83,7 +83,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>release,docs</id>
 			<activation>
 				<property>
 					<name>release</name>
