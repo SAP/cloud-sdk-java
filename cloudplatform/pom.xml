@@ -70,6 +70,7 @@
 									<!-- The parent has no sources -->
 									<sources>${empty.property}</sources>
 									<javadoc>${empty.property}</javadoc>
+									<packaging>pom</packaging>
 								</configuration>
 							</execution>
 						</executions>
