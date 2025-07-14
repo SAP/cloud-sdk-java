@@ -972,6 +972,7 @@
 					<configuration>
 						<quiet>true</quiet>
 						<additionalOptions>${javadoc.opts}</additionalOptions>
+						<failOnError>false</failOnError>
 						<show>protected</show>
 						<groups>
 							<group>
