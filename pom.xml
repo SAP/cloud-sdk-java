@@ -970,7 +970,7 @@
 						</execution>
 					</executions>
 					<configuration>
-						<quiet>false</quiet>
+						<quiet>true</quiet>
 						<additionalOptions>${javadoc.opts}</additionalOptions>
 						<show>protected</show>
 						<groups>

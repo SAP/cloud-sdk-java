@@ -131,7 +131,7 @@ jobs:
         run: |
           MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} install -DskipTests -DskipFormatting"
           
-          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
+          if [[ "true" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
             python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
             MVN_ARGS="$MVN_ARGS javadoc:aggregate -Pdocs"
