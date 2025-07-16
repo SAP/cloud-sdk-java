@@ -234,6 +234,19 @@ jobs:
           distribution: "sapmachine"
           java-version: 17
 
+      - name: "Restore Dependencies"
+        id: restore-dependencies
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ env.MAVEN_CACHE_KEY }}
+          path: ${{ env.M2_ROOT }}
+
+      - name: "Restore SDK M2"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SDK_M2_NAME }}
+          path: ${{ env.M2_ROOT }}
+
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
