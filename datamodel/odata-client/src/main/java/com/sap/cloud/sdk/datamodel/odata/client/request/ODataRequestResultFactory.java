@@ -17,11 +17,6 @@ import io.vavr.control.Try;
 @FunctionalInterface
 interface ODataRequestResultFactory
 {
-    ODataRequestResultGeneric create(
-        @Nonnull final ODataRequestGeneric oDataRequest,
-        @Nonnull final HttpResponse httpResponse,
-        @Nullable final HttpClient httpClient );
-
     /**
      * Strategy that does not buffer the response.
      */
@@ -39,4 +34,9 @@ interface ODataRequestResultFactory
             .peek(entity -> Try.run(() -> copy.setEntity(new BufferedHttpEntity(entity))));
         return new ODataRequestResultGeneric(oDataRequest, copy, httpClient);
     };
+
+    ODataRequestResultGeneric create(
+        @Nonnull final ODataRequestGeneric oDataRequest,
+        @Nonnull final HttpResponse httpResponse,
+        @Nullable final HttpClient httpClient );
 }

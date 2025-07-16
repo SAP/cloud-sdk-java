@@ -140,6 +140,7 @@ public class ODataRequestRead extends ODataRequestGeneric
      * Disable pre-buffering of http response entity.
      */
     @Beta
+    @Nonnull
     public ODataRequestResultResource.Executable withoutResponseBuffering()
     {
         requestResultFactory = ODataRequestResultFactory.WITHOUT_BUFFER;
