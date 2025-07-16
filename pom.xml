@@ -27,14 +27,10 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>archetypes</module>
 		<module>dependency-bundles/bom</module>
 		<module>cloudplatform</module>
-		<module>datamodel</module>
 		<module>dependency-bundles/modules-bom</module>
-		<module>s4hana</module>
 		<module>testutil</module>
-		<module>dependency-bundles/sdk-core</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -53,7 +49,7 @@
 		<sdk.version>5.21.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
-		<java.failOnWarning>false</java.failOnWarning>
+		<java.failOnWarning>true</java.failOnWarning>
 		<java.compilerArgument />
 		<project.rootdir>${project.basedir}</project.rootdir>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
@@ -783,7 +779,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<failOnWarning>false</failOnWarning>
+					<failOnWarning>true</failOnWarning>
 					<failBuild>true</failBuild>
 					<ignoreNonCompile>false</ignoreNonCompile>
 					<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
