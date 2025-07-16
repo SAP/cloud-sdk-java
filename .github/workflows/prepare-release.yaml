@@ -239,7 +239,7 @@ jobs:
 
   create-code-pr:
     name: "Create Code PR"
-    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr ]
+    needs: [ bump-version, run-ci, create-release, create-release-notes-pr ]
     outputs:
       pr-url: ${{ steps.create-code-pr.outputs.PR_URL }}
     runs-on: ubuntu-latest
@@ -268,7 +268,6 @@ jobs:
           PR_URL=$(gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
           - [ ] Review the changes in [the release commit]($COMMIT_URL)
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
-          - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
           - [ ] Review **and approve** this PR
           - [ ] Trigger the [Perform Release Workflow](${{ github.event.repository.html_url }}/actions/workflows/perform-release.yml)
@@ -279,7 +278,7 @@ jobs:
 
   handle-failure:
     runs-on: ubuntu-latest
-    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr, create-code-pr ]
+    needs: [ bump-version, run-ci, create-release, create-release-notes-pr, create-code-pr ]
     permissions:
       contents: write # needed to delete the GitHub release
     if: ${{ failure() }}
@@ -308,13 +307,6 @@ jobs:
         run: git push --delete origin ${{ needs.bump-version.outputs.release-tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-        continue-on-error: true
-
-      - name: "Delete Docs PR"
-        if: ${{ needs.create-docs-pr.outputs.pr-url != '' }}
-        run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-docs-pr.outputs.pr-url }} --delete-branch
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
       - name: "Delete Release Notes PR"
