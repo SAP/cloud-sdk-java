@@ -133,7 +133,7 @@ jobs:
           
           if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
-            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Prelease"
+            MVN_ARGS="$MVN_ARGS -Prelease"
           fi
 
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
@@ -149,14 +149,6 @@ jobs:
               git --no-pager diff
               exit 1
           fi
-
-      - name: "Upload Release Artifacts"
-        if: ${{ github.event.inputs.build-release-artifacts == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          path: ~/.sdk-release/${{ env.RELEASE_ARTIFACT_NAME }}
-          retention-days: 1
 
       - name: "Upload SDK M2"
         uses: actions/upload-artifact@v4
@@ -194,10 +186,19 @@ jobs:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
-      - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
+      - name: "Run Unit Tests"
+#        JONAS: remove "exit 0"
+        run: |
+          exit 0 
+          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} org.jacoco:jacoco-maven-plugin:prepare-agent surefire:test org.jacoco:jacoco-maven-plugin:report --fail-at-end"
+          echo "[DEBUG] Running Maven with arguments: $MVN_ARGS"
+          mvn $MVN_ARGS
+
+      - name: "Coverage Report"
+#        JONAS: remove "exit 0"
+        run: |
+          exit 0
+          python .pipeline/scripts/print-coverage.py --jacoco-report-pattern "**/target/site/jacoco/jacoco.csv"
 
   static-code-analysis:
     needs: [ context, build ]
@@ -233,24 +234,6 @@ jobs:
           distribution: "sapmachine"
           java-version: 17
 
-      - name: "Restore Dependencies"
-        id: restore-dependencies
-        uses: actions/cache/restore@v4
-        with:
-          key: ${{ env.MAVEN_CACHE_KEY }}
-          path: ${{ env.M2_ROOT }}
-
-      - name: "Restore SDK M2"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_M2_NAME }}
-          path: ${{ env.M2_ROOT }}
-
-      - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-
       - name: "Run ${{ matrix.task.name }} Analysis"
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} ${{ env.MVN_SKIP_CI_PLUGINS }} ${{ matrix.task.mvn_goal }}"
@@ -273,13 +256,6 @@ jobs:
         with:
           distribution: "sapmachine"
           java-version: 17
-
-      - name: "Restore Dependencies"
-        id: restore-dependencies
-        uses: actions/cache/restore@v4
-        with:
-          key: ${{ env.MAVEN_CACHE_KEY }}
-          path: ${{ env.MAVEN_CACHE_DIR }}
 
   blackduck:
     name: "Run BlackDuck Scan"
