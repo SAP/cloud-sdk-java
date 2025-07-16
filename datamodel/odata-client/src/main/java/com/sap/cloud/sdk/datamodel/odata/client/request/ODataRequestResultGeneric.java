@@ -147,7 +147,8 @@ public class ODataRequestResultGeneric
      * Method that allows consumers to disable buffering HTTP response entity. Note that once this is disabled, HTTP
      * responses can only be streamed/read once
      *
-     * @deprecated Please use {@link ODataRequestGeneric#disableHttpResponseBuffering()} instead.
+     * @deprecated Please use {@link ODataRequestRead#withoutResponseBuffering()} or
+     *             {@link ODataRequestReadByKey#withoutResponseBuffering()} instead.
      */
     @Deprecated
     public void disableBufferingHttpResponse()

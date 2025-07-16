@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 
+import com.google.common.annotations.Beta;
 import com.google.common.net.UrlEscapers;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -133,5 +134,15 @@ public class ODataRequestRead extends ODataRequestGeneric
                 ? tryExecute(request::requestGet, httpClient)
                 : tryExecuteWithCsrfToken(httpClient, request::requestGet);
         return result.get();
+    }
+
+    /**
+     * Disable pre-buffering of http response entity.
+     */
+    @Beta
+    public ODataRequestResultResource.Executable withoutResponseBuffering()
+    {
+        requestResultFactory = ODataRequestResultFactory.WITHOUT_BUFFER;
+        return httpClient -> (ODataRequestResultResource) this.execute(httpClient);
     }
 }

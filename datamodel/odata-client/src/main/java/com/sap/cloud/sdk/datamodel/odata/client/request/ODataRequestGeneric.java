@@ -93,7 +93,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
      * The response buffer strategy to use for this request.
      */
     @Nonnull
-    ResponseBufferStrategy bufferStrategy = ResponseBufferStrategy.ENABLED;
+    ODataRequestResultFactory requestResultFactory = ODataRequestResultFactory.WITH_BUFFER;
 
     ODataRequestGeneric(
         @Nonnull final String servicePath,
@@ -147,14 +147,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     public void addListener( @Nonnull final ODataRequestListener listener )
     {
         listeners.add(listener);
-    }
-
-    /**
-     * Disable pre-buffering of http response entity.
-     */
-    public void disableHttpResponseBuffering()
-    {
-        bufferStrategy = ResponseBufferStrategy.DISABLED;
     }
 
     /**
@@ -243,8 +235,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     {
         return Try
             .ofSupplier(httpOperation)
-            .map(bufferStrategy.getHandler())
-            .map(response -> new ODataRequestResultGeneric(this, response, httpClient))
+            .map(response -> requestResultFactory.create(this, response, httpClient))
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
 
