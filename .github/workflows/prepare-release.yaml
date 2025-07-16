@@ -153,49 +153,11 @@ jobs:
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
-          apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
           release-${{ needs.bump-version.outputs.release-version }}.tar.gz)
           
           echo "RELEASE_URL=$RELEASE_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
-
-  create-docs-pr:
-    name: "Create JavaDocs PR"
-    needs: [ bump-version, run-ci ]
-    outputs:
-      branch: ${{ steps.replace-javadoc.outputs.BRANCH_NAME }}
-      pr-url: ${{ steps.create-javadoc-pr.outputs.PR_URL }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Code Repository"
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.bump-version.outputs.release-branch }}
-      - name: "Checkout Docs Repository"
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.DOCS_REPO }}
-          path: .cloud-sdk-docs
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-      # needed to get the aggregated JavaDocs
-      - name: "Download SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .targets
-
-      - name: "Determine Major Version"
-        id: determine-major-version
-        run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
-
-      - name: "Prepare Git"
-        working-directory: ./.cloud-sdk-docs
-        run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
 
   create-release-notes-pr:
     name: "Create Release Notes PR"
