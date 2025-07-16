@@ -1030,6 +1030,12 @@
 										<goal>aggregate</goal>
 									</goals>
 								</execution>
+								<execution>
+									<id>attach-javadocs</id>
+									<goals>
+										<goal>jar</goal>
+									</goals>
+								</execution>
 							</executions>
 							<configuration>
 								<quiet>true</quiet>
