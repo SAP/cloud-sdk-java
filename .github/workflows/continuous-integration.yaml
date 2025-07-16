@@ -134,7 +134,7 @@ jobs:
           if [[ "true" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
             python .pipeline/scripts/generate-javadoc-sourcepath-properties.py
-            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Prelease -Dgpg.skip"
+            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Prelease -Dgpg.skip -Dmaven.javadoc.skip=false"
           fi
 
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
