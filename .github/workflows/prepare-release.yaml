@@ -136,14 +136,6 @@ jobs:
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests"
           mvn $MVN_ARGS
 
-      - name: "Download SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .targets/
-
       - name: "Prepare git"
         run: |
           git config --global user.email "cloudsdk@sap.com"
