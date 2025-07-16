@@ -27,10 +27,14 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>archetypes</module>
 		<module>dependency-bundles/bom</module>
 		<module>cloudplatform</module>
+		<module>datamodel</module>
 		<module>dependency-bundles/modules-bom</module>
+		<module>s4hana</module>
 		<module>testutil</module>
+		<module>dependency-bundles/sdk-core</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
