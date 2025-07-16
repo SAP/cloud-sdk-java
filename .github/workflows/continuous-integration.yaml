@@ -129,11 +129,11 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_SINGLE_THREADED_ARGS }} install -DskipTests -DskipFormatting"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -DskipTests -DskipFormatting"
           
-          if [[ "true" == "true" ]]; then
+          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
             echo "[DEBUG] Building release artifacts"
-            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Prelease -Dgpg.skip -Dmaven.javadoc.skip=false"
+            MVN_ARGS="$MVN_ARGS javadoc:aggregate -Prelease"
           fi
 
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
@@ -163,13 +163,6 @@ jobs:
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.SDK_M2_PATH }}
-          retention-days: 1
-
-      - name: "Upload SDK Targets"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          path: ${{ env.SDK_TARGETS_PATH }}
           retention-days: 1
 
   test:

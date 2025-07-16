@@ -152,9 +152,7 @@ jobs:
       - name: "Create Release"
         id: create-release
         run: |
-          # Create a tarball of the whole repository into release-artifacts.tar.gz
           tar --exclude=./release-artifacts.tar.gz --exclude=./targets/ -czf release-${{ needs.bump-version.outputs.release-version }}.tar.gz *
-          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/ .
 
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT
@@ -206,51 +204,6 @@ jobs:
         run: |
           git config --global user.email "cloudsdk@sap.com"
           git config --global user.name "SAP Cloud SDK Bot"
-
-      - name: "Replace JavaDoc"
-        id: replace-javadoc
-#        JONAS: remove first "exit 0" in following run
-        run: |
-          exit 0 
-          TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
-
-          rm -rf $TARGET_DIR
-          mkdir -p $TARGET_DIR
-          mv ./.targets/target/reports/apidocs/* $TARGET_DIR
-
-          cd ./.cloud-sdk-docs
-          git add -A .
-
-          CHANGED_FILES="$(git status -s)"
-          if [[ -z "$CHANGED_FILES" ]]; then
-              echo "[DEBUG] No changes to API docs detected, skipping Pull Request creation."
-              echo "CREATE_PR=false" >> $GITHUB_OUTPUT
-              exit 0
-          fi
-
-          echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-
-          git switch --create $BRANCH_NAME
-          git commit -m "chore: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
-          COMMIT_SHA=$(git log -1 --pretty=format:"%H")
-          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
-
-          git push origin $BRANCH_NAME
-
-      - name: "Create JavaDoc PR"
-        id: create-javadoc-pr
-        if: ${{ steps.replace-javadoc.outputs.CREATE_PR == 'true' }}
-        working-directory: ./.cloud-sdk-docs
-        run: |
-          PR_TITLE="Java: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Replace the contents of v${{ steps.determine-major-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
-
-          PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
-          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
   create-release-notes-pr:
     name: "Create Release Notes PR"

@@ -1024,18 +1024,6 @@
 										<goal>jar</goal>
 									</goals>
 								</execution>
-								<execution>
-									<id>javadoc-aggregate</id>
-									<goals>
-										<goal>aggregate</goal>
-									</goals>
-								</execution>
-								<execution>
-									<id>attach-javadocs</id>
-									<goals>
-										<goal>jar</goal>
-									</goals>
-								</execution>
 							</executions>
 							<configuration>
 								<quiet>true</quiet>
