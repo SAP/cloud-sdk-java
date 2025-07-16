@@ -39,6 +39,7 @@ import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
+import com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration;
 
 import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
@@ -89,6 +90,8 @@ class OAuth2Service
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfiguration;
+    @Nonnull
+    private final TokenCacheConfiguration tokenCacheConfiguration;
 
     // package-private for testing
     @Nonnull
@@ -102,7 +105,7 @@ class OAuth2Service
     private OAuth2TokenService createTokenService( @Nonnull final CacheKey ignored )
     {
         if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
+            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
         }
 
         final DefaultHttpDestination destination =
@@ -115,7 +118,9 @@ class OAuth2Service
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
         try {
-            return new DefaultOAuth2TokenService((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
+            return new DefaultOAuth2TokenService(
+                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
+                tokenCacheConfiguration);
         }
         catch( final ClassCastException e ) {
             final String msg =
@@ -335,6 +340,7 @@ class OAuth2Service
         private TenantPropagationStrategy tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
         private final Map<String, String> additionalParameters = new HashMap<>();
         private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
+        private TokenCacheConfiguration tokenCacheConfiguration = OAuth2Options.DEFAULT_TOKEN_CACHE_CONFIGURATION;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -413,6 +419,13 @@ class OAuth2Service
         }
 
         @Nonnull
+        Builder withTokenCacheConfiguration( @Nonnull final TokenCacheConfiguration tokenCacheConfiguration )
+        {
+            this.tokenCacheConfiguration = tokenCacheConfiguration;
+            return this;
+        }
+
+        @Nonnull
         OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
@@ -440,7 +453,8 @@ class OAuth2Service
                 onBehalfOf,
                 tenantPropagationStrategy,
                 additionalParameters,
-                resilienceConfig);
+                resilienceConfig,
+                tokenCacheConfiguration);
         }
     }
 

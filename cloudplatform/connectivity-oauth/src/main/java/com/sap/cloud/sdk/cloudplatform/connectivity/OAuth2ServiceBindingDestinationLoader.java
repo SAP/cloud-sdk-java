@@ -326,6 +326,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 .withTenantPropagationStrategyFrom(serviceIdentifier)
                 .withAdditionalParameters(oAuth2Options.getAdditionalTokenRetrievalParameters())
                 .withTimeLimiter(oAuth2Options.getTimeLimiter())
+                .withTokenCacheConfiguration(oAuth2Options.getTokenCacheConfiguration())
                 .build();
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }
