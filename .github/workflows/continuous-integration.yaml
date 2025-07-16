@@ -129,13 +129,7 @@ jobs:
 
       - name: "Build SDK"
         run: |
-          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} install -DskipTests -DskipFormatting"
-          
-          if [[ "${{ github.event.inputs.build-release-artifacts }}" == "true" ]]; then
-            echo "[DEBUG] Building release artifacts"
-            MVN_ARGS="$MVN_ARGS -Prelease"
-          fi
-
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests -DskipFormatting"
           echo "[DEBUG] Running Maven with following arguments: $MVN_ARGS"
           mvn $MVN_ARGS
 
