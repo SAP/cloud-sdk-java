@@ -36,14 +36,12 @@ jobs:
           RELEASE_VERSION=$(echo $CODE_BRANCH_NAME | cut -d '-' -f2)
           RELEASE_TAG=rel/$RELEASE_VERSION
           RELEASE_COMMIT=$(gh release view $RELEASE_TAG --repo ${{github.repository}} --json targetCommitish --jq '.targetCommitish')
-          DOCS_BRANCH_NAME=java/release-docs-$RELEASE_VERSION
           RELEASE_NOTES_BRANCH_NAME=java/release-notes-$RELEASE_VERSION
           
           echo "CODE_BRANCH_NAME=$CODE_BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_OUTPUT
           echo "RELEASE_COMMIT=$RELEASE_COMMIT" >> $GITHUB_OUTPUT
-          echo "DOCS_BRANCH_NAME=$DOCS_BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "RELEASE_NOTES_BRANCH_NAME=$RELEASE_NOTES_BRANCH_NAME" >> $GITHUB_OUTPUT
           
           echo -e "[DEBUG] Current GITHUB_OUTPUT:\n$(cat $GITHUB_OUTPUT)"
@@ -84,7 +82,6 @@ jobs:
         run: |
           gh release download ${{ needs.prerequisites.outputs.release-tag }} --dir ./ --repo "${{ github.repository }}"
           # x=extract v=verbose z=decompress f=file C=destination directory
-          tar -xvzf apidocs-*.tar.gz -C .
           tar -xvzf release-*.tar.gz -C .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
