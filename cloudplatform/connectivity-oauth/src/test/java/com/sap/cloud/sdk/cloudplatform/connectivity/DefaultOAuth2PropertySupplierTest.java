@@ -25,7 +25,6 @@ import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.CredentialType;
-import com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration;
 
 import lombok.RequiredArgsConstructor;
 
@@ -244,21 +243,18 @@ class DefaultOAuth2PropertySupplierTest
 
         sut = new DefaultOAuth2PropertySupplier(options);
 
-        assertThat(sut.getOAuth2Options().getTokenCacheConfiguration())
-            .isSameAs(OAuth2Options.DEFAULT_TOKEN_CACHE_CONFIGURATION);
+        assertThat(sut.getOAuth2Options().getTokenCacheParameters())
+            .isSameAs(OAuth2Options.DEFAULT_TOKEN_CACHE_PARAMETERS);
 
         options =
             ServiceBindingDestinationOptions
                 .forService(binding)
-                .withOption(
-                    OAuth2Options.TokenCacheOption
-                        .of(
-                            TokenCacheConfiguration
-                                .getInstance(Duration.ofSeconds(10), 5, Duration.ofSeconds(1), false)))
+                .withOption(OAuth2Options.TokenCacheParameters.of(Duration.ofSeconds(10), 5, Duration.ofSeconds(1)))
                 .build();
         sut = new DefaultOAuth2PropertySupplier(options);
-        assertThat(sut.getOAuth2Options().getTokenCacheConfiguration())
-            .isEqualTo(TokenCacheConfiguration.getInstance(Duration.ofSeconds(10), 5, Duration.ofSeconds(1), false));
+        assertThat(sut.getOAuth2Options().getTokenCacheParameters())
+            .usingRecursiveComparison()
+            .isEqualTo(OAuth2Options.TokenCacheParameters.of(Duration.ofSeconds(10), 5, Duration.ofSeconds(1)));
     }
 
     @RequiredArgsConstructor

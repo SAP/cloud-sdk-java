@@ -134,7 +134,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     {
         final OAuth2Options.Builder builder = OAuth2Options.builder();
         options.getOption(OAuth2Options.TokenRetrievalTimeout.class).peek(builder::withTimeLimiter);
-        options.getOption(OAuth2Options.TokenCacheOption.class).peek(builder::withTokenCacheConfiguration);
+        options.getOption(OAuth2Options.TokenCacheParameters.class).peek(builder::withTokenCacheParameters);
         return builder.build();
     }
 
