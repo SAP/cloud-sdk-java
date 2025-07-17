@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static com.sap.cloud.security.xsuaa.util.UriUtil.expandPath;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,7 @@ import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
+import com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration;
 
 import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
@@ -101,8 +103,10 @@ class OAuth2Service
     @Nonnull
     private OAuth2TokenService createTokenService( @Nonnull final CacheKey ignored )
     {
+        var tokenCacheConfiguration =
+            TokenCacheConfiguration.getInstance(Duration.ofHours(1), 1000, Duration.ofSeconds(30), false);
         if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
+            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
         }
 
         final DefaultHttpDestination destination =
@@ -115,7 +119,9 @@ class OAuth2Service
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
         try {
-            return new DefaultOAuth2TokenService((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
+            return new DefaultOAuth2TokenService(
+                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
+                tokenCacheConfiguration);
         }
         catch( final ClassCastException e ) {
             final String msg =
