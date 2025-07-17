@@ -103,7 +103,7 @@ class OAuth2Service
     @Nonnull
     private OAuth2TokenService createTokenService( @Nonnull final CacheKey ignored )
     {
-        var tokenCacheConfiguration =
+        final var tokenCacheConfiguration =
             TokenCacheConfiguration.getInstance(Duration.ofHours(1), 1000, Duration.ofSeconds(30), false);
         if( !(identity instanceof ZtisClientIdentity) ) {
             return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
