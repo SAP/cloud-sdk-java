@@ -33,11 +33,22 @@ public final class OAuth2Options
      * @since 5.12.0
      */
     public static final TimeLimiterConfiguration DEFAULT_TIMEOUT = TimeLimiterConfiguration.of(Duration.ofSeconds(10));
+
+    /**
+     * The default cache duration is 10 minutes, with cache size of 1000 tokens, expiration delta of 30 sec and no cache
+     * statistics enabled.
+     *
+     * @since 5.21.0
+     */
+    public static final TokenCacheParameters DEFAULT_TOKEN_CACHE_PARAMETERS =
+        TokenCacheParameters.of(Duration.ofMinutes(10), 1000, Duration.ofSeconds(30));
+
     /**
      * The default {@link OAuth2Options} instance that does not alter the token retrieval process and does not use mTLS
      * for the target system connection.
      */
-    public static final OAuth2Options DEFAULT = new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null);
+    public static final OAuth2Options DEFAULT =
+        new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null, DEFAULT_TOKEN_CACHE_PARAMETERS);
 
     private final boolean skipTokenRetrieval;
     @Nonnull
@@ -57,6 +68,15 @@ public final class OAuth2Options
     @Nullable
     @Getter
     private final KeyStore clientKeyStore;
+
+    /**
+     * Configuration for caching OAuth2 tokens.
+     *
+     * @since 5.21.0
+     */
+    @Nonnull
+    @Getter( AccessLevel.PACKAGE )
+    private final TokenCacheParameters tokenCacheParameters;
 
     /**
      * Indicates whether to skip the OAuth2 token flow.
@@ -101,6 +121,7 @@ public final class OAuth2Options
         private final Map<String, String> additionalTokenRetrievalParameters = new HashMap<>();
         private KeyStore clientKeyStore;
         private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
+        private TokenCacheParameters tokenCacheParameters = DEFAULT_TOKEN_CACHE_PARAMETERS;
 
         /**
          * Indicates whether to skip the OAuth2 token flow.
@@ -179,6 +200,21 @@ public final class OAuth2Options
         }
 
         /**
+         * Set a custom token cache configuration. {@link #DEFAULT_TOKEN_CACHE_PARAMETERS} by default.
+         *
+         * @param tokenCacheParameters
+         *            The custom token cache parameters.
+         * @return This {@link Builder}.
+         * @since 5.21.0
+         */
+        @Nonnull
+        public Builder withTokenCacheParameters( @Nonnull final TokenCacheParameters tokenCacheParameters )
+        {
+            this.tokenCacheParameters = tokenCacheParameters;
+            return this;
+        }
+
+        /**
          * Creates a new {@link OAuth2Options} instance.
          *
          * @return A new {@link OAuth2Options} instance.
@@ -198,7 +234,8 @@ public final class OAuth2Options
                 skipTokenRetrieval,
                 new HashMap<>(additionalTokenRetrievalParameters),
                 timeLimiter,
-                clientKeyStore);
+                clientKeyStore,
+                tokenCacheParameters);
         }
     }
 
@@ -214,4 +251,29 @@ public final class OAuth2Options
         @Nonnull
         private final TimeLimiterConfiguration value;
     }
+
+    /**
+     * Configure the {@link TokenCacheParameters} to be used for caching OAuth2 tokens.
+     *
+     * @since 5.21.0
+     */
+    @Getter
+    @RequiredArgsConstructor( staticName = "of" )
+    public static class TokenCacheParameters implements OptionsEnhancer<TokenCacheParameters>
+    {
+        @Nonnull
+        private final Duration cacheDuration;
+        @Nonnull
+        private final Integer cacheSize;
+        @Nonnull
+        private final Duration tokenExpirationDelta;
+
+        @Override
+        @Nonnull
+        public TokenCacheParameters getValue()
+        {
+            return this;
+        }
+    }
+
 }

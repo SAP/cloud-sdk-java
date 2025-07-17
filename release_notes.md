@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Add `TokenCacheParameters` to `OAuth2Options` to configurate token cache duration, expiration delta and cache size.
 
 ### 📈 Improvements
 
