@@ -33,9 +33,6 @@
 		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
-	<properties>
-		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
-	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

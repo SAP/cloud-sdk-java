@@ -27,10 +27,14 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>archetypes</module>
 		<module>dependency-bundles/bom</module>
 		<module>cloudplatform</module>
+		<module>datamodel</module>
 		<module>dependency-bundles/modules-bom</module>
+		<module>s4hana</module>
 		<module>testutil</module>
+		<module>dependency-bundles/sdk-core</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -44,7 +48,6 @@
 		</repository>
 	</distributionManagement>
 	<properties>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
 		<sdk.version>5.21.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
@@ -1199,6 +1202,17 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>build-test-modules</id>
+			<activation>
+				<property>
+					<name>!audience</name>
+				</property>
+			</activation>
+			<modules>
+				<module>testutil</module>
+			</modules>
 		</profile>
 	</profiles>
 </project>

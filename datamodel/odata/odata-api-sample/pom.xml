@@ -33,10 +33,6 @@
 		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
-	<properties>
-		<x-sap-release-audience>None</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>

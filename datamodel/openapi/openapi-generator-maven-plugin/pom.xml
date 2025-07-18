@@ -35,7 +35,6 @@
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- allow transitive use of javax.inject since this module is not included as dependency -->
 		<enforcer.skipEnforceScopeJavaEE>true</enforcer.skipEnforceScopeJavaEE>
 		<!-- allow scope compile for lombok since this module is not included as dependency -->

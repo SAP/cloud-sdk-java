@@ -34,7 +34,6 @@
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<jsr305.optional>false</jsr305.optional>
 	</properties>
 	<dependencies>

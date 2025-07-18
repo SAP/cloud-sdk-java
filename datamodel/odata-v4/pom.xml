@@ -40,7 +40,6 @@
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- skip the API compatibility check since this module is still in beta phase -->
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>
 		<japicmp.skip>true</japicmp.skip>
@@ -58,7 +57,7 @@
 			</modules>
 		</profile>
 		<profile>
-			<id>release,docs</id>
+			<id>release</id>
 			<activation>
 				<property>
 					<name>release</name>
