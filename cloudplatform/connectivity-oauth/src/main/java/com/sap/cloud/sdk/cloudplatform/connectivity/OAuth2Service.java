@@ -220,6 +220,10 @@ class OAuth2Service
             // the IAS property supplier will have set this to the provider ID by default
             // we have to override it here to match the current tenant, if the current tenant is defined
             additionalParameters.put("app_tid", tenantId);
+            if (onBehalfOf == OnBehalfOf.NAMED_USER_CURRENT_TENANT) {
+                // workaround until a fix is provided by IAS
+                additionalParameters.put("refresh_token", "0");
+            }
         }
     }
 
