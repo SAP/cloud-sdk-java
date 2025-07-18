@@ -76,6 +76,7 @@ jobs:
           distribution: "sapmachine"
           java-version: ${{ env.JAVA_VERSION }}
           server-id: central
+          maven-version: '3.9.9'
 
       - name: "Download Release Asset"
         id: download-asset
@@ -99,7 +100,7 @@ jobs:
       - name: "Deploy"
         run: |
           MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -e"
-          mvn clean deploy $MVN_ARGS
+          mvn deploy $MVN_ARGS
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
 
