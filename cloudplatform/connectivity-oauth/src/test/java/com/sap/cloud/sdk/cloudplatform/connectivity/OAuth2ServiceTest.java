@@ -226,6 +226,7 @@ class OAuth2ServiceTest
                     1,
                     postRequestedFor(urlEqualTo("/oauth/token"))
                         .withRequestBody(containing("app_tid=tenant"))
+                        .withRequestBody(containing("refresh_token=0"))
                         .withRequestBody(
                             containing("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer".replace(":", "%3A")))
                         .withRequestBody(containing("assertion=" + token)));
