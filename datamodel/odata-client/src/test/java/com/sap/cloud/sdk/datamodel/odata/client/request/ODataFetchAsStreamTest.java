@@ -5,13 +5,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V2;
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
+import static com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 
+import org.apache.http.client.entity.DecompressingEntity;
+import org.apache.http.entity.BufferedHttpEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -21,110 +27,141 @@ import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpEntityUtil;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
+
+import lombok.SneakyThrows;
 
 class ODataFetchAsStreamTest
 {
-    private static final String SERVICE_URL = "/service";
+    private static final String URL = "/service";
     private static final String TEXT_FILE_NAME = "test.txt";
     private static final String IMAGE_FILE_NAME = "SAP_logo.png";
     private static final String PDF_FILE_NAME = "POT01.pdf";
+
+    private static final ODataEntityKey ODATA_V2_KEY = new ODataEntityKey(V2).addKeyProperty("Name", "BER");
+    private static final ODataResourcePath ODATA_V2_PATH = of("Airports", ODATA_V2_KEY).addSegment("$value");
+    private static final ODataRequestReadByKey ODATA_V2_REQ = new ODataRequestReadByKey(URL, ODATA_V2_PATH, "", V2);
+
+    private static final ODataEntityKey ODATA_V4_KEY = new ODataEntityKey(V4).addKeyProperty("Name", "BER");
+    private static final ODataResourcePath ODATA_V4_PATH = of("Airports", ODATA_V4_KEY).addSegment("$value");
+    private static final ODataRequestReadByKey ODATA_V4_REQ = new ODataRequestReadByKey(URL, ODATA_V4_PATH, "", V4);
+
+    private static final Consumer<ODataRequestResult> VALIDATOR_BUFFERED =
+        result -> assertThat(result.getHttpResponse().getEntity())
+            .isInstanceOfAny(BufferedHttpEntity.class, DecompressingEntity.class);
+
+    private static final Consumer<ODataRequestResult> VALIDATOR_LAZY =
+        result -> assertThat(result.getHttpResponse().getEntity().isRepeatable()).isFalse();
 
     @RegisterExtension
     static final WireMockExtension SERVER =
         WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
-    private void testFileAsStream( final String fileName, final ODataProtocol oDataProtocol )
-        throws IOException
+    @SneakyThrows
+    private ODataRequestResult testStreamedFileForRequest(
+        final String fileName,
+        final ODataRequestExecutable request,
+        final Consumer<ODataRequestResult> resultValidator )
     {
-        SERVER
-            .stubFor(
-                get(WireMock.anyUrl())
-                    .willReturn(ok().withBody(readResourceFile(ODataFetchAsStreamTest.class, "files/" + fileName))));
+        final String responseBody = readResourceFile(fileName);
+        SERVER.stubFor(get(WireMock.anyUrl()).willReturn(ok().withBody(responseBody)));
 
         final Destination destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
-        final ODataResourcePath resource =
-            ODataResourcePath
-                .of("Airports", new ODataEntityKey(ODataProtocol.V2).addKeyProperty("Name", "BER"))
-                .addSegment("$value");
-
-        final ODataRequestReadByKey request = new ODataRequestReadByKey(SERVICE_URL, resource, "", oDataProtocol);
-
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResult result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        resultValidator.accept(result);
 
         try( InputStream actualFileStream = result.getHttpResponse().getEntity().getContent(); ) {
             assertThat(actualFileStream).isNotNull();
             assertThat(actualFileStream.available()).isGreaterThan(0);
 
-            try(
-                InputStream expectedFileStream =
-                    getClass()
-                        .getClassLoader()
-                        .getResourceAsStream(ODataFetchAsStreamTest.class.getSimpleName() + "/files/" + fileName) ) {
-                assertThat(expectedFileStream).hasSameContentAs(actualFileStream);
+            try( InputStream expectedFileStream = readResourceStream(fileName) ) {
+                assertThat(actualFileStream).hasSameContentAs(expectedFileStream);
             }
         }
 
-        SERVER.verify(getRequestedFor(urlEqualTo(SERVICE_URL + "/Airports('BER')/$value")));
+        SERVER.verify(getRequestedFor(urlEqualTo(URL + "/Airports('BER')/$value")));
+
+        return result;
     }
 
     @Test
     void testFetchTextFileAsStreamODataV2()
-        throws IOException
     {
-        testFileAsStream(TEXT_FILE_NAME, ODataProtocol.V2);
+        testStreamedFileForRequest(TEXT_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchImageFileAsStreamODataV2()
-        throws IOException
     {
-        testFileAsStream(IMAGE_FILE_NAME, ODataProtocol.V2);
+        testStreamedFileForRequest(IMAGE_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchPdfFileAsStreamODataV2()
-        throws IOException
     {
-        testFileAsStream(PDF_FILE_NAME, ODataProtocol.V2);
+        testStreamedFileForRequest(PDF_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchTextFileAsStreamODataV4()
-        throws IOException
     {
-        testFileAsStream(TEXT_FILE_NAME, ODataProtocol.V4);
+        testStreamedFileForRequest(TEXT_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchImageFileAsStreamODataV4()
-        throws IOException
     {
-        testFileAsStream(IMAGE_FILE_NAME, ODataProtocol.V4);
+        testStreamedFileForRequest(IMAGE_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchPdfFileAsStreamODataV4()
-        throws IOException
     {
-        testFileAsStream(PDF_FILE_NAME, ODataProtocol.V4);
+        testStreamedFileForRequest(PDF_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
     }
 
-    private static String readResourceFile( final Class<?> cls, final String resourceFileName )
+    @SneakyThrows
+    @Test
+    void testLazyResponseAsStreamODataV2()
     {
-        try {
-            final URL resourceUrl = cls.getClassLoader().getResource(cls.getSimpleName() + "/" + resourceFileName);
+        final ODataRequestExecutable lazyRequest = ODATA_V2_REQ.withoutResponseBuffering();
+        final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
 
-            if( resourceUrl == null ) {
-                throw new IllegalStateException("Cannot find resource file with name \"" + resourceFileName + "\".");
-            }
+        assertThatIOException()
+            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .withMessage("Stream closed");
+    }
 
-            return Resources.toString(resourceUrl, StandardCharsets.UTF_8);
+    @SneakyThrows
+    @Test
+    void testLazyResponseAsStreamODataV4()
+    {
+        final ODataRequestExecutable lazyRequest = ODATA_V4_REQ.withoutResponseBuffering();
+        final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
+
+        assertThatIOException()
+            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .withMessage("Stream closed");
+    }
+
+    @SneakyThrows
+    private static String readResourceFile( final String resourceFileName )
+    {
+        final String fileName = ODataFetchAsStreamTest.class.getSimpleName() + "/files/" + resourceFileName;
+        final URL resourceUrl = ODataFetchAsStreamTest.class.getClassLoader().getResource(fileName);
+
+        if( resourceUrl == null ) {
+            throw new IllegalStateException("Cannot find resource file with name \"" + resourceFileName + "\".");
         }
-        catch( final IOException e ) {
-            throw new IllegalStateException(e);
-        }
+        return Resources.toString(resourceUrl, StandardCharsets.UTF_8);
+    }
+
+    @SneakyThrows
+    private static InputStream readResourceStream( final String resourceFileName )
+    {
+        final String fileName = ODataFetchAsStreamTest.class.getSimpleName() + "/files/" + resourceFileName;
+        return ODataFetchAsStreamTest.class.getClassLoader().getResourceAsStream(fileName);
     }
 }
