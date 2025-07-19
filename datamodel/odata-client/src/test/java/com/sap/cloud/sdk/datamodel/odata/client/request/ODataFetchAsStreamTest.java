@@ -28,6 +28,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpEntityUtil;
+import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
 import lombok.SneakyThrows;
@@ -38,14 +39,6 @@ class ODataFetchAsStreamTest
     private static final String TEXT_FILE_NAME = "test.txt";
     private static final String IMAGE_FILE_NAME = "SAP_logo.png";
     private static final String PDF_FILE_NAME = "POT01.pdf";
-
-    private static final ODataEntityKey ODATA_V2_KEY = new ODataEntityKey(V2).addKeyProperty("Name", "BER");
-    private static final ODataResourcePath ODATA_V2_PATH = of("Airports", ODATA_V2_KEY).addSegment("$value");
-    private static final ODataRequestReadByKey ODATA_V2_REQ = new ODataRequestReadByKey(URL, ODATA_V2_PATH, "", V2);
-
-    private static final ODataEntityKey ODATA_V4_KEY = new ODataEntityKey(V4).addKeyProperty("Name", "BER");
-    private static final ODataResourcePath ODATA_V4_PATH = of("Airports", ODATA_V4_KEY).addSegment("$value");
-    private static final ODataRequestReadByKey ODATA_V4_REQ = new ODataRequestReadByKey(URL, ODATA_V4_PATH, "", V4);
 
     private static final Consumer<ODataRequestResult> VALIDATOR_BUFFERED =
         result -> assertThat(result.getHttpResponse().getEntity())
@@ -89,44 +82,45 @@ class ODataFetchAsStreamTest
     @Test
     void testFetchTextFileAsStreamODataV2()
     {
-        testStreamedFileForRequest(TEXT_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(TEXT_FILE_NAME, createRequest(V2), VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchImageFileAsStreamODataV2()
     {
-        testStreamedFileForRequest(IMAGE_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(IMAGE_FILE_NAME, createRequest(V2), VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchPdfFileAsStreamODataV2()
     {
-        testStreamedFileForRequest(PDF_FILE_NAME, ODATA_V2_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(PDF_FILE_NAME, createRequest(V2), VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchTextFileAsStreamODataV4()
     {
-        testStreamedFileForRequest(TEXT_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(TEXT_FILE_NAME, createRequest(V4), VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchImageFileAsStreamODataV4()
     {
-        testStreamedFileForRequest(IMAGE_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(IMAGE_FILE_NAME, createRequest(V4), VALIDATOR_BUFFERED);
     }
 
     @Test
     void testFetchPdfFileAsStreamODataV4()
     {
-        testStreamedFileForRequest(PDF_FILE_NAME, ODATA_V4_REQ, VALIDATOR_BUFFERED);
+        testStreamedFileForRequest(PDF_FILE_NAME, createRequest(V4), VALIDATOR_BUFFERED);
     }
 
     @SneakyThrows
     @Test
     void testLazyResponseAsStreamODataV2()
     {
-        final ODataRequestExecutable lazyRequest = ODATA_V2_REQ.withoutResponseBuffering();
+        final ODataRequestReadByKey request = createRequest(V2);
+        final ODataRequestExecutable lazyRequest = request.withoutResponseBuffering();
         final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
 
         assertThatIOException()
@@ -138,8 +132,22 @@ class ODataFetchAsStreamTest
     @Test
     void testLazyResponseAsStreamODataV4()
     {
-        final ODataRequestExecutable lazyRequest = ODATA_V4_REQ.withoutResponseBuffering();
+        final ODataRequestReadByKey request = createRequest(V4);
+        final ODataRequestExecutable lazyRequest = request.withoutResponseBuffering();
         final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
+
+        assertThatIOException()
+            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .withMessage("Stream closed");
+    }
+
+    @SneakyThrows
+    @Test
+    void testLazyResponseWithWorkaround()
+    {
+        final ODataRequestReadByKey request = createRequest(V4);
+        ODataRequestReadByKey.class.getMethod("withoutResponseBuffering").invoke(request); // workaround
+        final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, request, VALIDATOR_LAZY);
 
         assertThatIOException()
             .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
@@ -163,5 +171,12 @@ class ODataFetchAsStreamTest
     {
         final String fileName = ODataFetchAsStreamTest.class.getSimpleName() + "/files/" + resourceFileName;
         return ODataFetchAsStreamTest.class.getClassLoader().getResourceAsStream(fileName);
+    }
+
+    private static ODataRequestReadByKey createRequest( final ODataProtocol protocol )
+    {
+        final ODataEntityKey key = new ODataEntityKey(protocol).addKeyProperty("Name", "BER");
+        final ODataResourcePath path = of("Airports", key).addSegment("$value");
+        return new ODataRequestReadByKey(URL, path, "", protocol);
     }
 }
