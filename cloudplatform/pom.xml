@@ -51,12 +51,44 @@
 		<module>dwc-cf</module>
 	</modules>
 	<scm>
-		<connection />
-		<url />
+		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
+		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
+		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<project.rootdir>${project.basedir}/../../</project.rootdir>
 	</properties>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<property>
+					<name>release</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<version>3.1.4</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>install-file</goal>
+								</goals>
+								<configuration>
+									<file>${project.basedir}/pom.xml</file>
+									<!-- The parent has no sources -->
+									<sources>${empty.property}</sources>
+									<javadoc>${empty.property}</javadoc>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

@@ -29,9 +29,12 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
+	<scm>
+		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
+		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
+		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
+	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<project.rootdir>${project.basedir}/../../</project.rootdir>
 	</properties>
 	<dependencies>

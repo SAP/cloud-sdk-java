@@ -30,12 +30,11 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection />
-		<url />
+		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
+		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
+		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!-- allow scope compile for Java EE dependencies -->
 		<enforcer.skipEnforceScopeJavaEE>true</enforcer.skipEnforceScopeJavaEE>
 		<!-- allow scope compile for lombok -->
