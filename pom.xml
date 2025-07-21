@@ -797,7 +797,6 @@
 						<ignoredUnusedDeclaredDependency>org.projectlombok:lombok</ignoredUnusedDeclaredDependency>
 						<!-- By default, JUnit5 adapters are added to every module to ensure no tests are skipped -->
 						<ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter-engine</ignoredUnusedDeclaredDependency>
-
 						<!-- Transitive dependencies explicitly declared to fic CVEs-->
 						<ignoredUnusedDeclaredDependency>commons-beanutils:commons-beanutils</ignoredUnusedDeclaredDependency>
 					</ignoredUnusedDeclaredDependencies>
