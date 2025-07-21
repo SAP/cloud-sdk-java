@@ -68,8 +68,7 @@ jobs:
         with:
           workflow: "Continuous Integration"
           sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
-          excluded-jobs: |
-            [ run-blackduck-scan ]
+          excluded-jobs: "[ \"run-blackduck-scan\" ]"
 
   release:
     name: "Release"
