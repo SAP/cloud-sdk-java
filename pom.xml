@@ -853,7 +853,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<!-- JONAS: Is this needed? -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
