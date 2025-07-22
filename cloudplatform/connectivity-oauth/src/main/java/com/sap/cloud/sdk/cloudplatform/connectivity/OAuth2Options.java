@@ -263,8 +263,10 @@ public final class OAuth2Options
      * {@code DefaultOAuth2TokenService}. This cache stores the HTTP token response (including the token) and it governs
      * the cache entry, <em>not</em> the token's lifetime.
      *
-     * <p>Expired (or almost expired) tokens are never served, regardless of {@link #cacheDuration} as xsuaa checks
+     * <p>
+     * Expired (or almost expired) tokens are never served, regardless of {@link #cacheDuration} as xsuaa checks
      * <code>exp - {@link #tokenExpirationDelta}</code> before returning a cached entry.
+     *
      * @since 5.21.0
      */
     @Beta
