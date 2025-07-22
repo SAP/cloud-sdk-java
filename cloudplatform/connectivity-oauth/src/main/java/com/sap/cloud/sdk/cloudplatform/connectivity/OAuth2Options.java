@@ -1,22 +1,21 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import java.security.KeyStore;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
-
+import com.sap.cloud.security.annotation.Beta;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.security.KeyStore;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents various configuration parameters for the OAuth2 destination creation.
@@ -35,9 +34,10 @@ public final class OAuth2Options
     public static final TimeLimiterConfiguration DEFAULT_TIMEOUT = TimeLimiterConfiguration.of(Duration.ofSeconds(10));
 
     /**
-     * The default cache duration is 10 minutes, with cache size of 1000 tokens, expiration delta of 30 sec and no cache
-     * statistics enabled.
+     * Default token cache configuration used by {@link OAuth2Service}. Effective defaults: 10 minutes duration, 1000
+     * entries, 30 seconds delta and cache statistics disabled.
      *
+     * @see com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration#DEFAULT
      * @since 5.21.0
      */
     public static final TokenCacheParameters DEFAULT_TOKEN_CACHE_PARAMETERS =
@@ -75,7 +75,7 @@ public final class OAuth2Options
      * @since 5.21.0
      */
     @Nonnull
-    @Getter( AccessLevel.PACKAGE )
+    @Getter
     private final TokenCacheParameters tokenCacheParameters;
 
     /**
@@ -253,18 +253,39 @@ public final class OAuth2Options
     }
 
     /**
-     * Configure the {@link TokenCacheParameters} to be used for caching OAuth2 tokens.
+     * Configuration for the token <em>response</em> cache used by {@link OAuth2Service}.
+     *
+     * <p>
+     * <strong>Important:</strong> These values are passed to
+     * {@link com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration} used by XSUAAs
+     * {@code DefaultOAuth2TokenService}. This cache stores the HTTP token response (including the token) and is
+     * <em>not</em> the token's own validity period.
+     * </p>
      *
      * @since 5.21.0
+     * @implNote Expired (or almost expired) tokens are never served, regardless of {@link #cacheDuration}; xsuaa checks
+     *           <code>exp - {@link #tokenExpirationDelta}</code> before returning a cached entry.
      */
+    @Beta
     @Getter
     @RequiredArgsConstructor( staticName = "of" )
     public static class TokenCacheParameters implements OptionsEnhancer<TokenCacheParameters>
     {
+        /**
+         * Upper bound for how long a successful token response may remain cached. A cached entry is ignored earlier if
+         * the token would be (almost) expired.
+         */
         @Nonnull
         private final Duration cacheDuration;
+        /**
+         * The maximum number of tokens to cache.
+         */
         @Nonnull
         private final Integer cacheSize;
+        /**
+         * The delta to be subtracted from the token expiration time to determine how early should a token be refreshed
+         * before it expires.
+         */
         @Nonnull
         private final Duration tokenExpirationDelta;
 

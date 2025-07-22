@@ -111,7 +111,7 @@ class OAuth2Service
                     tokenCacheParameters.getCacheDuration(),
                     tokenCacheParameters.getCacheSize(),
                     tokenCacheParameters.getTokenExpirationDelta(),
-                    false);
+                    false); // disable cache statistics
 
         if( !(identity instanceof ZtisClientIdentity) ) {
             return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
