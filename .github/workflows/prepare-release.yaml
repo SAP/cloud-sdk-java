@@ -296,6 +296,13 @@ jobs:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
+      - name: "Delete Release Branch"
+        if: ${{ needs.bump-version.outputs.release-branch != '' }}
+        run: git push --delete origin ${{ needs.bump-version.outputs.release-branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+        continue-on-error: true
+
       - name: "Delete Release Tag"
         if: ${{ needs.bump-version.outputs.release-tag != '' }}
         run: git push --delete origin ${{ needs.bump-version.outputs.release-tag }}
