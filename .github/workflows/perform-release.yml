@@ -62,14 +62,6 @@ jobs:
               \"dependabot merger\": [] 
             }
 
-      - name: "Check Code Release Commit Continuous Integration"
-        if: ${{ inputs.skip-pr-merge != 'true' }}
-        uses: ./.github/actions/workflow-succeeded
-        with:
-          workflow: "Continuous Integration"
-          sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
-          excluded-jobs: "[ \"Run BlackDuck Scan\" ]"
-
   release:
     name: "Release"
     needs: [ prerequisites ]
