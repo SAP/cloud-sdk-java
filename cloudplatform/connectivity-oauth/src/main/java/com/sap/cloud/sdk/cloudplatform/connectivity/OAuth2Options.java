@@ -1,21 +1,23 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import java.security.KeyStore;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.security.annotation.Beta;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.security.KeyStore;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents various configuration parameters for the OAuth2 destination creation.
@@ -258,8 +260,8 @@ public final class OAuth2Options
      * <p>
      * <strong>Important:</strong> These values are passed to
      * {@link com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration} used by XSUAAs
-     * {@code DefaultOAuth2TokenService}. This cache stores the HTTP token response (including the token) and is
-     * <em>not</em> the token's own validity period.
+     * {@code DefaultOAuth2TokenService}. This cache stores the HTTP token response (including the token) and it governs
+     * the cache entry, <em>not</em> the token's lifetime.
      * </p>
      *
      * @since 5.21.0
