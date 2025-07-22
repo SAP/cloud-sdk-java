@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>0.40.0-SNAPSHOT</version>
+		<version>5.21.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>cloudplatform-connectivity</artifactId>
 	<name>Business Technology Platform - Connectivity</name>
