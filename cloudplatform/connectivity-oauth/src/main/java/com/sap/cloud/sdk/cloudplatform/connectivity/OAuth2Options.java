@@ -262,11 +262,10 @@ public final class OAuth2Options
      * {@link com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration} used by XSUAAs
      * {@code DefaultOAuth2TokenService}. This cache stores the HTTP token response (including the token) and it governs
      * the cache entry, <em>not</em> the token's lifetime.
-     * </p>
      *
+     * <p>Expired (or almost expired) tokens are never served, regardless of {@link #cacheDuration} as xsuaa checks
+     * <code>exp - {@link #tokenExpirationDelta}</code> before returning a cached entry.
      * @since 5.21.0
-     * @implNote Expired (or almost expired) tokens are never served, regardless of {@link #cacheDuration}; xsuaa checks
-     *           <code>exp - {@link #tokenExpirationDelta}</code> before returning a cached entry.
      */
     @Beta
     @Getter
