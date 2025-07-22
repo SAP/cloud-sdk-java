@@ -67,7 +67,7 @@ jobs:
         uses: ./.github/actions/workflow-succeeded
         with:
           workflow: "Continuous Integration"
-          sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }
+          sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
           excluded-jobs: "[\"blackduck\"]"
 
   release:
