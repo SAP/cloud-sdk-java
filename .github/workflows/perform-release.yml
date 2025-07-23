@@ -13,7 +13,7 @@ on:
         type: boolean
 
 env:
-  MVN_CLI_ARGS: --batch-mode --no-transfer-progress --fail-at-end --show-version
+  MVN_CLI_ARGS: --batch-mode --no-transfer-progress --fail-at-end --show-version -DskipTests
   JAVA_VERSION: 17
   DOCS_REPO: SAP/cloud-sdk
 
@@ -70,6 +70,18 @@ jobs:
           sha: ${{ steps.determine-branch-names.outputs.RELEASE_COMMIT }}
           excluded-jobs: "[\"Run BlackDuck Scan\"]"
 
+      - name: "Check Whether Release Notes PR Can Be Merged"
+        if: ${{ inputs.skip-pr-merge != 'true' }}
+        uses: ./.github/actions/pr-is-mergeable
+        with:
+          pr-ref: ${{ steps.determine-branch-names.outputs.RELEASE_NOTES_BRANCH_NAME }}
+          repo: ${{ env.DOCS_REPO }}
+          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          excluded-check-runs: |
+            {
+              \"Build Cloud SDK Documentation\": [\"dependabot\"]
+            }
+
   release:
     name: "Release"
     needs: [ prerequisites ]
@@ -83,7 +95,6 @@ jobs:
         with:
           distribution: "sapmachine"
           java-version: ${{ env.JAVA_VERSION }}
-          server-id: central
 
       - name: "Download Release Asset"
         id: download-asset
@@ -106,7 +117,7 @@ jobs:
 
       - name: "Deploy"
         run: |
-          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml -e"
+          MVN_ARGS="${{ env.MVN_CLI_ARGS }} -Drelease -s settings.xml"
           mvn deploy $MVN_ARGS
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
@@ -119,5 +130,11 @@ jobs:
 
       - name: "Publish the Draft Release"
         run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
+      - name: "Merge Release Notes PR"
+        if: ${{ inputs.skip-pr-merge != 'true' }}
+        run: gh pr merge --squash "${{ needs.prerequisites.outputs.release-notes-branch }}" --delete-branch --repo "${{ env.DOCS_REPO }}"
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}

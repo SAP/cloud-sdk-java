@@ -34,7 +34,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
+
+      - name: "Prepare git"
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Determine Versions"
         id: determine-versions
@@ -45,11 +49,6 @@ jobs:
       - run: "echo Release Version: ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
       - run: "echo Current Version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}"
       - run: "echo New Version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}"
-
-      - name: "Prepare git"
-        run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Set Release Version to ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
         id: prepare-release
@@ -136,11 +135,6 @@ jobs:
         run: |
           MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests"
           mvn $MVN_ARGS
-
-      - name: "Prepare git"
-        run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Create Release"
         id: create-release
