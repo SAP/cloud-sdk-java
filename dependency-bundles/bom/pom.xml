@@ -63,7 +63,7 @@
 		<commons-lang3.version>3.18.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
-		<caffeine.version>3.2.1</caffeine.version>
+		<caffeine.version>3.2.2</caffeine.version>
 		<jcache.version>1.1.1</jcache.version>
 		<resilience4j.version>2.3.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
@@ -270,7 +270,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.39.0</version>
+				<version>2.40.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
