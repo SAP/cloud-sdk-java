@@ -44,12 +44,13 @@ body:
         - Java and Maven version via `mvn --version`: ...
         - SAP Cloud SDK version: ...
         - Spring Boot or CAP version: ...
-        - <details><summary>Dependency tree via `mvn dependency:tree`</summary>
+        
+        <details><summary>Dependency tree via `mvn dependency:tree`</summary>
             
-            ```
-            Dependency tree here
-            ```
-          </details>
+        ```
+        Dependency tree here
+        ```
+        </details>
     validations:
       required: true
   - type: textarea
