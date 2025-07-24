@@ -33,6 +33,7 @@
 		<module>odata-core</module>
 		<module>odata-generator</module>
 		<module>odata-generator-maven-plugin</module>
+		<module>odata-api-sample</module>
 	</modules>
 	<properties>
 		<project.rootdir>${project.basedir}/../../../</project.rootdir>

@@ -33,6 +33,7 @@
 		<module>odata-v4-core</module>
 		<module>odata-v4-generator</module>
 		<module>odata-v4-generator-maven-plugin</module>
+		<module>odata-v4-api-sample</module>
 	</modules>
 	<properties>
 		<!-- skip the API compatibility check since this module is still in beta phase -->
