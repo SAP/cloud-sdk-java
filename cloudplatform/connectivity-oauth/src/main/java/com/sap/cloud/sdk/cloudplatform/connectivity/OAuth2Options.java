@@ -35,14 +35,14 @@ public final class OAuth2Options
     public static final TimeLimiterConfiguration DEFAULT_TIMEOUT = TimeLimiterConfiguration.of(Duration.ofSeconds(10));
 
     /**
-     * Default token cache configuration used by {@link OAuth2Service}. Effective defaults: 10 minutes duration, 1000
+     * Default token cache configuration used by {@link OAuth2Service}. Effective defaults: 1 hour duration, 1000
      * entries, 30 seconds delta and cache statistics disabled.
      *
      * @see com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration#DEFAULT
      * @since 5.21.0
      */
     public static final TokenCacheParameters DEFAULT_TOKEN_CACHE_PARAMETERS =
-        TokenCacheParameters.of(Duration.ofMinutes(10), 1000, Duration.ofSeconds(30));
+        TokenCacheParameters.of(Duration.ofHours(1), 1000, Duration.ofSeconds(30));
 
     /**
      * The default {@link OAuth2Options} instance that does not alter the token retrieval process and does not use mTLS
