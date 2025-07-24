@@ -28,11 +28,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
-		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
-		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
-	</scm>
 	<properties>
 		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
 		<project.rootdir>${project.basedir}/../</project.rootdir>

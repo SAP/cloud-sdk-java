@@ -32,11 +32,6 @@
 			<url>https://central.sonatype.com/api/v1/publisher/upload</url>
 		</repository>
 	</distributionManagement>
-	 <scm>
-		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
-		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
-  		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
-	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- do not modify the following line, it is updated by the versioning script -->
