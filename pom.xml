@@ -892,32 +892,6 @@
 					<maxHeap>2048</maxHeap>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.github.ekryd.sortpom</groupId>
-				<artifactId>sortpom-maven-plugin</artifactId>
-				<version>2.15.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>sort</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<skip>${skipFormatting}</skip>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<createBackupFile>false</createBackupFile>
-					<expandEmptyElements>false</expandEmptyElements>
-					<!--  -1 stands for tab  -->
-					<nrOfIndentSpace>-1</nrOfIndentSpace>
-					<sortDependencies>none</sortDependencies>
-					<sortPlugins>none</sortPlugins>
-					<sortProperties>false</sortProperties>
-					<sortModules>false</sortModules>
-					<verifyFail>stop</verifyFail>
-					<verifyFailOn>strict</verifyFailOn>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<profiles>
