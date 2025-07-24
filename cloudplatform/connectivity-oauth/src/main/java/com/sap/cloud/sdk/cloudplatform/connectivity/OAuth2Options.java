@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ServiceBindingDestinationOptions.OptionsEnhancer;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 
@@ -268,6 +269,7 @@ public final class OAuth2Options
      *
      * @since 5.21.0
      */
+    @Beta
     @Getter
     @RequiredArgsConstructor( staticName = "of" )
     public static class TokenCacheParameters implements OptionsEnhancer<TokenCacheParameters>
