@@ -2,12 +2,17 @@ package com.sap.cloud.sdk.datamodel.odata.helper;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -15,17 +20,23 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.annotations.JsonAdapter;
+import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
+import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestUpdate;
+import com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy;
 import com.sap.cloud.sdk.result.ElementName;
 
 import io.vavr.control.Option;
@@ -34,6 +45,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 class ModificationResponseTest
@@ -134,23 +146,25 @@ class ModificationResponseTest
         assertThat(modification.getResponseHeaders()).isEmpty();
     }
 
+    @SneakyThrows
     @Test
     void testResponseIsOnlyEvaluatedOnce()
     {
         final TestObject inputObject = new TestObject();
 
-        final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
-        when(request.getProtocol()).thenReturn(ODataProtocol.V4);
+        final HttpResponse response = spy(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
+        response.setHeaders(new Header[0]);
+        response.setEntity(new StringEntity("{\"foo\":\"bar\"}", UTF_8));
 
-        final Header[] responseHeaders = {};
+        final ODataEntityKey key = ODataEntityKey.of(Map.of("id", 42), V4);
+        final ODataRequestUpdate request =
+            new ODataRequestUpdate("service/path", "EntitySet", key, "{}", UpdateStrategy.REPLACE_WITH_PUT, null, V4);
+        request.setCsrfTokenRetriever(CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER);
 
-        final HttpResponse response = mock(HttpResponse.class);
-        doReturn(responseHeaders).when(response).getAllHeaders();
-        doReturn(responseHeaders).when(response).getHeaders("ETag");
-        doReturn(new StringEntity("{\"foo\":\"bar\"}", UTF_8)).when(response).getEntity();
-        doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK")).when(response).getStatusLine();
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.execute(any())).thenReturn(response);
 
-        final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, response);
+        final ODataRequestResultGeneric result = request.execute(httpClient);
         final ModificationResponse<TestObject> modification = ModificationResponse.of(result, inputObject, destination);
 
         modification.getResponseEntity();
@@ -162,5 +176,6 @@ class ModificationResponseTest
         assertThat(modifiedEntity).isNotNull();
 
         verify(response, times(1)).getEntity();
+        verify(httpClient, times(1)).execute(any());
     }
 }
