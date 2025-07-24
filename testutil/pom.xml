@@ -34,9 +34,6 @@
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
 	<properties>
-		<x-sap-release-audience>None</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
-		<x-sap-exclude-from-blackduck-scan>true</x-sap-exclude-from-blackduck-scan>
 		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
 		<project.rootdir>${project.basedir}/../</project.rootdir>
 	</properties>
