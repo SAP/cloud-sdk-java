@@ -1,4 +1,4 @@
-<a href="https://sap.github.io/cloud-sdk/docs/java/overview-cloud-sdk-for-java"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-for-java.svg" alt="SAP Cloud SDK for Java Logo" height="122.92" width="226.773"/></a>
+ <a href="https://sap.github.io/cloud-sdk/docs/java/overview-cloud-sdk-for-java"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-for-java.svg" alt="SAP Cloud SDK for Java Logo" height="122.92" width="226.773"/></a>
 
 ![build](https://github.com/SAP/cloud-sdk-java/actions/workflows/continuous-integration.yaml/badge.svg?branch=main)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-java)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java)
