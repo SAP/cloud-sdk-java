@@ -15,7 +15,7 @@ env:
   CI_BUILD_WORKFLOW: "continuous-integration.yaml" # Name of the workflow that should be triggered for CI build
   RELEASE_ARTIFACT_NAME: "release-artifacts" # Name of the artifact that should be downloaded from the CI workflow
   SDK_TARGETS_NAME: "sdk-targets" # Name of the SDK target directories artifact that should be downloaded from the CI workflow
-
+  JAVA_VERSION: 17
   DOCS_REPO: SAP/cloud-sdk
 
 jobs:
@@ -34,7 +34,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
+
+      - name: "Prepare git"
+        run: |
+          git config --global user.email "cloudsdk@sap.com"
+          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Determine Versions"
         id: determine-versions
@@ -45,11 +49,6 @@ jobs:
       - run: "echo Release Version: ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
       - run: "echo Current Version: ${{ steps.determine-versions.outputs.CURRENT_SNAPSHOT }}"
       - run: "echo New Version: ${{ steps.determine-versions.outputs.NEW_SNAPSHOT }}"
-
-      - name: "Prepare git"
-        run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Set Release Version to ${{ steps.determine-versions.outputs.RELEASE_VERSION }}"
         id: prepare-release
@@ -100,7 +99,7 @@ jobs:
             -f commit=${{ needs.bump-version.outputs.release-commit }}
             -f build-release-artifacts=true
             -f sign-release-artifacts=true
-            -f run-blackduck-scan=true
+            -f run-blackduck-scan=false
             -f run-security-rating=true
 
       - name: "Await CI Workflow"
@@ -124,33 +123,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
-      - name: "Download Release Artifacts"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.RELEASE_ARTIFACT_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .release-artifacts/
-      # needed to get the aggregated JavaDocs
-      - name: "Download SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .targets/
 
-      - name: "Prepare git"
+      - name: "Setup java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "sapmachine"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      - name: "Build SDK"
         run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
+          MVN_ARGS="${{ env.MVN_MULTI_THREADED_ARGS }} clean install -DskipTests"
+          mvn $MVN_ARGS
 
       - name: "Create Release"
         id: create-release
         run: |
-          tar -caf apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .targets/target/reports/apidocs/ .
-          tar -caf release-${{ needs.bump-version.outputs.release-version }}.tar.gz -C .release-artifacts/ .
-          
+          tar -czf release-${{ needs.bump-version.outputs.release-version }}.tar.gz *
+
           RELEASE_NAME="rel/${{ needs.bump-version.outputs.release-version }}"
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT
           
@@ -158,92 +148,11 @@ jobs:
           --target ${{ needs.bump-version.outputs.release-commit }} \
           --title "Release ${{ needs.bump-version.outputs.release-version }}" \
           --draft --generate-notes \
-          apidocs-${{ needs.bump-version.outputs.release-version }}.tar.gz \
           release-${{ needs.bump-version.outputs.release-version }}.tar.gz)
           
           echo "RELEASE_URL=$RELEASE_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
-
-  create-docs-pr:
-    name: "Create JavaDocs PR"
-    needs: [ bump-version, run-ci ]
-    outputs:
-      branch: ${{ steps.replace-javadoc.outputs.BRANCH_NAME }}
-      pr-url: ${{ steps.create-javadoc-pr.outputs.PR_URL }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Code Repository"
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.bump-version.outputs.release-branch }}
-      - name: "Checkout Docs Repository"
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.DOCS_REPO }}
-          path: .cloud-sdk-docs
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-      # needed to get the aggregated JavaDocs
-      - name: "Download SDK Targets"
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.SDK_TARGETS_NAME }}
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.run-ci.outputs.ci-run-id }}
-          path: .targets
-
-      - name: "Determine Major Version"
-        id: determine-major-version
-        run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
-
-      - name: "Prepare Git"
-        working-directory: ./.cloud-sdk-docs
-        run: |
-          git config --global user.email "cloudsdk@sap.com"
-          git config --global user.name "SAP Cloud SDK Bot"
-
-      - name: "Replace JavaDoc"
-        id: replace-javadoc
-        run: |
-          TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
-
-          rm -rf $TARGET_DIR
-          mkdir -p $TARGET_DIR
-          mv ./.targets/target/reports/apidocs/* $TARGET_DIR
-
-          cd ./.cloud-sdk-docs
-          git add -A .
-
-          CHANGED_FILES="$(git status -s)"
-          if [[ -z "$CHANGED_FILES" ]]; then
-              echo "[DEBUG] No changes to API docs detected, skipping Pull Request creation."
-              echo "CREATE_PR=false" >> $GITHUB_OUTPUT
-              exit 0
-          fi
-
-          echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-
-          git switch --create $BRANCH_NAME
-          git commit -m "chore: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
-          COMMIT_SHA=$(git log -1 --pretty=format:"%H")
-          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
-
-          git push origin $BRANCH_NAME
-
-      - name: "Create JavaDoc PR"
-        id: create-javadoc-pr
-        if: ${{ steps.replace-javadoc.outputs.CREATE_PR == 'true' }}
-        working-directory: ./.cloud-sdk-docs
-        run: |
-          PR_TITLE="Java: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Replace the contents of v${{ steps.determine-major-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
-
-          PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
-          echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
   create-release-notes-pr:
     name: "Create Release Notes PR"
@@ -325,7 +234,7 @@ jobs:
 
   create-code-pr:
     name: "Create Code PR"
-    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr ]
+    needs: [ bump-version, run-ci, create-release, create-release-notes-pr ]
     outputs:
       pr-url: ${{ steps.create-code-pr.outputs.PR_URL }}
     runs-on: ubuntu-latest
@@ -354,18 +263,17 @@ jobs:
           PR_URL=$(gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
           - [ ] Review the changes in [the release commit]($COMMIT_URL)
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
-          - [ ] Review **and approve** the [JavaDocs PR](${{ needs.create-docs-pr.outputs.pr-url }})
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
           - [ ] Review **and approve** this PR
           - [ ] Trigger the [Perform Release Workflow](${{ github.event.repository.html_url }}/actions/workflows/perform-release.yml)
-          - [ ] Once the `Perform Release` workflow is through, head over to the [OSS Repository](https://oss.sonatype.org/#stagingRepositories) and log in with the credentials in the Team Password Safe. There should be a staged release. Check whether everything looks good and, if so, publish the release.")
+          - [ ] Once the `Perform Release` workflow is through, head over to [Central Sonatype](https://central.sonatype.com/publishing/deployments) and log in with the credentials in the Team Password Safe. There should be a published release.")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
 
   handle-failure:
     runs-on: ubuntu-latest
-    needs: [ bump-version, run-ci, create-release, create-docs-pr, create-release-notes-pr, create-code-pr ]
+    needs: [ bump-version, run-ci, create-release, create-release-notes-pr, create-code-pr ]
     permissions:
       contents: write # needed to delete the GitHub release
     if: ${{ failure() }}
@@ -396,24 +304,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
 
-      - name: "Delete Docs PR"
-        if: ${{ needs.create-docs-pr.outputs.pr-url != '' }}
-        run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-docs-pr.outputs.pr-url }} --delete-branch
-        env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
-        continue-on-error: true
-
       - name: "Delete Release Notes PR"
         if: ${{ needs.create-release-notes-pr.outputs.pr-url != '' }}
         run: gh pr close --repo "${{ env.DOCS_REPO }}" ${{ needs.create-release-notes-pr.outputs.pr-url }} --delete-branch
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
         continue-on-error: true
-
-      - name: "Notify"
-        run: python .pipeline/scripts/notify.py
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          WORKFLOW: ${{ github.workflow }}
-          WORKFLOW_RUN_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
-          BRANCH_NAME: ${{ github.event.inputs.branch }}

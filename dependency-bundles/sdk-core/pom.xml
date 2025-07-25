@@ -30,8 +30,6 @@
 		</developer>
 	</developers>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<project.rootdir>${project.basedir}/../../</project.rootdir>
 	</properties>
 	<dependencies>
