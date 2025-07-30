@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.resilience4j;
 
+import static com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CircuitBreakerConfiguration.disabled;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
@@ -14,7 +15,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
@@ -25,13 +25,13 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 
 class TimeLimiterTest
 {
-    private static final TimeLimiterConfiguration timeLimiterConfig =
-        TimeLimiterConfiguration.of().timeoutDuration(Duration.ofMillis(100));
     private static final ResilienceConfiguration resilienceConfiguration =
-        ResilienceConfiguration.of("TimeLimiterTest.static").timeLimiterConfiguration(timeLimiterConfig);
+        ResilienceConfiguration
+            .of("TimeLimiterTest.static")
+            .timeLimiterConfiguration(TimeLimiterConfiguration.of().timeoutDuration(Duration.ofMillis(100)))
+            .circuitBreakerConfiguration(disabled());
 
     @Test
-    @Disabled( "Test is unreliable on jenkins. Use this to verify the timeout behaviour locally." )
     void testTimeLimiterWithRepeatingCalls()
         throws Exception
     {
