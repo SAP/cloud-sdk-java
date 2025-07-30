@@ -12,11 +12,13 @@
 
 ### ✨ New Functionality
 
-- 
+- Add `TokenCacheParameters` to `OAuth2Options` to configurate token cache duration, expiration delta and cache size.
 
 ### 📈 Improvements
 
-- 
+- Relax OAuth2 token cache duration to 1hr to avoid unnecessary token refreshes.
+- Disable refresh tokens when obtaining user tokens from IAS.
+  This acts as a workaround for a limitation of IAS, where obtaining a refresh token invalidates the original token.
 
 ### 🐛 Fixed Issues
 
