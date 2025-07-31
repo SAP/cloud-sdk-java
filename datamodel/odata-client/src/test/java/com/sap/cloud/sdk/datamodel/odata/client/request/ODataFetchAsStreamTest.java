@@ -16,8 +16,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
-import org.apache.http.client.entity.DecompressingEntity;
-import org.apache.http.entity.BufferedHttpEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -41,8 +39,7 @@ class ODataFetchAsStreamTest
     private static final String PDF_FILE_NAME = "POT01.pdf";
 
     private static final Consumer<ODataRequestResult> VALIDATOR_BUFFERED =
-        result -> assertThat(result.getHttpResponse().getEntity())
-            .isInstanceOfAny(BufferedHttpEntity.class, DecompressingEntity.class);
+        result -> assertThat(result.getHttpResponse().getEntity().isRepeatable()).isTrue();
 
     private static final Consumer<ODataRequestResult> VALIDATOR_LAZY =
         result -> assertThat(result.getHttpResponse().getEntity().isRepeatable()).isFalse();
