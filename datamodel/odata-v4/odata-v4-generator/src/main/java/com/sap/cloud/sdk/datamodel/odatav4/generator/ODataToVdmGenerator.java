@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -37,6 +36,7 @@ import org.slf4j.Logger;
 import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Multimap;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.utility.EdmxValidator;
 import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 

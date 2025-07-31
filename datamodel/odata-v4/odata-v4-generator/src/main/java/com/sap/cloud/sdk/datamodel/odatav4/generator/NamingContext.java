@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 class NamingContext
 {
