@@ -15,7 +15,14 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * OData request result for reading entities. The connection is not yet closed.
+ * OData request result for reading entities. The request is not yet closed. The response is not consumed. The
+ * connection is not yet released.
+ * <p>
+ * <b>Note:</b> This class implements {@link AutoCloseable} and should be closed after use to ensure that the underlying
+ * connection is released.
+ * <p>
+ * <b>Note:</b> This class is not thread-safe. The HTTP response object should not be consumed by multiple threads at
+ * the same time.
  *
  * @since 5.21.0
  */
