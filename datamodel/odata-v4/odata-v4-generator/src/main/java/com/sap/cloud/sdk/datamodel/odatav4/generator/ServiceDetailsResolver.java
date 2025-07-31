@@ -97,7 +97,7 @@ class ServiceDetailsResolver
     private String readServiceNameFromMetaDataFile( @Nonnull final File metadataFile )
     {
         String serviceName = getMetadataNamespace(metadataFile);
-        if( StringUtils.isBlankOrEmpty(serviceName) ) {
+        if( StringUtils.isBlank(serviceName) ) {
             // no namespace specified, consider filename as the service name
             serviceName = FilenameUtils.getBaseName(metadataFile.getAbsolutePath());
         }
@@ -132,7 +132,7 @@ class ServiceDetailsResolver
                 final Node namespaceNode = schemaAttributeMap.getNamedItem("Namespace");
                 if( namespaceNode != null ) {
                     final String namespace = namespaceNode.getNodeValue();
-                    if( !StringUtils.isBlankOrEmpty(namespace) ) {
+                    if( !StringUtils.isBlank(namespace) ) {
                         return namespace;
                     }
                 }

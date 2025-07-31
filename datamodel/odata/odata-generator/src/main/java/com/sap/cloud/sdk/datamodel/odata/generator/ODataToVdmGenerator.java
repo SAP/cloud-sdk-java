@@ -269,7 +269,7 @@ class ODataToVdmGenerator
 
     private String buildPackageName( final String basePackageName, final String subPackageName )
     {
-        if( StringUtils.isBlankOrEmpty(basePackageName) ) {
+        if( StringUtils.isBlank(basePackageName) ) {
             return subPackageName;
         } else {
             return String.format("%s.%s", basePackageName, subPackageName);

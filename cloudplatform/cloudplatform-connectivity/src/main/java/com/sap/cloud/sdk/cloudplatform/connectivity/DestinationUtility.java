@@ -58,7 +58,7 @@ public final class DestinationUtility
         requiresUserTokenExchange( @Nonnull final AuthenticationType authType, @Nullable final String systemUser )
     {
         // Handle special case for SAML Bearer Assertion and SAP Assertion SSO
-        if( !StringUtils.isBlankOrEmpty(systemUser)
+        if( !StringUtils.isBlank(systemUser)
             && (authType == AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION
                 || authType == AuthenticationType.SAP_ASSERTION_SSO) ) {
             final String msg =

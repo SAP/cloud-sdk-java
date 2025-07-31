@@ -43,7 +43,7 @@ class DatamodelMetadataGeneratorAdapter
         @Nonnull final GenerationConfiguration generationConfiguration,
         @Nullable final GenerationResult generationResult )
     {
-        if( StringUtils.isBlankOrEmpty(generationConfiguration.getInputSpec()) ) {
+        if( StringUtils.isBlank(generationConfiguration.getInputSpec()) ) {
             throw new IllegalArgumentException("Failure generating metadata because input spec was not provided.");
         }
 

@@ -93,7 +93,7 @@ class DefaultMavenRepositoryAccessor implements MavenRepositoryAccessor
                 e);
         }
 
-        if( StringUtils.isBlankOrEmpty(latestVersion) ) {
+        if( StringUtils.isBlank(latestVersion) ) {
             throw new MetadataGenerationException(
                 "Could not find expected XML field (versioning -> latest) while determining the latest module version for "
                     + mavenCoordinate

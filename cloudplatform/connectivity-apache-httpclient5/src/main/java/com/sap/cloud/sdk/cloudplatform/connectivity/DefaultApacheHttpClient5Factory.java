@@ -149,7 +149,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             return false;
         }
         final String scheme = destination.getUri().getScheme();
-        return "https".equalsIgnoreCase(scheme) || StringUtils.isBlankOrEmpty(scheme);
+        return "https".equalsIgnoreCase(scheme) || StringUtils.isEmpty(scheme);
     }
 
     private HostnameVerifier getHostnameVerifier( final HttpDestinationProperties destination )

@@ -193,13 +193,13 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         @Nullable
         String result;
 
-        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlankOrEmpty(label) ) {
+        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlank(label) ) {
             result = removeWhiteSpaces(label);
         } else {
             result = removeFirstPrefix(name, ENTITY_NAME_PREFIXES_TO_REMOVE);
         }
 
-        if( StringUtils.isBlankOrEmpty(result) ) {
+        if( StringUtils.isBlank(result) ) {
             throw new IllegalStateException(
                 "Could not create a valid Java identifier based on the entity name '"
                     + name
@@ -222,13 +222,13 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         @Nullable
         String result;
 
-        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlankOrEmpty(label) ) {
+        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlank(label) ) {
             result = removeWhiteSpaces(label);
         } else {
             result = removeFirstPrefix(name, PROPERTY_NAME_PREFIXES_TO_REMOVE);
         }
 
-        if( StringUtils.isBlankOrEmpty(result) ) {
+        if( StringUtils.isBlank(result) ) {
             throw new IllegalStateException(
                 "Could not create a valid Java identifier based on the property name '"
                     + name

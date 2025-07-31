@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static com.google.common.collect.Streams.stream;
 import static java.util.function.Predicate.not;
 
 import java.lang.reflect.ParameterizedType;
@@ -249,8 +250,7 @@ public class ODataRequestResultGeneric
     @Nonnull
     public Option<String> getVersionIdentifierFromHeader()
     {
-        return Option
-            .ofOptional(Streams.stream(getHeaderValues("ETag")).filter(not(Strings::isNullOrEmpty)).findFirst());
+        return Option.ofOptional(stream(getHeaderValues("ETag")).filter(not(Strings::isNullOrEmpty)).findFirst());
     }
 
     @Nonnull

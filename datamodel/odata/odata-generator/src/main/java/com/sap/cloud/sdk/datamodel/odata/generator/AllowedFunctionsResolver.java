@@ -122,7 +122,7 @@ class AllowedFunctionsResolver
 
         boolean isTargetingEntitySet()
         {
-            return !StringUtils.isBlankOrEmpty(entitySet.get()) && StringUtils.isBlankOrEmpty(property);
+            return !StringUtils.isBlank(entitySet.get()) && StringUtils.isBlank(property);
         }
 
         /**

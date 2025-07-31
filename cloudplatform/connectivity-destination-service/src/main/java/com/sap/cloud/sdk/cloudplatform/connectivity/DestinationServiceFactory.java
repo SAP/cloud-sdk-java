@@ -153,7 +153,7 @@ class DestinationServiceFactory
         @Nonnull final AuthenticationType authType )
     {
         Option<Long> maybeExpiresIn =
-            Option.of(authToken.getExpiresIn()).filter(not(StringUtils::isBlankOrEmpty)).map(Long::valueOf);
+            Option.of(authToken.getExpiresIn()).filter(not(StringUtils::isBlank)).map(Long::valueOf);
         // any auth token other than basic auth headers without expiration date are assumed to expire after default duration
         if( maybeExpiresIn.isEmpty() && authType != AuthenticationType.BASIC_AUTHENTICATION ) {
             maybeExpiresIn = DestinationService.Cache.getExpirationDuration().map(Duration::getSeconds);

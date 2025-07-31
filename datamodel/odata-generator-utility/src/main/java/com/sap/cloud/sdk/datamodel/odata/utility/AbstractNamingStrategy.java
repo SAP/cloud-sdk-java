@@ -401,7 +401,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy
     @Nonnull
     protected String chooseBetweenNameAndLabel( @Nonnull final String name, @Nullable final String label )
     {
-        if( StringUtils.isBlankOrEmpty(label) || getNameSource() == NameSource.NAME ) {
+        if( StringUtils.isBlank(label) || getNameSource() == NameSource.NAME ) {
             return name;
         }
 
@@ -544,7 +544,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy
         @Nullable final CharSequence conversionOutput,
         @Nonnull final String conversionTarget )
     {
-        if( !StringUtils.isBlankOrEmpty(conversionOutput) ) {
+        if( !StringUtils.isBlank(conversionOutput) ) {
             return;
         }
 

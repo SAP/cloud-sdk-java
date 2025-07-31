@@ -49,7 +49,7 @@ class SSLSocketFactoryUtil
             return false;
         }
         final String scheme = destination.getUri().getScheme();
-        return "https".equalsIgnoreCase(scheme) || StringUtils.isBlankOrEmpty(scheme);
+        return "https".equalsIgnoreCase(scheme) || StringUtils.isEmpty(scheme);
     }
 
     @Nonnull

@@ -93,15 +93,27 @@ public class StringUtils
     }
 
     /**
-     * Checks if the given string is blank or empty.
+     * Checks if the given string is blank.
      *
      * @param s
      *            the string to check
      * @return true if the string is null, empty, or contains only whitespace characters; false otherwise
      */
-    public static boolean isBlankOrEmpty( @Nullable final String s )
+    public static boolean isBlank( @Nullable final String s )
     {
-        return s == null || s.isBlank();
+        return isEmpty(s) || s.isBlank();
+    }
+
+    /**
+     * Checks if the given string is empty.
+     *
+     * @param s
+     *            the string to check
+     * @return true if the string is null, or empty (""); false otherwise
+     */
+    public static boolean isEmpty( @Nullable final String s )
+    {
+        return s == null || s.isEmpty();
     }
 
     /**
@@ -111,9 +123,9 @@ public class StringUtils
      *            the CharSequence to check
      * @return true if the CharSequence is null, empty, or contains only whitespace characters; false otherwise
      */
-    public static boolean isBlankOrEmpty( @Nullable final CharSequence s )
+    public static boolean isBlank( @Nullable final CharSequence s )
     {
-        return s != null && isBlankOrEmpty(s.toString());
+        return s != null && isBlank(s.toString());
     }
 
     /**
@@ -158,7 +170,7 @@ public class StringUtils
     @Nullable
     public static String trimToNull( final @Nullable String s )
     {
-        return isBlankOrEmpty(s) ? null : s.trim();
+        return isBlank(s) ? null : s.trim();
     }
 
     /**
@@ -191,7 +203,7 @@ public class StringUtils
     public static String substringBefore( @Nullable final String string, final char suffix )
     {
         if( string == null ) {
-            return string;
+            return null;
         }
         final int pos = string.indexOf(suffix);
         return pos >= 0 ? string.substring(0, pos) : string;

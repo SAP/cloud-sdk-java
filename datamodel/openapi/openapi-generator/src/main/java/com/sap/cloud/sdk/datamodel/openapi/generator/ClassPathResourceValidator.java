@@ -65,7 +65,7 @@ class ClassPathResourceValidator
         @Nonnull final String library,
         @Nonnull final String relativeTemplateFile )
     {
-        if( !StringUtils.isBlankOrEmpty(library) ) {
+        if( !StringUtils.isBlank(library) ) {
             final String template = this.buildLibraryFilePath(templateDir, library, relativeTemplateFile);
             if( new File(template).exists() || this.classpathTemplateExists(template) ) {
                 return template;

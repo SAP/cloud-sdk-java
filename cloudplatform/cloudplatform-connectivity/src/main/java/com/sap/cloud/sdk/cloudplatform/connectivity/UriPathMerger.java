@@ -67,7 +67,7 @@ public class UriPathMerger
         final String mergeQuery =
             Stream
                 .of(primaryUri.getRawQuery(), secondaryUri.getRawQuery())
-                .filter(not(StringUtils::isBlankOrEmpty))
+                .filter(not(StringUtils::isBlank))
                 .collect(Collectors.joining("&"));
 
         try {
