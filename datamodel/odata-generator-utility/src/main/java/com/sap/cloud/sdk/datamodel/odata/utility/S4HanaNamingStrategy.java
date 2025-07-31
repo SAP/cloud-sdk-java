@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.utility;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -120,8 +121,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         methodName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Objects");
 
-        methodName = StringUtils.removeStart(methodName, "to");
-        methodName = StringUtils.removeStart(methodName, "_");
+        methodName = removeStartIgnoreCase(methodName, "to");
+        methodName = removeStartIgnoreCase(methodName, "_");
         methodName = NamingUtils.uncapitalize(methodName);
 
         throwIfConversionResultIsNullOrEmpty(name, null, methodName, "Java method name");
@@ -134,8 +135,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
     public String generateJavaBuilderMethodName( @Nonnull final String name )
     {
         String methodName = generateNameFromProperty(name, null);
-        methodName = StringUtils.removeStartIgnoreCase(methodName, "to");
-        methodName = StringUtils.removeStart(methodName, "_");
+        methodName = removeStartIgnoreCase(methodName, "to");
+        methodName = removeStartIgnoreCase(methodName, "_");
         methodName = uncapitalizeLeadingAcronym(methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Property");
 
@@ -152,8 +153,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         methodName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Function");
 
-        methodName = StringUtils.removeStart(methodName, "to");
-        methodName = StringUtils.removeStart(methodName, "_");
+        methodName = removeStartIgnoreCase(methodName, "to");
+        methodName = removeStartIgnoreCase(methodName, "_");
 
         throwIfConversionResultIsNullOrEmpty(name, label, methodName, "Java function import method name");
 
@@ -250,7 +251,7 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
     {
         String formattedName = name.trim();
         for( final String prefixToRemove : prefixes ) {
-            if( StringUtils.startsWith(formattedName, prefixToRemove) ) {
+            if( formattedName.startsWith(prefixToRemove) ) {
                 formattedName = formattedName.substring(prefixToRemove.length());
                 break;
             }
@@ -262,9 +263,27 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
     {
         String formattedName = name;
         for( final String suffix : suffixes ) {
-            formattedName = StringUtils.removeEndIgnoreCase(formattedName, suffix);
+            formattedName = removeEndIgnoreCase(formattedName, suffix);
         }
 
         return formattedName;
+    }
+
+    @Nonnull
+    private static String removeStartIgnoreCase( @Nonnull final String s, @Nonnull final String prefix )
+    {
+        if( s.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT)) ) {
+            return s.substring(prefix.length());
+        }
+        return s;
+    }
+
+    @Nonnull
+    private static String removeEndIgnoreCase( @Nonnull final String s, @Nonnull final String prefix )
+    {
+        if( s.toLowerCase(Locale.ROOT).endsWith(prefix.toLowerCase(Locale.ROOT)) ) {
+            return s.substring(0, s.length() - prefix.length());
+        }
+        return s;
     }
 }
