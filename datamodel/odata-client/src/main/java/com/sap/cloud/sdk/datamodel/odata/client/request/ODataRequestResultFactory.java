@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
@@ -29,17 +30,18 @@ interface ODataRequestResultFactory
      * Strategy that buffers the response by creating a copy of it.
      */
     ODataRequestResultFactory WITH_BUFFER = ( oDataRequest, httpResponse, httpClient ) -> {
-        final BasicHttpResponse copy = new BasicHttpResponse(httpResponse.getStatusLine());
+        final StatusLine status = httpResponse.getStatusLine();
+        final BasicHttpResponse copy = new BasicHttpResponse(status);
         Option.of(httpResponse.getLocale()).peek(copy::setLocale);
         Option.of(httpResponse.getAllHeaders()).peek(copy::setHeaders);
 
         final Logger log = getLogger(ODataRequestResultFactory.class);
         Option
             .of(httpResponse.getEntity())
-            .onEmpty(() -> log.warn("HTTP response entity is empty."))
+            .onEmpty(() -> log.debug("HTTP response entity is empty: {}", status))
             .map(entity -> Try.run(() -> copy.setEntity(new BufferedHttpEntity(entity))))
             .peek(b -> b.onSuccess(v -> log.debug("Successfully buffered the HTTP response entity.")))
-            .peek(b -> b.onFailure(e -> log.warn("Failed to buffer the HTTP response entity.", e)));
+            .peek(b -> b.onFailure(e -> log.warn("Failed to buffer HTTP response entity: {}", status, e)));
 
         return new ODataRequestResultGeneric(oDataRequest, copy, httpClient);
     };
