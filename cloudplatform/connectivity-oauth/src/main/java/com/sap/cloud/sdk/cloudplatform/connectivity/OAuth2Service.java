@@ -18,6 +18,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
+import com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Options.TokenCacheParameters;
 import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
@@ -39,6 +40,7 @@ import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
+import com.sap.cloud.security.xsuaa.tokenflows.TokenCacheConfiguration;
 
 import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
@@ -89,6 +91,8 @@ class OAuth2Service
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration resilienceConfiguration;
+    @Nonnull
+    private final TokenCacheParameters tokenCacheParameters;
 
     // package-private for testing
     @Nonnull
@@ -101,8 +105,16 @@ class OAuth2Service
     @Nonnull
     private OAuth2TokenService createTokenService( @Nonnull final CacheKey ignored )
     {
+        final var tokenCacheConfiguration =
+            TokenCacheConfiguration
+                .getInstance(
+                    tokenCacheParameters.getCacheDuration(),
+                    tokenCacheParameters.getCacheSize(),
+                    tokenCacheParameters.getTokenExpirationDelta(),
+                    false); // disable cache statistics
+
         if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity));
+            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
         }
 
         final DefaultHttpDestination destination =
@@ -115,7 +127,9 @@ class OAuth2Service
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
         try {
-            return new DefaultOAuth2TokenService((CloseableHttpClient) HttpClientAccessor.getHttpClient(destination));
+            return new DefaultOAuth2TokenService(
+                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
+                tokenCacheConfiguration);
         }
         catch( final ClassCastException e ) {
             final String msg =
@@ -214,6 +228,10 @@ class OAuth2Service
             // the IAS property supplier will have set this to the provider ID by default
             // we have to override it here to match the current tenant, if the current tenant is defined
             additionalParameters.put("app_tid", tenantId);
+            if( onBehalfOf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
+                // workaround until a fix is provided by IAS
+                additionalParameters.put("refresh_token", "0");
+            }
         }
     }
 
@@ -335,6 +353,7 @@ class OAuth2Service
         private TenantPropagationStrategy tenantPropagationStrategy = TenantPropagationStrategy.ZID_HEADER;
         private final Map<String, String> additionalParameters = new HashMap<>();
         private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
+        private TokenCacheParameters tokenCacheParameters = OAuth2Options.DEFAULT_TOKEN_CACHE_PARAMETERS;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -413,6 +432,13 @@ class OAuth2Service
         }
 
         @Nonnull
+        Builder withTokenCacheParameters( @Nonnull final TokenCacheParameters tokenCacheParameters )
+        {
+            this.tokenCacheParameters = tokenCacheParameters;
+            return this;
+        }
+
+        @Nonnull
         OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
@@ -434,13 +460,15 @@ class OAuth2Service
 
             // copy the additional parameters to prevent accidental manipulation after the `OAuth2Service` instance has been created.
             final Map<String, String> additionalParameters = new HashMap<>(this.additionalParameters);
+
             return new OAuth2Service(
                 tokenUri,
                 identity,
                 onBehalfOf,
                 tenantPropagationStrategy,
                 additionalParameters,
-                resilienceConfig);
+                resilienceConfig,
+                tokenCacheParameters);
         }
     }
 
