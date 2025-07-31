@@ -132,6 +132,8 @@ public class ODataRequestReadByKey extends ODataRequestGeneric
 
     /**
      * Disable pre-buffering of http response entity.
+     *
+     * @since 5.21.0
      */
     @Beta
     @Nonnull

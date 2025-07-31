@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * OData request result for reading entities. The connection is not yet closed.
+ *
+ * @since 5.21.0
  */
 @Slf4j
 @Beta
