@@ -2,6 +2,8 @@ package com.sap.cloud.sdk.cloudplatform.security;
 
 import javax.annotation.Nonnull;
 
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
+
 import lombok.Data;
 
 /**
@@ -32,9 +34,8 @@ public class BearerCredentials implements Credentials
     public BearerCredentials( @Nonnull final String token )
     {
         final String trimmedToken = token.trim();
-        final int l = BEARER_PREFIX.length();
-        if( trimmedToken.length() > l && trimmedToken.substring(0, l).equalsIgnoreCase(BEARER_PREFIX) ) {
-            this.token = trimmedToken.substring(l).trim();
+        if( StringUtils.startsWithIgnoreCase(trimmedToken, BEARER_PREFIX) ) {
+            this.token = trimmedToken.substring(BEARER_PREFIX.length()).trim();
         } else {
             this.token = trimmedToken;
         }
