@@ -11,14 +11,13 @@ import java.util.LinkedList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.net.HttpHeaders;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.security.BasicCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.BearerCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 import com.sap.cloud.sdk.cloudplatform.security.NoCredentials;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;

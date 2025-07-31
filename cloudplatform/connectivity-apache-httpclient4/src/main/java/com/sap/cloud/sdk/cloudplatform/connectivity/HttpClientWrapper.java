@@ -16,7 +16,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
-import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
@@ -114,7 +113,7 @@ class HttpClientWrapper extends CloseableHttpClient implements UriQueryMerger
         final UriPathMerger merger = new UriPathMerger();
         final URI mergedUri = merger.merge(destination.getUri(), requestUri);
 
-        final String queryString = Joiner.on("&").join(QueryParamGetter.getQueryParameters(destination));
+        final String queryString = String.join("&", QueryParamGetter.getQueryParameters(destination));
         return merger.merge(mergedUri, URI.create("/?" + queryString));
     }
 

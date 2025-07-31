@@ -31,7 +31,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
@@ -92,7 +91,7 @@ public final class ApiClient
 
         private String collectionToString( final Collection<? extends CharSequence> collection )
         {
-            return StringUtils.collectionToDelimitedString(collection, separator);
+            return String.join(separator, collection);
         }
     }
 
@@ -596,7 +595,7 @@ public final class ApiClient
                 return Collections.singletonList(mediaType);
             }
         }
-        return MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(accepts));
+        return MediaType.parseMediaTypes(String.join(",", accepts));
     }
 
     /**

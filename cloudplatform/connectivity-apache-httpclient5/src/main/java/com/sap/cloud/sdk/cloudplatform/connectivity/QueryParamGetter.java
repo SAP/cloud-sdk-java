@@ -5,10 +5,9 @@ import java.util.LinkedList;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.escape.Escaper;
 import com.google.common.net.PercentEscaper;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;

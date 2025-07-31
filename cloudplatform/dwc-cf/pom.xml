@@ -30,14 +30,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
-	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk</groupId>
