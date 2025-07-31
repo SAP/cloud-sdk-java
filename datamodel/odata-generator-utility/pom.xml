@@ -35,6 +35,10 @@
 	<dependencies>
 		<!-- Scope: Compile -->
 		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>cloudplatform-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -49,10 +53,6 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<!-- Scope: Provided -->
 		<dependency>
@@ -76,5 +76,5 @@
 			<artifactId>junit-jupiter-params</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 </project>

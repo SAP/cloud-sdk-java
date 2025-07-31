@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.function.Predicate.not;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.stream.Collectors;
@@ -8,10 +10,9 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationPathsNotMergeableException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class UriPathMerger
      *            The secondary {@code URI}, usually identifying the request at runtime.
      *
      * @throws DestinationPathsNotMergeableException
-     *             If either of the request paths of the the given URIs are {@code null} or the URIs differ in the used
+     *             If either of the request paths of the given URIs are {@code null} or the URIs differ in the used
      *             schema, host, or port.
      *
      * @return The merged {@code URI}, representing the given request executed on the given destination.
@@ -66,7 +67,7 @@ public class UriPathMerger
         final String mergeQuery =
             Stream
                 .of(primaryUri.getRawQuery(), secondaryUri.getRawQuery())
-                .filter(StringUtils::isNotEmpty)
+                .filter(not(StringUtils::isBlankOrEmpty))
                 .collect(Collectors.joining("&"));
 
         try {

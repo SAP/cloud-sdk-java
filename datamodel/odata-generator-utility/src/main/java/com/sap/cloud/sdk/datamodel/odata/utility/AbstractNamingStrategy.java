@@ -8,9 +8,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.SourceVersion;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.CaseFormat;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -402,7 +401,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy
     @Nonnull
     protected String chooseBetweenNameAndLabel( @Nonnull final String name, @Nullable final String label )
     {
-        if( StringUtils.isBlank(label) || getNameSource() == NameSource.NAME ) {
+        if( StringUtils.isBlankOrEmpty(label) || getNameSource() == NameSource.NAME ) {
             return name;
         }
 
@@ -545,7 +544,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy
         @Nullable final CharSequence conversionOutput,
         @Nonnull final String conversionTarget )
     {
-        if( !StringUtils.isBlank(conversionOutput) ) {
+        if( !StringUtils.isBlankOrEmpty(conversionOutput) ) {
             return;
         }
 

@@ -9,12 +9,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 class ServiceDetailsResolver
 {
@@ -96,7 +97,7 @@ class ServiceDetailsResolver
     private String readServiceNameFromMetaDataFile( @Nonnull final File metadataFile )
     {
         String serviceName = getMetadataNamespace(metadataFile);
-        if( StringUtils.isBlank(serviceName) ) {
+        if( StringUtils.isBlankOrEmpty(serviceName) ) {
             // no namespace specified, consider filename as the service name
             serviceName = FilenameUtils.getBaseName(metadataFile.getAbsolutePath());
         }
@@ -131,7 +132,7 @@ class ServiceDetailsResolver
                 final Node namespaceNode = schemaAttributeMap.getNamedItem("Namespace");
                 if( namespaceNode != null ) {
                     final String namespace = namespaceNode.getNodeValue();
-                    if( !StringUtils.isBlank(namespace) ) {
+                    if( !StringUtils.isBlankOrEmpty(namespace) ) {
                         return namespace;
                     }
                 }
@@ -152,7 +153,7 @@ class ServiceDetailsResolver
     {
         final String prefixToRemove = "/s4hanacloud";
         final String serviceUrl = details.getServiceUrl();
-        final String adjustedUrl = StringUtils.removeStart(serviceUrl, prefixToRemove);
+        final String adjustedUrl = StringUtils.removeStartIgnoreCase(serviceUrl, prefixToRemove);
         details.setServiceUrl(adjustedUrl);
     }
 
@@ -183,7 +184,7 @@ class ServiceDetailsResolver
         catch( final URISyntaxException e ) {
             throw new ODataGeneratorReadException("Could not parse the atom:link url " + fullServiceUrl, e);
         }
-        return StringUtils.removeEnd(uri.getPath(), "/$metadata");
+        return StringUtils.removeEndIgnoreCase(uri.getPath(), "/$metadata");
     }
 
     @Nullable

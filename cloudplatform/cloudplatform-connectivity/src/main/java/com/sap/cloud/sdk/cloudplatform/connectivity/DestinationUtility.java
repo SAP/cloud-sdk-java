@@ -5,7 +5,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.S
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +58,7 @@ public final class DestinationUtility
         requiresUserTokenExchange( @Nonnull final AuthenticationType authType, @Nullable final String systemUser )
     {
         // Handle special case for SAML Bearer Assertion and SAP Assertion SSO
-        if( !StringUtils.isBlank(systemUser)
+        if( !StringUtils.isBlankOrEmpty(systemUser)
             && (authType == AuthenticationType.OAUTH2_SAML_BEARER_ASSERTION
                 || authType == AuthenticationType.SAP_ASSERTION_SSO) ) {
             final String msg =

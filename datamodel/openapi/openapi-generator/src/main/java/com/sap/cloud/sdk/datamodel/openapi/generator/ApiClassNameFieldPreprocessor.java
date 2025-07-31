@@ -3,11 +3,10 @@ package com.sap.cloud.sdk.datamodel.openapi.generator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 class ApiClassNameFieldPreprocessor implements PreprocessingStep
 {

@@ -1,15 +1,13 @@
 package com.sap.cloud.sdk.datamodel.odata.utility;
 
 import java.util.Collection;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.NoArgsConstructor;
 
@@ -121,8 +119,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         methodName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Objects");
 
-        methodName = removeStartIgnoreCase(methodName, "to");
-        methodName = removeStartIgnoreCase(methodName, "_");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "to");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "_");
         methodName = NamingUtils.uncapitalize(methodName);
 
         throwIfConversionResultIsNullOrEmpty(name, null, methodName, "Java method name");
@@ -135,8 +133,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
     public String generateJavaBuilderMethodName( @Nonnull final String name )
     {
         String methodName = generateNameFromProperty(name, null);
-        methodName = removeStartIgnoreCase(methodName, "to");
-        methodName = removeStartIgnoreCase(methodName, "_");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "to");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "_");
         methodName = uncapitalizeLeadingAcronym(methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Property");
 
@@ -153,8 +151,8 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         methodName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, methodName);
         methodName = appendSuffixIfNameIsReservedKeyword(methodName, "Function");
 
-        methodName = removeStartIgnoreCase(methodName, "to");
-        methodName = removeStartIgnoreCase(methodName, "_");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "to");
+        methodName = StringUtils.removeStartIgnoreCase(methodName, "_");
 
         throwIfConversionResultIsNullOrEmpty(name, label, methodName, "Java function import method name");
 
@@ -195,13 +193,13 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         @Nullable
         String result;
 
-        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlank(label) ) {
+        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlankOrEmpty(label) ) {
             result = removeWhiteSpaces(label);
         } else {
             result = removeFirstPrefix(name, ENTITY_NAME_PREFIXES_TO_REMOVE);
         }
 
-        if( StringUtils.isBlank(result) ) {
+        if( StringUtils.isBlankOrEmpty(result) ) {
             throw new IllegalStateException(
                 "Could not create a valid Java identifier based on the entity name '"
                     + name
@@ -224,13 +222,13 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
         @Nullable
         String result;
 
-        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlank(label) ) {
+        if( getNameSource() == NameSource.LABEL && !StringUtils.isBlankOrEmpty(label) ) {
             result = removeWhiteSpaces(label);
         } else {
             result = removeFirstPrefix(name, PROPERTY_NAME_PREFIXES_TO_REMOVE);
         }
 
-        if( StringUtils.isBlank(result) ) {
+        if( StringUtils.isBlankOrEmpty(result) ) {
             throw new IllegalStateException(
                 "Could not create a valid Java identifier based on the property name '"
                     + name
@@ -263,27 +261,9 @@ public final class S4HanaNamingStrategy extends AbstractNamingStrategy
     {
         String formattedName = name;
         for( final String suffix : suffixes ) {
-            formattedName = removeEndIgnoreCase(formattedName, suffix);
+            formattedName = StringUtils.removeEndIgnoreCase(formattedName, suffix);
         }
 
         return formattedName;
-    }
-
-    @Nonnull
-    private static String removeStartIgnoreCase( @Nonnull final String s, @Nonnull final String prefix )
-    {
-        if( s.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT)) ) {
-            return s.substring(prefix.length());
-        }
-        return s;
-    }
-
-    @Nonnull
-    private static String removeEndIgnoreCase( @Nonnull final String s, @Nonnull final String prefix )
-    {
-        if( s.toLowerCase(Locale.ROOT).endsWith(prefix.toLowerCase(Locale.ROOT)) ) {
-            return s.substring(0, s.length() - prefix.length());
-        }
-        return s;
     }
 }

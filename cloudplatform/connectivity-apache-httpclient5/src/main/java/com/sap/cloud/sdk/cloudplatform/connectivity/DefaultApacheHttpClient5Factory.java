@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -31,6 +30,7 @@ import org.apache.hc.core5.util.Timeout;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;
@@ -149,7 +149,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             return false;
         }
         final String scheme = destination.getUri().getScheme();
-        return "https".equalsIgnoreCase(scheme) || StringUtils.isEmpty(scheme);
+        return "https".equalsIgnoreCase(scheme) || StringUtils.isBlankOrEmpty(scheme);
     }
 
     private HostnameVerifier getHostnameVerifier( final HttpDestinationProperties destination )

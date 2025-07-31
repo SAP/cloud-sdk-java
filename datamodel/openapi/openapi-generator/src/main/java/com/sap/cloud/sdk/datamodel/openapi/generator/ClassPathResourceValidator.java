@@ -5,8 +5,9 @@ import java.nio.file.Paths;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openapitools.codegen.TemplateManager;
+
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +65,7 @@ class ClassPathResourceValidator
         @Nonnull final String library,
         @Nonnull final String relativeTemplateFile )
     {
-        if( StringUtils.isNotEmpty(library) ) {
+        if( !StringUtils.isBlankOrEmpty(library) ) {
             final String template = this.buildLibraryFilePath(templateDir, library, relativeTemplateFile);
             if( new File(template).exists() || this.classpathTemplateExists(template) ) {
                 return template;

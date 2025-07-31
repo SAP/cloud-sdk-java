@@ -10,13 +10,12 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.utility.LegacyClassScanner;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingStrategy;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingUtils;
