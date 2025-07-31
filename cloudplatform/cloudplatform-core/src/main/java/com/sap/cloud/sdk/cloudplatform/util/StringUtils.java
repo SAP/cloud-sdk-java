@@ -101,7 +101,7 @@ public class StringUtils
      */
     public static boolean isBlankOrEmpty( @Nullable final String s )
     {
-        return s == null || s.trim().isEmpty();
+        return s == null || s.isBlank();
     }
 
     /**
@@ -156,9 +156,9 @@ public class StringUtils
      * @return the trimmed string, or null if the input is null or empty after trimming
      */
     @Nullable
-    public static String trimToNull( @Nullable String s )
+    public static String trimToNull( final @Nullable String s )
     {
-        return s == null ? null : (s = s.trim()).isEmpty() ? null : s;
+        return isBlankOrEmpty(s) ? null : s.trim();
     }
 
     /**

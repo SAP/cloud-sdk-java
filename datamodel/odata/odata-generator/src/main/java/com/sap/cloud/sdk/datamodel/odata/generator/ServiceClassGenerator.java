@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
@@ -128,7 +127,7 @@ class ServiceClassGenerator
                                 .format(
                                     "<tr><td align='right'>%s:</td><td>%s</td></tr>",
                                     entry.getName(),
-                                    Joiner.on(", ").join(entry.getValues())));
+                                    String.join(", ", entry.getValues())));
                 }
             }
         }

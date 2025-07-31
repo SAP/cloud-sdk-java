@@ -15,8 +15,6 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Joiner;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -105,7 +103,7 @@ public class ServiceNameMappings
      */
     public void putString( @Nonnull final String key, @Nonnull final String value, @Nonnull final String... comments )
     {
-        mappings.put(new Key(key), new Value(value, Joiner.on(" ").join(comments)));
+        mappings.put(new Key(key), new Value(value, String.join(" ", comments)));
     }
 
     private void populateMappings()

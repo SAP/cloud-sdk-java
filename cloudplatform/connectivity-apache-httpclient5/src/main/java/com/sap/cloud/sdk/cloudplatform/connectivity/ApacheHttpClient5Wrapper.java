@@ -15,7 +15,6 @@ import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 
-import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
@@ -103,7 +102,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurab
             throw new IllegalStateException("Failed to merge destination URI with request URI.", e);
         }
 
-        final String queryString = Joiner.on("&").join(QueryParamGetter.getQueryParameters(destination));
+        final String queryString = String.join("&", QueryParamGetter.getQueryParameters(destination));
         requestUri = merger.merge(requestUri, URI.create("/?" + queryString));
 
         final ClassicRequestBuilder requestBuilder = ClassicRequestBuilder.copy(request);
