@@ -1,7 +1,8 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static com.google.common.collect.Streams.stream;
 import static java.util.function.Predicate.not;
+
+import static com.google.common.collect.Streams.stream;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,7 +31,6 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Streams;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
