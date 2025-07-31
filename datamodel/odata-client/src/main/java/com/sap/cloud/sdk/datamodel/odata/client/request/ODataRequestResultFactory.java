@@ -36,7 +36,7 @@ interface ODataRequestResultFactory
         final Logger log = getLogger(ODataRequestResultFactory.class);
         Option
             .of(httpResponse.getEntity())
-            .onEmpty(() -> log.warn(("HTTP response entity is empty.")))
+            .onEmpty(() -> log.warn("HTTP response entity is empty."))
             .map(entity -> Try.run(() -> copy.setEntity(new BufferedHttpEntity(entity))))
             .peek(b -> b.onSuccess(v -> log.debug("Successfully buffered the HTTP response entity.")))
             .peek(b -> b.onFailure(e -> log.warn("Failed to buffer the HTTP response entity.", e)));
