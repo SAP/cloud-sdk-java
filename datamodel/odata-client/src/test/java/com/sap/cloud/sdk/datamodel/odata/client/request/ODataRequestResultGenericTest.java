@@ -182,19 +182,20 @@ class ODataRequestResultGenericTest
         httpResponse.setEntity(new InputStreamEntity(inputStream, json.length()));
 
         // system under test
-        final ODataRequestResultGeneric testResult = new ODataRequestResultGeneric(oDataRequest, httpResponse);
-        testResult.disableBufferingHttpResponse();
+        try(
+            final ODataRequestResultResource testResult =
+                new ODataRequestResultResource(oDataRequest, httpResponse, null) ) {
+            // sanity checks do not consume the response
+            assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
+            assertThat(testResult.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
 
-        // sanity checks do not consume the response
-        assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
-        assertThat(testResult.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+            // true-positive, successfully read once
+            assertThat(testResult.asListOfMaps()).isEmpty();
 
-        // true-positive, successfully read once
-        assertThat(testResult.asListOfMaps()).isEmpty();
-
-        // true-negative, no second read possible
-        assertThatThrownBy(testResult::asListOfMaps)
-            .isInstanceOf(ODataDeserializationException.class)
-            .hasMessageContaining("Unable to read OData 4.0 response.");
+            // true-negative, no second read possible
+            assertThatThrownBy(testResult::asListOfMaps)
+                .isInstanceOf(ODataDeserializationException.class)
+                .hasMessageContaining("Unable to read OData 4.0 response.");
+        }
     }
 }

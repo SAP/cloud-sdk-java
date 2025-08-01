@@ -92,6 +92,7 @@ public class ODataRequestBatch extends ODataRequestGeneric
         this.uuidProvider = uuidProvider;
         this.batchUuid = uuidProvider.get();
         this.headers.remove(HttpHeaders.ACCEPT); // batch request does not require Accept header
+        this.requestResultFactory = ODataRequestResultFactory.WITHOUT_BUFFER;
     }
 
     @Nonnull
