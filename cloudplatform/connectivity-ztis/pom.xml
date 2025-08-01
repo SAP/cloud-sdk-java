@@ -32,6 +32,11 @@
 		<dependencies>
 			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
 			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>3.25.8</version>
+			</dependency>
+			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
 				<version>1.73.0</version>

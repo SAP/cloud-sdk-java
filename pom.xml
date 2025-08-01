@@ -122,7 +122,6 @@
 		<commons-codec.version>1.18.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
-		<protobuf-java.version>3.25.8</protobuf-java.version>
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
@@ -296,12 +295,6 @@
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
-			</dependency>
-			<!-- resolve vulnerability CVE-2024-7254 -->
-			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>${protobuf-java.version}</version>
 			</dependency>
 			<!--Dependencies with test scope-->
 			<dependency>
