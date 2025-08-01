@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.21.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-ztis</artifactId>
 	<name>Connectivity - Zero Trust Identity Service</name>
@@ -31,11 +31,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
-			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>3.25.8</version>
-			</dependency>
 			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
