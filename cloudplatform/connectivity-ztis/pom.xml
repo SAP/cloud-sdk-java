@@ -32,11 +32,6 @@
 		<dependencies>
 			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
 			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>3.25.8</version>
-			</dependency>
-			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
 				<version>1.73.0</version>
@@ -92,6 +87,19 @@
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Fix CVE-2024-7254 -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.25.8</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
