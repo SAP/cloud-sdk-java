@@ -120,13 +120,24 @@ class DestinationServiceAdapter
         throws DestinationAccessException,
             DestinationNotFoundException
     {
+        return getConfigurationAsJson(servicePath, strategy, DestinationOptions.builder().build());
+    }
+
+    @Nonnull
+    String getConfigurationAsJson(
+        @Nonnull final String servicePath,
+        @Nonnull final DestinationRetrievalStrategy strategy,
+        @Nonnull final DestinationOptions options )
+        throws DestinationAccessException,
+            DestinationNotFoundException
+    {
         final HttpDestination serviceDestination =
             Objects
                 .requireNonNull(
                     serviceDestinationLoader.apply(strategy.behalf()),
                     () -> "Destination for Destination Service on behalf of " + strategy.behalf() + " not found.");
 
-        final HttpUriRequest request = prepareRequest(servicePath, strategy);
+        final HttpUriRequest request = prepareRequest(servicePath, strategy, options);
 
         final HttpResponse response;
         try {
@@ -174,9 +185,20 @@ class DestinationServiceAdapter
 
     private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
     {
+        return prepareRequest(servicePath, strategy, DestinationOptions.builder().build());
+    }
+
+    private HttpUriRequest prepareRequest(
+        final String servicePath,
+        final DestinationRetrievalStrategy strategy,
+        final DestinationOptions options )
+    {
+        final String apiVersion = DestinationServiceOptionsAugmenter.getApiVersion(options).getOrElse("v1");
+        final String basePath = "destination-configuration/" + apiVersion;
+
         final URI requestUri;
         try {
-            requestUri = new URI(SERVICE_PATH + servicePath);
+            requestUri = new URI(basePath + servicePath);
         }
         catch( final URISyntaxException e ) {
             throw new DestinationAccessException(e);

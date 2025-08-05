@@ -20,6 +20,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static final String DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY = "scp.cf.destinationTokenExchangeStrategy";
     static final String X_REFRESH_TOKEN_KEY = "x-refresh-token";
     static final String X_FRAGMENT_KEY = "X-fragment-name";
+    static final String DESTINATION_SERVICE_API_VERSION_KEY = "scp.cf.destinationServiceApiVersion";
 
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -105,6 +106,22 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
         return this;
     }
 
+    /**
+     * Sets the API version to use when calling the destination service. This allows opting into newer API versions. If
+     * not set, the default API version (v1) will be used.
+     *
+     * @param apiVersion
+     *            The API version to use (e.g., "v1", "v2").
+     * @return The same augmenter that called this method.
+     * @since 5.22.0
+     */
+    @Nonnull
+    public DestinationServiceOptionsAugmenter apiVersion( @Nonnull final String apiVersion )
+    {
+        parameters.put(DESTINATION_SERVICE_API_VERSION_KEY, apiVersion);
+        return this;
+    }
+
     @Override
     public void augmentBuilder( @Nonnull final DestinationOptions.Builder builder )
     {
@@ -169,5 +186,23 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static Option<String> getFragmentName( @Nonnull final DestinationOptions options )
     {
         return options.get(X_FRAGMENT_KEY).filter(String.class::isInstance).map(String.class::cast);
+    }
+
+    /**
+     * Retrieves the configured API version to use when calling the destination service.
+     *
+     * @param options
+     *            The destination options instance that stores the key/value pair.
+     * @return An {@link Option} wrapping the API version if the parameter is present, otherwise a
+     *         {@link io.vavr.control.Option.None}.
+     * @since 5.22.0
+     */
+    @Nonnull
+    static Option<String> getApiVersion( @Nonnull final DestinationOptions options )
+    {
+        return options
+            .get(DESTINATION_SERVICE_API_VERSION_KEY)
+            .filter(String.class::isInstance)
+            .map(String.class::cast);
     }
 }

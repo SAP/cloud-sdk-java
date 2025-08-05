@@ -130,7 +130,7 @@ public class DestinationService implements DestinationLoader
     {
         final String servicePath = PATH_DEFAULT + destName;
         final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever =
-            strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
+            strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath, options), singleDestResilience);
 
         final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
             DestinationRetrievalStrategyResolver
@@ -145,7 +145,16 @@ public class DestinationService implements DestinationLoader
     DestinationServiceV1Response
         retrieveDestination( final DestinationRetrievalStrategy strategy, final String servicePath )
     {
-        final String response = adapter.getConfigurationAsJson(servicePath, strategy);
+        return retrieveDestination(strategy, servicePath, DestinationOptions.builder().build());
+    }
+
+    @Nonnull
+    DestinationServiceV1Response retrieveDestination(
+        final DestinationRetrievalStrategy strategy,
+        final String servicePath,
+        final DestinationOptions options )
+    {
+        final String response = adapter.getConfigurationAsJson(servicePath, strategy, options);
 
         return deserializeDestinationResponse(response);
     }
