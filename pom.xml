@@ -504,7 +504,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.6.1</version>
 				<executions>
 					<execution>
 						<id>enforce-project-rules</id>
@@ -1002,7 +1002,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-gpg-plugin</artifactId>
-							<version>3.2.7</version>
+							<version>3.2.8</version>
 							<executions>
 								<execution>
 									<id>sign-artifacts</id>
@@ -1059,7 +1059,7 @@
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>flatten-maven-plugin</artifactId>
-							<version>1.7.1</version>
+							<version>1.7.2</version>
 							<executions>
 								<execution>
 									<id>flatten</id>
