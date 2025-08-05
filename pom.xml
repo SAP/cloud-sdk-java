@@ -91,7 +91,7 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.8</spring.version>
+		<spring.version>6.2.9</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<assertj-core.version>3.27.3</assertj-core.version>
@@ -102,12 +102,12 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.10</maven-plugin.version>
+		<maven-plugin.version>3.9.11</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.2</caffeine.version>
 		<openapi-generator.version>7.14.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.34</io-swagger-core-v3.version>
+		<io-swagger-core-v3.version>2.2.35</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.31</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
@@ -119,7 +119,7 @@
 		<checkstyle.version>10.26.1</checkstyle.version>
 		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
-		<commons-codec.version>1.18.0</commons-codec.version>
+		<commons-codec.version>1.19.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<protobuf-java.version>3.25.8</protobuf-java.version>

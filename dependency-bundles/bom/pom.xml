@@ -51,17 +51,17 @@
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<scp-cf.xsuaa-client.version>3.6.0</scp-cf.xsuaa-client.version>
+		<scp-cf.xsuaa-client.version>3.6.1</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.5.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.17</slf4j.version>
 		<lombok.version>1.18.38</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
-		<vavr.version>0.10.6</vavr.version>
+		<vavr.version>0.10.7</vavr.version>
 		<guava.version>33.4.8-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
-		<commons-io.version>2.19.0</commons-io.version>
+		<commons-io.version>2.20.0</commons-io.version>
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
@@ -275,7 +275,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.40.0</version>
+				<version>2.41.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
