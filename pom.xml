@@ -82,7 +82,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.19.1</jackson.version>
+		<jackson.version>2.19.2</jackson.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -98,7 +98,7 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.18.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.13.3</junit.jupiter.version>
+		<junit.jupiter.version>5.13.4</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
