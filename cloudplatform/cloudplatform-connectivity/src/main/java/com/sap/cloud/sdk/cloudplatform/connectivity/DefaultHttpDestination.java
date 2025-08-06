@@ -169,7 +169,13 @@ public final class DefaultHttpDestination implements HttpDestination
         final Collection<Header> allHeaders = new ArrayList<>();
 
         allHeaders.addAll(customHeaders);
-        allHeaders.addAll(getHeadersFromHeaderProviders(requestUri));
+        allHeaders
+            .addAll(
+                getHeadersFromHeaderProviders(
+                    this,
+                    requestUri,
+                    customHeaderProviders,
+                    headerProvidersFromClassLoading));
         allHeaders.addAll(cachedHeadersFromProperties);
         if( allHeaders.stream().noneMatch(header -> header.getName().equalsIgnoreCase(HttpHeaders.AUTHORIZATION)) ) {
             allHeaders.addAll(getHeadersForAuthType());
@@ -180,7 +186,11 @@ public final class DefaultHttpDestination implements HttpDestination
         return allHeaders;
     }
 
-    private List<Header> getHeadersFromHeaderProviders( @Nonnull final URI requestUri )
+    static List<Header> getHeadersFromHeaderProviders(
+        @Nonnull final HttpDestination destination,
+        @Nonnull final URI requestUri,
+        @Nonnull final List<DestinationHeaderProvider> customHeaderProviders,
+        @Nonnull final List<DestinationHeaderProvider> headerProvidersFromClassLoading )
     {
         final List<DestinationHeaderProvider> aggregatedHeaderProviders = new ArrayList<>();
         aggregatedHeaderProviders.addAll(customHeaderProviders);
@@ -189,7 +199,7 @@ public final class DefaultHttpDestination implements HttpDestination
         final String msg = "Found these {} destination header providers: {}";
         log.debug(msg, aggregatedHeaderProviders.size(), aggregatedHeaderProviders);
 
-        final DestinationRequestContext requestContext = new DestinationRequestContext(this, requestUri);
+        final DestinationRequestContext requestContext = new DestinationRequestContext(destination, requestUri);
 
         final List<Header> result = new ArrayList<>();
         for( final DestinationHeaderProvider headerProvider : aggregatedHeaderProviders ) {

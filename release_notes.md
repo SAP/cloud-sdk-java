@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Introducing Transparent Proxy Destination - https://sap.github.io/cloud-sdk/docs/java/features/connectivity/transparent-proxy
 
 ### 📈 Improvements
 
