@@ -8,9 +8,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.SourceVersion;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.CaseFormat;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

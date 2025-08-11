@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>datamodel-parent</artifactId>
-		<version>5.18.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>soap</artifactId>
 	<name>Data Model - SOAP Queries</name>
@@ -28,21 +28,13 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
-	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
-	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<!-- updated to secure version due to CVE-2023-24998 -->
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
-				<version>1.5</version>
+				<version>1.6.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

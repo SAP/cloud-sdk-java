@@ -16,12 +16,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.slf4j.Logger;
@@ -31,6 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.JsonAdapter;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 import com.sap.cloud.sdk.datamodel.odata.utility.LegacyClassScanner;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingStrategy;
@@ -883,8 +882,7 @@ class NamespaceClassGenerator
         Unfortunately there is no other way to exclude it, because we can't get the binding parameter name from Olingo.
         So we have to go based on the ordering.
          */
-        final List<String> parameterList =
-            operation.getParameterNames().stream().skip(isBound ? 1 : 0).collect(Collectors.toList());
+        final List<String> parameterList = operation.getParameterNames().stream().skip(isBound ? 1 : 0).toList();
 
         for( final String parameterName : parameterList ) {
             final Service.Parameter parameter = operation.getParameter(parameterName);

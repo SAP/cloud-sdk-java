@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>odata-v4-parent</artifactId>
-		<version>5.18.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-v4-core</artifactId>
 	<packaging>jar</packaging>
@@ -29,13 +29,7 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<jsr305.optional>false</jsr305.optional>
 	</properties>
 	<dependencies>

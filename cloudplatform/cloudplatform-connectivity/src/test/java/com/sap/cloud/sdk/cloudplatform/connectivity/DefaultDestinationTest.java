@@ -43,8 +43,20 @@ class DefaultDestinationTest
     @Test
     void testToString()
     {
-        final Destination dest = DefaultDestination.builder().name("foo").property("some_password", "bar").build();
-        assertThat(dest).hasToString("DefaultDestination(properties={some_password=(hidden), Name=foo})");
+        final Destination dest =
+            DefaultDestination
+                .builder()
+                .name("foo")
+                .property("some_password", "bar")
+                .property("some_secret", "baz")
+                .build();
+
+        assertThat(dest.toString())
+            .startsWith("DefaultDestination(properties={")
+            .contains("some_password=(hidden)")
+            .contains("some_secret=(hidden)")
+            .contains("Name=foo")
+            .endsWith("})");
     }
 
     @Test

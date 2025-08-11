@@ -89,6 +89,12 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     @Setter
     protected CsrfTokenRetriever csrfTokenRetriever;
 
+    /**
+     * The response buffer strategy to use for this request.
+     */
+    @Nonnull
+    ODataRequestResultFactory requestResultFactory = ODataRequestResultFactory.WITH_BUFFER;
+
     ODataRequestGeneric(
         @Nonnull final String servicePath,
         @Nonnull final ODataResourcePath resourcePath,
@@ -229,7 +235,7 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     {
         return Try
             .ofSupplier(httpOperation)
-            .map(response -> new ODataRequestResultGeneric(this, response, httpClient))
+            .map(response -> requestResultFactory.create(this, response, httpClient))
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
 

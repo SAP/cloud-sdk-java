@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -17,6 +16,8 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 

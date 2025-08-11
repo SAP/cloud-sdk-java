@@ -22,8 +22,6 @@ class MetadataFileUtils
             docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             //disable inline doctype declaration to prevent XML External Entity Injection
             docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            //enable XML validation which is required to satisfy Fortify
-            docBuilderFactory.setValidating(true);
             final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             return docBuilder.parse(metadataFile);
         }

@@ -93,6 +93,7 @@ public class DeleteRequestBuilder<EntityT extends VdmEntity<?>>
     public ModificationResponse<EntityT> execute( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
 
         return ModificationResponse.of(response, getEntity());

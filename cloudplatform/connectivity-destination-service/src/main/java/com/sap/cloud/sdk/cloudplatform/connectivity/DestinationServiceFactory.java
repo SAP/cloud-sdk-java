@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static java.util.function.Predicate.not;
+
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationService.Cache.DEFAULT_EXPIRATION_DURATION;
 
 import java.time.Duration;
@@ -10,11 +12,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -152,7 +153,7 @@ class DestinationServiceFactory
         @Nonnull final AuthenticationType authType )
     {
         Option<Long> maybeExpiresIn =
-            Option.of(authToken.getExpiresIn()).filter(val -> !StringUtils.isBlank(val)).map(Long::valueOf);
+            Option.of(authToken.getExpiresIn()).filter(not(StringUtils::isBlank)).map(Long::valueOf);
         // any auth token other than basic auth headers without expiration date are assumed to expire after default duration
         if( maybeExpiresIn.isEmpty() && authType != AuthenticationType.BASIC_AUTHENTICATION ) {
             maybeExpiresIn = DestinationService.Cache.getExpirationDuration().map(Duration::getSeconds);

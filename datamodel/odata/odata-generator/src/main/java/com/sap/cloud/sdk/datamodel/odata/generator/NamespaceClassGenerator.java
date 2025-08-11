@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import com.google.common.base.Strings;
@@ -27,6 +26,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.generator.ServiceClassGenerator.ServiceClassAmplifier;
 import com.sap.cloud.sdk.datamodel.odata.generator.annotation.AnnotationStrategy;
 import com.sap.cloud.sdk.datamodel.odata.generator.annotation.EntityAnnotationModel;
