@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- [ODatav4] Fixed an issue when generating a client with property name `properties`.
