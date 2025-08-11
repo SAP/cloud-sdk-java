@@ -721,7 +721,7 @@ class NamespaceClassGenerator
                 final JBlock ifValueIsList = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifValueIsList.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifValueIsList.forEach(typeObject, "properties", iter);
+                final JForEach forEach = ifValueIsList.forEach(typeObject, "cloudSdkProperties", iter);
                 final JBlock isMap = forEach.body()._if(forEach.var()._instanceof(codeModel.ref(Map.class)))._then();
                 final JVar item = isMap.decl(JMod.FINAL, javaType, "item", JExpr._new(javaType));
                 isMap.directStatement("@SuppressWarnings(\"unchecked\")");

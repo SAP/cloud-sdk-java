@@ -60,6 +60,7 @@
                 <Property Name="CustomerId" Type="Edm.Int32" Nullable="false"/>
                 <Property Name="TotalAmount" Type="Edm.Decimal" Nullable="false"/>
                 <Property Name="ProductCounts" Type="Collection(GroceryStore.ProductCount)" Nullable="false"/>
+                <Property Name="properties" Type="Collection(GroceryStore.ProductCount)"/>
                 <NavigationProperty Name="Customer" Type="GroceryStore.Customer" Partner="Receipts"/>
             </EntityType>
             <EntityType Name="Address">

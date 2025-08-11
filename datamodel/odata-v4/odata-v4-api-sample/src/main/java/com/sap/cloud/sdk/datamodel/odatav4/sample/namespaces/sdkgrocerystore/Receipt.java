@@ -118,6 +118,26 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
             "ProductCounts",
             ProductCount.class);
     /**
+     * Constraints: Nullable
+     * <p>
+     * Original property name from the Odata EDM: <b>properties</b>
+     * </p>
+     *
+     * @return The properties contained in this {@link VdmEntity}.
+     */
+    @Nullable
+    @ElementName( "properties" )
+    private java.util.Collection<ProductCount> properties;
+    /**
+     * Use with available request builders to apply the <b>properties</b> complex property to query operations.
+     *
+     */
+    public final static com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount> PROPERTIES =
+        new com.sap.cloud.sdk.datamodel.odatav4.core.ComplexProperty.Collection<Receipt, ProductCount>(
+            Receipt.class,
+            "properties",
+            ProductCount.class);
+    /**
      * Navigation property <b>Customer</b> for <b>Receipt</b> to single <b>Customer</b>.
      *
      */
@@ -203,6 +223,21 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
         this.productCounts = productCounts;
     }
 
+    /**
+     * Constraints: Nullable
+     * <p>
+     * Original property name from the Odata EDM: <b>properties</b>
+     * </p>
+     *
+     * @param properties
+     *            The properties to set.
+     */
+    public void setProperties( @Nullable final java.util.Collection<ProductCount> properties )
+    {
+        rememberChangedField("properties", this.properties);
+        this.properties = properties;
+    }
+
     @Override
     protected String getEntityCollection()
     {
@@ -227,6 +262,7 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
         cloudSdkValues.put("CustomerId", getCustomerId());
         cloudSdkValues.put("TotalAmount", getTotalAmount());
         cloudSdkValues.put("ProductCounts", getProductCounts());
+        cloudSdkValues.put("properties", getProperties());
         return cloudSdkValues;
     }
 
@@ -261,8 +297,8 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
                 final Object value = cloudSdkValues.remove("ProductCounts");
                 if( value instanceof Iterable ) {
                     final LinkedList<ProductCount> productCounts = new LinkedList<ProductCount>();
-                    for( Object properties : ((Iterable<?>) value) ) {
-                        if( properties instanceof Map ) {
+                    for( Object cloudSdkProperties : ((Iterable<?>) value) ) {
+                        if( cloudSdkProperties instanceof Map ) {
                             final ProductCount item = new ProductCount();
                             @SuppressWarnings( "unchecked" )
                             final Map<String, Object> inputMap = ((Map<String, Object>) value);
@@ -274,6 +310,25 @@ public class Receipt extends VdmEntity<Receipt> implements VdmEntitySet
                 }
                 if( (value == null) && (getProductCounts() != null) ) {
                     setProductCounts(null);
+                }
+            }
+            if( cloudSdkValues.containsKey("properties") ) {
+                final Object value = cloudSdkValues.remove("properties");
+                if( value instanceof Iterable ) {
+                    final LinkedList<ProductCount> properties = new LinkedList<ProductCount>();
+                    for( Object cloudSdkProperties : ((Iterable<?>) value) ) {
+                        if( cloudSdkProperties instanceof Map ) {
+                            final ProductCount item = new ProductCount();
+                            @SuppressWarnings( "unchecked" )
+                            final Map<String, Object> inputMap = ((Map<String, Object>) value);
+                            item.fromMap(inputMap);
+                            properties.add(item);
+                        }
+                    }
+                    setProperties(properties);
+                }
+                if( (value == null) && (getProperties() != null) ) {
+                    setProperties(null);
                 }
             }
         }
