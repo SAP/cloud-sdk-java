@@ -36,6 +36,15 @@ updates:
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
       # used by deprecated code only, not worth updating for now
       - dependency-name: 'org.apache.axis2:*'
+      # Ignore problematic license versions
+      - dependency-name: 'com.sap.cloud.security:java-security'
+        versions: ['3.6.1', '3.6.2']
+      - dependency-name: 'com.sap.cloud.security.xsuaa:token-client'
+        versions: ['3.6.1', '3.6.2']
+      - dependency-name: 'com.sap.cloud.security:java-api'
+        versions: ['3.6.1', '3.6.2']
+      - dependency-name: 'com.sap.cloud.security:env'
+        versions: ['3.6.1', '3.6.2']
 
   # archetype updates
   # Dependabot seems to be unable to handle those, so this is disabled for now
