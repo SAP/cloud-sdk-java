@@ -37,7 +37,7 @@ import lombok.SneakyThrows;
 
 class GetOrComputeAllDestinationsCommandTest
 {
-    private static final int TEST_TIMEOUT = 300_000; // 5 minutes
+    private static final int TEST_TIMEOUT = 30_000; // 30 seconds
     private static final String DESTINATION_NAME = "SomeDestinationName";
 
     private static final DestinationOptions EMPTY_OPTIONS = DestinationOptions.builder().build();
