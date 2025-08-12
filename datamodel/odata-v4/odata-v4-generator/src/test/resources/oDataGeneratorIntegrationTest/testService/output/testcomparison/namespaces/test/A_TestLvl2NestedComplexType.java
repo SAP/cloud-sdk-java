@@ -73,9 +73,9 @@ public class A_TestLvl2NestedComplexType
         // simple properties
         {
             if (cloudSdkValues.containsKey("StringProperty")) {
-                final Object value = cloudSdkValues.remove("StringProperty");
-                if ((value == null)||(!value.equals(getStringProperty()))) {
-                    setStringProperty(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("StringProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getStringProperty()))) {
+                    setStringProperty(((java.lang.String) cloudSdkValue));
                 }
             }
         }

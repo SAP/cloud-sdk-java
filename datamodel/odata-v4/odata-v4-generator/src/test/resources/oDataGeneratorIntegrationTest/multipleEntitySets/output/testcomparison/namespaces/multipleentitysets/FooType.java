@@ -132,15 +132,15 @@ public class FooType
         // simple properties
         {
             if (cloudSdkValues.containsKey("Foo")) {
-                final Object value = cloudSdkValues.remove("Foo");
-                if ((value == null)||(!value.equals(getFoo()))) {
-                    setFoo(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Foo");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getFoo()))) {
+                    setFoo(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Type")) {
-                final Object value = cloudSdkValues.remove("Type");
-                if ((value == null)||(!value.equals(getType_2()))) {
-                    setType_2(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Type");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getType_2()))) {
+                    setType_2(((java.lang.String) cloudSdkValue));
                 }
             }
         }

@@ -237,33 +237,33 @@ public class TestEntitySingleLink
         // simple properties
         {
             if (cloudSdkValues.containsKey("KeyProperty")) {
-                final Object value = cloudSdkValues.remove("KeyProperty");
-                if ((value == null)||(!value.equals(getKeyProperty()))) {
-                    setKeyProperty(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("KeyProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getKeyProperty()))) {
+                    setKeyProperty(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("StringProperty")) {
-                final Object value = cloudSdkValues.remove("StringProperty");
-                if ((value == null)||(!value.equals(getStringProperty()))) {
-                    setStringProperty(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("StringProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getStringProperty()))) {
+                    setStringProperty(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("BooleanProperty")) {
-                final Object value = cloudSdkValues.remove("BooleanProperty");
-                if ((value == null)||(!value.equals(getBooleanProperty()))) {
-                    setBooleanProperty(((java.lang.Boolean) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("BooleanProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getBooleanProperty()))) {
+                    setBooleanProperty(((java.lang.Boolean) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("GuidProperty")) {
-                final Object value = cloudSdkValues.remove("GuidProperty");
-                if ((value == null)||(!value.equals(getGuidProperty()))) {
-                    setGuidProperty(((UUID) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("GuidProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getGuidProperty()))) {
+                    setGuidProperty(((UUID) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Int16Property")) {
-                final Object value = cloudSdkValues.remove("Int16Property");
-                if ((value == null)||(!value.equals(getInt16Property()))) {
-                    setInt16Property(((Short) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Int16Property");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getInt16Property()))) {
+                    setInt16Property(((Short) cloudSdkValue));
                 }
             }
         }

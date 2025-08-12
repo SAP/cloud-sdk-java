@@ -209,33 +209,33 @@ public class SimplePerson
         // simple properties
         {
             if (cloudSdkValues.containsKey("Person")) {
-                final Object value = cloudSdkValues.remove("Person");
-                if ((value == null)||(!value.equals(getPerson()))) {
-                    setPerson(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Person");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getPerson()))) {
+                    setPerson(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("EmailAddress")) {
-                final Object value = cloudSdkValues.remove("EmailAddress");
-                if ((value == null)||(!value.equals(getEmailAddress()))) {
-                    setEmailAddress(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("EmailAddress");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getEmailAddress()))) {
+                    setEmailAddress(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Amount")) {
-                final Object value = cloudSdkValues.remove("Amount");
-                if ((value == null)||(!value.equals(getAmount()))) {
-                    setAmount(((BigDecimal) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Amount");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getAmount()))) {
+                    setAmount(((BigDecimal) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Cost")) {
-                final Object value = cloudSdkValues.remove("Cost");
-                if ((value == null)||(!value.equals(getCost()))) {
-                    setCost(((BigDecimal) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Cost");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getCost()))) {
+                    setCost(((BigDecimal) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("SSomeday")) {
-                final Object value = cloudSdkValues.remove("SSomeday");
-                if ((value == null)||(!value.equals(getSSomeday()))) {
-                    setSSomeday(((LocalTime) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("SSomeday");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getSSomeday()))) {
+                    setSSomeday(((LocalTime) cloudSdkValue));
                 }
             }
         }

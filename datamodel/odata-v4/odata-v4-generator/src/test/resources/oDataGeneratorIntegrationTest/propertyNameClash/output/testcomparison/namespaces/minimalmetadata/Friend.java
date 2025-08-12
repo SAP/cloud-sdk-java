@@ -104,9 +104,9 @@ public class Friend
         // simple properties
         {
             if (cloudSdkValues.containsKey("Name")) {
-                final Object value = cloudSdkValues.remove("Name");
-                if ((value == null)||(!value.equals(getName()))) {
-                    setName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Name");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getName()))) {
+                    setName(((java.lang.String) cloudSdkValue));
                 }
             }
         }

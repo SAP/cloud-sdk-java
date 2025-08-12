@@ -97,15 +97,15 @@ public class DateRange extends VdmComplex<DateRange>
         // simple properties
         {
             if( cloudSdkValues.containsKey("Start") ) {
-                final Object value = cloudSdkValues.remove("Start");
-                if( (value == null) || (!value.equals(getStart())) ) {
-                    setStart(((OffsetDateTime) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Start");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getStart())) ) {
+                    setStart(((OffsetDateTime) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("End") ) {
-                final Object value = cloudSdkValues.remove("End");
-                if( (value == null) || (!value.equals(getEnd())) ) {
-                    setEnd(((OffsetDateTime) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("End");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getEnd())) ) {
+                    setEnd(((OffsetDateTime) cloudSdkValue));
                 }
             }
         }

@@ -667,7 +667,7 @@ class NamespaceClassGenerator
         final JBlock block = isPrimitive || isEnum ? simplePropertiesBlock : complexPropertiesBlock;
         final JBlock ifFoundBody = block._if(values.invoke("containsKey").arg(entry.getKey()))._then();
         final JInvocation invokeRemove = values.invoke("remove").arg(entry.getKey());
-        final JVar value = ifFoundBody.decl(JMod.FINAL, typeObject, "value", invokeRemove);
+        final JVar value = ifFoundBody.decl(JMod.FINAL, typeObject, "cloudSdkValue", invokeRemove);
         final JExpression valueIsNull = value.eq(JExpr._null());
         final JInvocation objectsEquals = codeModel.ref(Objects.class).staticInvoke("equals");
 
@@ -681,7 +681,7 @@ class NamespaceClassGenerator
                 final JBlock ifChangeBody = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifChangeBody.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifChangeBody.forEach(typeObject, "item", iter);
+                final JForEach forEach = ifChangeBody.forEach(typeObject, "cloudSdkItem", iter);
                 final JBlock ifString = forEach.body()._if(forEach.var()._instanceof(typeString))._then();
                 final JExpression enumLookup = enumDeserializer.arg(JExpr.cast(typeString, forEach.var()));
                 final JVar enumConstant = ifString.decl(JMod.FINAL, javaType, "enumConstant", enumLookup);
@@ -704,7 +704,7 @@ class NamespaceClassGenerator
                 final JBlock ifChangeBody = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifChangeBody.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifChangeBody.forEach(typeObject, "item", iter);
+                final JForEach forEach = ifChangeBody.forEach(typeObject, "cloudSdkItem", iter);
                 forEach.body().add(listInst.invoke("add").arg(JExpr.cast(javaType, forEach.var())));
                 ifChangeBody.invoke(javaMethodSet).arg(listInst);
             } else {
@@ -723,7 +723,7 @@ class NamespaceClassGenerator
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
                 final JForEach forEach = ifValueIsList.forEach(typeObject, "cloudSdkProperties", iter);
                 final JBlock isMap = forEach.body()._if(forEach.var()._instanceof(codeModel.ref(Map.class)))._then();
-                final JVar item = isMap.decl(JMod.FINAL, javaType, "item", JExpr._new(javaType));
+                final JVar item = isMap.decl(JMod.FINAL, javaType, "cloudSdkItem", JExpr._new(javaType));
                 isMap.directStatement("@SuppressWarnings(\"unchecked\")");
                 final JExpression castValueMap = JExpr.cast(fieldMapClass, value);
                 final JVar varInputMap = isMap.decl(JMod.FINAL, fieldMapClass, "inputMap", castValueMap);
