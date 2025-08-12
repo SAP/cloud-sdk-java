@@ -1639,6 +1639,72 @@ class DestinationServiceTest
     }
 
     @Test
+    void testCrossLevelScope()
+    {
+        final String destinationName = "CrossLevelDestination";
+        // the /v2 API does NOT respond with the "owner" attribute, thus not using createHttpDestinationServiceResponse() here
+        final String responseWithCrossLevel = """
+            {
+                "destinationConfiguration": {
+                    "Name": "%s",
+                    "Type": "HTTP",
+                    "URL": "https://foo.com",
+                    "Description": "%s level destination"
+                }
+            }
+            """;
+
+        final String expectedPathSubaccount = "/v2/destinations/%s@subaccount".formatted(destinationName);
+        final String expectedPathInstance = "/v2/destinations/%s@instance".formatted(destinationName);
+
+        doReturn(responseWithCrossLevel.formatted(destinationName, "subaccount"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq(expectedPathSubaccount), any());
+        doReturn(responseWithCrossLevel.formatted(destinationName, "instance"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq(expectedPathInstance), any());
+
+        final DestinationOptions optionsSubaccount =
+            DestinationOptions
+                .builder()
+                .augmentBuilder(
+                    DestinationServiceOptionsAugmenter
+                        .augmenter()
+                        .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT))
+                .build();
+        final DestinationOptions optionsInstance =
+            DestinationOptions
+                .builder()
+                .augmentBuilder(
+                    DestinationServiceOptionsAugmenter
+                        .augmenter()
+                        .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.INSTANCE))
+                .build();
+
+        final Try<Destination> destinationSubaccount = loader.tryGetDestination(destinationName, optionsSubaccount);
+        final Try<Destination> destinationInstance = loader.tryGetDestination(destinationName, optionsInstance);
+
+        assertThat(destinationSubaccount.isSuccess()).isTrue();
+        assertThat(destinationSubaccount.get().get(DestinationProperty.NAME)).contains(destinationName);
+        assertThat(destinationSubaccount.get().get("Description")).contains("subaccount level destination");
+        assertThat(loader.tryGetDestination(destinationName, optionsSubaccount).get())
+            .describedAs("Destination should be cached")
+            .isSameAs(destinationSubaccount.get());
+
+        assertThat(destinationInstance.isSuccess()).isTrue();
+        assertThat(destinationInstance.get()).isNotEqualTo(destinationSubaccount.get());
+        assertThat(destinationInstance.get().get(DestinationProperty.NAME)).contains(destinationName);
+        assertThat(destinationInstance.get().get("Description")).contains("instance level destination");
+        assertThat(loader.tryGetDestination(destinationName, optionsInstance).get())
+            .describedAs("Destination should be cached")
+            .isSameAs(destinationInstance.get());
+
+        // Verify destinations are cached, but isolated by cross-level scope
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq(expectedPathSubaccount), any());
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq(expectedPathInstance), any());
+    }
+
+    @Test
     void testFragmentDestinationsAreCacheIsolated()
     {
         DestinationService.Cache.disableChangeDetection();

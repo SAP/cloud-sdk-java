@@ -126,7 +126,6 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     public DestinationServiceOptionsAugmenter crossLevelConsumption( @Nonnull final CrossLevelScope scope )
     {
         parameters.put(CROSS_LEVEL_SETTING, scope);
-
         return this;
     }
 
