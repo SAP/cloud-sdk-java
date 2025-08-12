@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -84,7 +84,7 @@ jobs:
       statuses: write # needed to update the commit status
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
 
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
 
@@ -162,12 +162,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Code Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
       - name: "Checkout Docs Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
@@ -240,7 +240,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
@@ -279,7 +279,7 @@ jobs:
     if: ${{ failure() }}
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.inputs.branch }}
 
