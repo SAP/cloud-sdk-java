@@ -132,15 +132,15 @@ public class SimplePerson
         // simple properties
         {
             if (cloudSdkValues.containsKey("Person")) {
-                final Object value = cloudSdkValues.remove("Person");
-                if ((value == null)||(!value.equals(getPerson()))) {
-                    setPerson(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Person");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getPerson()))) {
+                    setPerson(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("EmailAddress")) {
-                final Object value = cloudSdkValues.remove("EmailAddress");
-                if ((value == null)||(!value.equals(getEmailAddress()))) {
-                    setEmailAddress(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("EmailAddress");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getEmailAddress()))) {
+                    setEmailAddress(((java.lang.String) cloudSdkValue));
                 }
             }
         }

@@ -88,25 +88,25 @@ public class PurchaseHistoryItem
         // simple properties
         {
             if (cloudSdkValues.containsKey("ReceiptId")) {
-                final Object value = cloudSdkValues.remove("ReceiptId");
-                if ((value == null)||(!value.equals(getReceiptId()))) {
-                    setReceiptId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("ReceiptId");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getReceiptId()))) {
+                    setReceiptId(((Integer) cloudSdkValue));
                 }
             }
         }
         // structured properties
         {
             if (cloudSdkValues.containsKey("ProductCount")) {
-                final Object value = cloudSdkValues.remove("ProductCount");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = cloudSdkValues.remove("ProductCount");
+                if (cloudSdkValue instanceof Map) {
                     if (getProductCount() == null) {
                         setProductCount(new ProductCount());
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<String, Object> inputMap = ((Map<String, Object> ) value);
+                    final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
                     getProductCount().fromMap(inputMap);
                 }
-                if ((value == null)&&(getProductCount()!= null)) {
+                if ((cloudSdkValue == null)&&(getProductCount()!= null)) {
                     setProductCount(null);
                 }
             }

@@ -20,4 +20,6 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- [ODatav4] Fixed an issue when generating clients.
+  - Property names: `value`, `item` and `properties` are now allowed.
+  

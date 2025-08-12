@@ -263,45 +263,45 @@ public class Product
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
-                final Object value = cloudSdkValues.remove("Id");
-                if ((value == null)||(!value.equals(getId()))) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Name")) {
-                final Object value = cloudSdkValues.remove("Name");
-                if ((value == null)||(!value.equals(getName()))) {
-                    setName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Name");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getName()))) {
+                    setName(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("ShelfId")) {
-                final Object value = cloudSdkValues.remove("ShelfId");
-                if ((value == null)||(!value.equals(getShelfId()))) {
-                    setShelfId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("ShelfId");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getShelfId()))) {
+                    setShelfId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("VendorId")) {
-                final Object value = cloudSdkValues.remove("VendorId");
-                if ((value == null)||(!value.equals(getVendorId()))) {
-                    setVendorId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("VendorId");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getVendorId()))) {
+                    setVendorId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Price")) {
-                final Object value = cloudSdkValues.remove("Price");
-                if ((value == null)||(!value.equals(getPrice()))) {
-                    setPrice(((BigDecimal) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Price");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getPrice()))) {
+                    setPrice(((BigDecimal) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Categories")) {
-                final Object value = cloudSdkValues.remove("Categories");
-                if ((value == null)&&(getCategories()!= null)) {
+                final Object cloudSdkValue = cloudSdkValues.remove("Categories");
+                if ((cloudSdkValue == null)&&(getCategories()!= null)) {
                     setCategories(null);
                 }
-                if (value instanceof Iterable) {
+                if (cloudSdkValue instanceof Iterable) {
                     final LinkedList<ProductCategory> categories = new LinkedList<ProductCategory>();
-                    for (Object item: ((Iterable<?> ) value)) {
-                        if (item instanceof java.lang.String) {
-                            final ProductCategory enumConstant = VdmEnum.getConstant(ProductCategory.class, ((java.lang.String) item));
+                    for (Object cloudSdkItem: ((Iterable<?> ) cloudSdkValue)) {
+                        if (cloudSdkItem instanceof java.lang.String) {
+                            final ProductCategory enumConstant = VdmEnum.getConstant(ProductCategory.class, ((java.lang.String) cloudSdkItem));
                             categories.add(enumConstant);
                         }
                     }

@@ -210,27 +210,27 @@ public class OpeningHours extends VdmEntity<OpeningHours> implements VdmEntitySe
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {
-                final Object value = cloudSdkValues.remove("Id");
-                if( (value == null) || (!value.equals(getId())) ) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getId())) ) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("DayOfWeek") ) {
-                final Object value = cloudSdkValues.remove("DayOfWeek");
-                if( (value == null) || (!value.equals(getDayOfWeek())) ) {
-                    setDayOfWeek(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("DayOfWeek");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getDayOfWeek())) ) {
+                    setDayOfWeek(((Integer) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("OpenTime") ) {
-                final Object value = cloudSdkValues.remove("OpenTime");
-                if( (value == null) || (!value.equals(getOpenTime())) ) {
-                    setOpenTime(((LocalTime) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("OpenTime");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getOpenTime())) ) {
+                    setOpenTime(((LocalTime) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("CloseTime") ) {
-                final Object value = cloudSdkValues.remove("CloseTime");
-                if( (value == null) || (!value.equals(getCloseTime())) ) {
-                    setCloseTime(((LocalTime) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("CloseTime");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getCloseTime())) ) {
+                    setCloseTime(((LocalTime) cloudSdkValue));
                 }
             }
         }
