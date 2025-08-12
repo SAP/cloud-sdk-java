@@ -116,7 +116,7 @@
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.1</wiremock.version>
-		<checkstyle.version>10.26.1</checkstyle.version>
+		<checkstyle.version>11.0.0</checkstyle.version>
 		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<commons-codec.version>1.19.0</commons-codec.version>
