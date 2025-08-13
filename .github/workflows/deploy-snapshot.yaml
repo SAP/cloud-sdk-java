@@ -9,7 +9,6 @@ jobs:
   deploy-snapshot:
     name: Deploy Snapshot
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
@@ -24,7 +23,6 @@ jobs:
           server-password: DEPLOYMENT_PASS
 
       - name: "Publish Snapshot"
-        timeout-minutes: 40
         run: >
           mvn 
           --batch-mode
