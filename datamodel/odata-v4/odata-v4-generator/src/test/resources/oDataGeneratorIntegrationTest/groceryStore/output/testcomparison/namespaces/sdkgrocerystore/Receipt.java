@@ -203,42 +203,42 @@ public class Receipt
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
-                final Object value = cloudSdkValues.remove("Id");
-                if ((value == null)||(!value.equals(getId()))) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("CustomerId")) {
-                final Object value = cloudSdkValues.remove("CustomerId");
-                if ((value == null)||(!value.equals(getCustomerId()))) {
-                    setCustomerId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("CustomerId");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getCustomerId()))) {
+                    setCustomerId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("TotalAmount")) {
-                final Object value = cloudSdkValues.remove("TotalAmount");
-                if ((value == null)||(!value.equals(getTotalAmount()))) {
-                    setTotalAmount(((BigDecimal) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("TotalAmount");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getTotalAmount()))) {
+                    setTotalAmount(((BigDecimal) cloudSdkValue));
                 }
             }
         }
         // structured properties
         {
             if (cloudSdkValues.containsKey("ProductCounts")) {
-                final Object value = cloudSdkValues.remove("ProductCounts");
-                if (value instanceof Iterable) {
+                final Object cloudSdkValue = cloudSdkValues.remove("ProductCounts");
+                if (cloudSdkValue instanceof Iterable) {
                     final LinkedList<ProductCount> productCounts = new LinkedList<ProductCount>();
-                    for (Object properties: ((Iterable<?> ) value)) {
-                        if (properties instanceof Map) {
-                            final ProductCount item = new ProductCount();
+                    for (Object cloudSdkProperties: ((Iterable<?> ) cloudSdkValue)) {
+                        if (cloudSdkProperties instanceof Map) {
+                            final ProductCount cloudSdkItem = new ProductCount();
                             @SuppressWarnings("unchecked")
-                            final Map<String, Object> inputMap = ((Map<String, Object> ) value);
-                            item.fromMap(inputMap);
-                            productCounts.add(item);
+                            final Map<String, Object> inputMap = ((Map<String, Object> ) cloudSdkValue);
+                            cloudSdkItem.fromMap(inputMap);
+                            productCounts.add(cloudSdkItem);
                         }
                     }
                     setProductCounts(productCounts);
                 }
-                if ((value == null)&&(getProductCounts()!= null)) {
+                if ((cloudSdkValue == null)&&(getProductCounts()!= null)) {
                     setProductCounts(null);
                 }
             }

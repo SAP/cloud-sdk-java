@@ -104,9 +104,9 @@ public class TestEntityStream
         // simple properties
         {
             if (cloudSdkValues.containsKey("StreamProperty")) {
-                final Object value = cloudSdkValues.remove("StreamProperty");
-                if ((value == null)||(!value.equals(getStreamProperty()))) {
-                    setStreamProperty(((URI) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("StreamProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getStreamProperty()))) {
+                    setStreamProperty(((URI) cloudSdkValue));
                 }
             }
         }

@@ -88,25 +88,25 @@ public class A_TestNestedComplexType
         // simple properties
         {
             if (cloudSdkValues.containsKey("StringProperty")) {
-                final Object value = cloudSdkValues.remove("StringProperty");
-                if ((value == null)||(!value.equals(getStringProperty()))) {
-                    setStringProperty(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("StringProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getStringProperty()))) {
+                    setStringProperty(((java.lang.String) cloudSdkValue));
                 }
             }
         }
         // structured properties
         {
             if (cloudSdkValues.containsKey("ComplexTypeProperty")) {
-                final Object value = cloudSdkValues.remove("ComplexTypeProperty");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = cloudSdkValues.remove("ComplexTypeProperty");
+                if (cloudSdkValue instanceof Map) {
                     if (getComplexTypeProperty() == null) {
                         setComplexTypeProperty(new A_TestLvl2NestedComplexType());
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     getComplexTypeProperty().fromMap(inputMap);
                 }
-                if ((value == null)&&(getComplexTypeProperty()!= null)) {
+                if ((cloudSdkValue == null)&&(getComplexTypeProperty()!= null)) {
                     setComplexTypeProperty(null);
                 }
             }

@@ -230,27 +230,27 @@ public class Customer extends VdmEntity<Customer> implements VdmEntitySet
         // simple properties
         {
             if( cloudSdkValues.containsKey("Id") ) {
-                final Object value = cloudSdkValues.remove("Id");
-                if( (value == null) || (!value.equals(getId())) ) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getId())) ) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("Name") ) {
-                final Object value = cloudSdkValues.remove("Name");
-                if( (value == null) || (!value.equals(getName())) ) {
-                    setName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Name");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getName())) ) {
+                    setName(((java.lang.String) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("Email") ) {
-                final Object value = cloudSdkValues.remove("Email");
-                if( (value == null) || (!value.equals(getEmail())) ) {
-                    setEmail(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Email");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getEmail())) ) {
+                    setEmail(((java.lang.String) cloudSdkValue));
                 }
             }
             if( cloudSdkValues.containsKey("AddressId") ) {
-                final Object value = cloudSdkValues.remove("AddressId");
-                if( (value == null) || (!value.equals(getAddressId())) ) {
-                    setAddressId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("AddressId");
+                if( (cloudSdkValue == null) || (!cloudSdkValue.equals(getAddressId())) ) {
+                    setAddressId(((Integer) cloudSdkValue));
                 }
             }
         }

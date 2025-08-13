@@ -276,51 +276,51 @@ public class Address
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
-                final Object value = cloudSdkValues.remove("Id");
-                if ((value == null)||(!value.equals(getId()))) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Street")) {
-                final Object value = cloudSdkValues.remove("Street");
-                if ((value == null)||(!value.equals(getStreet()))) {
-                    setStreet(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Street");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getStreet()))) {
+                    setStreet(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("City")) {
-                final Object value = cloudSdkValues.remove("City");
-                if ((value == null)||(!value.equals(getCity()))) {
-                    setCity(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("City");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getCity()))) {
+                    setCity(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("State")) {
-                final Object value = cloudSdkValues.remove("State");
-                if ((value == null)||(!value.equals(getState()))) {
-                    setState(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("State");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getState()))) {
+                    setState(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Country")) {
-                final Object value = cloudSdkValues.remove("Country");
-                if ((value == null)||(!value.equals(getCountry()))) {
-                    setCountry(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Country");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getCountry()))) {
+                    setCountry(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("PostalCode")) {
-                final Object value = cloudSdkValues.remove("PostalCode");
-                if ((value == null)||(!value.equals(getPostalCode()))) {
-                    setPostalCode(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("PostalCode");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getPostalCode()))) {
+                    setPostalCode(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Latitude")) {
-                final Object value = cloudSdkValues.remove("Latitude");
-                if ((value == null)||(!value.equals(getLatitude()))) {
-                    setLatitude(((Double) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Latitude");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getLatitude()))) {
+                    setLatitude(((Double) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("Longitude")) {
-                final Object value = cloudSdkValues.remove("Longitude");
-                if ((value == null)||(!value.equals(getLongitude()))) {
-                    setLongitude(((Double) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Longitude");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getLongitude()))) {
+                    setLongitude(((Double) cloudSdkValue));
                 }
             }
         }
