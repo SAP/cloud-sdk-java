@@ -41,6 +41,12 @@
 		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>artifactory-snapshots</id>
+			<url>https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
 		<sdk.version>5.22.0-SNAPSHOT</sdk.version>
@@ -480,6 +486,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
 					<version>3.15.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.11.2</version>
 				</plugin>
 				<plugin>
 					<groupId>com.sap.cloud.sdk.datamodel</groupId>
@@ -958,7 +969,6 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
 							<configuration>
 								<quiet>true</quiet>
 								<doclint>none</doclint>
