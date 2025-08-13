@@ -41,6 +41,12 @@
 		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
 		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>artifactory-snapshots</id>
+			<url>https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
 		<sdk.version>5.22.0-SNAPSHOT</sdk.version>
