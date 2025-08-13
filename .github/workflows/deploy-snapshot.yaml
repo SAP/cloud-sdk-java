@@ -24,6 +24,7 @@ jobs:
           server-password: DEPLOYMENT_PASS
 
       - name: "Publish Snapshot"
+        timeout-minutes: 40
         run: >
           mvn 
           --batch-mode
