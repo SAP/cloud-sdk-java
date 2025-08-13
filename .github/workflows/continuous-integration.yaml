@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -180,13 +180,13 @@ jobs:
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -223,7 +223,7 @@ jobs:
     name: "Run ${{ matrix.task.name }} Analysis"
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -241,13 +241,13 @@ jobs:
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -264,7 +264,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -325,7 +325,7 @@ jobs:
           path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
@@ -398,7 +398,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -414,7 +414,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.context.outputs.commit }}
 
