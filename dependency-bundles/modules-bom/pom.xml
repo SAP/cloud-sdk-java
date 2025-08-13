@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-modules-bom</artifactId>
-	<version>5.21.0-SNAPSHOT</version>
+	<version>5.22.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Modules BOM</name>
 	<description>Bill of Materials (BOM) of the SAP Cloud SDK modules.</description>
@@ -40,7 +40,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- do not modify the following line, it is updated by the versioning script -->
-		<sdk.version>5.21.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.22.0-SNAPSHOT</sdk.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -287,7 +287,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-gpg-plugin</artifactId>
-							<version>3.2.7</version>
+							<version>3.2.8</version>
 							<executions>
 								<execution>
 									<id>sign-artifacts</id>
@@ -356,7 +356,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-pmd-plugin</artifactId>
-						<version>3.26.0</version>
+						<version>3.27.0</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>
@@ -364,7 +364,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>4.9.3.0</version>
+						<version>4.9.3.2</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>
