@@ -488,6 +488,11 @@
 					<version>3.15.1</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.11.2</version>
+				</plugin>
+				<plugin>
 					<groupId>com.sap.cloud.sdk.datamodel</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${sdk.version}</version>
@@ -964,7 +969,6 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
 							<configuration>
 								<quiet>true</quiet>
 								<doclint>none</doclint>
