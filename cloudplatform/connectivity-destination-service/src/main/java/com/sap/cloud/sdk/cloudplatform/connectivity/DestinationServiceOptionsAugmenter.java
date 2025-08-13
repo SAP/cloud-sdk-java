@@ -138,9 +138,23 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     @RequiredArgsConstructor
     public enum CrossLevelScope
     {
+        /**
+         * Use the destination from the current subaccount.
+         */
         SUBACCOUNT("subaccount"),
+        /**
+         * Use the destination from the provider subaccount. Behaves identical to {@link #SUBACCOUNT}, if the current tenant is the provider tenant, or the strategy
+         * {@link DestinationServiceRetrievalStrategy#ALWAYS_PROVIDER} is used.
+         */
         PROVIDER_SUBACCOUNT("provider_subaccount"),
+        /**
+         * Use the destination from the destination service instance for the current tenant.
+         */
         INSTANCE("instance"),
+        /**
+         * Use the destination from the destination service instance for the provider tenant. Behaves identical to {@link #INSTANCE}, if the current tenant is the provider tenant, or the strategy
+         * {@link DestinationServiceRetrievalStrategy#ALWAYS_PROVIDER} is used.
+         */
         PROVIDER_INSTANCE("provider_instance");
 
         private final String identifier;
