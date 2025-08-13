@@ -12,7 +12,9 @@
 
 ### ✨ New Functionality
 
-- Introducing Transparent Proxy Destination - https://sap.github.io/cloud-sdk/docs/java/features/connectivity/transparent-proxy
+- Add built-in support for the [Transparent Proxy](https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/transparent-proxy-for-kubernetes) via a new `TransparentProxyDestination`.
+  For more information, refer to the [documentation](/docs/java/features/connectivity/transparent-proxy).
+- Add _experimental_ support for cross-level destination consumption via a new `CrossLevelScope` setting under `DestinationServiceOptionsAugmenter`.
 
 ### 📈 Improvements
 
