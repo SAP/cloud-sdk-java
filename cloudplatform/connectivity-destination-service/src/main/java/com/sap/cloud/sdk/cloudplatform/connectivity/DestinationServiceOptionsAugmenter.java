@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -23,7 +24,8 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static final String DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY = "scp.cf.destinationTokenExchangeStrategy";
     static final String X_REFRESH_TOKEN_KEY = "x-refresh-token";
     static final String X_FRAGMENT_KEY = "X-fragment-name";
-    static final String CROSS_LEVEL_SETTING = "crossLevelSetting";
+    static final String CROSS_LEVEL_SETTING_KEY = "crossLevelSetting";
+    static final String CUSTOM_HEADER_KEY = "customHeader.";
 
     private final Map<String, Object> parameters = new HashMap<>();
 
@@ -125,7 +127,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     @Nonnull
     public DestinationServiceOptionsAugmenter crossLevelConsumption( @Nonnull final CrossLevelScope scope )
     {
-        parameters.put(CROSS_LEVEL_SETTING, scope);
+        parameters.put(CROSS_LEVEL_SETTING_KEY, scope);
         return this;
     }
 
@@ -166,6 +168,27 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
         {
             return "@" + identifier;
         }
+    }
+
+    /**
+     * Adds custom headers to the destination request. Use this to add parameters that are not directly supported by the
+     * SDK. For example, use this to achieve destination chaining.
+     * <p>
+     * <strong>Note:</strong> Any secret values added as custom headers here will <strong>not</strong> be masked in log
+     * output and may appear in plain text on debug log level.
+     *
+     * @param headers
+     *            The headers to be added.
+     * @return The same augmenter that called this method.
+     * @since 5.22.0
+     */
+    @Nonnull
+    public DestinationServiceOptionsAugmenter customHeaders( @Nonnull final Header... headers )
+    {
+        for( final Header header : headers ) {
+            parameters.put(CUSTOM_HEADER_KEY + header.getName(), header.getValue());
+        }
+        return this;
     }
 
     @Override
@@ -238,8 +261,28 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
     static Option<CrossLevelScope> getCrossLevelScope( @Nonnull final DestinationOptions options )
     {
         return options
-            .get(CROSS_LEVEL_SETTING)
+            .get(CROSS_LEVEL_SETTING_KEY)
             .filter(CrossLevelScope.class::isInstance)
             .map(CrossLevelScope.class::cast);
+    }
+
+    @Nonnull
+    static List<Header> getAdditionalHeaders( @Nonnull final DestinationOptions options )
+    {
+        return options
+            .getOptionKeys()
+            .stream()
+            .filter(it -> it.startsWith(CUSTOM_HEADER_KEY))
+            .map(it -> it.replaceFirst(CUSTOM_HEADER_KEY, ""))
+            .map(headerName -> {
+                final String headerValue =
+                    options
+                        .get(CUSTOM_HEADER_KEY + headerName)
+                        .filter(String.class::isInstance)
+                        .map(String.class::cast)
+                        .get();
+                return new Header(headerName, headerValue);
+            })
+            .toList();
     }
 }

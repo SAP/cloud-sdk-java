@@ -196,6 +196,10 @@ class DestinationServiceAdapter
         if( strategy.fragment() != null ) {
             request.addHeader("x-fragment-name", strategy.fragment());
         }
+        for( Header h : strategy.additionalHeaders() ) {
+            request.addHeader(h.getName(), h.getValue());
+        }
+
         return request;
     }
 

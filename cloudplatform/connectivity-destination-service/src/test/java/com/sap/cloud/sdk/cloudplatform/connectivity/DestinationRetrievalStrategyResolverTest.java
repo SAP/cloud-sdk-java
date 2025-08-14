@@ -305,6 +305,6 @@ class DestinationRetrievalStrategyResolverTest
 
         sut.prepareSupplier(opts);
 
-        verify(sut).prepareSupplier(any(), any(), eq(null), eq(fragmentName));
+        verify(sut).prepareSupplier(any(), any(), eq(null), eq(fragmentName), any());
     }
 }

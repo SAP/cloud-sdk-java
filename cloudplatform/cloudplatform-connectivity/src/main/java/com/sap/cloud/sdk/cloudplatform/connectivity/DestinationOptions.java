@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,17 @@ public final class DestinationOptions
     public Option<Object> get( @Nonnull final String key )
     {
         return Option.of(parameters.get(key));
+    }
+
+    /**
+     * Get all
+     *
+     * @return
+     */
+    @Nonnull
+    public Set<String> getOptionKeys()
+    {
+        return Set.copyOf(parameters.keySet());
     }
 
     /**
