@@ -51,11 +51,10 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings( "PMD.TooManyStaticImports" )
 public class DestinationService implements DestinationLoader
 {
-    private static final String PATH_DEFAULT = "/destinations/";
-
-    private static final String PATH_SERVICE_INSTANCE = "/instanceDestinations";
-
-    private static final String PATH_SUBACCOUNT = "/subaccountDestinations";
+    private static final String PATH_DEFAULT = "/v1/destinations/";
+    private static final String PATH_V2 = "/v2/destinations/";
+    private static final String PATH_SERVICE_INSTANCE = "/v1/instanceDestinations";
+    private static final String PATH_SUBACCOUNT = "/v1/subaccountDestinations";
 
     static final TimeLimiterConfiguration DEFAULT_TIME_LIMITER =
         TimeLimiterConfiguration.of().timeoutDuration(Duration.ofSeconds(6));
@@ -128,7 +127,13 @@ public class DestinationService implements DestinationLoader
         throws DestinationAccessException,
             DestinationNotFoundException
     {
-        final String servicePath = PATH_DEFAULT + destName;
+        final String servicePath =
+            DestinationServiceOptionsAugmenter
+                .getCrossLevelScope(options)
+                .map(DestinationServiceOptionsAugmenter.CrossLevelScope::getSuffix)
+                .map(s -> PATH_V2 + destName + s)
+                .getOrElse(PATH_DEFAULT + destName);
+
         final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever =
             strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
 
@@ -199,9 +204,9 @@ public class DestinationService implements DestinationLoader
      * In case there exists a destination with the same name on service instance and on sub-account level, the
      * destination at service instance level takes precedence.
      *
-     * @return A list of destination properties.
      * @param retrievalStrategy
      *            Strategy for loading destinations in a multi-tenant application.
+     * @return A list of destination properties.
      * @since 5.12.0
      */
     @Nonnull
@@ -648,9 +653,8 @@ public class DestinationService implements DestinationLoader
          * <strong>Caution:</strong> Using this operation will lead to a re-creation of the destination cache. As a
          * consequence, all existing cache entries will be lost.
          *
-         * @deprecated since 5.2.0. Change detection mode is enabled by default
-         *
          * @since 4.7.0
+         * @deprecated since 5.2.0. Change detection mode is enabled by default
          */
         @Deprecated
         public static void enableChangeDetection()

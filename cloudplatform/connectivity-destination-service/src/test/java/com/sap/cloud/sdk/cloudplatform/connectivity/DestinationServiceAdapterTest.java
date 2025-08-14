@@ -79,7 +79,7 @@ class DestinationServiceAdapterTest
     private static final String PROVIDER_TENANT_ID = "provider-tenant-id";
 
     private static final String XSUAA_URL = "/xsuaa/oauth/token";
-    private static final String DESTINATION_SERVICE_URL = "/destination-service/destination-configuration/v1/";
+    private static final String DESTINATION_SERVICE_URL = "/destination-service/destination-configuration/";
     private static final String DESTINATION_RESPONSE = "{ response }";
 
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";

@@ -40,7 +40,7 @@ class DestinationServiceAuthenticationTest
     private static final String BASIC_AUTH = "Zm9vOmJhcg==";
     private static final String DESTINATION_NAME = "CXT-HTTP-OAUTH";
 
-    private static final String SERVICE_PATH_DESTINATION = "/destinations/" + DESTINATION_NAME;
+    private static final String SERVICE_PATH_DESTINATION = "/v1/destinations/" + DESTINATION_NAME;
 
     @SuppressWarnings( "deprecation" )
     private static final DestinationOptions DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE =
