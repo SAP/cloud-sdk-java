@@ -143,8 +143,9 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
          */
         SUBACCOUNT("subaccount"),
         /**
-         * Use the destination from the provider subaccount. Behaves identical to {@link #SUBACCOUNT}, if the current tenant is the provider tenant, or the strategy
-         * {@link DestinationServiceRetrievalStrategy#ALWAYS_PROVIDER} is used.
+         * Use the destination from the provider subaccount. Behaves identical to {@link #SUBACCOUNT}, if the current
+         * tenant is the provider tenant, or the strategy {@link DestinationServiceRetrievalStrategy#ALWAYS_PROVIDER} is
+         * used.
          */
         PROVIDER_SUBACCOUNT("provider_subaccount"),
         /**
@@ -152,7 +153,8 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
          */
         INSTANCE("instance"),
         /**
-         * Use the destination from the destination service instance for the provider tenant. Behaves identical to {@link #INSTANCE}, if the current tenant is the provider tenant, or the strategy
+         * Use the destination from the destination service instance for the provider tenant. Behaves identical to
+         * {@link #INSTANCE}, if the current tenant is the provider tenant, or the strategy
          * {@link DestinationServiceRetrievalStrategy#ALWAYS_PROVIDER} is used.
          */
         PROVIDER_INSTANCE("provider_instance");
