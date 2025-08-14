@@ -185,7 +185,7 @@ class DestinationServiceAdapter
         log.debug("Querying Destination Service via URI {}.", requestUri);
         final HttpUriRequest request = new HttpGet(requestUri);
 
-        if( !servicePath.startsWith("/v1/destinations") || !servicePath.startsWith("/v2/destinations") ) {
+        if( !servicePath.startsWith("/v1/destinations") && !servicePath.startsWith("/v2/destinations") ) {
             // additional headers and settings are only needed for single destination requests
             return request;
         }

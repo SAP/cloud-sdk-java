@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -103,7 +104,7 @@ class DestinationServiceAdapterTest
         stubFor(post(urlEqualTo(XSUAA_URL)).willReturn(okForJson(xsuaaResponse)));
 
         // mock destination service response
-        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(ok(DESTINATION_RESPONSE)));
+        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "v1/destinations/test")).willReturn(ok(DESTINATION_RESPONSE)));
     }
 
     @BeforeEach
@@ -265,6 +266,55 @@ class DestinationServiceAdapterTest
             getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL))
                 .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
                 .withHeader("x-fragment-name", equalTo(fragment))
+                .withoutHeader("x-user-token"));
+    }
+
+    @Test
+    void testCustomHeaders()
+    {
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+
+        final Header customHeader1 = new Header("X-Custom-Header-1", "value1");
+        final Header customHeader2 = new Header("X-Custom-Header-2", "value2");
+        final List<Header> customHeaders = List.of(customHeader1, customHeader2);
+
+        final String destinationResponse =
+            adapterToTest
+                .getConfigurationAsJson(
+                    "/v1/destinations/test",
+                    withoutToken(TECHNICAL_USER_CURRENT_TENANT).withAdditionalHeaders(customHeaders));
+
+        assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
+
+        verify(
+            1,
+            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL + "v1/destinations/test"))
+                .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
+                .withHeader("X-Custom-Header-1", equalTo("value1"))
+                .withHeader("X-Custom-Header-2", equalTo("value2"))
+                .withoutHeader("x-user-token"));
+    }
+
+    @Test
+    void testHeadersAreOnlyAddedForSingleDestinationCalls()
+    {
+        final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
+        final Header customHeader = new Header("X-Custom-Header", "should-not-appear");
+        final List<Header> customHeaders = List.of(customHeader);
+
+        final String destinationResponse =
+            adapterToTest
+                .getConfigurationAsJson(
+                    "/v1/subaccountDestinations",
+                    withUserToken(TECHNICAL_USER_CURRENT_TENANT, "some-user-token").withAdditionalHeaders(customHeaders));
+
+        assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
+
+        verify(
+            1,
+            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL + "/v1/subaccountDestinations"))
+                .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
+                .withoutHeader("X-Custom-Header") // Should not be added for non-destination requests
                 .withoutHeader("x-user-token"));
     }
 
