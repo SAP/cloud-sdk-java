@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -17,6 +18,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER
 import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.XsuaaTokenMocker.mockXsuaaToken;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -80,7 +82,9 @@ class DestinationServiceAdapterTest
     private static final String PROVIDER_TENANT_ID = "provider-tenant-id";
 
     private static final String XSUAA_URL = "/xsuaa/oauth/token";
-    private static final String DESTINATION_SERVICE_URL = "/destination-service/destination-configuration/";
+    private static final String DESTINATION_SERVICE_PATH = "/v1/destinations/test";
+    private static final String DESTINATION_SERVICE_URL =
+        "/destination-service/destination-configuration" + DESTINATION_SERVICE_PATH;
     private static final String DESTINATION_RESPONSE = "{ response }";
 
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
@@ -104,7 +108,9 @@ class DestinationServiceAdapterTest
         stubFor(post(urlEqualTo(XSUAA_URL)).willReturn(okForJson(xsuaaResponse)));
 
         // mock destination service response
-        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL + "v1/destinations/test")).willReturn(ok(DESTINATION_RESPONSE)));
+        stubFor(
+            get(urlEqualTo("/destination-service/destination-configuration" + DESTINATION_SERVICE_PATH))
+                .willReturn(ok(DESTINATION_RESPONSE)));
     }
 
     @BeforeEach
@@ -131,7 +137,8 @@ class DestinationServiceAdapterTest
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
         final String response =
-            adapterToTest.getConfigurationAsJson("/", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
+            adapterToTest
+                .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
 
         assertThat(response).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -169,7 +176,8 @@ class DestinationServiceAdapterTest
             TenantAccessor
                 .executeWithTenant(
                     () -> "tenant-id",
-                    () -> adapterToTest.getConfigurationAsJson("/", withoutToken(NAMED_USER_CURRENT_TENANT)));
+                    () -> adapterToTest
+                        .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withoutToken(NAMED_USER_CURRENT_TENANT)));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -199,7 +207,8 @@ class DestinationServiceAdapterTest
 
         // actual request, ensure that the tenant matches the one in the User JWT
         final String destinationResponse =
-            adapterToTest.getConfigurationAsJson("/", withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+            adapterToTest
+                .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -228,7 +237,7 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             adapterToTest
                 .getConfigurationAsJson(
-                    "/",
+                    DESTINATION_SERVICE_PATH,
                     DestinationRetrievalStrategy.withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
@@ -257,7 +266,9 @@ class DestinationServiceAdapterTest
 
         final String destinationResponse =
             adapterToTest
-                .getConfigurationAsJson("/", withoutToken(TECHNICAL_USER_CURRENT_TENANT).withFragmentName(fragment));
+                .getConfigurationAsJson(
+                    DESTINATION_SERVICE_PATH,
+                    withoutToken(TECHNICAL_USER_CURRENT_TENANT).withFragmentName(fragment));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
 
@@ -281,14 +292,14 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             adapterToTest
                 .getConfigurationAsJson(
-                    "/v1/destinations/test",
+                    DESTINATION_SERVICE_PATH,
                     withoutToken(TECHNICAL_USER_CURRENT_TENANT).withAdditionalHeaders(customHeaders));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
 
         verify(
             1,
-            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL + "v1/destinations/test"))
+            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL))
                 .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
                 .withHeader("X-Custom-Header-1", equalTo("value1"))
                 .withHeader("X-Custom-Header-2", equalTo("value2"))
@@ -302,19 +313,23 @@ class DestinationServiceAdapterTest
         final Header customHeader = new Header("X-Custom-Header", "should-not-appear");
         final List<Header> customHeaders = List.of(customHeader);
 
-        final String destinationResponse =
-            adapterToTest
+        stubFor(
+            get(urlEqualTo("/destination-service/destination-configuration/v1/subaccountDestinations"))
+                .willReturn(okJson("[]")));
+
+        assertThatCode(
+            () -> adapterToTest
                 .getConfigurationAsJson(
                     "/v1/subaccountDestinations",
-                    withUserToken(TECHNICAL_USER_CURRENT_TENANT, "some-user-token").withAdditionalHeaders(customHeaders));
-
-        assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
+                    withUserToken(TECHNICAL_USER_CURRENT_TENANT, "some-user-token")
+                        .withAdditionalHeaders(customHeaders)))
+            .doesNotThrowAnyException();
 
         verify(
             1,
-            getRequestedFor(urlEqualTo(DESTINATION_SERVICE_URL + "/v1/subaccountDestinations"))
+            getRequestedFor(urlEqualTo("/destination-service/destination-configuration/v1/subaccountDestinations"))
                 .withHeader("Authorization", equalTo("Bearer " + xsuaaToken))
-                .withoutHeader("X-Custom-Header") // Should not be added for non-destination requests
+                .withoutHeader("X-Custom-Header")
                 .withoutHeader("x-user-token"));
     }
 
