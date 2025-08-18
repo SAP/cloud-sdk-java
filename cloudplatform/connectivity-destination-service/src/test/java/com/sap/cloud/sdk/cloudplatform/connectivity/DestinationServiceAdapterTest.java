@@ -82,9 +82,9 @@ class DestinationServiceAdapterTest
     private static final String PROVIDER_TENANT_ID = "provider-tenant-id";
 
     private static final String XSUAA_URL = "/xsuaa/oauth/token";
-    private static final String DESTINATION_SERVICE_PATH = "/v1/destinations/test";
+    private static final String DESTINATION_PATH = "/v1/destinations/test";
     private static final String DESTINATION_SERVICE_URL =
-        "/destination-service/destination-configuration" + DESTINATION_SERVICE_PATH;
+        "/destination-service/destination-configuration" + DESTINATION_PATH;
     private static final String DESTINATION_RESPONSE = "{ response }";
 
     private static final String GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer";
@@ -108,9 +108,7 @@ class DestinationServiceAdapterTest
         stubFor(post(urlEqualTo(XSUAA_URL)).willReturn(okForJson(xsuaaResponse)));
 
         // mock destination service response
-        stubFor(
-            get(urlEqualTo("/destination-service/destination-configuration" + DESTINATION_SERVICE_PATH))
-                .willReturn(ok(DESTINATION_RESPONSE)));
+        stubFor(get(urlEqualTo(DESTINATION_SERVICE_URL)).willReturn(ok(DESTINATION_RESPONSE)));
     }
 
     @BeforeEach
@@ -137,8 +135,7 @@ class DestinationServiceAdapterTest
         final DestinationServiceAdapter adapterToTest = createSut(DEFAULT_SERVICE_BINDING);
 
         final String response =
-            adapterToTest
-                .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
+            adapterToTest.getConfigurationAsJson(DESTINATION_PATH, withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER));
 
         assertThat(response).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -177,7 +174,7 @@ class DestinationServiceAdapterTest
                 .executeWithTenant(
                     () -> "tenant-id",
                     () -> adapterToTest
-                        .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withoutToken(NAMED_USER_CURRENT_TENANT)));
+                        .getConfigurationAsJson(DESTINATION_PATH, withoutToken(NAMED_USER_CURRENT_TENANT)));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -207,8 +204,7 @@ class DestinationServiceAdapterTest
 
         // actual request, ensure that the tenant matches the one in the User JWT
         final String destinationResponse =
-            adapterToTest
-                .getConfigurationAsJson(DESTINATION_SERVICE_PATH, withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
+            adapterToTest.getConfigurationAsJson(DESTINATION_PATH, withUserToken(TECHNICAL_USER_CURRENT_TENANT, token));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
         verify(
@@ -237,7 +233,7 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             adapterToTest
                 .getConfigurationAsJson(
-                    DESTINATION_SERVICE_PATH,
+                    DESTINATION_PATH,
                     DestinationRetrievalStrategy.withRefreshToken(TECHNICAL_USER_CURRENT_TENANT, refreshToken));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
@@ -267,7 +263,7 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             adapterToTest
                 .getConfigurationAsJson(
-                    DESTINATION_SERVICE_PATH,
+                    DESTINATION_PATH,
                     withoutToken(TECHNICAL_USER_CURRENT_TENANT).withFragmentName(fragment));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
@@ -292,7 +288,7 @@ class DestinationServiceAdapterTest
         final String destinationResponse =
             adapterToTest
                 .getConfigurationAsJson(
-                    DESTINATION_SERVICE_PATH,
+                    DESTINATION_PATH,
                     withoutToken(TECHNICAL_USER_CURRENT_TENANT).withAdditionalHeaders(customHeaders));
 
         assertThat(destinationResponse).isEqualTo(DESTINATION_RESPONSE);
