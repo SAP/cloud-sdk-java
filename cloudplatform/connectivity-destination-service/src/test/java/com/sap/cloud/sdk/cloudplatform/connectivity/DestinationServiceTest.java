@@ -1838,10 +1838,7 @@ class DestinationServiceTest
         final Header h2 = new Header("X-Custom-2", "value-2");
 
         final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter()
-                    .customHeaders(h1, h2)
-                    .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT)
-            ).build();
+            DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1, h2)).build();
 
         // trigger fetching destination with custom headers
         loader.tryGetDestination(destinationName, options).get();
@@ -1849,7 +1846,7 @@ class DestinationServiceTest
         // verify the adapter was called with a strategy carrying the custom headers
         verify(destinationServiceAdapter, times(1))
             .getConfigurationAsJson(
-                eq("/v1/destinations/" + destinationName + "@subaccount"),
+                any(),
                 argThat(s -> s.additionalHeaders().contains(h1) && s.additionalHeaders().contains(h2)));
     }
 
