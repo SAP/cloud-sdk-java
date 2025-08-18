@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class DestinationServiceAdapter
 {
-    private static final String SERVICE_PATH = "destination-configuration/v1";
+    private static final String SERVICE_PATH = "destination-configuration";
 
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
