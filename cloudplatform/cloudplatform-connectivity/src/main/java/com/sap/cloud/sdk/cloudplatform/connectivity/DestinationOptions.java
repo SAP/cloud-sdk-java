@@ -38,9 +38,10 @@ public final class DestinationOptions
     }
 
     /**
-     * Get all
+     * Get all defined options.
      *
-     * @return
+     * @return A set of all option keys.
+     * @since 5.22.0
      */
     @Nonnull
     public Set<String> getOptionKeys()

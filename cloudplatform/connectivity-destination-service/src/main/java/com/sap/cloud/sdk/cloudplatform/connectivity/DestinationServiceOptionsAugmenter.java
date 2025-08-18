@@ -182,6 +182,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * @return The same augmenter that called this method.
      * @since 5.22.0
      */
+    @Beta
     @Nonnull
     public DestinationServiceOptionsAugmenter customHeaders( @Nonnull final Header... headers )
     {
