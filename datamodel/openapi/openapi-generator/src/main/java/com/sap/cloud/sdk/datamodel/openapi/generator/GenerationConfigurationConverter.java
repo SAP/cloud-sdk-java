@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_RESPONSE_SCHEMA_TITLES;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Year;
@@ -19,7 +21,11 @@ import com.sap.cloud.sdk.datamodel.openapi.generator.model.ApiMaturity;
 import com.sap.cloud.sdk.datamodel.openapi.generator.model.GenerationConfiguration;
 
 import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +66,11 @@ class GenerationConfigurationConverter
         config.setTemplateDir(TEMPLATE_DIRECTORY);
         config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
 
+        final var openAPI = parseOpenApiSpec(inputSpecFile, generationConfiguration);
+
         final var clientOptInput = new ClientOptInput();
         clientOptInput.config(config);
-        clientOptInput.openAPI(parseOpenApiSpec(inputSpecFile));
+        clientOptInput.openAPI(openAPI);
         return clientOptInput;
     }
 
@@ -90,16 +98,60 @@ class GenerationConfigurationConverter
         GlobalSettings.setProperty(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
     }
 
-    private static OpenAPI parseOpenApiSpec( @Nonnull final String inputSpecFile )
+    @Nonnull
+    private static
+        OpenAPI
+        parseOpenApiSpec( @Nonnull final String inputSpecFile, @Nonnull final GenerationConfiguration config )
     {
-        final List<AuthorizationValue> authorizationValues = List.of();
+        final var authorizationValues = List.<AuthorizationValue> of();
         final var options = new ParseOptions();
         options.setResolve(true);
         final var spec = new OpenAPIParser().readLocation(inputSpecFile, authorizationValues, options);
         if( !spec.getMessages().isEmpty() ) {
             log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
         }
-        return spec.getOpenAPI();
+        final var result = spec.getOpenAPI();
+        preprocessSpecification(result, config);
+        return result;
+    }
+
+    /**
+     * Preprocesses the OpenAPI specification to ensure that all inline schemas in "//components/responses" have a
+     * title. This does not affect regular schema definitions in "//components/schemas"! Without this fix, the OpenAPI
+     * Generator will generate classes with name format "InlineObject\d*" with high chance of naming conflicts.
+     *
+     * @param openAPI
+     *            the OpenAPI specification to preprocess
+     * @param config
+     *            the generation configuration to extract feature toggles from
+     */
+    private static
+        void
+        preprocessSpecification( @Nonnull final OpenAPI openAPI, @Nonnull final GenerationConfiguration config )
+    {
+        if( !FIX_RESPONSE_SCHEMA_TITLES.isEnabled(config) ) {
+            return;
+        }
+        final Components components = openAPI.getComponents();
+        if( components == null ) {
+            return;
+        }
+        final Map<String, ApiResponse> responses = components.getResponses();
+        if( responses == null ) {
+            return;
+        }
+        responses.forEach(( key, value ) -> {
+            final Content mediaContent = value.getContent();
+            if( mediaContent == null ) {
+                return;
+            }
+            mediaContent.forEach(( mediaType, content ) -> {
+                final Schema<?> schema = content.getSchema();
+                if( schema != null && schema.getTitle() == null ) {
+                    schema.setTitle(key + " " + (mediaContent.size() > 1 ? mediaType : ""));
+                }
+            });
+        });
     }
 
     private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )

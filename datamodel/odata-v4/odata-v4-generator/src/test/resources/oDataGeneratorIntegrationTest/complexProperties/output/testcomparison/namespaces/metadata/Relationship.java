@@ -95,21 +95,21 @@ public class Relationship
         // simple properties
         {
             if (cloudSdkValues.containsKey("Description")) {
-                final Object value = cloudSdkValues.remove("Description");
-                if ((value == null)||(!value.equals(getDescription()))) {
-                    setDescription(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Description");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getDescription()))) {
+                    setDescription(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("FirstName")) {
-                final Object value = cloudSdkValues.remove("FirstName");
-                if ((value == null)||(!value.equals(getFirstName()))) {
-                    setFirstName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("FirstName");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getFirstName()))) {
+                    setFirstName(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("LastName")) {
-                final Object value = cloudSdkValues.remove("LastName");
-                if ((value == null)||(!value.equals(getLastName()))) {
-                    setLastName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("LastName");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getLastName()))) {
+                    setLastName(((java.lang.String) cloudSdkValue));
                 }
             }
         }

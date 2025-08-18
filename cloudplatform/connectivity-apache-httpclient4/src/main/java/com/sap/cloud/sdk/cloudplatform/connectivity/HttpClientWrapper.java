@@ -16,7 +16,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
-import com.google.common.base.Joiner;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 
@@ -31,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * and it will append the url configured in the destination.
  */
 @Slf4j
-class HttpClientWrapper extends CloseableHttpClient
+class HttpClientWrapper extends CloseableHttpClient implements UriQueryMerger
 {
     private final CloseableHttpClient httpClient;
     @Getter( AccessLevel.PACKAGE )
@@ -107,15 +106,21 @@ class HttpClientWrapper extends CloseableHttpClient
         return new HttpClientWrapper(httpClient, destination);
     }
 
-    HttpUriRequest wrapRequest( final HttpUriRequest request )
+    @Nonnull
+    @Override
+    public URI mergeRequestUri( @Nonnull final URI requestUri )
     {
         final UriPathMerger merger = new UriPathMerger();
-        URI requestUri = merger.merge(destination.getUri(), request.getURI());
+        final URI mergedUri = merger.merge(destination.getUri(), requestUri);
 
-        final String queryString = Joiner.on("&").join(QueryParamGetter.getQueryParameters(destination));
-        requestUri = merger.merge(requestUri, URI.create("/?" + queryString));
+        final String queryString = String.join("&", QueryParamGetter.getQueryParameters(destination));
+        return merger.merge(mergedUri, URI.create("/?" + queryString));
+    }
 
+    HttpUriRequest wrapRequest( final HttpUriRequest request )
+    {
         final RequestBuilder requestBuilder = RequestBuilder.copy(request);
+        final URI requestUri = mergeRequestUri(request.getURI());
         requestBuilder.setUri(requestUri);
 
         for( final Header header : destination.getHeaders(requestUri) ) {

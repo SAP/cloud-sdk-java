@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.s4hana</groupId>
 		<artifactId>s4hana-parent</artifactId>
-		<version>5.19.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>s4hana-core</artifactId>
 	<name>SAP S/4HANA - Core</name>
@@ -28,14 +28,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
-	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Deprecated</x-sap-release-maturity>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>

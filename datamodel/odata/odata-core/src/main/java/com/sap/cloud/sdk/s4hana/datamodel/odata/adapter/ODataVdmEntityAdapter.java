@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.s4hana.datamodel.odata.adapter;
 
+import static java.util.function.Predicate.not;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,8 +14,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -187,7 +188,7 @@ public class ODataVdmEntityAdapter<T> extends TypeAdapter<VdmObject<T>>
                         if( jsonReader.peek() == JsonToken.BEGIN_OBJECT ) {
                             final ODataV2Metadata metadata = new Gson().fromJson(jsonReader, ODataV2Metadata.class);
                             final Option<String> maybeEtag =
-                                Option.of(metadata).map(ODataV2Metadata::getEtag).filter(StringUtils::isNotEmpty);
+                                Option.of(metadata).map(ODataV2Metadata::getEtag).filter(not(Strings::isNullOrEmpty));
                             if( maybeEtag.isDefined() && entity instanceof VdmEntity ) {
                                 ((VdmEntity<T>) entity).setVersionIdentifier(maybeEtag.get());
                             }

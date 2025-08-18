@@ -5,7 +5,7 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationProperty.S
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import io.vavr.control.Option;
 import lombok.extern.slf4j.Slf4j;

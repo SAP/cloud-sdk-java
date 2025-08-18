@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.datamodel.odata.generator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -11,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -22,13 +22,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
@@ -38,8 +33,9 @@ import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.utility.EdmxValidator;
-import com.sap.cloud.sdk.datamodel.odata.utility.NamingUtils;
+import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 
 import io.vavr.control.Try;
 
@@ -141,8 +137,7 @@ class ODataToVdmGenerator
         @Nonnull final Collection<File> inputFiles )
     {
         final Collection<EdmxFile> allEdmxFiles = new LinkedList<>();
-        final PropertiesConfiguration serviceNameMappings =
-            loadPropertiesConfiguration(config.getServiceNameMappings());
+        final ServiceNameMappings serviceNameMappings = loadPropertiesConfiguration(config.getServiceNameMappings());
 
         for( final File edmxFile : inputFiles ) {
 
@@ -218,7 +213,7 @@ class ODataToVdmGenerator
 
     private Service buildService(
         @Nonnull final String serviceName,
-        @Nonnull final PropertiesConfiguration serviceNameMappings,
+        @Nonnull final ServiceNameMappings serviceNameMappings,
         @Nullable final String defaultBasePath,
         @Nonnull final File serviceMetadataFile,
         @Nullable final File serviceSwaggerFile,
@@ -291,62 +286,28 @@ class ODataToVdmGenerator
         }
     }
 
-    private PropertiesConfiguration loadPropertiesConfiguration( final File serviceMappingsFile )
+    private ServiceNameMappings loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        final PropertiesConfiguration serviceNameMappings;
-        try {
-            if( serviceMappingsFile.exists() ) {
-                serviceNameMappings = new PropertiesConfiguration(serviceMappingsFile);
-            } else {
-                serviceNameMappings = new PropertiesConfiguration();
-            }
-        }
-        catch( final ConfigurationException e ) {
-            throw new ODataGeneratorReadException(e);
-        }
-
-        sanitizeConfiguration(serviceNameMappings);
-
-        return serviceNameMappings;
-    }
-
-    private void sanitizeConfiguration( final Configuration configuration )
-    {
-        for( final Iterator<String> it = configuration.getKeys(); it.hasNext(); ) {
-            final String key = it.next();
-
-            if( key.endsWith(Service.SERVICE_MAPPINGS_CLASS_SUFFIX) ) {
-                final String javaClassName = configuration.getString(key);
-                final String sanitizedJavaClassName = NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
-                configuration.setProperty(key, sanitizedJavaClassName);
-            }
-            if( key.endsWith(Service.SERVICE_MAPPINGS_PACKAGE_SUFFIX) ) {
-                final String javaPackageName = configuration.getString(key);
-                final String sanitizedJavaPackageName = NamingUtils.serviceNameToJavaPackageName(javaPackageName);
-                configuration.setProperty(key, sanitizedJavaPackageName);
-            }
-        }
+        return ServiceNameMappings.load(serviceMappingsFile.toPath());
     }
 
     private void storeConfiguration( final File serviceMappingsFile, final Iterable<Service> allODataServices )
     {
         ensureFileExists(serviceMappingsFile);
-        final PropertiesConfiguration serviceNameMappings = loadPropertiesConfiguration(serviceMappingsFile);
+        final ServiceNameMappings mappings = ServiceNameMappings.load(serviceMappingsFile.toPath());
 
         for( final Service oDataService : allODataServices ) {
             final String javaClassNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_CLASS_SUFFIX;
-            serviceNameMappings.setProperty(javaClassNameKey, oDataService.getJavaClassName());
-            serviceNameMappings.getLayout().setComment(javaClassNameKey, oDataService.getTitle());
-            serviceNameMappings.getLayout().setBlancLinesBefore(javaClassNameKey, 1);
+            mappings.putString(javaClassNameKey, oDataService.getJavaClassName(), oDataService.getTitle());
 
             final String javaPackageNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_PACKAGE_SUFFIX;
-            serviceNameMappings.setProperty(javaPackageNameKey, oDataService.getJavaPackageName());
+            mappings.putString(javaPackageNameKey, oDataService.getJavaPackageName());
         }
 
         try {
-            serviceNameMappings.save();
+            mappings.save();
         }
-        catch( final ConfigurationException e ) {
+        catch( final IOException e ) {
             throw new ODataGeneratorWriteException(e);
         }
     }
@@ -408,9 +369,12 @@ class ODataToVdmGenerator
     }
 
     private String getODataVersion( final EdmxProvider edmxProvider )
-        throws IllegalAccessException
+        throws IllegalAccessException,
+            NoSuchFieldException
     {
-        final DataServices dataServices = (DataServices) FieldUtils.readField(edmxProvider, "dataServices", true);
+        final Field field = EdmxProvider.class.getDeclaredField("dataServices");
+        field.setAccessible(true);
+        final DataServices dataServices = (DataServices) field.get(edmxProvider);
         return dataServices.getDataServiceVersion();
     }
 }

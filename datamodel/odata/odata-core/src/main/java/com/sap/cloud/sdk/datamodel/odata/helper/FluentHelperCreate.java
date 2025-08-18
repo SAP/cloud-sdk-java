@@ -70,6 +70,7 @@ public abstract class FluentHelperCreate<FluentHelperT, EntityT extends VdmEntit
     public ModificationResponse<EntityT> executeRequest( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
         final ODataRequestResultGeneric result = toRequest().execute(httpClient);
 
         return ModificationResponse.of(result, getEntity(), destination);

@@ -16,12 +16,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.slf4j.Logger;
@@ -31,6 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.JsonAdapter;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 import com.sap.cloud.sdk.datamodel.odata.utility.LegacyClassScanner;
 import com.sap.cloud.sdk.datamodel.odata.utility.NamingStrategy;
@@ -668,7 +667,7 @@ class NamespaceClassGenerator
         final JBlock block = isPrimitive || isEnum ? simplePropertiesBlock : complexPropertiesBlock;
         final JBlock ifFoundBody = block._if(values.invoke("containsKey").arg(entry.getKey()))._then();
         final JInvocation invokeRemove = values.invoke("remove").arg(entry.getKey());
-        final JVar value = ifFoundBody.decl(JMod.FINAL, typeObject, "value", invokeRemove);
+        final JVar value = ifFoundBody.decl(JMod.FINAL, typeObject, "cloudSdkValue", invokeRemove);
         final JExpression valueIsNull = value.eq(JExpr._null());
         final JInvocation objectsEquals = codeModel.ref(Objects.class).staticInvoke("equals");
 
@@ -682,7 +681,7 @@ class NamespaceClassGenerator
                 final JBlock ifChangeBody = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifChangeBody.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifChangeBody.forEach(typeObject, "item", iter);
+                final JForEach forEach = ifChangeBody.forEach(typeObject, "cloudSdkItem", iter);
                 final JBlock ifString = forEach.body()._if(forEach.var()._instanceof(typeString))._then();
                 final JExpression enumLookup = enumDeserializer.arg(JExpr.cast(typeString, forEach.var()));
                 final JVar enumConstant = ifString.decl(JMod.FINAL, javaType, "enumConstant", enumLookup);
@@ -705,7 +704,7 @@ class NamespaceClassGenerator
                 final JBlock ifChangeBody = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifChangeBody.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifChangeBody.forEach(typeObject, "item", iter);
+                final JForEach forEach = ifChangeBody.forEach(typeObject, "cloudSdkItem", iter);
                 forEach.body().add(listInst.invoke("add").arg(JExpr.cast(javaType, forEach.var())));
                 ifChangeBody.invoke(javaMethodSet).arg(listInst);
             } else {
@@ -722,9 +721,9 @@ class NamespaceClassGenerator
                 final JBlock ifValueIsList = ifFoundBody._if(value._instanceof(typeIterable))._then();
                 final JVar listInst = ifValueIsList.decl(JMod.FINAL, listType, javaFieldName, JExpr._new(listType));
                 final JExpression iter = JExpr.cast(typeIterable.narrow(codeModel.wildcard()), value);
-                final JForEach forEach = ifValueIsList.forEach(typeObject, "properties", iter);
+                final JForEach forEach = ifValueIsList.forEach(typeObject, "cloudSdkProperties", iter);
                 final JBlock isMap = forEach.body()._if(forEach.var()._instanceof(codeModel.ref(Map.class)))._then();
-                final JVar item = isMap.decl(JMod.FINAL, javaType, "item", JExpr._new(javaType));
+                final JVar item = isMap.decl(JMod.FINAL, javaType, "cloudSdkItem", JExpr._new(javaType));
                 isMap.directStatement("@SuppressWarnings(\"unchecked\")");
                 final JExpression castValueMap = JExpr.cast(fieldMapClass, value);
                 final JVar varInputMap = isMap.decl(JMod.FINAL, fieldMapClass, "inputMap", castValueMap);
@@ -883,8 +882,7 @@ class NamespaceClassGenerator
         Unfortunately there is no other way to exclude it, because we can't get the binding parameter name from Olingo.
         So we have to go based on the ordering.
          */
-        final List<String> parameterList =
-            operation.getParameterNames().stream().skip(isBound ? 1 : 0).collect(Collectors.toList());
+        final List<String> parameterList = operation.getParameterNames().stream().skip(isBound ? 1 : 0).toList();
 
         for( final String parameterName : parameterList ) {
             final Service.Parameter parameter = operation.getParameter(parameterName);

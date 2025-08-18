@@ -17,7 +17,6 @@ import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;
 
@@ -93,6 +92,7 @@ public class ODataRequestBatch extends ODataRequestGeneric
         this.uuidProvider = uuidProvider;
         this.batchUuid = uuidProvider.get();
         this.headers.remove(HttpHeaders.ACCEPT); // batch request does not require Accept header
+        this.requestResultFactory = ODataRequestResultFactory.WITHOUT_BUFFER;
     }
 
     @Nonnull
@@ -373,10 +373,15 @@ public class ODataRequestBatch extends ODataRequestGeneric
 
             this.contentId = requestBatch.contentId.getAndIncrement();
             this.request = requestSingle;
-            this.resourcePath =
-                StringUtils.removeStart(encodedRelativeUriSingleRequest, encodedServicePathBatchRequest);
+            this.resourcePath = removeStart(encodedRelativeUriSingleRequest, encodedServicePathBatchRequest);
             this.httpMethod = httpMethod;
             this.payload = payload;
+        }
+
+        @Nonnull
+        private String removeStart( @Nonnull final String string, @Nonnull final String prefix )
+        {
+            return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
         }
 
         private void assertSingleAndBatchRequestAreConsistent(

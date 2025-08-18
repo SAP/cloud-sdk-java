@@ -97,7 +97,9 @@ public class CollectionValueActionRequestBuilder<ResultT>
     public ActionResponseCollection<ResultT> execute( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
+
         return ActionResponseCollection.of(response, resultClass);
     }
 }
