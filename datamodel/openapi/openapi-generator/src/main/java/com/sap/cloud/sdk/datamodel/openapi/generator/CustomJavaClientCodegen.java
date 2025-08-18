@@ -277,23 +277,21 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
             for( final String candidate : candidates ) {
                 if( candidate.startsWith("List<") ) {
-
                     int depth = 0;
                     String sub = candidate;
-
                     while( sub.startsWith("List<") ) {
                         sub = sub.substring(5, sub.length() - 1);
                         depth++;
                     }
 
                     final String innerType = sub;
-
                     if( depth == 1 ) {
                         candidatesMultiple1D.add(innerType);
                     } else {
                         candidatesMultipleND
                             .add(Map.of("innerType", innerType, "depth", String.valueOf(depth), "fullType", candidate));
                     }
+
                     useCreators = true;
                 } else {
                     candidatesSingle.add(candidate);

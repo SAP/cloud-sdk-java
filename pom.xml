@@ -52,7 +52,7 @@
 		<sdk.version>5.22.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
-		<java.failOnWarning>false</java.failOnWarning>
+		<java.failOnWarning>true</java.failOnWarning>
 		<java.compilerArgument />
 		<project.rootdir>${project.basedir}</project.rootdir>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
