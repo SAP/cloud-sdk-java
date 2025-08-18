@@ -7,6 +7,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import io.vavr.control.Option;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
 
 class ServiceWithNavigableEntitiesImpl
 {
@@ -124,10 +125,10 @@ class ServiceWithNavigableEntitiesImpl
                     action.getReturnType());
             maybeEntity
                 .filter(e -> e.getVersionIdentifier().isDefined())
-                .map(VdmEntity<EntityT>::getVersionIdentifier)
+                .map(VdmEntity::getVersionIdentifier)
                 .filter(Option::isDefined)
                 .map(Option::get)
-                .forEach(eTag -> requestBuilder.withHeader("ETag", eTag));
+                .forEach(eTag -> requestBuilder.withHeader(HttpHeaders.IF_MATCH, eTag));
             return requestBuilder;
         }
 
@@ -145,10 +146,10 @@ class ServiceWithNavigableEntitiesImpl
                     action.getReturnType());
             maybeEntity
                 .filter(e -> e.getVersionIdentifier().isDefined())
-                .map(VdmEntity<EntityT>::getVersionIdentifier)
+                .map(VdmEntity::getVersionIdentifier)
                 .filter(Option::isDefined)
                 .map(Option::get)
-                .forEach(eTag -> requestBuilder.withHeader("ETag", eTag));
+                .forEach(eTag -> requestBuilder.withHeader(HttpHeaders.IF_MATCH, eTag));
             return requestBuilder;
         }
     }

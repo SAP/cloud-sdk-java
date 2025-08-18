@@ -25,7 +25,7 @@ class BoundActionTest
 
         assertThat(action.toRequest().getRelativeUri()).hasToString(targetUrl);
         assertThat(action.toRequest().getActionParameters()).hasToString("{}");
-        assertThat(action.toRequest().getHeaders()).containsEntry("ETag", Collections.singletonList("some-etag"));
+        assertThat(action.toRequest().getHeaders()).containsEntry("If-Match", Collections.singletonList("some-etag"));
     }
 
     @Test
@@ -38,7 +38,7 @@ class BoundActionTest
 
         assertThat(action.toRequest().getRelativeUri()).hasToString(targetUrl);
         assertThat(action.toRequest().getActionParameters()).hasToString("{}");
-        assertThat(action.toRequest().getHeaders()).doesNotContainEntry("ETag", Collections.singletonList("some-etag"));
+        assertThat(action.toRequest().getHeaders()).doesNotContainKey("If-Match");
     }
 
     @Test
