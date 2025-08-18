@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.20.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-ztis</artifactId>
 	<name>Connectivity - Zero Trust Identity Service</name>
@@ -28,26 +28,13 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
-	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Beta</x-sap-release-maturity>
-	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
 			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>3.25.7</version>
-			</dependency>
-			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
-				<version>1.72.0</version>
+				<version>1.74.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -73,18 +60,22 @@
 		<dependency>
 			<groupId>io.spiffe</groupId>
 			<artifactId>java-spiffe-core</artifactId>
-			<version>0.8.11</version>
+			<version>0.8.13</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-beanutils</artifactId>
+					<groupId>commons-beanutils</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.spiffe</groupId>
 			<artifactId>grpc-netty-linux</artifactId>
-			<version>0.8.11</version>
+			<version>0.8.13</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Override grpc versions from spiffe -->
@@ -96,6 +87,19 @@
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Fix CVE-2024-7254 -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.25.8</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -110,6 +114,17 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

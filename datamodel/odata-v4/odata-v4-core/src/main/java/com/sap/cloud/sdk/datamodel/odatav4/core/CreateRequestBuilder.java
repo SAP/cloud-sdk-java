@@ -103,6 +103,7 @@ public class CreateRequestBuilder<EntityT extends VdmEntity<?>>
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
         final ODataRequestResultGeneric response = toRequest().execute(httpClient);
+
         return ModificationResponse.of(response, getEntity());
     }
 

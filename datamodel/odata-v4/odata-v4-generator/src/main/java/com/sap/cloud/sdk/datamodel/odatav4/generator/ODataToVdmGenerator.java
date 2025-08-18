@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -37,6 +36,7 @@ import org.slf4j.Logger;
 import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Multimap;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.utility.EdmxValidator;
 import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 
@@ -293,7 +293,7 @@ class ODataToVdmGenerator
 
     private ServiceNameMappings loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        return new ServiceNameMappings(serviceMappingsFile.toPath());
+        return ServiceNameMappings.load(serviceMappingsFile.toPath());
     }
 
     // Schema definitions are necessary to make the EDMX properties explorable through Olingo API at runtime, example:
@@ -334,7 +334,7 @@ class ODataToVdmGenerator
     private void storeConfiguration( final File serviceMappingsFile, final Iterable<Service> allODataServices )
     {
         ensureFileExists(serviceMappingsFile);
-        final ServiceNameMappings mappings = new ServiceNameMappings(serviceMappingsFile.toPath());
+        final ServiceNameMappings mappings = ServiceNameMappings.load(serviceMappingsFile.toPath());
 
         for( final Service oDataService : allODataServices ) {
             final String javaClassNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_CLASS_SUFFIX;

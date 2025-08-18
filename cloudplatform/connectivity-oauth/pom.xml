@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.20.0-SNAPSHOT</version>
+		<version>5.22.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-oauth</artifactId>
 	<name>OAuth2 Connectivity</name>
@@ -28,14 +28,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection />
-		<url />
-	</scm>
-	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Beta</x-sap-release-maturity>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
@@ -134,6 +126,10 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 		<!-- scope "provided" -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -190,11 +186,6 @@
 		<dependency>
 			<groupId>com.sap.cloud.sdk</groupId>
 			<artifactId>testutil</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.datamodel.odata.generator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,8 +24,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
@@ -34,6 +33,7 @@ import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 import com.sap.cloud.sdk.datamodel.odata.utility.EdmxValidator;
 import com.sap.cloud.sdk.datamodel.odata.utility.ServiceNameMappings;
 
@@ -288,13 +288,13 @@ class ODataToVdmGenerator
 
     private ServiceNameMappings loadPropertiesConfiguration( final File serviceMappingsFile )
     {
-        return new ServiceNameMappings(serviceMappingsFile.toPath());
+        return ServiceNameMappings.load(serviceMappingsFile.toPath());
     }
 
     private void storeConfiguration( final File serviceMappingsFile, final Iterable<Service> allODataServices )
     {
         ensureFileExists(serviceMappingsFile);
-        final ServiceNameMappings mappings = new ServiceNameMappings(serviceMappingsFile.toPath());
+        final ServiceNameMappings mappings = ServiceNameMappings.load(serviceMappingsFile.toPath());
 
         for( final Service oDataService : allODataServices ) {
             final String javaClassNameKey = oDataService.getName() + Service.SERVICE_MAPPINGS_CLASS_SUFFIX;
@@ -369,9 +369,12 @@ class ODataToVdmGenerator
     }
 
     private String getODataVersion( final EdmxProvider edmxProvider )
-        throws IllegalAccessException
+        throws IllegalAccessException,
+            NoSuchFieldException
     {
-        final DataServices dataServices = (DataServices) FieldUtils.readField(edmxProvider, "dataServices", true);
+        final Field field = EdmxProvider.class.getDeclaredField("dataServices");
+        field.setAccessible(true);
+        final DataServices dataServices = (DataServices) field.get(edmxProvider);
         return dataServices.getDataServiceVersion();
     }
 }

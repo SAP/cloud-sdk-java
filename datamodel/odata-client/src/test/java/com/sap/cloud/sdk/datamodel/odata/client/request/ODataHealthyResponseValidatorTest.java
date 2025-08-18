@@ -1,19 +1,15 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
 import org.apache.http.entity.StringEntity;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -22,32 +18,23 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorExcep
 
 class ODataHealthyResponseValidatorTest
 {
-    private final ODataRequestResult odataResult = mock(ODataRequestResult.class);
-    private final ODataRequestGeneric odataRequest = mock(ODataRequestGeneric.class);
-    private final HttpResponse httpResponse = mock(HttpResponse.class);
-    private final StatusLine httpResponseStatusLine = mock(StatusLine.class);
-
-    @BeforeEach
-    void adjustMocks()
-    {
-        lenient().when(odataRequest.getProtocol()).thenReturn(ODataProtocol.V2);
-        lenient().when(odataResult.getHttpResponse()).thenReturn(httpResponse);
-        lenient().when(odataResult.getODataRequest()).thenReturn(odataRequest);
-        lenient().when(httpResponse.getStatusLine()).thenReturn(httpResponseStatusLine);
-        lenient().when(httpResponse.getAllHeaders()).thenReturn(new Header[0]);
-        lenient().when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
-    }
+    private static final ODataRequestGeneric REQUEST =
+        new ODataRequestRead("service-path", "EntitySet", null, ODataProtocol.V2);
 
     @Test
     void testSuccess()
     {
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_OK, "OK");
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
+
         ODataHealthyResponseValidator.requireHealthyResponse(odataResult);
     }
 
     @Test
     void testNotFound()
     {
-        when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_NOT_FOUND);
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not Found");
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> ODataHealthyResponseValidator.requireHealthyResponse(odataResult))
@@ -78,8 +65,9 @@ class ODataHealthyResponseValidatorTest
             }
             """;
 
-        when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        when(httpResponse.getEntity()).thenReturn(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
+        final HttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
+        httpResponse.setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
+        final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         assertThatExceptionOfType(ODataServiceErrorException.class)
             .isThrownBy(() -> ODataHealthyResponseValidator.requireHealthyResponse(odataResult))

@@ -12,7 +12,9 @@
 
 ### ✨ New Functionality
 
-- 
+- Add built-in support for the [Transparent Proxy](https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/transparent-proxy-for-kubernetes) via a new `TransparentProxyDestination`.
+  For more information, refer to the [documentation](/docs/java/features/connectivity/transparent-proxy).
+- Add _experimental_ support for cross-level destination consumption via a new `CrossLevelScope` setting under `DestinationServiceOptionsAugmenter`.
 
 ### 📈 Improvements
 
@@ -20,4 +22,6 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- [ODatav4] Fixed an issue when generating clients.
+  - Property names: `value`, `item` and `properties` are now allowed.
+  

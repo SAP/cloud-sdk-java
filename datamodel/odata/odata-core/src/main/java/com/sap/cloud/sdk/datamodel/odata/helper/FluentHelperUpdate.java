@@ -110,8 +110,9 @@ public abstract class FluentHelperUpdate<FluentHelperT, EntityT extends VdmEntit
     {
         final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
 
-        final ODataRequestResultGeneric response = toRequest().execute(httpClient);
-        return ModificationResponse.of(response, getEntity(), destination);
+        final ODataRequestResultGeneric result = toRequest().execute(httpClient);
+
+        return ModificationResponse.of(result, getEntity(), destination);
     }
 
     @Override

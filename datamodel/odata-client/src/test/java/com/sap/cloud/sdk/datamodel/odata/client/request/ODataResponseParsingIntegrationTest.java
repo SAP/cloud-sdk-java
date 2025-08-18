@@ -1,10 +1,10 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -311,10 +311,14 @@ class ODataResponseParsingIntegrationTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);
 
-        final ODataRequestResultGeneric result = request.execute(httpClient);
-        result.disableBufferingHttpResponse();
-        assertThat(result.asMap()).containsKeys("value", "@odata.count");
-        assertThatExceptionOfType(ODataDeserializationException.class).isThrownBy(() -> result.getInlineCount());
+        try( final ODataRequestResultResource result = request.withoutResponseBuffering().execute(httpClient) ) {
+
+            // first access successful
+            assertThat(result.asMap()).containsKeys("value", "@odata.count");
+
+            // second access fails
+            assertThatExceptionOfType(ODataDeserializationException.class).isThrownBy(result::getInlineCount);
+        }
     }
 
     @Test
@@ -323,9 +327,17 @@ class ODataResponseParsingIntegrationTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true&$format=json", ODataProtocol.V4);
 
-        final ODataRequestResultGeneric result = request.execute(httpClient);
+        @SuppressWarnings( "resource" ) // let's assume user is forgetting try-with-resources
+        final ODataRequestResultGeneric result = request.withoutResponseBuffering().execute(httpClient);
+
+        // first access successful
         assertThat(result.asMap()).containsKeys("value", "@odata.count");
-        result.disableBufferingHttpResponse();
-        assertThat(result.getInlineCount()).isEqualTo(20);
+
+        // second access fails
+        assertThatExceptionOfType(ODataDeserializationException.class)
+            .isThrownBy(result::getInlineCount)
+            .havingRootCause()
+            .isInstanceOf(IOException.class)
+            .withMessage("Attempted read from closed stream.");
     }
 }

@@ -12,7 +12,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.commons.lang3.StringUtils;
+import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

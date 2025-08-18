@@ -54,7 +54,7 @@ runs:
       run: |
         JOBS_JSON=$(gh run view "${{ steps.find-run-id.outputs.RUN_ID }}" --json jobs)
         NON_SUCCESSFUL_JOBS=$(jq -r '.jobs[] | select(.conclusion != "success" and .conclusion != "neutral")' <<< "$JOBS_JSON")
-        EXCLUDED_JOBS=$(jq -r '.[]' <<< "${{ inputs.excluded-jobs }}")
+        EXCLUDED_JOBS=$(jq -r '.[]' <<< '${{ inputs.excluded-jobs }}')
         while IFS= read -r EXCLUDED_JOB; do
           if [[ -z "$EXCLUDED_JOB" ]]; then
             continue

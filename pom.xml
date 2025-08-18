@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.20.0-SNAPSHOT</version>
+	<version>5.22.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -37,19 +37,23 @@
 		<module>dependency-bundles/sdk-core</module>
 	</modules>
 	<scm>
-		<connection />
-		<url />
+		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
+		<developerConnection>scm:git:ssh://github.com:SAP/cloud-sdk-java.git</developerConnection>
+		<url>https://github.com/SAP/cloud-sdk-java/tree/main</url>
 	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>artifactory-snapshots</id>
+			<url>https://common.repositories.cloud.sap/artifactory/build-snapshots-cloudsdk</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
-		<x-sap-release-audience>Public</x-sap-release-audience>
-		<x-sap-release-maturity>Stable</x-sap-release-maturity>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.20.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.22.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>false</java.failOnWarning>
 		<java.compilerArgument />
-		<javadoc.opts />
 		<project.rootdir>${project.basedir}</project.rootdir>
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -84,7 +88,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.19.0</jackson.version>
+		<jackson.version>2.19.2</jackson.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -93,35 +97,37 @@
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.7</spring.version>
+		<spring.version>6.2.9</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
-		<assertj-core.version>3.27.3</assertj-core.version>
+		<assertj-core.version>3.27.4</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.18.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.12.2</junit.jupiter.version>
+		<junit.jupiter.version>5.13.4</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.9</maven-plugin.version>
+		<maven-plugin.version>3.9.11</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.1</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
-		<caffeine.version>3.2.0</caffeine.version>
-		<openapi-generator.version>7.13.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.32</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.29</io-swagger-parser-v3.version>
+		<caffeine.version>3.2.2</caffeine.version>
+		<openapi-generator.version>7.14.0</openapi-generator.version>
+		<io-swagger-core-v3.version>2.2.35</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.31</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.80</bouncycastle.version>
+		<bouncycastle.version>1.81</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
-		<wiremock.version>3.13.0</wiremock.version>
-		<checkstyle.version>10.24.0</checkstyle.version>
-		<byte-buddy.version>1.17.5</byte-buddy.version>
+		<wiremock.version>3.13.1</wiremock.version>
+		<checkstyle.version>11.0.0</checkstyle.version>
+		<byte-buddy.version>1.17.6</byte-buddy.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
-		<commons-codec.version>1.18.0</commons-codec.version>
+		<commons-codec.version>1.19.0</commons-codec.version>
+		<commons-beanutils.version>1.11.0</commons-beanutils.version>
+		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
@@ -290,6 +296,12 @@
 				<artifactId>bcprov-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
 			</dependency>
+			<!-- resolve vulnerability CVE-2025-48734 -->
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons-beanutils.version}</version>
+			</dependency>
 			<!--Dependencies with test scope-->
 			<dependency>
 				<groupId>com.sap.cloud.sdk</groupId>
@@ -412,11 +424,13 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
+			<version>${findbugs-jsr305.version}</version>
 			<optional>${jsr305.optional}</optional>
 		</dependency>
 	</dependencies>
@@ -439,307 +453,8 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.5.0</version>
-					<executions>
-						<execution>
-							<id>enforce-project-rules</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<rules>
-									<requireMavenVersion>
-										<version>${maven.version}</version>
-									</requireMavenVersion>
-									<requireJavaVersion>
-										<version>${java.version}</version>
-									</requireJavaVersion>
-									<banDistributionManagement />
-									<banDuplicatePomDependencyVersions />
-									<dependencyConvergence />
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ban-deprecated-dependencies</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<rules>
-									<bannedDependencies>
-										<message>Do not use deprecated dependencies.</message>
-										<excludes>
-											<exclude>javax.servlet:servlet-api</exclude>
-											<exclude>javax.ws.rs:jsr311-api</exclude>
-											<!--  use javax.ws.rs:javax.ws.rs-api  -->
-											<exclude>commons-httpclient:commons-httpclient</exclude>
-										</excludes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ban-logging-frameworks</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipBanLoggingFrameworks}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Do not use and do exclude all transitive uses of logging frameworks.</message>
-										<excludes>
-											<exclude>org.slf4j:slf4j-simple</exclude>
-											<exclude>commons-logging</exclude>
-											<exclude>ch.qos.logback</exclude>
-											<exclude>org.apache.logging.log4j</exclude>
-											<exclude>org.apache.log4j</exclude>
-											<exclude>log4j</exclude>
-											<exclude>org.tinylog</exclude>
-										</excludes>
-										<includes>
-											<include>org.slf4j:slf4j-simple:*:*:test</include>
-										</includes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>enforce-scope-logger-bridges</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipEnforceScopeLoggerBridges}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Logger bridges must use scope runtime or test.</message>
-										<excludes>
-											<exclude>org.slf4j:jul-to-slf4j</exclude>
-											<exclude>org.slf4j:jcl-over-slf4j</exclude>
-											<exclude>org.slf4j:log4j-over-slf4j</exclude>
-										</excludes>
-										<includes>
-											<include>org.slf4j:jul-to-slf4j:*:*:runtime</include>
-											<include>org.slf4j:jul-to-slf4j:*:*:test</include>
-											<include>org.slf4j:jcl-over-slf4j:*:*:runtime</include>
-											<include>org.slf4j:jcl-over-slf4j:*:*:test</include>
-											<include>org.slf4j:log4j-over-slf4j:*:*:runtime</include>
-											<include>org.slf4j:log4j-over-slf4j:*:*:test</include>
-										</includes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>enforce-scope-javaee</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipEnforceScopeJavaEE}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Use Java EE modules with scope provided or test.</message>
-										<excludes>
-											<exclude>javax:javaee-api</exclude>
-											<exclude>javax.inject:javax.inject</exclude>
-											<exclude>javax.ws.rs:javax.ws.rs-api</exclude>
-										</excludes>
-										<includes>
-											<include>javax:javaee-api:*:*:provided</include>
-											<include>javax:javaee-api:*:*:test</include>
-											<include>javax.ws.rs:javax.ws.rs-api:*:*:provided</include>
-											<include>javax.ws.rs:javax.ws.rs-api:*:*:test</include>
-										</includes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>enforce-scope-lombok</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipEnforceScopeLombok}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Use lombok with scope provided.</message>
-										<excludes>
-											<exclude>org.projectlombok:lombok</exclude>
-										</excludes>
-										<includes>
-											<include>org.projectlombok:lombok:*:*:provided</include>
-										</includes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ban-api-dependencies</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipBanGeneratedModulesReference}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Do not reference generated API modules (or modules transitively
-                      referencing generated API modules), as they might be removed by profiles.</message>
-										<excludes>
-											<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
-											<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
-											<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
-										</excludes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ban-old-junit</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<skip>${enforcer.skipBanJunit4}</skip>
-								<rules>
-									<bannedDependencies>
-										<message>Do not use JUnit 4.X, instead exclusively use Junit Jupiter. JUnit 4 tests will (silently) simply not be executed.</message>
-										<excludes>
-											<exclude>junit:junit</exclude>
-										</excludes>
-									</bannedDependencies>
-								</rules>
-							</configuration>
-						</execution>
-					</executions>
-					<configuration>
-						<fail>true</fail>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>net.revelc.code.formatter</groupId>
-					<artifactId>formatter-maven-plugin</artifactId>
-					<version>2.23.0</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>format</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<skip>${skipFormatting}</skip>
-						<configFile>${project.build.javaCodeFormatter}</configFile>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<directories>
-							<directory>${project.basedir}/src/main/java</directory>
-							<directory>${project.basedir}/src/test/java</directory>
-						</directories>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>net.revelc.code</groupId>
-					<artifactId>impsort-maven-plugin</artifactId>
-					<version>1.12.0</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>sort</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<skip>${skipFormatting}</skip>
-						<groups>java.,javax.,org.,com.</groups>
-						<staticGroups>java,*</staticGroups>
-						<staticAfter>false</staticAfter>
-						<removeUnused>true</removeUnused>
-						<compliance>${java.version}</compliance>
-						<excludes>
-							<exclude>**/test/resources/**</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.ekryd.sortpom</groupId>
-					<artifactId>sortpom-maven-plugin</artifactId>
-					<version>2.15.0</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>sort</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<skip>${skipFormatting}</skip>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<createBackupFile>false</createBackupFile>
-						<expandEmptyElements>false</expandEmptyElements>
-						<!--  -1 stands for tab  -->
-						<nrOfIndentSpace>-1</nrOfIndentSpace>
-						<sortDependencies>none</sortDependencies>
-						<sortPlugins>none</sortPlugins>
-						<sortProperties>false</sortProperties>
-						<sortModules>false</sortModules>
-						<verifyFail>stop</verifyFail>
-						<verifyFailOn>strict</verifyFailOn>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.8.1</version>
-					<executions>
-						<execution>
-							<id>analyze</id>
-							<phase>process-test-classes</phase>
-							<goals>
-								<goal>analyze-only</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>analyze-dep-mgt</id>
-							<phase>process-test-classes</phase>
-							<goals>
-								<goal>analyze-dep-mgt</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>analyze-duplicate</id>
-							<phase>process-test-classes</phase>
-							<goals>
-								<goal>analyze-duplicate</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<failOnWarning>true</failOnWarning>
-						<failBuild>true</failBuild>
-						<ignoreNonCompile>false</ignoreNonCompile>
-						<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
-						<ignoredUnusedDeclaredDependencies combine.children="append">
-							<!--  ignore annotations that are not visible on bytecode level  -->
-							<ignoredUnusedDeclaredDependency>com.google.code.findbugs:jsr305</ignoredUnusedDeclaredDependency>
-							<!-- Logging API, adapters and default implementation for tests -->
-							<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-api</ignoredUnusedDeclaredDependency>
-							<ignoredUnusedDeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUnusedDeclaredDependency>
-							<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-simple</ignoredUnusedDeclaredDependency>
-							<!-- Lombok usage for code generation -->
-							<ignoredUnusedDeclaredDependency>org.projectlombok:lombok</ignoredUnusedDeclaredDependency>
-							<!-- By default, JUnit5 adapters are added to every module to ensure no tests are skipped -->
-							<ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter-engine</ignoredUnusedDeclaredDependency>
-						</ignoredUnusedDeclaredDependencies>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -759,31 +474,8 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>3.4.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.4</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.4</version>
-					<configuration>
-						<retryFailedDeploymentCount>3</retryFailedDeploymentCount>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.21.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -796,245 +488,9 @@
 					<version>3.15.1</version>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.6.0</version>
-					<executions>
-						<execution>
-							<id>remove-old-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>remove-project-artifact</goal>
-							</goals>
-							<configuration>
-								<removeAll>false</removeAll>
-								<failOnError>false</failOnError>
-							</configuration>
-						</execution>
-						<execution>
-							<id>add-source</id>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>add-source</goal>
-							</goals>
-							<configuration>
-								<sources>
-									<source>${project.build.generated-sources}</source>
-								</sources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.13</version>
-					<executions>
-						<execution>
-							<id>prepare-agent</id>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-							<configuration>
-								<destFile>${jacoco.executionDataFile}</destFile>
-							</configuration>
-						</execution>
-						<execution>
-							<id>report</id>
-							<goals>
-								<goal>report</goal>
-							</goals>
-							<configuration>
-								<dataFile>${jacoco.executionDataFile}</dataFile>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.3</version>
-					<configuration>
-						<includes>
-							<include>${surefire.include}</include>
-						</includes>
-						<excludes>
-							<exclude>${surefire.exclude}</exclude>
-						</excludes>
-						<forkCount>${surefire.forkCount}</forkCount>
-						<reuseForks>false</reuseForks>
-						<groups>${surefire.groups}</groups>
-						<excludedGroups>${surefire.excludedGroups}</excludedGroups>
-						<systemPropertyVariables>
-							<surefire.forkDir>${project.build.directory}/surefire-fork/${surefire.forkNumber}/</surefire.forkDir>
-						</systemPropertyVariables>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>3.6.0</version>
-					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>${checkstyle.version}</version>
-						</dependency>
-					</dependencies>
-					<configuration>
-						<configLocation>${project.rootdir}/codestyle/checkstyle.xml</configLocation>
-						<linkXRef>false</linkXRef>
-						<includeResources>false</includeResources>
-						<includeTestResources>false</includeTestResources>
-						<excludes>${codeAnalysisExclusions}</excludes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.spotbugs</groupId>
-					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.9.3.0</version>
-					<configuration>
-						<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
-						<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
-						<effort>Max</effort>
-						<threshold>Low</threshold>
-						<maxHeap>2048</maxHeap>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.26.0</version>
-					<configuration>
-						<rulesets>
-							<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
-							<ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset>
-							<!-- content of the PMD default rule set for Java can be found here:
-                                                        https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD
-                                                         -->
-							<ruleset>/rulesets/java/maven-pmd-plugin-default.xml</ruleset>
-						</rulesets>
-						<linkXRef>false</linkXRef>
-						<targetJdk>${java.version}</targetJdk>
-						<excludes>
-							<exclude>${codeAnalysisExclusions}</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.projectlombok</groupId>
-					<artifactId>lombok-maven-plugin</artifactId>
-					<version>1.18.20.0</version>
-					<executions>
-						<execution>
-							<id>delombok</id>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>delombok</goal>
-							</goals>
-							<configuration>
-								<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-								<outputDirectory>${project.build.directory}/delombok</outputDirectory>
-							</configuration>
-						</execution>
-						<execution>
-							<id>test-delombok</id>
-							<phase>generate-test-sources</phase>
-							<goals>
-								<goal>testDelombok</goal>
-							</goals>
-							<configuration>
-								<sourceDirectory>${project.basedir}/src/test/java</sourceDirectory>
-								<outputDirectory>${project.build.directory}/delombok-test</outputDirectory>
-							</configuration>
-						</execution>
-					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.38</version>
-						</dependency>
-					</dependencies>
-					<configuration>
-						<addOutputDirectory>false</addOutputDirectory>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>properties-maven-plugin</artifactId>
-					<version>1.2.1</version>
-					<executions>
-						<execution>
-							<phase>initialize</phase>
-							<goals>
-								<goal>read-project-properties</goal>
-							</goals>
-							<configuration>
-								<files>
-									<file>${project.rootdir}/javadoc.properties</file>
-								</files>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.11.2</version>
-					<executions>
-						<execution>
-							<id>javadoc-jar</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>javadoc-aggregate</id>
-							<goals>
-								<goal>aggregate</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<quiet>true</quiet>
-						<additionalOptions>${javadoc.opts}</additionalOptions>
-						<show>protected</show>
-						<groups>
-							<group>
-								<title>Cloud Platform</title>
-								<packages>com.sap.cloud.sdk.cloudplatform*</packages>
-							</group>
-							<group>
-								<title>Utility Packages</title>
-								<packages>com.sap.cloud.sdk.datamodel* :com.sap.cloud.sdk.result*:*
-                  :com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
-                  :com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
-                  :org.eclipse*</packages>
-							</group>
-							<group>
-								<title>SAP S/4HANA</title>
-								<packages>com.sap.cloud.sdk.s4hana*</packages>
-							</group>
-						</groups>
-						<sourcepath>${project.basedir}/target/delombok; ${javadoc.sourcepath}</sourcepath>
-						<overview>${project.rootdir}/javadoc.overview.html</overview>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.1</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<forceCreation>true</forceCreation>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>com.sap.cloud.sdk.datamodel</groupId>
@@ -1045,97 +501,620 @@
 						<sapCopyrightHeader>true</sapCopyrightHeader>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.0</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<!-- phase: validate -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>enforce-project-rules</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>${maven.version}</version>
+								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>${java.version}</version>
+								</requireJavaVersion>
+								<banDistributionManagement />
+								<banDuplicatePomDependencyVersions />
+								<dependencyConvergence />
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-deprecated-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<message>Do not use deprecated dependencies.</message>
+									<excludes>
+										<exclude>javax.servlet:servlet-api</exclude>
+										<exclude>javax.ws.rs:jsr311-api</exclude>
+										<!--  use javax.ws.rs:javax.ws.rs-api  -->
+										<exclude>commons-httpclient:commons-httpclient</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-logging-frameworks</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipBanLoggingFrameworks}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Do not use and do exclude all transitive uses of logging frameworks.</message>
+									<excludes>
+										<exclude>org.slf4j:slf4j-simple</exclude>
+										<exclude>commons-logging</exclude>
+										<exclude>ch.qos.logback</exclude>
+										<exclude>org.apache.logging.log4j</exclude>
+										<exclude>org.apache.log4j</exclude>
+										<exclude>log4j</exclude>
+										<exclude>org.tinylog</exclude>
+									</excludes>
+									<includes>
+										<include>org.slf4j:slf4j-simple:*:*:test</include>
+									</includes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-scope-logger-bridges</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipEnforceScopeLoggerBridges}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Logger bridges must use scope runtime or test.</message>
+									<excludes>
+										<exclude>org.slf4j:jul-to-slf4j</exclude>
+										<exclude>org.slf4j:jcl-over-slf4j</exclude>
+										<exclude>org.slf4j:log4j-over-slf4j</exclude>
+									</excludes>
+									<includes>
+										<include>org.slf4j:jul-to-slf4j:*:*:runtime</include>
+										<include>org.slf4j:jul-to-slf4j:*:*:test</include>
+										<include>org.slf4j:jcl-over-slf4j:*:*:runtime</include>
+										<include>org.slf4j:jcl-over-slf4j:*:*:test</include>
+										<include>org.slf4j:log4j-over-slf4j:*:*:runtime</include>
+										<include>org.slf4j:log4j-over-slf4j:*:*:test</include>
+									</includes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-scope-javaee</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipEnforceScopeJavaEE}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Use Java EE modules with scope provided or test.</message>
+									<excludes>
+										<exclude>javax:javaee-api</exclude>
+										<exclude>javax.inject:javax.inject</exclude>
+										<exclude>javax.ws.rs:javax.ws.rs-api</exclude>
+									</excludes>
+									<includes>
+										<include>javax:javaee-api:*:*:provided</include>
+										<include>javax:javaee-api:*:*:test</include>
+										<include>javax.ws.rs:javax.ws.rs-api:*:*:provided</include>
+										<include>javax.ws.rs:javax.ws.rs-api:*:*:test</include>
+									</includes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-scope-lombok</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipEnforceScopeLombok}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Use lombok with scope provided.</message>
+									<excludes>
+										<exclude>org.projectlombok:lombok</exclude>
+									</excludes>
+									<includes>
+										<include>org.projectlombok:lombok:*:*:provided</include>
+									</includes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-old-junit</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipBanJunit4}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Do not use JUnit 4.X, instead exclusively use Junit Jupiter. JUnit 4 tests will (silently) simply not be executed.</message>
+									<excludes>
+										<exclude>junit:junit</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-api-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<skip>${enforcer.skipBanGeneratedModulesReference}</skip>
+							<rules>
+								<bannedDependencies>
+									<message>Do not reference generated API modules (or modules transitively
+										referencing generated API modules), as they might be removed by profiles.</message>
+									<excludes>
+										<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
+										<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
+										<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+			<!-- phase: process-sources -->
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
+				<version>2.23.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>${skipFormatting}</skip>
+					<configFile>${project.build.javaCodeFormatter}</configFile>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<directories>
+						<directory>${project.basedir}/src/main/java</directory>
+						<directory>${project.basedir}/src/test/java</directory>
+					</directories>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>net.revelc.code</groupId>
 				<artifactId>impsort-maven-plugin</artifactId>
+				<version>1.12.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sort</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>${skipFormatting}</skip>
+					<groups>java.,javax.,org.,com.</groups>
+					<staticGroups>java,*</staticGroups>
+					<staticAfter>false</staticAfter>
+					<removeUnused>true</removeUnused>
+					<compliance>${java.version}</compliance>
+					<excludes>
+						<exclude>**/test/resources/**</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
+			<!-- phase: process-resources and process-test-resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+			</plugin>
+			<!-- phase: test-compile -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<failOnWarning>true</failOnWarning>
+					<failBuild>true</failBuild>
+					<ignoreNonCompile>false</ignoreNonCompile>
+					<ignoreUnusedRuntime>true</ignoreUnusedRuntime>
+					<ignoredUnusedDeclaredDependencies combine.children="append">
+						<!--  ignore annotations that are not visible on bytecode level  -->
+						<ignoredUnusedDeclaredDependency>com.google.code.findbugs:jsr305</ignoredUnusedDeclaredDependency>
+						<!-- Logging API, adapters and default implementation for tests -->
+						<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-api</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>org.slf4j:jcl-over-slf4j</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>org.slf4j:slf4j-simple</ignoredUnusedDeclaredDependency>
+						<!-- Lombok usage for code generation -->
+						<ignoredUnusedDeclaredDependency>org.projectlombok:lombok</ignoredUnusedDeclaredDependency>
+						<!-- By default, JUnit5 adapters are added to every module to ensure no tests are skipped -->
+						<ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter-engine</ignoredUnusedDeclaredDependency>
+						<!-- Transitive dependencies explicitly declared to fic CVEs-->
+						<ignoredUnusedDeclaredDependency>commons-beanutils:commons-beanutils</ignoredUnusedDeclaredDependency>
+					</ignoredUnusedDeclaredDependencies>
+				</configuration>
+				<executions>
+					<execution>
+						<id>analyze</id>
+						<goals>
+							<goal>analyze-only</goal>
+						</goals>
+						<phase>process-test-classes</phase>
+					</execution>
+					<execution>
+						<id>analyze-dep-mgt</id>
+						<goals>
+							<goal>analyze-dep-mgt</goal>
+						</goals>
+						<phase>process-test-classes</phase>
+					</execution>
+					<execution>
+						<id>analyze-duplicate</id>
+						<goals>
+							<goal>analyze-duplicate</goal>
+						</goals>
+						<phase>process-test-classes</phase>
+					</execution>
+				</executions>
 			</plugin>
+			<!-- phase: test -->
+			<plugin>
+				<!-- Needed because GitHub actions uses an old Maven version <3.9.0 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.3</version>
+				<configuration>
+					<includes>
+						<include>${surefire.include}</include>
+					</includes>
+					<excludes>
+						<exclude>${surefire.exclude}</exclude>
+					</excludes>
+					<forkCount>${surefire.forkCount}</forkCount>
+					<reuseForks>false</reuseForks>
+					<groups>${surefire.groups}</groups>
+					<excludedGroups>${surefire.excludedGroups}</excludedGroups>
+					<systemPropertyVariables>
+						<surefire.forkDir>${project.build.directory}/surefire-fork/${surefire.forkNumber}/</surefire.forkDir>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<!-- phase: verify -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<configLocation>${project.rootdir}/codestyle/checkstyle.xml</configLocation>
+					<linkXRef>false</linkXRef>
+					<includeResources>false</includeResources>
+					<includeTestResources>false</includeTestResources>
+					<excludes>${codeAnalysisExclusions}</excludes>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>${checkstyle.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.27.0</version>
+				<configuration>
+					<rulesets>
+						<ruleset>${project.rootdir}/codestyle/pmd.xml</ruleset>
+						<ruleset>${project.rootdir}/codestyle/sdk_specific_pmd_rules.xml</ruleset>
+						<!-- content of the PMD default rule set for Java can be found here:
+                                                    https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD
+                                                     -->
+						<ruleset>/rulesets/java/maven-pmd-plugin-default.xml</ruleset>
+					</rulesets>
+					<linkXRef>false</linkXRef>
+					<targetJdk>${java.version}</targetJdk>
+					<excludes>
+						<exclude>${codeAnalysisExclusions}</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.generated-sources}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.13</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${jacoco.executionDataFile}</destFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${jacoco.executionDataFile}</dataFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>com.github.ekryd.sortpom</groupId>
-				<artifactId>sortpom-maven-plugin</artifactId>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.9.3.2</version>
+				<configuration>
+					<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
+					<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
+					<maxHeap>2048</maxHeap>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>disable-doclint-java8</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
+			<id>skip-openapi-vdm-generation</id>
 			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+				<openapi.generate.skip>true</openapi.generate.skip>
 			</properties>
 		</profile>
 		<profile>
-			<id>docs</id>
+			<id>release</id>
 			<activation>
 				<property>
-					<name>docs</name>
+					<name>release</name>
 				</property>
 			</activation>
+			<!-- Children projects inherit the configuration -->
 			<build>
-				<resources>
-					<resource>
-						<targetPath>${project.build.directory}/apidocs</targetPath>
-						<filtering>false</filtering>
-						<directory>${project.rootdir}</directory>
-						<includes>
-							<include>LICENSE</include>
-						</includes>
-					</resource>
-				</resources>
+				<!-- Resources taken from docs profile -->
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-source-plugin</artifactId>
+							<version>3.3.1</version>
+							<executions>
+								<execution>
+									<id>attach-sources</id>
+									<goals>
+										<goal>jar-no-fork</goal>
+									</goals>
+									<phase>package</phase>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-maven-plugin</artifactId>
+							<version>1.18.20.0</version>
+							<configuration>
+								<addOutputDirectory>false</addOutputDirectory>
+							</configuration>
+							<dependencies>
+								<dependency>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+									<version>1.18.38</version>
+								</dependency>
+							</dependencies>
+							<executions>
+								<execution>
+									<id>delombok</id>
+									<goals>
+										<goal>delombok</goal>
+									</goals>
+									<phase>process-sources</phase>
+									<configuration>
+										<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+										<outputDirectory>${project.build.directory}/delombok</outputDirectory>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<configuration>
+								<quiet>true</quiet>
+								<doclint>none</doclint>
+								<show>protected</show>
+								<groups>
+									<group>
+										<title>Cloud Platform</title>
+										<packages>com.sap.cloud.sdk.cloudplatform*</packages>
+									</group>
+									<group>
+										<title>Utility Packages</title>
+										<packages>com.sap.cloud.sdk.datamodel* :com.sap.cloud.sdk.result*:*
+											:com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
+											:com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
+											:org.eclipse*</packages>
+									</group>
+									<group>
+										<title>SAP S/4HANA</title>
+										<packages>com.sap.cloud.sdk.s4hana*</packages>
+									</group>
+								</groups>
+								<sourcepath>${project.basedir}/target/delombok</sourcepath>
+								<overview>${project.rootdir}/javadoc.overview.html</overview>
+							</configuration>
+							<executions>
+								<execution>
+									<id>javadoc-jar</id>
+									<goals>
+										<goal>jar</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-gpg-plugin</artifactId>
+							<version>3.2.8</version>
+							<executions>
+								<execution>
+									<id>sign-artifacts</id>
+									<goals>
+										<goal>sign</goal>
+									</goals>
+									<phase>verify</phase>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-install-plugin</artifactId>
+							<version>3.1.4</version>
+							<executions>
+								<execution>
+									<goals>
+										<goal>install-file</goal>
+									</goals>
+									<phase>install</phase>
+									<configuration>
+										<file>${project.basedir}/target/${project.artifactId}-${project.version}.jar</file>
+										<sources>${project.basedir}/target/${project.artifactId}-${project.version}-sources.jar</sources>
+										<javadoc>${project.basedir}/target/${project.artifactId}-${project.version}-javadoc.jar</javadoc>
+										<pomFile>${project.basedir}/pom.xml</pomFile>
+										<groupId>${project.groupId}</groupId>
+										<artifactId>${project.artifactId}</artifactId>
+										<version>${project.version}</version>
+										<packaging>${project.packaging}</packaging>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-deploy-plugin</artifactId>
+							<version>3.1.4</version>
+							<configuration>
+								<skip>true</skip>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.sonatype.central</groupId>
+							<artifactId>central-publishing-maven-plugin</artifactId>
+							<version>0.8.0</version>
+							<extensions>true</extensions>
+							<configuration>
+								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
+								<publishingServerId>central</publishingServerId>
+								<autoPublish>false</autoPublish>
+							</configuration>
+						</plugin>
+						<!-- flatten POM files to resolve dependency version information stored in BOMs -->
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>flatten-maven-plugin</artifactId>
+							<version>1.7.2</version>
+							<executions>
+								<execution>
+									<id>flatten</id>
+									<phase>process-resources</phase>
+									<goals>
+										<goal>flatten</goal>
+									</goals>
+								</execution>
+								<execution>
+									<id>flatten.clean</id>
+									<goals>
+										<goal>clean</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<!-- pre-defined config for open source projects -->
+								<flattenMode>oss</flattenMode>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 				<plugins>
+					<!-- The release artifacts don't contain our custom config files for these plugins -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-checkstyle-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs-maven-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>properties-maven-plugin</artifactId>
-						<inherited>false</inherited>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -1143,7 +1122,31 @@
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
+						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>flatten-maven-plugin</artifactId>
+					</plugin>
+					<!-- The plugins configuration below will not be inherited by children projects, they are specific to the parent pom -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<configuration>
+									<file>${project.basedir}/pom.xml</file>
+									<!-- The parent has no sources -->
+									<sources>${empty.property}</sources>
+									<javadoc>${empty.property}</javadoc>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>
@@ -1158,12 +1161,6 @@
 			<modules>
 				<module>testutil</module>
 			</modules>
-		</profile>
-		<profile>
-			<id>skip-openapi-vdm-generation</id>
-			<properties>
-				<openapi.generate.skip>true</openapi.generate.skip>
-			</properties>
 		</profile>
 	</profiles>
 </project>

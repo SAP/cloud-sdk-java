@@ -190,50 +190,50 @@ public class SimplePerson
         // simple properties
         {
             if (cloudSdkValues.containsKey("FirstName")) {
-                final Object value = cloudSdkValues.remove("FirstName");
-                if ((value == null)||(!value.equals(getFirstName()))) {
-                    setFirstName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("FirstName");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getFirstName()))) {
+                    setFirstName(((java.lang.String) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("LastName")) {
-                final Object value = cloudSdkValues.remove("LastName");
-                if ((value == null)||(!value.equals(getLastName()))) {
-                    setLastName(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("LastName");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getLastName()))) {
+                    setLastName(((java.lang.String) cloudSdkValue));
                 }
             }
         }
         // structured properties
         {
             if (cloudSdkValues.containsKey("Relationships")) {
-                final Object value = cloudSdkValues.remove("Relationships");
-                if (value instanceof Iterable) {
+                final Object cloudSdkValue = cloudSdkValues.remove("Relationships");
+                if (cloudSdkValue instanceof Iterable) {
                     final LinkedList<Relationship> relationships = new LinkedList<Relationship>();
-                    for (Object properties: ((Iterable<?> ) value)) {
-                        if (properties instanceof Map) {
-                            final Relationship item = new Relationship();
+                    for (Object cloudSdkProperties: ((Iterable<?> ) cloudSdkValue)) {
+                        if (cloudSdkProperties instanceof Map) {
+                            final Relationship cloudSdkItem = new Relationship();
                             @SuppressWarnings("unchecked")
-                            final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
-                            item.fromMap(inputMap);
-                            relationships.add(item);
+                            final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
+                            cloudSdkItem.fromMap(inputMap);
+                            relationships.add(cloudSdkItem);
                         }
                     }
                     setRelationships(relationships);
                 }
-                if ((value == null)&&(getRelationships()!= null)) {
+                if ((cloudSdkValue == null)&&(getRelationships()!= null)) {
                     setRelationships(null);
                 }
             }
             if (cloudSdkValues.containsKey("Favorite")) {
-                final Object value = cloudSdkValues.remove("Favorite");
-                if (value instanceof Map) {
+                final Object cloudSdkValue = cloudSdkValues.remove("Favorite");
+                if (cloudSdkValue instanceof Map) {
                     if (getFavorite() == null) {
                         setFavorite(new Relationship());
                     }
                     @SuppressWarnings("unchecked")
-                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) value);
+                    final Map<java.lang.String, Object> inputMap = ((Map<java.lang.String, Object> ) cloudSdkValue);
                     getFavorite().fromMap(inputMap);
                 }
-                if ((value == null)&&(getFavorite()!= null)) {
+                if ((cloudSdkValue == null)&&(getFavorite()!= null)) {
                     setFavorite(null);
                 }
             }

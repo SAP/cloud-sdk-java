@@ -129,15 +129,15 @@ public class FloorPlan
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
-                final Object value = cloudSdkValues.remove("Id");
-                if ((value == null)||(!value.equals(getId()))) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("ImageUri")) {
-                final Object value = cloudSdkValues.remove("ImageUri");
-                if ((value == null)||(!value.equals(getImageUri()))) {
-                    setImageUri(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("ImageUri");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getImageUri()))) {
+                    setImageUri(((java.lang.String) cloudSdkValue));
                 }
             }
         }

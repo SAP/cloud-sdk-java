@@ -165,15 +165,15 @@ public class Shelf
         // simple properties
         {
             if (cloudSdkValues.containsKey("Id")) {
-                final Object value = cloudSdkValues.remove("Id");
-                if ((value == null)||(!value.equals(getId()))) {
-                    setId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("Id");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getId()))) {
+                    setId(((Integer) cloudSdkValue));
                 }
             }
             if (cloudSdkValues.containsKey("FloorPlanId")) {
-                final Object value = cloudSdkValues.remove("FloorPlanId");
-                if ((value == null)||(!value.equals(getFloorPlanId()))) {
-                    setFloorPlanId(((Integer) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("FloorPlanId");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getFloorPlanId()))) {
+                    setFloorPlanId(((Integer) cloudSdkValue));
                 }
             }
         }

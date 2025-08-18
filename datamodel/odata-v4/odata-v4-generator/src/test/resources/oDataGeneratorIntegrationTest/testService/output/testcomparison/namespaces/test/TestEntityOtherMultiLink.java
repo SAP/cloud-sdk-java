@@ -108,9 +108,9 @@ public class TestEntityOtherMultiLink
         // simple properties
         {
             if (cloudSdkValues.containsKey("KeyProperty")) {
-                final Object value = cloudSdkValues.remove("KeyProperty");
-                if ((value == null)||(!value.equals(getKeyProperty()))) {
-                    setKeyProperty(((java.lang.String) value));
+                final Object cloudSdkValue = cloudSdkValues.remove("KeyProperty");
+                if ((cloudSdkValue == null)||(!cloudSdkValue.equals(getKeyProperty()))) {
+                    setKeyProperty(((java.lang.String) cloudSdkValue));
                 }
             }
         }
