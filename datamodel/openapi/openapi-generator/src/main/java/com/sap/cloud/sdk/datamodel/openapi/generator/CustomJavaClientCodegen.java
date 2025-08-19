@@ -269,32 +269,33 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             return;
         }
         boolean useCreators = false;
+        final var LIST_TYPE_PREFIX = "List<";
         for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
             int nonPrimitives = 0;
-            final var candidatesSingle = new HashSet<String>();
-            final var candidatesMultiple1D = new HashSet<String>();
-            final var candidatesMultipleND = new HashSet<Map<String, String>>();
+            final var singleTypes = new HashSet<String>();
+            final var arrayTypes1D = new HashSet<String>();
+            final var arrayTypesND = new HashSet<Map<String, String>>();
 
             for( final String candidate : candidates ) {
-                if( candidate.startsWith("List<") ) {
+                if( candidate.startsWith(LIST_TYPE_PREFIX) ) {
                     int depth = 0;
                     String sub = candidate;
-                    while( sub.startsWith("List<") ) {
+                    while( sub.startsWith(LIST_TYPE_PREFIX) ) {
                         sub = sub.substring(5, sub.length() - 1);
                         depth++;
                     }
 
                     final String innerType = sub;
                     if( depth == 1 ) {
-                        candidatesMultiple1D.add(innerType);
+                        arrayTypes1D.add(innerType);
                     } else {
-                        candidatesMultipleND
+                        arrayTypesND
                             .add(Map.of("innerType", innerType, "depth", String.valueOf(depth), "fullType", candidate));
                     }
 
                     useCreators = true;
                 } else {
-                    candidatesSingle.add(candidate);
+                    singleTypes.add(candidate);
                     useCreators |= PRIMITIVES.contains(candidate);
                     if( !PRIMITIVES.contains(candidate) ) {
                         nonPrimitives++;
@@ -307,7 +308,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                         "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
                     log.warn(msg, m.name);
                 }
-                final var numArrayTypes = candidatesSingle.size() + candidatesMultipleND.size();
+                final var numArrayTypes = singleTypes.size() + arrayTypesND.size();
                 if( numArrayTypes > 1 ) {
                     final var msg =
                         "Field can be oneOf %d array types. Deserialization may not work as expected."
@@ -320,11 +321,11 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                     Map
                         .of(
                             "single",
-                            candidatesSingle,
+                            singleTypes,
                             "multiple1D",
-                            candidatesMultiple1D,
+                            arrayTypes1D,
                             "multipleND",
-                            candidatesMultipleND);
+                            arrayTypesND);
                 m.vendorExtensions.put("x-monads", monads);
                 m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
             }
