@@ -307,6 +307,14 @@ class CustomJavaClientCodegen extends JavaClientCodegen
                         "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
                     log.warn(msg, m.name);
                 }
+                var numArrayTypes = candidatesSingle.size() + candidatesMultipleND.size();
+                if( numArrayTypes > 1 ) {
+                    final var msg =
+                        "Field can be oneOf %d array types. Deserialization may not work as expected."
+                            .formatted(numArrayTypes);
+                    log.warn(msg, m.name);
+                }
+
                 candidates.clear();
                 final var monads =
                     Map
