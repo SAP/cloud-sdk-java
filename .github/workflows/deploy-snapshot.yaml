@@ -9,7 +9,6 @@ jobs:
   deploy-snapshot:
     name: Deploy Snapshot
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v5
