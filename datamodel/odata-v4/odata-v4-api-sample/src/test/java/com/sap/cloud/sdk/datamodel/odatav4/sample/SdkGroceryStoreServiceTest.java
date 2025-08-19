@@ -116,6 +116,8 @@ class SdkGroceryStoreServiceTest
                 .build();
 
         final Customer customer = Customer.builder().id(1337).build();
+        customer.setVersionIdentifier("123");
+
         final ActionResponseCollection<PurchaseHistoryItem> historyItems =
             service
                 .forEntity(customer)
