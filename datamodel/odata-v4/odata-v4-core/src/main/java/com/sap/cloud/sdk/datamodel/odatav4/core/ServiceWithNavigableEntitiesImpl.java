@@ -2,12 +2,13 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.HttpHeaders;
+
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
 import io.vavr.control.Option;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpHeaders;
 
 class ServiceWithNavigableEntitiesImpl
 {
