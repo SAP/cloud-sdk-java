@@ -186,9 +186,9 @@ class OneOfDeserializationTest
         var matrix = objectMapper.readValue(json, OneOfWithMatrix.class);
         assertThat(matrix)
             .describedAs("Object should be deserialized as InnerIntegers2D")
-            .isInstanceOf(OneOfWithMatrix.InnerIntegers2D.class);
-        var integers2D = (OneOfWithMatrix.InnerIntegers2D) matrix;
-        assertThat(integers2D.values()).isEqualTo(List.of(List.of(1, 2, 3), List.of(4, 5, 6)));
+            .isInstanceOfSatisfying(
+                OneOfWithMatrix.InnerIntegers2D.class,
+                integers2D -> assertThat(integers2D.values()).isEqualTo(List.of(List.of(1, 2, 3), List.of(4, 5, 6))));
 
         assertThatThrownBy(() -> objectMapper.readValue(json, OneOfWithMatrixAndArray.class))
             .hasMessageContaining("Conflicting array-delegate creators")
