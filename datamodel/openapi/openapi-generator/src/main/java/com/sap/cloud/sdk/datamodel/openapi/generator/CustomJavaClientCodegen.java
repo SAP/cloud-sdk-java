@@ -269,7 +269,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             return;
         }
         boolean useCreators = false;
-        final var LIST_TYPE_PREFIX = "List<";
         for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
             int nonPrimitives = 0;
             final var singleTypes = new HashSet<String>();
@@ -277,10 +276,10 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             final var arrayTypesND = new HashSet<Map<String, String>>();
 
             for( final String candidate : candidates ) {
-                if( candidate.startsWith(LIST_TYPE_PREFIX) ) {
+                if( candidate.startsWith("List<") ) {
                     int depth = 0;
                     String sub = candidate;
-                    while( sub.startsWith(LIST_TYPE_PREFIX) ) {
+                    while( sub.startsWith("List<") ) {
                         sub = sub.substring(5, sub.length() - 1);
                         depth++;
                     }
