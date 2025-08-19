@@ -22,6 +22,7 @@
 
 ### 🐛 Fixed Issues
 
-- [ODatav4] Fixed an issue when generating clients.
+- [ODatav4] Fix incorrect HTTP header name when sending entity version identifier in bound-action requests.
+- [ODatav4] Fix an issue when generating clients.
   - Property names: `value`, `item` and `properties` are now allowed.
   
