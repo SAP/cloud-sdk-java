@@ -318,14 +318,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
                 candidates.clear();
                 final var monads =
-                    Map
-                        .of(
-                            "single",
-                            singleTypes,
-                            "multiple1D",
-                            arrayTypes1D,
-                            "multipleND",
-                            arrayTypesND);
+                    Map.of("single", singleTypes, "multiple1D", arrayTypes1D, "multipleND", arrayTypesND);
                 m.vendorExtensions.put("x-monads", monads);
                 m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
             }
