@@ -29,6 +29,8 @@ class TransparentProxyDestinationTest
     private static final String TEST_TENANT_SUBDOMAIN = "subdomainValue";
     private static final String TEST_TENANT_ID = "tenantIdValue";
     private static final String TEST_AUTHORIZATION_HEADER = "dummy-jwt-token";
+    private static final String SUBACCOUNT_LEVEL = "subaccount";
+    private static final String PROVIDER_SUBACCOUNT_LEVEL = "provider_subaccount";
 
     @Test
     void testGetDelegationDestination()
@@ -75,14 +77,18 @@ class TransparentProxyDestinationTest
         final TransparentProxyDestination destination =
             TransparentProxyDestination
                 .dynamicDestination(TEST_DEST_NAME, VALID_URI.toString())
+                .destinationLevel(SUBACCOUNT_LEVEL)
                 .fragmentName("fragName")
+                .fragmentLevel(PROVIDER_SUBACCOUNT_LEVEL)
                 .fragmentOptional(true)
                 .build();
 
         assertThat(destination.getHeaders(VALID_URI))
             .contains(
                 new Header(TransparentProxyDestination.DESTINATION_NAME_HEADER_KEY, TEST_DEST_NAME),
+                new Header(TransparentProxyDestination.DESTINATION_LEVEL_HEADER_KEY, SUBACCOUNT_LEVEL),
                 new Header(TransparentProxyDestination.FRAGMENT_NAME_HEADER_KEY, "fragName"),
+                new Header(TransparentProxyDestination.FRAGMENT_LEVEL_HEADER_KEY, PROVIDER_SUBACCOUNT_LEVEL),
                 new Header(TransparentProxyDestination.FRAGMENT_OPTIONAL_HEADER_KEY, "true"));
     }
 
