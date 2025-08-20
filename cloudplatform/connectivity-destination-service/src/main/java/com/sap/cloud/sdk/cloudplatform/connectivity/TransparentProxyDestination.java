@@ -227,33 +227,35 @@ public class TransparentProxyDestination implements HttpDestination
     }
 
     /**
-     * Creates a new builder for a "static" destination.
+     * Creates a new builder for a destination.
      * <p>
-     * A static destination connects directly to a specified URL and does not use the destination-gateway. It allows
-     * setting generic headers but does not support gateway-specific properties like destination name or fragments.
+     * A destination connects directly to a specified URL and does not use the destination-gateway. It allows setting
+     * generic headers but does not support gateway-specific properties like destination name or fragments.
      *
-     * @return A new {@link StaticBuilder} instance.
+     * @return A new {@link Builder} instance.
      */
     @Nonnull
-    public static StaticBuilder staticDestination( @Nonnull final String uri )
+    public static Builder destination( @Nonnull final String uri )
     {
-        return new StaticBuilder(uri);
+        return new Builder(uri);
     }
 
     /**
-     * Creates a new builder for a "dynamic" destination that is resolved via the destination-gateway.
+     * Creates a new builder for a destination-gateway.
      * <p>
-     * A dynamic destination requires a destination name and will be routed through the central destination-gateway. It
+     * A destination-gateway requires a destination name and will be routed through the central destination-gateway. It
      * supports all gateway-specific properties like fragments, tenant context, and authentication flows.
      *
      * @param destinationName
      *            The name of the destination to be resolved by the gateway.
-     * @return A new {@link DynamicBuilder} instance.
+     * @return A new {@link DestinationGatewayBuilder} instance.
      */
     @Nonnull
-    public static DynamicBuilder dynamicDestination( @Nonnull final String destinationName, @Nonnull final String uri )
+    public static
+        DestinationGatewayBuilder
+        destinationGateway( @Nonnull final String destinationName, @Nonnull final String uri )
     {
-        return new DynamicBuilder(destinationName, uri);
+        return new DestinationGatewayBuilder(destinationName, uri);
     }
 
     /**
@@ -619,34 +621,34 @@ public class TransparentProxyDestination implements HttpDestination
     }
 
     /**
-     * Builder for creating a "static" {@link TransparentProxyDestination}. See
+     * Builder for creating a destination {@link TransparentProxyDestination}. See
      * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/destination-custom-resource
      */
-    public static final class StaticBuilder extends AbstractBuilder<StaticBuilder>
+    public static final class Builder extends AbstractBuilder<Builder>
     {
-        private StaticBuilder( @Nonnull final String uri )
+        private Builder( @Nonnull final String uri )
         {
             property(DestinationProperty.URI, uri);
         }
 
         @Override
-        protected StaticBuilder getThis()
+        protected Builder getThis()
         {
             return this;
         }
     }
 
     /**
-     * Builder for creating a "dynamic" {@link TransparentProxyDestination}. See
+     * Builder for creating a destination-gateway {@link TransparentProxyDestination}. See
      * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
      */
-    public static final class DynamicBuilder extends AbstractBuilder<DynamicBuilder>
+    public static final class DestinationGatewayBuilder extends AbstractBuilder<DestinationGatewayBuilder>
     {
-        private DynamicBuilder( @Nonnull final String destinationName, @Nonnull final String uri )
+        private DestinationGatewayBuilder( @Nonnull final String destinationName, @Nonnull final String uri )
         {
             if( destinationName.isEmpty() ) {
                 throw new IllegalArgumentException(
-                    "The 'destinationName' property is required for dynamic destinations but was not set.");
+                    "The 'destinationName' property is required for destination-gateway but was not set.");
             }
 
             this.header(DESTINATION_NAME_HEADER_KEY, destinationName);
@@ -654,13 +656,13 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         @Override
-        protected DynamicBuilder getThis()
+        protected DestinationGatewayBuilder getThis()
         {
             return this;
         }
 
         /**
-         * Sets the fragment name for the dynamic destination. See
+         * Sets the fragment name for the destination-gateway. See
          * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
          *
          * @param fragmentName
@@ -668,13 +670,13 @@ public class TransparentProxyDestination implements HttpDestination
          * @return This builder instance for method chaining.
          */
         @Nonnull
-        public DynamicBuilder fragmentName( @Nonnull final String fragmentName )
+        public DestinationGatewayBuilder fragmentName( @Nonnull final String fragmentName )
         {
             return header(new Header(FRAGMENT_NAME_HEADER_KEY, fragmentName));
         }
 
         /**
-         * Sets the fragment optional flag for the dynamic destination. See
+         * Sets the fragment optional flag for the destination-gateway. See
          * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
          *
          * @param fragmentOptional
@@ -682,7 +684,7 @@ public class TransparentProxyDestination implements HttpDestination
          * @return This builder instance for method chaining.
          */
         @Nonnull
-        public DynamicBuilder fragmentOptional( final boolean fragmentOptional )
+        public DestinationGatewayBuilder fragmentOptional( final boolean fragmentOptional )
         {
             return header(new Header(FRAGMENT_OPTIONAL_HEADER_KEY, Boolean.toString(fragmentOptional)));
         }
