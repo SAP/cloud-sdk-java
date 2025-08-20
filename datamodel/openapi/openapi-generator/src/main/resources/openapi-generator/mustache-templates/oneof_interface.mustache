@@ -28,38 +28,21 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     static Inner{{.}} create( @Nonnull final {{.}} val) { return new Inner{{.}}(val); }
 
 {{/model.vendorExtensions.x-monads.single}}
-{{#model.vendorExtensions.x-monads.multiple1D}}
-    /**
-    * Helper class to create a list of {{.}} that implements {@link {{classname}}}.
-    */
-    record Inner{{.}}s(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<{{.}}> values) implements {{classname}} {}
-
-    /**
-    * Creator to enable deserialization of a list of {{.}}.
-    *
-    * @param val the value to use
-    * @return a new instance of {@link Inner{{.}}s}.
-    */
-    @com.fasterxml.jackson.annotation.JsonCreator
-    @Nonnull
-    static Inner{{.}}s create( @Nonnull final List<{{.}}> val) { return new Inner{{.}}s(val); }
-
-{{/model.vendorExtensions.x-monads.multiple1D}}
 {{#model.vendorExtensions.x-monads.multipleND}}
     /**
-    * Helper class to create {@code {{{fullType}}} } that implements {@link {{classname}}}.
-    */
-    record Inner{{innerType}}s{{depth}}D(@com.fasterxml.jackson.annotation.JsonValue @Nonnull {{{fullType}}} values) implements {{classname}} {}
+     * Helper class to create {@code {{{originalType}}} } that implements {@link {{classname}}}.
+     */
+    record {{wrapperType}}(@com.fasterxml.jackson.annotation.JsonValue @Nonnull {{{originalType}}} values) implements {{classname}} {}
 
     /**
-    * Creator to enable deserialization of {@code {{{fullType}}} }.
-    *
-    * @param val the value to use
-    * @return a new instance of {@link Inner{{innerType}}s{{depth}}D}.
-    */
+     * Creator to enable deserialization of {@code {{{originalType}}} }.
+     *
+     * @param val the value to use
+     * @return a new instance of {@link {{wrapperType}}}.
+     */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static Inner{{innerType}}s{{depth}}D create{{depth}}DList( @Nonnull final {{{fullType}}} val) { return new Inner{{innerType}}s{{depth}}D(val); }
+    static {{wrapperType}} create{{wrapperType}}( @Nonnull final {{{originalType}}} val) { return new {{wrapperType}}(val); }
 
 {{/model.vendorExtensions.x-monads.multipleND}}
 }

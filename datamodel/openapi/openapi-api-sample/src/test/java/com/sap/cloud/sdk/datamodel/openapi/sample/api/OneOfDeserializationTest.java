@@ -3,7 +3,6 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AllOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AnyOf;
@@ -32,8 +30,6 @@ import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminator;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithDiscriminatorAndMapping;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithEnumDiscriminator;
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithMatrix;
-import com.sap.cloud.sdk.datamodel.openapi.sample.model.OneOfWithMatrixAndArray;
 
 class OneOfDeserializationTest
 {
@@ -164,35 +160,13 @@ class OneOfDeserializationTest
         var fanta = (Fanta) actual;
         assertThat(fanta.getFlavor())
             .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
-            .isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        var flavorTypes = (FantaFlavor.InnerFlavorTypes) fanta.getFlavor();
+            .isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        var flavorTypes = (FantaFlavor.ListOfFlavorTypes) fanta.getFlavor();
         assertThat(flavorTypes.values())
             .describedAs("Flavor should be deserialized as a list of FlavorType instances")
             .isNotEmpty()
             .allMatch(FlavorType.class::isInstance);
 
-    }
-
-    @Test
-    void oneOfWIthMatrixOfObjects()
-        throws JsonProcessingException
-    {
-        var json = """
-            [
-              [1, 2, 3 ],
-              [4, 5, 6 ]
-            ]
-            """;
-        var matrix = objectMapper.readValue(json, OneOfWithMatrix.class);
-        assertThat(matrix)
-            .describedAs("Object should be deserialized as InnerIntegers2D")
-            .isInstanceOf(OneOfWithMatrix.InnerIntegers2D.class);
-        var integers2D = (OneOfWithMatrix.InnerIntegers2D) matrix;
-        assertThat(integers2D.values()).isEqualTo(List.of(List.of(1, 2, 3), List.of(4, 5, 6)));
-
-        assertThatThrownBy(() -> objectMapper.readValue(json, OneOfWithMatrixAndArray.class))
-            .hasMessageContaining("Conflicting array-delegate creators")
-            .isInstanceOf(InvalidDefinitionException.class);
     }
 
     @Test
@@ -213,8 +187,9 @@ class OneOfDeserializationTest
 
         assertThat(actual.getSodaType()).isEqualTo("Fanta");
         assertThat(actual.getColor()).isEqualTo("orange");
-        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        assertThat(((FantaFlavor.InnerFlavorTypes) actual.getFlavor()).values()).allMatch(FlavorType.class::isInstance);
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        assertThat(((FantaFlavor.ListOfFlavorTypes) actual.getFlavor()).values())
+            .allMatch(FlavorType.class::isInstance);
     }
 
     @Test

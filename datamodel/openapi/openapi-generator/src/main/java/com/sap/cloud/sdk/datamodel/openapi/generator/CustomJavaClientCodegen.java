@@ -260,64 +260,55 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     /**
      * Use JsonCreator for interface sub-types in case there are any primitives.
      *
-     * @param m
-     *            The model to update.
+     * @param m The model to update.
      */
-    private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
-    {
-        if( m.discriminator != null ) {
+    private void useCreatorsForInterfaceSubtypes(@Nonnull final CodegenModel m) {
+        if (m.discriminator != null) {
             return;
         }
         boolean useCreators = false;
-        for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
+        record ArrayTypeInfo(String wrapperType, String originalType) {}
+
+        for (final Set<String> candidates : List.of(m.anyOf, m.oneOf)) {
             int nonPrimitives = 0;
             final var singleTypes = new HashSet<String>();
-            final var arrayTypes1D = new HashSet<String>();
-            final var arrayTypesND = new HashSet<Map<String, String>>();
+            final var arrayTypes = new HashSet<ArrayTypeInfo>();
 
-            for( final String candidate : candidates ) {
-                if( candidate.startsWith("List<") ) {
+            for (final String candidate : candidates) {
+                if (candidate.startsWith("List<")) {
                     int depth = 0;
                     String sub = candidate;
-                    while( sub.startsWith("List<") ) {
+                    while (sub.startsWith("List<")) {
                         sub = sub.substring(5, sub.length() - 1);
                         depth++;
                     }
 
-                    final String innerType = sub;
-                    if( depth == 1 ) {
-                        arrayTypes1D.add(innerType);
-                    } else {
-                        arrayTypesND
-                            .add(Map.of("innerType", innerType, "depth", String.valueOf(depth), "fullType", candidate));
-                    }
-
+                    arrayTypes.add(new ArrayTypeInfo("ListOf".repeat(depth) + sub + "s", candidate));
                     useCreators = true;
                 } else {
                     singleTypes.add(candidate);
                     useCreators |= PRIMITIVES.contains(candidate);
-                    if( !PRIMITIVES.contains(candidate) ) {
+                    if (!PRIMITIVES.contains(candidate)) {
                         nonPrimitives++;
                     }
                 }
             }
-            if( useCreators ) {
-                if( nonPrimitives > 1 ) {
+            if (useCreators) {
+                if (nonPrimitives > 1) {
                     final var msg =
-                        "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
+                            "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
                     log.warn(msg, m.name);
                 }
-                final var numArrayTypes = singleTypes.size() + arrayTypesND.size();
-                if( numArrayTypes > 1 ) {
+                final var numArrayTypes = singleTypes.size() + arrayTypes.size();
+                if (numArrayTypes > 1) {
                     final var msg =
-                        "Field can be oneOf %d array types. Deserialization may not work as expected."
-                            .formatted(numArrayTypes);
+                            "Field can be oneOf %d array types. Deserialization may not work as expected."
+                                    .formatted(numArrayTypes);
                     log.warn(msg, m.name);
                 }
 
                 candidates.clear();
-                final var monads =
-                    Map.of("single", singleTypes, "multiple1D", arrayTypes1D, "multipleND", arrayTypesND);
+                final var monads = Map.of("single", singleTypes, "multipleND", arrayTypes);
                 m.vendorExtensions.put("x-monads", monads);
                 m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
             }

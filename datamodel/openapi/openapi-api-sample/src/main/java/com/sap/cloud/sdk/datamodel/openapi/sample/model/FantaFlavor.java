@@ -85,22 +85,22 @@ public interface FantaFlavor
     }
 
     /**
-    * Helper class to create a list of FlavorType that implements {@link FantaFlavor}.
-    */
-    record InnerFlavorTypes(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<FlavorType> values) implements FantaFlavor {}
+     * Helper class to create {@code List<FlavorType> } that implements {@link FantaFlavor}.
+     */
+    record ListOfFlavorTypes(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<FlavorType> values) implements FantaFlavor {}
 
     /**
-     * Creator to enable deserialization of a list of FlavorType.
+     * Creator to enable deserialization of {@code List<FlavorType> }.
      *
      * @param val
      *            the value to use
-     * @return a new instance of {@link InnerFlavorTypes}.
+     * @return a new instance of {@link ListOfFlavorTypes}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static InnerFlavorTypes create( @Nonnull final List<FlavorType> val )
+    static ListOfFlavorTypes createListOfFlavorTypes( @Nonnull final List<FlavorType> val )
     {
-        return new InnerFlavorTypes(val);
+        return new ListOfFlavorTypes(val);
     }
 
 }

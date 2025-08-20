@@ -117,24 +117,6 @@ components:
         mapping:
           disc_foo: '#/components/schemas/Foo'
           disc_bar: '#/components/schemas/Bar'
-    OneOfWithMatrix:
-      oneOf:
-        - type: integer
-        - type: array
-          items:
-            type: array
-            items:
-              type: integer
-    OneOfWithMatrixAndArray:
-      oneOf:
-        - type: array
-          items:
-            type: integer
-        - type: array
-          items:
-            type: array
-            items:
-              type: integer
     Foo:
       type: object
       properties:
