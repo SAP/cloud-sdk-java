@@ -160,8 +160,8 @@ class OneOfDeserializationTest
         var fanta = (Fanta) actual;
         assertThat(fanta.getFlavor())
             .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
-            .isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        var flavorTypes = (FantaFlavor.InnerFlavorTypes) fanta.getFlavor();
+            .isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        var flavorTypes = (FantaFlavor.ListOfFlavorTypes) fanta.getFlavor();
         assertThat(flavorTypes.values())
             .describedAs("Flavor should be deserialized as a list of FlavorType instances")
             .isNotEmpty()
@@ -187,8 +187,9 @@ class OneOfDeserializationTest
 
         assertThat(actual.getSodaType()).isEqualTo("Fanta");
         assertThat(actual.getColor()).isEqualTo("orange");
-        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        assertThat(((FantaFlavor.InnerFlavorTypes) actual.getFlavor()).values()).allMatch(FlavorType.class::isInstance);
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        assertThat(((FantaFlavor.ListOfFlavorTypes) actual.getFlavor()).values())
+            .allMatch(FlavorType.class::isInstance);
     }
 
     @Test
