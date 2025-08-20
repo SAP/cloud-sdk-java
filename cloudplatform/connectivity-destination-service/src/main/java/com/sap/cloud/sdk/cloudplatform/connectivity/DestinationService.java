@@ -51,8 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings( "PMD.TooManyStaticImports" )
 public class DestinationService implements DestinationLoader
 {
-    private static final String PATH_DEFAULT = "/v1/destinations/";
-    private static final String PATH_V2 = "/v2/destinations/";
+    static final String PATH_DEFAULT = "/v1/destinations/";
+    static final String PATH_V2 = "/v2/destinations/";
     private static final String PATH_SERVICE_INSTANCE = "/v1/instanceDestinations";
     private static final String PATH_SUBACCOUNT = "/v1/subaccountDestinations";
 

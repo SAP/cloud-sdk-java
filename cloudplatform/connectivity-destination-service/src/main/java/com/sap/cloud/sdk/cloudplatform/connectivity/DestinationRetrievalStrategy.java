@@ -4,6 +4,9 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalS
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.TokenForwarding.REFRESH_TOKEN;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.TokenForwarding.USER_TOKEN;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,6 +33,8 @@ final class DestinationRetrievalStrategy
     private final String token;
     @Nullable
     private String fragment;
+    @Nonnull
+    private final List<Header> additionalHeaders = new ArrayList<>();
 
     static DestinationRetrievalStrategy withoutToken( @Nonnull final OnBehalfOf behalf )
     {
@@ -65,6 +70,12 @@ final class DestinationRetrievalStrategy
             throw new IllegalStateException("Attempted to change an already set fragment name");
         }
         fragment = fragmentName;
+        return this;
+    }
+
+    DestinationRetrievalStrategy withAdditionalHeaders( @Nonnull final List<Header> additionalHeaders )
+    {
+        this.additionalHeaders.addAll(additionalHeaders);
         return this;
     }
 
