@@ -112,6 +112,27 @@
 			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser-core</artifactId>
 		</dependency>
+		<!-- fix dependency convergence -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
 		<!-- scope test -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -146,6 +167,23 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<ignoredUnusedDeclaredDependencies>
+						<!-- Ensure correct jackson dependency versions are present -->
+						<!-- When Maven runs a plugin it will ignore its dependencyManagement section -->
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.core:jackson-annotations</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-joda</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-guava</ignoredUnusedDeclaredDependency>
+						<ignoredUnusedDeclaredDependency>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</ignoredUnusedDeclaredDependency>
+					</ignoredUnusedDeclaredDependencies>
+				</configuration>
+			</plugin>
+		</plugins>
 		<resources>
 			<resource>
 				<filtering>true</filtering>
