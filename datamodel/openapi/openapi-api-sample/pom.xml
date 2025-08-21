@@ -102,29 +102,44 @@
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>sample-swagger-v2</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/petstore-swagger2.json</inputSpec>
+							<apiPackage>com.sap.cloud.sdk.datamodel.openapi.petstore.api</apiPackage>
+							<modelPackage>com.sap.cloud.sdk.datamodel.openapi.petstore.model</modelPackage>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sample-openapi-v3</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
+							<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
+							<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
+							<additionalProperties>
+								<pojoBuilderMethodName>create</pojoBuilderMethodName>
+								<pojoBuildMethodName />
+								<pojoConstructorVisibility>protected</pojoConstructorVisibility>
+								<useOneOfInterfaces>true</useOneOfInterfaces>
+								<useOneOfCreators>true</useOneOfCreators>
+								<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
+							</additionalProperties>
+							<sapCopyrightHeader>true</sapCopyrightHeader>
+							<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
+						</configuration>
 					</execution>
 				</executions>
 				<configuration>
-					<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
-					<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
-					<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
 					<apiMaturity>released</apiMaturity>
 					<deleteOutputDirectory>true</deleteOutputDirectory>
 					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-					<sapCopyrightHeader>true</sapCopyrightHeader>
-					<additionalProperties>
-						<pojoBuilderMethodName>create</pojoBuilderMethodName>
-						<pojoBuildMethodName />
-						<pojoConstructorVisibility>protected</pojoConstructorVisibility>
-						<useOneOfInterfaces>true</useOneOfInterfaces>
-						<useOneOfCreators>true</useOneOfCreators>
-						<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
-					</additionalProperties>
-					<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
 				</configuration>
 			</plugin>
 			<!-- Enable formatter to always run on the generated code -->
