@@ -2,6 +2,8 @@ package com.sap.cloud.sdk.datamodel.odatav4.core;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.HttpHeaders;
+
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
 import io.vavr.control.Option;
@@ -124,10 +126,10 @@ class ServiceWithNavigableEntitiesImpl
                     action.getReturnType());
             maybeEntity
                 .filter(e -> e.getVersionIdentifier().isDefined())
-                .map(VdmEntity<EntityT>::getVersionIdentifier)
+                .map(VdmEntity::getVersionIdentifier)
                 .filter(Option::isDefined)
                 .map(Option::get)
-                .forEach(eTag -> requestBuilder.withHeader("ETag", eTag));
+                .forEach(eTag -> requestBuilder.withHeader(HttpHeaders.IF_MATCH, eTag));
             return requestBuilder;
         }
 
@@ -145,10 +147,10 @@ class ServiceWithNavigableEntitiesImpl
                     action.getReturnType());
             maybeEntity
                 .filter(e -> e.getVersionIdentifier().isDefined())
-                .map(VdmEntity<EntityT>::getVersionIdentifier)
+                .map(VdmEntity::getVersionIdentifier)
                 .filter(Option::isDefined)
                 .map(Option::get)
-                .forEach(eTag -> requestBuilder.withHeader("ETag", eTag));
+                .forEach(eTag -> requestBuilder.withHeader(HttpHeaders.IF_MATCH, eTag));
             return requestBuilder;
         }
     }

@@ -208,6 +208,9 @@
           "Content-Type": {
             "equalTo": "application/json"
           },
+          "If-Match": {
+            "equalTo": "123"
+          },
           "Accept": {
             "equalTo": "application/json"
           },
