@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/transparent-proxy-for-kubernetes
  */
 @Slf4j
+@com.google.common.annotations.Beta
 public class TransparentProxyDestination implements HttpDestination
 {
     static final String DESTINATION_NAME_HEADER_KEY = "x-destination-name";
