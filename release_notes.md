@@ -22,6 +22,7 @@
 
 ### 🐛 Fixed Issues
 
+- [OpenAPI] Fix code generator for transitive dependency version inconsistencies for Jackson.
 - [ODatav4] Fixed an issue when generating clients.
   - Property names: `value`, `item` and `properties` are now allowed.
   
