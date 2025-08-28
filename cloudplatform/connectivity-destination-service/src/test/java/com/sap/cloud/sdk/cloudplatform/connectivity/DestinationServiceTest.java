@@ -1834,8 +1834,8 @@ class DestinationServiceTest
     @DisplayName( "Custom headers in DestinationOptions are forwarded to Destination Service" )
     void testCustomHeadersForwardedToDestinationService()
     {
-        final Header h1 = new Header("X-Custom-1", "value-1");
-        final Header h2 = new Header("X-Custom-2", "value-2");
+        final Header h1 = new Header("X-Custom-Header-1", "value-1");
+        final Header h2 = new Header("X-Custom-Header-2", "value-2");
 
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1, h2)).build();
