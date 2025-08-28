@@ -177,7 +177,7 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
      * <strong>Note:</strong> Any secret values added as custom headers here will <strong>not</strong> be masked in log
      * output and may appear in plain text on debug log level.
      * </p>
-     * 
+     *
      * @param headers
      *            The headers to be added.
      * @return The same augmenter that called this method.
