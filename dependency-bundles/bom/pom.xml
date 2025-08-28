@@ -55,7 +55,7 @@
 		<!-- XSUAA -->
 		<!-- Keep this version consistent with the one from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<scp-cf.xsuaa-client.version>3.6.0</scp-cf.xsuaa-client.version>
+		<scp-cf.xsuaa-client.version>3.6.3</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.5.0</java-jwt.version>
 		<!-- Utility stuff -->
 		<slf4j.version>2.0.17</slf4j.version>
@@ -339,7 +339,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
+							<version>3.11.3</version>
 							<executions>
 								<execution>
 									<id>javadoc-jar</id>
@@ -435,7 +435,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>4.9.3.2</version>
+						<version>4.9.4.0</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>
