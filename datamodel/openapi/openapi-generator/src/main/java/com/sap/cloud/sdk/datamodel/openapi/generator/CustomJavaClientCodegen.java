@@ -1,19 +1,8 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REDUNDANT_IS_BOOLEAN_PREFIX;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.FIX_REMOVE_UNUSED_COMPONENTS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PATHS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_EXCLUDE_PROPERTIES;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_FLOAT_ARRAYS;
-import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.USE_ONE_OF_CREATORS;
+import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomProperties.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -267,7 +256,8 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             return;
         }
         boolean useCreators = false;
-        record ArrayTypeInfo(String wrapperType, String originalType) {}
+        record ArrayTypeInfo(String wrapperType, String originalType) {
+        }
 
         for (final Set<String> candidates : List.of(m.anyOf, m.oneOf)) {
             int nonPrimitives = 0;
@@ -276,14 +266,11 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
             for (final String candidate : candidates) {
                 if (candidate.startsWith("List<")) {
-                    int depth = 0;
-                    String sub = candidate;
-                    while (sub.startsWith("List<")) {
-                        sub = sub.substring(5, sub.length() - 1);
-                        depth++;
-                    }
+                    final var wrapperType = candidate.replace("<", "Of")
+                            .replaceFirst(">", "s")
+                            .replace(">", "");
 
-                    arrayTypes.add(new ArrayTypeInfo("ListOf".repeat(depth) + sub + "s", candidate));
+                    arrayTypes.add(new ArrayTypeInfo(wrapperType, candidate));
                     useCreators = true;
                 } else {
                     singleTypes.add(candidate);
