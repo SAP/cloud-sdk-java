@@ -1830,6 +1830,26 @@ class DestinationServiceTest
         assertThat(httpClient).isSameAs(HttpClientAccessor.getHttpClient(destination));
     }
 
+    @Test
+    @DisplayName( "Custom headers in DestinationOptions are forwarded to Destination Service" )
+    void testCustomHeadersForwardedToDestinationService()
+    {
+        final Header h1 = new Header("X-Custom-Header-1", "value-1");
+        final Header h2 = new Header("X-Custom-Header-2", "value-2");
+
+        final DestinationOptions options =
+            DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1, h2)).build();
+
+        // trigger fetching destination with custom headers
+        loader.tryGetDestination(destinationName, options).get();
+
+        // verify the adapter was called with a strategy carrying the custom headers
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(
+                any(),
+                argThat(s -> s.additionalHeaders().contains(h1) && s.additionalHeaders().contains(h2)));
+    }
+
     private String createHttpDestinationServiceResponse( final String name, final String url )
     {
         return String.format("""

@@ -185,17 +185,25 @@ class DestinationServiceAdapter
         log.debug("Querying Destination Service via URI {}.", requestUri);
         final HttpUriRequest request = new HttpGet(requestUri);
 
-        final String headerName = switch( strategy.tokenForwarding() ) {
-            case USER_TOKEN -> "x-user-token";
-            case REFRESH_TOKEN -> "x-refresh-token";
-            case NONE -> null;
-        };
-        if( headerName != null ) {
-            request.addHeader(headerName, strategy.token());
+        if( !servicePath.startsWith(DestinationService.PATH_DEFAULT)
+            && !servicePath.startsWith(DestinationService.PATH_V2) ) {
+            // additional headers and settings are only needed for single destination requests
+            return request;
+        }
+
+        switch( strategy.tokenForwarding() ) {
+            case USER_TOKEN -> request.addHeader("x-user-token", strategy.token());
+            case REFRESH_TOKEN -> request.addHeader("x-refresh-token", strategy.token());
+            case NONE -> {
+                /* nothing to do in this case */ }
         }
         if( strategy.fragment() != null ) {
             request.addHeader("x-fragment-name", strategy.fragment());
         }
+        for( final Header h : strategy.additionalHeaders() ) {
+            request.addHeader(h.getName(), h.getValue());
+        }
+
         return request;
     }
 

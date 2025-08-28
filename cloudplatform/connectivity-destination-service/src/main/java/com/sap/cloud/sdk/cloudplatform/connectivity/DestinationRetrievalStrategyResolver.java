@@ -116,13 +116,15 @@ class DestinationRetrievalStrategyResolver
                 .getFragmentName(options)
                 .peek(it -> log.debug("Found fragment name '{}'.", it))
                 .getOrNull();
+        final List<Header> additionalHeaders = DestinationServiceOptionsAugmenter.getAdditionalHeaders(options);
+        additionalHeaders.forEach(it -> log.debug("Found additional header: {}.", it));
 
         log
             .debug(
                 "Loading destination from reuse-destination-service with retrieval strategy {} and token exchange strategy {}.",
                 retrievalStrategy,
                 tokenExchangeStrategy);
-        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy, refreshToken, fragmentName);
+        return prepareSupplier(retrievalStrategy, tokenExchangeStrategy, refreshToken, fragmentName, additionalHeaders);
     }
 
     /**
@@ -161,7 +163,8 @@ class DestinationRetrievalStrategyResolver
         @Nonnull final DestinationServiceRetrievalStrategy retrievalStrategy,
         @Nonnull final DestinationServiceTokenExchangeStrategy tokenExchangeStrategy,
         @Nullable final String refreshToken,
-        @Nullable final String fragmentName )
+        @Nullable final String fragmentName,
+        @Nonnull final List<Header> additionalHeaders )
         throws DestinationAccessException
     {
         log
@@ -197,6 +200,9 @@ class DestinationRetrievalStrategyResolver
             resolveSingleRequestStrategy(retrievalStrategy, tokenExchangeStrategy, refreshToken);
         if( fragmentName != null ) {
             strategy.withFragmentName(fragmentName);
+        }
+        if( !additionalHeaders.isEmpty() ) {
+            strategy.withAdditionalHeaders(additionalHeaders);
         }
         return new DestinationRetrieval(() -> destinationRetriever.apply(strategy), strategy.behalf());
     }
