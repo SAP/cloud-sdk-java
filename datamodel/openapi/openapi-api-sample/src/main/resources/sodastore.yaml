@@ -154,6 +154,15 @@ components:
           type: string
         caffeine:
           type: boolean
+        logo:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: array
+                items:
+                  type: integer
+                  format: int32
     Fanta:
       type: object
       properties:

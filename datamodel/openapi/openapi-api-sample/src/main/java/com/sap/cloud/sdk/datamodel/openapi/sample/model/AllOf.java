@@ -42,6 +42,9 @@ public class AllOf
     @JsonProperty( "caffeine" )
     private Boolean caffeine;
 
+    @JsonProperty( "logo" )
+    private ColaLogo logo;
+
     @JsonProperty( "color" )
     private String color;
 
@@ -129,6 +132,42 @@ public class AllOf
     public void setCaffeine( @Nullable final Boolean caffeine )
     {
         this.caffeine = caffeine;
+    }
+
+    /**
+     * Set the logo of this {@link AllOf} instance and return the same instance.
+     *
+     * @param logo
+     *            The logo of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
+     */
+    @Nonnull
+    public AllOf logo( @Nullable final ColaLogo logo )
+    {
+        this.logo = logo;
+        return this;
+    }
+
+    /**
+     * Get logo
+     *
+     * @return logo The logo of this {@link AllOf} instance.
+     */
+    @Nonnull
+    public ColaLogo getLogo()
+    {
+        return logo;
+    }
+
+    /**
+     * Set the logo of this {@link AllOf} instance.
+     *
+     * @param logo
+     *            The logo of this {@link AllOf}
+     */
+    public void setLogo( @Nullable final ColaLogo logo )
+    {
+        this.logo = logo;
     }
 
     /**
@@ -250,6 +289,8 @@ public class AllOf
             declaredFields.put("sodaType", sodaType);
         if( caffeine != null )
             declaredFields.put("caffeine", caffeine);
+        if( logo != null )
+            declaredFields.put("logo", logo);
         if( color != null )
             declaredFields.put("color", color);
         if( flavor != null )
@@ -285,6 +326,7 @@ public class AllOf
         return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields)
             && Objects.equals(this.sodaType, allOf.sodaType)
             && Objects.equals(this.caffeine, allOf.caffeine)
+            && Objects.equals(this.logo, allOf.logo)
             && Objects.equals(this.color, allOf.color)
             && Objects.equals(this.flavor, allOf.flavor);
     }
@@ -292,7 +334,7 @@ public class AllOf
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, color, flavor, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, logo, color, flavor, cloudSdkCustomFields);
     }
 
     @Override
@@ -303,6 +345,7 @@ public class AllOf
         sb.append("class AllOf {\n");
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
+        sb.append("    logo: ").append(toIndentedString(logo)).append("\n");
         sb.append("    color: ").append(toIndentedString(color)).append("\n");
         sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields
