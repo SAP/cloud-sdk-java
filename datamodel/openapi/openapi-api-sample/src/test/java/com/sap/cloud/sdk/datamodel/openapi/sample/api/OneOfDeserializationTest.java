@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.datamodel.openapi.sample.api;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -22,6 +23,7 @@ import com.sap.cloud.sdk.datamodel.openapi.sample.model.AllOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AnyOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Bar;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Cola;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.ColaLogo;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Fanta;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavor;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FlavorType;
@@ -61,6 +63,12 @@ class OneOfDeserializationTest
             {"intensity":3,"nuance":"wood"},
             {"intensity":5,"nuance":"citrus"}
           ]
+        }""";
+    private static final String COLA_LOGO_MATRIX_JSON = """
+        {
+          "sodaType": "Cola",
+          "caffeine": true,
+          "logo": [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
         }""";
     private static final String UNKNOWN_JSON = """
         {
@@ -160,13 +168,26 @@ class OneOfDeserializationTest
         var fanta = (Fanta) actual;
         assertThat(fanta.getFlavor())
             .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
-            .isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        var flavorTypes = (FantaFlavor.InnerFlavorTypes) fanta.getFlavor();
+            .isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        var flavorTypes = (FantaFlavor.ListOfFlavorTypes) fanta.getFlavor();
         assertThat(flavorTypes.values())
             .describedAs("Flavor should be deserialized as a list of FlavorType instances")
             .isNotEmpty()
             .allMatch(FlavorType.class::isInstance);
 
+        actual = objectMapper.readValue(COLA_LOGO_MATRIX_JSON, strategy);
+
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Cola with JSON subtype deduction")
+            .isInstanceOf(Cola.class);
+        var cola = (Cola) actual;
+        assertThat(cola.isCaffeine()).isTrue();
+        assertThat(cola.getLogo()).isInstanceOf(ColaLogo.ListOfListOfIntegers.class);
+        var logo = (ColaLogo.ListOfListOfIntegers) cola.getLogo();
+        assertThat(logo.values())
+            .describedAs("Logo should be deserialized as a list of list of integers")
+            .isInstanceOf(List.class)
+            .containsExactly(List.of(255, 0, 0), List.of(0, 255, 0), List.of(0, 0, 255));
     }
 
     @Test
@@ -187,8 +208,9 @@ class OneOfDeserializationTest
 
         assertThat(actual.getSodaType()).isEqualTo("Fanta");
         assertThat(actual.getColor()).isEqualTo("orange");
-        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.InnerFlavorTypes.class);
-        assertThat(((FantaFlavor.InnerFlavorTypes) actual.getFlavor()).values()).allMatch(FlavorType.class::isInstance);
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        assertThat(((FantaFlavor.ListOfFlavorTypes) actual.getFlavor()).values())
+            .allMatch(FlavorType.class::isInstance);
     }
 
     @Test

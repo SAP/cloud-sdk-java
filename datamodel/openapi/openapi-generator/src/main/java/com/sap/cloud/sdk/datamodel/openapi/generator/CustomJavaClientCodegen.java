@@ -260,41 +260,53 @@ class CustomJavaClientCodegen extends JavaClientCodegen
     /**
      * Use JsonCreator for interface sub-types in case there are any primitives.
      *
-     * @param m
-     *            The model to update.
+     * @param m The model to update.
      */
-    private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
-    {
-        if( m.discriminator != null ) {
+    private void useCreatorsForInterfaceSubtypes(@Nonnull final CodegenModel m) {
+        if (m.discriminator != null) {
             return;
         }
         boolean useCreators = false;
-        for( final Set<String> candidates : List.of(m.anyOf, m.oneOf) ) {
-            int nonPrimitives = 0;
-            final var candidatesSingle = new HashSet<String>();
-            final var candidatesMultiple = new HashSet<String>();
+        record ArrayTypeInfo(String wrapperType, String originalType) {
+        }
 
-            for( final String candidate : candidates ) {
-                if( candidate.startsWith("List<") ) {
-                    final var c1 = candidate.substring(5, candidate.length() - 1);
-                    candidatesMultiple.add(c1);
+        for (final Set<String> candidates : List.of(m.anyOf, m.oneOf)) {
+            int nonPrimitives = 0;
+            final var singleTypes = new HashSet<String>();
+            final var arrayTypes = new HashSet<ArrayTypeInfo>();
+
+            for (final String candidate : candidates) {
+                if (candidate.startsWith("List<")) {
+                    final var wrapperType = candidate.replace("<", "Of")
+                            .replaceFirst(">", "s")
+                            .replace(">", "");
+
+                    arrayTypes.add(new ArrayTypeInfo(wrapperType, candidate));
                     useCreators = true;
                 } else {
-                    candidatesSingle.add(candidate);
+                    singleTypes.add(candidate);
                     useCreators |= PRIMITIVES.contains(candidate);
-                    if( !PRIMITIVES.contains(candidate) ) {
+                    if (!PRIMITIVES.contains(candidate)) {
                         nonPrimitives++;
                     }
                 }
             }
-            if( useCreators ) {
-                if( nonPrimitives > 1 ) {
+            if (useCreators) {
+                if (nonPrimitives > 1) {
                     final var msg =
-                        "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
+                            "Generating interface with mixed multiple non-primitive and primitive sub-types: {}. Deserialization may not work.";
                     log.warn(msg, m.name);
                 }
+                final var numArrayTypes = singleTypes.size() + arrayTypes.size();
+                if (numArrayTypes > 1) {
+                    final var msg =
+                            "Field can be oneOf %d array types. Deserialization may not work as expected."
+                                    .formatted(numArrayTypes);
+                    log.warn(msg, m.name);
+                }
+
                 candidates.clear();
-                final var monads = Map.of("single", candidatesSingle, "multiple", candidatesMultiple);
+                final var monads = Map.of("single", singleTypes, "multipleND", arrayTypes);
                 m.vendorExtensions.put("x-monads", monads);
                 m.vendorExtensions.put("x-is-one-of-interface", true); // enforce template usage
             }

@@ -42,6 +42,9 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     @JsonProperty( "caffeine" )
     private Boolean caffeine;
 
+    @JsonProperty( "logo" )
+    private ColaLogo logo;
+
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
@@ -126,6 +129,42 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
+     * Set the logo of this {@link Cola} instance and return the same instance.
+     *
+     * @param logo
+     *            The logo of this {@link Cola}
+     * @return The same instance of this {@link Cola} class
+     */
+    @Nonnull
+    public Cola logo( @Nullable final ColaLogo logo )
+    {
+        this.logo = logo;
+        return this;
+    }
+
+    /**
+     * Get logo
+     *
+     * @return logo The logo of this {@link Cola} instance.
+     */
+    @Nonnull
+    public ColaLogo getLogo()
+    {
+        return logo;
+    }
+
+    /**
+     * Set the logo of this {@link Cola} instance.
+     *
+     * @param logo
+     *            The logo of this {@link Cola}
+     */
+    public void setLogo( @Nullable final ColaLogo logo )
+    {
+        this.logo = logo;
+    }
+
+    /**
      * Get the names of the unrecognizable properties of the {@link Cola}.
      *
      * @return The set of properties names
@@ -172,6 +211,8 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
             declaredFields.put("sodaType", sodaType);
         if( caffeine != null )
             declaredFields.put("caffeine", caffeine);
+        if( logo != null )
+            declaredFields.put("logo", logo);
         return declaredFields;
     }
 
@@ -202,13 +243,14 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
         final Cola cola = (Cola) o;
         return Objects.equals(this.cloudSdkCustomFields, cola.cloudSdkCustomFields)
             && Objects.equals(this.sodaType, cola.sodaType)
-            && Objects.equals(this.caffeine, cola.caffeine);
+            && Objects.equals(this.caffeine, cola.caffeine)
+            && Objects.equals(this.logo, cola.logo);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, logo, cloudSdkCustomFields);
     }
 
     @Override
@@ -219,6 +261,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
         sb.append("class Cola {\n");
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
+        sb.append("    logo: ").append(toIndentedString(logo)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");
