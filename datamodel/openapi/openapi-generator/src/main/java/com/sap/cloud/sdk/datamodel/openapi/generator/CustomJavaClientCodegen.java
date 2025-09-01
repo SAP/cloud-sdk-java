@@ -269,7 +269,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         boolean useCreators = false;
         record ArrayTypeInfo(String wrapperType, String originalType) {
         }
-
         for (final Set<String> candidates : List.of(m.anyOf, m.oneOf)) {
             int nonPrimitives = 0;
             final var singleTypes = new HashSet<String>();
@@ -277,11 +276,20 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
             for (final String candidate : candidates) {
                 if (candidate.startsWith("List<")) {
-                    final var wrapperType = candidate.replace("<", "Of")
+                    var wrapperType = candidate.replace("<", "Of")
                             .replaceFirst(">", "s")
                             .replace(">", "");
+                    var targetType = candidate;
 
-                    arrayTypes.add(new ArrayTypeInfo(wrapperType, candidate));
+                    if (USE_FLOAT_ARRAYS.isEnabled(config) && candidate.contains("BigDecimal")) {
+                        wrapperType = wrapperType.replace("List", "Array")
+                                .replace("BigDecimal", "Float");
+                        targetType = candidate.replace("List<", "")
+                                .replace("BigDecimal", "float")
+                                .replace(">", "[]");
+                    }
+
+                    arrayTypes.add(new ArrayTypeInfo(wrapperType, targetType));
                     useCreators = true;
                 } else {
                     singleTypes.add(candidate);
