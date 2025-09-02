@@ -25,25 +25,6 @@ import javax.annotation.Nonnull;
 public interface ColaLogo
 {
     /**
-     * Helper class to create a String that implements {@link ColaLogo}.
-     */
-    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements ColaLogo {}
-
-    /**
-     * Creator to enable deserialization of a String.
-     *
-     * @param val
-     *            the value to use
-     * @return a new instance of {@link InnerString}.
-     */
-    @com.fasterxml.jackson.annotation.JsonCreator
-    @Nonnull
-    static InnerString create( @Nonnull final String val )
-    {
-        return new InnerString(val);
-    }
-
-    /**
      * Helper class to create {@code List<List<Integer>> } that implements {@link ColaLogo}.
      */
     record ListOfListOfIntegers(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<List<Integer>> values) implements ColaLogo {}
@@ -60,6 +41,25 @@ public interface ColaLogo
     static ListOfListOfIntegers createListOfListOfIntegers( @Nonnull final List<List<Integer>> val )
     {
         return new ListOfListOfIntegers(val);
+    }
+
+    /**
+     * Helper class to create {@code String } that implements {@link ColaLogo}.
+     */
+    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements ColaLogo {}
+
+    /**
+     * Creator to enable deserialization of {@code String }.
+     *
+     * @param val
+     *            the value to use
+     * @return a new instance of {@link InnerString}.
+     */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    @Nonnull
+    static InnerString create( @Nonnull final String val )
+    {
+        return new InnerString(val);
     }
 
 }
