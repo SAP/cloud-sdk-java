@@ -37,6 +37,8 @@ public class TransparentProxyDestination implements HttpDestination
     static final String TENANT_SUBDOMAIN_HEADER_KEY = "x-tenant-subdomain";
     static final String TENANT_ID_HEADER_KEY = "x-tenant-id";
     static final String FRAGMENT_OPTIONAL_HEADER_KEY = "x-fragment-optional";
+    static final String DESTINATION_LEVEL_HEADER_KEY = "x-destination-level";
+    static final String FRAGMENT_LEVEL_HEADER_KEY = "x-fragment-level";
     static final String TOKEN_SERVICE_TENANT_HEADER_KEY = "x-token-service-tenant";
     static final String CLIENT_ASSERTION_HEADER_KEY = "x-client-assertion";
     static final String CLIENT_ASSERTION_TYPE_HEADER_KEY = "x-client-assertion-type";
@@ -671,6 +673,34 @@ public class TransparentProxyDestination implements HttpDestination
         public DynamicBuilder fragmentName( @Nonnull final String fragmentName )
         {
             return header(new Header(FRAGMENT_NAME_HEADER_KEY, fragmentName));
+        }
+
+        /**
+         * Sets the destination level for the dynamic destination. See
+         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
+         *
+         * @param destinationLevel
+         *            The level of the destination to use.
+         * @return This builder instance for method chaining.
+         */
+        @Nonnull
+        public DynamicBuilder destinationLevel( @Nonnull final String destinationLevel )
+        {
+            return header(new Header(DESTINATION_LEVEL_HEADER_KEY, destinationLevel));
+        }
+
+        /**
+         * Sets the fragment level for the dynamic destination. See
+         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
+         *
+         * @param fragmentLevel
+         *            The level of the fragment to use.
+         * @return This builder instance for method chaining.
+         */
+        @Nonnull
+        public DynamicBuilder fragmentLevel( @Nonnull final String fragmentLevel )
+        {
+            return header(new Header(FRAGMENT_LEVEL_HEADER_KEY, fragmentLevel));
         }
 
         /**
