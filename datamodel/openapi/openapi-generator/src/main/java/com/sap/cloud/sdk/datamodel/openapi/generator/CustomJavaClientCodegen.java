@@ -133,7 +133,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
         super.updateModelForComposedSchema(m, schema, allDefinitions);
 
         if( USE_ONE_OF_CREATORS.isEnabled(config) ) {
-            useCreatorsForInterfaceSubtypes(m);
+            new CreatorForInterfaceSubtypesFeature(m, config).apply();
         }
     }
 
@@ -253,17 +253,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             }
             return false;
         });
-    }
-
-    /**
-     * Use JsonCreator for interface sub-types in case there are any primitives.
-     *
-     * @param m
-     *            The model to update.
-     */
-    private void useCreatorsForInterfaceSubtypes( @Nonnull final CodegenModel m )
-    {
-        new CreatorForInterfaceSubtypesFeature(m, config).apply();
     }
 
     @SuppressWarnings( { "rawtypes", "RedundantSuppression" } )

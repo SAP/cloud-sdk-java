@@ -23,6 +23,7 @@ import com.sap.cloud.sdk.datamodel.openapi.sample.model.AllOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.AnyOf;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Bar;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Cola;
+import com.sap.cloud.sdk.datamodel.openapi.sample.model.ColaBarCode;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.ColaLogo;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.Fanta;
 import com.sap.cloud.sdk.datamodel.openapi.sample.model.FantaFlavor;
@@ -74,6 +75,13 @@ class OneOfDeserializationTest
         {
           "sodaType": "Sprite",
           "someProperty": "someValue"
+        }""";
+
+    private static final String COLA_BARCODE_FLOAT_ARRAY_JSON = """
+        {
+          "sodaType": "Cola",
+          "caffeine": true,
+          "barCode": [1.1, 2.2, 3.3]
         }""";
 
     @Test
@@ -188,6 +196,19 @@ class OneOfDeserializationTest
             .describedAs("Logo should be deserialized as a list of list of integers")
             .isInstanceOf(List.class)
             .containsExactly(List.of(255, 0, 0), List.of(0, 255, 0), List.of(0, 0, 255));
+
+        actual = objectMapper.readValue(COLA_BARCODE_FLOAT_ARRAY_JSON, strategy);
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Cola with JSON subtype deduction")
+            .isInstanceOf(Cola.class);
+        cola = (Cola) actual;
+        assertThat(cola.isCaffeine()).isTrue();
+        assertThat(cola.getBarCode()).isInstanceOf(ColaBarCode.ArrayOfFloats.class);
+        var barCode = (ColaBarCode.ArrayOfFloats) cola.getBarCode();
+        assertThat(barCode.values())
+            .describedAs("BarCode should be deserialized as an array of floats")
+            .isInstanceOf(float[].class)
+            .containsExactly(1.1f, 2.2f, 3.3f);
     }
 
     @Test
