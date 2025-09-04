@@ -5,6 +5,8 @@ import static com.sap.cloud.sdk.datamodel.openapi.generator.GeneratorCustomPrope
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.openapitools.codegen.CodegenModel;
 
 import com.google.common.collect.Sets;
@@ -37,12 +39,13 @@ class CreatorForInterfaceSubtypesFeature
 
         }
 
-        boolean hasArray = creators.stream().anyMatch(CreatorDetails::isArray);
-        boolean hasPrimitive = creators.stream().anyMatch(CreatorDetails::isPrimitive);
-        boolean hasObject = creators.stream().anyMatch(CreatorDetails::isObject);
+        final var hasArray = creators.stream().anyMatch(CreatorDetails::isArray);
+        final var hasPrimitive = creators.stream().anyMatch(CreatorDetails::isPrimitive);
+        final var hasObject = creators.stream().anyMatch(CreatorDetails::isObject);
 
-        if( !hasArray && !hasPrimitive )
+        if( !hasArray && !hasPrimitive ) {
             return;
+        }
 
         if( hasPrimitive && hasObject ) {
             final var msg =
@@ -60,7 +63,7 @@ class CreatorForInterfaceSubtypesFeature
         m.vendorExtensions.put(VENDOR_EXT_ONE_OF_INTERFACE, true); // enforce template usage
     }
 
-    private CreatorDetails processCandidate( String candidate )
+    private CreatorDetails processCandidate( @Nonnull final String candidate )
     {
         if( candidate.startsWith("List<") ) {
             var targetType = candidate;
@@ -73,8 +76,8 @@ class CreatorForInterfaceSubtypesFeature
 
             return new CreatorDetails(wrapperType, targetType, true, false, false);
         }
-        var isPrimitive = PRIMITIVES.contains(candidate);
-        var wrapperType = "Inner" + candidate;
+        final var isPrimitive = PRIMITIVES.contains(candidate);
+        final var wrapperType = "Inner" + candidate;
         return new CreatorDetails(wrapperType, candidate, false, isPrimitive, !isPrimitive);
     }
 
