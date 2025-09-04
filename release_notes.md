@@ -8,7 +8,9 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- The builder methods for `TransparentProxyDestination` have been renamed:
+  - `staticDestination()` to `destination()`
+  - `dynamicDestination()` to `destinationGateway()`
 
 ### ✨ New Functionality
 

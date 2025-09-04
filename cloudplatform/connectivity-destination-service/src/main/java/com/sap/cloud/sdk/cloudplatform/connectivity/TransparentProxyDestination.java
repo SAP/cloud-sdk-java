@@ -26,11 +26,11 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Immutable implementation of the {@link HttpDestination} interface.
- * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/transparent-proxy-for-kubernetes
+ * * Immutable implementation of the {@link HttpDestination} interface for using the
+ * <a href="https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/transparent-proxy-for-kubernetes">transparent
+ * proxy</a>.
  */
 @Slf4j
-@com.google.common.annotations.Beta
 public class TransparentProxyDestination implements HttpDestination
 {
     static final String DESTINATION_NAME_HEADER_KEY = "x-destination-name";
@@ -363,8 +363,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a tenant subdomain header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy
+         * Adds a tenant subdomain header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy</a>
          * <p>
          * Note: Tenant subdomain and tenant ID cannot be set at the same time. Calling this method when a tenant ID
          * header is already present will throw an exception.
@@ -387,8 +387,8 @@ public class TransparentProxyDestination implements HttpDestination
 
         /**
          * Adds a tenant ID header to the destination. Set automatically by the Cloud SDK per-request, if both tenant id
-         * and tenant subdomain are left unset. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy
+         * and tenant subdomain are left unset. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/multitenancy</a>
          * <p>
          * Note: Tenant subdomain and tenant ID cannot be set at the same time. Calling this method when a tenant ID
          * header is already present will throw an exception.
@@ -410,9 +410,10 @@ public class TransparentProxyDestination implements HttpDestination
 
         /**
          * Adds a token service tenant header to the destination. Is send to the destination service as x-tenant header
-         * and should be used when tokenServiceURLType in the destination service is common. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/technical-user-propagation and
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-client-credentials-authentication-cf15900ca39242fb87a1fb081a54b9ca
+         * and should be used when tokenServiceURLType in the destination service is common. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/technical-user-propagation">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/technical-user-propagation</a>
+         * and <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-client-credentials-authentication-cf15900ca39242fb87a1fb081a54b9ca">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-client-credentials-authentication-cf15900ca39242fb87a1fb081a54b9ca</a>
          *
          * @param tokenServiceTenant
          *            The token service tenant value.
@@ -425,8 +426,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a client assertion header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers
+         * Adds a client assertion header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers</a>
          *
          * @param clientAssertion
          *            The client assertion value.
@@ -439,8 +440,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a client assertion type header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers
+         * Adds a client assertion type header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/provide-client-assertion-properties-as-headers</a>
          *
          * @param clientAssertionType
          *            The client assertion type value.
@@ -453,8 +454,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a client assertion destination name header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/client-assertion-with-automated-assertion-fetching-by-service
+         * Adds a client assertion destination name header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/client-assertion-with-automated-assertion-fetching-by-service">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/client-assertion-with-automated-assertion-fetching-by-service</a>
          *
          * @param clientAssertionDestinationName
          *            The client assertion destination name value.
@@ -483,8 +484,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a subject token type header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d
+         * Adds a subject token type header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d</a>
          *
          * @param subjectTokenType
          *            The subject token type value.
@@ -497,8 +498,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds an actor token header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d
+         * Adds an actor token header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d</a>
          *
          * @param actorToken
          *            The actor token value.
@@ -511,8 +512,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds an actor token type header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d
+         * Adds an actor token type header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-token-exchange-authentication-8813df7e39e5472ca5bdcdd34598592d</a>
          *
          * @param actorTokenType
          *            The actor token type value.
@@ -525,8 +526,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a redirect URI header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770
+         * Adds a redirect URI header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770</a>
          *
          * @param redirectUri
          *            The redirect URI value.
@@ -539,8 +540,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Adds a code verifier header to the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770
+         * Adds a code verifier header to the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/oauth-authorization-code-authentication-7bdfed49c6d0451b8aafe1c94da8c770</a>
          *
          * @param codeVerifier
          *            The code verifier value.
@@ -553,8 +554,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the chain name header for the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion
+         * Sets the chain name header for the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion</a>
          *
          * @param chainName
          *            The name of the chain.
@@ -567,8 +568,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the chain variable subject token header for the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion
+         * Sets the chain variable subject token header for the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion</a>
          *
          * @param subjectToken
          *            The subject token value.
@@ -581,8 +582,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the chain variable subject token type header for the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion
+         * Sets the chain variable subject token type header for the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion</a>
          *
          * @param subjectTokenType
          *            The subject token type value.
@@ -595,8 +596,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the chain variable SAML provider destination name header for the destination. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion
+         * Sets the chain variable SAML provider destination name header for the destination. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/ias-signed-saml-bearer-assertion</a>
          *
          * @param samlProviderDestinationName
          *            The SAML provider destination name.
@@ -622,8 +623,8 @@ public class TransparentProxyDestination implements HttpDestination
     }
 
     /**
-     * Builder for creating a destination {@link TransparentProxyDestination}. See
-     * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/destination-custom-resource
+     * Builder for creating a destination {@link TransparentProxyDestination}. See <a href=
+     * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/destination-custom-resource">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/destination-custom-resource</a>
      */
     public static final class Builder extends AbstractBuilder<Builder>
     {
@@ -640,8 +641,8 @@ public class TransparentProxyDestination implements HttpDestination
     }
 
     /**
-     * Builder for creating a destination-gateway {@link TransparentProxyDestination}. See
-     * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
+     * Builder for creating a destination-gateway {@link TransparentProxyDestination}. See <a href=
+     * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations</a>
      */
     public static final class DestinationGatewayBuilder extends AbstractBuilder<DestinationGatewayBuilder>
     {
@@ -663,8 +664,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the fragment name for the destination-gateway. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
+         * Sets the fragment name for the destination-gateway. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations</a>
          *
          * @param fragmentName
          *            The name of the fragment to use.
@@ -677,8 +678,8 @@ public class TransparentProxyDestination implements HttpDestination
         }
 
         /**
-         * Sets the fragment optional flag for the destination-gateway. See
-         * https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations
+         * Sets the fragment optional flag for the destination-gateway. See <a href=
+         * "https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations">https://help.sap.com/docs/connectivity/sap-btp-connectivity-cf/dynamic-lookup-of-destinations</a>
          *
          * @param fragmentOptional
          *            The value indicating if the fragment is optional.
