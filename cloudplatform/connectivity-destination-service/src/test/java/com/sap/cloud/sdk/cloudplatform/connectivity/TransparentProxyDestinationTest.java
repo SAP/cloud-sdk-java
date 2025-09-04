@@ -35,7 +35,7 @@ class TransparentProxyDestinationTest
     {
         final TransparentProxyDestination destination =
             TransparentProxyDestination
-                .destinationGateway(TEST_DEST_NAME, VALID_URI.toString())
+                .gateway(TEST_DEST_NAME, VALID_URI.toString())
                 .property(TEST_KEY, TEST_VALUE)
                 .build();
 
@@ -46,7 +46,7 @@ class TransparentProxyDestinationTest
     void testGetUriSuccessfully()
     {
         final TransparentProxyDestination destination =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, VALID_URI.toString()).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, VALID_URI.toString()).build();
 
         Assertions.assertThat(destination.getUri()).isEqualTo(VALID_URI);
     }
@@ -60,7 +60,7 @@ class TransparentProxyDestinationTest
 
         final TransparentProxyDestination destination =
             TransparentProxyDestination
-                .destinationGateway(TEST_DEST_NAME, VALID_URI.toString())
+                .gateway(TEST_DEST_NAME, VALID_URI.toString())
                 .header(header1)
                 .header(header2)
                 .build();
@@ -70,11 +70,11 @@ class TransparentProxyDestinationTest
     }
 
     @Test
-    void testDestinationGatewayHeaders()
+    void testGatewayHeaders()
     {
         final TransparentProxyDestination destination =
             TransparentProxyDestination
-                .destinationGateway(TEST_DEST_NAME, VALID_URI.toString())
+                .gateway(TEST_DEST_NAME, VALID_URI.toString())
                 .fragmentName("fragName")
                 .fragmentOptional(true)
                 .build();
@@ -153,7 +153,7 @@ class TransparentProxyDestinationTest
     {
         Tenant tenant = new DefaultTenant(TEST_TENANT_ID, TEST_TENANT_SUBDOMAIN);
         TransparentProxyDestination destination =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
         TenantAccessor.executeWithTenant(tenant, () -> {
             assertThat(destination.getHeaders(URI.create(TRANSPARENT_PROXY_GATEWAY)))
                 .contains(new Header(TransparentProxyDestination.TENANT_ID_HEADER_KEY, TEST_TENANT_ID));
@@ -168,7 +168,7 @@ class TransparentProxyDestinationTest
         AuthToken token = new AuthToken(mockJwt);
 
         TransparentProxyDestination destination =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
         assertNotNull(destination);
         AuthTokenAccessor.executeWithAuthToken(token, () -> {
             assertThat(destination.getHeaders(URI.create(TRANSPARENT_PROXY_GATEWAY)))
@@ -180,21 +180,20 @@ class TransparentProxyDestinationTest
     void testBuildThrowsExceptionWhenDestinationNameMissing()
     {
         Assertions
-            .assertThatThrownBy(
-                () -> TransparentProxyDestination.destinationGateway("", TRANSPARENT_PROXY_GATEWAY).build())
+            .assertThatThrownBy(() -> TransparentProxyDestination.gateway("", TRANSPARENT_PROXY_GATEWAY).build())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(
                 "The 'destinationName' property is required for destination-gateway but was not set.");
     }
 
     @Test
-    void testEqualDestinationGateway()
+    void testEqualGateway()
     {
         final TransparentProxyDestination destination1 =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, VALID_URI.toString()).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, VALID_URI.toString()).build();
 
         final TransparentProxyDestination destination2 =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, VALID_URI.toString()).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, VALID_URI.toString()).build();
         assertThat(destination1).isEqualTo(destination2);
     }
 
@@ -238,7 +237,7 @@ class TransparentProxyDestinationTest
     void testNoTenantHeaderWhenNoTenantPresent()
     {
         TransparentProxyDestination destination =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
         Collection<Header> headers = destination.getHeaders(URI.create(TRANSPARENT_PROXY_GATEWAY));
         assertThat(
             headers
@@ -252,7 +251,7 @@ class TransparentProxyDestinationTest
     void testNoAuthorizationHeaderWhenNoAuthTokenPresent()
     {
         TransparentProxyDestination destination =
-            TransparentProxyDestination.destinationGateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
+            TransparentProxyDestination.gateway(TEST_DEST_NAME, TRANSPARENT_PROXY_GATEWAY).build();
         Collection<Header> headers = destination.getHeaders(URI.create(TRANSPARENT_PROXY_GATEWAY));
         assertThat(
             headers
