@@ -77,7 +77,7 @@
 		<resilience4j.version>2.3.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
 		<gson.version>2.13.1</gson.version>
-		<jackson.version>2.19.2</jackson.version>
+		<jackson.version>2.20.0</jackson.version>
 		<owasp-json-sanitizer.version>1.2.3</owasp-json-sanitizer.version>
 		<!-- end of essential versions -->
 	</properties>
@@ -273,7 +273,7 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.49.5</version>
+				<version>3.50.0</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
