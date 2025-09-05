@@ -163,6 +163,12 @@ components:
                 items:
                   type: integer
                   format: int32
+        barCode:
+          oneOf:
+            - type: array
+              items:
+                type: number
+            - type: string
     Fanta:
       type: object
       properties:
