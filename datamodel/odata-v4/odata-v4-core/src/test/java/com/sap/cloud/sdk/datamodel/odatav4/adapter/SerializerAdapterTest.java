@@ -51,7 +51,7 @@ class SerializerAdapterTest
 
         // Jackson
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         final String jsonJackson = mapper.writeValueAsString(PERSON);
         final Person personJackson = mapper.readValue(jsonJackson, Person.class);
 

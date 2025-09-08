@@ -89,6 +89,7 @@
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.20.0</jackson.version>
+		<jackson.annotations.version>2.20</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -270,7 +271,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
-				<version>${jackson.version}</version>
+				<version>${jackson.annotations.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
