@@ -401,6 +401,5 @@ public class Soda
         */
         Soda build();
     }
-
 }
 

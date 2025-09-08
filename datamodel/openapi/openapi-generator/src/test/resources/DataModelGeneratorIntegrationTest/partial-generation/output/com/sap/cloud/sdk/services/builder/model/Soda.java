@@ -308,6 +308,5 @@ public class Soda
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

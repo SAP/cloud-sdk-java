@@ -168,6 +168,5 @@ public class AllOf
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

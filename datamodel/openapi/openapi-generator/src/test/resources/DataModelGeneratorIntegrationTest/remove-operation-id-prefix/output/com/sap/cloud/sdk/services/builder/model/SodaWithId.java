@@ -402,6 +402,5 @@ public class SodaWithId
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

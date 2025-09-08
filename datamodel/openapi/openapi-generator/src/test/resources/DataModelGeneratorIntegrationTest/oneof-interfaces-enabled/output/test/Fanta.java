@@ -208,6 +208,5 @@ public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscrimina
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

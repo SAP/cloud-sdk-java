@@ -172,6 +172,5 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 
