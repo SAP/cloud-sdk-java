@@ -168,6 +168,5 @@ public class ServiceUnavailableApplicationJson
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

@@ -178,6 +178,5 @@ public class OneOfWithDiscriminatorAndMapping
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

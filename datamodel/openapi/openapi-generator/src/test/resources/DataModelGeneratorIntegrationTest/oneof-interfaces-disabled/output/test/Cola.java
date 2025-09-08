@@ -168,6 +168,5 @@ public class Cola
     }
     return o.toString().replace("\n", "\n    ");
   }
-
 }
 

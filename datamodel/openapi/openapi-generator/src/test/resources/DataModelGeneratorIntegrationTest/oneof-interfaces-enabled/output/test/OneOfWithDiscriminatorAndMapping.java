@@ -48,8 +48,6 @@ import javax.annotation.Nullable;
 @JsonSubTypes({
   @JsonSubTypes.Type(value = Cola.class, name = "cool_cola"),
   @JsonSubTypes.Type(value = Fanta.class, name = "fancy_fanta"),
-  @JsonSubTypes.Type(value = Cola.class, name = "Cola"),
-  @JsonSubTypes.Type(value = Fanta.class, name = "Fanta"),
 })
 
 public interface OneOfWithDiscriminatorAndMapping  {
