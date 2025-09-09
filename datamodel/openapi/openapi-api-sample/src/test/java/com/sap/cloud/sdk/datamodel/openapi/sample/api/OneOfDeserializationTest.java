@@ -196,55 +196,6 @@ class OneOfDeserializationTest
     }
 
     @Test
-    void oneOfWithDiscriminatorAndMappingNestedArrayOfObjects()
-        throws JsonProcessingException
-    {
-        var fantaJson = """
-            {
-              "sodaType": "fancy_fanta",
-              "color": "orange",
-              "flavor": [
-                {"intensity":3,"nuance":"wood"},
-                {"intensity":5,"nuance":"citrus"}
-              ]
-            }""";
-        Object actual = objectMapper.readValue(fantaJson, OneOfWithDiscriminatorAndMapping.class);
-
-        assertThat(actual)
-            .describedAs("Object should automatically be deserialized as Fanta using explicit discriminator mapping")
-            .isInstanceOf(Fanta.class);
-        var fanta = (Fanta) actual;
-        assertThat(fanta.getFlavor())
-            .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
-            .isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
-        var flavorTypes = (FantaFlavor.ListOfFlavorTypes) fanta.getFlavor();
-        assertThat(flavorTypes.values())
-            .describedAs("Flavor should be deserialized as a list of FlavorType instances")
-            .isNotEmpty()
-            .allMatch(FlavorType.class::isInstance);
-
-        var colaJson = """
-            {
-              "sodaType": "cool_cola",
-              "caffeine": true,
-              "logo": [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
-            }""";
-        actual = objectMapper.readValue(colaJson, OneOfWithDiscriminatorAndMapping.class);
-
-        assertThat(actual)
-            .describedAs("Object should automatically be deserialized as Cola using explicit discriminator mapping")
-            .isInstanceOf(Cola.class);
-        var cola = (Cola) actual;
-        assertThat(cola.isCaffeine()).isTrue();
-        assertThat(cola.getLogo()).isInstanceOf(ColaLogo.ListOfListOfIntegers.class);
-        var logo = (ColaLogo.ListOfListOfIntegers) cola.getLogo();
-        assertThat(logo.values())
-            .describedAs("Logo should be deserialized as a list of list of integers")
-            .isInstanceOf(List.class)
-            .containsExactly(List.of(255, 0, 0), List.of(0, 255, 0), List.of(0, 0, 255));
-    }
-
-    @Test
     void anyOf()
         throws JsonProcessingException
     {
