@@ -130,6 +130,7 @@
 								<useOneOfInterfaces>true</useOneOfInterfaces>
 								<useOneOfCreators>true</useOneOfCreators>
 								<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
+								<useFloatArrays>true</useFloatArrays>
 							</additionalProperties>
 							<sapCopyrightHeader>true</sapCopyrightHeader>
 							<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>

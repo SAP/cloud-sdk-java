@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import test.Cola;
+import test.ColaBarCode;
 import test.Fanta;
 import test.FantaFlavor;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -47,6 +48,9 @@ public class AnyOf
 {
   @JsonProperty("sodaType")
   private String sodaType;
+
+  @JsonProperty("barCode")
+  private ColaBarCode barCode;
 
   @JsonProperty("flavor")
   private FantaFlavor flavor;
@@ -82,6 +86,35 @@ public class AnyOf
    */
   public void setSodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
+  }
+
+  /**
+   * Set the barCode of this {@link AnyOf} instance and return the same instance.
+   *
+   * @param barCode  The barCode of this {@link AnyOf}
+   * @return The same instance of this {@link AnyOf} class
+   */
+  @Nonnull public AnyOf barCode( @Nullable final ColaBarCode barCode) {
+    this.barCode = barCode;
+    return this;
+  }
+
+  /**
+   * Get barCode
+   * @return barCode  The barCode of this {@link AnyOf} instance.
+   */
+  @Nonnull
+  public ColaBarCode getBarCode() {
+    return barCode;
+  }
+
+  /**
+   * Set the barCode of this {@link AnyOf} instance.
+   *
+   * @param barCode  The barCode of this {@link AnyOf}
+   */
+  public void setBarCode( @Nullable final ColaBarCode barCode) {
+    this.barCode = barCode;
   }
 
   /**
@@ -150,6 +183,7 @@ public class AnyOf
   {
     final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
     if( sodaType != null ) declaredFields.put("sodaType", sodaType);
+    if( barCode != null ) declaredFields.put("barCode", barCode);
     if( flavor != null ) declaredFields.put("flavor", flavor);
     return declaredFields;
   }
@@ -178,12 +212,13 @@ public class AnyOf
     final AnyOf anyOf = (AnyOf) o;
     return Objects.equals(this.cloudSdkCustomFields, anyOf.cloudSdkCustomFields) &&
         Objects.equals(this.sodaType, anyOf.sodaType) &&
+        Objects.equals(this.barCode, anyOf.barCode) &&
         Objects.equals(this.flavor, anyOf.flavor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sodaType, flavor, cloudSdkCustomFields);
+    return Objects.hash(sodaType, barCode, flavor, cloudSdkCustomFields);
   }
 
   @Override
@@ -191,6 +226,7 @@ public class AnyOf
     final StringBuilder sb = new StringBuilder();
     sb.append("class AnyOf {\n");
     sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
+    sb.append("    barCode: ").append(toIndentedString(barCode)).append("\n");
     sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
