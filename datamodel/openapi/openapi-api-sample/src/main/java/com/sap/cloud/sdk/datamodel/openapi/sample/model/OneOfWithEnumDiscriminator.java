@@ -24,9 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "disc", visible = true )
 @JsonSubTypes( {
     @JsonSubTypes.Type( value = Bar.class, name = "disc_bar" ),
-    @JsonSubTypes.Type( value = Foo.class, name = "disc_foo" ),
-    @JsonSubTypes.Type( value = Bar.class, name = "Bar" ),
-    @JsonSubTypes.Type( value = Foo.class, name = "Foo" ), } )
+    @JsonSubTypes.Type( value = Foo.class, name = "disc_foo" ), } )
 
 public interface OneOfWithEnumDiscriminator
 {
