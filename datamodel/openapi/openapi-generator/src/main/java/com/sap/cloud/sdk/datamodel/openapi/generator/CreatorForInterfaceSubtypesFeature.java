@@ -36,7 +36,6 @@ class CreatorForInterfaceSubtypesFeature
         for( final String candidate : Sets.union(m.anyOf, m.oneOf) ) {
             final var creator = processCandidate(candidate);
             creators.add(creator);
-
         }
 
         final var hasArray = creators.stream().anyMatch(CreatorDetails::isArray);
