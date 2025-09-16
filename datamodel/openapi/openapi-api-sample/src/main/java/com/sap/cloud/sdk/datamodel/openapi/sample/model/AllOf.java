@@ -45,6 +45,9 @@ public class AllOf
     @JsonProperty( "logo" )
     private ColaLogo logo;
 
+    @JsonProperty( "barCode" )
+    private ColaBarCode barCode;
+
     @JsonProperty( "color" )
     private String color;
 
@@ -171,6 +174,42 @@ public class AllOf
     }
 
     /**
+     * Set the barCode of this {@link AllOf} instance and return the same instance.
+     *
+     * @param barCode
+     *            The barCode of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
+     */
+    @Nonnull
+    public AllOf barCode( @Nullable final ColaBarCode barCode )
+    {
+        this.barCode = barCode;
+        return this;
+    }
+
+    /**
+     * Get barCode
+     *
+     * @return barCode The barCode of this {@link AllOf} instance.
+     */
+    @Nonnull
+    public ColaBarCode getBarCode()
+    {
+        return barCode;
+    }
+
+    /**
+     * Set the barCode of this {@link AllOf} instance.
+     *
+     * @param barCode
+     *            The barCode of this {@link AllOf}
+     */
+    public void setBarCode( @Nullable final ColaBarCode barCode )
+    {
+        this.barCode = barCode;
+    }
+
+    /**
      * Set the color of this {@link AllOf} instance and return the same instance.
      *
      * @param color
@@ -291,6 +330,8 @@ public class AllOf
             declaredFields.put("caffeine", caffeine);
         if( logo != null )
             declaredFields.put("logo", logo);
+        if( barCode != null )
+            declaredFields.put("barCode", barCode);
         if( color != null )
             declaredFields.put("color", color);
         if( flavor != null )
@@ -327,6 +368,7 @@ public class AllOf
             && Objects.equals(this.sodaType, allOf.sodaType)
             && Objects.equals(this.caffeine, allOf.caffeine)
             && Objects.equals(this.logo, allOf.logo)
+            && Objects.equals(this.barCode, allOf.barCode)
             && Objects.equals(this.color, allOf.color)
             && Objects.equals(this.flavor, allOf.flavor);
     }
@@ -334,7 +376,7 @@ public class AllOf
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, logo, color, flavor, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, logo, barCode, color, flavor, cloudSdkCustomFields);
     }
 
     @Override
@@ -346,6 +388,7 @@ public class AllOf
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
         sb.append("    logo: ").append(toIndentedString(logo)).append("\n");
+        sb.append("    barCode: ").append(toIndentedString(barCode)).append("\n");
         sb.append("    color: ").append(toIndentedString(color)).append("\n");
         sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields

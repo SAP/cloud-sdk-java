@@ -109,8 +109,8 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.BETA,
             true,
             true,
-            10,
-            Map.of("useOneOfInterfaces", "true", "useOneOfCreators", "true")),
+            11,
+            Map.of("useOneOfInterfaces", "true", "useOneOfCreators", "true", "useFloatArrays", "true")),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
             "sodastore.JSON",
