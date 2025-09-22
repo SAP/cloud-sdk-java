@@ -15,38 +15,36 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.sample.model;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 /**
- * ColaLogo
+ * ColaBarCode
  */
-public interface ColaLogo
+public interface ColaBarCode
 {
     /**
-     * Helper class to create {@code List<List<Integer>> } that implements {@link ColaLogo}.
+     * Helper class to create {@code float[] } that implements {@link ColaBarCode}.
      */
-    record ListOfListOfIntegers(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<List<Integer>> values) implements ColaLogo {}
+    record ArrayOfFloats(@com.fasterxml.jackson.annotation.JsonValue @Nonnull float[] values) implements ColaBarCode {}
 
     /**
-     * Creator to enable deserialization of {@code List<List<Integer>> }.
+     * Creator to enable deserialization of {@code float[] }.
      *
      * @param val
      *            the value to use
-     * @return a new instance of {@link ListOfListOfIntegers}.
+     * @return a new instance of {@link ArrayOfFloats}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static ListOfListOfIntegers createListOfListOfIntegers( @Nonnull final List<List<Integer>> val )
+    static ArrayOfFloats createArrayOfFloats( @Nonnull final float[] val )
     {
-        return new ListOfListOfIntegers(val);
+        return new ArrayOfFloats(val);
     }
 
     /**
-     * Helper class to create {@code String } that implements {@link ColaLogo}.
+     * Helper class to create {@code String } that implements {@link ColaBarCode}.
      */
-    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements ColaLogo {}
+    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements ColaBarCode {}
 
     /**
      * Creator to enable deserialization of {@code String }.

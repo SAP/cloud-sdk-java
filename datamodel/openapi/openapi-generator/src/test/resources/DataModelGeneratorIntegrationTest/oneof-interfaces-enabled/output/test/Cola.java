@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import test.ColaBarCode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -47,6 +48,9 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
 {
   @JsonProperty("sodaType")
   private String sodaType;
+
+  @JsonProperty("barCode")
+  private ColaBarCode barCode;
 
   @JsonAnySetter
   @JsonAnyGetter
@@ -79,6 +83,35 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
    */
   public void setSodaType( @Nullable final String sodaType) {
     this.sodaType = sodaType;
+  }
+
+  /**
+   * Set the barCode of this {@link Cola} instance and return the same instance.
+   *
+   * @param barCode  The barCode of this {@link Cola}
+   * @return The same instance of this {@link Cola} class
+   */
+  @Nonnull public Cola barCode( @Nullable final ColaBarCode barCode) {
+    this.barCode = barCode;
+    return this;
+  }
+
+  /**
+   * Get barCode
+   * @return barCode  The barCode of this {@link Cola} instance.
+   */
+  @Nonnull
+  public ColaBarCode getBarCode() {
+    return barCode;
+  }
+
+  /**
+   * Set the barCode of this {@link Cola} instance.
+   *
+   * @param barCode  The barCode of this {@link Cola}
+   */
+  public void setBarCode( @Nullable final ColaBarCode barCode) {
+    this.barCode = barCode;
   }
 
   /**
@@ -118,6 +151,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
   {
     final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
     if( sodaType != null ) declaredFields.put("sodaType", sodaType);
+    if( barCode != null ) declaredFields.put("barCode", barCode);
     return declaredFields;
   }
 
@@ -144,12 +178,13 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
     final Cola cola = (Cola) o;
     return Objects.equals(this.cloudSdkCustomFields, cola.cloudSdkCustomFields) &&
-        Objects.equals(this.sodaType, cola.sodaType);
+        Objects.equals(this.sodaType, cola.sodaType) &&
+        Objects.equals(this.barCode, cola.barCode);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sodaType, cloudSdkCustomFields);
+    return Objects.hash(sodaType, barCode, cloudSdkCustomFields);
   }
 
   @Override
@@ -157,6 +192,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     final StringBuilder sb = new StringBuilder();
     sb.append("class Cola {\n");
     sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
+    sb.append("    barCode: ").append(toIndentedString(barCode)).append("\n");
     cloudSdkCustomFields.forEach((k,v) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
     sb.append("}");
     return sb.toString();

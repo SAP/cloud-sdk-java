@@ -28,12 +28,31 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public interface FantaFlavor
 {
     /**
-     * Helper class to create a Integer that implements {@link FantaFlavor}.
+     * Helper class to create {@code String } that implements {@link FantaFlavor}.
+     */
+    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements FantaFlavor {}
+
+    /**
+     * Creator to enable deserialization of {@code String }.
+     *
+     * @param val
+     *            the value to use
+     * @return a new instance of {@link InnerString}.
+     */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    @Nonnull
+    static InnerString create( @Nonnull final String val )
+    {
+        return new InnerString(val);
+    }
+
+    /**
+     * Helper class to create {@code Integer } that implements {@link FantaFlavor}.
      */
     record InnerInteger(@com.fasterxml.jackson.annotation.JsonValue @Nonnull Integer value) implements FantaFlavor {}
 
     /**
-     * Creator to enable deserialization of a Integer.
+     * Creator to enable deserialization of {@code Integer }.
      *
      * @param val
      *            the value to use
@@ -47,12 +66,12 @@ public interface FantaFlavor
     }
 
     /**
-     * Helper class to create a FlavorType that implements {@link FantaFlavor}.
+     * Helper class to create {@code FlavorType } that implements {@link FantaFlavor}.
      */
     record InnerFlavorType(@com.fasterxml.jackson.annotation.JsonValue @Nonnull FlavorType value) implements FantaFlavor {}
 
     /**
-     * Creator to enable deserialization of a FlavorType.
+     * Creator to enable deserialization of {@code FlavorType }.
      *
      * @param val
      *            the value to use
@@ -60,28 +79,9 @@ public interface FantaFlavor
      */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static InnerFlavorType create( @Nonnull final FlavorType val )
+    static InnerFlavorType createInnerFlavorType( @Nonnull final FlavorType val )
     {
         return new InnerFlavorType(val);
-    }
-
-    /**
-     * Helper class to create a String that implements {@link FantaFlavor}.
-     */
-    record InnerString(@com.fasterxml.jackson.annotation.JsonValue @Nonnull String value) implements FantaFlavor {}
-
-    /**
-     * Creator to enable deserialization of a String.
-     *
-     * @param val
-     *            the value to use
-     * @return a new instance of {@link InnerString}.
-     */
-    @com.fasterxml.jackson.annotation.JsonCreator
-    @Nonnull
-    static InnerString create( @Nonnull final String val )
-    {
-        return new InnerString(val);
     }
 
     /**
