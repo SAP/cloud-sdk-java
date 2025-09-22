@@ -101,9 +101,9 @@
 		<spring.version>6.2.11</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
-		<assertj-core.version>3.27.4</assertj-core.version>
+		<assertj-core.version>3.27.6</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
-		<mockito.version>5.19.0</mockito.version>
+		<mockito.version>5.20.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
 		<junit.jupiter.version>5.13.4</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
@@ -114,12 +114,12 @@
 		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.2</caffeine.version>
 		<openapi-generator.version>7.15.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.36</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.33</io-swagger-parser-v3.version>
+		<io-swagger-core-v3.version>2.2.37</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.34</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.2.2</stax2-api.version>
-		<bouncycastle.version>1.81</bouncycastle.version>
+		<bouncycastle.version>1.82</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.1</wiremock.version>
@@ -974,7 +974,7 @@
 								<dependency>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
-									<version>1.18.40</version>
+									<version>1.18.42</version>
 								</dependency>
 							</dependencies>
 							<executions>
