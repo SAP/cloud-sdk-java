@@ -130,7 +130,7 @@
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<jsr305.optional>true</jsr305.optional>
-		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
 	</properties>
 	<dependencyManagement>
@@ -919,7 +919,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.9.5.0</version>
+				<version>4.9.6.0</version>
 				<configuration>
 					<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 					<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
@@ -1087,7 +1087,7 @@
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>flatten-maven-plugin</artifactId>
-							<version>1.7.2</version>
+							<version>1.7.3</version>
 							<executions>
 								<execution>
 									<id>flatten</id>
