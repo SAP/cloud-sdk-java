@@ -53,6 +53,7 @@ import java.util.function.Function;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
+import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +81,7 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.thread.ThreadContextExecutors;
 import com.sap.cloud.sdk.testutil.TestContext;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
@@ -1579,6 +1581,45 @@ class DestinationServiceTest
         assertThatThrownBy(() -> loader.tryGetDestination("BadDestination").get())
             .isInstanceOf(DestinationAccessException.class)
             .hasRootCauseInstanceOf(MalformedJsonException.class);
+    }
+
+    @Test
+    void testCircuitBreaker()
+    {
+        DestinationService.Cache.disable();
+
+        doReturn("{ \"destinationConfiguration\" : { \"Name ... } }")
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/destinations/BadDestination"), any());
+
+        for( int i = 0; i < 10; ++i ) {
+            loader.tryGetDestination("BadDestination").getOrNull();
+        }
+        assertThatThrownBy(() -> loader.tryGetDestination("BadDestination").get())
+            .has(causeNotCircuitBreaker())
+            .has(causeMalformedJson());
+    }
+
+    private static Condition<Throwable> causeNotCircuitBreaker()
+    {
+        return new Condition<>(e -> {
+            for( Throwable t = e.getCause(); t != null; t = t.getCause() ) {
+                if( t instanceof CallNotPermittedException )
+                    return false;
+            }
+            return true;
+        }, "should not have CallNotPermittedException as one of the causes");
+    }
+
+    private static Condition<Throwable> causeMalformedJson()
+    {
+        return new Condition<>(e -> {
+            for( Throwable t = e.getCause(); t != null; t = t.getCause() ) {
+                if( t instanceof MalformedJsonException )
+                    return true;
+            }
+            return false;
+        }, "has MalformedJsonException as one of the causes");
     }
 
     @Test

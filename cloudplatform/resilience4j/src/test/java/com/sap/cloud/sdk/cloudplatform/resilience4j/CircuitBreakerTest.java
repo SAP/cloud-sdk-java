@@ -19,8 +19,8 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.CircuitBreakerConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
+import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -78,7 +78,10 @@ class CircuitBreakerTest
 
         assertThatThrownBy(wrappedCallable::call)
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
-            .hasCauseExactlyInstanceOf(CallNotPermittedException.class);
+            .hasCauseExactlyInstanceOf(ThreadContextExecutionException.class)
+            .hasRootCauseExactlyInstanceOf(Exception.class)
+            .hasMessage(
+                "com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException: java.lang.Exception: Simulated failure, attempt nr: 3");
 
         verify(callable, times(circuitBreakerConfiguration.closedBufferSize())).call();
     }

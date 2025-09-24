@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.resilience4j;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -8,7 +10,9 @@ import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationKey;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -22,6 +26,8 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
 
     private final ConcurrentMap<ResilienceIsolationKey, CircuitBreakerRegistry> circuitBreakerRegistries =
         new ConcurrentHashMap<>();
+
+    private final Map<String, Throwable> lastExceptions = new HashMap<>();
 
     private CircuitBreakerRegistry getCircuitBreakerRegistry( @Nonnull final ResilienceIsolationKey isolationKey )
     {
@@ -48,7 +54,13 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
                 .permittedNumberOfCallsInHalfOpenState(configuration.circuitBreakerConfiguration().halfOpenBufferSize())
                 .build();
 
-        return circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
+        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
+
+        circuitBreaker
+            .getEventPublisher()
+            .onError(event -> lastExceptions.put(circuitBreaker.getName(), event.getThrowable()));
+
+        return circuitBreaker;
     }
 
     @Nonnull
@@ -60,6 +72,19 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
         if( !configuration.circuitBreakerConfiguration().isEnabled() ) {
             return callable;
         }
-        return CircuitBreaker.decorateCallable(getCircuitBreaker(configuration), callable);
+
+        CircuitBreaker circuitBreaker = getCircuitBreaker(configuration);
+        return () -> {
+            try {
+                return CircuitBreaker.decorateCallable(circuitBreaker, callable).call();
+            }
+            catch( CallNotPermittedException e ) {
+                var lastException = lastExceptions.get(circuitBreaker.getName());
+                if( lastException != null ) {
+                    throw new ResilienceRuntimeException(lastException);
+                }
+                throw new ResilienceRuntimeException(e);
+            }
+        };
     }
 }
