@@ -16,10 +16,13 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Default implementation for circuit breaker provider.
  */
+@Slf4j
 public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, GenericDecorator
 {
     private static final CircuitBreakerConfig DEFAULT_CIRCUIT_BREAKER_CONFIG = CircuitBreakerConfig.custom().build();
@@ -54,7 +57,7 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
                 .permittedNumberOfCallsInHalfOpenState(configuration.circuitBreakerConfiguration().halfOpenBufferSize())
                 .build();
 
-        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
+        val circuitBreaker = circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
 
         circuitBreaker
             .getEventPublisher()
@@ -73,17 +76,15 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
             return callable;
         }
 
-        CircuitBreaker circuitBreaker = getCircuitBreaker(configuration);
+        val circuitBreaker = getCircuitBreaker(configuration);
         return () -> {
             try {
                 return CircuitBreaker.decorateCallable(circuitBreaker, callable).call();
             }
             catch( CallNotPermittedException e ) {
-                var lastException = lastExceptions.get(circuitBreaker.getName());
-                if( lastException != null ) {
-                    throw new ResilienceRuntimeException(lastException);
-                }
-                throw new ResilienceRuntimeException(e);
+                log.debug("Circuit breaker '{}' is open, call not permitted.", circuitBreaker.getName());
+                val lastException = lastExceptions.get(circuitBreaker.getName());
+                throw new ResilienceRuntimeException(lastException != null ? lastException : e);
             }
         };
     }
