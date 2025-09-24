@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.resilience4j;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -8,20 +10,27 @@ import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationKey;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Default implementation for circuit breaker provider.
  */
+@Slf4j
 public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, GenericDecorator
 {
     private static final CircuitBreakerConfig DEFAULT_CIRCUIT_BREAKER_CONFIG = CircuitBreakerConfig.custom().build();
 
     private final ConcurrentMap<ResilienceIsolationKey, CircuitBreakerRegistry> circuitBreakerRegistries =
         new ConcurrentHashMap<>();
+
+    private final Map<String, Throwable> lastExceptions = new HashMap<>();
 
     private CircuitBreakerRegistry getCircuitBreakerRegistry( @Nonnull final ResilienceIsolationKey isolationKey )
     {
@@ -48,9 +57,16 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
                 .permittedNumberOfCallsInHalfOpenState(configuration.circuitBreakerConfiguration().halfOpenBufferSize())
                 .build();
 
-        return circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
+        val circuitBreaker = circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);
+
+        circuitBreaker
+            .getEventPublisher()
+            .onError(event -> lastExceptions.put(circuitBreaker.getName(), event.getThrowable()));
+
+        return circuitBreaker;
     }
 
+    @SuppressWarnings( "PMD.PreserveStackTrace" ) // The circuit breaker stack-trace doesn't contain any info
     @Nonnull
     @Override
     public <T> Callable<T> decorateCallable(
@@ -60,6 +76,17 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
         if( !configuration.circuitBreakerConfiguration().isEnabled() ) {
             return callable;
         }
-        return CircuitBreaker.decorateCallable(getCircuitBreaker(configuration), callable);
+
+        val circuitBreaker = getCircuitBreaker(configuration);
+        return () -> {
+            try {
+                return CircuitBreaker.decorateCallable(circuitBreaker, callable).call();
+            }
+            catch( CallNotPermittedException e ) {
+                log.debug("Circuit breaker '{}' is open, call not permitted.", circuitBreaker.getName());
+                val lastException = lastExceptions.get(circuitBreaker.getName());
+                throw new ResilienceRuntimeException(lastException != null ? lastException : e);
+            }
+        };
     }
 }

@@ -188,6 +188,9 @@ public class Resilience4jDecorationStrategy implements ResilienceDecorationStrat
                 callableResult = callableResult.recover(fallbackFunction);
             }
             return callableResult.onFailure(t -> {
+                if( t instanceof ResilienceRuntimeException e ) {
+                    throw e;
+                }
                 throw new ResilienceRuntimeException(t);
             }).get();
         };

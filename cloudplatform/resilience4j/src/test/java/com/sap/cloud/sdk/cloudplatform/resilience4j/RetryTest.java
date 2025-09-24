@@ -26,8 +26,6 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-
 class RetryTest
 {
     @Test
@@ -169,7 +167,7 @@ class RetryTest
 
         assertThatThrownBy(wrappedCallable::call)
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
-            .hasCauseExactlyInstanceOf(CallNotPermittedException.class);
+            .hasCauseExactlyInstanceOf(ThreadContextExecutionException.class);
         verify(callable, times(circuitBreakerClosedBuffer)).call();
     }
 

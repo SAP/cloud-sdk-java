@@ -18,7 +18,7 @@
 
 ### 📈 Improvements
 
-- 
+- Circuit breaker exceptions `CallNotPermittedException` have been replaced in favor of the previously thrown exception to provide more context on the failure.
 
 ### 🐛 Fixed Issues
 
