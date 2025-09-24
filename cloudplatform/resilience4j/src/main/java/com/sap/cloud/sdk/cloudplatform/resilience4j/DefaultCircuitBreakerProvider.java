@@ -66,6 +66,7 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
         return circuitBreaker;
     }
 
+    @SuppressWarnings( "PMD.PreserveStackTrace" ) // The circuit breaker stack-trace doesn't contain any info
     @Nonnull
     @Override
     public <T> Callable<T> decorateCallable(
