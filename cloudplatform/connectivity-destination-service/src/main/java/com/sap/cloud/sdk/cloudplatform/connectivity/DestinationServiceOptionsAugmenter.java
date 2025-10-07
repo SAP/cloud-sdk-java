@@ -163,8 +163,13 @@ public class DestinationServiceOptionsAugmenter implements DestinationOptionsAug
 
         private final String identifier;
 
+        /**
+         * Return the suffix to be appended to e.g. a destination or fragment name.
+         *
+         * @return The suffix including the leading '@' character.
+         */
         @Nonnull
-        String getSuffix()
+        public String getSuffix()
         {
             return "@" + identifier;
         }
