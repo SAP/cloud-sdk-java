@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.23.0-SNAPSHOT</version>
+	<version>5.24.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -49,7 +49,7 @@
 	</distributionManagement>
 	<properties>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.23.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.24.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -105,7 +105,7 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.20.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>5.13.4</junit.jupiter.version>
+		<junit.jupiter.version>6.0.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -505,7 +505,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-archetype-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -533,7 +533,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>3.6.2</version>
 				<executions>
 					<execution>
 						<id>enforce-project-rules</id>
@@ -765,7 +765,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.9.0</version>
 				<configuration>
 					<failOnWarning>true</failOnWarning>
 					<failBuild>true</failBuild>
