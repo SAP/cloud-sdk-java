@@ -18,7 +18,7 @@
         <cloud-sdk.version>5.23.0-SNAPSHOT</cloud-sdk.version>
 
         <maven.compiler.release>${java.version}</maven.compiler.release>
-			  <maven.compiler.proc>full</maven.compiler.proc>
+        <maven.compiler.proc>full</maven.compiler.proc>
 
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
