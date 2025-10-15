@@ -36,6 +36,7 @@
 		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
 		<!-- allow JUnit 4 as we need to compile against MojoRule, but we don't use JUnit 4 for test execution itself -->
 		<enforcer.skipBanJunit4>true</enforcer.skipBanJunit4>
+		<skipJavaDoc>true</skipJavaDoc>
 	</properties>
 	<dependencies>
 		<dependency>

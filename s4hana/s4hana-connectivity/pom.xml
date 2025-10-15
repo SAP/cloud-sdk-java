@@ -28,6 +28,9 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
+	<properties>
+		<skipJavaDoc>true</skipJavaDoc>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>

@@ -132,6 +132,7 @@
 		<jsr305.optional>true</jsr305.optional>
 		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
 		<maven.compiler.proc>full</maven.compiler.proc>
+		<skipJavaDoc>false</skipJavaDoc>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -926,6 +927,56 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<maxHeap>2048</maxHeap>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-maven-plugin</artifactId>
+				<version>1.18.20.0</version>
+				<configuration>
+					<sourceDirectory>src/main/java</sourceDirectory>
+					<outputDirectory>target/delombok</outputDirectory>
+					<skip>${skipJavaDoc}</skip>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+						<version>1.18.42</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>${skipJavaDoc}</skip>
+					<quiet>true</quiet>
+					<doclint>none</doclint>
+					<show>protected</show>
+					<encoding>UTF-8</encoding>
+					<additionalJOptions>
+						<additionalJOption>-Xdoclint:none</additionalJOption>
+						<additionalJOption>-quiet</additionalJOption>
+					</additionalJOptions>
+					<groups>
+						<group>
+							<title>Cloud Platform</title>
+							<packages>com.sap.cloud.sdk.cloudplatform*</packages>
+						</group>
+						<group>
+							<title>Utility Packages</title>
+							<packages>com.sap.cloud.sdk.datamodel* :com.sap.cloud.sdk.result*:*
+								:com.sap.cloud.sdk.scp* :com.sap.cloud.sdk.testutil*
+								:com.sap.cloud.sdk.typeconverter* :com.sap.marmolata* :com.sap.security*
+								:org.eclipse*</packages>
+						</group>
+						<group>
+							<title>SAP S/4HANA</title>
+							<packages>com.sap.cloud.sdk.s4hana*</packages>
+						</group>
+					</groups>
+					<overview>${project.rootdir}/javadoc.overview.html</overview>
 				</configuration>
 			</plugin>
 		</plugins>
