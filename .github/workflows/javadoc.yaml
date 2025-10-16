@@ -18,6 +18,7 @@ env:
 
 jobs:
   build:
+    name: "JavaDoc to Documentation Portal"
     runs-on: ubuntu-latest
 
     steps:
@@ -45,7 +46,7 @@ jobs:
         run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
 
       - name: "Install project (skip tests)"
-        run: mvn install -DskipTests
+        run: mvn install -DskipTests --quiet
 
       - name: "Process sources"
         run: mvn process-sources -Drelease --fail-at-end --projects "${PROJECTS}"
@@ -70,7 +71,7 @@ jobs:
 
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv ./.targets/target/reports/apidocs/* $TARGET_DIR
+          mv ./target/reports/apidocs/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
