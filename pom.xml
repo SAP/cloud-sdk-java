@@ -1015,7 +1015,6 @@
 										<packages>com.sap.cloud.sdk.s4hana*</packages>
 									</group>
 								</groups>
-								<sourcepath>${project.basedir}/target/delombok</sourcepath>
 								<overview>${project.rootdir}/javadoc.overview.html</overview>
 							</configuration>
 							<executions>
@@ -1024,6 +1023,9 @@
 									<goals>
 										<goal>jar</goal>
 									</goals>
+									<configuration>
+										<sourcepath>${project.basedir}/target/delombok</sourcepath>
+									</configuration>
 								</execution>
 							</executions>
 						</plugin>

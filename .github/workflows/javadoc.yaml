@@ -58,12 +58,8 @@ jobs:
 
       - name: "Generate aggregated Javadoc"
         run: |
-          mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false -Djavadoc.sourcepath=src/main/java --projects "${PROJECTS}" --quiet
+          mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false --projects "${PROJECTS}" --quiet
           ls -lA target
-
-      - name: "Save JavaDoc path"
-        id: javadoc-path
-        run: echo "JAVADOC_DIR=$(pwd)/target" >> $GITHUB_OUTPUT
 
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v4
@@ -80,7 +76,7 @@ jobs:
           ls -lA target
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv target $TARGET_DIR
+          mv target/reports/apidocs/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
@@ -95,7 +91,7 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ needs.bump-version.outputs.release-version }}
+          BRANCH_NAME=java/release-docs-${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME
