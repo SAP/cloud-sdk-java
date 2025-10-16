@@ -7,6 +7,9 @@ on:
         description: 'Branch to clone'
         required: false
         default: 'rel/5.24.0'
+  push:
+    branches:
+      - javadoc-aggregate-delombok
 
 env:
   JAVA_VERSION: 17
