@@ -928,23 +928,6 @@
 					<maxHeap>2048</maxHeap>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok-maven-plugin</artifactId>
-				<version>1.18.20.0</version>
-				<configuration>
-					<sourceDirectory>src/main/java</sourceDirectory>
-					<outputDirectory>target/delombok</outputDirectory>
-					<skip>${skipJavaDoc}</skip>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.projectlombok</groupId>
-						<artifactId>lombok</artifactId>
-						<version>1.18.42</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 		</plugins>
 	</build>
 	<profiles>
