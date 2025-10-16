@@ -59,7 +59,7 @@ jobs:
 
       - name: "Save JavaDoc path"
         id: javadoc-path
-        run: echo "JAVADOC_DIR=$(pwd)/target/reports/apidocs" >> $GITHUB_OUTPUT
+        run: echo "JAVADOC_DIR=$(pwd)/target" >> $GITHUB_OUTPUT
 
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v4
