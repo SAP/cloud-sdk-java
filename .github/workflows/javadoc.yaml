@@ -45,8 +45,8 @@ jobs:
         id: determine-major-version
         run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
 
-      - name: "Install project (skip tests)"
-        run: mvn install -DskipTests --quiet
+      #- name: "Install project (skip tests)"
+      #  run: mvn install -DskipTests --quiet
 
       - name: "Process sources"
         run: mvn process-sources -Drelease --fail-at-end --projects "${PROJECTS}" --quiet
@@ -73,10 +73,10 @@ jobs:
         run: |
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
-          ls -lA
+          ls -lA target
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv ${{ steps.javadoc-path.outputs.JAVADOC_DIR }}/* $TARGET_DIR
+          mv target $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
