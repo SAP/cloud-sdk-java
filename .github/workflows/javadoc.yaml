@@ -49,13 +49,13 @@ jobs:
         run: mvn install -DskipTests --quiet
 
       - name: "Process sources"
-        run: mvn process-sources -Drelease --fail-at-end --projects "${PROJECTS}"
+        run: mvn process-sources -Drelease --fail-at-end --projects "${PROJECTS}" --quiet
 
       - name: "Copy delombok sources"
         run: find . -type d -path "*/target/delombok" -exec sh -c 'cp -r "$1"/* "$(dirname $(dirname "$1"))/src/main/java/"' _ {} \;
 
       - name: "Generate aggregated Javadoc"
-        run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false -Djavadoc.sourcepath=src/main/java --projects "${PROJECTS}"
+        run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false -Djavadoc.sourcepath=src/main/java --projects "${PROJECTS}" --quiet
 
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v4
@@ -67,11 +67,13 @@ jobs:
       - name: "Replace JavaDoc"
         id: replace-javadoc
         run: |
+          SOURCE_DIR=${{ github.workspace }}/target/reports/apidocs
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
+          ls -lA
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv ./target/reports/apidocs/* $TARGET_DIR
+          mv $SOURCE_DIR/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
