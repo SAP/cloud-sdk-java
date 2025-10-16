@@ -57,6 +57,10 @@ jobs:
       - name: "Generate aggregated Javadoc"
         run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false -Djavadoc.sourcepath=src/main/java --projects "${PROJECTS}" --quiet
 
+      - name: "Save JavaDoc path"
+        id: javadoc-path
+        run: echo "JAVADOC_DIR=$(pwd)/target/reports/apidocs" >> $GITHUB_OUTPUT
+
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v4
         with:
@@ -67,13 +71,12 @@ jobs:
       - name: "Replace JavaDoc"
         id: replace-javadoc
         run: |
-          SOURCE_DIR=${{ github.workspace }}/target/reports/apidocs
           TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
 
           ls -lA
           rm -rf $TARGET_DIR
           mkdir -p $TARGET_DIR
-          mv $SOURCE_DIR/* $TARGET_DIR
+          mv ${{ steps.javadoc-path.outputs.JAVADOC_DIR }}/* $TARGET_DIR
 
           cd ./.cloud-sdk-docs
           git add -A .
