@@ -5,11 +5,8 @@ on:
     inputs:
       branch:
         description: 'Branch to clone'
-        required: false
-        default: 'rel/5.23.0'
-  push:
-    branches:
-      - javadoc-aggregate-delombok
+        required: true
+        default: 'rel/5.24.0'
 
 env:
   JAVA_VERSION: 17
@@ -57,9 +54,7 @@ jobs:
         run: find . -type d -path "*/target/delombok" -exec sh -c 'cp -r "$1"/* "$(dirname $(dirname "$1"))/src/main/java/"' _ {} \;
 
       - name: "Generate aggregated Javadoc"
-        run: |
-          sed -i '/<sourcepath>${project.basedir}\/target\/delombok<\/sourcepath>/d' pom.xml
-          mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false --projects "${PROJECTS}" --quiet
+        run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false --projects "${PROJECTS}" --quiet
 
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v4
@@ -109,5 +104,6 @@ jobs:
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
+          echo "PR: $PR_URL" >> $GITHUB_STEP_SUMMARY
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
