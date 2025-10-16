@@ -193,12 +193,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
     @Nonnull
     CredentialType getCredentialType()
     {
-        return getOAuthCredential(CredentialType.class, "credential-type")
-            .onEmpty(
-                () -> log
-                    .warn(
-                        "Credential type not found or not recognised in service binding. Defaulting to BINDING_SECRET."))
-            .getOrElse(CredentialType.BINDING_SECRET);
+        return getOAuthCredential(CredentialType.class, "credential-type").getOrElse(CredentialType.BINDING_SECRET);
     }
 
     /**
