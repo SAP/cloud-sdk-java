@@ -40,9 +40,7 @@ jobs:
 
       - name: "Determine Major Version"
         id: determine-major-version
-        run: |
-          echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
-          echo ${GITHUB_OUTPUT}
+        run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
 
       - name: "Install project (skip tests)"
         run: mvn install -DskipTests --quiet
