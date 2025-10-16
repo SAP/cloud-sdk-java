@@ -32,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: "Switch branch"
-        run: git checkout "${{ github.event.inputs.branch || 'rel/5.23.0' }}"
+        run: git checkout "${{ github.event.inputs.branch || 'javadoc-aggregate-delombok' }}"
 
       - name: "Set up JDK 17"
         uses: actions/setup-java@v4
@@ -47,8 +47,8 @@ jobs:
           echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
           echo ${GITHUB_OUTPUT}
 
-      #- name: "Install project (skip tests)"
-      #  run: mvn install -DskipTests --quiet
+      - name: "Install project (skip tests)"
+        run: mvn install -DskipTests --quiet
 
       - name: "Process sources"
         run: mvn process-sources -Drelease --fail-at-end --projects "${PROJECTS}" --quiet
