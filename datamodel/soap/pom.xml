@@ -28,9 +28,6 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
-	<properties>
-		<skipJavaDoc>true</skipJavaDoc>
-	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

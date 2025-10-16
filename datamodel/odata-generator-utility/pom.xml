@@ -31,7 +31,6 @@
 	<properties>
 		<!-- allow scope compile for lombok -->
 		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
-		<skipJavaDoc>true</skipJavaDoc>
 	</properties>
 	<dependencies>
 		<!-- Scope: Compile -->

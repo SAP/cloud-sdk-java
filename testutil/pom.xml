@@ -31,7 +31,6 @@
 	<properties>
 		<enforcer.skipBanWiremockCompileScope>true</enforcer.skipBanWiremockCompileScope>
 		<project.rootdir>${project.basedir}/../</project.rootdir>
-		<skipJavaDoc>true</skipJavaDoc>
 	</properties>
 	<dependencies>
 		<!-- Please note: One can **not** use this module within any of the Cloud SDK modules listed below, as that would lead to circular dependencies.

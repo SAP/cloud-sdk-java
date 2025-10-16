@@ -36,7 +36,6 @@
 		<enforcer.skipEnforceScopeLombok>true</enforcer.skipEnforceScopeLombok>
 		<surefire.tempDirectory>target</surefire.tempDirectory>
 		<jsr305.optional>false</jsr305.optional>
-		<skipJavaDoc>true</skipJavaDoc>
 	</properties>
 	<dependencies>
 		<dependency>
