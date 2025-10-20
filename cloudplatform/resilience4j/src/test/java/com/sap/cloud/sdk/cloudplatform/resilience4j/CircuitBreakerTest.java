@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.resilience4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,6 +22,7 @@ import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -76,12 +78,20 @@ class CircuitBreakerTest
         assertThat(callResults).hasSize(attemptedInvocations);
         assertThat(callResults).startsWith(attempts.toArray(new Boolean[0]));
 
-        assertThatThrownBy(wrappedCallable::call)
+        Throwable thrown = catchThrowable(wrappedCallable::call);
+
+        assertThat(thrown)
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
             .hasCauseExactlyInstanceOf(ThreadContextExecutionException.class)
             .hasRootCauseExactlyInstanceOf(Exception.class)
             .hasMessage(
                 "com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException: java.lang.Exception: Simulated failure, attempt nr: 3");
+
+        assertThat(thrown.getSuppressed().length).isEqualTo(1);
+        Throwable suppressed = thrown.getSuppressed()[0];
+        assertThat(suppressed)
+            .isExactlyInstanceOf(CallNotPermittedException.class)
+            .hasMessage("CircuitBreaker 'circuitbreaker.test.2' is OPEN and does not permit further calls");
 
         verify(callable, times(circuitBreakerConfiguration.closedBufferSize())).call();
     }

@@ -66,7 +66,7 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
         return circuitBreaker;
     }
 
-    @SuppressWarnings( "PMD.PreserveStackTrace" ) // The circuit breaker stack-trace doesn't contain any info
+    //    @SuppressWarnings( "PMD.PreserveStackTrace" ) // The circuit breaker stack-trace doesn't contain any info
     @Nonnull
     @Override
     public <T> Callable<T> decorateCallable(
@@ -85,7 +85,12 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
             catch( CallNotPermittedException e ) {
                 log.debug("Circuit breaker '{}' is open, call not permitted.", circuitBreaker.getName());
                 val lastException = lastExceptions.get(circuitBreaker.getName());
-                throw new ResilienceRuntimeException(lastException != null ? lastException : e);
+                if( lastException == null ) {
+                    throw new ResilienceRuntimeException(e);
+                }
+                val resilienceRuntimeException = new ResilienceRuntimeException(lastException);
+                resilienceRuntimeException.addSuppressed(e);
+                throw resilienceRuntimeException;
             }
         };
     }
