@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to clone'
+        description: 'Branch/Commit/Tag for JavaDoc'
         required: true
-        default: 'rel/5.24.0'
+        default: 'main'
 
 env:
   JAVA_VERSION: 17

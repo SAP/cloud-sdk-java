@@ -154,6 +154,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+  create-javadoc-aggregated-pr:
+    needs: [ create-release ]
+    name: "Create Aggregated JavaDoc PR on Documentation Portal"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Trigger workflow (ignore failures)"
+        uses: ./.github/actions/trigger-workflow
+        with:
+          workflow: javadoc.yaml
+          workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
+          parameters: -f branch=${{ needs.create-release.outputs.release-name }}
+
   create-release-notes-pr:
     name: "Create Release Notes PR"
     needs: [ bump-version, run-ci ]
