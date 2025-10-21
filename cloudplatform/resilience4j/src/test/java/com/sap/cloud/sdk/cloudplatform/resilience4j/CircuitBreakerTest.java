@@ -84,8 +84,9 @@ class CircuitBreakerTest
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
             .hasCauseExactlyInstanceOf(ThreadContextExecutionException.class)
             .hasRootCauseExactlyInstanceOf(Exception.class)
-            .hasMessage(
-                "com.sap.cloud.sdk.cloudplatform.thread.exception.ThreadContextExecutionException: java.lang.Exception: Simulated failure, attempt nr: 3");
+            .hasMessage("CircuitBreaker 'circuitbreaker.test.2' is OPEN and does not permit further calls");
+
+        assertThat(thrown.getCause()).hasMessage("java.lang.Exception: Simulated failure, attempt nr: 3");
 
         assertThat(thrown.getSuppressed().length).isEqualTo(1);
         Throwable suppressed = thrown.getSuppressed()[0];
