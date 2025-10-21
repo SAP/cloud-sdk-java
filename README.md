@@ -1,7 +1,7 @@
 ![build](https://github.com/SAP/cloud-sdk-java/actions/workflows/continuous-integration.yaml/badge.svg?branch=main)
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-sdk-java)](https://api.reuse.software/info/github.com/SAP/cloud-sdk-java)
 [![Fosstars security rating](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_badge.svg)](https://github.com/SAP/cloud-sdk-java/blob/fosstars-report/fosstars_report.md)
-[![Maven Central](https://img.shields.io/badge/maven_central-5.23.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.23.0)
+[![Maven Central](https://img.shields.io/badge/maven_central-5.24.0-blue.svg)](https://search.maven.org/search?q=g:com.sap.cloud.sdk%20AND%20a:sdk-core%20AND%20v:5.24.0)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/SAP/cloud-sdk-java)
 
 # <img src="https://sap.github.io/cloud-sdk/img/logo.svg" alt="SAP Cloud SDK" width="30"/> SAP Cloud SDK for Java
