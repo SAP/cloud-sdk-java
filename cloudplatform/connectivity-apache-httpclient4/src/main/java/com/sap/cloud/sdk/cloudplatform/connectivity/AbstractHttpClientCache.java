@@ -121,6 +121,7 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
         return Try.success(httpClient);
     }
 
+    @SuppressWarnings( "PMD.CloseResource" ) // no new resource is opened
     private static boolean isHealthy( final HttpClient httpClient )
         throws IllegalArgumentException,
             NullPointerException
