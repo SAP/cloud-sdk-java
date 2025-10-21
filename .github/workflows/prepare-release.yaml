@@ -158,7 +158,14 @@ jobs:
     needs: [ create-release ]
     name: "Create Aggregated JavaDoc PR on Documentation Portal"
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to trigger the ci-build workflow
+      statuses: write # needed to update the commit status
     steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.bump-version.outputs.release-branch }}
       - name: "Trigger workflow (ignore failures)"
         uses: ./.github/actions/trigger-workflow
         continue-on-error: true
