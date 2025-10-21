@@ -125,6 +125,10 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
         throws IllegalArgumentException,
             NullPointerException
     {
+        if( !(httpClient instanceof HttpClientWrapper) ) {
+            log.trace("Cannot verify health of HttpClient: {}", httpClient);
+            return true;
+        }
         try {
             val hc = (CloseableHttpClient) FieldUtils.readField(httpClient, "httpClient", true);
             val cm = (PoolingHttpClientConnectionManager) FieldUtils.readField(hc, "connManager", true);
