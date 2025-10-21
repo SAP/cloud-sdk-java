@@ -161,6 +161,7 @@ jobs:
     steps:
       - name: "Trigger workflow (ignore failures)"
         uses: ./.github/actions/trigger-workflow
+        continue-on-error: true
         with:
           workflow: javadoc.yaml
           workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
