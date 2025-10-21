@@ -165,13 +165,13 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v5
         with:
-          ref: ${{ needs.bump-version.outputs.release-branch }}
+          ref: ${{ needs.create-release.outputs.release-name }}
       - name: "Trigger workflow (ignore failures)"
         uses: ./.github/actions/trigger-workflow
         continue-on-error: true
         with:
           workflow: javadoc.yaml
-          workflow-ref: ${{ needs.bump-version.outputs.release-branch }}
+          workflow-ref: javadoc-aggregate-delombok
           parameters: -f branch=${{ needs.create-release.outputs.release-name }}
 
   create-release-notes-pr:
