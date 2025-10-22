@@ -171,7 +171,7 @@ jobs:
         continue-on-error: true
         with:
           workflow: javadoc.yaml
-          workflow-ref: main
+          workflow-ref: javadoc-aggregate-delombok-3.12.0
           parameters: -f branch=${{ needs.create-release.outputs.release-name }}
 
   create-release-notes-pr:
