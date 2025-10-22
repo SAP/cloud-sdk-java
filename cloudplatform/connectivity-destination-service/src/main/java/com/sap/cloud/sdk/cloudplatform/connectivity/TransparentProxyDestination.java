@@ -56,13 +56,10 @@ public class TransparentProxyDestination implements HttpDestination
     static final String CHAIN_VAR_SAML_PROVIDER_DESTINATION_NAME_HEADER_KEY = "x-chain-var-samlProviderDestinationName";
     static final String TENANT_ID_AND_TENANT_SUBDOMAIN_BOTH_PASSED_ERROR_MESSAGE =
         "Tenant id and tenant subdomain cannot be passed at the same time.";
-
-    @Delegate
-    private final DestinationProperties baseProperties;
-
     @Nonnull
     final ImmutableList<Header> customHeaders;
-
+    @Delegate
+    private final DestinationProperties baseProperties;
     @Nonnull
     @Getter( AccessLevel.PACKAGE )
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
@@ -89,6 +86,41 @@ public class TransparentProxyDestination implements HttpDestination
                 ? ImmutableList.<DestinationHeaderProvider> builder().addAll(customHeaderProviders).build()
                 : ImmutableList.of();
 
+    }
+
+    static boolean containsHeader( final Collection<Header> headers, final String headerName )
+    {
+        return headers.stream().anyMatch(h -> h.getName().equalsIgnoreCase(headerName));
+    }
+
+    /**
+     * Creates a new builder for a destination.
+     * <p>
+     * A destination connects directly to a specified URL and does not use the destination-gateway. It allows setting
+     * generic headers but does not support gateway-specific properties like destination name or fragments.
+     *
+     * @return A new {@link Builder} instance.
+     */
+    @Nonnull
+    public static Builder destination( @Nonnull final String uri )
+    {
+        return new Builder(uri);
+    }
+
+    /**
+     * Creates a new builder for a destination-gateway.
+     * <p>
+     * A destination-gateway requires a destination name and will be routed through the central destination-gateway. It
+     * supports all gateway-specific properties like fragments, tenant context, and authentication flows.
+     *
+     * @param destinationName
+     *            The name of the destination to be resolved by the gateway.
+     * @return A new {@link GatewayBuilder} instance.
+     */
+    @Nonnull
+    public static GatewayBuilder gateway( @Nonnull final String destinationName, @Nonnull final String uri )
+    {
+        return new GatewayBuilder(destinationName, uri);
     }
 
     @Nonnull
@@ -129,11 +161,6 @@ public class TransparentProxyDestination implements HttpDestination
         });
 
         return allHeaders;
-    }
-
-    static boolean containsHeader( final Collection<Header> headers, final String headerName )
-    {
-        return headers.stream().anyMatch(h -> h.getName().equalsIgnoreCase(headerName));
     }
 
     @Nonnull
@@ -227,36 +254,6 @@ public class TransparentProxyDestination implements HttpDestination
     public int hashCode()
     {
         return new HashCodeBuilder(17, 37).append(baseProperties).append(customHeaders).toHashCode();
-    }
-
-    /**
-     * Creates a new builder for a destination.
-     * <p>
-     * A destination connects directly to a specified URL and does not use the destination-gateway. It allows setting
-     * generic headers but does not support gateway-specific properties like destination name or fragments.
-     *
-     * @return A new {@link Builder} instance.
-     */
-    @Nonnull
-    public static Builder destination( @Nonnull final String uri )
-    {
-        return new Builder(uri);
-    }
-
-    /**
-     * Creates a new builder for a destination-gateway.
-     * <p>
-     * A destination-gateway requires a destination name and will be routed through the central destination-gateway. It
-     * supports all gateway-specific properties like fragments, tenant context, and authentication flows.
-     *
-     * @param destinationName
-     *            The name of the destination to be resolved by the gateway.
-     * @return A new {@link GatewayBuilder} instance.
-     */
-    @Nonnull
-    public static GatewayBuilder gateway( @Nonnull final String destinationName, @Nonnull final String uri )
-    {
-        return new GatewayBuilder(destinationName, uri);
     }
 
     /**
@@ -689,7 +686,7 @@ public class TransparentProxyDestination implements HttpDestination
         public GatewayBuilder destinationLevel(
             @Nonnull final DestinationServiceOptionsAugmenter.CrossLevelScope destinationLevel )
         {
-            return header(new Header(DESTINATION_LEVEL_HEADER_KEY, destinationLevel.toString()));
+            return header(new Header(DESTINATION_LEVEL_HEADER_KEY, destinationLevel.toString().toLowerCase()));
         }
 
         /**
@@ -704,7 +701,7 @@ public class TransparentProxyDestination implements HttpDestination
         public GatewayBuilder fragmentLevel(
             @Nonnull final DestinationServiceOptionsAugmenter.CrossLevelScope fragmentLevel )
         {
-            return header(new Header(FRAGMENT_LEVEL_HEADER_KEY, fragmentLevel.toString()));
+            return header(new Header(FRAGMENT_LEVEL_HEADER_KEY, fragmentLevel.toString().toLowerCase()));
         }
 
         /**
