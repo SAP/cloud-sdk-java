@@ -84,7 +84,7 @@ class CircuitBreakerTest
             .isExactlyInstanceOf(ResilienceRuntimeException.class)
             .hasCauseExactlyInstanceOf(ThreadContextExecutionException.class)
             .hasRootCauseExactlyInstanceOf(Exception.class)
-            .hasMessage("CircuitBreaker 'circuitbreaker.test.2' is OPEN and does not permit further calls");
+            .hasMessage("CircuitBreaker 'circuitbreaker.test.2' is OPEN and does not permit further calls. Triggered by java.lang.Exception: Simulated failure, attempt nr: 3");
 
         assertThat(thrown.getCause()).hasMessage("java.lang.Exception: Simulated failure, attempt nr: 3");
 
