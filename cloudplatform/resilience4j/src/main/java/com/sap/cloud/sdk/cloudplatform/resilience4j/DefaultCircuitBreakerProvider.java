@@ -89,7 +89,10 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
                 if( lastException == null ) {
                     throw new ResilienceRuntimeException(message, e);
                 }
-                val resilienceRuntimeException = new ResilienceRuntimeException(message + ". Triggered by " + lastException.getMessage(), lastException);
+                val resilienceRuntimeException =
+                    new ResilienceRuntimeException(
+                        message + ". Triggered by " + lastException.getMessage(),
+                        lastException);
                 resilienceRuntimeException.addSuppressed(e);
                 throw resilienceRuntimeException;
             }
