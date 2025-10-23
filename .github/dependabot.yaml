@@ -36,8 +36,6 @@ updates:
       - dependency-name: 'com.github.ekryd.sortpom:sortpom-maven-plugin'
       # used by deprecated code only, not worth updating for now
       - dependency-name: 'org.apache.axis2:*'
-      # newer versions cause issues with our release process
-      - dependency-name: 'org.apache.maven.plugins:maven-javadoc-plugin'
       # Ignore problematic license versions
       - dependency-name: 'com.sap.cloud.security:java-security'
         versions: ['3.6.1', '3.6.2']
