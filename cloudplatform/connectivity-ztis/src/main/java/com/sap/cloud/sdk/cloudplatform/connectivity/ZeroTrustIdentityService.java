@@ -106,17 +106,11 @@ public class ZeroTrustIdentityService
             return new FileSystemX509Source();
         }
 
-        final String socketPath = Option.of(System.getenv(SOCKET_ENVIRONMENT_VARIABLE))
-                .peek(s -> log.debug("Found {} environment variable, using socket path {} for ZTIS agent.", SOCKET_ENVIRONMENT_VARIABLE, s))
-                .onEmpty(() -> log.warn("Environment variable {} not set, using the default socket path {} for ZTIS agent", SOCKET_ENVIRONMENT_VARIABLE, DEFAULT_SOCKET_PATH))
-            .getOrElse(DEFAULT_SOCKET_PATH);
+        final String socketPath = Option.of(System.getenv(SOCKET_ENVIRONMENT_VARIABLE)).getOrElse(DEFAULT_SOCKET_PATH);
+        log.info("Using socket path {} for ZTIS agent.", socketPath);
 
         final X509SourceOptions x509SourceOptions =
-            X509SourceOptions
-                .builder()
-                .spiffeSocketPath(socketPath)
-                .initTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .build();
+            X509SourceOptions.builder().spiffeSocketPath(socketPath).initTimeout(DEFAULT_SOCKET_TIMEOUT).build();
         try {
             return DefaultX509Source.newSource(x509SourceOptions);
         }
