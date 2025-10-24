@@ -589,6 +589,66 @@ class BtpServicePropertySuppliersTest
                             PROVIDER_TENANT_ID));
         }
 
+        @Test
+        void testProviderClientId()
+        {
+            @SuppressWarnings( "deprecation" )
+            final ServiceBindingDestinationOptions options =
+                    ServiceBindingDestinationOptions
+                            .forService(BINDING)
+                            .withOption(IasOptions.withProviderClient("provider-client-id"))
+                            .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                    .containsExactlyInAnyOrderEntriesOf(
+                            Map
+                                    .of(
+                                            "resource",
+                                            "urn:sap:identity:application:provider:clientid:provider-client-id",
+                                            "app_tid",
+                                            PROVIDER_TENANT_ID));
+        }
+
+        @Test
+        void testProviderClientIdWithTenantId()
+        {
+            @SuppressWarnings( "deprecation" )
+            final ServiceBindingDestinationOptions options =
+                    ServiceBindingDestinationOptions
+                            .forService(BINDING)
+                            .withOption(IasOptions.withProviderClient("provider-client-id", "provider-tenant-id"))
+                            .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+
+            assertThat(sut).isNotNull();
+            assertThat(sut.getTokenUri()).hasToString(PROVIDER_URL + "/oauth2/token");
+            assertThat(sut.getServiceUri()).hasToString(PROVIDER_URL);
+
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.skipTokenRetrieval()).isFalse();
+            assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
+            assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                    .containsExactlyInAnyOrderEntriesOf(
+                            Map
+                                    .of(
+                                            "resource",
+                                            "urn:sap:identity:application:provider:clientid:provider-client-id:apptid:provider-tenant-id",
+                                            "app_tid",
+                                            PROVIDER_TENANT_ID));
+        }
+
         @AllArgsConstructor
         private enum MutualTlsForTechnicalProviderAuthenticationTest
         {
