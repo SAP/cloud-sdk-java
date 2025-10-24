@@ -210,10 +210,10 @@ class BtpServicePropertySuppliers
                 return;
             }
 
-            if (o.getProviderClientId() != null) {
-                String resource = "urn:sap:identity:application:provider:clientid:" +  o.getProviderClientId();
-                if (o.getProviderTenantId() != null) {
-                    resource += ":apptid:" +  o.getProviderTenantId();
+            if( o.getProviderClientId() != null ) {
+                String resource = "urn:sap:identity:application:provider:clientid:" + o.getProviderClientId();
+                if( o.getProviderTenantId() != null ) {
+                    resource += ":apptid:" + o.getProviderTenantId();
                 }
                 optionsBuilder.withTokenRetrievalParameter("resource", resource);
                 return;

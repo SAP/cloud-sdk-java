@@ -222,7 +222,9 @@ public final class BtpServiceOptions
          * @return An instance of {@link OptionsEnhancer} that will lead to the given application provider being used
          *         when retrieving an authentication token from the IAS service.
          *
-         * @see <a href="https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming APIs from Other Applications</a>
+         * @see <a href=
+         *      "https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming
+         *      APIs from Other Applications</a>
          */
         @Nonnull
         public static OptionsEnhancer<?> withApplicationName( @Nonnull final String applicationName )
@@ -231,8 +233,8 @@ public final class BtpServiceOptions
         }
 
         /**
-         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given provider client ID
-         * when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
+         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given provider client
+         * ID when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios.
          * <p>
          * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String)}.
          *
@@ -241,7 +243,9 @@ public final class BtpServiceOptions
          * @return An instance of {@link OptionsEnhancer} that will lead to the given application provider being used
          *         when retrieving an authentication token from the IAS service.
          *
-         * @see <a href="https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming APIs from Other Applications</a>
+         * @see <a href=
+         *      "https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming
+         *      APIs from Other Applications</a>
          */
         @Nonnull
         public static OptionsEnhancer<?> withProviderClient( @Nonnull final String providerClientId )
@@ -250,9 +254,10 @@ public final class BtpServiceOptions
         }
 
         /**
-         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given provider client ID
-         * and provider tenant ID when performing token retrievals. This is needed in <b>App-To-App</b> communication scenarios
-         * when having dependencies to <i>different tenants</i> of the <i>same, multi-tenant</i> provider application (fan-out / 1-N).
+         * Creates an {@link OptionsEnhancer} that instructs an IAS-based destination to use the given provider client
+         * ID and provider tenant ID when performing token retrievals. This is needed in <b>App-To-App</b> communication
+         * scenarios when having dependencies to <i>different tenants</i> of the <i>same, multi-tenant</i> provider
+         * application (fan-out / 1-N).
          * <p>
          * <b>Hint:</b> This option is <b>mutually exclusive</b> with {@link #withConsumerClient(String)}
          *
@@ -263,10 +268,14 @@ public final class BtpServiceOptions
          * @return An instance of {@link OptionsEnhancer} that will lead to the given application provider being used
          *         when retrieving an authentication token from the IAS service.
          *
-         * @see <a href="https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming APIs from Other Applications</a>
+         * @see <a href=
+         *      "https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications?locale=en-US">Consuming
+         *      APIs from Other Applications</a>
          */
         @Nonnull
-        public static OptionsEnhancer<?> withProviderClient( @Nonnull final String providerClientId, @Nonnull final String providerTenantId )
+        public static
+            OptionsEnhancer<?>
+            withProviderClient( @Nonnull final String providerClientId, @Nonnull final String providerTenantId )
         {
             return new IasCommunicationOptions(null, providerClientId, providerTenantId, null, null);
         }

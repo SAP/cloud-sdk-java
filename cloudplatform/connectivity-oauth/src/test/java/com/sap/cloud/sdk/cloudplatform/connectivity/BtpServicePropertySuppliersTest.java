@@ -594,10 +594,10 @@ class BtpServicePropertySuppliersTest
         {
             @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions options =
-                    ServiceBindingDestinationOptions
-                            .forService(BINDING)
-                            .withOption(IasOptions.withProviderClient("provider-client-id"))
-                            .build();
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(IasOptions.withProviderClient("provider-client-id"))
+                    .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
@@ -610,13 +610,13 @@ class BtpServicePropertySuppliersTest
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
             assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                    .containsExactlyInAnyOrderEntriesOf(
-                            Map
-                                    .of(
-                                            "resource",
-                                            "urn:sap:identity:application:provider:clientid:provider-client-id",
-                                            "app_tid",
-                                            PROVIDER_TENANT_ID));
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:clientid:provider-client-id",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @Test
@@ -624,10 +624,10 @@ class BtpServicePropertySuppliersTest
         {
             @SuppressWarnings( "deprecation" )
             final ServiceBindingDestinationOptions options =
-                    ServiceBindingDestinationOptions
-                            .forService(BINDING)
-                            .withOption(IasOptions.withProviderClient("provider-client-id", "provider-tenant-id"))
-                            .build();
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .withOption(IasOptions.withProviderClient("provider-client-id", "provider-tenant-id"))
+                    .build();
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
 
@@ -640,13 +640,13 @@ class BtpServicePropertySuppliersTest
             assertThat(oAuth2Options.getClientKeyStore()).isNotNull();
             assertThatClientCertificateIsContained(oAuth2Options.getClientKeyStore());
             assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
-                    .containsExactlyInAnyOrderEntriesOf(
-                            Map
-                                    .of(
-                                            "resource",
-                                            "urn:sap:identity:application:provider:clientid:provider-client-id:apptid:provider-tenant-id",
-                                            "app_tid",
-                                            PROVIDER_TENANT_ID));
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:clientid:provider-client-id:apptid:provider-tenant-id",
+                            "app_tid",
+                            PROVIDER_TENANT_ID));
         }
 
         @AllArgsConstructor
