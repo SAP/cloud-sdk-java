@@ -47,6 +47,7 @@ public class ZeroTrustIdentityService
 {
     static final ServiceIdentifier ZTIS_IDENTIFIER = ServiceIdentifier.of("zero-trust-identity");
     private static final String DEFAULT_SOCKET_PATH = "unix:///tmp/spire-agent/public/api.sock";
+    private static final String SOCKET_ENVIRONMENT_VARIABLE = "SPIFFE_ENDPOINT_SOCKET";
     private static final Duration DEFAULT_SOCKET_TIMEOUT = Duration.ofSeconds(10);
     @Getter
     private static final ZeroTrustIdentityService instance = new ZeroTrustIdentityService();
@@ -105,17 +106,22 @@ public class ZeroTrustIdentityService
             return new FileSystemX509Source();
         }
 
+        final String socketPath = Option.of(System.getenv(SOCKET_ENVIRONMENT_VARIABLE))
+                .peek(s -> log.debug("Found {} environment variable, using socket path {} for ZTIS agent.", SOCKET_ENVIRONMENT_VARIABLE, s))
+                .onEmpty(() -> log.warn("Environment variable {} not set, using the default socket path {} for ZTIS agent", SOCKET_ENVIRONMENT_VARIABLE, DEFAULT_SOCKET_PATH))
+            .getOrElse(DEFAULT_SOCKET_PATH);
+
         final X509SourceOptions x509SourceOptions =
             X509SourceOptions
                 .builder()
-                .spiffeSocketPath(DEFAULT_SOCKET_PATH)
+                .spiffeSocketPath(socketPath)
                 .initTimeout(DEFAULT_SOCKET_TIMEOUT)
                 .build();
         try {
             return DefaultX509Source.newSource(x509SourceOptions);
         }
         catch( final Exception e ) {
-            throw new CloudPlatformException("Failed to load the certificate from the default unix socket.", e);
+            throw new CloudPlatformException("Failed to load the certificate from the unix socket: " + socketPath, e);
         }
     }
 
