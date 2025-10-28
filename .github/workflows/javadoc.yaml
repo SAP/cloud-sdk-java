@@ -39,9 +39,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: "Determine Major Version"
-        id: determine-major-version
-        run: echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+      - name: "Determine Versions"
+        id: determine-version
+        run: |
+          echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
+          echo "CURRENT_VERSION=$(jq -r '.version' latest.json" >> $GITHUB_OUTPUT
 
       - name: "Install project (skip tests)"
         run: mvn install -DskipTests --quiet
@@ -65,7 +67,7 @@ jobs:
       - name: "Replace JavaDoc"
         id: replace-javadoc
         run: |
-          TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
+          TARGET_DIR=./.cloud-sdk-docs/static/java-api/v${{ steps.determine-version.outputs.MAJOR_VERSION }}
 
           ls -lA target
           rm -rf $TARGET_DIR
@@ -83,11 +85,11 @@ jobs:
           fi
 
           echo "CREATE_PR=true" >> $GITHUB_OUTPUT
-          BRANCH_NAME=java/release-docs-${{ steps.determine-major-version.outputs.MAJOR_VERSION }}
+          BRANCH_NAME=java/release-docs-${{ steps.determine-version.outputs.CURRENT_VERSION }}
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git switch --create $BRANCH_NAME
-          git commit -m "chore: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
+          git commit -m "chore: Update JavaDocs for release ${{ steps.determine-version.outputs.CURRENT_VERSION }}"
           COMMIT_SHA=$(git log -1 --pretty=format:"%H")
           echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
 
@@ -99,7 +101,7 @@ jobs:
         working-directory: ./.cloud-sdk-docs
         run: |
           PR_TITLE="Java: Update JavaDocs for release ${{ needs.bump-version.outputs.release-version }}"
-          PR_BODY="Replace the contents of v${{ steps.determine-major-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
+          PR_BODY="Replace the contents of v${{ steps.determine-version.outputs.MAJOR_VERSION }} API docs with the latest release of the SDK."
 
           PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" --repo "${{ env.DOCS_REPO }}")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
