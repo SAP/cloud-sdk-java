@@ -12,13 +12,11 @@
 
 ### ✨ New Functionality
 
-- Add support for using the Zero Trust Identity Service (ZTIS) on Kyma by detecting the [well-known environment variable `SPIFFE_ENDPOINT_SOCKET`](https://github.com/spiffe/spiffe/blob/main/standards/SPIFFE_Workload_Endpoint.md#4-locating-the-endpoint).
-- Add support for explicitly passing the `clientid` of the target system when using the IAS App2App authentication flow.
-  Use the new methods `withProviderClient(clientid)` and `withProviderClient(clientid, apptid)` under `BtpServiceOptions.IasOptions`.
+- 
 
 ### 📈 Improvements
 
-- When the circuit breaker opens, the resulting `ResilienceRuntimeException` will have the original `CallNotPermittedException` from the circuit breaker stored as a suppressed exception. 
+- 
 
 ### 🐛 Fixed Issues
 
