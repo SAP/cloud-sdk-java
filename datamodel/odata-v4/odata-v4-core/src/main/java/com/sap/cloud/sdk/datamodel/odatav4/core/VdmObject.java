@@ -79,7 +79,7 @@ public abstract class VdmObject<ObjectT>
     /**
      * Returns the names and values of a custom field.
      *
-     * @return All of the names & values of custom fields as a map.
+     * @return All the names &amp; values of custom fields as a map.
      */
     @JsonAnyGetter
     @Nonnull

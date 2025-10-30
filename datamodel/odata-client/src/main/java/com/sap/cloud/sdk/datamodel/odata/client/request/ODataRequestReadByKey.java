@@ -76,7 +76,8 @@ public class ODataRequestReadByKey extends ODataRequestGeneric
 
     /**
      * Constructor with StructuredQuery for OData read requests on entity collections directly. For operations on nested
-     * entity collections use {@link #ODataRequestRead(String, ODataResourcePath, String, ODataProtocol)}.
+     * entity collections use
+     * {@link ODataRequestRead#ODataRequestRead(String, ODataResourcePath, String, ODataProtocol)}.
      *
      * @param servicePath
      *            The OData service path.

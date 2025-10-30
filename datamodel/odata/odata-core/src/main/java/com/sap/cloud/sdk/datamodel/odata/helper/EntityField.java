@@ -15,7 +15,7 @@ import lombok.Getter;
 /**
  * Template class to represent entity fields. Instances of this object are used in query modifier methods of the entity
  * fluent helpers. Contains methods to compare a field's value with a provided value.
- *
+ * <p>
  * Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying OData
  * field names, so use the constructor with caution.
  *
@@ -53,7 +53,7 @@ public class EntityField<EntityT, FieldT> implements EntitySelectable<EntityT>
     /**
      * Use the constants declared in each entity inner class. Instantiating directly requires knowing the underlying
      * OData field names, so use with caution.
-     *
+     * <p>
      * When creating instances for custom fields, this constructor can be used to add a type converter that will be
      * automatically used by the respective entity when getting or setting custom fields.
      *
@@ -126,7 +126,7 @@ public class EntityField<EntityT, FieldT> implements EntitySelectable<EntityT>
      * @param value
      *            Field value to compare with.
      *
-     * @return Fluent helper that represents a <i>field > value</i> expression.
+     * @return Fluent helper that represents a <i>field &gt; value</i> expression.
      */
     @Nonnull
     public ExpressionFluentHelper<EntityT> gt( @Nullable final FieldT value )
@@ -140,7 +140,7 @@ public class EntityField<EntityT, FieldT> implements EntitySelectable<EntityT>
      * @param value
      *            Field value to compare with.
      *
-     * @return Fluent helper that represents a <i>field >= value</i> expression.
+     * @return Fluent helper that represents a <i>field &ge; value</i> expression.
      */
     @Nonnull
     public ExpressionFluentHelper<EntityT> ge( @Nullable final FieldT value )
@@ -154,7 +154,7 @@ public class EntityField<EntityT, FieldT> implements EntitySelectable<EntityT>
      * @param value
      *            Field value to compare with.
      *
-     * @return Fluent helper that represents a <i>field < value</i> expression.
+     * @return Fluent helper that represents a <i>field &lt; value</i> expression.
      */
     @Nonnull
     public ExpressionFluentHelper<EntityT> lt( @Nullable final FieldT value )
@@ -168,7 +168,7 @@ public class EntityField<EntityT, FieldT> implements EntitySelectable<EntityT>
      * @param value
      *            Field value to compare with.
      *
-     * @return Fluent helper that represents a <i>field <= value</i> expression.
+     * @return Fluent helper that represents a <i>field &le; value</i> expression.
      */
     @Nonnull
     public ExpressionFluentHelper<EntityT> le( @Nullable final FieldT value )

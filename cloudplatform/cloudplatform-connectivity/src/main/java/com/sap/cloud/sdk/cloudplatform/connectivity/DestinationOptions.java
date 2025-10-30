@@ -138,10 +138,10 @@ public final class DestinationOptions
         }
 
         /**
-         * Creates an immutable instance of {@link DestinationOptions) with whatever parameters have been set through
+         * Creates an immutable instance of {@link DestinationOptions} with whatever parameters have been set through
          * the builder and any augmenters attached to it.
          *
-         * @return An immutable instance of {@link DestinationOptions).
+         * @return An immutable instance of {@link DestinationOptions}.
          */
         @Nonnull
         public DestinationOptions build()
