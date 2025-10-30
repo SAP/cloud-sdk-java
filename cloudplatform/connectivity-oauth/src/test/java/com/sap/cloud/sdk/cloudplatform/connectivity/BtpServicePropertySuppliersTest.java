@@ -587,12 +587,12 @@ class BtpServicePropertySuppliersTest
                             "urn:sap:identity:consumer:clientid:client-id:apptid:tenant-id",
                             "app_tid",
                             PROVIDER_TENANT_ID));
-          /*
-           * Note: having two different apptid values here is intentional.
-           * The first one is the tenant ID used by the target system.
-           * The second one is the tenant ID of the current application.
-           * While they can be the same, they do not have to be.
-           */
+            /*
+             * Note: having two different apptid values here is intentional.
+             * The first one is the tenant ID used by the target system.
+             * The second one is the tenant ID of the current application.
+             * While they can be the same, they do not have to be.
+             */
         }
 
         @Test
