@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.23.0-SNAPSHOT</version>
+		<version>5.24.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-destination-service</artifactId>
 	<name>Cloud Platform - Connectivity SAP BTP Cloud Foundry</name>
@@ -203,6 +203,11 @@
 		<dependency>
 			<groupId>com.sap.cloud.environment.servicebinding</groupId>
 			<artifactId>java-sap-vcap-services</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-circuitbreaker</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

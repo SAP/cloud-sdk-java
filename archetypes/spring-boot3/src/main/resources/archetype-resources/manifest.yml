@@ -6,8 +6,6 @@ applications:
   timeout: 300
   random-route: true
   path: application/target/${artifactId}-application.jar
-  buildpacks:
-    - sap_java_buildpack
   env:
     TARGET_RUNTIME: main
     SPRING_PROFILES_ACTIVE: 'cloud'

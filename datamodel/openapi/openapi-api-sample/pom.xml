@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>5.23.0-SNAPSHOT</version>
+		<version>5.24.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-api-sample</artifactId>
 	<name>Data Model - OpenAPI Services - Sample API</name>
@@ -130,6 +130,7 @@
 								<useOneOfInterfaces>true</useOneOfInterfaces>
 								<useOneOfCreators>true</useOneOfCreators>
 								<enumUnknownDefaultCase>true</enumUnknownDefaultCase>
+								<useFloatArrays>true</useFloatArrays>
 							</additionalProperties>
 							<sapCopyrightHeader>true</sapCopyrightHeader>
 							<enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
