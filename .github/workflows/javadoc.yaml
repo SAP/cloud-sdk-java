@@ -43,7 +43,7 @@ jobs:
         id: determine-version
         run: |
           echo "MAJOR_VERSION=$(jq -r '.version' latest.json | cut -d '.' -f 1)" >> $GITHUB_OUTPUT
-          echo "CURRENT_VERSION=$(jq -r '.version' latest.json" >> $GITHUB_OUTPUT
+          echo "CURRENT_VERSION=$(jq -r '.version' latest.json)" >> $GITHUB_OUTPUT
 
       - name: "Install project (skip tests)"
         run: mvn install -DskipTests --quiet

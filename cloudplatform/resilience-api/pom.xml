@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.24.0-SNAPSHOT</version>
+		<version>5.25.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>resilience-api</artifactId>
 	<name>Cloud Platform - Resilience API</name>
