@@ -1082,7 +1082,7 @@
 							<configuration>
 								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
 								<publishingServerId>central</publishingServerId>
-								<autoPublish>false</autoPublish>
+								<autoPublish>true</autoPublish>
 							</configuration>
 						</plugin>
 						<!-- flatten POM files to resolve dependency version information stored in BOMs -->

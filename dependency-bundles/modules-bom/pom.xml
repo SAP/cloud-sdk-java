@@ -342,7 +342,7 @@
 							<configuration>
 								<deploymentName>SAP AI SDK ${project.version}</deploymentName>
 								<publishingServerId>central</publishingServerId>
-								<autoPublish>false</autoPublish>
+								<autoPublish>true</autoPublish>
 							</configuration>
 						</plugin>
 					</plugins>
