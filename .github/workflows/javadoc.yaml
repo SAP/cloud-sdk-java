@@ -25,7 +25,7 @@ jobs:
           git config --global user.name "SAP Cloud SDK Bot"
 
       - name: "Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
@@ -33,7 +33,7 @@ jobs:
         run: git checkout "${{ github.event.inputs.branch || 'main' }}"
 
       - name: "Set up JDK 17"
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -58,7 +58,7 @@ jobs:
         run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false --projects "${PROJECTS}" --quiet
 
       - name: "Checkout Docs Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
