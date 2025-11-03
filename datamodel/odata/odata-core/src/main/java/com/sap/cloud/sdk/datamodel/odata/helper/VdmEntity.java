@@ -53,12 +53,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
     private transient String servicePathForFetch;
 
     /**
-     * Convienence field for reusing the same destination with multiple queries (e.g. fetching associated entities).
-     *
-     * @param destination
-     *            New destination to apply to this entity
-     *
-     * @return The stored destination for executing queries, or null if no such context has been set.
+     * Convenience field for reusing the same destination with multiple queries (e.g. fetching associated entities).
      */
     @Getter( AccessLevel.PROTECTED )
     @Setter( AccessLevel.PROTECTED )
@@ -122,7 +117,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
 
     /**
      * Sets the service path and destination for the fetch commands of this entity.
-     *
+     * <p>
      * Also applies to any associated entities (navigation properties) that were previously fetched.
      * <p>
      * <b>Note:</b> Use with caution, as this can easily break the fetch calls on this entity. See the interface of the
@@ -212,9 +207,7 @@ public abstract class VdmEntity<EntityT> extends VdmObject<EntityT>
     }
 
     @Nonnull
-    private <T extends VdmEntity<T>> ODataRequestResultGeneric fetchField(
-        final String fieldName,
-        final Destination destination )
+    private ODataRequestResultGeneric fetchField( final String fieldName, final Destination destination )
     {
         final ODataEntityKey entityKey = ODataEntityKey.of(getKey(), ODataProtocol.V2);
         final ODataResourcePath path = ODataResourcePath.of(getEntityCollection(), entityKey).addSegment(fieldName);

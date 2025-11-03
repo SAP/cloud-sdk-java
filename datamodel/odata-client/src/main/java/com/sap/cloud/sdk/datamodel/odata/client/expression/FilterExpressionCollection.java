@@ -156,10 +156,11 @@ public interface FilterExpressionCollection
     }
 
     /**
-     * Returns a {@link ValueCollection.Expression} that extracts the subsequence of {@code operand1) starting from
-     * {@code operand2) ({@code "substring"}).
+     * Returns a {@link ValueCollection.Expression} that extracts the subsequence of {@code operand1} starting from
+     * {@code operand2} ({@code "substring"}).
      *
-     * @param operand1 The collection to get the subsequence from.
+     * @param operand1
+     *            The collection to get the subsequence from.
      *
      * @param operand2
      *            The index of the first element of the subsequence to be extracted.
@@ -175,11 +176,11 @@ public interface FilterExpressionCollection
     }
 
     /**
-     * Returns a {@link ValueCollection.Expression} that extracts the subsequence of {@code operand1) starting from
-     * {@code operand2) with length {@code operand3} ({@code "substring"}).
+     * Returns a {@link ValueCollection.Expression} that extracts the subsequence of {@code operand1} starting from
+     * {@code operand2} with length {@code operand3} ({@code "substring"}).
      *
-     * @param operand1 The collection to get the subsequence from.
-     *
+     * @param operand1
+     *            The collection to get the subsequence from.
      * @param operand2
      *            The index of the first element of the subsequence to be extracted.
      * @param operand3

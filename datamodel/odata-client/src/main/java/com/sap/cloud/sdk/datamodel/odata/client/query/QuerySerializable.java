@@ -2,7 +2,7 @@ package com.sap.cloud.sdk.datamodel.odata.client.query;
 
 import javax.annotation.Nonnull;
 
-import com.sap.cloud.sdk.datamodel.odata.client.request.ODataUriFactory;
+import com.sap.cloud.sdk.datamodel.odata.client.request.UriEncodingStrategy;
 
 /**
  * A serializable query interface to serve an encoded and not-encoded String representation.
@@ -10,8 +10,8 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataUriFactory;
 public interface QuerySerializable
 {
     /**
-     * Compute the encoded string representation of this query. All characters except the ones listed in
-     * {@link ODataUriFactory#SAFE_CHARS_IN_QUERY} are encoded
+     * Compute the encoded string representation of this query with the following {@link UriEncodingStrategy#REGULAR}
+     * strategy.
      *
      * @return A string representing the encoded request query.
      */
