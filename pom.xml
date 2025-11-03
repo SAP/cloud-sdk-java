@@ -88,7 +88,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.20.0</jackson.version>
+		<jackson.version>2.20.1</jackson.version>
 		<jackson.annotations.version>2.20</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20250517</json.version>
@@ -105,15 +105,15 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.20.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.0.0</junit.jupiter.version>
+		<junit.jupiter.version>6.0.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.11</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
-		<maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
+		<maven-plugin-testing.version>3.4.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.3</caffeine.version>
-		<openapi-generator.version>7.16.0</openapi-generator.version>
+		<openapi-generator.version>7.17.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.40</io-swagger-core-v3.version>
 		<io-swagger-parser-v3.version>2.1.35</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
