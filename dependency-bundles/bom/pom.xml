@@ -65,7 +65,7 @@
 		<vavr.version>0.10.7</vavr.version>
 		<guava.version>33.5.0-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
-		<commons-io.version>2.20.0</commons-io.version>
+		<commons-io.version>2.21.0</commons-io.version>
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
@@ -279,13 +279,13 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.51.1</version>
+				<version>3.52.0</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.43.0</version>
+				<version>2.44.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
