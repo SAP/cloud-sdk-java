@@ -61,6 +61,12 @@ public class GenerationConfiguration
     @Builder.Default
     boolean debugModels = false;
 
+    @Singular( ignoreNullCollections = true )
+    Map<String, String> typeMappings;
+
+    @Singular( ignoreNullCollections = true )
+    Map<String, String> importMappings;
+
     /**
      * Indicates whether to use the default SAP copyright header for generated files.
      *
