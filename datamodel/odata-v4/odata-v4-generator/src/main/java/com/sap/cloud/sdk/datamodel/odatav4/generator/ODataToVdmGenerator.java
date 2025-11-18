@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -392,16 +395,14 @@ class ODataToVdmGenerator
     private boolean excludePatternMatch( final String excludeFilePattern, final String serviceMetadataFilename )
     {
         final List<String> excludeFilePatternEach = new ArrayList<>(Arrays.asList(excludeFilePattern.split(",")));
-        final AntPathMatcher antPathMatcher = new AntPathMatcher();
+        final FileSystem fileSystem = FileSystems.getDefault();
 
         for( final String filePattern : excludeFilePatternEach ) {
-            if( antPathMatcher.match(filePattern, serviceMetadataFilename) ) {
-                logger
-                    .info(
-                        String
-                            .format(
-                                "Excluding metadata file %s, as it matches with the excludes pattern.",
-                                serviceMetadataFilename));
+            final PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + filePattern.trim());
+
+            if( pathMatcher.matches(Paths.get(serviceMetadataFilename)) ) {
+                final String msg = "Excluding metadata file %s, as it matches with the excludes pattern.";
+                logger.info(String.format(msg, serviceMetadataFilename));
                 return true;
             }
         }
