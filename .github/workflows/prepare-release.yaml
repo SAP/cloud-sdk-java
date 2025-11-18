@@ -154,6 +154,26 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+  create-javadoc-aggregated-pr:
+    needs: [ create-release ]
+    name: "Create Aggregated JavaDoc PR on Documentation Portal"
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to trigger the ci-build workflow
+      statuses: write # needed to update the commit status
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.create-release.outputs.release-name }}
+      - name: "Trigger workflow (ignore failures)"
+        uses: ./.github/actions/trigger-workflow
+        continue-on-error: true
+        with:
+          workflow: javadoc.yaml
+          workflow-ref: main
+          parameters: -f branch=${{ needs.create-release.outputs.release-name }}
+
   create-release-notes-pr:
     name: "Create Release Notes PR"
     needs: [ bump-version, run-ci ]
@@ -263,10 +283,11 @@ jobs:
           PR_URL=$(gh pr create --title "Release ${{ needs.bump-version.outputs.release-version }}" --body "## TODOs
           - [ ] Review the changes in [the release commit]($COMMIT_URL)
           - [ ] Review **and approve** the [Release Notes PR](${{ needs.create-release-notes-pr.outputs.pr-url }})
+          - [ ] Review **and approve** the [JavaDoc PR](https://github.com/SAP/cloud-sdk/pulls?q=is%3Aopen+is%3Apr+author%3Abot-sdk-js+Update+JavaDocs)
           - [ ] Review the [Draft Release](${{ needs.create-release.outputs.release-url }})
           - [ ] Review **and approve** this PR
           - [ ] Once all tests of this PR are green, trigger the [Perform Release Workflow](${{ github.event.repository.html_url }}/actions/workflows/perform-release.yml)
-          - [ ] Once the `Perform Release` workflow is through, head over to [Central Sonatype](https://central.sonatype.com/publishing/deployments) and log in with the credentials in the Team Password Safe. There should be a validated release that can be released by clicking the _release_ button.")
+          - [ ] Once the `Perform Release` workflow is through, head over to [Central Sonatype](https://central.sonatype.com/publishing/deployments) and log in with the credentials in the Team Password Safe. There should be a published release.")
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}

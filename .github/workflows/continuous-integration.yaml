@@ -143,14 +143,14 @@ jobs:
           fi
 
       - name: "Upload SDK M2"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.SDK_M2_PATH }}
           retention-days: 1
 
       - name: "Upload SDK Targets"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
           path: ${{ env.SDK_TARGETS_PATH }}
@@ -180,13 +180,13 @@ jobs:
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -241,13 +241,13 @@ jobs:
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -282,7 +282,7 @@ jobs:
           path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Initialize CodeQL"
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: "java"
           queries: security-extended
@@ -294,7 +294,7 @@ jobs:
           mvn $MVN_ARGS
 
       - name: "Perform CodeQL Analysis"
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:java"
 
@@ -325,7 +325,7 @@ jobs:
           path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}

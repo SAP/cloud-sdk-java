@@ -75,14 +75,22 @@ class TransparentProxyDestinationTest
         final TransparentProxyDestination destination =
             TransparentProxyDestination
                 .gateway(TEST_DEST_NAME, VALID_URI.toString())
+                .destinationLevel(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT)
                 .fragmentName("fragName")
+                .fragmentLevel(DestinationServiceOptionsAugmenter.CrossLevelScope.PROVIDER_SUBACCOUNT)
                 .fragmentOptional(true)
                 .build();
 
         assertThat(destination.getHeaders(VALID_URI))
             .contains(
                 new Header(TransparentProxyDestination.DESTINATION_NAME_HEADER_KEY, TEST_DEST_NAME),
+                new Header(
+                    TransparentProxyDestination.DESTINATION_LEVEL_HEADER_KEY,
+                    DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT.toString()),
                 new Header(TransparentProxyDestination.FRAGMENT_NAME_HEADER_KEY, "fragName"),
+                new Header(
+                    TransparentProxyDestination.FRAGMENT_LEVEL_HEADER_KEY,
+                    DestinationServiceOptionsAugmenter.CrossLevelScope.PROVIDER_SUBACCOUNT.toString()),
                 new Header(TransparentProxyDestination.FRAGMENT_OPTIONAL_HEADER_KEY, "true"));
     }
 

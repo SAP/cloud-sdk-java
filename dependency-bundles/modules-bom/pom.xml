@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-modules-bom</artifactId>
-	<version>5.24.0-SNAPSHOT</version>
+	<version>5.25.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Modules BOM</name>
 	<description>Bill of Materials (BOM) of the SAP Cloud SDK modules.</description>
@@ -44,7 +44,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- do not modify the following line, it is updated by the versioning script -->
-		<sdk.version>5.24.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.25.0-SNAPSHOT</sdk.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -272,7 +272,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
+							<version>3.12.0</version>
 							<executions>
 								<execution>
 									<id>javadoc-jar</id>
@@ -342,7 +342,7 @@
 							<configuration>
 								<deploymentName>SAP AI SDK ${project.version}</deploymentName>
 								<publishingServerId>central</publishingServerId>
-								<autoPublish>false</autoPublish>
+								<autoPublish>true</autoPublish>
 							</configuration>
 						</plugin>
 					</plugins>

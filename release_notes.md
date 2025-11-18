@@ -16,7 +16,7 @@
 
 ### 📈 Improvements
 
-- When the circuit breaker opens, the resulting `ResilienceRuntimeException` will have the original `CallNotPermittedException` from the circuit breaker stored as a suppressed exception. 
+- 
 
 ### 🐛 Fixed Issues
 

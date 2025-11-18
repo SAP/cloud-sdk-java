@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-bom</artifactId>
-	<version>5.24.0-SNAPSHOT</version>
+	<version>5.25.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Modules and Dependencies BOM</name>
 	<description>Bill of Materials (BOM) of the SAP Cloud SDK modules and dependencies.</description>
@@ -44,7 +44,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- do not modify the following line, it is updated by the versioning script -->
-		<sdk.version>5.24.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.25.0-SNAPSHOT</sdk.version>
 		<service-binding.version>0.21.0</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
@@ -65,19 +65,19 @@
 		<vavr.version>0.10.7</vavr.version>
 		<guava.version>33.5.0-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
-		<commons-io.version>2.20.0</commons-io.version>
+		<commons-io.version>2.21.0</commons-io.version>
 		<!-- Apache file utils -->
 		<axis2.version>1.7.9</axis2.version>
 		<!--Used in essential modules: cloudplatform-connectivity, connectivity-destination-service, odata-client, odata-core, securitys-->
 		<commons-lang3.version>3.19.0</commons-lang3.version>
 		<!-- Soap requests -->
 		<!-- Resilience & Caching -->
-		<caffeine.version>3.2.2</caffeine.version>
+		<caffeine.version>3.2.3</caffeine.version>
 		<jcache.version>1.1.1</jcache.version>
 		<resilience4j.version>2.3.0</resilience4j.version>
 		<!-- JSON & XML stuff -->
 		<gson.version>2.13.2</gson.version>
-		<jackson.version>2.20.0</jackson.version>
+		<jackson.version>2.20.1</jackson.version>
 		<jackson.annotations.version>2.20</jackson.annotations.version>
 		<owasp-json-sanitizer.version>1.2.3</owasp-json-sanitizer.version>
 		<!-- end of essential versions -->
@@ -279,13 +279,13 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.51.1</version>
+				<version>3.52.0</version>
 			</dependency>
 			<!--  2.10 by Caffeine and 2.11 by Guava  -->
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.42.0</version>
+				<version>2.44.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -345,7 +345,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>3.11.2</version>
+							<version>3.12.0</version>
 							<executions>
 								<execution>
 									<id>javadoc-jar</id>
@@ -415,7 +415,7 @@
 							<configuration>
 								<deploymentName>SAP AI SDK ${project.version}</deploymentName>
 								<publishingServerId>central</publishingServerId>
-								<autoPublish>false</autoPublish>
+								<autoPublish>true</autoPublish>
 							</configuration>
 						</plugin>
 					</plugins>

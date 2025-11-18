@@ -78,9 +78,10 @@ public abstract class FluentHelperByKey<FluentHelperT, EntityT extends VdmEntity
     }
 
     /**
-     * Query modifier to limit which field values of the entity get fetched & populated. If this method is never called,
-     * then all fields will be fetched & populated. But if this method is called at least once, then only the specified
-     * fields will be fetched & populated. Calling this multiple times will combine the set(s) of fields of each call.
+     * Query modifier to limit which field values of the entity get fetched &amp; populated. If this method is never
+     * called, then all fields will be fetched &amp; populated. But if this method is called at least once, then only
+     * the specified fields will be fetched &amp; populated. Calling this multiple times will combine the set(s) of
+     * fields of each call.
      *
      * @param fields
      *            Array of fields to select.
