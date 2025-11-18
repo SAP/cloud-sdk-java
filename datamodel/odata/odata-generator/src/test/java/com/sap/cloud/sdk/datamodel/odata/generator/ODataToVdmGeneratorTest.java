@@ -1,11 +1,11 @@
 package com.sap.cloud.sdk.datamodel.odata.generator;
 
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Test;
+import static com.sap.cloud.sdk.datamodel.odata.generator.ODataToVdmGenerator.excludePatternMatch;
 
 import java.io.File;
 
-import static com.sap.cloud.sdk.datamodel.odata.generator.ODataToVdmGenerator.excludePatternMatch;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Test;
 
 public class ODataToVdmGeneratorTest
 {

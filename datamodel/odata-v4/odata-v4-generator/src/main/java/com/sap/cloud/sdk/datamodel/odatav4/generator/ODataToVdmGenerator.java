@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.slf4j.Logger;
-import org.springframework.util.AntPathMatcher;
 
 import com.google.common.collect.Multimap;
 import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
