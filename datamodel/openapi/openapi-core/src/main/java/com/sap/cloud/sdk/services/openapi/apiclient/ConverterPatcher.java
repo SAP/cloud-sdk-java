@@ -70,6 +70,14 @@ interface ConverterPatcher
         @Override
         public <T> T patch( @Nonnull final T instance )
         {
+          // run the following code respectively if the classes were available:
+
+          // Builder builder = ((JacksonJsonHttpMessageConverter) instance).getMapper().rebuild()
+          //    .changeDefaultVisibility(v -> v
+          //       .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+          //       .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+          // return (T) new JacksonJsonHttpMessageConverter(builder);
+
             final String springJacksonConverter =
                 "org.springframework.http.converter.json.JacksonJsonHttpMessageConverter";
             final Class<?> cl = instance.getClass();
@@ -84,14 +92,17 @@ interface ConverterPatcher
                         .rebuild();
                 builder = builder.changeDefaultVisibility(vc);
                 try {
-                    final Class<?> jackson2ser = Class.forName("com.fasterxml.jackson.databind.JsonSerializable");
-                    final Object serializer =
+                  final String jackson2SerName = "com.fasterxml.jackson.databind.JsonSerializable";
+                  final String serializerName = "tools.jackson.databind.ser.jackson.RawSerializer";
+                  final String moduleName = "tools.jackson.databind.module.SimpleModule";
+                  final Class<?> jackson2ser = Class.forName(jackson2SerName);
+                  final Object serializer =
                         Class
-                            .forName("tools.jackson.databind.ser.jackson.RawSerializer")
+                            .forName(serializerName)
                             .getConstructor(Class.class)
                             .newInstance(jackson2ser);
-                    Object module =
-                        Class.forName("tools.jackson.databind.module.SimpleModule").getConstructor().newInstance();
+                  Object module =
+                        Class.forName(moduleName).getConstructor().newInstance();
                     module =
                         module.getClass().getMethod("addSerializer", serializer.getClass()).invoke(module, serializer);
                     builder =
@@ -101,11 +112,7 @@ interface ConverterPatcher
                             .invoke(builder, module);
                 }
                 catch( final
-                    ClassNotFoundException
-                        | NoSuchMethodException
-                        | InstantiationException
-                        | IllegalAccessException
-                        | InvocationTargetException e ) {
+                    Exception e ) {
                     log.debug("Could not find Jackson2 JsonSerializable class to add ToStringSerializer.", e);
                 }
                 return (T) new org.springframework.http.converter.json.JacksonJsonHttpMessageConverter(builder);
