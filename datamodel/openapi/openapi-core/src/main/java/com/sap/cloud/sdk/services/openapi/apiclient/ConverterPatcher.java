@@ -1,6 +1,5 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.UnaryOperator;
@@ -70,13 +69,13 @@ interface ConverterPatcher
         @Override
         public <T> T patch( @Nonnull final T instance )
         {
-          // run the following code respectively if the classes were available:
-
-          // Builder builder = ((JacksonJsonHttpMessageConverter) instance).getMapper().rebuild()
-          //    .changeDefaultVisibility(v -> v
-          //       .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-          //       .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
-          // return (T) new JacksonJsonHttpMessageConverter(builder);
+            // run the following code respectively if the classes were available:
+            //
+            // Builder builder = ((JacksonJsonHttpMessageConverter) instance).getMapper().rebuild()
+            //    .changeDefaultVisibility(v -> v
+            //       .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+            //       .withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+            // return (T) new JacksonJsonHttpMessageConverter(builder);
 
             final String springJacksonConverter =
                 "org.springframework.http.converter.json.JacksonJsonHttpMessageConverter";
@@ -92,17 +91,13 @@ interface ConverterPatcher
                         .rebuild();
                 builder = builder.changeDefaultVisibility(vc);
                 try {
-                  final String jackson2SerName = "com.fasterxml.jackson.databind.JsonSerializable";
-                  final String serializerName = "tools.jackson.databind.ser.jackson.RawSerializer";
-                  final String moduleName = "tools.jackson.databind.module.SimpleModule";
-                  final Class<?> jackson2ser = Class.forName(jackson2SerName);
-                  final Object serializer =
-                        Class
-                            .forName(serializerName)
-                            .getConstructor(Class.class)
-                            .newInstance(jackson2ser);
-                  Object module =
-                        Class.forName(moduleName).getConstructor().newInstance();
+                    final String jackson2SerName = "com.fasterxml.jackson.databind.JsonSerializable";
+                    final String serializerName = "tools.jackson.databind.ser.jackson.RawSerializer";
+                    final String moduleName = "tools.jackson.databind.module.SimpleModule";
+                    final Class<?> jackson2ser = Class.forName(jackson2SerName);
+                    final Object serializer =
+                        Class.forName(serializerName).getConstructor(Class.class).newInstance(jackson2ser);
+                    Object module = Class.forName(moduleName).getConstructor().newInstance();
                     module =
                         module.getClass().getMethod("addSerializer", serializer.getClass()).invoke(module, serializer);
                     builder =
@@ -111,8 +106,7 @@ interface ConverterPatcher
                             .getMethod("addModule", module.getClass())
                             .invoke(builder, module);
                 }
-                catch( final
-                    Exception e ) {
+                catch( final Exception e ) {
                     log.debug("Could not find Jackson2 JsonSerializable class to add ToStringSerializer.", e);
                 }
                 return (T) new org.springframework.http.converter.json.JacksonJsonHttpMessageConverter(builder);
