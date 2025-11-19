@@ -218,7 +218,7 @@ public class DataModelGeneratorMojo extends AbstractMojo
     }
 
     @Nonnull
-    private Map<String, String> parseMapping( @Nonnull List<String> mappings )
+    private Map<String, String> parseMapping( @Nonnull final List<String> mappings )
     {
         return mappings
             .stream()

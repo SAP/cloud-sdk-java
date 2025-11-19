@@ -130,7 +130,7 @@ class DeserializationTest
                             .withHeader("Content-Type", "application/octet-stream")
                             .withBody(binaryData)));
 
-        byte[] result = sut.sodasDownloadIdGet(1L);
+        final byte[] result = sut.sodasDownloadIdGet(1L);
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo(binaryData);
     }
