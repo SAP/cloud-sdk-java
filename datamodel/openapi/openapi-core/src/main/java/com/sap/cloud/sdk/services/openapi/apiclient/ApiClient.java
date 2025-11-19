@@ -336,8 +336,7 @@ public final class ApiClient
     @Nonnull
     public ApiClient addDefaultHeader( @Nonnull final String name, @Nonnull final String value )
     {
-        defaultHeaders.remove(name);
-        defaultHeaders.add(name, value);
+        defaultHeaders.set(name, value);
         return this;
     }
 
