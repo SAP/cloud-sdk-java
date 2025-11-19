@@ -78,11 +78,14 @@ interface ConverterPatcher
                         .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
                         .withSetterVisibility(JsonAutoDetect.Visibility.NONE);
                 tools.jackson.databind.json.JsonMapper.Builder builder =
-                    ((org.springframework.http.converter.json.JacksonJsonHttpMessageConverter) instance).getMapper().rebuild();
+                    ((org.springframework.http.converter.json.JacksonJsonHttpMessageConverter) instance)
+                        .getMapper()
+                        .rebuild();
                 builder = builder.changeDefaultVisibility(vc);
                 try {
                     final Class<?> jackson2ser = Class.forName("com.fasterxml.jackson.databind.JsonSerializable");
-                    final tools.jackson.databind.ValueSerializer<?> ser = new tools.jackson.databind.ser.jackson.RawSerializer<>(jackson2ser);
+                    final tools.jackson.databind.ValueSerializer<?> ser =
+                        new tools.jackson.databind.ser.jackson.RawSerializer<>(jackson2ser);
                     builder = builder.addModule(new tools.jackson.databind.module.SimpleModule().addSerializer(ser));
                 }
                 catch( final ClassNotFoundException e ) {
