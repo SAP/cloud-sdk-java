@@ -30,6 +30,7 @@ class DataModelGeneratorMojoUnitTest
         RESOURCE_PATH + "/testInvocationWithUnexpectedApiMaturity/pom.xml";
     private static final String ADDITIONAL_PROPERTIES_POM =
         RESOURCE_PATH + "/testAdditionalPropertiesAndEnablingAnyOfOneOf/pom.xml";
+    private static final String MAPPINGS_EDGE_CASES_POM = RESOURCE_PATH + "/testMappingsEdgeCases/pom.xml";
 
     @TempDir
     File outputDirectory;
@@ -50,6 +51,11 @@ class DataModelGeneratorMojoUnitTest
         assertThat(configuration.getApiPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.api");
         assertThat(configuration.deleteOutputDirectory()).isTrue();
         assertThat(configuration.isOneOfAnyOfGenerationEnabled()).isFalse();
+        assertThat(configuration.getTypeMappings())
+            .containsEntry("binary", "org.springframework.core.io.Resource")
+            .containsEntry("file", "org.springframework.core.io.Resource");
+        assertThat(configuration.getImportMappings())
+            .containsEntry("org.springframework.core.io.Resource", "org.springframework.core.io.Resource");
 
         mojo.setOutputDirectory(outputDirectory.getAbsolutePath());
 
@@ -71,6 +77,8 @@ class DataModelGeneratorMojoUnitTest
         assertThat(configuration.getModelPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.model");
         assertThat(configuration.getApiPackage()).isEqualTo("com.sap.cloud.sdk.datamodel.rest.test.api");
         assertThat(configuration.deleteOutputDirectory()).isFalse();
+        assertThat(configuration.getTypeMappings()).isEmpty();
+        assertThat(configuration.getImportMappings()).isEmpty();
 
         mojo.setOutputDirectory(outputDirectory.getAbsolutePath());
 
@@ -125,5 +133,22 @@ class DataModelGeneratorMojoUnitTest
             .containsEntry("useAbstractionForFiles", "true");
 
         assertThat(mojo.retrieveGenerationConfiguration().get().isOneOfAnyOfGenerationEnabled()).isTrue();
+    }
+
+    @Test
+    @InjectMojo( goal = "generate", pom = MAPPINGS_EDGE_CASES_POM )
+    void testMappingsEdgeCases( DataModelGeneratorMojo mojo )
+        throws Throwable
+    {
+        final GenerationConfiguration configuration = mojo.retrieveGenerationConfiguration().get();
+
+        assertThat(configuration.getTypeMappings())
+            .hasSize(2) // Only valid mappings should remain
+            .containsEntry("File", "byte[]")
+            .containsEntry("binary", "org.springframework.core.io.Resource");
+
+        assertThat(configuration.getImportMappings())
+            .hasSize(1)
+            .containsEntry("Resource", "org.springframework.core.io.Resource");
     }
 }

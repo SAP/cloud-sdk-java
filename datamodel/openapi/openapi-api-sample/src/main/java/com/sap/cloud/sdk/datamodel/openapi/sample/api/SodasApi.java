@@ -59,6 +59,68 @@ public class SodasApi extends AbstractOpenApiService
 
     /**
      * <p>
+     * Download soda product data as binary
+     * </p>
+     * <p>
+     * </p>
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>404</b> - Soda product not found
+     *
+     * @param id
+     *            ID of the soda product to download
+     * @return byte[]
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public byte[] sodasDownloadIdGet( @Nonnull final Long id )
+        throws OpenApiRequestException
+    {
+        final Object localVarPostBody = null;
+
+        // verify the required parameter 'id' is set
+        if( id == null ) {
+            throw new OpenApiRequestException("Missing the required parameter 'id' when calling sodasDownloadIdGet");
+        }
+
+        // create path and map variables
+        final Map<String, Object> localVarPathParams = new HashMap<String, Object>();
+        localVarPathParams.put("id", id);
+        final String localVarPath =
+            UriComponentsBuilder.fromPath("/sodas/download/{id}").buildAndExpand(localVarPathParams).toUriString();
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { "application/octet-stream" };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {};
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        final String[] localVarAuthNames = new String[] { "apiKeyAuth", "bearerAuth" };
+
+        final ParameterizedTypeReference<byte[]> localVarReturnType = new ParameterizedTypeReference<byte[]>()
+        {
+        };
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                HttpMethod.GET,
+                localVarQueryParams,
+                localVarPostBody,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarAuthNames,
+                localVarReturnType);
+    }
+
+    /**
+     * <p>
      * Get all soda products
      * </p>
      * <p>

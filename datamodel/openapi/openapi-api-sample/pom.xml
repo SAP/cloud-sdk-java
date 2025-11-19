@@ -123,6 +123,7 @@
 							<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
 							<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
 							<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
+                            <typeMappings>File=byte[]</typeMappings>
 							<additionalProperties>
 								<pojoBuilderMethodName>create</pojoBuilderMethodName>
 								<pojoBuildMethodName />
