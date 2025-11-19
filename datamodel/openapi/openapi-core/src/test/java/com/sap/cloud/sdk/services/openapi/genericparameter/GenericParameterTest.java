@@ -1,7 +1,7 @@
 package com.sap.cloud.sdk.services.openapi.genericparameter;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -57,7 +57,7 @@ class GenericParameterTest
         WireMock
             .stubFor(
                 post(urlEqualTo("/api"))
-                    .withRequestBody(equalTo(expectedBody))
+                    .withRequestBody(equalToJson(expectedBody))
                     .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 
         final DefaultHttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
@@ -76,7 +76,7 @@ class GenericParameterTest
                     .fieldPopulatedAsStringWithoutAnnotation(jsonString)
                     .fieldPopulatedAsJacksonJsonNode(jacksonJsonNode)
                     .build());
-        verify(postRequestedFor(urlEqualTo("/api")).withRequestBody(equalTo(expectedBody)));
+        verify(postRequestedFor(urlEqualTo("/api")).withRequestBody(equalToJson(expectedBody)));
     }
 
     @Value

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,18 +28,13 @@ import org.springframework.http.RequestEntity.BodyBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.auth.ApiKeyAuth;
@@ -51,6 +47,8 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  */
 public final class ApiClient
 {
+    private static final ConverterPatcher[] CONVERTER_PATCHES =
+        { new ConverterPatcher.Jackson2(), new ConverterPatcher.Jackson3() };
 
     /**
      * Enum representing the delimiter of a given collection.
@@ -688,8 +686,7 @@ public final class ApiClient
         // auth headers are added automatically by the SDK
         // updateParamsForAuth(authNames, queryParams, headerParams);
 
-        @SuppressWarnings( "deprecation" ) // spring-web:6.2.0 and later, works until <7.0.0
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(basePath).path(path);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(basePath).path(path);
         if( queryParams != null ) {
             //encode the query parameters in case they contain unsafe characters
             for( final List<String> values : queryParams.values() ) {
@@ -724,7 +721,7 @@ public final class ApiClient
         final ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, returnType);
 
         statusCode = responseEntity.getStatusCode().value();
-        responseHeaders = responseEntity.getHeaders();
+        responseHeaders = extractHeadersMap(responseEntity.getHeaders());
 
         if( statusCode == 204 ) {
             return null;
@@ -734,6 +731,22 @@ public final class ApiClient
             // The error handler built into the RestTemplate should handle 400 and 500 series errors.
             throw new OpenApiRequestException(
                 "API returned " + statusCode + " and it wasn't handled by the RestTemplate error handler");
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    static MultiValueMap<String, String> extractHeadersMap( @Nonnull final HttpHeaders headers )
+    {
+        if( headers instanceof MultiValueMap ) {
+            return (MultiValueMap<String, String>) headers; // until including Spring Framework 6
+        }
+        try {
+            return (MultiValueMap<String, String>) HttpHeaders.class
+                .getDeclaredMethod("asMultiValueMap") // since Spring Framework 7
+                .invoke(headers);
+        }
+        catch( final Exception e ) {
+            return MultiValueMap.fromSingleValue(headers.toSingleValueMap()); // fallback
         }
     }
 
@@ -748,14 +761,7 @@ public final class ApiClient
     private void addHeadersToRequest( @Nullable final HttpHeaders headers, final BodyBuilder requestBuilder )
     {
         if( headers != null ) {
-            for( final Entry<String, List<String>> entry : headers.entrySet() ) {
-                final List<String> values = entry.getValue();
-                for( final String value : values ) {
-                    if( value != null ) {
-                        requestBuilder.header(entry.getKey(), value);
-                    }
-                }
-            }
+            requestBuilder.headers(headers);
         }
     }
 
@@ -763,26 +769,12 @@ public final class ApiClient
     private static RestTemplate newDefaultRestTemplate()
     {
         final RestTemplate restTemplate = new RestTemplate();
-
-        final ObjectMapper objectMapper = newDefaultObjectMapper();
-        restTemplate
-            .getMessageConverters()
-            .stream()
-            .filter(MappingJackson2HttpMessageConverter.class::isInstance)
-            .map(MappingJackson2HttpMessageConverter.class::cast)
-            .forEach(converter -> converter.setObjectMapper(objectMapper));
-
+        final List<HttpMessageConverter<?>> converters = new LinkedList<>(restTemplate.getMessageConverters());
+        for( final ConverterPatcher patcher : CONVERTER_PATCHES ) {
+            patcher.patchList(converters);
+        }
+        restTemplate.setMessageConverters(converters);
         return restTemplate;
-    }
-
-    @Nonnull
-    private static ObjectMapper newDefaultObjectMapper()
-    {
-        return new Jackson2ObjectMapperBuilder()
-            .modules(new JavaTimeModule())
-            .visibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
-            .visibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE)
-            .build();
     }
 
     @Nonnull
