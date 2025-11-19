@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.services.openapi.apiclient;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.UnaryOperator;
@@ -69,31 +70,33 @@ interface ConverterPatcher
         @Override
         public <T> T patch( @Nonnull final T instance )
         {
-            final String springJacksonConverter =
-                "org.springframework.http.converter.json.JacksonJsonHttpMessageConverter";
-            final Class<?> cl = instance.getClass();
-            if( cl.getName().equals(springJacksonConverter) ) {
-                final UnaryOperator<tools.jackson.databind.introspect.VisibilityChecker> vc =
-                    v -> v
-                        .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                        .withSetterVisibility(JsonAutoDetect.Visibility.NONE);
-                tools.jackson.databind.json.JsonMapper.Builder builder =
-                    ((org.springframework.http.converter.json.JacksonJsonHttpMessageConverter) instance)
-                        .getMapper()
-                        .rebuild();
-                builder = builder.changeDefaultVisibility(vc);
-                try {
-                    final Class<?> jackson2ser = Class.forName("com.fasterxml.jackson.databind.JsonSerializable");
-                    final tools.jackson.databind.ValueSerializer<?> ser =
-                        new tools.jackson.databind.ser.jackson.RawSerializer<>(jackson2ser);
-                    builder = builder.addModule(new tools.jackson.databind.module.SimpleModule().addSerializer(ser));
-                }
-                catch( final ClassNotFoundException e ) {
-                    log.debug("Could not find Jackson2 JsonSerializable class to add ToStringSerializer.", e);
-                }
-                return (T) new org.springframework.http.converter.json.JacksonJsonHttpMessageConverter(builder);
+          final String springJacksonConverter =
+              "org.springframework.http.converter.json.JacksonJsonHttpMessageConverter";
+          final Class<?> cl = instance.getClass();
+          if( cl.getName().equals(springJacksonConverter) ) {
+            final UnaryOperator<tools.jackson.databind.introspect.VisibilityChecker> vc =
+                v -> v
+                    .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                    .withSetterVisibility(JsonAutoDetect.Visibility.NONE);
+            tools.jackson.databind.json.JsonMapper.Builder builder =
+                ((org.springframework.http.converter.json.JacksonJsonHttpMessageConverter) instance)
+                    .getMapper()
+                    .rebuild();
+            builder = builder.changeDefaultVisibility(vc);
+            try {
+              final Class<?> jackson2ser = Class.forName("com.fasterxml.jackson.databind.JsonSerializable");
+              final Object serializer = Class.forName("tools.jackson.databind.ser.jackson.RawSerializer").getConstructor(Class.class).newInstance(jackson2ser);
+              Object module = Class.forName("tools.jackson.databind.module.SimpleModule").getConstructor().newInstance();
+              module = module.getClass().getMethod("addSerializer", serializer.getClass()).invoke(module, serializer);
+              builder = (tools.jackson.databind.json.JsonMapper.Builder) builder.getClass().getMethod("addModule", module.getClass()).invoke(builder, module);
             }
-            return instance;
+            catch( final ClassNotFoundException | NoSuchMethodException | InstantiationException |
+                         IllegalAccessException | InvocationTargetException e ) {
+              log.debug("Could not find Jackson2 JsonSerializable class to add ToStringSerializer.", e);
+            }
+            return (T) new org.springframework.http.converter.json.JacksonJsonHttpMessageConverter(builder);
+          }
+          return instance;
         }
     }
 }
