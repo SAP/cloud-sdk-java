@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -211,6 +212,21 @@ class DefaultApacheHttpClient5FactoryTest
             WIRE_MOCK_SERVER.verify(getRequestedFor(urlEqualTo("/proxy")));
             assertThat(response.getCode()).isEqualTo(HttpStatus.SC_OK);
         }
+    }
+
+    @Test
+    @SneakyThrows
+    void verifyDefaultRetryMechanism()
+    {
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/too-many-requests")).willReturn(aResponse().withStatus(429)));
+        WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/temporary-error")).willReturn(aResponse().withStatus(503)));
+
+        final HttpClient client = sut.createHttpClient();
+        client.execute(new HttpGet(WIRE_MOCK_SERVER.url("/too-many-requests")), ignored -> ignored);
+        client.execute(new HttpGet(WIRE_MOCK_SERVER.url("/temporary-error")), ignored -> ignored);
+
+        WIRE_MOCK_SERVER.verify(2, getRequestedFor(urlEqualTo("/too-many-requests")));
+        WIRE_MOCK_SERVER.verify(2, getRequestedFor(urlEqualTo("/temporary-error")));
     }
 
     @SneakyThrows
