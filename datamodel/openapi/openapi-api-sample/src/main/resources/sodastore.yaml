@@ -258,6 +258,29 @@ paths:
                 $ref: '#/components/schemas/SodaWithId'
         '404':
           description: Soda product not found
+  /sodas/download/{id}:
+    get:
+      summary: Download soda product data as binary
+      tags:
+        - Sodas
+      parameters:
+        - name: id
+          in: path
+          description: ID of the soda product to download
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Soda product not found
   /orders:
     post:
       summary: Create a new order

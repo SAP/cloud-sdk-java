@@ -115,6 +115,26 @@ class DeserializationTest
         assertThat(actual.getCustomField("unexpectedField")).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
     }
 
+    @Test
+    void testBinaryResponse()
+    {
+        final byte[] binaryData = "binary file content".getBytes();
+        WireMock
+            .stubFor(
+                WireMock
+                    .get(WireMock.urlMatching("/sodas/download/\\d+"))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/octet-stream")
+                            .withBody(binaryData)));
+
+        final byte[] result = sut.sodasDownloadIdGet(1L);
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(binaryData);
+    }
+
     private void stub( String responseBody )
     {
         WireMock.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(okJson(responseBody)));

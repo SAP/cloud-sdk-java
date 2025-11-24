@@ -20,7 +20,14 @@
 					<verbose>true</verbose>
 					<outputDirectory>output-directory</outputDirectory>
 					<deleteOutputDirectory>true</deleteOutputDirectory>
-				</configuration>
+                    <typeMappings>
+                        <typeMapping>binary=org.springframework.core.io.Resource</typeMapping>
+                        <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
+                    </typeMappings>
+                    <importMappings>
+                        <importMapping>org.springframework.core.io.Resource=org.springframework.core.io.Resource</importMapping>
+                    </importMappings>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>

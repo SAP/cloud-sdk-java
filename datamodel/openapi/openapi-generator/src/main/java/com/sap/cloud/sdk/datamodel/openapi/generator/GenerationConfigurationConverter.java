@@ -65,6 +65,8 @@ class GenerationConfigurationConverter
         config.setModelPackage(generationConfiguration.getModelPackage());
         config.setTemplateDir(TEMPLATE_DIRECTORY);
         config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
+        config.typeMapping().putAll(generationConfiguration.getTypeMappings());
+        config.importMapping().putAll(generationConfiguration.getImportMappings());
 
         final var openAPI = parseOpenApiSpec(inputSpecFile, generationConfiguration);
 
