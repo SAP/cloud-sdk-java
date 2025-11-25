@@ -186,12 +186,14 @@ jobs:
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v5
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
           token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+
       - name: "Prepare Git"
         working-directory: ./.cloud-sdk-docs
         run: |
