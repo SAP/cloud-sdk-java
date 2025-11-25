@@ -2,7 +2,7 @@ package com.sap.cloud.sdk.services.openapi.core;
 
 import javax.annotation.Nonnull;
 
-import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.sap.cloud.sdk.services.openapi.apiclient.ApiClient;
@@ -48,6 +48,6 @@ public class OpenApiResponse
     public OpenApiResponse( final int statusCode )
     {
         this.statusCode = statusCode;
-        headers = new HttpHeaders();
+        headers = new LinkedMultiValueMap<>();
     }
 }
