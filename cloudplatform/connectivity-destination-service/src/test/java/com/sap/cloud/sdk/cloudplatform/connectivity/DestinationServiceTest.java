@@ -18,11 +18,13 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,6 +52,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceRuntimeException;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
@@ -1620,6 +1623,38 @@ class DestinationServiceTest
             }
             return false;
         }, "has MalformedJsonException as one of the causes");
+    }
+
+    @Test
+    @DisplayName("Circuit breaker is shared across destination and blocks calls to different destinations")
+    void testCircuitBreakerSharedAcrossDestinations() {
+        DestinationService.Cache.disable();
+
+        doThrow(new RuntimeException("Service unavailable"))
+                .when(destinationServiceAdapter)
+                .getConfigurationAsJson(contains("DEST_A"), any());
+
+        doReturn(responseDestinationWithBasicAuthToken)
+                .when(destinationServiceAdapter)
+                .getConfigurationAsJson(contains("DEST_B"), any());
+
+        // Trigger circuit breaker to open on DEST_A
+        for (int i = 0; i < 10; i++) {
+            loader.tryGetDestination("DEST_A").getOrNull();
+        }
+        Try<Destination> destBResult = loader.tryGetDestination("DEST_B");
+
+        assertThat(destBResult.isFailure()).isTrue();
+        assertThatThrownBy(destBResult::get)
+                .isInstanceOf(DestinationAccessException.class)
+                .hasCauseInstanceOf(ResilienceRuntimeException.class)
+                .cause()
+                .hasMessageContaining("is OPEN and does not permit further calls");
+
+        verify(destinationServiceAdapter, times(10))
+                .getConfigurationAsJson(contains("DEST_A"), any());
+        verify(destinationServiceAdapter, never())
+                .getConfigurationAsJson(contains("DEST_B"), any());
     }
 
     @Test
