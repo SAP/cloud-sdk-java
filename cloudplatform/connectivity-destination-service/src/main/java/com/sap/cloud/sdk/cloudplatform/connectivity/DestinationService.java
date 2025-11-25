@@ -127,6 +127,11 @@ public class DestinationService implements DestinationLoader
         throws DestinationAccessException,
             DestinationNotFoundException
     {
+       final var perDestinationResilience = createResilienceConfiguration(
+                "singleDestResilience"+destName,
+                DEFAULT_TIME_LIMITER,
+                DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER);
+
         final String servicePath =
             DestinationServiceOptionsAugmenter
                 .getCrossLevelScope(options)
@@ -135,7 +140,7 @@ public class DestinationService implements DestinationLoader
                 .getOrElse(PATH_DEFAULT + destName);
 
         final Function<DestinationRetrievalStrategy, DestinationServiceV1Response> destinationRetriever =
-            strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), singleDestResilience);
+            strategy -> resilientCall(() -> retrieveDestination(strategy, servicePath), perDestinationResilience);
 
         final DestinationRetrievalStrategyResolver destinationRetrievalStrategyResolver =
             DestinationRetrievalStrategyResolver
