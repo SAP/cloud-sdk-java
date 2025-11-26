@@ -919,6 +919,8 @@ public class DestinationService implements DestinationLoader
         @Nullable
         private TimeLimiterConfiguration timeLimiterConfiguration = null;
         @Nullable
+        private CircuitBreakerConfiguration circuitBreakerConfiguration = null;
+        @Nullable
         private String providerTenantId;
 
         /**
@@ -935,6 +937,23 @@ public class DestinationService implements DestinationLoader
         public Builder withTimeLimiterConfiguration( @Nonnull final TimeLimiterConfiguration timeLimiterConfiguration )
         {
             this.timeLimiterConfiguration = timeLimiterConfiguration;
+            return this;
+        }
+
+        /**
+         * Create instance applying the given circuit breaker when retrieving destinations.
+         *
+         * @param circuitBreakerConfiguration
+         *            The circuit-breaker configuration to be applied for the request. Use
+         *            {@code TimeLimiterConfiguration.disabled()} to diable the circuit-breaker.
+         * @return The builder itself.
+         * @since 5.25.0
+         */
+        @Nonnull
+        public Builder withCircuitBreakerConfiguration(
+            @Nonnull final CircuitBreakerConfiguration circuitBreakerConfiguration )
+        {
+            this.circuitBreakerConfiguration = circuitBreakerConfiguration;
             return this;
         }
 
@@ -956,10 +975,12 @@ public class DestinationService implements DestinationLoader
         {
             final TimeLimiterConfiguration timeLimiter =
                 timeLimiterConfiguration != null ? timeLimiterConfiguration : DEFAULT_TIME_LIMITER;
+            final CircuitBreakerConfiguration circuitBreaker =
+                circuitBreakerConfiguration != null ? circuitBreakerConfiguration : DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER;
             return new DestinationService(
                 new DestinationServiceAdapter(null, null, providerTenantId),
-                createResilienceConfiguration("singleDestResilience", timeLimiter, DEFAULT_SINGLE_DEST_CIRCUIT_BREAKER),
-                createResilienceConfiguration("allDestResilience", timeLimiter, DEFAULT_ALL_DEST_CIRCUIT_BREAKER));
+                createResilienceConfiguration("singleDestResilience", timeLimiter, circuitBreaker),
+                createResilienceConfiguration("allDestResilience", timeLimiter, circuitBreaker));
         }
     }
 }
