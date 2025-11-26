@@ -26,6 +26,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
@@ -149,6 +150,10 @@ class GetOrComputeSingleDestinationCommand
             if( result != null ) {
                 return Try.success(result);
             }
+            if( !destinationExists() ) {
+              String msg = "Destination %s was not found among the destinations of the current tenant.";
+              return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
+            }
 
             final Try<Destination> maybeResult = Try.ofSupplier(destinationSupplier);
             if( maybeResult.isFailure() ) {
@@ -261,6 +266,20 @@ class GetOrComputeSingleDestinationCommand
             return null;
         }
         return maybeDestination;
+    }
+
+    private boolean destinationExists()
+    {
+        if( getAllCommand != null ) {
+            val allDestinations = getAllCommand.execute();
+            if( allDestinations != null && allDestinations.isSuccess() ) {
+                return allDestinations
+                    .get()
+                    .stream()
+                    .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
+            }
+        }
+        return false;
     }
 
     /**

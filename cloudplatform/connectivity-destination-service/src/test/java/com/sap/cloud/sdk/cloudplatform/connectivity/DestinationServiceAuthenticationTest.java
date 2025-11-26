@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -42,6 +43,12 @@ class DestinationServiceAuthenticationTest
 
     private static final String SERVICE_PATH_DESTINATION = "/v1/destinations/" + DESTINATION_NAME;
 
+    private static final String ALL_DESTINATIONS = """
+        [{
+            "Name": "CXT-HTTP-OAUTH"
+          }]
+        """;
+
     @SuppressWarnings( "deprecation" )
     private static final DestinationOptions DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE =
         DestinationOptions
@@ -62,6 +69,12 @@ class DestinationServiceAuthenticationTest
     void setMockAdapter()
     {
         mockAdapter = mock(DestinationServiceAdapter.class);
+      doReturn(ALL_DESTINATIONS)
+          .when(mockAdapter)
+          .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+      doReturn(ALL_DESTINATIONS)
+          .when(mockAdapter)
+          .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         doThrow(new AssertionError("Unexpected invocation to mocked adapter"))
             .when(mockAdapter)
             .getConfigurationAsJson(anyString(), any());
@@ -443,6 +456,6 @@ class DestinationServiceAuthenticationTest
                     "authTokens",
                     tokens != null ? List.of(tokens) : Collections.emptyList());
 
-        doReturn(new Gson().toJson(destination)).when(mockAdapter).getConfigurationAsJson(any(), eq(expectedStrategy));
+        doReturn(new Gson().toJson(destination)).when(mockAdapter).getConfigurationAsJson(matches("/v1/destinations/.*"), eq(expectedStrategy));
     }
 }

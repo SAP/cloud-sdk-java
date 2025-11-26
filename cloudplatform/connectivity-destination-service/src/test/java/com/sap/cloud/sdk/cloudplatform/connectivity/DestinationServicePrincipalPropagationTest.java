@@ -16,9 +16,9 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -73,6 +73,11 @@ class DestinationServicePrincipalPropagationTest
           }
         }
         """;
+    private static final String ALL_DESTINATIONS = """
+        [{
+            "Name": "test"
+          }]
+        """;
 
     @RegisterExtension
     static TestContext context = TestContext.withThreadContext().resetCaches();
@@ -101,7 +106,16 @@ class DestinationServicePrincipalPropagationTest
 
         DefaultServiceBindingAccessor.setInstance(() -> List.of(connectivityService));
 
-        doReturn(DESTINATION).when(destinationServiceAdapter).getConfigurationAsJson(anyString(), any());
+        // WIP
+        doReturn(ALL_DESTINATIONS)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+        doReturn(ALL_DESTINATIONS)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        doReturn(DESTINATION)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(matches("/v1/destinations/.*"), any());
 
         stubFor(
             post("/xsuaa/oauth/token")
