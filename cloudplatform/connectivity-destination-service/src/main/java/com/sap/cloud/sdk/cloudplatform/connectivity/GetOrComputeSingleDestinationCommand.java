@@ -151,8 +151,8 @@ class GetOrComputeSingleDestinationCommand
                 return Try.success(result);
             }
             if( !destinationExists() ) {
-              String msg = "Destination %s was not found among the destinations of the current tenant.";
-              return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
+                String msg = "Destination %s was not found among the destinations of the current tenant.";
+                return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
             }
 
             final Try<Destination> maybeResult = Try.ofSupplier(destinationSupplier);
