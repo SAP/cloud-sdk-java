@@ -155,7 +155,7 @@ class GetOrComputeSingleDestinationCommand
                 return Try.success(result);
             }
             if( prependGetAllDestinationCall && !destinationExists() ) {
-                String msg = "Destination %s was not found among the destinations of the current tenant.";
+                final String msg = "Destination %s was not found among the destinations of the current tenant.";
                 return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
             }
 
