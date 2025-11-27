@@ -72,7 +72,7 @@ class GetOrComputeDestinationCommandTest
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
-                .prepareCommand("destination", options, destinationCache, isolationLocks, ( foo, bar ) -> null, null)
+                .prepareCommand("destination", options, destinationCache, isolationLocks, ( foo, bar ) -> null, null, false)
                 .get();
 
         assertThat(sut.getExchangeStrategy()).isEqualTo(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
@@ -158,7 +158,7 @@ class GetOrComputeDestinationCommandTest
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
-                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
+                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null, false)
                 .get();
 
         assertThat(sut.getCacheKey()).isEqualTo(expectedCacheKey);
@@ -198,7 +198,7 @@ class GetOrComputeDestinationCommandTest
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
-                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
+                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null, false)
                 .get();
 
         final Try<Destination> fetchedDestination = sut.execute();
@@ -236,7 +236,7 @@ class GetOrComputeDestinationCommandTest
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
-                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
+                .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null, false)
                 .get();
 
         final Try<Destination> fetchedDestination = sut.execute();
@@ -288,7 +288,8 @@ class GetOrComputeDestinationCommandTest
                                     destinationCache,
                                     isolationLocks,
                                     function,
-                                    null)
+                                    null,
+                                    false)
                                 .get()));
 
         final Try<Destination> fetchedDestination = sut.execute();
@@ -342,7 +343,8 @@ class GetOrComputeDestinationCommandTest
                                     destinationCache,
                                     isolationLocks,
                                     function,
-                                    null)
+                                    null,
+                                    false)
                                 .get()));
 
         final Try<Destination> fetchedDestination =
@@ -393,7 +395,8 @@ class GetOrComputeDestinationCommandTest
                                     destinationCache,
                                     isolationLocks,
                                     function,
-                                    null)
+                                    null,
+                                    false)
                                 .get()));
 
         final Try<Destination> fetchedDestination = sut.execute();
@@ -437,7 +440,7 @@ class GetOrComputeDestinationCommandTest
                 .executeWithTenant(
                     t1,
                     () -> GetOrComputeSingleDestinationCommand
-                        .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null)
+                        .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null, false)
                         .get());
 
         final Try<Destination> shouldBeFailure = TenantAccessor.executeWithTenant(t1, sut::execute);
@@ -487,7 +490,8 @@ class GetOrComputeDestinationCommandTest
                                     destinationCache,
                                     isolationLocks,
                                     function,
-                                    null)
+                                    null,
+                                    false)
                                 .get()));
 
         final Try<Destination> fetchedDestination = PrincipalAccessor.executeWithPrincipal(p1, () -> sut.execute());
@@ -542,7 +546,8 @@ class GetOrComputeDestinationCommandTest
                     destinationCache,
                     isolationLocks,
                     destinationRetriever,
-                    getAllCommand)
+                    getAllCommand,
+                    false)
                 .flatMap(GetOrComputeSingleDestinationCommand::execute);
 
         assertThat(result.isSuccess()).isTrue();
@@ -627,7 +632,8 @@ class GetOrComputeDestinationCommandTest
                     destinationCache,
                     isolationLocks,
                     destinationRetriever,
-                    getAllMock)
+                    getAllMock,
+                    false)
                 .get();
         final Try<Destination> result = sut.execute();
 

@@ -53,6 +53,8 @@ class GetOrComputeSingleDestinationCommand
     private final DestinationServiceTokenExchangeStrategy exchangeStrategy;
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
+    @Nonnull
+    private final Boolean prependGetAllDestinationCall;
 
     @SuppressWarnings( "deprecation" )
     static Try<GetOrComputeSingleDestinationCommand> prepareCommand(
@@ -61,7 +63,8 @@ class GetOrComputeSingleDestinationCommand
         @Nonnull final Cache<CacheKey, Destination> destinationCache,
         @Nonnull final Cache<CacheKey, ReentrantLock> isolationLocks,
         @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationRetriever,
-        @Nullable final GetOrComputeAllDestinationsCommand getAllCommand )
+        @Nullable final GetOrComputeAllDestinationsCommand getAllCommand,
+        @Nonnull final Boolean prependGetAllDestinationCall)
     {
         final Supplier<Destination> destinationSupplier =
             () -> destinationRetriever.apply(destinationName, destinationOptions);
@@ -110,7 +113,8 @@ class GetOrComputeSingleDestinationCommand
                     destinationCache,
                     destinationSupplier,
                     exchangeStrategy,
-                    getAllCommand));
+                    getAllCommand,
+                    prependGetAllDestinationCall));
     }
 
     /**
@@ -150,7 +154,7 @@ class GetOrComputeSingleDestinationCommand
             if( result != null ) {
                 return Try.success(result);
             }
-            if( !destinationExists() ) {
+            if( prependGetAllDestinationCall && !destinationExists() ) {
                 String msg = "Destination %s was not found among the destinations of the current tenant.";
                 return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
             }

@@ -16,6 +16,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import lombok.Setter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -79,6 +80,10 @@ public class DestinationService implements DestinationLoader
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration allDestResilience;
 
+    @Nonnull
+    @Setter
+    private Boolean prependGetAllDestinationCall = false;
+
     /**
      * Create instance with all default settings
      */
@@ -120,7 +125,7 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
+        return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination, prependGetAllDestinationCall);
     }
 
     Destination loadAndParseDestination( final String destName, final DestinationOptions options )
@@ -839,7 +844,8 @@ public class DestinationService implements DestinationLoader
             @Nonnull final DestinationService loader,
             @Nonnull final String destinationName,
             @Nonnull final DestinationOptions options,
-            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader )
+            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader,
+            @Nonnull final Boolean prependGetAllCall)
         {
             if( !cacheEnabled ) {
                 return Try.ofSupplier(() -> destinationDownloader.apply(destinationName, options));
@@ -866,7 +872,8 @@ public class DestinationService implements DestinationLoader
                         instanceSingle(),
                         isolationLocks(),
                         destinationDownloader,
-                        getAllCommand);
+                        getAllCommand,
+                        prependGetAllCall);
             return command.flatMap(GetOrComputeSingleDestinationCommand::execute);
         }
 
