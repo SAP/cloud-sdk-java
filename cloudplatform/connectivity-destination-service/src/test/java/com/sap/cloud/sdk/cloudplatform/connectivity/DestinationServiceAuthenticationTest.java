@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -43,12 +42,6 @@ class DestinationServiceAuthenticationTest
 
     private static final String SERVICE_PATH_DESTINATION = "/v1/destinations/" + DESTINATION_NAME;
 
-    private static final String ALL_DESTINATIONS = """
-        [{
-            "Name": "CXT-HTTP-OAUTH"
-          }]
-        """;
-
     @SuppressWarnings( "deprecation" )
     private static final DestinationOptions DESTINATION_RETRIEVAL_LOOKUP_EXCHANGE =
         DestinationOptions
@@ -72,10 +65,6 @@ class DestinationServiceAuthenticationTest
         doThrow(new AssertionError("Unexpected invocation to mocked adapter"))
             .when(mockAdapter)
             .getConfigurationAsJson(anyString(), any());
-        doReturn(ALL_DESTINATIONS)
-            .when(mockAdapter)
-            .getConfigurationAsJson(matches("/v1/subaccountDestinations"), any());
-        doReturn(ALL_DESTINATIONS).when(mockAdapter).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         sut = new DestinationService(mockAdapter);
     }
 
@@ -97,8 +86,6 @@ class DestinationServiceAuthenticationTest
             .containsExactlyInAnyOrder(new Header("Authorization", "Basic " + BASIC_AUTH));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -159,8 +146,6 @@ class DestinationServiceAuthenticationTest
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedFirstStrategy));
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedSecondStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -206,8 +191,6 @@ class DestinationServiceAuthenticationTest
             .containsExactlyInAnyOrder(new Header("Authorization", "Bearer " + OAUTH_TOKEN));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -262,8 +245,6 @@ class DestinationServiceAuthenticationTest
             .containsExactlyInAnyOrder(new Header("Authorization", "Bearer " + oAuthToken));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(anyString(), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -310,8 +291,6 @@ class DestinationServiceAuthenticationTest
             .containsExactlyInAnyOrder(new Header("Authorization", "Bearer " + oAuthToken));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -363,8 +342,6 @@ class DestinationServiceAuthenticationTest
                 new Header("x-sap-security-session", "create"));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(anyString(), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -406,8 +383,6 @@ class DestinationServiceAuthenticationTest
         assertThat(dest.asHttp().getHeaders()).containsExactlyInAnyOrder(new Header("Cookie", assertionCookie));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -436,8 +411,6 @@ class DestinationServiceAuthenticationTest
         assertThat(dest.asHttp().getHeaders()).containsExactlyInAnyOrder(new Header("Authorization", "Bearer ey1234"));
 
         verify(mockAdapter, times(1)).getConfigurationAsJson(anyString(), eq(expectedStrategy));
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(mockAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -472,6 +445,6 @@ class DestinationServiceAuthenticationTest
 
         doReturn(new Gson().toJson(destination))
             .when(mockAdapter)
-            .getConfigurationAsJson(matches("/v1/destinations/.*"), eq(expectedStrategy));
+            .getConfigurationAsJson(any(), eq(expectedStrategy));
     }
 }
