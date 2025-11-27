@@ -113,6 +113,15 @@ class DestinationServiceTest
             "ProxyType": "Internet",
             "KeyStorePassword": "password",
             "KeyStoreLocation": "aaa"
+          },
+          {
+            "Name": "SomeDestinationName",
+            "Type": "HTTP",
+            "URL": "https://a.s4hana.ondemand.com",
+            "Authentication": "ClientCertificateAuthentication",
+            "ProxyType": "Internet",
+            "KeyStorePassword": "password",
+            "KeyStoreLocation": "aaa"
           }]
         """;
 
@@ -442,7 +451,7 @@ class DestinationServiceTest
 
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
 
         final DestinationProperties destination =
             destinationList
@@ -478,7 +487,7 @@ class DestinationServiceTest
         final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ALWAYS_PROVIDER);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
     }
 
     @Test
@@ -494,7 +503,7 @@ class DestinationServiceTest
         final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ONLY_SUBSCRIBER);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
     }
 
     @Test
@@ -589,10 +598,10 @@ class DestinationServiceTest
         final List<Destination> destinationList = new ArrayList<>();
         destinations.get().forEach(destinationList::add);
 
-        assertThat(destinationList.size()).isEqualTo(3);
+        assertThat(destinationList.size()).isEqualTo(4);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
+            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1", destinationName);
     }
 
     @SuppressWarnings( "deprecation" )
@@ -1910,4 +1919,58 @@ class DestinationServiceTest
             }
             """, name, url);
     }
+
+  @Test
+  void testPrependGetAllDestinationsCall()
+  {
+    doReturn(responseServiceInstanceDestination)
+        .when(destinationServiceAdapter)
+        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+    doReturn(responseSubaccountDestination)
+        .when(destinationServiceAdapter)
+        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+
+    loader.setPrependGetAllDestinationCall(true);
+
+    final DestinationOptions options =
+        DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+    Destination result = loader.tryGetDestination(destinationName).get();
+
+    // verify all results are cached
+    verify(destinationServiceAdapter, times(1))
+        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+    verify(destinationServiceAdapter, times(1))
+        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+    verify(destinationServiceAdapter, times(1))
+        .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
+    verifyNoMoreInteractions(destinationServiceAdapter);
+
+    loader.setPrependGetAllDestinationCall(false);
+  }
+
+  @Test
+  void testPrependGetAllDestinationsCallWithMissingDestination()
+  {
+    doReturn(responseServiceInstanceDestination)
+        .when(destinationServiceAdapter)
+        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+    doReturn(responseSubaccountDestination)
+        .when(destinationServiceAdapter)
+        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+
+    loader.setPrependGetAllDestinationCall(true);
+
+    final DestinationOptions options =
+        DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+    assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get()).isInstanceOf(DestinationAccessException.class).hasMessageContaining("was not found among the destinations of the current tenant.");
+
+    // verify all results are cached
+    verify(destinationServiceAdapter, times(1))
+        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+    verify(destinationServiceAdapter, times(1))
+        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+    verifyNoMoreInteractions(destinationServiceAdapter);
+
+    loader.setPrependGetAllDestinationCall(false);
+  }
 }
