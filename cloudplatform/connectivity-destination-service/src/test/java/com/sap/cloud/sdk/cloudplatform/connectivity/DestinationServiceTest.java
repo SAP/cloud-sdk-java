@@ -1920,57 +1920,55 @@ class DestinationServiceTest
             """, name, url);
     }
 
-  @Test
-  void testPrependGetAllDestinationsCall()
-  {
-    doReturn(responseServiceInstanceDestination)
-        .when(destinationServiceAdapter)
-        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-    doReturn(responseSubaccountDestination)
-        .when(destinationServiceAdapter)
-        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+    @Test
+    void testPrependGetAllDestinationsCall()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-    loader.setPrependGetAllDestinationCall(true);
+        loader.setPrependGetAllDestinationCall(true);
 
-    final DestinationOptions options =
-        DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
-    Destination result = loader.tryGetDestination(destinationName).get();
+        final DestinationOptions options =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+        Destination result = loader.tryGetDestination(destinationName).get();
 
-    // verify all results are cached
-    verify(destinationServiceAdapter, times(1))
-        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-    verify(destinationServiceAdapter, times(1))
-        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-    verify(destinationServiceAdapter, times(1))
-        .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
-    verifyNoMoreInteractions(destinationServiceAdapter);
+        // verify all results are cached
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+        verify(destinationServiceAdapter, times(1))
+            .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
+        verifyNoMoreInteractions(destinationServiceAdapter);
 
-    loader.setPrependGetAllDestinationCall(false);
-  }
+        loader.setPrependGetAllDestinationCall(false);
+    }
 
-  @Test
-  void testPrependGetAllDestinationsCallWithMissingDestination()
-  {
-    doReturn(responseServiceInstanceDestination)
-        .when(destinationServiceAdapter)
-        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-    doReturn(responseSubaccountDestination)
-        .when(destinationServiceAdapter)
-        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+    @Test
+    void testPrependGetAllDestinationsCallWithMissingDestination()
+    {
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-    loader.setPrependGetAllDestinationCall(true);
+        loader.setPrependGetAllDestinationCall(true);
 
-    final DestinationOptions options =
-        DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
-    assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get()).isInstanceOf(DestinationAccessException.class).hasMessageContaining("was not found among the destinations of the current tenant.");
+        final DestinationOptions options =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+        assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get())
+            .isInstanceOf(DestinationAccessException.class)
+            .hasMessageContaining("was not found among the destinations of the current tenant.");
 
-    // verify all results are cached
-    verify(destinationServiceAdapter, times(1))
-        .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-    verify(destinationServiceAdapter, times(1))
-        .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-    verifyNoMoreInteractions(destinationServiceAdapter);
+        // verify all results are cached
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+        verifyNoMoreInteractions(destinationServiceAdapter);
 
-    loader.setPrependGetAllDestinationCall(false);
-  }
+        loader.setPrependGetAllDestinationCall(false);
+    }
 }

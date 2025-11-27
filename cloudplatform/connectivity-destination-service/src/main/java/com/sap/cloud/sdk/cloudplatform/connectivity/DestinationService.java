@@ -16,7 +16,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import lombok.Setter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -42,6 +41,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -125,7 +125,13 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination, prependGetAllDestinationCall);
+        return Cache
+            .getOrComputeDestination(
+                this,
+                destinationName,
+                options,
+                this::loadAndParseDestination,
+                prependGetAllDestinationCall);
     }
 
     Destination loadAndParseDestination( final String destName, final DestinationOptions options )
@@ -845,7 +851,7 @@ public class DestinationService implements DestinationLoader
             @Nonnull final String destinationName,
             @Nonnull final DestinationOptions options,
             @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader,
-            @Nonnull final Boolean prependGetAllCall)
+            @Nonnull final Boolean prependGetAllCall )
         {
             if( !cacheEnabled ) {
                 return Try.ofSupplier(() -> destinationDownloader.apply(destinationName, options));

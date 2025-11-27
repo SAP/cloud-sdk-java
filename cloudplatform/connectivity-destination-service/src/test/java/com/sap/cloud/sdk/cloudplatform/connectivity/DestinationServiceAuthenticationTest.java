@@ -443,8 +443,6 @@ class DestinationServiceAuthenticationTest
                     "authTokens",
                     tokens != null ? List.of(tokens) : Collections.emptyList());
 
-        doReturn(new Gson().toJson(destination))
-            .when(mockAdapter)
-            .getConfigurationAsJson(any(), eq(expectedStrategy));
+        doReturn(new Gson().toJson(destination)).when(mockAdapter).getConfigurationAsJson(any(), eq(expectedStrategy));
     }
 }

@@ -72,7 +72,14 @@ class GetOrComputeDestinationCommandTest
 
         final GetOrComputeSingleDestinationCommand sut =
             GetOrComputeSingleDestinationCommand
-                .prepareCommand("destination", options, destinationCache, isolationLocks, ( foo, bar ) -> null, null, false)
+                .prepareCommand(
+                    "destination",
+                    options,
+                    destinationCache,
+                    isolationLocks,
+                    ( foo, bar ) -> null,
+                    null,
+                    false)
                 .get();
 
         assertThat(sut.getExchangeStrategy()).isEqualTo(DestinationServiceTokenExchangeStrategy.LOOKUP_THEN_EXCHANGE);
@@ -440,7 +447,14 @@ class GetOrComputeDestinationCommandTest
                 .executeWithTenant(
                     t1,
                     () -> GetOrComputeSingleDestinationCommand
-                        .prepareCommand(DESTINATION_NAME, options, destinationCache, isolationLocks, function, null, false)
+                        .prepareCommand(
+                            DESTINATION_NAME,
+                            options,
+                            destinationCache,
+                            isolationLocks,
+                            function,
+                            null,
+                            false)
                         .get());
 
         final Try<Destination> shouldBeFailure = TenantAccessor.executeWithTenant(t1, sut::execute);

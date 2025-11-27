@@ -64,7 +64,7 @@ class GetOrComputeSingleDestinationCommand
         @Nonnull final Cache<CacheKey, ReentrantLock> isolationLocks,
         @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationRetriever,
         @Nullable final GetOrComputeAllDestinationsCommand getAllCommand,
-        @Nonnull final Boolean prependGetAllDestinationCall)
+        @Nonnull final Boolean prependGetAllDestinationCall )
     {
         final Supplier<Destination> destinationSupplier =
             () -> destinationRetriever.apply(destinationName, destinationOptions);
