@@ -426,6 +426,8 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
+        private static boolean getAllDocumentsPrepended = false;
+        // JONAS: put feature switch here
 
         static {
             recreateSingleCache();
@@ -441,6 +443,16 @@ public class DestinationService implements DestinationLoader
         static boolean isChangeDetectionEnabled()
         {
             return changeDetectionEnabled;
+        }
+
+        static boolean isGetAllDocumentsPrepended()
+        {
+            return getAllDocumentsPrepended;
+        }
+
+        public static void setGetAllDocumentsPrepended( boolean bool )
+        {
+            getAllDocumentsPrepended = bool;
         }
 
         @Nonnull
@@ -496,6 +508,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
+            getAllDocumentsPrepended = false;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
@@ -866,7 +879,8 @@ public class DestinationService implements DestinationLoader
                         instanceSingle(),
                         isolationLocks(),
                         destinationDownloader,
-                        getAllCommand);
+                        getAllCommand,
+                        getAllDocumentsPrepended);
             return command.flatMap(GetOrComputeSingleDestinationCommand::execute);
         }
 

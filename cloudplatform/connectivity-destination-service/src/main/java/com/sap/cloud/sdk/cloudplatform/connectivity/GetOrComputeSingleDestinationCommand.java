@@ -26,6 +26,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
@@ -52,6 +53,8 @@ class GetOrComputeSingleDestinationCommand
     private final DestinationServiceTokenExchangeStrategy exchangeStrategy;
     @Nullable
     private final GetOrComputeAllDestinationsCommand getAllCommand;
+    @Nonnull
+    private final Boolean prependGetAllDestinationCall;
 
     @SuppressWarnings( "deprecation" )
     static Try<GetOrComputeSingleDestinationCommand> prepareCommand(
@@ -60,7 +63,8 @@ class GetOrComputeSingleDestinationCommand
         @Nonnull final Cache<CacheKey, Destination> destinationCache,
         @Nonnull final Cache<CacheKey, ReentrantLock> isolationLocks,
         @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationRetriever,
-        @Nullable final GetOrComputeAllDestinationsCommand getAllCommand )
+        @Nullable final GetOrComputeAllDestinationsCommand getAllCommand,
+        @Nonnull final Boolean prependGetAllDestinationCall )
     {
         final Supplier<Destination> destinationSupplier =
             () -> destinationRetriever.apply(destinationName, destinationOptions);
@@ -109,7 +113,8 @@ class GetOrComputeSingleDestinationCommand
                     destinationCache,
                     destinationSupplier,
                     exchangeStrategy,
-                    getAllCommand));
+                    getAllCommand,
+                    prependGetAllDestinationCall));
     }
 
     /**
@@ -148,6 +153,10 @@ class GetOrComputeSingleDestinationCommand
             result = getCachedDestination();
             if( result != null ) {
                 return Try.success(result);
+            }
+            if( prependGetAllDestinationCall && !destinationExists() ) {
+                final String msg = "Destination %s was not found among the destinations of the current tenant.";
+                return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
             }
 
             final Try<Destination> maybeResult = Try.ofSupplier(destinationSupplier);
@@ -261,6 +270,20 @@ class GetOrComputeSingleDestinationCommand
             return null;
         }
         return maybeDestination;
+    }
+
+    private boolean destinationExists()
+    {
+        if( getAllCommand != null ) {
+            val allDestinations = getAllCommand.execute();
+            if( allDestinations != null && allDestinations.isSuccess() ) {
+                return allDestinations
+                    .get()
+                    .stream()
+                    .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
+            }
+        }
+        return false;
     }
 
     /**
