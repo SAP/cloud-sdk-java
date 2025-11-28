@@ -41,7 +41,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -121,12 +120,7 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        return Cache
-            .getOrComputeDestination(
-                this,
-                destinationName,
-                options,
-                this::loadAndParseDestination);
+        return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
     Destination loadAndParseDestination( final String destName, final DestinationOptions options )
@@ -451,12 +445,14 @@ public class DestinationService implements DestinationLoader
             return changeDetectionEnabled;
         }
 
-        static boolean isGetAllDocumentsPrepended() {
-          return getAllDocumentsPrepended;
+        static boolean isGetAllDocumentsPrepended()
+        {
+            return getAllDocumentsPrepended;
         }
 
-        public static void setGetAllDocumentsPrepended(boolean bool) {
-          getAllDocumentsPrepended = bool;
+        public static void setGetAllDocumentsPrepended( boolean bool )
+        {
+            getAllDocumentsPrepended = bool;
         }
 
         @Nonnull
@@ -856,7 +852,7 @@ public class DestinationService implements DestinationLoader
             @Nonnull final DestinationService loader,
             @Nonnull final String destinationName,
             @Nonnull final DestinationOptions options,
-            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader)
+            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader )
         {
             if( !cacheEnabled ) {
                 return Try.ofSupplier(() -> destinationDownloader.apply(destinationName, options));
