@@ -80,10 +80,6 @@ public class DestinationService implements DestinationLoader
     @Getter( AccessLevel.PACKAGE )
     private final ResilienceConfiguration allDestResilience;
 
-    @Nonnull
-    @Setter
-    private Boolean prependGetAllDestinationCall = false;
-
     /**
      * Create instance with all default settings
      */
@@ -130,8 +126,7 @@ public class DestinationService implements DestinationLoader
                 this,
                 destinationName,
                 options,
-                this::loadAndParseDestination,
-                prependGetAllDestinationCall);
+                this::loadAndParseDestination);
     }
 
     Destination loadAndParseDestination( final String destName, final DestinationOptions options )
@@ -437,6 +432,8 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
+        private static boolean getAllDocumentsPrepended = false;
+        // JONAS: put feature switch here
 
         static {
             recreateSingleCache();
@@ -452,6 +449,14 @@ public class DestinationService implements DestinationLoader
         static boolean isChangeDetectionEnabled()
         {
             return changeDetectionEnabled;
+        }
+
+        static boolean isGetAllDocumentsPrepended() {
+          return getAllDocumentsPrepended;
+        }
+
+        public static void setGetAllDocumentsPrepended(boolean bool) {
+          getAllDocumentsPrepended = bool;
         }
 
         @Nonnull
@@ -507,6 +512,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
+            getAllDocumentsPrepended = false;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
@@ -850,8 +856,7 @@ public class DestinationService implements DestinationLoader
             @Nonnull final DestinationService loader,
             @Nonnull final String destinationName,
             @Nonnull final DestinationOptions options,
-            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader,
-            @Nonnull final Boolean prependGetAllCall )
+            @Nonnull final BiFunction<String, DestinationOptions, Destination> destinationDownloader)
         {
             if( !cacheEnabled ) {
                 return Try.ofSupplier(() -> destinationDownloader.apply(destinationName, options));
@@ -879,7 +884,7 @@ public class DestinationService implements DestinationLoader
                         isolationLocks(),
                         destinationDownloader,
                         getAllCommand,
-                        prependGetAllCall);
+                        getAllDocumentsPrepended);
             return command.flatMap(GetOrComputeSingleDestinationCommand::execute);
         }
 

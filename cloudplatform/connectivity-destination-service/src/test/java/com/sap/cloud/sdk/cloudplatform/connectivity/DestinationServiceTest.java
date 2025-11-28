@@ -1930,7 +1930,8 @@ class DestinationServiceTest
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-        loader.setPrependGetAllDestinationCall(true);
+          DestinationService.Cache.setGetAllDocumentsPrepended(true);
+
 
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
@@ -1943,7 +1944,7 @@ class DestinationServiceTest
             .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
         verifyNoMoreInteractions(destinationServiceAdapter);
 
-        loader.setPrependGetAllDestinationCall(false);
+      DestinationService.Cache.setGetAllDocumentsPrepended(false);
     }
 
     @Test
@@ -1956,7 +1957,7 @@ class DestinationServiceTest
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-        loader.setPrependGetAllDestinationCall(true);
+      DestinationService.Cache.setGetAllDocumentsPrepended(true);
 
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
@@ -1969,6 +1970,6 @@ class DestinationServiceTest
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
         verifyNoMoreInteractions(destinationServiceAdapter);
 
-        loader.setPrependGetAllDestinationCall(false);
+      DestinationService.Cache.setGetAllDocumentsPrepended(false);
     }
 }
