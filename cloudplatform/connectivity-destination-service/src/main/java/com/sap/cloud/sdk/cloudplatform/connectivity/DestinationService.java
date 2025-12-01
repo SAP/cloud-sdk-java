@@ -16,6 +16,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import lombok.Setter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -426,8 +427,8 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
+        @Setter
         private static boolean getAllDocumentsPrepended = false;
-        // JONAS: put feature switch here
 
         static {
             recreateSingleCache();
@@ -450,12 +451,7 @@ public class DestinationService implements DestinationLoader
             return getAllDocumentsPrepended;
         }
 
-        public static void setGetAllDocumentsPrepended( boolean bool )
-        {
-            getAllDocumentsPrepended = bool;
-        }
-
-        @Nonnull
+      @Nonnull
         static com.github.benmanes.caffeine.cache.Cache<CacheKey, Destination> instanceSingle()
         {
             throwIfDisabled();
