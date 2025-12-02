@@ -41,8 +41,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Retrieves destination information from the SCP destination service on Cloud Foundry.
@@ -121,6 +121,10 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
+        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
+            final String msg = "Destination %s was not found among the destinations of the current tenant.";
+            return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
+        }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
@@ -385,6 +389,17 @@ public class DestinationService implements DestinationLoader
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
     }
 
+    private boolean preLookupCheckSuccessful( String destinationName )
+    {
+        val allDestinations = getAllDestinationProperties();
+        if( !allDestinations.isEmpty() ) {
+            return allDestinations
+                .stream()
+                .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
+        }
+        return false;
+    }
+
     /**
      * Helper class that encapsulates all caching related configuration options.
      *
@@ -427,8 +442,8 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
-        @Setter
-        private static boolean getAllDocumentsPrepended = false;
+        @Getter( AccessLevel.PACKAGE )
+        private static boolean preLookupCheckEnabled = false;
 
         static {
             recreateSingleCache();
@@ -446,9 +461,14 @@ public class DestinationService implements DestinationLoader
             return changeDetectionEnabled;
         }
 
-        static boolean isGetAllDocumentsPrepended()
+        public static void enablePreLookupCheck()
         {
-            return getAllDocumentsPrepended;
+            preLookupCheckEnabled = true;
+        }
+
+        public static void disablePreLookupCheck()
+        {
+            preLookupCheckEnabled = false;
         }
 
         @Nonnull
@@ -504,7 +524,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
-            getAllDocumentsPrepended = false;
+            preLookupCheckEnabled = false;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
@@ -875,8 +895,7 @@ public class DestinationService implements DestinationLoader
                         instanceSingle(),
                         isolationLocks(),
                         destinationDownloader,
-                        getAllCommand,
-                        getAllDocumentsPrepended);
+                        getAllCommand);
             return command.flatMap(GetOrComputeSingleDestinationCommand::execute);
         }
 

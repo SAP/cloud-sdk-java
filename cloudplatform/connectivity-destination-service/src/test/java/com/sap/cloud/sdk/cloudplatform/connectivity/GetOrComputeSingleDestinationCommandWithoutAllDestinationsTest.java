@@ -233,8 +233,7 @@ class GetOrComputeSingleDestinationCommandWithoutAllDestinationsTest
                     destinationCache,
                     isolationLocks,
                     destinationService::loadAndParseDestination,
-                    null,
-                    false);
+                    null);
 
         if( maybeCommand.isFailure() ) {
             if( testCase.isCommandCreationExpectedToSucceed() ) {
