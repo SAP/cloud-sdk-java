@@ -64,7 +64,7 @@ class ApiClientViaConstructorTest
         server
             .expect(ExpectedCount.twice(), requestTo(BASE_PATH + RELATIVE_PATH))
             .andExpect(method(HttpMethod.POST))
-            .andExpect(content().string("{\"return\":\"Hello, World!\",\"Return\":\"Hello, World!\"}"))
+            .andExpect(content().json("{\"return\":\"Hello, World!\",\"Return\":\"Hello, World!\"}"))
             .andRespond(MockRestResponseCreators.withSuccess(SUCCESS_BODY, MediaType.TEXT_PLAIN));
 
         // first service invocation
