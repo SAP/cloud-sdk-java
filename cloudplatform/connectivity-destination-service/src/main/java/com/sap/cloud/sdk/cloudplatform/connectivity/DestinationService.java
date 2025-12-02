@@ -16,7 +16,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import lombok.Setter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -42,6 +41,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -451,7 +451,7 @@ public class DestinationService implements DestinationLoader
             return getAllDocumentsPrepended;
         }
 
-      @Nonnull
+        @Nonnull
         static com.github.benmanes.caffeine.cache.Cache<CacheKey, Destination> instanceSingle()
         {
             throwIfDisabled();
