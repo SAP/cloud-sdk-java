@@ -442,7 +442,6 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
-        @Getter( AccessLevel.PACKAGE )
         private static boolean preLookupCheckEnabled = false;
 
         static {
@@ -461,11 +460,16 @@ public class DestinationService implements DestinationLoader
             return changeDetectionEnabled;
         }
 
-        public static void enablePreLookupCheck()
+      /**
+       * Enables checking if a destination exists before trying to call it directly when invoking {@link #tryGetDestination}.
+       */
+      public static void enablePreLookupCheck()
         {
             preLookupCheckEnabled = true;
         }
-
+        /**
+         * Disables checking if a destination exists before trying to call it directly when invoking {@link #tryGetDestination}.
+         */
         public static void disablePreLookupCheck()
         {
             preLookupCheckEnabled = false;
