@@ -389,7 +389,7 @@ public class DestinationService implements DestinationLoader
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
     }
 
-    private boolean preLookupCheckSuccessful( String destinationName )
+    private boolean preLookupCheckSuccessful( final String destinationName )
     {
         val allDestinations = getAllDestinationProperties();
         if( !allDestinations.isEmpty() ) {
