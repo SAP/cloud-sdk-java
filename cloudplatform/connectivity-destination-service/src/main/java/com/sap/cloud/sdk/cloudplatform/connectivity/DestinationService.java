@@ -42,6 +42,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Retrieves destination information from the SCP destination service on Cloud Foundry.
@@ -120,6 +121,10 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
+        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
+            final String msg = "Destination %s was not found among the destinations of the current tenant.";
+            return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
+        }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
@@ -384,6 +389,17 @@ public class DestinationService implements DestinationLoader
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
     }
 
+    private boolean preLookupCheckSuccessful( final String destinationName )
+    {
+        val allDestinations = getAllDestinationProperties();
+        if( !allDestinations.isEmpty() ) {
+            return allDestinations
+                .stream()
+                .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
+        }
+        return false;
+    }
+
     /**
      * Helper class that encapsulates all caching related configuration options.
      *
@@ -426,6 +442,7 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
+        private static boolean preLookupCheckEnabled = false;
 
         static {
             recreateSingleCache();
@@ -441,6 +458,24 @@ public class DestinationService implements DestinationLoader
         static boolean isChangeDetectionEnabled()
         {
             return changeDetectionEnabled;
+        }
+
+        /**
+         * Enables checking if a destination exists before trying to call it directly when invoking
+         * {@link #tryGetDestination}.
+         */
+        public static void enablePreLookupCheck()
+        {
+            preLookupCheckEnabled = true;
+        }
+
+        /**
+         * Disables checking if a destination exists before trying to call it directly when invoking
+         * {@link #tryGetDestination}.
+         */
+        public static void disablePreLookupCheck()
+        {
+            preLookupCheckEnabled = false;
         }
 
         @Nonnull
@@ -496,6 +531,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
+            preLookupCheckEnabled = false;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
