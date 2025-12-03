@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Added new functionality to check if a destination exists before trying to call it directly when invoking `DestinationService.tryGetDestination`.
 
 ### 📈 Improvements
 
