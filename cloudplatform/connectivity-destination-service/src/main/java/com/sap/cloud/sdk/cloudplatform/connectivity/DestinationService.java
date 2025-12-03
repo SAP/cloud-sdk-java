@@ -460,15 +460,18 @@ public class DestinationService implements DestinationLoader
             return changeDetectionEnabled;
         }
 
-      /**
-       * Enables checking if a destination exists before trying to call it directly when invoking {@link #tryGetDestination}.
-       */
-      public static void enablePreLookupCheck()
+        /**
+         * Enables checking if a destination exists before trying to call it directly when invoking
+         * {@link #tryGetDestination}.
+         */
+        public static void enablePreLookupCheck()
         {
             preLookupCheckEnabled = true;
         }
+
         /**
-         * Disables checking if a destination exists before trying to call it directly when invoking {@link #tryGetDestination}.
+         * Disables checking if a destination exists before trying to call it directly when invoking
+         * {@link #tryGetDestination}.
          */
         public static void disablePreLookupCheck()
         {
