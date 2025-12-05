@@ -82,7 +82,7 @@ public final class NamingUtils
                 .replace("ODataServiceFor", "")
                 .replace("RemoteApiFor", "")
                 .replace("ApiFor", "")
-                .replace("Api", "")
+                .replaceAll("^(?i)Api", "")
                 .replaceAll("Service$", "");
 
         return formattedName;

@@ -247,9 +247,8 @@ class EdmService implements Service
     public String getJavaPackageName()
     {
         final String javaPackageNameKey = name + SERVICE_MAPPINGS_PACKAGE_SUFFIX;
-        return serviceNameMappings
-            .getString(javaPackageNameKey)
-            .orElseGet(() -> NamingUtils.serviceNameToJavaPackageName(getTitle()));
+        final String javaPackageName = serviceNameMappings.getString(javaPackageNameKey).orElseGet(this::getTitle);
+        return NamingUtils.serviceNameToJavaPackageName(javaPackageName);
     }
 
     @Override
