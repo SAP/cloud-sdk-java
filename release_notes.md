@@ -20,4 +20,6 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fix unintended modification of `serviceNameMappings.properties` during OData service regeneration altering stored mappings. 
+  Additionally, service name cleanup is now case-insensitive for consistency.
+

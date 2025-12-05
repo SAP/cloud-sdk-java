@@ -79,11 +79,11 @@ public final class NamingUtils
 
         formattedName =
             formattedName
-                .replace("ODataServiceFor", "")
-                .replace("RemoteApiFor", "")
-                .replace("ApiFor", "")
-                .replace("Api", "")
-                .replaceAll("Service$", "");
+                .replaceAll("^(?i)ODataServiceFor", "")
+                .replaceAll("^(?i)RemoteApiFor", "")
+                .replaceAll("^(?i)ApiFor", "")
+                .replaceAll("^(?i)Api", "")
+                .replaceAll("(?i)Service$", "");
 
         return formattedName;
     }
