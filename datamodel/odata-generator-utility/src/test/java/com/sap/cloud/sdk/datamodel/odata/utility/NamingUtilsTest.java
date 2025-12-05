@@ -30,8 +30,7 @@ class NamingUtilsTest
                 Arguments.of("handle_snake_case", "HandleSnakeCase"),
                 Arguments.of("OData Service for Business Partner", "BusinessPartner"),
                 Arguments.of("API MATERIAL DOCUMENT SRV", "MATERIALDOCUMENTSRV"),
-                Arguments.of("MATERIALDOCUMENTSRV", "MATERIALDOCUMENTSRV")
-            );
+                Arguments.of("MATERIALDOCUMENTSRV", "MATERIALDOCUMENTSRV"));
     }
 
     @ParameterizedTest
