@@ -261,9 +261,8 @@ class EdmService implements Service
     public String getJavaClassName()
     {
         final String javaClassNameKey = name + SERVICE_MAPPINGS_CLASS_SUFFIX;
-        return serviceNameMappings
-            .getString(javaClassNameKey)
-            .orElseGet(() -> NamingUtils.serviceNameToBaseJavaClassName(getTitle()));
+        final String javaClassName = serviceNameMappings.getString(javaClassNameKey).orElseGet(this::getTitle);
+        return NamingUtils.serviceNameToBaseJavaClassName(javaClassName);
     }
 
     @Override
