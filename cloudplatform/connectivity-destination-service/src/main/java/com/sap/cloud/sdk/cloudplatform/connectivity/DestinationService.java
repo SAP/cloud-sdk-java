@@ -42,7 +42,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 /**
  * Retrieves destination information from the SCP destination service on Cloud Foundry.
@@ -391,13 +390,9 @@ public class DestinationService implements DestinationLoader
 
     private boolean preLookupCheckSuccessful( final String destinationName )
     {
-        val allDestinations = getAllDestinationProperties();
-        if( !allDestinations.isEmpty() ) {
-            return allDestinations
-                .stream()
-                .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
-        }
-        return false;
+        return getAllDestinationProperties()
+            .stream()
+            .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
     }
 
     /**
@@ -442,7 +437,7 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
-        private static boolean preLookupCheckEnabled = false;
+        private static boolean preLookupCheckEnabled = true;
 
         static {
             recreateSingleCache();
@@ -463,6 +458,8 @@ public class DestinationService implements DestinationLoader
         /**
          * Enables checking if a destination exists before trying to call it directly when invoking
          * {@link #tryGetDestination}.
+         *
+         * @since 5.25.0
          */
         public static void enablePreLookupCheck()
         {
@@ -472,6 +469,8 @@ public class DestinationService implements DestinationLoader
         /**
          * Disables checking if a destination exists before trying to call it directly when invoking
          * {@link #tryGetDestination}.
+         *
+         * @since 5.25.0
          */
         public static void disablePreLookupCheck()
         {
@@ -531,7 +530,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
-            preLookupCheckEnabled = false;
+            preLookupCheckEnabled = true;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);

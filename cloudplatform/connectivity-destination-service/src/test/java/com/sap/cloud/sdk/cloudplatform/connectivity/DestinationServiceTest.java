@@ -345,6 +345,9 @@ class DestinationServiceTest
     @BeforeEach
     void setup()
     {
+        // Disable PreLookupCheck to simplify test setup
+        DestinationService.Cache.disablePreLookupCheck();
+
         providerTenant = new DefaultTenant("provider-tenant");
         subscriberTenant = new DefaultTenant("subscriber-tenant");
         context.setTenant(subscriberTenant);
@@ -1932,18 +1935,13 @@ class DestinationServiceTest
 
         DestinationService.Cache.enablePreLookupCheck();
 
-        final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
         Destination result = loader.tryGetDestination(destinationName).get();
 
-        // verify all results are cached
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
         verify(destinationServiceAdapter, times(1))
             .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
         verifyNoMoreInteractions(destinationServiceAdapter);
-
-        DestinationService.Cache.disablePreLookupCheck();
     }
 
     @Test
@@ -1958,17 +1956,13 @@ class DestinationServiceTest
 
         DestinationService.Cache.enablePreLookupCheck();
 
-        final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
         assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get())
             .isInstanceOf(DestinationAccessException.class)
             .hasMessageContaining("was not found among the destinations of the current tenant.");
 
-        // verify all results are cached
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
         verifyNoMoreInteractions(destinationServiceAdapter);
 
-        DestinationService.Cache.disablePreLookupCheck();
     }
 }

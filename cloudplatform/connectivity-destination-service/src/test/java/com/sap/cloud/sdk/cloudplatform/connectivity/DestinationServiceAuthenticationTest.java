@@ -66,6 +66,8 @@ class DestinationServiceAuthenticationTest
             .when(mockAdapter)
             .getConfigurationAsJson(anyString(), any());
         sut = new DestinationService(mockAdapter);
+        // Disable PreLookupCheck to simplify test setup
+        DestinationService.Cache.disablePreLookupCheck();
     }
 
     @Test
