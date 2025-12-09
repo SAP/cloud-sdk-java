@@ -122,7 +122,7 @@ public class DestinationService implements DestinationLoader
     {
         if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
             final String msg = "Destination %s was not found among the destinations of the current tenant.";
-            return Try.failure(new DestinationAccessException(String.format(msg, destinationName)));
+            return Try.failure(new DestinationNotFoundException(String.format(msg, destinationName)));
         }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
@@ -453,17 +453,6 @@ public class DestinationService implements DestinationLoader
         static boolean isChangeDetectionEnabled()
         {
             return changeDetectionEnabled;
-        }
-
-        /**
-         * Enables checking if a destination exists before trying to call it directly when invoking
-         * {@link #tryGetDestination}.
-         *
-         * @since 5.25.0
-         */
-        public static void enablePreLookupCheck()
-        {
-            preLookupCheckEnabled = true;
         }
 
         /**

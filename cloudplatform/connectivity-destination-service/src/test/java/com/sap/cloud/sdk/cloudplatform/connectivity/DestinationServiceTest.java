@@ -1926,14 +1926,15 @@ class DestinationServiceTest
     @Test
     void testPrependGetAllDestinationsCall()
     {
+        // Reset Cache to re-enable the PreLookupCheck
+        DestinationService.Cache.reset();
+
         doReturn(responseServiceInstanceDestination)
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         doReturn(responseSubaccountDestination)
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-
-        DestinationService.Cache.enablePreLookupCheck();
 
         Destination result = loader.tryGetDestination(destinationName).get();
 
@@ -1947,6 +1948,9 @@ class DestinationServiceTest
     @Test
     void testPrependGetAllDestinationsCallWithMissingDestination()
     {
+        // Reset Cache to re-enable the PreLookupCheck
+        DestinationService.Cache.reset();
+
         doReturn(responseServiceInstanceDestination)
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
@@ -1954,10 +1958,8 @@ class DestinationServiceTest
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-        DestinationService.Cache.enablePreLookupCheck();
-
         assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get())
-            .isInstanceOf(DestinationAccessException.class)
+            .isInstanceOf(DestinationNotFoundException.class)
             .hasMessageContaining("was not found among the destinations of the current tenant.");
 
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
