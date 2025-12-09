@@ -79,11 +79,11 @@ public final class NamingUtils
 
         formattedName =
             formattedName
-                .replaceAll("^(?i)ODataServiceFor", "")
-                .replaceAll("^(?i)RemoteApiFor", "")
-                .replaceAll("^(?i)ApiFor", "")
-                .replaceAll("^(?i)Api", "")
-                .replaceAll("(?i)Service$", "");
+                .replaceAll("O(data|DATA|Data)S(ervice|ERVICE)F(or|OR)", "")
+                .replaceAll("R(emote|EMOTE)A(pi|PI)F(or|OR)", "")
+                .replaceAll("A(pi|PI)F(or|OR)", "")
+                .replaceAll("A(pi|PI)", "")
+                .replaceAll("S(ervice|ERVICE)$", "");
 
         return formattedName;
     }
