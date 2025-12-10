@@ -79,10 +79,10 @@ public final class NamingUtils
 
         formattedName =
             formattedName
-                .replaceFirst("O(data|DATA|Data)S(ervice|ERVICE)F(or|OR)", "")
-                .replaceFirst("R(emote|EMOTE)A(pi|PI)F(or|OR)", "")
-                .replaceFirst("A(pi|PI)F(or|OR)", "")
-                .replaceFirst("A(pi|PI)", "")
+                .replaceAll("O(data|DATA|Data)S(ervice|ERVICE)F(or|OR)", "")
+                .replaceAll("R(emote|EMOTE)A(pi|PI)F(or|OR)", "")
+                .replaceAll("A(pi|PI)F(or|OR)", "")
+                .replaceAll("A(pi|PI)", "")
                 .replaceAll("S(ervice|ERVICE)$", "");
 
         return formattedName;
