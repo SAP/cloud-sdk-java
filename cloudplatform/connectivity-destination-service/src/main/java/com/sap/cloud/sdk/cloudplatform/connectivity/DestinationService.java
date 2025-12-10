@@ -457,7 +457,8 @@ public class DestinationService implements DestinationLoader
 
         /**
          * Disables checking if a destination exists before trying to call it directly when invoking
-         * {@link #tryGetDestination}.
+         * {@link #tryGetDestination}. All available destinations can be found with {@link
+         * #getAllDestinationProperties}.
          *
          * @since 5.25.0
          */
