@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHeaders;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -96,13 +96,9 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
 
     private static boolean isAuthTokenExpected( @Nonnull final AuthenticationType authType )
     {
-        switch( authType ) {
-            case NO_AUTHENTICATION:
-            case PRINCIPAL_PROPAGATION:
-            case CLIENT_CERTIFICATE_AUTHENTICATION:
-                return false;
-            default:
-                return true;
-        }
+      return switch (authType) {
+        case NO_AUTHENTICATION, PRINCIPAL_PROPAGATION, CLIENT_CERTIFICATE_AUTHENTICATION -> false;
+        default -> true;
+      };
     }
 }

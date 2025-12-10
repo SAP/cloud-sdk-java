@@ -27,9 +27,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
@@ -50,9 +48,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -68,6 +68,7 @@ import com.auth0.jwt.JWT;
 import com.google.gson.stream.MalformedJsonException;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceAdapter.DestinationHttpClientResponseHandler;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
@@ -497,21 +498,20 @@ class DestinationServiceTest
             .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
     }
 
+    @SneakyThrows
     @Test
     // slow test, run manually if needed
     void destinationServiceTimeOutWhileGettingDestination()
-        throws IOException
     {
         final HttpDestination serviceDestination = DefaultHttpDestination.builder("").build();
 
         // prepare slow HttpClient
-        HttpClientFactory factory = HttpClientAccessor.getHttpClientFactory();
-        HttpClient cl = mock(HttpClient.class);
+        final HttpClient cl = mock(HttpClient.class);
         doAnswer(invocation -> {
             Thread.sleep(TEST_TIMEOUT);
             return null;
-        }).when(cl).execute(any());
-        HttpClientAccessor.setHttpClientFactory(dest -> cl);
+        }).when(cl).execute(any(ClassicHttpRequest.class), any(DestinationHttpClientResponseHandler.class));
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> cl);
 
         // prepare adapter
         final DestinationServiceAdapter adapter =
@@ -540,11 +540,11 @@ class DestinationServiceTest
             .isExactlyInstanceOf(DestinationAccessException.class)
             .hasRootCauseExactlyInstanceOf(TimeoutException.class);
 
-        verify(cl, times(1)).execute(any());
+        verify(cl, times(1)).execute(any(ClassicHttpRequest.class), any(DestinationHttpClientResponseHandler.class));
         verify(adapter, times(1)).getConfigurationAsJson(eq("/v1/destinations/SomeDestinationName"), any());
 
         // reset
-        HttpClientAccessor.setHttpClientFactory(null);
+        ApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     @Test
@@ -892,21 +892,25 @@ class DestinationServiceTest
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
     }
 
+    @SneakyThrows
     @Test
     void testUnknownDestinationLeadsToDestinationNotFoundException()
-        throws IOException
     {
         // prepare 404 HttpClient
-        final HttpClientFactory factory = HttpClientAccessor.getHttpClientFactory();
         final HttpClient client404 = mock(HttpClient.class);
-        when(client404.execute(any())).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, 404, "Not found"));
-        HttpClientAccessor.setHttpClientFactory(dest -> client404);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> client404);
+
+        final var response404 = new BasicClassicHttpResponse(HttpStatus.SC_NOT_FOUND, "Not Found");
+        doAnswer(invocation -> {
+            final HttpClientResponseHandler<?> handler = invocation.getArgument(1);
+            return handler.handleResponse(response404);
+        }).when(client404).execute(any(ClassicHttpRequest.class), any(DestinationHttpClientResponseHandler.class));
 
         assertThatThrownBy(() -> loader.tryGetDestination("UnknownDestination").get())
             .isInstanceOf(DestinationNotFoundException.class);
 
         // reset
-        HttpClientAccessor.setHttpClientFactory(factory);
+        ApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     private void tryGetDestinationTwice( String destinationName, String responseDestination, int numberOfFetches )
@@ -1864,11 +1868,11 @@ class DestinationServiceTest
             assertThat(PrincipalAccessor.getCurrentPrincipal().getPrincipalId()).isEqualTo("principal-" + i);
             destination = loader.tryGetDestination(name, DestinationOptions.builder().build()).get().asHttp();
 
-            httpClient = HttpClientAccessor.getHttpClient(destination);
+            httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
             System.out.println("[" + LocalDateTime.now() + "] Got " + name);
         }
         assertThat(DestinationService.Cache.instanceSingle().estimatedSize()).isEqualTo(1);
-        assertThat(httpClient).isSameAs(HttpClientAccessor.getHttpClient(destination));
+        assertThat(httpClient).isSameAs(ApacheHttpClient5Accessor.getHttpClient(destination));
     }
 
     @Test
