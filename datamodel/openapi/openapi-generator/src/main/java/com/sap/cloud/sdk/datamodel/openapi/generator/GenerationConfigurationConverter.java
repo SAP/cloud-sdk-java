@@ -47,7 +47,7 @@ class GenerationConfigurationConverter
 
     static final String SAP_COPYRIGHT_HEADER =
         "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. All rights reserved.";
-    static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("mustache-templates").toString();
+    static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("resttemplate").toString();
     static final String LIBRARY_NAME = JavaClientCodegen.RESTTEMPLATE;
 
     @Nonnull
