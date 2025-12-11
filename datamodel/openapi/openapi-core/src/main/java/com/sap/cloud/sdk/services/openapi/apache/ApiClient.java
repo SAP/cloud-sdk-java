@@ -43,10 +43,10 @@ import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
@@ -54,6 +54,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.FileEntity;
@@ -99,7 +100,7 @@ public class ApiClient
     public ApiClient( CloseableHttpClient httpClient )
     {
         objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -775,7 +776,7 @@ public class ApiClient
      *             IO exception
      */
     @SuppressWarnings( "unchecked" )
-    public <T> T deserialize( CloseableHttpResponse response, TypeReference<T> valueType )
+    public <T> T deserialize( ClassicHttpResponse response, TypeReference<T> valueType )
         throws ApiException,
             IOException,
             ParseException
@@ -814,7 +815,7 @@ public class ApiClient
         }
     }
 
-    protected File downloadFileFromResponse( CloseableHttpResponse response )
+    protected File downloadFileFromResponse( ClassicHttpResponse response )
         throws IOException
     {
         Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
@@ -968,7 +969,30 @@ public class ApiClient
         return cookie;
     }
 
-    protected <T> T processResponse( CloseableHttpResponse response, TypeReference<T> returnType )
+    /**
+     * Creates an HttpClientResponseHandler for processing HTTP responses. Wraps checked exceptions (ParseException,
+     * ApiException) as IOException since the handler interface only allows IOException to be thrown.
+     *
+     * @param <T>
+     *            Type
+     * @param returnType
+     *            Return type
+     * @return HttpClientResponseHandler instance
+     */
+    protected <T> HttpClientResponseHandler<T> createResponseHandler( TypeReference<T> returnType )
+    {
+        return response -> {
+            try {
+                return processResponse(response, returnType);
+            }
+            catch( ParseException | ApiException e ) {
+                // Wrap exceptions as IOException since handler can only throw IOException
+                throw new IOException("Failed to process response: " + e.getMessage(), e);
+            }
+        };
+    }
+
+    protected <T> T processResponse( ClassicHttpResponse response, TypeReference<T> returnType )
         throws ApiException,
             IOException,
             ParseException
@@ -1089,10 +1113,11 @@ public class ApiClient
             builder.setEntity(new StringEntity("", contentTypeObj));
         }
 
-        try( CloseableHttpResponse response = httpClient.execute(builder.build(), context) ) {
-            return processResponse(response, returnType);
+        try {
+            HttpClientResponseHandler<T> responseHandler = createResponseHandler(returnType);
+            return httpClient.execute(builder.build(), context, responseHandler);
         }
-        catch( IOException | ParseException e ) {
+        catch( IOException e ) {
             throw new ApiException(e);
         }
     }
