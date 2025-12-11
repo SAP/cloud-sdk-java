@@ -47,13 +47,13 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>prompt-registry</id>
+                        <id>sample-generation</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/prompt-registry.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
                             <apiPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.api</apiPackage>
                             <modelPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.model</modelPackage>
                             <additionalProperties>
