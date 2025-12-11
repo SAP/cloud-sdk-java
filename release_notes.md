@@ -20,4 +20,4 @@
 
 ### 🐛 Fixed Issues
 
-- [OData] Fix unintended modification of `serviceNameMappings.properties` during OData service re-generation.
+- 
