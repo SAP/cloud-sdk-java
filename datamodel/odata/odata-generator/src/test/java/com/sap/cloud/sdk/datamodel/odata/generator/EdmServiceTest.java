@@ -75,7 +75,6 @@ class EdmServiceTest
     {
         return Stream
             .of(
-                // Non-breaking fix for https://github.com/SAP/cloud-sdk-java/issues/1024
                 Arguments.of("API_MATERIAL_DOCUMENT_SRV", "materialdocumentsrv", "MATERIALDOCUMENTSRV"),
                 Arguments.of("Product_Api_Service", "product", "Product" // "Api" and "Service" removed
                 ));
