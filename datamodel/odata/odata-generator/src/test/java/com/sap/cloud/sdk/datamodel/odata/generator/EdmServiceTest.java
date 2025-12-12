@@ -22,7 +22,7 @@ class EdmServiceTest
 
     @ParameterizedTest
     @MethodSource( "getServiceNameMappingScenarios" )
-    void testServiceNameMappingsGenerated(
+    void testServiceNameMappingsGeneration(
         @Nonnull final String serviceName,
         @Nonnull final String expectedPackageName,
         @Nonnull final String expectedClassName )
@@ -76,7 +76,7 @@ class EdmServiceTest
         return Stream
             .of(
                 // Non-breaking fix for https://github.com/SAP/cloud-sdk-java/issues/1024
-                Arguments.of("API_MATERIAL_DOCUMENT_SRV", "apimaterialdocumentsrv", "APIMATERIALDOCUMENTSRV"),
+                Arguments.of("API_MATERIAL_DOCUMENT_SRV", "materialdocumentsrv", "MATERIALDOCUMENTSRV"),
                 Arguments.of("Product_Api_Service", "product", "Product" // "Api" and "Service" removed
                 ));
     }
