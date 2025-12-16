@@ -74,12 +74,6 @@ public class ApiClient
     protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     protected Map<String, String> defaultCookieMap = new HashMap<String, String>();
     protected String basePath = "http://localhost";
-    protected List<ServerConfiguration> servers =
-        new ArrayList<ServerConfiguration>(
-            Arrays
-                .asList(new ServerConfiguration("", "No description provided", new HashMap<String, ServerVariable>())));
-    protected Integer serverIndex = 0;
-    protected Map<String, String> serverVariables = null;
     protected boolean debugging = false;
     protected int connectionTimeout = 0;
 
@@ -193,61 +187,6 @@ public class ApiClient
     public ApiClient setBasePath( String basePath )
     {
         this.basePath = basePath;
-        this.serverIndex = null;
-        return this;
-    }
-
-    public List<ServerConfiguration> getServers()
-    {
-        return servers;
-    }
-
-    /**
-     * Sets the server.
-     *
-     * @param servers
-     *            a list of server configuration
-     * @return API client
-     */
-    public ApiClient setServers( List<ServerConfiguration> servers )
-    {
-        this.servers = servers;
-        return this;
-    }
-
-    public Integer getServerIndex()
-    {
-        return serverIndex;
-    }
-
-    /**
-     * Sets the server index.
-     *
-     * @param serverIndex
-     *            server index
-     * @return API client
-     */
-    public ApiClient setServerIndex( Integer serverIndex )
-    {
-        this.serverIndex = serverIndex;
-        return this;
-    }
-
-    public Map<String, String> getServerVariables()
-    {
-        return serverVariables;
-    }
-
-    /**
-     * Sets the server variables.
-     *
-     * @param serverVariables
-     *            server variables
-     * @return API client
-     */
-    public ApiClient setServerVariables( Map<String, String> serverVariables )
-    {
-        this.serverVariables = serverVariables;
         return this;
     }
 
@@ -868,22 +807,7 @@ public class ApiClient
      */
     public String getBaseURL()
     {
-        String baseURL;
-        if( serverIndex != null ) {
-            if( serverIndex < 0 || serverIndex >= servers.size() ) {
-                throw new ArrayIndexOutOfBoundsException(
-                    String
-                        .format(
-                            Locale.ROOT,
-                            "Invalid index %d when selecting the host settings. Must be less than %d",
-                            serverIndex,
-                            servers.size()));
-            }
-            baseURL = servers.get(serverIndex).URL(serverVariables);
-        } else {
-            baseURL = basePath;
-        }
-        return baseURL;
+        return basePath;
     }
 
     /**
