@@ -67,6 +67,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sap.cloud.sdk.services.openapi.apache.auth.Authentication;
+import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 
 public class ApiClient
 {
@@ -100,7 +101,6 @@ public class ApiClient
         objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
         objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.registerModule(new RFC3339JavaTimeModule());
         objectMapper.setDateFormat(ApiClient.buildDefaultDateFormat());
 
         dateFormat = ApiClient.buildDefaultDateFormat();
@@ -540,7 +540,7 @@ public class ApiClient
                 return accept;
             }
         }
-        return StringUtil.join(accepts, ",");
+        return String.join(",", accepts);
     }
 
     /**
