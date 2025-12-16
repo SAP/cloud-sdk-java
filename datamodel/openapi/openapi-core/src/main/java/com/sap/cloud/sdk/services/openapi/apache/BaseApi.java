@@ -24,7 +24,7 @@ public abstract class BaseApi
 
     public BaseApi()
     {
-        this(Configuration.getDefaultApiClient());
+        this(new ApiClient());
     }
 
     public BaseApi( ApiClient apiClient )

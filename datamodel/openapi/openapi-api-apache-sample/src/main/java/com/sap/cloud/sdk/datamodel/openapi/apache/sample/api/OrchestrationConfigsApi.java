@@ -29,7 +29,6 @@ import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConf
 import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
 import com.sap.cloud.sdk.services.openapi.apache.ApiException;
 import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
-import com.sap.cloud.sdk.services.openapi.apache.Configuration;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;
 
 public class OrchestrationConfigsApi extends BaseApi
@@ -37,7 +36,7 @@ public class OrchestrationConfigsApi extends BaseApi
 
     public OrchestrationConfigsApi()
     {
-        super(Configuration.getDefaultApiClient());
+        super(new ApiClient());
     }
 
     public OrchestrationConfigsApi( ApiClient apiClient )
