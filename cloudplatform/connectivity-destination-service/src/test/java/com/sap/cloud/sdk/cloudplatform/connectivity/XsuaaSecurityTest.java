@@ -96,10 +96,10 @@ class XsuaaSecurityTest
         final HttpGet request = new HttpGet(RULE.getApplicationServerUri() + "/app");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue());
 
-      try ( CloseableHttpClient client = HttpClients.createDefault() ) {
-        String response = client.execute(request, new BasicHttpClientResponseHandler());
-        assertThat(response).isEmpty();
-      }
+        try( CloseableHttpClient client = HttpClients.createDefault() ) {
+            String response = client.execute(request, new BasicHttpClientResponseHandler());
+            assertThat(response).isEmpty();
+        }
     }
 
     @SneakyThrows

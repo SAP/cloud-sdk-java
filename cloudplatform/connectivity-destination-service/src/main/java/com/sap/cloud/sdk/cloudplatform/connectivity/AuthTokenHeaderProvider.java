@@ -96,9 +96,9 @@ class AuthTokenHeaderProvider implements DestinationHeaderProvider
 
     private static boolean isAuthTokenExpected( @Nonnull final AuthenticationType authType )
     {
-      return switch (authType) {
-        case NO_AUTHENTICATION, PRINCIPAL_PROPAGATION, CLIENT_CERTIFICATE_AUTHENTICATION -> false;
-        default -> true;
-      };
+        return switch( authType ) {
+            case NO_AUTHENTICATION, PRINCIPAL_PROPAGATION, CLIENT_CERTIFICATE_AUTHENTICATION -> false;
+            default -> true;
+        };
     }
 }
