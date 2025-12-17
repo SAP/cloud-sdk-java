@@ -116,8 +116,6 @@ public class OrchestrationConfigsApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
             {
@@ -135,7 +133,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -216,8 +213,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigDeleteResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigDeleteResponse>()
             {
@@ -235,7 +230,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -316,8 +310,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
         };
@@ -334,7 +326,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -427,8 +418,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigGetResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigGetResponse>()
             {
@@ -446,7 +435,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -517,8 +505,6 @@ public class OrchestrationConfigsApi extends BaseApi
         final String[] localVarContentTypes = { "multipart/form-data" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
             {
@@ -536,7 +522,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -665,8 +650,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
             {
@@ -684,7 +667,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -799,8 +781,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
             {
@@ -818,7 +798,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -849,8 +828,6 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -864,7 +841,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 returnType);
     }
 }

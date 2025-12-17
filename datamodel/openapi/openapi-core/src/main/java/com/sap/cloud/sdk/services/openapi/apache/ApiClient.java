@@ -28,7 +28,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +65,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sap.cloud.sdk.services.openapi.apache.auth.Authentication;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 
 public class ApiClient
@@ -80,8 +78,6 @@ public class ApiClient
     protected CloseableHttpClient httpClient;
     protected ObjectMapper objectMapper;
     protected String tempFolderPath = null;
-
-    protected Map<String, Authentication> authentications;
 
     protected ThreadLocal<Integer> lastStatusCode = new ThreadLocal<>();
     protected ThreadLocal<Map<String, List<String>>> lastResponseHeaders = new ThreadLocal<>();
@@ -107,11 +103,6 @@ public class ApiClient
 
         // Set default User-Agent.
         setUserAgent("OpenAPI-Generator/0.0.1/java");
-
-        // Setup authentications (key: authentication name, value: authentication).
-        authentications = new HashMap<String, Authentication>();
-        // Prevent the authentications from being modified.
-        authentications = Collections.unmodifiableMap(authentications);
 
         this.httpClient = httpClient;
     }
@@ -209,28 +200,6 @@ public class ApiClient
     public Map<String, List<String>> getResponseHeaders()
     {
         return lastResponseHeaders.get();
-    }
-
-    /**
-     * Get authentications (key: authentication name, value: authentication).
-     *
-     * @return Map of authentication
-     */
-    public Map<String, Authentication> getAuthentications()
-    {
-        return authentications;
-    }
-
-    /**
-     * Get authentication for the given name.
-     *
-     * @param authName
-     *            The authentication name
-     * @return The authentication, null if not found
-     */
-    public Authentication getAuthentication( String authName )
-    {
-        return authentications.get(authName);
     }
 
     /**
@@ -964,8 +933,6 @@ public class ApiClient
      *            The request's Accept header
      * @param contentType
      *            The request's Content-Type header
-     * @param authNames
-     *            The authentications to apply
      * @param returnType
      *            Return type
      * @return The response body in type of string
@@ -984,7 +951,6 @@ public class ApiClient
         Map<String, Object> formParams,
         String accept,
         String contentType,
-        String[] authNames,
         TypeReference<T> returnType )
         throws ApiException
     {
@@ -992,7 +958,7 @@ public class ApiClient
             throw new ApiException("Cannot have body and form params");
         }
 
-        updateParamsForAuth(authNames, queryParams, headerParams, cookieParams);
+        // updateParamsForAuth(authNames, queryParams, headerParams, cookieParams);
         final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
 
         ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
@@ -1042,32 +1008,6 @@ public class ApiClient
         }
         catch( IOException e ) {
             throw new ApiException(e);
-        }
-    }
-
-    /**
-     * Update query and header parameters based on authentication settings.
-     *
-     * @param authNames
-     *            The authentications to apply
-     * @param queryParams
-     *            Query parameters
-     * @param headerParams
-     *            Header parameters
-     * @param cookieParams
-     *            Cookie parameters
-     */
-    protected void updateParamsForAuth(
-        String[] authNames,
-        List<Pair> queryParams,
-        Map<String, String> headerParams,
-        Map<String, String> cookieParams )
-    {
-        for( String authName : authNames ) {
-            Authentication auth = authentications.get(authName);
-            if( auth == null )
-                throw new RuntimeException("Authentication undefined: " + authName);
-            auth.applyToParams(queryParams, headerParams, cookieParams);
         }
     }
 }

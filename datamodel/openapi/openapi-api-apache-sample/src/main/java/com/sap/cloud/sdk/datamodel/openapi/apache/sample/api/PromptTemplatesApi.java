@@ -130,8 +130,6 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
         {
         };
@@ -148,7 +146,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -238,8 +235,6 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateDeleteResponse> localVarReturnType =
             new TypeReference<PromptTemplateDeleteResponse>()
             {
@@ -257,7 +252,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -347,8 +341,6 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
         };
@@ -365,7 +357,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -455,8 +446,6 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateGetResponse> localVarReturnType = new TypeReference<PromptTemplateGetResponse>()
         {
         };
@@ -473,7 +462,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -552,8 +540,6 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "multipart/form-data" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
         {
         };
@@ -570,7 +556,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -690,8 +675,6 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
         {
         };
@@ -708,7 +691,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -824,8 +806,6 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
         {
         };
@@ -842,7 +822,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -949,8 +928,6 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()
             {
@@ -968,7 +945,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -1103,8 +1079,6 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()
             {
@@ -1122,7 +1096,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 localVarReturnType);
     }
 
@@ -1151,8 +1124,6 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {};
-
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -1166,7 +1137,6 @@ public class PromptTemplatesApi extends BaseApi
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 returnType);
     }
 }
