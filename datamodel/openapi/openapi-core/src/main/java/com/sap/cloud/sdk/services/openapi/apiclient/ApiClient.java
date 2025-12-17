@@ -160,6 +160,7 @@ public final class ApiClient
         // Set default User-Agent.
         setUserAgent("Java-SDK");
 
+
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<>();
         // Prevent the authentications from being modified.
