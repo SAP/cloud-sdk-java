@@ -86,11 +86,11 @@ class TransparentProxyDestinationTest
                 new Header(TransparentProxyDestination.DESTINATION_NAME_HEADER_KEY, TEST_DEST_NAME),
                 new Header(
                     TransparentProxyDestination.DESTINATION_LEVEL_HEADER_KEY,
-                    DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT.toString()),
+                    DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT.toString().toLowerCase()),
                 new Header(TransparentProxyDestination.FRAGMENT_NAME_HEADER_KEY, "fragName"),
                 new Header(
                     TransparentProxyDestination.FRAGMENT_LEVEL_HEADER_KEY,
-                    DestinationServiceOptionsAugmenter.CrossLevelScope.PROVIDER_SUBACCOUNT.toString()),
+                    DestinationServiceOptionsAugmenter.CrossLevelScope.PROVIDER_SUBACCOUNT.toString().toLowerCase()),
                 new Header(TransparentProxyDestination.FRAGMENT_OPTIONAL_HEADER_KEY, "true"));
     }
 
