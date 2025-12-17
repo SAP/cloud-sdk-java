@@ -36,6 +36,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -107,12 +109,18 @@ public class ApiClient
         this.httpClient = httpClient;
     }
 
-    public ApiClient()
-    {
-        this(HttpClients.createDefault());
+    public ApiClient(Destination destination) {
+        this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination));
+        setBasePath(destination.asHttp().getUri().toString());
     }
 
-    public static DateFormat buildDefaultDateFormat()
+    public ApiClient()
+    {
+        this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
+        // TODO: What about base path?
+    }
+
+    private static DateFormat buildDefaultDateFormat()
     {
         return new RFC3339DateFormat();
     }
@@ -126,7 +134,7 @@ public class ApiClient
      *
      * @return Object mapper
      */
-    public ObjectMapper getObjectMapper()
+    private ObjectMapper getObjectMapper()
     {
         return objectMapper;
     }
@@ -138,13 +146,13 @@ public class ApiClient
      *            object mapper
      * @return API client
      */
-    public ApiClient setObjectMapper( ObjectMapper objectMapper )
+    private ApiClient setObjectMapper( ObjectMapper objectMapper )
     {
         this.objectMapper = objectMapper;
         return this;
     }
 
-    public CloseableHttpClient getHttpClient()
+    private CloseableHttpClient getHttpClient()
     {
         return httpClient;
     }
@@ -156,13 +164,13 @@ public class ApiClient
      *            HTTP client
      * @return API client
      */
-    public ApiClient setHttpClient( CloseableHttpClient httpClient )
+    private ApiClient setHttpClient( CloseableHttpClient httpClient )
     {
         this.httpClient = httpClient;
         return this;
     }
 
-    public String getBasePath()
+    private String getBasePath()
     {
         return basePath;
     }
@@ -174,7 +182,7 @@ public class ApiClient
      *            base path
      * @return API client
      */
-    public ApiClient setBasePath( String basePath )
+    private ApiClient setBasePath( String basePath )
     {
         this.basePath = basePath;
         return this;
@@ -185,8 +193,8 @@ public class ApiClient
      *
      * @return Status code
      */
-    @Deprecated
-    public int getStatusCode()
+    @Deprecated // TODO: Do we keep deprecated methods?
+    private int getStatusCode()
     {
         return lastStatusCode.get();
     }
@@ -197,7 +205,7 @@ public class ApiClient
      * @return Response headers
      */
     @Deprecated
-    public Map<String, List<String>> getResponseHeaders()
+    private Map<String, List<String>> getResponseHeaders()
     {
         return lastResponseHeaders.get();
     }
@@ -208,7 +216,7 @@ public class ApiClient
      *
      * @return Temp folder path
      */
-    public String getTempFolderPath()
+    private String getTempFolderPath()
     {
         return tempFolderPath;
     }
@@ -220,7 +228,7 @@ public class ApiClient
      *            User agent
      * @return API client
      */
-    public final ApiClient setUserAgent( String userAgent )
+    private final ApiClient setUserAgent(String userAgent)
     {
         addDefaultHeader("User-Agent", userAgent);
         return this;
@@ -233,7 +241,7 @@ public class ApiClient
      *            Temp folder path
      * @return API client
      */
-    public ApiClient setTempFolderPath( String tempFolderPath )
+    private ApiClient setTempFolderPath(String tempFolderPath)
     {
         this.tempFolderPath = tempFolderPath;
         return this;
@@ -248,7 +256,7 @@ public class ApiClient
      *            The header's value
      * @return API client
      */
-    public final ApiClient addDefaultHeader( String key, String value )
+    private final ApiClient addDefaultHeader(String key, String value)
     {
         defaultHeaderMap.put(key, value);
         return this;
@@ -263,7 +271,7 @@ public class ApiClient
      *            The cookie's value
      * @return API client
      */
-    public ApiClient addDefaultCookie( String key, String value )
+    private ApiClient addDefaultCookie(String key, String value)
     {
         defaultCookieMap.put(key, value);
         return this;
@@ -274,7 +282,7 @@ public class ApiClient
      *
      * @return True if debugging is on
      */
-    public boolean isDebugging()
+    private boolean isDebugging()
     {
         return debugging;
     }
@@ -286,7 +294,7 @@ public class ApiClient
      *            To enable (true) or disable (false) debugging
      * @return API client
      */
-    public ApiClient setDebugging( boolean debugging )
+    private ApiClient setDebugging( boolean debugging )
     {
         // TODO: implement debugging mode
         this.debugging = debugging;
@@ -298,7 +306,7 @@ public class ApiClient
      *
      * @return Connection timeout
      */
-    public int getConnectTimeout()
+    private int getConnectTimeout()
     {
         return connectionTimeout;
     }
@@ -311,7 +319,7 @@ public class ApiClient
      *            Connection timeout in milliseconds
      * @return API client
      */
-    public ApiClient setConnectTimeout( int connectionTimeout )
+    private ApiClient setConnectTimeout(int connectionTimeout)
     {
         this.connectionTimeout = connectionTimeout;
         return this;
@@ -322,7 +330,7 @@ public class ApiClient
      *
      * @return Date format
      */
-    public DateFormat getDateFormat()
+    private DateFormat getDateFormat()
     {
         return dateFormat;
     }
@@ -334,7 +342,7 @@ public class ApiClient
      *            Date format
      * @return API client
      */
-    public ApiClient setDateFormat( DateFormat dateFormat )
+    private ApiClient setDateFormat(DateFormat dateFormat)
     {
         this.dateFormat = dateFormat;
         // Also set the date format for model (de)serialization with Date properties.
@@ -349,7 +357,7 @@ public class ApiClient
      *            String
      * @return Date
      */
-    public Date parseDate( String str )
+    private Date parseDate(String str)
     {
         try {
             return dateFormat.parse(str);
@@ -366,7 +374,7 @@ public class ApiClient
      *            Date
      * @return Date in string format
      */
-    public String formatDate( Date date )
+    private String formatDate( Date date )
     {
         return dateFormat.format(date);
     }
@@ -435,7 +443,7 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
-    public List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
+    private List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
     {
         List<Pair> params = new ArrayList<Pair>();
 
@@ -484,7 +492,7 @@ public class ApiClient
      *            MIME
      * @return True if MIME type is boolean
      */
-    public boolean isJsonMime( String mime )
+    private boolean isJsonMime( String mime )
     {
         String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
         return mime != null && (mime.matches(jsonMime) || mime.equals("*/*"));
@@ -557,7 +565,7 @@ public class ApiClient
      *            HTTP headers
      * @return a map of string array
      */
-    protected Map<String, List<String>> transformResponseHeaders( Header[] headers )
+    private Map<String, List<String>> transformResponseHeaders( Header[] headers )
     {
         Map<String, List<String>> headersMap = new HashMap<>();
         for( Header header : headers ) {
@@ -576,7 +584,7 @@ public class ApiClient
     /**
      * Parse content type object from header value
      */
-    protected ContentType getContentType( String headerValue )
+    private ContentType getContentType( String headerValue )
         throws ApiException
     {
         try {
@@ -590,7 +598,7 @@ public class ApiClient
     /**
      * Get content type of a response or null if one was not provided
      */
-    protected String getResponseMimeType( HttpResponse response )
+    private String getResponseMimeType( HttpResponse response )
         throws ApiException
     {
         Header contentTypeHeader = response.getFirstHeader("Content-Type");
@@ -613,7 +621,7 @@ public class ApiClient
      * @throws ApiException
      *             API exception
      */
-    public HttpEntity serialize( Object obj, Map<String, Object> formParams, ContentType contentType )
+    private HttpEntity serialize( Object obj, Map<String, Object> formParams, ContentType contentType )
         throws ApiException
     {
         String mimeType = contentType.getMimeType();
@@ -683,7 +691,7 @@ public class ApiClient
      *             IO exception
      */
     @SuppressWarnings( "unchecked" )
-    public <T> T deserialize( ClassicHttpResponse response, TypeReference<T> valueType )
+    private <T> T deserialize( ClassicHttpResponse response, TypeReference<T> valueType )
         throws ApiException,
             IOException,
             ParseException
@@ -722,7 +730,7 @@ public class ApiClient
         }
     }
 
-    protected File downloadFileFromResponse( ClassicHttpResponse response )
+    private File downloadFileFromResponse( ClassicHttpResponse response )
         throws IOException
     {
         Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
@@ -732,7 +740,7 @@ public class ApiClient
         return file;
     }
 
-    protected File prepareDownloadFile( String contentDisposition )
+    private File prepareDownloadFile( String contentDisposition )
         throws IOException
     {
         String filename = null;
@@ -791,7 +799,7 @@ public class ApiClient
      *            URL query string of the deep object parameters
      * @return The full URL
      */
-    protected
+    private
         String
         buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
     {
@@ -843,17 +851,17 @@ public class ApiClient
         return url.toString();
     }
 
-    protected boolean isSuccessfulStatus( int statusCode )
+    private boolean isSuccessfulStatus( int statusCode )
     {
         return statusCode >= 200 && statusCode < 300;
     }
 
-    protected boolean isBodyAllowed( String method )
+    private boolean isBodyAllowed( String method )
     {
         return bodyMethods.contains(method);
     }
 
-    protected Cookie buildCookie( String key, String value, URI uri )
+    private Cookie buildCookie( String key, String value, URI uri )
     {
         BasicClientCookie cookie = new BasicClientCookie(key, value);
         cookie.setDomain(uri.getHost());
@@ -871,7 +879,7 @@ public class ApiClient
      *            Return type
      * @return HttpClientResponseHandler instance
      */
-    protected <T> HttpClientResponseHandler<T> createResponseHandler( TypeReference<T> returnType )
+    private <T> HttpClientResponseHandler<T> createResponseHandler( TypeReference<T> returnType )
     {
         return response -> {
             try {
@@ -884,7 +892,7 @@ public class ApiClient
         };
     }
 
-    protected <T> T processResponse( ClassicHttpResponse response, TypeReference<T> returnType )
+    private <T> T processResponse( ClassicHttpResponse response, TypeReference<T> returnType )
         throws ApiException,
             IOException,
             ParseException
@@ -958,7 +966,6 @@ public class ApiClient
             throw new ApiException("Cannot have body and form params");
         }
 
-        // updateParamsForAuth(authNames, queryParams, headerParams, cookieParams);
         final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
 
         ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
