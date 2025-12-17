@@ -172,8 +172,6 @@ import java.util.StringJoiner;
             };
             final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-            String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
-
         {{#returnType}}
                 TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{returnType}}}>() {};
                 return apiClient.invokeAPI(
@@ -192,7 +190,6 @@ import java.util.StringJoiner;
             localVarFormParams,
             localVarAccept,
             localVarContentType,
-            localVarAuthNames,
         {{#returnType}}localVarReturnType{{/returnType}}{{^returnType}}null{{/returnType}}
             );
             }
@@ -220,8 +217,6 @@ import java.util.StringJoiner;
                 };
                 final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-                String[] localVarAuthNames = new String[] { {{#authMethods}}"{{name}}"{{^-last}}, {{/-last}}{{/authMethods}} };
-
                 return apiClient.invokeAPI(
                 localVarPath,
                 method,
@@ -234,7 +229,6 @@ import java.util.StringJoiner;
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
-                localVarAuthNames,
                 returnType
                 );
                 }
