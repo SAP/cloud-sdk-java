@@ -36,14 +36,11 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -67,6 +64,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 
 public class ApiClient
@@ -109,7 +108,8 @@ public class ApiClient
         this.httpClient = httpClient;
     }
 
-    public ApiClient(Destination destination) {
+    public ApiClient( Destination destination )
+    {
         this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination));
         setBasePath(destination.asHttp().getUri().toString());
     }
@@ -228,7 +228,7 @@ public class ApiClient
      *            User agent
      * @return API client
      */
-    private final ApiClient setUserAgent(String userAgent)
+    private final ApiClient setUserAgent( String userAgent )
     {
         addDefaultHeader("User-Agent", userAgent);
         return this;
@@ -241,7 +241,7 @@ public class ApiClient
      *            Temp folder path
      * @return API client
      */
-    private ApiClient setTempFolderPath(String tempFolderPath)
+    private ApiClient setTempFolderPath( String tempFolderPath )
     {
         this.tempFolderPath = tempFolderPath;
         return this;
@@ -256,7 +256,7 @@ public class ApiClient
      *            The header's value
      * @return API client
      */
-    private final ApiClient addDefaultHeader(String key, String value)
+    private final ApiClient addDefaultHeader( String key, String value )
     {
         defaultHeaderMap.put(key, value);
         return this;
@@ -271,7 +271,7 @@ public class ApiClient
      *            The cookie's value
      * @return API client
      */
-    private ApiClient addDefaultCookie(String key, String value)
+    private ApiClient addDefaultCookie( String key, String value )
     {
         defaultCookieMap.put(key, value);
         return this;
@@ -319,7 +319,7 @@ public class ApiClient
      *            Connection timeout in milliseconds
      * @return API client
      */
-    private ApiClient setConnectTimeout(int connectionTimeout)
+    private ApiClient setConnectTimeout( int connectionTimeout )
     {
         this.connectionTimeout = connectionTimeout;
         return this;
@@ -342,7 +342,7 @@ public class ApiClient
      *            Date format
      * @return API client
      */
-    private ApiClient setDateFormat(DateFormat dateFormat)
+    private ApiClient setDateFormat( DateFormat dateFormat )
     {
         this.dateFormat = dateFormat;
         // Also set the date format for model (de)serialization with Date properties.
@@ -357,7 +357,7 @@ public class ApiClient
      *            String
      * @return Date
      */
-    private Date parseDate(String str)
+    private Date parseDate( String str )
     {
         try {
             return dateFormat.parse(str);
