@@ -390,8 +390,7 @@ public class DestinationService implements DestinationLoader
 
     private boolean preLookupCheckSuccessful( final String destinationName, final DestinationOptions options )
     {
-          return new ArrayList<>(
-              Cache.getOrComputeAllDestinations(options, this::getAllDestinationsByRetrievalStrategy).get())
+        return getAllDestinationProperties(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options).get())
             .stream()
             .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
     }
