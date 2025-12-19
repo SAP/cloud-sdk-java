@@ -108,8 +108,6 @@ class DestinationServicePrincipalPropagationTest
                 .withRequestBody(
                     equalTo("grant_type=client_credentials&client_secret=CLIENT_SECRET&client_id=CLIENT_ID"))
                 .willReturn(okJson("{\"access_token\":\"provider-client-credentials\",\"expires_in\":3600}")));
-        // Disable PreLookupCheck to simplify test setup
-        DestinationService.Cache.disablePreLookupCheck();
     }
 
     @AfterEach
