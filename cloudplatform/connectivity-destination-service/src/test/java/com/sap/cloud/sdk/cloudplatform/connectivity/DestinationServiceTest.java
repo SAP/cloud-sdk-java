@@ -113,15 +113,6 @@ class DestinationServiceTest
             "ProxyType": "Internet",
             "KeyStorePassword": "password",
             "KeyStoreLocation": "aaa"
-          },
-          {
-            "Name": "SomeDestinationName",
-            "Type": "HTTP",
-            "URL": "https://a.s4hana.ondemand.com",
-            "Authentication": "ClientCertificateAuthentication",
-            "ProxyType": "Internet",
-            "KeyStorePassword": "password",
-            "KeyStoreLocation": "aaa"
           }]
         """;
 
@@ -345,9 +336,6 @@ class DestinationServiceTest
     @BeforeEach
     void setup()
     {
-        // Disable PreLookupCheck to simplify test setup
-        DestinationService.Cache.disablePreLookupCheck();
-
         providerTenant = new DefaultTenant("provider-tenant");
         subscriberTenant = new DefaultTenant("subscriber-tenant");
         context.setTenant(subscriberTenant);
@@ -454,7 +442,7 @@ class DestinationServiceTest
 
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
 
         final DestinationProperties destination =
             destinationList
@@ -490,7 +478,7 @@ class DestinationServiceTest
         final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ALWAYS_PROVIDER);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
     }
 
     @Test
@@ -506,7 +494,7 @@ class DestinationServiceTest
         final Collection<DestinationProperties> destinationList = loader.getAllDestinationProperties(ONLY_SUBSCRIBER);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT", destinationName);
+            .containsExactly("CC8-HTTP-BASIC", "CC8-HTTP-CERT1", "CC8-HTTP-CERT");
     }
 
     @Test
@@ -601,10 +589,10 @@ class DestinationServiceTest
         final List<Destination> destinationList = new ArrayList<>();
         destinations.get().forEach(destinationList::add);
 
-        assertThat(destinationList.size()).isEqualTo(4);
+        assertThat(destinationList.size()).isEqualTo(3);
         assertThat(destinationList)
             .extracting(d -> d.get(DestinationProperty.NAME).get())
-            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1", destinationName);
+            .containsOnly("CC8-HTTP-BASIC", "CC8-HTTP-CERT", "CC8-HTTP-CERT1");
     }
 
     @SuppressWarnings( "deprecation" )
@@ -1921,50 +1909,5 @@ class DestinationServiceTest
                 }
             }
             """, name, url);
-    }
-
-    @Test
-    void testPrependGetAllDestinationsCall()
-    {
-        // Reset Cache to re-enable the PreLookupCheck
-        DestinationService.Cache.reset();
-
-        doReturn(responseServiceInstanceDestination)
-            .when(destinationServiceAdapter)
-            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-        doReturn(responseSubaccountDestination)
-            .when(destinationServiceAdapter)
-            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-
-        Destination result = loader.tryGetDestination(destinationName).get();
-
-        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verify(destinationServiceAdapter, times(1))
-            .getConfigurationAsJson(eq("/v1/destinations/" + destinationName), any());
-        verifyNoMoreInteractions(destinationServiceAdapter);
-    }
-
-    @Test
-    void testPrependGetAllDestinationsCallWithMissingDestination()
-    {
-        // Reset Cache to re-enable the PreLookupCheck
-        DestinationService.Cache.reset();
-
-        doReturn(responseServiceInstanceDestination)
-            .when(destinationServiceAdapter)
-            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-        doReturn(responseSubaccountDestination)
-            .when(destinationServiceAdapter)
-            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-
-        assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get())
-            .isInstanceOf(DestinationNotFoundException.class)
-            .hasMessageContaining("was not found among the destinations of the current tenant.");
-
-        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
-        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
-        verifyNoMoreInteractions(destinationServiceAdapter);
-
     }
 }
