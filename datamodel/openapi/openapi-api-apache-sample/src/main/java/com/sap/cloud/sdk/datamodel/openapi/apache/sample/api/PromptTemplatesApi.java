@@ -13,7 +13,6 @@ package com.sap.cloud.sdk.datamodel.openapi.apache.sample.api;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,37 +65,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope )
         throws ApiException
     {
-        return this
-            .createUpdatePromptTemplate(
-                promptTemplatePostRequest,
-                aiResourceGroup,
-                aiResourceGroupScope,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Create or update a prompt template
-     *
-     * @param promptTemplatePostRequest
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplatePostResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplatePostResponse createUpdatePromptTemplate(
-        @javax.annotation.Nonnull PromptTemplatePostRequest promptTemplatePostRequest,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = promptTemplatePostRequest;
 
         // verify the required parameter 'promptTemplatePostRequest' is set
@@ -120,8 +88,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -167,33 +133,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope )
         throws ApiException
     {
-        return this
-            .deletePromptTemplate(promptTemplateId, aiResourceGroup, aiResourceGroupScope, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Delete prompt template
-     *
-     * @param promptTemplateId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateDeleteResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateDeleteResponse deletePromptTemplate(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
@@ -221,8 +160,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -271,33 +208,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope )
         throws ApiException
     {
-        return this
-            .exportPromptTemplate(promptTemplateId, aiResourceGroup, aiResourceGroupScope, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Export prompt template
-     *
-     * @param promptTemplateId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return File
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public File exportPromptTemplate(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
@@ -325,8 +235,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -374,33 +282,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope )
         throws ApiException
     {
-        return this
-            .getPromptTemplateByUuid(promptTemplateId, aiResourceGroup, aiResourceGroupScope, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Get prompt template by UUID
-     *
-     * @param promptTemplateId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateGetResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateGetResponse getPromptTemplateByUuid(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
@@ -428,8 +309,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -477,32 +356,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable File _file )
         throws ApiException
     {
-        return this.importPromptTemplate(aiResourceGroup, aiResourceGroupScope, _file, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Import prompt template
-     *
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param _file
-     *            (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplatePostResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplatePostResponse importPromptTemplate(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable File _file,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -519,8 +372,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         if( _file != null )
             localVarFormParams.put("file", _file);
@@ -575,45 +426,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope )
         throws ApiException
     {
-        return this
-            .listPromptTemplateHistory(
-                scenario,
-                version,
-                name,
-                aiResourceGroup,
-                aiResourceGroupScope,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * List prompt template history
-     *
-     * @param scenario
-     *            (required)
-     * @param version
-     *            (required)
-     * @param name
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateListResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateListResponse listPromptTemplateHistory(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
@@ -653,8 +465,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -714,53 +524,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable Boolean includeSpec )
         throws ApiException
     {
-        return this
-            .listPromptTemplates(
-                aiResourceGroup,
-                aiResourceGroupScope,
-                scenario,
-                name,
-                version,
-                retrieve,
-                includeSpec,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * List prompt templates
-     *
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param scenario
-     *            (optional)
-     * @param name
-     *            (optional)
-     * @param version
-     *            (optional)
-     * @param retrieve
-     *            (optional, default to both)
-     * @param includeSpec
-     *            (optional, default to false)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateListResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateListResponse listPromptTemplates(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable String scenario,
-        @javax.annotation.Nullable String name,
-        @javax.annotation.Nullable String version,
-        @javax.annotation.Nullable String retrieve,
-        @javax.annotation.Nullable Boolean includeSpec,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -782,8 +545,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -837,45 +598,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws ApiException
     {
-        return this
-            .parsePromptTemplateById(
-                promptTemplateId,
-                aiResourceGroup,
-                aiResourceGroupScope,
-                metadata,
-                promptTemplateSubstitutionRequest,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Parse prompt template by ID
-     *
-     * @param promptTemplateId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param metadata
-     *            (optional, default to false)
-     * @param promptTemplateSubstitutionRequest
-     *            (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateSubstitutionResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateSubstitutionResponse parsePromptTemplateById(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable Boolean metadata,
-        @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'promptTemplateId' is set
@@ -904,8 +626,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -964,53 +684,6 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws ApiException
     {
-        return this
-            .parsePromptTemplateByNameVersion(
-                scenario,
-                version,
-                name,
-                aiResourceGroup,
-                aiResourceGroupScope,
-                metadata,
-                promptTemplateSubstitutionRequest,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Parse prompt template by name and version
-     *
-     * @param scenario
-     *            (required)
-     * @param version
-     *            (required)
-     * @param name
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param aiResourceGroupScope
-     *            Specify whether the resource group scope is to be used (optional)
-     * @param metadata
-     *            (optional, default to false)
-     * @param promptTemplateSubstitutionRequest
-     *            (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return PromptTemplateSubstitutionResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public PromptTemplateSubstitutionResponse parsePromptTemplateByNameVersion(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable Boolean metadata,
-        @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'scenario' is set
@@ -1053,8 +726,6 @@ public class PromptTemplatesApi extends BaseApi
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
             localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
