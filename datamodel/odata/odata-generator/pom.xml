@@ -118,10 +118,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.sun.codemodel</groupId>
 			<artifactId>codemodel</artifactId>
 		</dependency>
