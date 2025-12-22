@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -36,12 +35,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.hc.client5.http.cookie.BasicCookieStore;
-import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -70,13 +66,9 @@ import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 
 public class ApiClient
 {
-    protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
-    protected Map<String, String> defaultCookieMap = new HashMap<String, String>();
     protected String basePath = "http://localhost";
-    protected boolean debugging = false;
-    protected int connectionTimeout = 0;
 
-    protected CloseableHttpClient httpClient;
+    protected final CloseableHttpClient httpClient;
     protected ObjectMapper objectMapper;
     protected String tempFolderPath = null;
 
@@ -86,8 +78,9 @@ public class ApiClient
     protected DateFormat dateFormat;
 
     // Methods that can have a request body
-    protected static List<String> bodyMethods = Arrays.asList("POST", "PUT", "DELETE", "PATCH");
+    protected static final List<String> BODY_METHODS = Arrays.asList("POST", "PUT", "DELETE", "PATCH");
 
+    // TODO: static factory or public?
     public ApiClient( CloseableHttpClient httpClient )
     {
         objectMapper = new ObjectMapper();
@@ -102,9 +95,6 @@ public class ApiClient
 
         dateFormat = ApiClient.buildDefaultDateFormat();
 
-        // Set default User-Agent.
-        setUserAgent("OpenAPI-Generator/0.0.1/java");
-
         this.httpClient = httpClient;
     }
 
@@ -117,7 +107,6 @@ public class ApiClient
     public ApiClient()
     {
         this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
-        // TODO: What about base path?
     }
 
     private static DateFormat buildDefaultDateFormat()
@@ -134,7 +123,8 @@ public class ApiClient
      *
      * @return Object mapper
      */
-    private ObjectMapper getObjectMapper()
+    // TODO: couples with Jackson if public
+    public ObjectMapper getObjectMapper()
     {
         return objectMapper;
     }
@@ -146,7 +136,7 @@ public class ApiClient
      *            object mapper
      * @return API client
      */
-    private ApiClient setObjectMapper( ObjectMapper objectMapper )
+    public ApiClient setObjectMapper( ObjectMapper objectMapper )
     {
         this.objectMapper = objectMapper;
         return this;
@@ -155,19 +145,6 @@ public class ApiClient
     private CloseableHttpClient getHttpClient()
     {
         return httpClient;
-    }
-
-    /**
-     * Sets the HTTP client.
-     *
-     * @param httpClient
-     *            HTTP client
-     * @return API client
-     */
-    private ApiClient setHttpClient( CloseableHttpClient httpClient )
-    {
-        this.httpClient = httpClient;
-        return this;
     }
 
     private String getBasePath()
@@ -182,7 +159,7 @@ public class ApiClient
      *            base path
      * @return API client
      */
-    private ApiClient setBasePath( String basePath )
+    public ApiClient setBasePath( String basePath )
     {
         this.basePath = basePath;
         return this;
@@ -193,6 +170,8 @@ public class ApiClient
      *
      * @return Status code
      */
+    // TODO: Find a better way to expose last response info
+    // TODO: custom response handler by user?
     @Deprecated // TODO: Do we keep deprecated methods?
     private int getStatusCode()
     {
@@ -222,19 +201,6 @@ public class ApiClient
     }
 
     /**
-     * Set the User-Agent header's value (by adding to the default header map).
-     *
-     * @param userAgent
-     *            User agent
-     * @return API client
-     */
-    private final ApiClient setUserAgent( String userAgent )
-    {
-        addDefaultHeader("User-Agent", userAgent);
-        return this;
-    }
-
-    /**
      * Set temp folder path
      *
      * @param tempFolderPath
@@ -248,84 +214,6 @@ public class ApiClient
     }
 
     /**
-     * Add a default header.
-     *
-     * @param key
-     *            The header's key
-     * @param value
-     *            The header's value
-     * @return API client
-     */
-    private final ApiClient addDefaultHeader( String key, String value )
-    {
-        defaultHeaderMap.put(key, value);
-        return this;
-    }
-
-    /**
-     * Add a default cookie.
-     *
-     * @param key
-     *            The cookie's key
-     * @param value
-     *            The cookie's value
-     * @return API client
-     */
-    private ApiClient addDefaultCookie( String key, String value )
-    {
-        defaultCookieMap.put(key, value);
-        return this;
-    }
-
-    /**
-     * Check that whether debugging is enabled for this API client.
-     *
-     * @return True if debugging is on
-     */
-    private boolean isDebugging()
-    {
-        return debugging;
-    }
-
-    /**
-     * Enable/disable debugging for this API client.
-     *
-     * @param debugging
-     *            To enable (true) or disable (false) debugging
-     * @return API client
-     */
-    private ApiClient setDebugging( boolean debugging )
-    {
-        // TODO: implement debugging mode
-        this.debugging = debugging;
-        return this;
-    }
-
-    /**
-     * Connect timeout (in milliseconds).
-     *
-     * @return Connection timeout
-     */
-    private int getConnectTimeout()
-    {
-        return connectionTimeout;
-    }
-
-    /**
-     * Set the connect timeout (in milliseconds). A value of 0 means no timeout, otherwise values must be between 1 and
-     * {@link Integer#MAX_VALUE}.
-     *
-     * @param connectionTimeout
-     *            Connection timeout in milliseconds
-     * @return API client
-     */
-    private ApiClient setConnectTimeout( int connectionTimeout )
-    {
-        this.connectionTimeout = connectionTimeout;
-        return this;
-    }
-
-    /**
      * Get the date format used to parse/format date parameters.
      *
      * @return Date format
@@ -335,6 +223,7 @@ public class ApiClient
         return dateFormat;
     }
 
+    // TODO: remove accessor or even get rid of the field
     /**
      * Set the date format used to parse/format date parameters.
      *
@@ -443,6 +332,7 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
+    // TODO: check if this will even be used in api.mustache?
     private List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
     {
         List<Pair> params = new ArrayList<Pair>();
@@ -507,6 +397,7 @@ public class ApiClient
      * @return The Accept header to use. If the given array is empty, null will be returned (not to set the Accept
      *         header explicitly).
      */
+    // TODO: have it static?
     public String selectHeaderAccept( String[] accepts )
     {
         if( accepts.length == 0 ) {
@@ -777,16 +668,6 @@ public class ApiClient
     }
 
     /**
-     * Returns the URL of the client as defined by the server (if exists) or the base path.
-     *
-     * @return The URL for the client.
-     */
-    public String getBaseURL()
-    {
-        return basePath;
-    }
-
-    /**
      * Build full URL by concatenating base URL, the given sub path and query parameters.
      *
      * @param path
@@ -803,7 +684,7 @@ public class ApiClient
         String
         buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
     {
-        String baseURL = getBaseURL();
+        String baseURL = getBasePath();
 
         final StringBuilder url = new StringBuilder();
         url.append(baseURL).append(path);
@@ -858,15 +739,7 @@ public class ApiClient
 
     private boolean isBodyAllowed( String method )
     {
-        return bodyMethods.contains(method);
-    }
-
-    private Cookie buildCookie( String key, String value, URI uri )
-    {
-        BasicClientCookie cookie = new BasicClientCookie(key, value);
-        cookie.setDomain(uri.getHost());
-        cookie.setPath("/");
-        return cookie;
+        return BODY_METHODS.contains(method);
     }
 
     /**
@@ -933,8 +806,6 @@ public class ApiClient
      *            The request body object - if it is not binary, otherwise null
      * @param headerParams
      *            The header parameters
-     * @param cookieParams
-     *            The cookie parameters
      * @param formParams
      *            The form parameters
      * @param accept
@@ -955,7 +826,6 @@ public class ApiClient
         String urlQueryDeepObject,
         Object body,
         Map<String, String> headerParams,
-        Map<String, String> cookieParams,
         Map<String, Object> formParams,
         String accept,
         String contentType,
@@ -977,24 +847,8 @@ public class ApiClient
         for( Entry<String, String> keyValue : headerParams.entrySet() ) {
             builder.addHeader(keyValue.getKey(), keyValue.getValue());
         }
-        for( Map.Entry<String, String> keyValue : defaultHeaderMap.entrySet() ) {
-            if( !headerParams.containsKey(keyValue.getKey()) ) {
-                builder.addHeader(keyValue.getKey(), keyValue.getValue());
-            }
-        }
-
-        BasicCookieStore store = new BasicCookieStore();
-        for( Entry<String, String> keyValue : cookieParams.entrySet() ) {
-            store.addCookie(buildCookie(keyValue.getKey(), keyValue.getValue(), builder.getUri()));
-        }
-        for( Entry<String, String> keyValue : defaultCookieMap.entrySet() ) {
-            if( !cookieParams.containsKey(keyValue.getKey()) ) {
-                store.addCookie(buildCookie(keyValue.getKey(), keyValue.getValue(), builder.getUri()));
-            }
-        }
 
         HttpClientContext context = HttpClientContext.create();
-        context.setCookieStore(store);
 
         ContentType contentTypeObj = getContentType(contentType);
         if( body != null || !formParams.isEmpty() ) {

@@ -107,7 +107,6 @@ import java.util.StringJoiner;
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
             List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-            Map<String, String> localVarCookieParams = new HashMap<String, String>();
             Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         {{#queryParams}}
@@ -154,10 +153,6 @@ import java.util.StringJoiner;
 
             localVarHeaderParams.putAll(additionalHeaders);
 
-        {{#cookieParams}}if ({{paramName}} != null)
-            localVarCookieParams.put("{{baseName}}", apiClient.parameterToString({{paramName}}));
-        {{/cookieParams}}
-
         {{#formParams}}if ({{paramName}} != null)
             localVarFormParams.put("{{baseName}}", {{paramName}});
         {{/formParams}}
@@ -186,7 +181,6 @@ import java.util.StringJoiner;
             localVarQueryStringJoiner.toString(),
             localVarPostBody,
             localVarHeaderParams,
-            localVarCookieParams,
             localVarFormParams,
             localVarAccept,
             localVarContentType,
