@@ -44,6 +44,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -98,7 +99,7 @@ public class ApiClient
     public ApiClient( Destination destination )
     {
         this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination));
-        setBasePath(destination.asHttp().getUri().toString());
+        this.basePath = destination.asHttp().getUri().toString();
     }
 
     public ApiClient()
@@ -724,6 +725,10 @@ public class ApiClient
             ParseException
     {
         int statusCode = response.getCode();
+        if( statusCode == HttpStatus.SC_NO_CONTENT ) {
+            return null;
+        }
+
         Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
 
         if( isSuccessfulStatus(statusCode) ) {
