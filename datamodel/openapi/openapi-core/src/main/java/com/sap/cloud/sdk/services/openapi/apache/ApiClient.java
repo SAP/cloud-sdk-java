@@ -15,55 +15,46 @@ package com.sap.cloud.sdk.services.openapi.apache;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
-import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
+
+import static com.sap.cloud.sdk.services.openapi.apache.ApiClientResponseHandler.isJsonMime;
 
 public class ApiClient
 {
@@ -329,20 +320,6 @@ public class ApiClient
     }
 
     /**
-     * Check if the given MIME is a JSON MIME. JSON MIME examples: application/json application/json; charset=UTF8
-     * APPLICATION/JSON application/vnd.company+json
-     *
-     * @param mime
-     *            MIME
-     * @return True if MIME type is boolean
-     */
-    private static boolean isJsonMime( String mime )
-    {
-        String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
-        return mime != null && (mime.matches(jsonMime) || mime.equals("*/*"));
-    }
-
-    /**
      * Select the Accept header's value from the given accepts array: if JSON exists in the given array, use it;
      * otherwise use all of them (joining into a string)
      *
@@ -351,7 +328,6 @@ public class ApiClient
      * @return The Accept header to use. If the given array is empty, null will be returned (not to set the Accept
      *         header explicitly).
      */
-    // TODO: have it static?
     public static String selectHeaderAccept( String[] accepts )
     {
         if( accepts.length == 0 ) {
@@ -404,29 +380,6 @@ public class ApiClient
     }
 
     /**
-     * Transforms response headers into map.
-     *
-     * @param headers
-     *            HTTP headers
-     * @return a map of string array
-     */
-    private static Map<String, List<String>> transformResponseHeaders( Header[] headers )
-    {
-        Map<String, List<String>> headersMap = new HashMap<>();
-        for( Header header : headers ) {
-            List<String> valuesList = headersMap.get(header.getName());
-            if( valuesList != null ) {
-                valuesList.add(header.getValue());
-            } else {
-                valuesList = new ArrayList<>();
-                valuesList.add(header.getValue());
-                headersMap.put(header.getName(), valuesList);
-            }
-        }
-        return headersMap;
-    }
-
-    /**
      * Parse content type object from header value
      */
     private ContentType getContentType( String headerValue )
@@ -438,19 +391,6 @@ public class ApiClient
         catch( UnsupportedCharsetException e ) {
             throw new ApiException("Could not parse content type " + headerValue);
         }
-    }
-
-    /**
-     * Get content type of a response or null if one was not provided
-     */
-    private String getResponseMimeType( HttpResponse response )
-        throws ApiException
-    {
-        Header contentTypeHeader = response.getFirstHeader("Content-Type");
-        if( contentTypeHeader != null ) {
-            return getContentType(contentTypeHeader.getValue()).getMimeType();
-        }
-        return null;
     }
 
     /**
@@ -521,107 +461,6 @@ public class ApiClient
     }
 
     /**
-     * Deserialize response body to Java object according to the Content-Type.
-     *
-     * @param <T>
-     *            Type
-     * @param response
-     *            Response
-     * @param valueType
-     *            Return type
-     * @return Deserialized object
-     * @throws ApiException
-     *             API exception
-     * @throws IOException
-     *             IO exception
-     */
-    @SuppressWarnings( "unchecked" )
-    private <T> T deserialize( ClassicHttpResponse response, TypeReference<T> valueType )
-        throws ApiException,
-            IOException,
-            ParseException
-    {
-        if( valueType == null ) {
-            return null;
-        }
-        HttpEntity entity = response.getEntity();
-        Type valueRawType = valueType.getType();
-        if( valueRawType.equals(byte[].class) ) {
-            return (T) EntityUtils.toByteArray(entity);
-        } else if( valueRawType.equals(File.class) ) {
-            return (T) downloadFileFromResponse(response);
-        }
-        String mimeType = getResponseMimeType(response);
-        if( mimeType == null || isJsonMime(mimeType) ) {
-            // Assume json if no mime type
-            // convert input stream to string
-            String content = EntityUtils.toString(entity);
-
-            if( "".equals(content) ) { // returns null for empty body
-                return null;
-            }
-
-            return objectMapper.readValue(content, valueType);
-        } else if( mimeType.toLowerCase().startsWith("text/") ) {
-            // convert input stream to string
-            return (T) EntityUtils.toString(entity);
-        } else {
-            Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-            throw new ApiException(
-                "Deserialization for content type '" + mimeType + "' not supported for type '" + valueType + "'",
-                response.getCode(),
-                responseHeaders,
-                EntityUtils.toString(entity));
-        }
-    }
-
-    private File downloadFileFromResponse( ClassicHttpResponse response )
-        throws IOException
-    {
-        Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
-        String contentDisposition = contentDispositionHeader == null ? null : contentDispositionHeader.getValue();
-        File file = prepareDownloadFile(contentDisposition);
-        Files.copy(response.getEntity().getContent(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        return file;
-    }
-
-    private File prepareDownloadFile( String contentDisposition )
-        throws IOException
-    {
-        String filename = null;
-        if( contentDisposition != null && !"".equals(contentDisposition) ) {
-            // Get filename from the Content-Disposition header.
-            Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
-            Matcher matcher = pattern.matcher(contentDisposition);
-            if( matcher.find() )
-                filename = matcher.group(1);
-        }
-
-        String prefix;
-        String suffix = null;
-        if( filename == null ) {
-            prefix = "download-";
-            suffix = "";
-        } else {
-            int pos = filename.lastIndexOf('.');
-            if( pos == -1 ) {
-                prefix = filename + "-";
-            } else {
-                prefix = filename.substring(0, pos) + "-";
-                suffix = filename.substring(pos);
-            }
-            // Files.createTempFile requires the prefix to be at least three characters long
-            if( prefix.length() < 3 )
-                prefix = "download-";
-        }
-
-        if( tempFolderPath == null )
-            return Files.createTempFile(prefix, suffix).toFile();
-        else
-            return Files.createTempFile(Paths.get(tempFolderPath), prefix, suffix).toFile();
-    }
-
-    /**
      * Build full URL by concatenating base URL, the given sub path and query parameters.
      *
      * @param path
@@ -686,57 +525,9 @@ public class ApiClient
         return url.toString();
     }
 
-    private static boolean isSuccessfulStatus( int statusCode )
-    {
-        return statusCode >= 200 && statusCode < 300;
-    }
-
     private static boolean isBodyAllowed( String method )
     {
         return BODY_METHODS.contains(method);
-    }
-
-    /**
-     * Creates an HttpClientResponseHandler for processing HTTP responses. Wraps checked exceptions (ParseException,
-     * ApiException) as IOException since the handler interface only allows IOException to be thrown.
-     *
-     * @param <T>
-     *            Type
-     * @param returnType
-     *            Return type
-     * @return HttpClientResponseHandler instance
-     */
-    private <T> HttpClientResponseHandler<T> createResponseHandler( TypeReference<T> returnType )
-    {
-        return response -> {
-            try {
-                return processResponse(response, returnType);
-            }
-            catch( ParseException | ApiException e ) {
-                // Wrap exceptions as IOException since handler can only throw IOException
-                throw new IOException("Failed to process response: " + e.getMessage(), e);
-            }
-        };
-    }
-
-    private <T> T processResponse( ClassicHttpResponse response, TypeReference<T> returnType )
-        throws ApiException,
-            IOException,
-            ParseException
-    {
-        int statusCode = response.getCode();
-        if( statusCode == HttpStatus.SC_NO_CONTENT ) {
-            return null;
-        }
-
-        Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-
-        if( isSuccessfulStatus(statusCode) ) {
-            return this.deserialize(response, returnType);
-        } else {
-            String message = EntityUtils.toString(response.getEntity());
-            throw new ApiException(message, statusCode, responseHeaders, message);
-        }
     }
 
     /**
@@ -817,7 +608,8 @@ public class ApiClient
         }
 
         try {
-            HttpClientResponseHandler<T> responseHandler = createResponseHandler(returnType);
+            HttpClientResponseHandler<T> responseHandler =
+                new ApiClientResponseHandler<>(objectMapper, tempFolderPath, returnType);
             return httpClient.execute(builder.build(), context, responseHandler);
         }
         catch( IOException e ) {
