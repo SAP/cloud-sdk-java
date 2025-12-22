@@ -4,24 +4,20 @@
 
 ### 🚧 Known Issues
 
--
+- 
 
 ### 🔧 Compatibility Notes
 
--
+- 
 
 ### ✨ New Functionality
 
-- Added native DestinationLoader implementation through the `TransparentProxy` class. This enables seamless destination
-  retrieval via `tryGetDestination` and provides full Cloud SDK integration for applications running in Kubernetes
-  environments where Transparent Proxy is available.
+- 
 
 ### 📈 Improvements
 
--
+- 
 
 ### 🐛 Fixed Issues
 
-- Fix unintended modification of `serviceNameMappings.properties` during OData service regeneration altering stored
-  mappings.
-  Additionally, service name cleanup is now case-insensitive for consistency.
+- 
