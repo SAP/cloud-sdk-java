@@ -13,7 +13,6 @@ package com.sap.cloud.sdk.datamodel.openapi.apache.sample.api;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,30 +60,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroup )
         throws ApiException
     {
-        return this
-            .createUpdateOrchestrationConfig(orchestrationConfigPostRequest, aiResourceGroup, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Create or update an orchestration config
-     *
-     * @param orchestrationConfigPostRequest
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigPostResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigPostResponse createUpdateOrchestrationConfig(
-        @javax.annotation.Nonnull OrchestrationConfigPostRequest orchestrationConfigPostRequest,
-        @javax.annotation.Nullable String aiResourceGroup,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = orchestrationConfigPostRequest;
 
         // verify the required parameter 'orchestrationConfigPostRequest' is set
@@ -106,8 +81,6 @@ public class OrchestrationConfigsApi extends BaseApi
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -151,29 +124,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroup )
         throws ApiException
     {
-        return this.deleteOrchestrationConfig(orchestrationConfigId, aiResourceGroup, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Delete orchestration config
-     *
-     * @param orchestrationConfigId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigDeleteResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigDeleteResponse deleteOrchestrationConfig(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
@@ -199,8 +149,6 @@ public class OrchestrationConfigsApi extends BaseApi
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -246,29 +194,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroup )
         throws ApiException
     {
-        return this.exportOrchestrationConfig(orchestrationConfigId, aiResourceGroup, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Export orchestration config
-     *
-     * @param orchestrationConfigId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return File
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public File exportOrchestrationConfig(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
@@ -294,8 +219,6 @@ public class OrchestrationConfigsApi extends BaseApi
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -343,37 +266,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable Boolean resolveTemplateRef )
         throws ApiException
     {
-        return this
-            .getOrchestrationConfigByUuid(
-                orchestrationConfigId,
-                aiResourceGroup,
-                resolveTemplateRef,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Get orchestration config by UUID
-     *
-     * @param orchestrationConfigId
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param resolveTemplateRef
-     *            (optional, default to false)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigGetResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigGetResponse getOrchestrationConfigByUuid(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable Boolean resolveTemplateRef,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
@@ -400,8 +292,6 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -447,29 +337,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable File _file )
         throws ApiException
     {
-        return this.importOrchestrationConfig(aiResourceGroup, _file, Collections.emptyMap());
-    }
-
-    /**
-     *
-     * Import orchestration config
-     *
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param _file
-     *            (optional)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigPostResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigPostResponse importOrchestrationConfig(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable File _file,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -484,8 +351,6 @@ public class OrchestrationConfigsApi extends BaseApi
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         if( _file != null )
             localVarFormParams.put("file", _file);
@@ -544,49 +409,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable Boolean resolveTemplateRef )
         throws ApiException
     {
-        return this
-            .listOrchestrationConfigHistory(
-                scenario,
-                version,
-                name,
-                aiResourceGroup,
-                includeSpec,
-                resolveTemplateRef,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * List orchestration config history
-     *
-     * @param scenario
-     *            (required)
-     * @param version
-     *            (required)
-     * @param name
-     *            (required)
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param includeSpec
-     *            (optional, default to false)
-     * @param resolveTemplateRef
-     *            (optional, default to false)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigListResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigListResponse listOrchestrationConfigHistory(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable Boolean includeSpec,
-        @javax.annotation.Nullable Boolean resolveTemplateRef,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
@@ -628,8 +450,6 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -690,53 +510,6 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable Boolean resolveTemplateRef )
         throws ApiException
     {
-        return this
-            .listOrchestrationConfigs(
-                aiResourceGroup,
-                scenario,
-                name,
-                version,
-                retrieve,
-                includeSpec,
-                resolveTemplateRef,
-                Collections.emptyMap());
-    }
-
-    /**
-     *
-     * List orchestration configs
-     *
-     * @param aiResourceGroup
-     *            Specify a resource group id to use (optional)
-     * @param scenario
-     *            (optional)
-     * @param name
-     *            (optional)
-     * @param version
-     *            (optional)
-     * @param retrieve
-     *            (optional, default to both)
-     * @param includeSpec
-     *            (optional, default to false)
-     * @param resolveTemplateRef
-     *            (optional, default to false)
-     * @param additionalHeaders
-     *            additionalHeaders for this call
-     * @return OrchestrationConfigListResponse
-     * @throws ApiException
-     *             if fails to make API call
-     */
-    public OrchestrationConfigListResponse listOrchestrationConfigs(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String scenario,
-        @javax.annotation.Nullable String name,
-        @javax.annotation.Nullable String version,
-        @javax.annotation.Nullable String retrieve,
-        @javax.annotation.Nullable Boolean includeSpec,
-        @javax.annotation.Nullable Boolean resolveTemplateRef,
-        Map<String, String> additionalHeaders )
-        throws ApiException
-    {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -757,8 +530,6 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
-
-        localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
