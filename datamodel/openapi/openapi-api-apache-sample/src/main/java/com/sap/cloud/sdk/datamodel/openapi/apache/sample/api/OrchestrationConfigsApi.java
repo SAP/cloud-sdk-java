@@ -102,7 +102,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
@@ -129,7 +128,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -197,7 +195,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
@@ -226,7 +223,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -294,7 +290,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
@@ -322,7 +317,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -401,7 +395,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
@@ -431,7 +424,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -488,7 +480,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
@@ -518,7 +509,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -632,7 +622,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(apiClient.parameterToPair("include_spec", includeSpec));
@@ -663,7 +652,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,
@@ -759,7 +747,6 @@ public class OrchestrationConfigsApi extends BaseApi
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(apiClient.parameterToPair("scenario", scenario));
@@ -794,7 +781,6 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarQueryStringJoiner.toString(),
                 localVarPostBody,
                 localVarHeaderParams,
-                localVarCookieParams,
                 localVarFormParams,
                 localVarAccept,
                 localVarContentType,

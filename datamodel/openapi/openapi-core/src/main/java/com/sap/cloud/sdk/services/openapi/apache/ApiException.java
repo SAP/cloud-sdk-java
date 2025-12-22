@@ -15,6 +15,7 @@ package com.sap.cloud.sdk.services.openapi.apache;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Swap with OpenApiRequestException
 public class ApiException extends Exception
 {
     private static final long serialVersionUID = 1L;
