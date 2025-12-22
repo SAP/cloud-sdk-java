@@ -124,10 +124,10 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "application/json" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
         {
@@ -208,7 +208,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -225,12 +225,12 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateDeleteResponse> localVarReturnType =
             new TypeReference<PromptTemplateDeleteResponse>()
@@ -312,7 +312,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}/export"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -329,12 +329,12 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
@@ -415,7 +415,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -432,12 +432,12 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateGetResponse> localVarReturnType = new TypeReference<PromptTemplateGetResponse>()
         {
@@ -526,10 +526,10 @@ public class PromptTemplatesApi extends BaseApi
             localVarFormParams.put("file", _file);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "multipart/form-data" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
         {
@@ -638,9 +638,9 @@ public class PromptTemplatesApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/history"
-                .replaceAll("\\{" + "scenario" + "\\}", apiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", apiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -657,12 +657,12 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
         {
@@ -786,12 +786,12 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
         {
@@ -890,7 +890,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}/substitution"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -908,10 +908,10 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "application/json" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()
@@ -1037,9 +1037,9 @@ public class PromptTemplatesApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/substitution"
-                .replaceAll("\\{" + "scenario" + "\\}", apiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", apiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -1057,10 +1057,10 @@ public class PromptTemplatesApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "application/json" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()

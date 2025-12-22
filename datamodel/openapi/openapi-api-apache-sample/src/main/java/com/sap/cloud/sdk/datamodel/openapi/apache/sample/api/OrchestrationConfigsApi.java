@@ -110,10 +110,10 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "application/json" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
@@ -188,7 +188,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -203,12 +203,12 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigDeleteResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigDeleteResponse>()
@@ -283,7 +283,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}/export"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -298,12 +298,12 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
@@ -388,7 +388,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    apiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -404,12 +404,12 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigGetResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigGetResponse>()
@@ -491,10 +491,10 @@ public class OrchestrationConfigsApi extends BaseApi
             localVarFormParams.put("file", _file);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = { "multipart/form-data" };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
@@ -613,9 +613,9 @@ public class OrchestrationConfigsApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/registry/v2/scenarios/{scenario}/orchestrationConfigs/{name}/versions/{version}/history"
-                .replaceAll("\\{" + "scenario" + "\\}", apiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", apiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", apiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -632,12 +632,12 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
@@ -761,12 +761,12 @@ public class OrchestrationConfigsApi extends BaseApi
         localVarHeaderParams.putAll(additionalHeaders);
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
