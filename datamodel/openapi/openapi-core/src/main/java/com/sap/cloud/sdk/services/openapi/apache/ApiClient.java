@@ -25,13 +25,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +44,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -60,6 +59,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
@@ -72,13 +72,10 @@ public class ApiClient
     protected ObjectMapper objectMapper;
     protected String tempFolderPath = null;
 
-    protected ThreadLocal<Integer> lastStatusCode = new ThreadLocal<>();
-    protected ThreadLocal<Map<String, List<String>>> lastResponseHeaders = new ThreadLocal<>();
-
     protected DateFormat dateFormat;
 
     // Methods that can have a request body
-    protected static final List<String> BODY_METHODS = Arrays.asList("POST", "PUT", "DELETE", "PATCH");
+    protected static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
 
     // TODO: static factory or public?
     public ApiClient( CloseableHttpClient httpClient )
@@ -115,36 +112,17 @@ public class ApiClient
     }
 
     /**
-     * Returns the current object mapper used for JSON serialization/deserialization.
-     * <p>
-     * Note: If you make changes to the object mapper, remember to set it back via <code>setObjectMapper</code> in order
-     * to trigger HTTP client rebuilding.
-     * </p>
-     *
-     * @return Object mapper
-     */
-    // TODO: couples with Jackson if public
-    public ObjectMapper getObjectMapper()
-    {
-        return objectMapper;
-    }
-
-    /**
      * Sets the object mapper.
      *
      * @param objectMapper
      *            object mapper
      * @return API client
      */
+    @Beta
     public ApiClient setObjectMapper( ObjectMapper objectMapper )
     {
         this.objectMapper = objectMapper;
         return this;
-    }
-
-    private CloseableHttpClient getHttpClient()
-    {
-        return httpClient;
     }
 
     private String getBasePath()
@@ -163,30 +141,6 @@ public class ApiClient
     {
         this.basePath = basePath;
         return this;
-    }
-
-    /**
-     * Gets the status code of the previous request
-     *
-     * @return Status code
-     */
-    // TODO: Find a better way to expose last response info
-    // TODO: custom response handler by user?
-    @Deprecated // TODO: Do we keep deprecated methods?
-    private int getStatusCode()
-    {
-        return lastStatusCode.get();
-    }
-
-    /**
-     * Gets the response headers of the previous request
-     *
-     * @return Response headers
-     */
-    @Deprecated
-    private Map<String, List<String>> getResponseHeaders()
-    {
-        return lastResponseHeaders.get();
     }
 
     /**
@@ -332,8 +286,7 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
-    // TODO: check if this will even be used in api.mustache?
-    private List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
+    public List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
     {
         List<Pair> params = new ArrayList<Pair>();
 
@@ -382,7 +335,7 @@ public class ApiClient
      *            MIME
      * @return True if MIME type is boolean
      */
-    private boolean isJsonMime( String mime )
+    private static boolean isJsonMime( String mime )
     {
         String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
         return mime != null && (mime.matches(jsonMime) || mime.equals("*/*"));
@@ -398,7 +351,7 @@ public class ApiClient
      *         header explicitly).
      */
     // TODO: have it static?
-    public String selectHeaderAccept( String[] accepts )
+    public static String selectHeaderAccept( String[] accepts )
     {
         if( accepts.length == 0 ) {
             return null;
@@ -419,7 +372,7 @@ public class ApiClient
      *            The Content-Type array to select from
      * @return The Content-Type header to use. If the given array is empty, or matches "any", JSON will be used.
      */
-    public String selectHeaderContentType( String[] contentTypes )
+    public static String selectHeaderContentType( String[] contentTypes )
     {
         if( contentTypes.length == 0 || contentTypes[0].equals("*/*") ) {
             return "application/json";
@@ -439,7 +392,7 @@ public class ApiClient
      *            String
      * @return Escaped string
      */
-    public String escapeString( String str )
+    public static String escapeString( String str )
     {
         try {
             return URLEncoder.encode(str, "utf8").replaceAll("\\+", "%20");
@@ -456,7 +409,7 @@ public class ApiClient
      *            HTTP headers
      * @return a map of string array
      */
-    private Map<String, List<String>> transformResponseHeaders( Header[] headers )
+    private static Map<String, List<String>> transformResponseHeaders( Header[] headers )
     {
         Map<String, List<String>> headersMap = new HashMap<>();
         for( Header header : headers ) {
@@ -732,12 +685,12 @@ public class ApiClient
         return url.toString();
     }
 
-    private boolean isSuccessfulStatus( int statusCode )
+    private static boolean isSuccessfulStatus( int statusCode )
     {
         return statusCode >= 200 && statusCode < 300;
     }
 
-    private boolean isBodyAllowed( String method )
+    private static boolean isBodyAllowed( String method )
     {
         return BODY_METHODS.contains(method);
     }
@@ -771,13 +724,7 @@ public class ApiClient
             ParseException
     {
         int statusCode = response.getCode();
-        lastStatusCode.set(statusCode);
-        if( statusCode == HttpStatus.SC_NO_CONTENT ) {
-            return null;
-        }
-
         Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-        lastResponseHeaders.set(responseHeaders);
 
         if( isSuccessfulStatus(statusCode) ) {
             return this.deserialize(response, returnType);
@@ -818,6 +765,7 @@ public class ApiClient
      * @throws ApiException
      *             API exception
      */
+    @Beta
     public <T> T invokeAPI(
         String path,
         String method,
