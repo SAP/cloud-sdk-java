@@ -23,7 +23,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -60,6 +59,7 @@ import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -302,13 +302,13 @@ public class ApiClient
      * Parse content type object from header value
      */
     private ContentType getContentType( String headerValue )
-        throws ApiException
+        throws OpenApiRequestException
     {
         try {
             return ContentType.parse(headerValue);
         }
         catch( UnsupportedCharsetException e ) {
-            throw new ApiException("Could not parse content type " + headerValue);
+            throw new OpenApiRequestException("Could not parse content type " + headerValue);
         }
     }
 
@@ -322,11 +322,11 @@ public class ApiClient
      * @param formParams
      *            Form parameters
      * @return Object
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             API exception
      */
     private HttpEntity serialize( Object obj, Map<String, Object> formParams, ContentType contentType )
-        throws ApiException
+        throws OpenApiRequestException
     {
         String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
@@ -336,7 +336,7 @@ public class ApiClient
                     contentType.withCharset(StandardCharsets.UTF_8));
             }
             catch( JsonProcessingException e ) {
-                throw new ApiException(e);
+                throw new OpenApiRequestException(e);
             }
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
@@ -375,7 +375,7 @@ public class ApiClient
             } else if( obj instanceof byte[] ) {
                 return new ByteArrayEntity((byte[]) obj, contentType);
             }
-            throw new ApiException("Serialization for content type '" + contentType + "' not supported");
+            throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
         }
     }
 
@@ -475,7 +475,7 @@ public class ApiClient
      * @param returnType
      *            Return type
      * @return The response body in type of string
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             API exception
      */
     @Beta
@@ -491,10 +491,10 @@ public class ApiClient
         String accept,
         String contentType,
         TypeReference<T> returnType )
-        throws ApiException
+        throws OpenApiRequestException
     {
         if( body != null && !formParams.isEmpty() ) {
-            throw new ApiException("Cannot have body and form params");
+            throw new OpenApiRequestException("Cannot have body and form params");
         }
 
         final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
@@ -517,7 +517,7 @@ public class ApiClient
                 // Add entity if we have content and a valid method
                 builder.setEntity(serialize(body, formParams, contentTypeObj));
             } else {
-                throw new ApiException("method " + method + " does not support a request body");
+                throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
         } else {
             // for empty body
@@ -530,7 +530,7 @@ public class ApiClient
             return httpClient.execute(builder.build(), context, responseHandler);
         }
         catch( IOException e ) {
-            throw new ApiException(e);
+            throw new OpenApiRequestException(e);
         }
     }
 }
