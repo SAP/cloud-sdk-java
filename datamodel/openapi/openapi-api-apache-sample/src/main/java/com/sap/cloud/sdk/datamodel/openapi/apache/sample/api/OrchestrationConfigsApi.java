@@ -35,7 +35,6 @@ public class OrchestrationConfigsApi extends BaseApi
 
     public OrchestrationConfigsApi()
     {
-        super(new ApiClient());
     }
 
     public OrchestrationConfigsApi( ApiClient apiClient )
@@ -80,7 +79,7 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -138,7 +137,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -148,7 +147,7 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -208,7 +207,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}/export"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -218,7 +217,7 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -280,7 +279,7 @@ public class OrchestrationConfigsApi extends BaseApi
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(orchestrationConfigId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -289,9 +288,9 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -350,7 +349,7 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         if( _file != null )
             localVarFormParams.put("file", _file);
@@ -435,9 +434,9 @@ public class OrchestrationConfigsApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/registry/v2/scenarios/{scenario}/orchestrationConfigs/{name}/versions/{version}/history"
-                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -446,10 +445,10 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("include_spec", includeSpec));
-        localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("include_spec", includeSpec));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -522,14 +521,14 @@ public class OrchestrationConfigsApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("scenario", scenario));
-        localVarQueryParams.addAll(apiClient.parameterToPair("name", name));
-        localVarQueryParams.addAll(apiClient.parameterToPair("version", version));
-        localVarQueryParams.addAll(apiClient.parameterToPair("retrieve", retrieve));
-        localVarQueryParams.addAll(apiClient.parameterToPair("include_spec", includeSpec));
-        localVarQueryParams.addAll(apiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("scenario", scenario));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("name", name));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("version", version));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("retrieve", retrieve));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("include_spec", includeSpec));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);

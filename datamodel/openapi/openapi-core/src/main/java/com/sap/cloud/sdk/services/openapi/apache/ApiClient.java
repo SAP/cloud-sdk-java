@@ -12,6 +12,10 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import static com.sap.cloud.sdk.services.openapi.apache.DefaultApiResponseHandler.isJsonMime;
+import static lombok.AccessLevel.NONE;
+import static lombok.AccessLevel.PRIVATE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -54,152 +61,64 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 
-import static com.sap.cloud.sdk.services.openapi.apache.ApiClientResponseHandler.isJsonMime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Value;
+import lombok.With;
 
+@Value
+@Getter( NONE )
+@AllArgsConstructor( access = PRIVATE )
 public class ApiClient
 {
-    protected String basePath = "http://localhost";
+    @Nonnull
+    CloseableHttpClient httpClient;
 
-    protected final CloseableHttpClient httpClient;
-    protected ObjectMapper objectMapper;
-    protected String tempFolderPath = null;
+    @With
+    @Nonnull
+    String basePath;
 
-    protected DateFormat dateFormat;
+    @With( onMethod_ = @Beta )
+    @Nonnull
+    ObjectMapper objectMapper;
+
+    @With
+    @Nullable
+    String tempFolderPath;
 
     // Methods that can have a request body
-    protected static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
+    private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
+    private static final String DEFAULT_BASE_PATH = "http://localhost";
 
-    // TODO: static factory or public?
-    public ApiClient( CloseableHttpClient httpClient )
+    public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
-        objectMapper = new ObjectMapper();
-        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-        objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.setDateFormat(ApiClient.buildDefaultDateFormat());
-
-        dateFormat = ApiClient.buildDefaultDateFormat();
-
-        this.httpClient = httpClient;
+        return new ApiClient(httpClient, DEFAULT_BASE_PATH, createDefaultObjectMapper(), null);
     }
 
-    public ApiClient( Destination destination )
+    public static ApiClient create( @Nonnull final Destination destination )
     {
-        this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination));
-        this.basePath = destination.asHttp().getUri().toString();
+        return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination))
+            .withBasePath(destination.asHttp().getUri().toString());
+
     }
 
-    public ApiClient()
+    public static ApiClient create()
     {
-        this((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
+        return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
     }
 
-    private static DateFormat buildDefaultDateFormat()
+    private static ObjectMapper createDefaultObjectMapper()
     {
-        return new RFC3339DateFormat();
-    }
-
-    /**
-     * Sets the object mapper.
-     *
-     * @param objectMapper
-     *            object mapper
-     * @return API client
-     */
-    @Beta
-    public ApiClient setObjectMapper( ObjectMapper objectMapper )
-    {
-        this.objectMapper = objectMapper;
-        return this;
-    }
-
-    private String getBasePath()
-    {
-        return basePath;
-    }
-
-    /**
-     * Sets the base path.
-     *
-     * @param basePath
-     *            base path
-     * @return API client
-     */
-    public ApiClient setBasePath( String basePath )
-    {
-        this.basePath = basePath;
-        return this;
-    }
-
-    /**
-     * The path of temporary folder used to store downloaded files from endpoints with file response. The default value
-     * is <code>null</code>, i.e. using the system's default temporary folder.
-     *
-     * @return Temp folder path
-     */
-    private String getTempFolderPath()
-    {
-        return tempFolderPath;
-    }
-
-    /**
-     * Set temp folder path
-     *
-     * @param tempFolderPath
-     *            Temp folder path
-     * @return API client
-     */
-    private ApiClient setTempFolderPath( String tempFolderPath )
-    {
-        this.tempFolderPath = tempFolderPath;
-        return this;
-    }
-
-    /**
-     * Get the date format used to parse/format date parameters.
-     *
-     * @return Date format
-     */
-    private DateFormat getDateFormat()
-    {
-        return dateFormat;
-    }
-
-    // TODO: remove accessor or even get rid of the field
-    /**
-     * Set the date format used to parse/format date parameters.
-     *
-     * @param dateFormat
-     *            Date format
-     * @return API client
-     */
-    private ApiClient setDateFormat( DateFormat dateFormat )
-    {
-        this.dateFormat = dateFormat;
-        // Also set the date format for model (de)serialization with Date properties.
-        this.objectMapper.setDateFormat((DateFormat) dateFormat.clone());
-        return this;
-    }
-
-    /**
-     * Parse the given string into Date object.
-     *
-     * @param str
-     *            String
-     * @return Date
-     */
-    private Date parseDate( String str )
-    {
-        try {
-            return dateFormat.parse(str);
-        }
-        catch( java.text.ParseException e ) {
-            throw new RuntimeException(e);
-        }
+        var jackson = new ObjectMapper();
+        jackson.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        jackson.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jackson.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
+        jackson.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        jackson.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        jackson.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+        jackson.registerModule(new JavaTimeModule());
+        jackson.setDateFormat(new RFC3339DateFormat());
+        return jackson;
     }
 
     /**
@@ -209,9 +128,9 @@ public class ApiClient
      *            Date
      * @return Date in string format
      */
-    private String formatDate( Date date )
+    private static String formatDate( Date date )
     {
-        return dateFormat.format(date);
+        return new RFC3339DateFormat().format(date);
     }
 
     /**
@@ -221,7 +140,7 @@ public class ApiClient
      *            Object
      * @return Object in string format
      */
-    public String parameterToString( Object param )
+    public static String parameterToString( Object param )
     {
         if( param == null ) {
             return "";
@@ -243,7 +162,7 @@ public class ApiClient
 
     /**
      * Formats the specified query parameter to a list containing a single {@code Pair} object.
-     *
+     * <p>
      * Note that {@code value} must not be a collection.
      *
      * @param name
@@ -252,7 +171,7 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list containing a single {@code Pair} object.
      */
-    public List<Pair> parameterToPair( String name, Object value )
+    public static List<Pair> parameterToPair( String name, Object value )
     {
         List<Pair> params = new ArrayList<Pair>();
 
@@ -267,7 +186,7 @@ public class ApiClient
 
     /**
      * Formats the specified collection query parameters to a list of {@code Pair} objects.
-     *
+     * <p>
      * Note that the values of each of the returned Pair objects are percent-encoded.
      *
      * @param collectionFormat
@@ -278,7 +197,7 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
-    public List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
+    public static List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
     {
         List<Pair> params = new ArrayList<Pair>();
 
@@ -477,10 +396,8 @@ public class ApiClient
         String
         buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
     {
-        String baseURL = getBasePath();
-
         final StringBuilder url = new StringBuilder();
-        url.append(baseURL).append(path);
+        url.append(basePath).append(path);
 
         if( queryParams != null && !queryParams.isEmpty() ) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
@@ -609,7 +526,7 @@ public class ApiClient
 
         try {
             HttpClientResponseHandler<T> responseHandler =
-                new ApiClientResponseHandler<>(objectMapper, tempFolderPath, returnType);
+                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType);
             return httpClient.execute(builder.build(), context, responseHandler);
         }
         catch( IOException e ) {

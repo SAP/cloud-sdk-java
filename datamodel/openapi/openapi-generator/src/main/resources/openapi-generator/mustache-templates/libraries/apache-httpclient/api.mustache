@@ -34,7 +34,6 @@ import java.util.StringJoiner;
     public class {{classname}} extends BaseApi {
 
     public {{classname}}() {
-    super(new ApiClient());
     }
 
     public {{classname}}(ApiClient apiClient) {
@@ -73,7 +72,7 @@ import java.util.StringJoiner;
         {{/required}}{{/allParams}}
         // create path and map variables
         String localVarPath = "{{{path}}}"{{#pathParams}}
-            .replaceAll("\\{" + "{{baseName}}" + "\\}", ApiClient.escapeString(apiClient.parameterToString({{{paramName}}}))){{/pathParams}};
+            .replaceAll("\\{" + "{{baseName}}" + "\\}", ApiClient.escapeString(ApiClient.parameterToString({{{paramName}}}))){{/pathParams}};
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -99,10 +98,10 @@ import java.util.StringJoiner;
                     {{#hasVars}}
                         {{#vars}}
                             {{#isArray}}
-                                    localVarQueryParams.addAll(apiClient.parameterToPairs("multi", "{{baseName}}", {{paramName}}.{{getter}}()));
+                                    localVarQueryParams.addAll(ApiClient.parameterToPairs("multi", "{{baseName}}", {{paramName}}.{{getter}}()));
                             {{/isArray}}
                             {{^isArray}}
-                                    localVarQueryParams.addAll(apiClient.parameterToPair("{{baseName}}", {{paramName}}.{{getter}}()));
+                                    localVarQueryParams.addAll(ApiClient.parameterToPair("{{baseName}}", {{paramName}}.{{getter}}()));
                             {{/isArray}}
                         {{/vars}}
                     {{/hasVars}}
@@ -111,17 +110,17 @@ import java.util.StringJoiner;
                                 localVarQueryStringJoiner.add({{paramName}}.toUrlQueryString());
                         {{/isModel}}
                         {{^isModel}}
-                            {{#collectionFormat}}localVarCollectionQueryParams.addAll(apiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(apiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
+                            {{#collectionFormat}}localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(ApiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
                         {{/isModel}}
                     {{/hasVars}}
                 {{/isExplode}}
                 {{^isExplode}}
-                    {{#collectionFormat}}localVarCollectionQueryParams.addAll(apiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(apiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
+                    {{#collectionFormat}}localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(ApiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
                 {{/isExplode}}
             {{/isDeepObject}}
         {{/queryParams}}
         {{#headerParams}}if ({{paramName}} != null)
-            localVarHeaderParams.put("{{baseName}}", apiClient.parameterToString({{paramName}}));
+            localVarHeaderParams.put("{{baseName}}", ApiClient.parameterToString({{paramName}}));
         {{/headerParams}}
 
         {{#formParams}}if ({{paramName}} != null)

@@ -12,28 +12,15 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public abstract class BaseApi
 {
+    protected final ApiClient apiClient;
 
-    protected ApiClient apiClient;
-
-    public BaseApi()
+    protected BaseApi()
     {
-        this(new ApiClient());
-    }
-
-    public BaseApi( ApiClient apiClient )
-    {
-        this.apiClient = apiClient;
-    }
-
-    public ApiClient getApiClient()
-    {
-        return apiClient;
-    }
-
-    public void setApiClient( ApiClient apiClient )
-    {
-        this.apiClient = apiClient;
+        this(ApiClient.create());
     }
 }

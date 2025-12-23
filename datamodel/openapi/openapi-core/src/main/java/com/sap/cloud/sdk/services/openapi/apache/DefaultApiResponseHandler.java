@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @param <T>
  *            The type of object to deserialize the response into
  */
-class ApiClientResponseHandler<T> implements HttpClientResponseHandler<T>
+class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
 {
     private final ObjectMapper objectMapper;
     private final String tempFolderPath;
@@ -63,7 +63,7 @@ class ApiClientResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param returnType
      *            The type reference for response deserialization
      */
-    ApiClientResponseHandler( ObjectMapper objectMapper, String tempFolderPath, TypeReference<T> returnType )
+    DefaultApiResponseHandler( ObjectMapper objectMapper, String tempFolderPath, TypeReference<T> returnType )
     {
         this.objectMapper = objectMapper;
         this.tempFolderPath = tempFolderPath;
