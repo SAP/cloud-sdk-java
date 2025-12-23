@@ -37,7 +37,6 @@ public class PromptTemplatesApi extends BaseApi
 
     public PromptTemplatesApi()
     {
-        super(new ApiClient());
     }
 
     public PromptTemplatesApi( ApiClient apiClient )
@@ -85,9 +84,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -147,7 +146,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -157,9 +156,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -222,7 +221,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}/export"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -232,9 +231,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/octet-stream", "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -296,7 +295,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -306,9 +305,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -369,9 +368,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         if( _file != null )
             localVarFormParams.put("file", _file);
@@ -450,9 +449,9 @@ public class PromptTemplatesApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/history"
-                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -462,9 +461,9 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -536,15 +535,15 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("scenario", scenario));
-        localVarQueryParams.addAll(apiClient.parameterToPair("name", name));
-        localVarQueryParams.addAll(apiClient.parameterToPair("version", version));
-        localVarQueryParams.addAll(apiClient.parameterToPair("retrieve", retrieve));
-        localVarQueryParams.addAll(apiClient.parameterToPair("includeSpec", includeSpec));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("scenario", scenario));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("name", name));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("version", version));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("retrieve", retrieve));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("includeSpec", includeSpec));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -612,7 +611,7 @@ public class PromptTemplatesApi extends BaseApi
             "/lm/promptTemplates/{promptTemplateId}/substitution"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
-                    ApiClient.escapeString(apiClient.parameterToString(promptTemplateId)));
+                    ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -621,11 +620,11 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("metadata", metadata));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("metadata", metadata));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
@@ -710,9 +709,9 @@ public class PromptTemplatesApi extends BaseApi
         // create path and map variables
         String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/substitution"
-                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(apiClient.parameterToString(scenario)))
-                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(apiClient.parameterToString(version)))
-                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(apiClient.parameterToString(name)));
+                .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
+                .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
+                .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
         StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
@@ -721,11 +720,11 @@ public class PromptTemplatesApi extends BaseApi
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        localVarQueryParams.addAll(apiClient.parameterToPair("metadata", metadata));
+        localVarQueryParams.addAll(ApiClient.parameterToPair("metadata", metadata));
         if( aiResourceGroup != null )
-            localVarHeaderParams.put("AI-Resource-Group", apiClient.parameterToString(aiResourceGroup));
+            localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
         if( aiResourceGroupScope != null )
-            localVarHeaderParams.put("AI-Resource-Group-Scope", apiClient.parameterToString(aiResourceGroupScope));
+            localVarHeaderParams.put("AI-Resource-Group-Scope", ApiClient.parameterToString(aiResourceGroupScope));
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
