@@ -26,9 +26,9 @@ import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConf
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConfigPostRequest;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConfigPostResponse;
 import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
-import com.sap.cloud.sdk.services.openapi.apache.ApiException;
 import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 public class OrchestrationConfigsApi extends BaseApi
 {
@@ -51,21 +51,21 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param aiResourceGroup
      *            Specify a resource group id to use (optional)
      * @return OrchestrationConfigPostResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigPostResponse createUpdateOrchestrationConfig(
         @javax.annotation.Nonnull OrchestrationConfigPostRequest orchestrationConfigPostRequest,
         @javax.annotation.Nullable String aiResourceGroup )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = orchestrationConfigPostRequest;
 
         // verify the required parameter 'orchestrationConfigPostRequest' is set
         if( orchestrationConfigPostRequest == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'orchestrationConfigPostRequest' when calling createUpdateOrchestrationConfig");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'orchestrationConfigPostRequest' when calling createUpdateOrchestrationConfig")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -115,21 +115,21 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param aiResourceGroup
      *            Specify a resource group id to use (optional)
      * @return OrchestrationConfigDeleteResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigDeleteResponse deleteOrchestrationConfig(
         @javax.annotation.Nonnull UUID orchestrationConfigId,
         @javax.annotation.Nullable String aiResourceGroup )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'orchestrationConfigId' when calling deleteOrchestrationConfig");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'orchestrationConfigId' when calling deleteOrchestrationConfig")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -185,21 +185,21 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param aiResourceGroup
      *            Specify a resource group id to use (optional)
      * @return File
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public File exportOrchestrationConfig(
         @javax.annotation.Nonnull UUID orchestrationConfigId,
         @javax.annotation.Nullable String aiResourceGroup )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'orchestrationConfigId' when calling exportOrchestrationConfig");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'orchestrationConfigId' when calling exportOrchestrationConfig")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -256,22 +256,22 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param resolveTemplateRef
      *            (optional, default to false)
      * @return OrchestrationConfigGetResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigGetResponse getOrchestrationConfigByUuid(
         @javax.annotation.Nonnull UUID orchestrationConfigId,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable Boolean resolveTemplateRef )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'orchestrationConfigId' when calling getOrchestrationConfigByUuid");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'orchestrationConfigId' when calling getOrchestrationConfigByUuid")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -328,13 +328,13 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param _file
      *            (optional)
      * @return OrchestrationConfigPostResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigPostResponse importOrchestrationConfig(
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable File _file )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -396,7 +396,7 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param resolveTemplateRef
      *            (optional, default to false)
      * @return OrchestrationConfigListResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigListResponse listOrchestrationConfigHistory(
@@ -406,29 +406,27 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable Boolean includeSpec,
         @javax.annotation.Nullable Boolean resolveTemplateRef )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'scenario' when calling listOrchestrationConfigHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'scenario' when calling listOrchestrationConfigHistory")
+                .statusCode(400);
         }
 
         // verify the required parameter 'version' is set
         if( version == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'version' when calling listOrchestrationConfigHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'version' when calling listOrchestrationConfigHistory").statusCode(400);
         }
 
         // verify the required parameter 'name' is set
         if( name == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'name' when calling listOrchestrationConfigHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'name' when calling listOrchestrationConfigHistory").statusCode(400);
         }
 
         // create path and map variables
@@ -496,7 +494,7 @@ public class OrchestrationConfigsApi extends BaseApi
      * @param resolveTemplateRef
      *            (optional, default to false)
      * @return OrchestrationConfigListResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public OrchestrationConfigListResponse listOrchestrationConfigs(
@@ -507,7 +505,7 @@ public class OrchestrationConfigsApi extends BaseApi
         @javax.annotation.Nullable String retrieve,
         @javax.annotation.Nullable Boolean includeSpec,
         @javax.annotation.Nullable Boolean resolveTemplateRef )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 

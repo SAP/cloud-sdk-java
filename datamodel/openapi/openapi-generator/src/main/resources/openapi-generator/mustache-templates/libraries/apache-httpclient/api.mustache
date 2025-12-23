@@ -3,7 +3,7 @@ package {{package}};
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import {{invokerPackage}}.ApiException;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 import {{invokerPackage}}.ApiClient;
 import {{invokerPackage}}.BaseApi;
 {{#models.0}}
@@ -50,7 +50,7 @@ import java.util.StringJoiner;
         {{#returnType}}
             * @return {{returnType}}
         {{/returnType}}
-        * @throws ApiException if fails to make API call
+        * @throws OpenApiRequestException if fails to make API call
         {{#isDeprecated}}
             * @deprecated
         {{/isDeprecated}}
@@ -62,12 +62,13 @@ import java.util.StringJoiner;
         {{#isDeprecated}}
             @Deprecated
         {{/isDeprecated}}
-        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#allParams}}{{>nullable_var_annotations}} {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws ApiException {
+        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#allParams}}{{>nullable_var_annotations}} {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
         Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
         {{#allParams}}{{#required}}
             // verify the required parameter '{{paramName}}' is set
             if ({{paramName}} == null) {
-            throw new ApiException(400, "Missing the required parameter '{{paramName}}' when calling {{operationId}}");
+            throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{operationId}}")
+                .statusCode(400);
             }
         {{/required}}{{/allParams}}
         // create path and map variables

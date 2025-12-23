@@ -39,6 +39,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 /**
  * Handles HTTP response processing for API client operations. This class encapsulates response deserialization, error
@@ -78,7 +79,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
         try {
             return processResponse(response);
         }
-        catch( ParseException | ApiException e ) {
+        catch( ParseException | OpenApiRequestException e ) {
             // Wrap exceptions as IOException since handler can only throw IOException
             throw new IOException("Failed to process response: " + e.getMessage(), e);
         }
@@ -90,7 +91,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param response
      *            The HTTP response to process
      * @return The deserialized response object
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if the response indicates an error
      * @throws IOException
      *             if an I/O error occurs
@@ -98,7 +99,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      *             if response parsing fails
      */
     private T processResponse( ClassicHttpResponse response )
-        throws ApiException,
+        throws OpenApiRequestException,
             IOException,
             ParseException
     {
@@ -113,7 +114,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             return deserialize(response);
         } else {
             String message = EntityUtils.toString(response.getEntity());
-            throw new ApiException(message, statusCode, responseHeaders, message);
+            throw new OpenApiRequestException(message).statusCode(statusCode).responseHeaders(responseHeaders);
         }
     }
 
@@ -123,7 +124,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param response
      *            The HTTP response to deserialize
      * @return The deserialized object
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if deserialization fails
      * @throws IOException
      *             if an I/O error occurs
@@ -132,7 +133,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      */
     @SuppressWarnings( "unchecked" )
     private T deserialize( ClassicHttpResponse response )
-        throws ApiException,
+        throws OpenApiRequestException,
             IOException,
             ParseException
     {
@@ -162,11 +163,11 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             return (T) EntityUtils.toString(entity);
         } else {
             Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-            throw new ApiException(
-                "Deserialization for content type '" + mimeType + "' not supported for type '" + returnType + "'",
-                response.getCode(),
-                responseHeaders,
-                EntityUtils.toString(entity));
+            throw new OpenApiRequestException(
+                "Deserialization for content type '" + mimeType + "' not supported for type '" + returnType + "'")
+                .statusCode(response.getCode())
+                .responseHeaders(responseHeaders)
+                .responseBody(EntityUtils.toString(entity));
         }
     }
 
@@ -240,11 +241,11 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param response
      *            The HTTP response
      * @return The MIME type, or null if not present
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if the content type cannot be parsed
      */
     private String getResponseMimeType( HttpResponse response )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Header contentTypeHeader = response.getFirstHeader("Content-Type");
         if( contentTypeHeader != null ) {
@@ -259,17 +260,17 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param headerValue
      *            The Content-Type header value
      * @return The parsed ContentType object
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if the content type cannot be parsed
      */
     private static ContentType parseContentType( String headerValue )
-        throws ApiException
+        throws OpenApiRequestException
     {
         try {
             return ContentType.parse(headerValue);
         }
         catch( UnsupportedCharsetException e ) {
-            throw new ApiException("Could not parse content type " + headerValue);
+            throw new OpenApiRequestException("Could not parse content type " + headerValue);
         }
     }
 

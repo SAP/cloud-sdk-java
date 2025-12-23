@@ -28,9 +28,9 @@ import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplatePos
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplateSubstitutionRequest;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplateSubstitutionResponse;
 import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
-import com.sap.cloud.sdk.services.openapi.apache.ApiException;
 import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 public class PromptTemplatesApi extends BaseApi
 {
@@ -55,22 +55,22 @@ public class PromptTemplatesApi extends BaseApi
      * @param aiResourceGroupScope
      *            Specify whether the resource group scope is to be used (optional)
      * @return PromptTemplatePostResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplatePostResponse createUpdatePromptTemplate(
         @javax.annotation.Nonnull PromptTemplatePostRequest promptTemplatePostRequest,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplatePostRequest;
 
         // verify the required parameter 'promptTemplatePostRequest' is set
         if( promptTemplatePostRequest == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'promptTemplatePostRequest' when calling createUpdatePromptTemplate");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'promptTemplatePostRequest' when calling createUpdatePromptTemplate")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -123,22 +123,21 @@ public class PromptTemplatesApi extends BaseApi
      * @param aiResourceGroupScope
      *            Specify whether the resource group scope is to be used (optional)
      * @return PromptTemplateDeleteResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateDeleteResponse deletePromptTemplate(
         @javax.annotation.Nonnull UUID promptTemplateId,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'promptTemplateId' when calling deletePromptTemplate");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'promptTemplateId' when calling deletePromptTemplate").statusCode(400);
         }
 
         // create path and map variables
@@ -198,22 +197,21 @@ public class PromptTemplatesApi extends BaseApi
      * @param aiResourceGroupScope
      *            Specify whether the resource group scope is to be used (optional)
      * @return File
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public File exportPromptTemplate(
         @javax.annotation.Nonnull UUID promptTemplateId,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'promptTemplateId' when calling exportPromptTemplate");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'promptTemplateId' when calling exportPromptTemplate").statusCode(400);
         }
 
         // create path and map variables
@@ -272,22 +270,22 @@ public class PromptTemplatesApi extends BaseApi
      * @param aiResourceGroupScope
      *            Specify whether the resource group scope is to be used (optional)
      * @return PromptTemplateGetResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateGetResponse getPromptTemplateByUuid(
         @javax.annotation.Nonnull UUID promptTemplateId,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'promptTemplateId' when calling getPromptTemplateByUuid");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'promptTemplateId' when calling getPromptTemplateByUuid")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -346,14 +344,14 @@ public class PromptTemplatesApi extends BaseApi
      * @param _file
      *            (optional)
      * @return PromptTemplatePostResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplatePostResponse importPromptTemplate(
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope,
         @javax.annotation.Nullable File _file )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -414,7 +412,7 @@ public class PromptTemplatesApi extends BaseApi
      * @param aiResourceGroupScope
      *            Specify whether the resource group scope is to be used (optional)
      * @return PromptTemplateListResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateListResponse listPromptTemplateHistory(
@@ -423,27 +421,26 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nonnull String name,
         @javax.annotation.Nullable String aiResourceGroup,
         @javax.annotation.Nullable String aiResourceGroupScope )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'scenario' when calling listPromptTemplateHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'scenario' when calling listPromptTemplateHistory").statusCode(400);
         }
 
         // verify the required parameter 'version' is set
         if( version == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'version' when calling listPromptTemplateHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'version' when calling listPromptTemplateHistory").statusCode(400);
         }
 
         // verify the required parameter 'name' is set
         if( name == null ) {
-            throw new ApiException(400, "Missing the required parameter 'name' when calling listPromptTemplateHistory");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'name' when calling listPromptTemplateHistory").statusCode(400);
         }
 
         // create path and map variables
@@ -510,7 +507,7 @@ public class PromptTemplatesApi extends BaseApi
      * @param includeSpec
      *            (optional, default to false)
      * @return PromptTemplateListResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateListResponse listPromptTemplates(
@@ -521,7 +518,7 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String version,
         @javax.annotation.Nullable String retrieve,
         @javax.annotation.Nullable Boolean includeSpec )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -586,7 +583,7 @@ public class PromptTemplatesApi extends BaseApi
      * @param promptTemplateSubstitutionRequest
      *            (optional)
      * @return PromptTemplateSubstitutionResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateSubstitutionResponse parsePromptTemplateById(
@@ -595,15 +592,15 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope,
         @javax.annotation.Nullable Boolean metadata,
         @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'promptTemplateId' when calling parsePromptTemplateById");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'promptTemplateId' when calling parsePromptTemplateById")
+                .statusCode(400);
         }
 
         // create path and map variables
@@ -670,7 +667,7 @@ public class PromptTemplatesApi extends BaseApi
      * @param promptTemplateSubstitutionRequest
      *            (optional)
      * @return PromptTemplateSubstitutionResponse
-     * @throws ApiException
+     * @throws OpenApiRequestException
      *             if fails to make API call
      */
     public PromptTemplateSubstitutionResponse parsePromptTemplateByNameVersion(
@@ -681,29 +678,28 @@ public class PromptTemplatesApi extends BaseApi
         @javax.annotation.Nullable String aiResourceGroupScope,
         @javax.annotation.Nullable Boolean metadata,
         @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
-        throws ApiException
+        throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'scenario' when calling parsePromptTemplateByNameVersion");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'scenario' when calling parsePromptTemplateByNameVersion")
+                .statusCode(400);
         }
 
         // verify the required parameter 'version' is set
         if( version == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'version' when calling parsePromptTemplateByNameVersion");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'version' when calling parsePromptTemplateByNameVersion")
+                .statusCode(400);
         }
 
         // verify the required parameter 'name' is set
         if( name == null ) {
-            throw new ApiException(
-                400,
-                "Missing the required parameter 'name' when calling parsePromptTemplateByNameVersion");
+            throw new OpenApiRequestException(
+                "Missing the required parameter 'name' when calling parsePromptTemplateByNameVersion").statusCode(400);
         }
 
         // create path and map variables
