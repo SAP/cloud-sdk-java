@@ -91,14 +91,14 @@
 		<jackson.version>2.20.1</jackson.version>
 		<jackson.annotations.version>2.20</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20250517</json.version>
+		<json.version>20251224</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
 		<!-- Spring dependencies -->
 		<!-- Keep these versions consistent with the ones from the SAP Java Buildpack (after their 2.0 release) -->
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
-		<spring.version>6.2.12</spring.version>
+		<spring.version>7.0.2</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<assertj-core.version>3.27.6</assertj-core.version>
