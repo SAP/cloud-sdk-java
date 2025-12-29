@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.annotations.Beta;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplateDeleteResponse;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplateGetResponse;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.PromptTemplateListResponse;
@@ -32,14 +37,41 @@ import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
+/**
+ * Prompt Registry API in version 0.0.1.
+ *
+ * Prompt Storage service for Design time & Runtime prompt templates.
+ */
+@Beta
 public class PromptTemplatesApi extends BaseApi
 {
 
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API
+     */
     public PromptTemplatesApi()
     {
     }
 
-    public PromptTemplatesApi( ApiClient apiClient )
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API.
+     *
+     * @param httpDestination
+     *            The destination that API should be used with
+     */
+    public PromptTemplatesApi( @Nonnull final Destination httpDestination )
+    {
+        super(httpDestination);
+    }
+
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
+    @Beta
+    public PromptTemplatesApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);
     }
@@ -59,9 +91,9 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplatePostResponse createUpdatePromptTemplate(
-        @javax.annotation.Nonnull PromptTemplatePostRequest promptTemplatePostRequest,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope )
+        @Nonnull final PromptTemplatePostRequest promptTemplatePostRequest,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplatePostRequest;
@@ -127,9 +159,9 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateDeleteResponse deletePromptTemplate(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope )
+        @Nonnull final UUID promptTemplateId,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -201,9 +233,9 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public File exportPromptTemplate(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope )
+        @Nonnull final UUID promptTemplateId,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -274,9 +306,9 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateGetResponse getPromptTemplateByUuid(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope )
+        @Nonnull final UUID promptTemplateId,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -348,9 +380,9 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplatePostResponse importPromptTemplate(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable File _file )
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope,
+        @Nullable final File _file )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -416,11 +448,11 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateListResponse listPromptTemplateHistory(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope )
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -511,13 +543,13 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateListResponse listPromptTemplates(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable String scenario,
-        @javax.annotation.Nullable String name,
-        @javax.annotation.Nullable String version,
-        @javax.annotation.Nullable String retrieve,
-        @javax.annotation.Nullable Boolean includeSpec )
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope,
+        @Nullable final String scenario,
+        @Nullable final String name,
+        @Nullable final String version,
+        @Nullable final String retrieve,
+        @Nullable final Boolean includeSpec )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -587,11 +619,11 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateSubstitutionResponse parsePromptTemplateById(
-        @javax.annotation.Nonnull UUID promptTemplateId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable Boolean metadata,
-        @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
+        @Nonnull final UUID promptTemplateId,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope,
+        @Nullable final Boolean metadata,
+        @Nullable final PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplateSubstitutionRequest;
@@ -671,13 +703,13 @@ public class PromptTemplatesApi extends BaseApi
      *             if fails to make API call
      */
     public PromptTemplateSubstitutionResponse parsePromptTemplateByNameVersion(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String aiResourceGroupScope,
-        @javax.annotation.Nullable Boolean metadata,
-        @javax.annotation.Nullable PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name,
+        @Nullable final String aiResourceGroup,
+        @Nullable final String aiResourceGroupScope,
+        @Nullable final Boolean metadata,
+        @Nullable final PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws OpenApiRequestException
     {
         Object localVarPostBody = promptTemplateSubstitutionRequest;

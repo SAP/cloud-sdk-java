@@ -23,22 +23,78 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import com.google.common.annotations.Beta;
+
+{{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+{{/aiSdkConstructor}}
+{{#aiSdkConstructor}}import com.sap.ai.sdk.core.AiCoreService;
+{{/aiSdkConstructor}}
+
 {{#useBeanValidation}}
     import {{javaxPackage}}.validation.constraints.*;
     import {{javaxPackage}}.validation.Valid;
 
 {{/useBeanValidation}}
+
+/**
+* {{appName}} in version {{version}}.
+*
+* {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+*/
 {{!>generatedAnnotation}}
-
+{{^isReleased}}@Beta{{/isReleased}}
 {{#operations}}
-    public class {{classname}} extends BaseApi {
+public class {{classname}} extends BaseApi {
 
+    {{^aiSdkConstructor}}
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}}
+    */
     public {{classname}}() {
     }
 
-    public {{classname}}(ApiClient apiClient) {
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}}.
+    *
+    * @param httpDestination The destination that API should be used with
+    */
+    public {{classname}}( @Nonnull final Destination httpDestination )
+    {
+    super(httpDestination);
+    }
+
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+    *
+    * @param apiClient
+    *            ApiClient to invoke the API on
+    */
+    @Beta
+    public {{classname}}(@Nonnull final ApiClient apiClient) {
     super(apiClient);
     }
+    {{/aiSdkConstructor}}
+    {{#aiSdkConstructor}}
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}}
+    */
+    public {{classname}}()
+    {
+    super(new AiCoreService().getApiClient());
+    }
+
+    /**
+    * Instantiates this API class to invoke operations on the {{appName}}
+    *
+    * @param aiCoreService The configured connectivity instance to AI Core
+    */
+    public {{classname}}( @Nonnull final AiCoreService aiCoreService )
+    {
+    super(aiCoreService.getApiClient());
+    }
+    {{/aiSdkConstructor}}
 
     {{#operation}}
         /**
@@ -62,7 +118,8 @@ import java.util.StringJoiner;
         {{#isDeprecated}}
             @Deprecated
         {{/isDeprecated}}
-        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#allParams}}{{>nullable_var_annotations}} {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
+        {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
+        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#allParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
         Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
         {{#allParams}}{{#required}}
             // verify the required parameter '{{paramName}}' is set
