@@ -12,9 +12,10 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
-import lombok.RequiredArgsConstructor;
+import javax.annotation.Nonnull;
 
-@RequiredArgsConstructor
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+
 public abstract class BaseApi
 {
     protected final ApiClient apiClient;
@@ -22,5 +23,15 @@ public abstract class BaseApi
     protected BaseApi()
     {
         this(ApiClient.create());
+    }
+
+    protected BaseApi( @Nonnull final Destination destination )
+    {
+        this(ApiClient.create(destination));
+    }
+
+    protected BaseApi( @Nonnull final ApiClient apiClient )
+    {
+        this.apiClient = apiClient;
     }
 }

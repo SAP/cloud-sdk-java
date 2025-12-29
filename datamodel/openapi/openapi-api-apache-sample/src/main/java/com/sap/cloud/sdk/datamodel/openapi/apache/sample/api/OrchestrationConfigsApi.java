@@ -19,7 +19,12 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.annotations.Beta;
+import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConfigDeleteResponse;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConfigGetResponse;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.OrchestrationConfigListResponse;
@@ -30,14 +35,41 @@ import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
+/**
+ * Prompt Registry API in version 0.0.1.
+ *
+ * Prompt Storage service for Design time & Runtime prompt templates.
+ */
+@Beta
 public class OrchestrationConfigsApi extends BaseApi
 {
 
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API
+     */
     public OrchestrationConfigsApi()
     {
     }
 
-    public OrchestrationConfigsApi( ApiClient apiClient )
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API.
+     *
+     * @param httpDestination
+     *            The destination that API should be used with
+     */
+    public OrchestrationConfigsApi( @Nonnull final Destination httpDestination )
+    {
+        super(httpDestination);
+    }
+
+    /**
+     * Instantiates this API class to invoke operations on the Prompt Registry API based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
+    @Beta
+    public OrchestrationConfigsApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);
     }
@@ -55,8 +87,8 @@ public class OrchestrationConfigsApi extends BaseApi
      *             if fails to make API call
      */
     public OrchestrationConfigPostResponse createUpdateOrchestrationConfig(
-        @javax.annotation.Nonnull OrchestrationConfigPostRequest orchestrationConfigPostRequest,
-        @javax.annotation.Nullable String aiResourceGroup )
+        @Nonnull final OrchestrationConfigPostRequest orchestrationConfigPostRequest,
+        @Nullable final String aiResourceGroup )
         throws OpenApiRequestException
     {
         Object localVarPostBody = orchestrationConfigPostRequest;
@@ -118,10 +150,10 @@ public class OrchestrationConfigsApi extends BaseApi
      * @throws OpenApiRequestException
      *             if fails to make API call
      */
-    public OrchestrationConfigDeleteResponse deleteOrchestrationConfig(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup )
-        throws OpenApiRequestException
+    public
+        OrchestrationConfigDeleteResponse
+        deleteOrchestrationConfig( @Nonnull final UUID orchestrationConfigId, @Nullable final String aiResourceGroup )
+            throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -188,10 +220,10 @@ public class OrchestrationConfigsApi extends BaseApi
      * @throws OpenApiRequestException
      *             if fails to make API call
      */
-    public File exportOrchestrationConfig(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup )
-        throws OpenApiRequestException
+    public
+        File
+        exportOrchestrationConfig( @Nonnull final UUID orchestrationConfigId, @Nullable final String aiResourceGroup )
+            throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -260,9 +292,9 @@ public class OrchestrationConfigsApi extends BaseApi
      *             if fails to make API call
      */
     public OrchestrationConfigGetResponse getOrchestrationConfigByUuid(
-        @javax.annotation.Nonnull UUID orchestrationConfigId,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable Boolean resolveTemplateRef )
+        @Nonnull final UUID orchestrationConfigId,
+        @Nullable final String aiResourceGroup,
+        @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -331,10 +363,10 @@ public class OrchestrationConfigsApi extends BaseApi
      * @throws OpenApiRequestException
      *             if fails to make API call
      */
-    public OrchestrationConfigPostResponse importOrchestrationConfig(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable File _file )
-        throws OpenApiRequestException
+    public
+        OrchestrationConfigPostResponse
+        importOrchestrationConfig( @Nullable final String aiResourceGroup, @Nullable final File _file )
+            throws OpenApiRequestException
     {
         Object localVarPostBody = null;
 
@@ -400,12 +432,12 @@ public class OrchestrationConfigsApi extends BaseApi
      *             if fails to make API call
      */
     public OrchestrationConfigListResponse listOrchestrationConfigHistory(
-        @javax.annotation.Nonnull String scenario,
-        @javax.annotation.Nonnull String version,
-        @javax.annotation.Nonnull String name,
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable Boolean includeSpec,
-        @javax.annotation.Nullable Boolean resolveTemplateRef )
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name,
+        @Nullable final String aiResourceGroup,
+        @Nullable final Boolean includeSpec,
+        @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
@@ -498,13 +530,13 @@ public class OrchestrationConfigsApi extends BaseApi
      *             if fails to make API call
      */
     public OrchestrationConfigListResponse listOrchestrationConfigs(
-        @javax.annotation.Nullable String aiResourceGroup,
-        @javax.annotation.Nullable String scenario,
-        @javax.annotation.Nullable String name,
-        @javax.annotation.Nullable String version,
-        @javax.annotation.Nullable String retrieve,
-        @javax.annotation.Nullable Boolean includeSpec,
-        @javax.annotation.Nullable Boolean resolveTemplateRef )
+        @Nullable final String aiResourceGroup,
+        @Nullable final String scenario,
+        @Nullable final String name,
+        @Nullable final String version,
+        @Nullable final String retrieve,
+        @Nullable final Boolean includeSpec,
+        @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
         Object localVarPostBody = null;
