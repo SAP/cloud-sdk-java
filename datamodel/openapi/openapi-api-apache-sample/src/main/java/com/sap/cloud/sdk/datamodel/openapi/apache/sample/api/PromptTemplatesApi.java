@@ -99,7 +99,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = promptTemplatePostRequest;
+        final Object localVarPostBody = promptTemplatePostRequest;
 
         // verify the required parameter 'promptTemplatePostRequest' is set
         if( promptTemplatePostRequest == null ) {
@@ -109,14 +109,14 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath = "/lm/promptTemplates";
+        final String localVarPath = "/lm/promptTemplates";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -129,9 +129,10 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
-        {
-        };
+        final TypeReference<PromptTemplatePostResponse> localVarReturnType =
+            new TypeReference<PromptTemplatePostResponse>()
+            {
+            };
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -204,7 +205,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
@@ -213,18 +214,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -239,7 +240,7 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateDeleteResponse> localVarReturnType =
+        final TypeReference<PromptTemplateDeleteResponse> localVarReturnType =
             new TypeReference<PromptTemplateDeleteResponse>()
             {
             };
@@ -312,7 +313,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
@@ -321,18 +322,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/promptTemplates/{promptTemplateId}/export"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -347,7 +348,7 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<File> localVarReturnType = new TypeReference<File>()
+        final TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
         };
         return apiClient
@@ -419,7 +420,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
@@ -429,18 +430,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/promptTemplates/{promptTemplateId}"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -455,9 +456,10 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateGetResponse> localVarReturnType = new TypeReference<PromptTemplateGetResponse>()
-        {
-        };
+        final TypeReference<PromptTemplateGetResponse> localVarReturnType =
+            new TypeReference<PromptTemplateGetResponse>()
+            {
+            };
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -527,17 +529,17 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final File _file )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/lm/promptTemplates/import";
+        final String localVarPath = "/lm/promptTemplates/import";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -553,9 +555,10 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "multipart/form-data" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplatePostResponse> localVarReturnType = new TypeReference<PromptTemplatePostResponse>()
-        {
-        };
+        final TypeReference<PromptTemplatePostResponse> localVarReturnType =
+            new TypeReference<PromptTemplatePostResponse>()
+            {
+            };
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -629,7 +632,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final String aiResourceGroupScope )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
@@ -650,18 +653,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/history"
                 .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
                 .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
                 .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -676,9 +679,10 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
-        {
-        };
+        final TypeReference<PromptTemplateListResponse> localVarReturnType =
+            new TypeReference<PromptTemplateListResponse>()
+            {
+            };
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -769,17 +773,17 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final Boolean includeSpec )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/lm/promptTemplates";
+        final String localVarPath = "/lm/promptTemplates";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("scenario", scenario));
         localVarQueryParams.addAll(ApiClient.parameterToPair("name", name));
@@ -799,9 +803,10 @@ public class PromptTemplatesApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateListResponse> localVarReturnType = new TypeReference<PromptTemplateListResponse>()
-        {
-        };
+        final TypeReference<PromptTemplateListResponse> localVarReturnType =
+            new TypeReference<PromptTemplateListResponse>()
+            {
+            };
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -877,7 +882,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = promptTemplateSubstitutionRequest;
+        final Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'promptTemplateId' is set
         if( promptTemplateId == null ) {
@@ -887,18 +892,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/promptTemplates/{promptTemplateId}/substitution"
                 .replaceAll(
                     "\\{" + "promptTemplateId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(promptTemplateId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("metadata", metadata));
         if( aiResourceGroup != null )
@@ -912,7 +917,7 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
+        final TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()
             {
             };
@@ -999,7 +1004,7 @@ public class PromptTemplatesApi extends BaseApi
         @Nullable final PromptTemplateSubstitutionRequest promptTemplateSubstitutionRequest )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = promptTemplateSubstitutionRequest;
+        final Object localVarPostBody = promptTemplateSubstitutionRequest;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
@@ -1022,18 +1027,18 @@ public class PromptTemplatesApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/lm/scenarios/{scenario}/promptTemplates/{name}/versions/{version}/substitution"
                 .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
                 .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
                 .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("metadata", metadata));
         if( aiResourceGroup != null )
@@ -1047,7 +1052,7 @@ public class PromptTemplatesApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
+        final TypeReference<PromptTemplateSubstitutionResponse> localVarReturnType =
             new TypeReference<PromptTemplateSubstitutionResponse>()
             {
             };

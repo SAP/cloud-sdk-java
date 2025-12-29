@@ -94,7 +94,7 @@ public class OrchestrationConfigsApi extends BaseApi
         @Nullable final String aiResourceGroup )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = orchestrationConfigPostRequest;
+        final Object localVarPostBody = orchestrationConfigPostRequest;
 
         // verify the required parameter 'orchestrationConfigPostRequest' is set
         if( orchestrationConfigPostRequest == null ) {
@@ -104,14 +104,14 @@ public class OrchestrationConfigsApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath = "/registry/v2/orchestrationConfigs";
+        final String localVarPath = "/registry/v2/orchestrationConfigs";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -122,7 +122,7 @@ public class OrchestrationConfigsApi extends BaseApi
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
             {
             };
@@ -195,7 +195,7 @@ public class OrchestrationConfigsApi extends BaseApi
         deleteOrchestrationConfig( @Nonnull final UUID orchestrationConfigId, @Nullable final String aiResourceGroup )
             throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
@@ -205,18 +205,18 @@ public class OrchestrationConfigsApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -229,7 +229,7 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigDeleteResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigDeleteResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigDeleteResponse>()
             {
             };
@@ -299,7 +299,7 @@ public class OrchestrationConfigsApi extends BaseApi
         exportOrchestrationConfig( @Nonnull final UUID orchestrationConfigId, @Nullable final String aiResourceGroup )
             throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
@@ -309,18 +309,18 @@ public class OrchestrationConfigsApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}/export"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -333,7 +333,7 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<File> localVarReturnType = new TypeReference<File>()
+        final TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
         };
         return apiClient
@@ -405,7 +405,7 @@ public class OrchestrationConfigsApi extends BaseApi
         @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'orchestrationConfigId' is set
         if( orchestrationConfigId == null ) {
@@ -415,18 +415,18 @@ public class OrchestrationConfigsApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/registry/v2/orchestrationConfigs/{orchestrationConfigId}"
                 .replaceAll(
                     "\\{" + "orchestrationConfigId" + "\\}",
                     ApiClient.escapeString(ApiClient.parameterToString(orchestrationConfigId)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
         if( aiResourceGroup != null )
@@ -440,7 +440,7 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigGetResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigGetResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigGetResponse>()
             {
             };
@@ -510,17 +510,17 @@ public class OrchestrationConfigsApi extends BaseApi
         importOrchestrationConfig( @Nullable final String aiResourceGroup, @Nullable final File _file )
             throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/registry/v2/orchestrationConfigs/import";
+        final String localVarPath = "/registry/v2/orchestrationConfigs/import";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         if( aiResourceGroup != null )
             localVarHeaderParams.put("AI-Resource-Group", ApiClient.parameterToString(aiResourceGroup));
@@ -534,7 +534,7 @@ public class OrchestrationConfigsApi extends BaseApi
         final String[] localVarContentTypes = { "multipart/form-data" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigPostResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigPostResponse>()
             {
             };
@@ -614,7 +614,7 @@ public class OrchestrationConfigsApi extends BaseApi
         @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // verify the required parameter 'scenario' is set
         if( scenario == null ) {
@@ -636,18 +636,18 @@ public class OrchestrationConfigsApi extends BaseApi
         }
 
         // create path and map variables
-        String localVarPath =
+        final String localVarPath =
             "/registry/v2/scenarios/{scenario}/orchestrationConfigs/{name}/versions/{version}/history"
                 .replaceAll("\\{" + "scenario" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(scenario)))
                 .replaceAll("\\{" + "version" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(version)))
                 .replaceAll("\\{" + "name" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(name)));
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("include_spec", includeSpec));
         localVarQueryParams.addAll(ApiClient.parameterToPair("resolve_template_ref", resolveTemplateRef));
@@ -662,7 +662,7 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigListResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
             {
             };
@@ -756,17 +756,17 @@ public class OrchestrationConfigsApi extends BaseApi
         @Nullable final Boolean resolveTemplateRef )
         throws OpenApiRequestException
     {
-        Object localVarPostBody = null;
+        final Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/registry/v2/orchestrationConfigs";
+        final String localVarPath = "/registry/v2/orchestrationConfigs";
 
-        StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         String localVarQueryParameterBaseName;
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarQueryParams.addAll(ApiClient.parameterToPair("scenario", scenario));
         localVarQueryParams.addAll(ApiClient.parameterToPair("name", name));
@@ -785,7 +785,7 @@ public class OrchestrationConfigsApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        TypeReference<OrchestrationConfigListResponse> localVarReturnType =
+        final TypeReference<OrchestrationConfigListResponse> localVarReturnType =
             new TypeReference<OrchestrationConfigListResponse>()
             {
             };
