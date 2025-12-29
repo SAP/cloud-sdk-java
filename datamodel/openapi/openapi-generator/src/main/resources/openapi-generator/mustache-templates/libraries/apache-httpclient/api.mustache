@@ -1,4 +1,9 @@
-{{>licenseInfo}}
+{{#copyrightHeader}}
+/*
+* {{copyrightHeader}}
+*/
+{{/copyrightHeader}}
+
 package {{package}};
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -52,8 +57,7 @@ public class {{classname}} extends BaseApi {
     /**
     * Instantiates this API class to invoke operations on the {{appName}}
     */
-    public {{classname}}() {
-    }
+    public {{classname}}() {}
 
     /**
     * Instantiates this API class to invoke operations on the {{appName}}.
@@ -100,31 +104,40 @@ public class {{classname}} extends BaseApi {
         /**
         * {{summary}}
         * {{notes}}
+        {{#responses}}
+        * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}</p>
+        {{/responses}}
         {{#allParams}}
-            * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}{{/isContainer}}){{/required}}
+            * @param {{paramName}} {{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}{{/isContainer}}){{/required}}
+        {{#description}}
+            {{description}}
+        {{/description}}
+        {{^description}}
+                The value for the parameter {{paramName}}
+        {{/description}}
         {{/allParams}}
         {{#returnType}}
             * @return {{returnType}}
         {{/returnType}}
-        * @throws OpenApiRequestException if fails to make API call
-        {{#isDeprecated}}
-            * @deprecated
-        {{/isDeprecated}}
+        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
         {{#externalDocs}}
             * {{description}}
             * @see <a href="{{url}}">{{summary}} Documentation</a>
         {{/externalDocs}}
+        {{#isDeprecated}}
+                * @deprecated
+        {{/isDeprecated}}
         */
         {{#isDeprecated}}
             @Deprecated
         {{/isDeprecated}}
         {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
-        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{operationId}}({{#allParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
+        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
         Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
         {{#allParams}}{{#required}}
             // verify the required parameter '{{paramName}}' is set
             if ({{paramName}} == null) {
-            throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{operationId}}")
+            throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}")
                 .statusCode(400);
             }
         {{/required}}{{/allParams}}
