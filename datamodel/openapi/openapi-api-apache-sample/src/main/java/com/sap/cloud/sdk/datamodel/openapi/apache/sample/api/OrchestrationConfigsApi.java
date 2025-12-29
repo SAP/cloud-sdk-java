@@ -69,22 +69,16 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
      * Create or update an orchestration config
-     * </p>
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
      *
      * @param orchestrationConfigPostRequest
      *            (required) The value for the parameter orchestrationConfigPostRequest
@@ -149,22 +143,43 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Delete orchestration config
-     * </p>
+     * Create or update an orchestration config
      * <p>
      * <b>200</b> - Successful response
-     * </p>
+     * <p>
+     * <b>400</b> - Bad Request
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
-     * <p>
-     * <b>404</b> - Bad Request
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param orchestrationConfigPostRequest
+     *            The value for the parameter orchestrationConfigPostRequest
+     * @return OrchestrationConfigPostResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigPostResponse createUpdateOrchestrationConfig(
+        @Nonnull final OrchestrationConfigPostRequest orchestrationConfigPostRequest )
+        throws OpenApiRequestException
+    {
+        return createUpdateOrchestrationConfig(orchestrationConfigPostRequest, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Delete orchestration config
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>404</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param orchestrationConfigId
      *            (required) The value for the parameter orchestrationConfigId
@@ -235,19 +250,40 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Export orchestration config
-     * </p>
+     * Delete orchestration config
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
-     * <b>400</b> - Bad Request
-     * </p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>404</b> - Bad Request
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param orchestrationConfigId
+     *            The value for the parameter orchestrationConfigId
+     * @return OrchestrationConfigDeleteResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigDeleteResponse deleteOrchestrationConfig( @Nonnull final UUID orchestrationConfigId )
+        throws OpenApiRequestException
+    {
+        return deleteOrchestrationConfig(orchestrationConfigId, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Export orchestration config
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param orchestrationConfigId
      *            (required) The value for the parameter orchestrationConfigId
@@ -317,22 +353,40 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Get orchestration config by UUID
-     * </p>
+     * Export orchestration config
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
-     * <p>
-     * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param orchestrationConfigId
+     *            The value for the parameter orchestrationConfigId
+     * @return File
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public File exportOrchestrationConfig( @Nonnull final UUID orchestrationConfigId )
+        throws OpenApiRequestException
+    {
+        return exportOrchestrationConfig(orchestrationConfigId, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Get orchestration config by UUID
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param orchestrationConfigId
      *            (required) The value for the parameter orchestrationConfigId
@@ -407,19 +461,40 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Import orchestration config
-     * </p>
+     * Get orchestration config by UUID
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
+     * <p>
+     * <b>403</b> - Forbidden Error
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param orchestrationConfigId
+     *            The value for the parameter orchestrationConfigId
+     * @return OrchestrationConfigGetResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigGetResponse getOrchestrationConfigByUuid( @Nonnull final UUID orchestrationConfigId )
+        throws OpenApiRequestException
+    {
+        return getOrchestrationConfigByUuid(orchestrationConfigId, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Import orchestration config
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param aiResourceGroup
      *            (optional) Specify a resource group id to use
@@ -480,22 +555,38 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * List orchestration config history
-     * </p>
+     * Import orchestration config
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
-     * <p>
-     * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @return OrchestrationConfigPostResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigPostResponse importOrchestrationConfig()
+        throws OpenApiRequestException
+    {
+        return importOrchestrationConfig(null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * List orchestration config history
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param scenario
      *            (required) The value for the parameter scenario
@@ -592,22 +683,49 @@ public class OrchestrationConfigsApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * List orchestration configs
-     * </p>
+     * List orchestration config history
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param scenario
+     *            The value for the parameter scenario
+     * @param version
+     *            The value for the parameter version
+     * @param name
+     *            The value for the parameter name
+     * @return OrchestrationConfigListResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigListResponse listOrchestrationConfigHistory(
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name )
+        throws OpenApiRequestException
+    {
+        return listOrchestrationConfigHistory(scenario, version, name, null, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * List orchestration configs
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param aiResourceGroup
      *            (optional) Specify a resource group id to use
@@ -684,5 +802,29 @@ public class OrchestrationConfigsApi extends BaseApi
                 localVarAccept,
                 localVarContentType,
                 localVarReturnType);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * List orchestration configs
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
+     *
+     * @return OrchestrationConfigListResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OrchestrationConfigListResponse listOrchestrationConfigs()
+        throws OpenApiRequestException
+    {
+        return listOrchestrationConfigs(null, null, null, null, null, null, null);
     }
 }
