@@ -71,22 +71,16 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
      * Create or update a prompt template
-     * </p>
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
      *
      * @param promptTemplatePostRequest
      *            (required) The value for the parameter promptTemplatePostRequest
@@ -155,22 +149,43 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Delete prompt template
-     * </p>
+     * Create or update a prompt template
      * <p>
      * <b>200</b> - Successful response
-     * </p>
+     * <p>
+     * <b>400</b> - Bad Request
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
-     * <p>
-     * <b>404</b> - Bad Request
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param promptTemplatePostRequest
+     *            The value for the parameter promptTemplatePostRequest
+     * @return PromptTemplatePostResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplatePostResponse createUpdatePromptTemplate(
+        @Nonnull final PromptTemplatePostRequest promptTemplatePostRequest )
+        throws OpenApiRequestException
+    {
+        return createUpdatePromptTemplate(promptTemplatePostRequest, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Delete prompt template
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>404</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param promptTemplateId
      *            (required) The value for the parameter promptTemplateId
@@ -245,19 +260,40 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Export prompt template
-     * </p>
+     * Delete prompt template
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
-     * <b>400</b> - Bad Request
-     * </p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>404</b> - Bad Request
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param promptTemplateId
+     *            The value for the parameter promptTemplateId
+     * @return PromptTemplateDeleteResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateDeleteResponse deletePromptTemplate( @Nonnull final UUID promptTemplateId )
+        throws OpenApiRequestException
+    {
+        return deletePromptTemplate(promptTemplateId, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Export prompt template
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param promptTemplateId
      *            (required) The value for the parameter promptTemplateId
@@ -331,22 +367,40 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Get prompt template by UUID
-     * </p>
+     * Export prompt template
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
-     * <p>
-     * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param promptTemplateId
+     *            The value for the parameter promptTemplateId
+     * @return File
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public File exportPromptTemplate( @Nonnull final UUID promptTemplateId )
+        throws OpenApiRequestException
+    {
+        return exportPromptTemplate(promptTemplateId, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Get prompt template by UUID
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param promptTemplateId
      *            (required) The value for the parameter promptTemplateId
@@ -421,19 +475,40 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Import prompt template
-     * </p>
+     * Get prompt template by UUID
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
+     * <p>
+     * <b>403</b> - Forbidden Error
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param promptTemplateId
+     *            The value for the parameter promptTemplateId
+     * @return PromptTemplateGetResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateGetResponse getPromptTemplateByUuid( @Nonnull final UUID promptTemplateId )
+        throws OpenApiRequestException
+    {
+        return getPromptTemplateByUuid(promptTemplateId, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Import prompt template
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param aiResourceGroup
      *            (optional) Specify a resource group id to use
@@ -498,22 +573,38 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * List prompt template history
-     * </p>
+     * Import prompt template
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
-     * <p>
-     * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @return PromptTemplatePostResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplatePostResponse importPromptTemplate()
+        throws OpenApiRequestException
+    {
+        return importPromptTemplate(null, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * List prompt template history
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param scenario
      *            (required) The value for the parameter scenario
@@ -605,22 +696,49 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * List prompt templates
-     * </p>
+     * List prompt template history
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param scenario
+     *            The value for the parameter scenario
+     * @param version
+     *            The value for the parameter version
+     * @param name
+     *            The value for the parameter name
+     * @return PromptTemplateListResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateListResponse listPromptTemplateHistory(
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name )
+        throws OpenApiRequestException
+    {
+        return listPromptTemplateHistory(scenario, version, name, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * List prompt templates
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param aiResourceGroup
      *            (optional) Specify a resource group id to use
@@ -701,22 +819,40 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Parse prompt template by ID
-     * </p>
+     * List prompt templates
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @return PromptTemplateListResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateListResponse listPromptTemplates()
+        throws OpenApiRequestException
+    {
+        return listPromptTemplates(null, null, null, null, null, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Parse prompt template by ID
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param promptTemplateId
      *            (required) The value for the parameter promptTemplateId
@@ -797,22 +933,42 @@ public class PromptTemplatesApi extends BaseApi
 
     /**
      * <p>
-     * </p>
      * <p>
-     * Parse prompt template by name and version
-     * </p>
+     * Parse prompt template by ID
      * <p>
      * <b>200</b> - Successful response
-     * </p>
      * <p>
      * <b>400</b> - Bad Request
-     * </p>
      * <p>
      * <b>403</b> - Forbidden Error
-     * </p>
      * <p>
      * <b>0</b> - Common Error
-     * </p>
+     *
+     * @param promptTemplateId
+     *            The value for the parameter promptTemplateId
+     * @return PromptTemplateSubstitutionResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateSubstitutionResponse parsePromptTemplateById( @Nonnull final UUID promptTemplateId )
+        throws OpenApiRequestException
+    {
+        return parsePromptTemplateById(promptTemplateId, null, null, null, null);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Parse prompt template by name and version
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
      *
      * @param scenario
      *            (required) The value for the parameter scenario
@@ -908,5 +1064,38 @@ public class PromptTemplatesApi extends BaseApi
                 localVarAccept,
                 localVarContentType,
                 localVarReturnType);
+    }
+
+    /**
+     * <p>
+     * <p>
+     * Parse prompt template by name and version
+     * <p>
+     * <b>200</b> - Successful response
+     * <p>
+     * <b>400</b> - Bad Request
+     * <p>
+     * <b>403</b> - Forbidden Error
+     * <p>
+     * <b>0</b> - Common Error
+     *
+     * @param scenario
+     *            The value for the parameter scenario
+     * @param version
+     *            The value for the parameter version
+     * @param name
+     *            The value for the parameter name
+     * @return PromptTemplateSubstitutionResponse
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public PromptTemplateSubstitutionResponse parsePromptTemplateByNameVersion(
+        @Nonnull final String scenario,
+        @Nonnull final String version,
+        @Nonnull final String name )
+        throws OpenApiRequestException
+    {
+        return parsePromptTemplateByNameVersion(scenario, version, name, null, null, null, null);
     }
 }
