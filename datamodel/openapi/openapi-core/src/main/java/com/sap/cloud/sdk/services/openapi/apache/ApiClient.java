@@ -12,8 +12,13 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static com.sap.cloud.sdk.services.openapi.apache.DefaultApiResponseHandler.isJsonMime;
-import static lombok.AccessLevel.NONE;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.io.File;
@@ -48,12 +53,12 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
@@ -61,13 +66,14 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 import lombok.With;
 
 @Value
-@Getter( NONE )
+@Getter( AccessLevel.NONE )
 @AllArgsConstructor( access = PRIVATE )
 public class ApiClient
 {
@@ -109,16 +115,17 @@ public class ApiClient
 
     private static ObjectMapper createDefaultObjectMapper()
     {
-        var jackson = new ObjectMapper();
-        jackson.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
-        jackson.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        jackson.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-        jackson.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        jackson.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-        jackson.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-        jackson.registerModule(new JavaTimeModule());
-        jackson.setDateFormat(new RFC3339DateFormat());
-        return jackson;
+        return JsonMapper
+            .builder()
+            .addModule(new JavaTimeModule())
+            .defaultDateFormat(new RFC3339DateFormat())
+            .visibility(GETTER, Visibility.NONE)
+            .visibility(SETTER, Visibility.NONE)
+            .defaultPropertyInclusion(JsonInclude.Value.construct(NON_NULL, NON_NULL))
+            .disable(FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DEFAULT_VIEW_INCLUSION)
+            .disable(WRITE_DATES_AS_TIMESTAMPS)
+            .build();
     }
 
     /**
