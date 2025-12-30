@@ -21,12 +21,10 @@ import javax.annotation.Nonnull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.annotations.Beta;
 
 /**
  * FantaFlavor
  */
-@Beta
 public interface FantaFlavor
 {
     /**

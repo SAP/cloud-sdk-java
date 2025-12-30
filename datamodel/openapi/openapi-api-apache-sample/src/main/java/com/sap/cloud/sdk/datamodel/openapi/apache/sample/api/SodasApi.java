@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.Soda;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.SodaWithId;
@@ -29,7 +28,6 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  *
  * API for managing soda products and orders in SodaStore.
  */
-@Beta
 public class SodasApi extends BaseApi
 {
 
@@ -57,7 +55,6 @@ public class SodasApi extends BaseApi
      * @param apiClient
      *            ApiClient to invoke the API on
      */
-    @Beta
     public SodasApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);

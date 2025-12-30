@@ -13,7 +13,6 @@ import java.util.StringJoiner;
 import javax.annotation.Nonnull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.Order;
 import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
@@ -26,7 +25,6 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  *
  * API for managing soda products and orders in SodaStore.
  */
-@Beta
 public class OrdersApi extends BaseApi
 {
 
@@ -54,7 +52,6 @@ public class OrdersApi extends BaseApi
      * @param apiClient
      *            ApiClient to invoke the API on
      */
-    @Beta
     public OrdersApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);

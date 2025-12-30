@@ -27,10 +27,6 @@
             <artifactId>cloudplatform-connectivity</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
@@ -45,6 +41,7 @@
                 <groupId>com.sap.cloud.sdk.datamodel</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
+                    <apiMaturity>released</apiMaturity>
                     <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
                     <enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
                     <deleteOutputDirectory>true</deleteOutputDirectory>

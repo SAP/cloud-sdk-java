@@ -31,7 +31,6 @@ import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.annotations.Beta;
 
 {{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 {{/aiSdkConstructor}}
@@ -50,7 +49,6 @@ import com.google.common.annotations.Beta;
 * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
 */
 {{!>generatedAnnotation}}
-{{^isReleased}}@Beta{{/isReleased}}
 {{#operations}}
 public class {{classname}} extends BaseApi {
 
@@ -76,7 +74,6 @@ public class {{classname}} extends BaseApi {
     * @param apiClient
     *            ApiClient to invoke the API on
     */
-    @Beta
     public {{classname}}(@Nonnull final ApiClient apiClient) {
     super(apiClient);
     }

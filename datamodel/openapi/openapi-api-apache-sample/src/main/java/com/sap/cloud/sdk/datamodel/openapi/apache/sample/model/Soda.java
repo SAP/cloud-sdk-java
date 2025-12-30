@@ -30,13 +30,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.annotations.Beta;
 
 /**
  * Soda
  */
-
-@Beta // CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
 public class Soda
 // CHECKSTYLE:ON
 {

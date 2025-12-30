@@ -19,12 +19,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * ColaLogo
  */
-@Beta
 public interface ColaLogo
 {
     /**

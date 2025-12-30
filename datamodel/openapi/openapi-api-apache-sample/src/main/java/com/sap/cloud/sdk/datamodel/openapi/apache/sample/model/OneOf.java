@@ -17,12 +17,10 @@ package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.annotations.Beta;
 
 /**
  * OneOf
  */
-@Beta
 @JsonTypeInfo( use = JsonTypeInfo.Id.DEDUCTION )
 @JsonSubTypes( { @JsonSubTypes.Type( value = Cola.class ), @JsonSubTypes.Type( value = Fanta.class ), } )
 

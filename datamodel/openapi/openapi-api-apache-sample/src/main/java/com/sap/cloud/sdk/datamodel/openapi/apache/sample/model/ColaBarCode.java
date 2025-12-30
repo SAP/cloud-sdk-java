@@ -20,12 +20,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 /**
  * ColaBarCode
  */
-@Beta
 public interface ColaBarCode
 {
     /**
