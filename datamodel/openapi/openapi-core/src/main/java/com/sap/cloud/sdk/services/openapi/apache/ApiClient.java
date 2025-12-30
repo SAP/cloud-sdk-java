@@ -486,6 +486,7 @@ public class ApiClient
      *             API exception
      */
     @Beta
+    @Nonnull
     public <T> T invokeAPI(
         String path,
         String method,

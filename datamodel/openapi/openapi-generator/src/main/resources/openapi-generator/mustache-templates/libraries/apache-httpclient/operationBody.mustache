@@ -74,12 +74,12 @@ final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         {{#returnType}}
-            final TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{returnType}}}>() {};
-            return apiClient.invokeAPI(
+        final TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{returnType}}}>() {};
         {{/returnType}}
         {{^returnType}}
-            apiClient.invokeAPI(
+        final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>() {};
         {{/returnType}}
+        return apiClient.invokeAPI(
         localVarPath,
         "{{httpMethod}}",
         localVarQueryParams,
@@ -90,5 +90,5 @@ final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
         localVarFormParams,
         localVarAccept,
         localVarContentType,
-        {{#returnType}}localVarReturnType{{/returnType}}{{^returnType}}null{{/returnType}}
+        localVarReturnType
         );

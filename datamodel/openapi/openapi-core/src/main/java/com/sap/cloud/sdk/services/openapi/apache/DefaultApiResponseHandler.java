@@ -108,11 +108,10 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             return null;
         }
 
-        Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-
         if( isSuccessfulStatus(statusCode) ) {
             return deserialize(response);
         } else {
+            Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
             String message = EntityUtils.toString(response.getEntity());
             throw new OpenApiRequestException(message).statusCode(statusCode).responseHeaders(responseHeaders);
         }
@@ -140,8 +139,15 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
         if( returnType == null ) {
             return null;
         }
+
+        final Type valueRawType = returnType.getType();
+        if( valueRawType.equals(OpenApiResponse.class) ) {
+            final int statusCode = response.getCode();
+            Map<String, List<String>> headers = transformResponseHeaders(response.getHeaders());
+            return (T) new OpenApiResponse(statusCode, headers);
+        }
+
         HttpEntity entity = response.getEntity();
-        Type valueRawType = returnType.getType();
         if( valueRawType.equals(byte[].class) ) {
             return (T) EntityUtils.toByteArray(entity);
         } else if( valueRawType.equals(File.class) ) {
