@@ -28,13 +28,11 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.annotations.Beta;
 
 /**
  * Fanta
  */
-
-@Beta // CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
 public class Fanta implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminatorAndMapping
 // CHECKSTYLE:ON
 {
