@@ -13,11 +13,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
@@ -32,6 +32,7 @@ import com.sap.cloud.sdk.cloudplatform.exception.NoServiceBindingException;
 import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -126,53 +127,62 @@ class DestinationServiceAdapter
                     serviceDestinationLoader.apply(strategy.behalf()),
                     () -> "Destination for Destination Service on behalf of " + strategy.behalf() + " not found.");
 
-        final HttpUriRequest request = prepareRequest(servicePath, strategy);
+        final ClassicHttpRequest request = prepareRequest(servicePath, strategy);
 
-        final HttpResponse response;
         try {
-            response = HttpClientAccessor.getHttpClient(serviceDestination).execute(request);
+            return ApacheHttpClient5Accessor
+                .getHttpClient(serviceDestination)
+                .execute(request, new DestinationHttpClientResponseHandler(request));
         }
         catch( final IOException e ) {
             throw new DestinationAccessException(e);
         }
-        return handleResponse(request, response);
     }
 
-    @Nonnull
-    private static String handleResponse( final HttpUriRequest request, final HttpResponse response )
+    @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
+    static class DestinationHttpClientResponseHandler extends BasicHttpClientResponseHandler
     {
-        final StatusLine status = response.getStatusLine();
-        final int statusCode = status.getStatusCode();
-        final String reasonPhrase = status.getReasonPhrase();
+        final ClassicHttpRequest request;
 
-        log.debug("Destination service returned HTTP status {} ({})", statusCode, reasonPhrase);
+        @Override
+        public String handleResponse( final ClassicHttpResponse response )
+        {
+            final int statusCode = response.getCode();
+            final String reasonPhrase = response.getReasonPhrase();
 
-        Try<String> maybeBody = Try.of(() -> HttpEntityUtil.getResponseBody(response));
-        if( maybeBody.isFailure() ) {
-            final var ex =
-                new DestinationAccessException("Failed to read body from HTTP response", maybeBody.getCause());
-            maybeBody = Try.failure(ex);
+            log.debug("Destination service returned HTTP status {} ({})", statusCode, reasonPhrase);
+
+            Try<String> maybeBody = Try.of(() -> handleEntity(response.getEntity()));
+            if( maybeBody.isFailure() ) {
+                final var ex =
+                    new DestinationAccessException("Failed to read body from HTTP response", maybeBody.getCause());
+                maybeBody = Try.failure(ex);
+            }
+
+            if( statusCode == HttpStatus.SC_OK ) {
+                final var ex =
+                    new DestinationAccessException("Failed to get destinations: no body returned in response.");
+                maybeBody = maybeBody.filter(it -> !Strings.isNullOrEmpty(it), () -> ex);
+                return maybeBody.get();
+            }
+
+            final String requestUri = request.getRequestUri();
+            if( statusCode == HttpStatus.SC_NOT_FOUND ) {
+                throw new DestinationNotFoundException(
+                    null,
+                    "Destination could not be found for path " + requestUri + ".");
+            }
+            final String message =
+                "Failed to get destinations: destination service responded with HTTP status %s (%S) at '%s'."
+                    .formatted(statusCode, reasonPhrase, requestUri);
+            final String messageWithBody =
+                message + " Body: %s".formatted(maybeBody.getOrElseGet(Throwable::getMessage));
+            log.error(messageWithBody);
+            throw new DestinationAccessException(message);
         }
-
-        if( statusCode == HttpStatus.SC_OK ) {
-            final var ex = new DestinationAccessException("Failed to get destinations: no body returned in response.");
-            maybeBody = maybeBody.filter(it -> !Strings.isNullOrEmpty(it), () -> ex);
-            return maybeBody.get();
-        }
-
-        final String requestUri = request.getURI().getPath();
-        if( statusCode == HttpStatus.SC_NOT_FOUND ) {
-            throw new DestinationNotFoundException(null, "Destination could not be found for path " + requestUri + ".");
-        }
-        final String message =
-            "Failed to get destinations: destination service responded with HTTP status %s (%S) at '%s'."
-                .formatted(statusCode, reasonPhrase, requestUri);
-        final String messageWithBody = message + " Body: %s".formatted(maybeBody.getOrElseGet(Throwable::getMessage));
-        log.error(messageWithBody);
-        throw new DestinationAccessException(message);
     }
 
-    private HttpUriRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
+    private ClassicHttpRequest prepareRequest( final String servicePath, final DestinationRetrievalStrategy strategy )
     {
         final URI requestUri;
         try {
@@ -183,7 +193,7 @@ class DestinationServiceAdapter
         }
 
         log.debug("Querying Destination Service via URI {}.", requestUri);
-        final HttpUriRequest request = new HttpGet(requestUri);
+        final ClassicHttpRequest request = new HttpGet(requestUri);
 
         if( !servicePath.startsWith(DestinationService.PATH_DEFAULT)
             && !servicePath.startsWith(DestinationService.PATH_V2) ) {
