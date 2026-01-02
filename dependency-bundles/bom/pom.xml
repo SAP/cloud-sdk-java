@@ -48,7 +48,7 @@
 		<service-binding.version>0.21.0</service-binding.version>
 		<!-- HTTP stuff -->
 		<httpcore.version>4.4.16</httpcore.version>
-		<httpcore5.version>5.3.6</httpcore5.version>
+		<httpcore5.version>5.4</httpcore5.version>
 		<httpclient5.version>5.5.1</httpclient5.version>
 		<httpcomponents-client.version>4.5.14</httpcomponents-client.version>
 		<jakarta-servlet.version>6.1.0</jakarta-servlet.version>
