@@ -126,7 +126,6 @@
                             <typeMappings>File=byte[]</typeMappings>
 							<additionalProperties>
 								<pojoBuilderMethodName>create</pojoBuilderMethodName>
-								<pojoBuildMethodName />
 								<pojoConstructorVisibility>protected</pojoConstructorVisibility>
 								<useOneOfInterfaces>true</useOneOfInterfaces>
 								<useOneOfCreators>true</useOneOfCreators>
