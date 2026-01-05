@@ -30,6 +30,10 @@ updates:
       test:
         dependency-type: "development"
     ignore:
+      - dependency-name: "org.springframework.boot:*"
+        versions: [ ">=4.0.0" ]
+      - dependency-name: "org.springframework:*"
+        versions: [ ">=7.0.0" ]
       # updating leads to ignoring our formatting rules
       - dependency-name: 'net.revelc.code.formatter:formatter-maven-plugin'
       # updating leads to unintended formatting of POM files
