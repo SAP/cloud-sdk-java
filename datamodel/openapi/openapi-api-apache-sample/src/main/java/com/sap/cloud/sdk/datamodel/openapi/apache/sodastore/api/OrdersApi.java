@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+* Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
 */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.api;
+package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.datamodel.openapi.apache.sample.model.Order;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Order;
 import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
 import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.Pair;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -13,7 +13,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
+package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model;
 
 import java.util.List;
 

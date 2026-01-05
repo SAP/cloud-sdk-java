@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -13,7 +13,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
+package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,10 +30,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Cola
+ * AllOf
  */
 // CHECKSTYLE:OFF
-public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminatorAndMapping
+public class AllOf
 // CHECKSTYLE:ON
 {
     @JsonProperty( "sodaType" )
@@ -48,26 +48,32 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     @JsonProperty( "barCode" )
     private ColaBarCode barCode;
 
+    @JsonProperty( "color" )
+    private String color;
+
+    @JsonProperty( "flavor" )
+    private FantaFlavor flavor;
+
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
-     * Default constructor for Cola.
+     * Default constructor for AllOf.
      */
-    protected Cola()
+    protected AllOf()
     {
     }
 
     /**
-     * Set the sodaType of this {@link Cola} instance and return the same instance.
+     * Set the sodaType of this {@link AllOf} instance and return the same instance.
      *
      * @param sodaType
-     *            The sodaType of this {@link Cola}
-     * @return The same instance of this {@link Cola} class
+     *            The sodaType of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
      */
     @Nonnull
-    public Cola sodaType( @Nullable final String sodaType )
+    public AllOf sodaType( @Nullable final String sodaType )
     {
         this.sodaType = sodaType;
         return this;
@@ -76,7 +82,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     /**
      * Get sodaType
      *
-     * @return sodaType The sodaType of this {@link Cola} instance.
+     * @return sodaType The sodaType of this {@link AllOf} instance.
      */
     @Nonnull
     public String getSodaType()
@@ -85,10 +91,10 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the sodaType of this {@link Cola} instance.
+     * Set the sodaType of this {@link AllOf} instance.
      *
      * @param sodaType
-     *            The sodaType of this {@link Cola}
+     *            The sodaType of this {@link AllOf}
      */
     public void setSodaType( @Nullable final String sodaType )
     {
@@ -96,14 +102,14 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the caffeine of this {@link Cola} instance and return the same instance.
+     * Set the caffeine of this {@link AllOf} instance and return the same instance.
      *
      * @param caffeine
-     *            The caffeine of this {@link Cola}
-     * @return The same instance of this {@link Cola} class
+     *            The caffeine of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
      */
     @Nonnull
-    public Cola caffeine( @Nullable final Boolean caffeine )
+    public AllOf caffeine( @Nullable final Boolean caffeine )
     {
         this.caffeine = caffeine;
         return this;
@@ -112,7 +118,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     /**
      * Get caffeine
      *
-     * @return caffeine The caffeine of this {@link Cola} instance.
+     * @return caffeine The caffeine of this {@link AllOf} instance.
      */
     @Nonnull
     public Boolean isCaffeine()
@@ -121,10 +127,10 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the caffeine of this {@link Cola} instance.
+     * Set the caffeine of this {@link AllOf} instance.
      *
      * @param caffeine
-     *            The caffeine of this {@link Cola}
+     *            The caffeine of this {@link AllOf}
      */
     public void setCaffeine( @Nullable final Boolean caffeine )
     {
@@ -132,14 +138,14 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the logo of this {@link Cola} instance and return the same instance.
+     * Set the logo of this {@link AllOf} instance and return the same instance.
      *
      * @param logo
-     *            The logo of this {@link Cola}
-     * @return The same instance of this {@link Cola} class
+     *            The logo of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
      */
     @Nonnull
-    public Cola logo( @Nullable final ColaLogo logo )
+    public AllOf logo( @Nullable final ColaLogo logo )
     {
         this.logo = logo;
         return this;
@@ -148,7 +154,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     /**
      * Get logo
      *
-     * @return logo The logo of this {@link Cola} instance.
+     * @return logo The logo of this {@link AllOf} instance.
      */
     @Nonnull
     public ColaLogo getLogo()
@@ -157,10 +163,10 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the logo of this {@link Cola} instance.
+     * Set the logo of this {@link AllOf} instance.
      *
      * @param logo
-     *            The logo of this {@link Cola}
+     *            The logo of this {@link AllOf}
      */
     public void setLogo( @Nullable final ColaLogo logo )
     {
@@ -168,14 +174,14 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the barCode of this {@link Cola} instance and return the same instance.
+     * Set the barCode of this {@link AllOf} instance and return the same instance.
      *
      * @param barCode
-     *            The barCode of this {@link Cola}
-     * @return The same instance of this {@link Cola} class
+     *            The barCode of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
      */
     @Nonnull
-    public Cola barCode( @Nullable final ColaBarCode barCode )
+    public AllOf barCode( @Nullable final ColaBarCode barCode )
     {
         this.barCode = barCode;
         return this;
@@ -184,7 +190,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     /**
      * Get barCode
      *
-     * @return barCode The barCode of this {@link Cola} instance.
+     * @return barCode The barCode of this {@link AllOf} instance.
      */
     @Nonnull
     public ColaBarCode getBarCode()
@@ -193,10 +199,10 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Set the barCode of this {@link Cola} instance.
+     * Set the barCode of this {@link AllOf} instance.
      *
      * @param barCode
-     *            The barCode of this {@link Cola}
+     *            The barCode of this {@link AllOf}
      */
     public void setBarCode( @Nullable final ColaBarCode barCode )
     {
@@ -204,7 +210,79 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Get the names of the unrecognizable properties of the {@link Cola}.
+     * Set the color of this {@link AllOf} instance and return the same instance.
+     *
+     * @param color
+     *            The color of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
+     */
+    @Nonnull
+    public AllOf color( @Nullable final String color )
+    {
+        this.color = color;
+        return this;
+    }
+
+    /**
+     * Get color
+     *
+     * @return color The color of this {@link AllOf} instance.
+     */
+    @Nonnull
+    public String getColor()
+    {
+        return color;
+    }
+
+    /**
+     * Set the color of this {@link AllOf} instance.
+     *
+     * @param color
+     *            The color of this {@link AllOf}
+     */
+    public void setColor( @Nullable final String color )
+    {
+        this.color = color;
+    }
+
+    /**
+     * Set the flavor of this {@link AllOf} instance and return the same instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link AllOf}
+     * @return The same instance of this {@link AllOf} class
+     */
+    @Nonnull
+    public AllOf flavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+        return this;
+    }
+
+    /**
+     * Get flavor
+     *
+     * @return flavor The flavor of this {@link AllOf} instance.
+     */
+    @Nonnull
+    public FantaFlavor getFlavor()
+    {
+        return flavor;
+    }
+
+    /**
+     * Set the flavor of this {@link AllOf} instance.
+     *
+     * @param flavor
+     *            The flavor of this {@link AllOf}
+     */
+    public void setFlavor( @Nullable final FantaFlavor flavor )
+    {
+        this.flavor = flavor;
+    }
+
+    /**
+     * Get the names of the unrecognizable properties of the {@link AllOf}.
      *
      * @return The set of properties names
      */
@@ -216,7 +294,7 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     }
 
     /**
-     * Get the value of an unrecognizable property of this {@link Cola} instance.
+     * Get the value of an unrecognizable property of this {@link AllOf} instance.
      *
      * @deprecated Use {@link #toMap()} instead.
      * @param name
@@ -231,13 +309,13 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
         throws NoSuchElementException
     {
         if( !cloudSdkCustomFields.containsKey(name) ) {
-            throw new NoSuchElementException("Cola has no field with name '" + name + "'.");
+            throw new NoSuchElementException("AllOf has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
     }
 
     /**
-     * Get the value of all properties of this {@link Cola} instance including unrecognized properties.
+     * Get the value of all properties of this {@link AllOf} instance including unrecognized properties.
      *
      * @return The map of all properties
      */
@@ -254,11 +332,15 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
             declaredFields.put("logo", logo);
         if( barCode != null )
             declaredFields.put("barCode", barCode);
+        if( color != null )
+            declaredFields.put("color", color);
+        if( flavor != null )
+            declaredFields.put("flavor", flavor);
         return declaredFields;
     }
 
     /**
-     * Set an unrecognizable property of this {@link Cola} instance. If the map previously contained a mapping for the
+     * Set an unrecognizable property of this {@link AllOf} instance. If the map previously contained a mapping for the
      * key, the old value is replaced by the specified value.
      *
      * @param customFieldName
@@ -281,18 +363,20 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
         if( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        final Cola cola = (Cola) o;
-        return Objects.equals(this.cloudSdkCustomFields, cola.cloudSdkCustomFields)
-            && Objects.equals(this.sodaType, cola.sodaType)
-            && Objects.equals(this.caffeine, cola.caffeine)
-            && Objects.equals(this.logo, cola.logo)
-            && Objects.equals(this.barCode, cola.barCode);
+        final AllOf allOf = (AllOf) o;
+        return Objects.equals(this.cloudSdkCustomFields, allOf.cloudSdkCustomFields)
+            && Objects.equals(this.sodaType, allOf.sodaType)
+            && Objects.equals(this.caffeine, allOf.caffeine)
+            && Objects.equals(this.logo, allOf.logo)
+            && Objects.equals(this.barCode, allOf.barCode)
+            && Objects.equals(this.color, allOf.color)
+            && Objects.equals(this.flavor, allOf.flavor);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, logo, barCode, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, logo, barCode, color, flavor, cloudSdkCustomFields);
     }
 
     @Override
@@ -300,11 +384,13 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class Cola {\n");
+        sb.append("class AllOf {\n");
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
         sb.append("    logo: ").append(toIndentedString(logo)).append("\n");
         sb.append("    barCode: ").append(toIndentedString(barCode)).append("\n");
+        sb.append("    color: ").append(toIndentedString(color)).append("\n");
+        sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");
@@ -320,6 +406,14 @@ public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminat
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a new {@link AllOf} instance. No arguments are required.
+     */
+    public static AllOf create()
+    {
+        return new AllOf();
     }
 
 }

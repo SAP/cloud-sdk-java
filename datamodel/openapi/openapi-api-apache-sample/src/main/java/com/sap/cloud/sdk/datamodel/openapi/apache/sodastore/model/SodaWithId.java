@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -13,7 +13,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
+package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,10 +32,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Soda
+ * SodaWithId
  */
 // CHECKSTYLE:OFF
-public class Soda
+public class SodaWithId
 // CHECKSTYLE:ON
 {
     @JsonProperty( "name" )
@@ -53,22 +53,22 @@ public class Soda
     public enum PackagingEnum
     {
         /**
-         * The GLASS option of this Soda
+         * The GLASS option of this SodaWithId
          */
         GLASS("glass"),
 
         /**
-         * The CARTON option of this Soda
+         * The CARTON option of this SodaWithId
          */
         CARTON("carton"),
 
         /**
-         * The CAN option of this Soda
+         * The CAN option of this SodaWithId
          */
         CAN("can"),
 
         /**
-         * The UNKNOWN_DEFAULT_OPEN_API option of this Soda
+         * The UNKNOWN_DEFAULT_OPEN_API option of this SodaWithId
          */
         UNKNOWN_DEFAULT_OPEN_API("unknown_default_open_api");
 
@@ -108,7 +108,7 @@ public class Soda
          *
          * @param value
          *            The String value
-         * @return The enum value of type Soda
+         * @return The enum value of type SodaWithId
          */
         @JsonCreator
         @Nonnull
@@ -129,26 +129,29 @@ public class Soda
     @JsonProperty( "price" )
     private Float price;
 
+    @JsonProperty( "id" )
+    private Long id;
+
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
-     * Default constructor for Soda.
+     * Default constructor for SodaWithId.
      */
-    protected Soda()
+    protected SodaWithId()
     {
     }
 
     /**
-     * Set the name of this {@link Soda} instance and return the same instance.
+     * Set the name of this {@link SodaWithId} instance and return the same instance.
      *
      * @param name
-     *            The name of this {@link Soda}
-     * @return The same instance of this {@link Soda} class
+     *            The name of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public Soda name( @Nonnull final String name )
+    public SodaWithId name( @Nonnull final String name )
     {
         this.name = name;
         return this;
@@ -157,7 +160,7 @@ public class Soda
     /**
      * Get name
      *
-     * @return name The name of this {@link Soda} instance.
+     * @return name The name of this {@link SodaWithId} instance.
      */
     @Nonnull
     public String getName()
@@ -166,10 +169,10 @@ public class Soda
     }
 
     /**
-     * Set the name of this {@link Soda} instance.
+     * Set the name of this {@link SodaWithId} instance.
      *
      * @param name
-     *            The name of this {@link Soda}
+     *            The name of this {@link SodaWithId}
      */
     public void setName( @Nonnull final String name )
     {
@@ -177,14 +180,14 @@ public class Soda
     }
 
     /**
-     * Set the brand of this {@link Soda} instance and return the same instance.
+     * Set the brand of this {@link SodaWithId} instance and return the same instance.
      *
      * @param brand
-     *            The brand of this {@link Soda}
-     * @return The same instance of this {@link Soda} class
+     *            The brand of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public Soda brand( @Nonnull final String brand )
+    public SodaWithId brand( @Nonnull final String brand )
     {
         this.brand = brand;
         return this;
@@ -193,7 +196,7 @@ public class Soda
     /**
      * Get brand
      *
-     * @return brand The brand of this {@link Soda} instance.
+     * @return brand The brand of this {@link SodaWithId} instance.
      */
     @Nonnull
     public String getBrand()
@@ -202,10 +205,10 @@ public class Soda
     }
 
     /**
-     * Set the brand of this {@link Soda} instance.
+     * Set the brand of this {@link SodaWithId} instance.
      *
      * @param brand
-     *            The brand of this {@link Soda}
+     *            The brand of this {@link SodaWithId}
      */
     public void setBrand( @Nonnull final String brand )
     {
@@ -213,14 +216,14 @@ public class Soda
     }
 
     /**
-     * Set the quantity of this {@link Soda} instance and return the same instance.
+     * Set the quantity of this {@link SodaWithId} instance and return the same instance.
      *
      * @param quantity
-     *            The quantity of this {@link Soda}
-     * @return The same instance of this {@link Soda} class
+     *            The quantity of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public Soda quantity( @Nonnull final Integer quantity )
+    public SodaWithId quantity( @Nonnull final Integer quantity )
     {
         this.quantity = quantity;
         return this;
@@ -229,7 +232,7 @@ public class Soda
     /**
      * Get quantity
      *
-     * @return quantity The quantity of this {@link Soda} instance.
+     * @return quantity The quantity of this {@link SodaWithId} instance.
      */
     @Nonnull
     public Integer getQuantity()
@@ -238,10 +241,10 @@ public class Soda
     }
 
     /**
-     * Set the quantity of this {@link Soda} instance.
+     * Set the quantity of this {@link SodaWithId} instance.
      *
      * @param quantity
-     *            The quantity of this {@link Soda}
+     *            The quantity of this {@link SodaWithId}
      */
     public void setQuantity( @Nonnull final Integer quantity )
     {
@@ -249,14 +252,14 @@ public class Soda
     }
 
     /**
-     * Set the packaging of this {@link Soda} instance and return the same instance.
+     * Set the packaging of this {@link SodaWithId} instance and return the same instance.
      *
      * @param packaging
-     *            The packaging of this {@link Soda}
-     * @return The same instance of this {@link Soda} class
+     *            The packaging of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public Soda packaging( @Nullable final PackagingEnum packaging )
+    public SodaWithId packaging( @Nullable final PackagingEnum packaging )
     {
         this.packaging = packaging;
         return this;
@@ -265,7 +268,7 @@ public class Soda
     /**
      * Get packaging
      *
-     * @return packaging The packaging of this {@link Soda} instance.
+     * @return packaging The packaging of this {@link SodaWithId} instance.
      */
     @Nonnull
     public PackagingEnum getPackaging()
@@ -274,10 +277,10 @@ public class Soda
     }
 
     /**
-     * Set the packaging of this {@link Soda} instance.
+     * Set the packaging of this {@link SodaWithId} instance.
      *
      * @param packaging
-     *            The packaging of this {@link Soda}
+     *            The packaging of this {@link SodaWithId}
      */
     public void setPackaging( @Nullable final PackagingEnum packaging )
     {
@@ -285,14 +288,14 @@ public class Soda
     }
 
     /**
-     * Set the price of this {@link Soda} instance and return the same instance.
+     * Set the price of this {@link SodaWithId} instance and return the same instance.
      *
      * @param price
-     *            The price of this {@link Soda}
-     * @return The same instance of this {@link Soda} class
+     *            The price of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
      */
     @Nonnull
-    public Soda price( @Nonnull final Float price )
+    public SodaWithId price( @Nonnull final Float price )
     {
         this.price = price;
         return this;
@@ -301,7 +304,7 @@ public class Soda
     /**
      * Get price
      *
-     * @return price The price of this {@link Soda} instance.
+     * @return price The price of this {@link SodaWithId} instance.
      */
     @Nonnull
     public Float getPrice()
@@ -310,10 +313,10 @@ public class Soda
     }
 
     /**
-     * Set the price of this {@link Soda} instance.
+     * Set the price of this {@link SodaWithId} instance.
      *
      * @param price
-     *            The price of this {@link Soda}
+     *            The price of this {@link SodaWithId}
      */
     public void setPrice( @Nonnull final Float price )
     {
@@ -321,7 +324,43 @@ public class Soda
     }
 
     /**
-     * Get the names of the unrecognizable properties of the {@link Soda}.
+     * Set the id of this {@link SodaWithId} instance and return the same instance.
+     *
+     * @param id
+     *            The id of this {@link SodaWithId}
+     * @return The same instance of this {@link SodaWithId} class
+     */
+    @Nonnull
+    public SodaWithId id( @Nullable final Long id )
+    {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * Get id
+     *
+     * @return id The id of this {@link SodaWithId} instance.
+     */
+    @Nonnull
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the id of this {@link SodaWithId} instance.
+     *
+     * @param id
+     *            The id of this {@link SodaWithId}
+     */
+    public void setId( @Nullable final Long id )
+    {
+        this.id = id;
+    }
+
+    /**
+     * Get the names of the unrecognizable properties of the {@link SodaWithId}.
      *
      * @return The set of properties names
      */
@@ -333,7 +372,7 @@ public class Soda
     }
 
     /**
-     * Get the value of an unrecognizable property of this {@link Soda} instance.
+     * Get the value of an unrecognizable property of this {@link SodaWithId} instance.
      *
      * @deprecated Use {@link #toMap()} instead.
      * @param name
@@ -348,13 +387,13 @@ public class Soda
         throws NoSuchElementException
     {
         if( !cloudSdkCustomFields.containsKey(name) ) {
-            throw new NoSuchElementException("Soda has no field with name '" + name + "'.");
+            throw new NoSuchElementException("SodaWithId has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
     }
 
     /**
-     * Get the value of all properties of this {@link Soda} instance including unrecognized properties.
+     * Get the value of all properties of this {@link SodaWithId} instance including unrecognized properties.
      *
      * @return The map of all properties
      */
@@ -373,12 +412,14 @@ public class Soda
             declaredFields.put("packaging", packaging);
         if( price != null )
             declaredFields.put("price", price);
+        if( id != null )
+            declaredFields.put("id", id);
         return declaredFields;
     }
 
     /**
-     * Set an unrecognizable property of this {@link Soda} instance. If the map previously contained a mapping for the
-     * key, the old value is replaced by the specified value.
+     * Set an unrecognizable property of this {@link SodaWithId} instance. If the map previously contained a mapping for
+     * the key, the old value is replaced by the specified value.
      *
      * @param customFieldName
      *            The name of the property
@@ -400,19 +441,20 @@ public class Soda
         if( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        final Soda soda = (Soda) o;
-        return Objects.equals(this.cloudSdkCustomFields, soda.cloudSdkCustomFields)
-            && Objects.equals(this.name, soda.name)
-            && Objects.equals(this.brand, soda.brand)
-            && Objects.equals(this.quantity, soda.quantity)
-            && Objects.equals(this.packaging, soda.packaging)
-            && Objects.equals(this.price, soda.price);
+        final SodaWithId sodaWithId = (SodaWithId) o;
+        return Objects.equals(this.cloudSdkCustomFields, sodaWithId.cloudSdkCustomFields)
+            && Objects.equals(this.name, sodaWithId.name)
+            && Objects.equals(this.brand, sodaWithId.brand)
+            && Objects.equals(this.quantity, sodaWithId.quantity)
+            && Objects.equals(this.packaging, sodaWithId.packaging)
+            && Objects.equals(this.price, sodaWithId.price)
+            && Objects.equals(this.id, sodaWithId.id);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(name, brand, quantity, packaging, price, cloudSdkCustomFields);
+        return Objects.hash(name, brand, quantity, packaging, price, id, cloudSdkCustomFields);
     }
 
     @Override
@@ -420,12 +462,13 @@ public class Soda
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class Soda {\n");
+        sb.append("class SodaWithId {\n");
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    brand: ").append(toIndentedString(brand)).append("\n");
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("    packaging: ").append(toIndentedString(packaging)).append("\n");
         sb.append("    price: ").append(toIndentedString(price)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");
@@ -441,6 +484,76 @@ public class Soda
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link SodaWithId} instance with all required
+     * arguments.
+     */
+    public static Builder create()
+    {
+        return ( name ) -> ( brand ) -> (
+            quantity ) -> ( price ) -> new SodaWithId().name(name).brand(brand).quantity(quantity).price(price);
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder
+    {
+        /**
+         * Set the name of this {@link SodaWithId} instance.
+         *
+         * @param name
+         *            The name of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder1 name( @Nonnull final String name );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder1
+    {
+        /**
+         * Set the brand of this {@link SodaWithId} instance.
+         *
+         * @param brand
+         *            The brand of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder2 brand( @Nonnull final String brand );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder2
+    {
+        /**
+         * Set the quantity of this {@link SodaWithId} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder3 quantity( @Nonnull final Integer quantity );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder3
+    {
+        /**
+         * Set the price of this {@link SodaWithId} instance.
+         *
+         * @param price
+         *            The price of this {@link SodaWithId}
+         * @return The SodaWithId instance.
+         */
+        SodaWithId price( @Nonnull final Float price );
     }
 
 }

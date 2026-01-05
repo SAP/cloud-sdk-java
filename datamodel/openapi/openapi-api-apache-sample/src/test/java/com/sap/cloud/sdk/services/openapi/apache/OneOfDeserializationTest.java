@@ -1,0 +1,316 @@
+package com.sap.cloud.sdk.services.openapi.apache;
+
+import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.AllOf;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.AnyOf;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Bar;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Cola;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.ColaBarCode;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.ColaLogo;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Fanta;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.FantaFlavor;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.FlavorType;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Foo;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.OneOf;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.OneOfWithDiscriminator;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.OneOfWithDiscriminatorAndMapping;
+import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.OneOfWithEnumDiscriminator;
+
+class OneOfDeserializationTest
+{
+    private static final ObjectMapper objectMapper = newDefaultObjectMapper();
+
+    private static final Cola COLA_OBJECT = Cola.create().caffeine(true).sodaType("Cola");
+    private static final Fanta FANTA_OBJECT =
+        Fanta
+            .create()
+            .color("orange")
+            .sodaType("Fanta")
+            .flavor(new FantaFlavor.InnerFlavorType(FlavorType.create().intensity(3).nuance("wood")));
+    private static final String COLA_JSON = """
+        {
+          "sodaType": "Cola",
+          "caffeine": true
+        }""";
+    private static final String FANTA_JSON = """
+        {
+          "sodaType": "Fanta",
+          "color": "orange",
+          "flavor": {"intensity":3,"nuance":"wood"}
+        }""";
+    private static final String FANTA_FLAVOR_ARRAY_JSON = """
+        {
+          "sodaType": "Fanta",
+          "color": "orange",
+          "flavor": [
+            {"intensity":3,"nuance":"wood"},
+            {"intensity":5,"nuance":"citrus"}
+          ]
+        }""";
+    private static final String COLA_LOGO_MATRIX_JSON = """
+        {
+          "sodaType": "Cola",
+          "caffeine": true,
+          "logo": [[255, 0, 0], [0, 255, 0], [0, 0, 255]]
+        }""";
+    private static final String UNKNOWN_JSON = """
+        {
+          "sodaType": "Sprite",
+          "someProperty": "someValue"
+        }""";
+
+    private static final String COLA_BARCODE_FLOAT_ARRAY_JSON = """
+        {
+          "sodaType": "Cola",
+          "caffeine": true,
+          "barCode": [1.1, 2.2, 3.3]
+        }""";
+
+    @Test
+    void oneOf()
+        throws JsonProcessingException
+    {
+        var actual = objectMapper.readValue(COLA_JSON, OneOf.class);
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Cola with JSON subtype deduction")
+            .isInstanceOf(Cola.class)
+            .isEqualTo(COLA_OBJECT);
+
+        actual = objectMapper.readValue(FANTA_JSON, OneOf.class);
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Fanta with JSON subtype deduction")
+            .isInstanceOf(Fanta.class)
+            .isEqualTo(FANTA_OBJECT);
+
+        assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOf.class))
+            .isInstanceOf(JsonProcessingException.class);
+    }
+
+    @Test
+    void oneOfWithDiscriminator()
+        throws JsonProcessingException
+    {
+        var actual = objectMapper.readValue(COLA_JSON, OneOfWithDiscriminator.class);
+        assertThat(actual)
+            .describedAs(
+                "Object should automatically be deserialized as Cola using the class names as discriminator mapping values")
+            .isInstanceOf(Cola.class)
+            .isEqualTo(COLA_OBJECT);
+
+        actual = objectMapper.readValue(FANTA_JSON, OneOfWithDiscriminator.class);
+        assertThat(actual)
+            .describedAs(
+                "Object should automatically be deserialized as Fanta using the class names as discriminator mapping values")
+            .isInstanceOf(Fanta.class)
+            .isEqualTo(FANTA_OBJECT);
+
+        assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminator.class))
+            .isInstanceOf(JsonProcessingException.class);
+    }
+
+    @Test
+    void oneOfWithDiscriminatorAndMapping()
+        throws JsonProcessingException
+    {
+        var jsonWithCustomMapping = """
+            {
+              "sodaType": "cool_cola",
+              "caffeine": true
+            }""";
+        var actual = objectMapper.readValue(jsonWithCustomMapping, OneOfWithDiscriminatorAndMapping.class);
+        assertThat(actual)
+            .describedAs(
+                "Object should automatically be deserialized as Cola using the explicit discriminator mapping values")
+            .isInstanceOf(Cola.class)
+            .isEqualTo(Cola.create().caffeine(true).sodaType("cool_cola"));
+
+        jsonWithCustomMapping = """
+            {
+              "sodaType": "fancy_fanta",
+              "color": "orange"
+            }""";
+        actual = objectMapper.readValue(jsonWithCustomMapping, OneOfWithDiscriminatorAndMapping.class);
+        assertThat(actual)
+            .describedAs(
+                "Object should automatically be deserialized as Fanta using the explicit discriminator mapping values")
+            .isInstanceOf(Fanta.class)
+            .isEqualTo(Fanta.create().color("orange").sodaType("fancy_fanta"));
+
+        assertThatThrownBy(() -> objectMapper.readValue(UNKNOWN_JSON, OneOfWithDiscriminatorAndMapping.class))
+            .isInstanceOf(JsonProcessingException.class);
+    }
+
+    static Stream<Class<?>> oneOfStrategiesProvider()
+    {
+        return Stream.of(OneOf.class, OneOfWithDiscriminator.class);
+    }
+
+    @ParameterizedTest( name = "Deserialization with strategy: {0}" )
+    @MethodSource( "oneOfStrategiesProvider" )
+    void oneOfWithNestedArrayOfObjects( Class<?> strategy )
+        throws JsonProcessingException
+    {
+        var payload = FANTA_FLAVOR_ARRAY_JSON;
+        if( strategy == OneOfWithDiscriminatorAndMapping.class ) {
+            payload.replace("Fanta", "fancy_fanta").replace("Cola", "cool_cola");
+        }
+
+        Object actual = objectMapper.readValue(payload, strategy);
+
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Fanta with JSON subtype deduction")
+            .isInstanceOf(Fanta.class);
+        var fanta = (Fanta) actual;
+        assertThat(fanta.getFlavor())
+            .describedAs("Flavor should be deserialized as wrapper class for a list of FlavorType instances")
+            .isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        var flavorTypes = (FantaFlavor.ListOfFlavorTypes) fanta.getFlavor();
+        assertThat(flavorTypes.values())
+            .describedAs("Flavor should be deserialized as a list of FlavorType instances")
+            .isNotEmpty()
+            .allMatch(FlavorType.class::isInstance);
+
+        actual = objectMapper.readValue(COLA_LOGO_MATRIX_JSON, strategy);
+
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Cola with JSON subtype deduction")
+            .isInstanceOf(Cola.class);
+        var cola = (Cola) actual;
+        assertThat(cola.isCaffeine()).isTrue();
+        assertThat(cola.getLogo()).isInstanceOf(ColaLogo.ListOfListOfIntegers.class);
+        var logo = (ColaLogo.ListOfListOfIntegers) cola.getLogo();
+        assertThat(logo.values())
+            .describedAs("Logo should be deserialized as a list of list of integers")
+            .isInstanceOf(List.class)
+            .containsExactly(List.of(255, 0, 0), List.of(0, 255, 0), List.of(0, 0, 255));
+
+        actual = objectMapper.readValue(COLA_BARCODE_FLOAT_ARRAY_JSON, strategy);
+        assertThat(actual)
+            .describedAs("Object should automatically be deserialized as Cola with JSON subtype deduction")
+            .isInstanceOf(Cola.class);
+        cola = (Cola) actual;
+        assertThat(cola.isCaffeine()).isTrue();
+        assertThat(cola.getBarCode()).isInstanceOf(ColaBarCode.ArrayOfFloats.class);
+        var barCode = (ColaBarCode.ArrayOfFloats) cola.getBarCode();
+        assertThat(barCode.values())
+            .describedAs("BarCode should be deserialized as an array of floats")
+            .isInstanceOf(float[].class)
+            .containsExactly(1.1f, 2.2f, 3.3f);
+    }
+
+    @Test
+    void anyOf()
+        throws JsonProcessingException
+    {
+        AnyOf anyOfCola = objectMapper.readValue(COLA_JSON, AnyOf.class);
+        assertThat(anyOfCola.getSodaType()).isEqualTo("Cola");
+        assertThat(anyOfCola.isCaffeine()).isTrue();
+        assertThat(anyOfCola.getColor()).isNull();
+
+        AnyOf anyOfFanta = objectMapper.readValue(FANTA_JSON, AnyOf.class);
+        assertThat(anyOfFanta.getSodaType()).isEqualTo("Fanta");
+        assertThat(anyOfFanta.getColor()).isEqualTo("orange");
+        assertThat(anyOfFanta.isCaffeine()).isNull();
+
+        AnyOf actual = objectMapper.readValue(FANTA_FLAVOR_ARRAY_JSON, AnyOf.class);
+
+        assertThat(actual.getSodaType()).isEqualTo("Fanta");
+        assertThat(actual.getColor()).isEqualTo("orange");
+        assertThat(actual.getFlavor()).isInstanceOf(FantaFlavor.ListOfFlavorTypes.class);
+        assertThat(((FantaFlavor.ListOfFlavorTypes) actual.getFlavor()).values())
+            .allMatch(FlavorType.class::isInstance);
+    }
+
+    @Test
+    void allOf()
+        throws JsonProcessingException
+    {
+        AllOf allOfCola = objectMapper.readValue(COLA_JSON, AllOf.class);
+        assertThat(allOfCola.getSodaType()).isEqualTo("Cola");
+        assertThat(allOfCola.isCaffeine()).isTrue();
+        assertThat(allOfCola.getColor()).isNull();
+
+        AllOf allOfFanta = objectMapper.readValue(FANTA_JSON, AllOf.class);
+        assertThat(allOfFanta.getSodaType()).isEqualTo("Fanta");
+        assertThat(allOfFanta.getColor()).isEqualTo("orange");
+        assertThat(allOfFanta.isCaffeine()).isNull();
+    }
+
+    @Test
+    void testColaSerialization()
+        throws JsonProcessingException
+    {
+        var expected = objectMapper.readValue(COLA_JSON, JsonNode.class);
+        var actual = objectMapper.valueToTree(expected);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void testFantaSerialization()
+        throws JsonProcessingException
+    {
+        var expected = objectMapper.readValue(FANTA_JSON, JsonNode.class);
+        var actual = objectMapper.valueToTree(expected);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void testDeserializationWithEnumDiscriminator()
+        throws JsonProcessingException
+    {
+        var json = """
+            {
+              "foo": "asdf",
+              "disc": "disc_foo"
+            }""";
+        assertThat(objectMapper.readValue(json, OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(Foo.class)
+            .isEqualTo(Foo.create().foo("asdf").disc(Foo.DiscEnum.DISC_FOO));
+        json = """
+            {
+              "bar": "asdf",
+              "disc": "disc_bar"
+            }""";
+        assertThat(objectMapper.readValue(json, OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(Bar.class)
+            .isEqualTo(Bar.create().bar("asdf").disc(Bar.DiscEnum.DISC_BAR));
+
+        assertThatThrownBy(() -> objectMapper.readValue("{ \"type\": \"unknown\" }", OneOfWithEnumDiscriminator.class))
+            .isInstanceOf(JsonProcessingException.class);
+    }
+
+    /**
+     * Taken from {@link com.sap.cloud.sdk.services.openapi.apiclient.ApiClient}
+     */
+    @Nonnull
+    private static ObjectMapper newDefaultObjectMapper()
+    {
+        return JsonMapper
+            .builder()
+            .addModule(new JavaTimeModule())
+            .visibility(GETTER, JsonAutoDetect.Visibility.NONE)
+            .visibility(SETTER, JsonAutoDetect.Visibility.NONE)
+            .build();
+    }
+}

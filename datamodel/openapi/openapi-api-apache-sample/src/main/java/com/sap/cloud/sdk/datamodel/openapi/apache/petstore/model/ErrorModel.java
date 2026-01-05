@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
- * SodaStore API
- * API for managing soda products and orders in SodaStore.
+ * Swagger Petstore
+ * A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification
  *
  *
  *
@@ -13,7 +13,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
+package com.sap.cloud.sdk.datamodel.openapi.apache.petstore.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,103 +30,96 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * FlavorType
+ * ErrorModel
  */
 // CHECKSTYLE:OFF
-public class FlavorType
+public class ErrorModel
 // CHECKSTYLE:ON
 {
-    @JsonProperty( "intensity" )
-    private Integer intensity;
+    @JsonProperty( "code" )
+    private Integer code;
 
-    @JsonProperty( "nuance" )
-    private String nuance;
+    @JsonProperty( "message" )
+    private String message;
 
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
-     * Default constructor for FlavorType.
-     */
-    protected FlavorType()
-    {
-    }
-
-    /**
-     * Set the intensity of this {@link FlavorType} instance and return the same instance.
+     * Set the code of this {@link ErrorModel} instance and return the same instance.
      *
-     * @param intensity
-     *            The intensity of the flavor
-     * @return The same instance of this {@link FlavorType} class
+     * @param code
+     *            The code of this {@link ErrorModel}
+     * @return The same instance of this {@link ErrorModel} class
      */
     @Nonnull
-    public FlavorType intensity( @Nullable final Integer intensity )
+    public ErrorModel code( @Nonnull final Integer code )
     {
-        this.intensity = intensity;
+        this.code = code;
         return this;
     }
 
     /**
-     * The intensity of the flavor
+     * Get code
      *
-     * @return intensity The intensity of this {@link FlavorType} instance.
+     * @return code The code of this {@link ErrorModel} instance.
      */
     @Nonnull
-    public Integer getIntensity()
+    public Integer getCode()
     {
-        return intensity;
+        return code;
     }
 
     /**
-     * Set the intensity of this {@link FlavorType} instance.
+     * Set the code of this {@link ErrorModel} instance.
      *
-     * @param intensity
-     *            The intensity of the flavor
+     * @param code
+     *            The code of this {@link ErrorModel}
      */
-    public void setIntensity( @Nullable final Integer intensity )
+    public void setCode( @Nonnull final Integer code )
     {
-        this.intensity = intensity;
+        this.code = code;
     }
 
     /**
-     * Set the nuance of this {@link FlavorType} instance and return the same instance.
+     * Set the message of this {@link ErrorModel} instance and return the same instance.
      *
-     * @param nuance
-     *            The nuance of the flavor
-     * @return The same instance of this {@link FlavorType} class
+     * @param message
+     *            The message of this {@link ErrorModel}
+     * @return The same instance of this {@link ErrorModel} class
      */
     @Nonnull
-    public FlavorType nuance( @Nullable final String nuance )
+    public ErrorModel message( @Nonnull final String message )
     {
-        this.nuance = nuance;
+        this.message = message;
         return this;
     }
 
     /**
-     * The nuance of the flavor
+     * Get message
      *
-     * @return nuance The nuance of this {@link FlavorType} instance.
+     * @return message The message of this {@link ErrorModel} instance.
      */
     @Nonnull
-    public String getNuance()
+    public String getMessage()
     {
-        return nuance;
+        return message;
     }
 
     /**
-     * Set the nuance of this {@link FlavorType} instance.
+     * Set the message of this {@link ErrorModel} instance.
      *
-     * @param nuance
-     *            The nuance of the flavor
+     * @param message
+     *            The message of this {@link ErrorModel}
      */
-    public void setNuance( @Nullable final String nuance )
+    public void setMessage( @Nonnull final String message )
     {
-        this.nuance = nuance;
+        this.message = message;
     }
 
     /**
-     * Get the names of the unrecognizable properties of the {@link FlavorType}.
+     * Get the names of the unrecognizable properties of the {@link ErrorModel}.
      *
      * @return The set of properties names
      */
@@ -138,7 +131,7 @@ public class FlavorType
     }
 
     /**
-     * Get the value of an unrecognizable property of this {@link FlavorType} instance.
+     * Get the value of an unrecognizable property of this {@link ErrorModel} instance.
      *
      * @deprecated Use {@link #toMap()} instead.
      * @param name
@@ -153,13 +146,13 @@ public class FlavorType
         throws NoSuchElementException
     {
         if( !cloudSdkCustomFields.containsKey(name) ) {
-            throw new NoSuchElementException("FlavorType has no field with name '" + name + "'.");
+            throw new NoSuchElementException("ErrorModel has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
     }
 
     /**
-     * Get the value of all properties of this {@link FlavorType} instance including unrecognized properties.
+     * Get the value of all properties of this {@link ErrorModel} instance including unrecognized properties.
      *
      * @return The map of all properties
      */
@@ -168,15 +161,15 @@ public class FlavorType
     public Map<String, Object> toMap()
     {
         final Map<String, Object> declaredFields = new LinkedHashMap<>(cloudSdkCustomFields);
-        if( intensity != null )
-            declaredFields.put("intensity", intensity);
-        if( nuance != null )
-            declaredFields.put("nuance", nuance);
+        if( code != null )
+            declaredFields.put("code", code);
+        if( message != null )
+            declaredFields.put("message", message);
         return declaredFields;
     }
 
     /**
-     * Set an unrecognizable property of this {@link FlavorType} instance. If the map previously contained a mapping for
+     * Set an unrecognizable property of this {@link ErrorModel} instance. If the map previously contained a mapping for
      * the key, the old value is replaced by the specified value.
      *
      * @param customFieldName
@@ -199,16 +192,16 @@ public class FlavorType
         if( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        final FlavorType flavorType = (FlavorType) o;
-        return Objects.equals(this.cloudSdkCustomFields, flavorType.cloudSdkCustomFields)
-            && Objects.equals(this.intensity, flavorType.intensity)
-            && Objects.equals(this.nuance, flavorType.nuance);
+        final ErrorModel errorModel = (ErrorModel) o;
+        return Objects.equals(this.cloudSdkCustomFields, errorModel.cloudSdkCustomFields)
+            && Objects.equals(this.code, errorModel.code)
+            && Objects.equals(this.message, errorModel.message);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(intensity, nuance, cloudSdkCustomFields);
+        return Objects.hash(code, message, cloudSdkCustomFields);
     }
 
     @Override
@@ -216,9 +209,9 @@ public class FlavorType
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class FlavorType {\n");
-        sb.append("    intensity: ").append(toIndentedString(intensity)).append("\n");
-        sb.append("    nuance: ").append(toIndentedString(nuance)).append("\n");
+        sb.append("class ErrorModel {\n");
+        sb.append("    code: ").append(toIndentedString(code)).append("\n");
+        sb.append("    message: ").append(toIndentedString(message)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");

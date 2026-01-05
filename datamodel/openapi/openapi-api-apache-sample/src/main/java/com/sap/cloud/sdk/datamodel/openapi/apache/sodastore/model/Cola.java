@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -13,7 +13,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
+package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,10 +30,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * AnyOf
+ * Cola
  */
 // CHECKSTYLE:OFF
-public class AnyOf
+public class Cola implements OneOf, OneOfWithDiscriminator, OneOfWithDiscriminatorAndMapping
 // CHECKSTYLE:ON
 {
     @JsonProperty( "sodaType" )
@@ -48,32 +48,26 @@ public class AnyOf
     @JsonProperty( "barCode" )
     private ColaBarCode barCode;
 
-    @JsonProperty( "color" )
-    private String color;
-
-    @JsonProperty( "flavor" )
-    private FantaFlavor flavor;
-
     @JsonAnySetter
     @JsonAnyGetter
     private final Map<String, Object> cloudSdkCustomFields = new LinkedHashMap<>();
 
     /**
-     * Default constructor for AnyOf.
+     * Default constructor for Cola.
      */
-    protected AnyOf()
+    protected Cola()
     {
     }
 
     /**
-     * Set the sodaType of this {@link AnyOf} instance and return the same instance.
+     * Set the sodaType of this {@link Cola} instance and return the same instance.
      *
      * @param sodaType
-     *            The sodaType of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
+     *            The sodaType of this {@link Cola}
+     * @return The same instance of this {@link Cola} class
      */
     @Nonnull
-    public AnyOf sodaType( @Nullable final String sodaType )
+    public Cola sodaType( @Nullable final String sodaType )
     {
         this.sodaType = sodaType;
         return this;
@@ -82,7 +76,7 @@ public class AnyOf
     /**
      * Get sodaType
      *
-     * @return sodaType The sodaType of this {@link AnyOf} instance.
+     * @return sodaType The sodaType of this {@link Cola} instance.
      */
     @Nonnull
     public String getSodaType()
@@ -91,10 +85,10 @@ public class AnyOf
     }
 
     /**
-     * Set the sodaType of this {@link AnyOf} instance.
+     * Set the sodaType of this {@link Cola} instance.
      *
      * @param sodaType
-     *            The sodaType of this {@link AnyOf}
+     *            The sodaType of this {@link Cola}
      */
     public void setSodaType( @Nullable final String sodaType )
     {
@@ -102,14 +96,14 @@ public class AnyOf
     }
 
     /**
-     * Set the caffeine of this {@link AnyOf} instance and return the same instance.
+     * Set the caffeine of this {@link Cola} instance and return the same instance.
      *
      * @param caffeine
-     *            The caffeine of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
+     *            The caffeine of this {@link Cola}
+     * @return The same instance of this {@link Cola} class
      */
     @Nonnull
-    public AnyOf caffeine( @Nullable final Boolean caffeine )
+    public Cola caffeine( @Nullable final Boolean caffeine )
     {
         this.caffeine = caffeine;
         return this;
@@ -118,7 +112,7 @@ public class AnyOf
     /**
      * Get caffeine
      *
-     * @return caffeine The caffeine of this {@link AnyOf} instance.
+     * @return caffeine The caffeine of this {@link Cola} instance.
      */
     @Nonnull
     public Boolean isCaffeine()
@@ -127,10 +121,10 @@ public class AnyOf
     }
 
     /**
-     * Set the caffeine of this {@link AnyOf} instance.
+     * Set the caffeine of this {@link Cola} instance.
      *
      * @param caffeine
-     *            The caffeine of this {@link AnyOf}
+     *            The caffeine of this {@link Cola}
      */
     public void setCaffeine( @Nullable final Boolean caffeine )
     {
@@ -138,14 +132,14 @@ public class AnyOf
     }
 
     /**
-     * Set the logo of this {@link AnyOf} instance and return the same instance.
+     * Set the logo of this {@link Cola} instance and return the same instance.
      *
      * @param logo
-     *            The logo of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
+     *            The logo of this {@link Cola}
+     * @return The same instance of this {@link Cola} class
      */
     @Nonnull
-    public AnyOf logo( @Nullable final ColaLogo logo )
+    public Cola logo( @Nullable final ColaLogo logo )
     {
         this.logo = logo;
         return this;
@@ -154,7 +148,7 @@ public class AnyOf
     /**
      * Get logo
      *
-     * @return logo The logo of this {@link AnyOf} instance.
+     * @return logo The logo of this {@link Cola} instance.
      */
     @Nonnull
     public ColaLogo getLogo()
@@ -163,10 +157,10 @@ public class AnyOf
     }
 
     /**
-     * Set the logo of this {@link AnyOf} instance.
+     * Set the logo of this {@link Cola} instance.
      *
      * @param logo
-     *            The logo of this {@link AnyOf}
+     *            The logo of this {@link Cola}
      */
     public void setLogo( @Nullable final ColaLogo logo )
     {
@@ -174,14 +168,14 @@ public class AnyOf
     }
 
     /**
-     * Set the barCode of this {@link AnyOf} instance and return the same instance.
+     * Set the barCode of this {@link Cola} instance and return the same instance.
      *
      * @param barCode
-     *            The barCode of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
+     *            The barCode of this {@link Cola}
+     * @return The same instance of this {@link Cola} class
      */
     @Nonnull
-    public AnyOf barCode( @Nullable final ColaBarCode barCode )
+    public Cola barCode( @Nullable final ColaBarCode barCode )
     {
         this.barCode = barCode;
         return this;
@@ -190,7 +184,7 @@ public class AnyOf
     /**
      * Get barCode
      *
-     * @return barCode The barCode of this {@link AnyOf} instance.
+     * @return barCode The barCode of this {@link Cola} instance.
      */
     @Nonnull
     public ColaBarCode getBarCode()
@@ -199,10 +193,10 @@ public class AnyOf
     }
 
     /**
-     * Set the barCode of this {@link AnyOf} instance.
+     * Set the barCode of this {@link Cola} instance.
      *
      * @param barCode
-     *            The barCode of this {@link AnyOf}
+     *            The barCode of this {@link Cola}
      */
     public void setBarCode( @Nullable final ColaBarCode barCode )
     {
@@ -210,79 +204,7 @@ public class AnyOf
     }
 
     /**
-     * Set the color of this {@link AnyOf} instance and return the same instance.
-     *
-     * @param color
-     *            The color of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
-     */
-    @Nonnull
-    public AnyOf color( @Nullable final String color )
-    {
-        this.color = color;
-        return this;
-    }
-
-    /**
-     * Get color
-     *
-     * @return color The color of this {@link AnyOf} instance.
-     */
-    @Nonnull
-    public String getColor()
-    {
-        return color;
-    }
-
-    /**
-     * Set the color of this {@link AnyOf} instance.
-     *
-     * @param color
-     *            The color of this {@link AnyOf}
-     */
-    public void setColor( @Nullable final String color )
-    {
-        this.color = color;
-    }
-
-    /**
-     * Set the flavor of this {@link AnyOf} instance and return the same instance.
-     *
-     * @param flavor
-     *            The flavor of this {@link AnyOf}
-     * @return The same instance of this {@link AnyOf} class
-     */
-    @Nonnull
-    public AnyOf flavor( @Nullable final FantaFlavor flavor )
-    {
-        this.flavor = flavor;
-        return this;
-    }
-
-    /**
-     * Get flavor
-     *
-     * @return flavor The flavor of this {@link AnyOf} instance.
-     */
-    @Nonnull
-    public FantaFlavor getFlavor()
-    {
-        return flavor;
-    }
-
-    /**
-     * Set the flavor of this {@link AnyOf} instance.
-     *
-     * @param flavor
-     *            The flavor of this {@link AnyOf}
-     */
-    public void setFlavor( @Nullable final FantaFlavor flavor )
-    {
-        this.flavor = flavor;
-    }
-
-    /**
-     * Get the names of the unrecognizable properties of the {@link AnyOf}.
+     * Get the names of the unrecognizable properties of the {@link Cola}.
      *
      * @return The set of properties names
      */
@@ -294,7 +216,7 @@ public class AnyOf
     }
 
     /**
-     * Get the value of an unrecognizable property of this {@link AnyOf} instance.
+     * Get the value of an unrecognizable property of this {@link Cola} instance.
      *
      * @deprecated Use {@link #toMap()} instead.
      * @param name
@@ -309,13 +231,13 @@ public class AnyOf
         throws NoSuchElementException
     {
         if( !cloudSdkCustomFields.containsKey(name) ) {
-            throw new NoSuchElementException("AnyOf has no field with name '" + name + "'.");
+            throw new NoSuchElementException("Cola has no field with name '" + name + "'.");
         }
         return cloudSdkCustomFields.get(name);
     }
 
     /**
-     * Get the value of all properties of this {@link AnyOf} instance including unrecognized properties.
+     * Get the value of all properties of this {@link Cola} instance including unrecognized properties.
      *
      * @return The map of all properties
      */
@@ -332,15 +254,11 @@ public class AnyOf
             declaredFields.put("logo", logo);
         if( barCode != null )
             declaredFields.put("barCode", barCode);
-        if( color != null )
-            declaredFields.put("color", color);
-        if( flavor != null )
-            declaredFields.put("flavor", flavor);
         return declaredFields;
     }
 
     /**
-     * Set an unrecognizable property of this {@link AnyOf} instance. If the map previously contained a mapping for the
+     * Set an unrecognizable property of this {@link Cola} instance. If the map previously contained a mapping for the
      * key, the old value is replaced by the specified value.
      *
      * @param customFieldName
@@ -363,20 +281,18 @@ public class AnyOf
         if( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        final AnyOf anyOf = (AnyOf) o;
-        return Objects.equals(this.cloudSdkCustomFields, anyOf.cloudSdkCustomFields)
-            && Objects.equals(this.sodaType, anyOf.sodaType)
-            && Objects.equals(this.caffeine, anyOf.caffeine)
-            && Objects.equals(this.logo, anyOf.logo)
-            && Objects.equals(this.barCode, anyOf.barCode)
-            && Objects.equals(this.color, anyOf.color)
-            && Objects.equals(this.flavor, anyOf.flavor);
+        final Cola cola = (Cola) o;
+        return Objects.equals(this.cloudSdkCustomFields, cola.cloudSdkCustomFields)
+            && Objects.equals(this.sodaType, cola.sodaType)
+            && Objects.equals(this.caffeine, cola.caffeine)
+            && Objects.equals(this.logo, cola.logo)
+            && Objects.equals(this.barCode, cola.barCode);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(sodaType, caffeine, logo, barCode, color, flavor, cloudSdkCustomFields);
+        return Objects.hash(sodaType, caffeine, logo, barCode, cloudSdkCustomFields);
     }
 
     @Override
@@ -384,13 +300,11 @@ public class AnyOf
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("class AnyOf {\n");
+        sb.append("class Cola {\n");
         sb.append("    sodaType: ").append(toIndentedString(sodaType)).append("\n");
         sb.append("    caffeine: ").append(toIndentedString(caffeine)).append("\n");
         sb.append("    logo: ").append(toIndentedString(logo)).append("\n");
         sb.append("    barCode: ").append(toIndentedString(barCode)).append("\n");
-        sb.append("    color: ").append(toIndentedString(color)).append("\n");
-        sb.append("    flavor: ").append(toIndentedString(flavor)).append("\n");
         cloudSdkCustomFields
             .forEach(( k, v ) -> sb.append("    ").append(k).append(": ").append(toIndentedString(v)).append("\n"));
         sb.append("}");
@@ -406,6 +320,14 @@ public class AnyOf
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a new {@link Cola} instance. No arguments are required.
+     */
+    public static Cola create()
+    {
+        return new Cola();
     }
 
 }
