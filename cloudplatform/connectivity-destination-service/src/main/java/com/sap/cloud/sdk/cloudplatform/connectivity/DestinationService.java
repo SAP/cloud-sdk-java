@@ -120,6 +120,10 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
+        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
+            final String msg = "Destination %s was not found among the destinations of the current tenant.";
+            return Try.failure(new DestinationNotFoundException(String.format(msg, destinationName)));
+        }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
@@ -384,6 +388,13 @@ public class DestinationService implements DestinationLoader
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
     }
 
+    private boolean preLookupCheckSuccessful( final String destinationName )
+    {
+        return getAllDestinationProperties()
+            .stream()
+            .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
+    }
+
     /**
      * Helper class that encapsulates all caching related configuration options.
      *
@@ -426,6 +437,7 @@ public class DestinationService implements DestinationLoader
 
         private static boolean cacheEnabled = true;
         private static boolean changeDetectionEnabled = true;
+        private static boolean preLookupCheckEnabled = true;
 
         static {
             recreateSingleCache();
@@ -441,6 +453,18 @@ public class DestinationService implements DestinationLoader
         static boolean isChangeDetectionEnabled()
         {
             return changeDetectionEnabled;
+        }
+
+        /**
+         * Disables checking if a destination exists before trying to call it directly when invoking
+         * {@link #tryGetDestination}. All available destinations can be found with
+         * {@link #getAllDestinationProperties}.
+         *
+         * @since 5.25.0
+         */
+        public static void disablePreLookupCheck()
+        {
+            preLookupCheckEnabled = false;
         }
 
         @Nonnull
@@ -496,6 +520,7 @@ public class DestinationService implements DestinationLoader
                 cacheEnabled = true;
             }
             changeDetectionEnabled = true;
+            preLookupCheckEnabled = true;
 
             sizeLimit = Option.some(DEFAULT_SIZE_LIMIT);
             expirationDuration = Option.some(DEFAULT_EXPIRATION_DURATION);
