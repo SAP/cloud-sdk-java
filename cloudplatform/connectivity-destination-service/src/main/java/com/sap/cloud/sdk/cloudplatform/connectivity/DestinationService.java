@@ -122,7 +122,7 @@ public class DestinationService implements DestinationLoader
     {
         if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
             final String msg = "Destination %s was not found among the destinations of the current tenant.";
-            return Try.failure(new DestinationNotFoundException(String.format(msg, destinationName)));
+            return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
         }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
