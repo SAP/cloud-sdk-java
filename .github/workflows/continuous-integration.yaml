@@ -120,7 +120,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
@@ -143,14 +143,14 @@ jobs:
           fi
 
       - name: "Upload SDK M2"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.SDK_M2_PATH }}
           retention-days: 1
 
       - name: "Upload SDK Targets"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
           path: ${{ env.SDK_TARGETS_PATH }}
@@ -174,19 +174,19 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -235,19 +235,19 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
 
       - name: "Restore SDK Targets"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.SDK_TARGETS_NAME }}
 
@@ -276,7 +276,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
@@ -319,13 +319,13 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
 
       - name: "Restore SDK M2"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.SDK_M2_NAME }}
           path: ${{ env.M2_ROOT }}
