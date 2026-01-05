@@ -120,7 +120,7 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName) ) {
+        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName, options) ) {
             final String msg = "Destination %s was not found among the destinations of the current tenant.";
             return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
         }
@@ -388,9 +388,13 @@ public class DestinationService implements DestinationLoader
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
     }
 
-    private boolean preLookupCheckSuccessful( final String destinationName )
+    private boolean preLookupCheckSuccessful( final String destinationName, final DestinationOptions options )
     {
-        return getAllDestinationProperties()
+        final DestinationServiceRetrievalStrategy retrievalStrategy =
+            DestinationServiceOptionsAugmenter
+                .getRetrievalStrategy(options)
+                .getOrElse(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
+        return getAllDestinationProperties(retrievalStrategy)
             .stream()
             .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
     }
