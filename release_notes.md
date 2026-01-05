@@ -12,7 +12,8 @@
 
 ### ✨ New Functionality
 
-- 
+- `DestinationService.tryGetDestination` now checks if the given destination exists before trying to call it directly.
+  This behaviour is enabled by default and can be disabled via `DestinationService.Cache.disablePreLookupCheck`.
 
 ### 📈 Improvements
 
