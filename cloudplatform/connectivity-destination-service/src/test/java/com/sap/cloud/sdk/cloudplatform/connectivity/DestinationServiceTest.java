@@ -1255,9 +1255,13 @@ class DestinationServiceTest
         assertThat(DestinationService.Cache.isolationLocks().asMap())
             .containsOnlyKeys(
                 CacheKey.fromIds("TenantA", null).append(destinationName, options),
-                CacheKey.fromIds("TenantA", null).append(options),
+                CacheKey
+                    .fromIds("TenantA", null)
+                    .append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options)),
                 CacheKey.fromIds("TenantB", null).append(destinationName, options),
-                CacheKey.fromIds("TenantB", null).append(options));
+                CacheKey
+                    .fromIds("TenantB", null)
+                    .append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options)));
 
         // assert cache entries for one get-single command for each tenant
         assertThat(DestinationService.Cache.instanceSingle().asMap())
@@ -1327,7 +1331,9 @@ class DestinationServiceTest
             .containsOnlyKeys(
                 CacheKey.of(subscriberTenant, principal1).append(destinationName, options),
                 CacheKey.of(subscriberTenant, principal2).append(destinationName, options),
-                CacheKey.of(subscriberTenant, null).append(options));
+                CacheKey
+                    .of(subscriberTenant, null)
+                    .append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options)));
 
         assertThat(DestinationService.Cache.instanceSingle().asMap())
             .containsOnlyKeys(
@@ -1371,7 +1377,9 @@ class DestinationServiceTest
         assertThat(DestinationService.Cache.isolationLocks().asMap())
             .containsOnlyKeys(
                 CacheKey.of(subscriberTenant, null).append(destinationName, options),
-                CacheKey.of(subscriberTenant, null).append(options));
+                CacheKey
+                    .of(subscriberTenant, null)
+                    .append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(options)));
 
         assertThat(DestinationService.Cache.instanceSingle().asMap())
             .containsOnlyKeys(
