@@ -41,7 +41,7 @@ class GetOrComputeAllDestinationsCommand
 
         final CacheKey cacheKey = CacheKey.ofTenantOptionalIsolation();
 
-        cacheKey.append(destinationOptions);
+        cacheKey.append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(destinationOptions));
 
         final ReentrantLock isolationLock =
             Objects.requireNonNull(isolationLocks.get(cacheKey, any -> new ReentrantLock()));
