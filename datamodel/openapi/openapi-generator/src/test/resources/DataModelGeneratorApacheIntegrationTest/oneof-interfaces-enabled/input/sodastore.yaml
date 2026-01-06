@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Soda Store API
+  version: 1.0.0
+  description: API for managing sodas in a soda store
+paths:
+  /sodas:
+    get:
+      summary: Get a list of all sodas
+      operationId: getSodas
+      responses:
+        '200':
+          description: A list of sodas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OneOf'
+components:
+  schemas:
+    OneOfWithDiscriminatorAndMapping:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+      discriminator:
+        propertyName: sodaType
+        mapping:
+          cool_cola: '#/components/schemas/Cola'
+          fancy_fanta: '#/components/schemas/Fanta'
+    OneOfWithDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+      discriminator:
+        propertyName: sodaType
+    OneOf:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    AnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    AllOf:
+      allOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    ColaTemperature:
+      enum:
+        - COOL
+        - WARM
+    Cola:
+      type: object
+      properties:
+        sodaType:
+          type: string
+        barCode:
+          oneOf:
+            - type: array
+              items:
+                type: number
+            - type: string
+    Fanta:
+      type: object
+      properties:
+        sodaType:
+          type: string
+        flavor:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/Cola'
+            - type: array
+              items:
+                type: string
+            - type: array
+              items:
+                type: array
+                items:
+                  type: string

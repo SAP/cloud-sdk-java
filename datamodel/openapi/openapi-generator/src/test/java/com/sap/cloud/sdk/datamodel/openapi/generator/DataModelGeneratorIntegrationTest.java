@@ -236,7 +236,7 @@ class DataModelGeneratorIntegrationTest
         new DataModelGenerator().generateDataModel(build).onFailure(Throwable::printStackTrace);
     }
 
-    Path getInputDirectory(final TestCase testCase)
+    Path getInputDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory = getTestCaseDirectory(testCase);
         final Path inputDirectory = testCaseDirectory.resolve("input");
@@ -249,17 +249,14 @@ class DataModelGeneratorIntegrationTest
     private Path getTestCaseDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory =
-            Paths
-                .get(
-                    "src/test/resources/" + this.getClass().getSimpleName(),
-                    testCase.testCaseName);
+            Paths.get("src/test/resources/" + this.getClass().getSimpleName(), testCase.testCaseName);
 
         assertThat(testCaseDirectory).exists().isDirectory().isReadable();
 
         return testCaseDirectory;
     }
 
-     Path getComparisonDirectory(final TestCase testCase)
+    Path getComparisonDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory = getTestCaseDirectory(testCase);
         final Path comparisonDirectory = testCaseDirectory.resolve("output");
