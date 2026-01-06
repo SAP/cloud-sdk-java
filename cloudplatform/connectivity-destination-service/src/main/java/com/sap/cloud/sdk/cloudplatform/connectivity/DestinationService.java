@@ -464,7 +464,7 @@ public class DestinationService implements DestinationLoader
          * {@link #tryGetDestination}. All available destinations can be found with
          * {@link #getAllDestinationProperties}.
          *
-         * @since 5.25.0
+         * @since 5.26.0
          */
         public static void disablePreLookupCheck()
         {
