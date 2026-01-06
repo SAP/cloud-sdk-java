@@ -664,6 +664,8 @@ class DestinationServiceTest
     @Test
     void testGetDestinationOnlySubscriberStrategyDoesNotReadProviderDestinations()
     {
+
+        // JONAS: use this here as base for test. Check which calls are made using GetOrComputeAllDestinationsCommand
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
 
@@ -1973,6 +1975,34 @@ class DestinationServiceTest
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
         verifyNoMoreInteractions(destinationServiceAdapter);
+    }
 
+    @Test
+    void testPrependGetAllDestinationsCallUsesCorrectRetrievalStrategy()
+    {
+        // Reset Cache to re-enable the PreLookupCheck
+        DestinationService.Cache.reset();
+
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        doReturn(responseServiceInstanceDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+        // destination with name destinationName is provider-only
+        doReturn(responseSubaccountDestination)
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(
+                eq("/v1/subaccountDestinations"),
+                argThat(s -> s.behalf() == TECHNICAL_USER_PROVIDER));
+
+        final DestinationOptions options =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+
+        // set current tenant to be the subscriber tenant
+        context.setTenant(providerTenant);
+
+        Destination result = loader.tryGetDestination(destinationName, options).get();
+        assertThat(result.asHttp().getUri()).isEqualTo(URI.create(providerUrl));
     }
 }
