@@ -664,8 +664,6 @@ class DestinationServiceTest
     @Test
     void testGetDestinationOnlySubscriberStrategyDoesNotReadProviderDestinations()
     {
-
-        // JONAS: use this here as base for test. Check which calls are made using GetOrComputeAllDestinationsCommand
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ONLY_SUBSCRIBER)).build();
 
