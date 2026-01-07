@@ -18,9 +18,9 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
-class TestApi extends AbstractOpenApiService
+class TestSpringApi extends AbstractOpenApiService
 {
-    TestApi( @Nonnull final Destination httpDestination )
+    TestSpringApi( @Nonnull final Destination httpDestination )
     {
         super(httpDestination);
     }
