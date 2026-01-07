@@ -66,31 +66,33 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.Value;
 import lombok.With;
 
-@Value
-@Getter( AccessLevel.NONE )
 @AllArgsConstructor( access = PRIVATE )
+@EqualsAndHashCode
+@ToString
 public class ApiClient
 {
     @Nonnull
-    CloseableHttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
     @With
+    @Getter
     @Nonnull
-    String basePath;
+    private final String basePath;
 
     @With( onMethod_ = @Beta )
     @Nonnull
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @With
     @Nullable
-    String tempFolderPath;
+    private final String tempFolderPath;
 
     // Methods that can have a request body
     private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
