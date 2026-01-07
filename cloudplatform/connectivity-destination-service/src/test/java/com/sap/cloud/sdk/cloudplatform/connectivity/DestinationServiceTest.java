@@ -1994,11 +1994,11 @@ class DestinationServiceTest
                 eq("/v1/subaccountDestinations"),
                 argThat(s -> s.behalf() == TECHNICAL_USER_PROVIDER));
 
-        final DestinationOptions options =
-            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
-
         // set current tenant to be the subscriber tenant
         context.setTenant(providerTenant);
+
+        final DestinationOptions options =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
 
         Destination result = loader.tryGetDestination(destinationName, options).get();
         assertThat(result.asHttp().getUri()).isEqualTo(URI.create(providerUrl));
