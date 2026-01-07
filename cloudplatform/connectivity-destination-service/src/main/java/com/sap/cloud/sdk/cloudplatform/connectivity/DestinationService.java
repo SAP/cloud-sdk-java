@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -907,9 +908,21 @@ public class DestinationService implements DestinationLoader
                 return destinationDownloader.apply(options);
             }
 
+            if( isUsingExperimentalFeatures(options) ) {
+                log
+                    .warn(
+                        "Using cache/change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected behaviour.");
+            }
+
             return GetOrComputeAllDestinationsCommand
                 .prepareCommand(options, instanceAll(), isolationLocks(), destinationDownloader)
                 .execute();
+        }
+
+        private static boolean isUsingExperimentalFeatures( @Nonnull final DestinationOptions options )
+        {
+            String[] featureNames = { "X-fragment-name", "crossLevelSetting", "customHeader" };
+            return options.getOptionKeys().stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::contains));
         }
 
         private Cache()
