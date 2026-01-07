@@ -8,10 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -42,16 +47,31 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 @WireMockTest
 class GenericReturnTypeTest
 {
-    @Test
-    void testGenericAccessToNonNestedJsonObject( @Nonnull final WireMockRuntimeInfo wm )
+
+    HttpDestination httpDestination;
+
+    @BeforeEach
+    void setUp( @Nonnull final WireMockRuntimeInfo wm )
+    {
+        httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+    }
+
+    static Stream<Arguments> provideContext()
+    {
+        return Stream
+            .of(
+                Arguments.of((Function<HttpDestination, Object>) ( des ) -> new TestSpringApi(des).testMethod()),
+                Arguments.of((Function<HttpDestination, Object>) ( des ) -> new TestSpringApi(des).testMethod()));
+    }
+
+    @MethodSource( "provideContext" )
+    @ParameterizedTest
+    void testGenericAccessToNonNestedJsonObject( @Nonnull final Function<HttpDestination, Object> contextFactory )
     {
         final String responseBody = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
-
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
-
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 
-        final Object context = new TestApi(httpDestination).testMethod();
+        final Object context = contextFactory.apply(httpDestination);
 
         @SuppressWarnings( "unchecked" )
         final LinkedHashMap<String, String> castedReturnObject = (LinkedHashMap<String, String>) context;
@@ -60,16 +80,15 @@ class GenericReturnTypeTest
         assertThat(castedReturnObject.get("lastname")).isEqualTo("Doe");
     }
 
-    @Test
-    void testGenericAccessToNestedJsonObject( @Nonnull final WireMockRuntimeInfo wm )
+    @MethodSource( "provideContext" )
+    @ParameterizedTest
+    void testGenericAccessToNestedJsonObject( @Nonnull final Function<HttpDestination, Object> contextFactory )
     {
         final String responseBody = "{" + "\"foo\": \"bar\"," + "\"bar\": {" + "\"foobar\": \"barfoo\"" + "}" + "}";
 
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
-
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 
-        final Object context = new TestApi(httpDestination).testMethod();
+        final Object context = contextFactory.apply(httpDestination);
 
         @SuppressWarnings( "unchecked" )
         final LinkedHashMap<String, Object> castedReturnObject = (LinkedHashMap<String, Object>) context;
@@ -83,16 +102,15 @@ class GenericReturnTypeTest
         assertThat(castedNestedReturnObject.get("foobar")).isEqualTo("barfoo");
     }
 
-    @Test
-    void testGenericAccessToArray( @Nonnull final WireMockRuntimeInfo wm )
+    @MethodSource( "provideContext" )
+    @ParameterizedTest
+    void testGenericAccessToArray( @Nonnull final Function<HttpDestination, Object> contextFactory )
     {
         final String responseBody = "[\"foo\", \"bar\", \"foo\", \"bar\"]";
 
-        final HttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
-
         stubFor(get(urlEqualTo("/endpoint")).willReturn(okJson(responseBody)));
 
-        final Object context = new TestApi(httpDestination).testMethod();
+        final Object context = contextFactory.apply(httpDestination);
 
         @SuppressWarnings( "unchecked" )
         final List<String> castedReturnObject = (List<String>) context;

@@ -24,9 +24,12 @@ class ApiClientFromDestinationTest
     {
         final HttpDestination testDestination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
-        final MyTestAbstractOpenApiService service = new MyTestAbstractOpenApiService(testDestination);
+        final MyTestAbstractOpenApiService springService = new MyTestAbstractOpenApiService(testDestination);
+        final MyTestAbstractApacheOpenApiService apacheService =
+            new MyTestAbstractApacheOpenApiService(testDestination);
 
-        service.foo();
+        springService.foo();
+        apacheService.foo();
     }
 
     @Test
@@ -34,9 +37,13 @@ class ApiClientFromDestinationTest
     {
         final HttpDestination testDestination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
-        final MyExceptionThrowingServiceAbstract service = new MyExceptionThrowingServiceAbstract(testDestination);
+        final MyExceptionThrowingServiceAbstract springService =
+            new MyExceptionThrowingServiceAbstract(testDestination);
+        final MyExceptionThrowingApacheServiceAbstract apacheService =
+            new MyExceptionThrowingApacheServiceAbstract(testDestination);
 
-        assertThatExceptionOfType(IllegalAccessException.class).isThrownBy(service::foo);
+        assertThatExceptionOfType(IllegalAccessException.class).isThrownBy(springService::foo);
+        assertThatExceptionOfType(IllegalAccessException.class).isThrownBy(apacheService::foo);
     }
 
     private class MyTestAbstractOpenApiService extends AbstractOpenApiService
@@ -55,6 +62,35 @@ class ApiClientFromDestinationTest
     private static class MyExceptionThrowingServiceAbstract extends AbstractOpenApiService
     {
         public MyExceptionThrowingServiceAbstract( final Destination destination )
+        {
+            super(destination);
+        }
+
+        void foo()
+            throws IllegalAccessException
+        {
+            throw new IllegalAccessException("Something went horribly wrong");
+        }
+    }
+
+    private static class MyTestAbstractApacheOpenApiService extends com.sap.cloud.sdk.services.openapi.apache.BaseApi
+    {
+        public MyTestAbstractApacheOpenApiService( final Destination destination )
+        {
+            super(destination);
+        }
+
+        void foo()
+        {
+            assertThat(apiClient.getBasePath()).isEqualTo(SERVER.baseUrl());
+        }
+    }
+
+    private static class MyExceptionThrowingApacheServiceAbstract
+        extends
+        com.sap.cloud.sdk.services.openapi.apache.BaseApi
+    {
+        public MyExceptionThrowingApacheServiceAbstract( final Destination destination )
         {
             super(destination);
         }
