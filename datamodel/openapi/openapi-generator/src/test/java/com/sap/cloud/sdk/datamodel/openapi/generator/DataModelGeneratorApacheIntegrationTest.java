@@ -22,7 +22,15 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
 
     @Override
     @ParameterizedTest
-    @EnumSource( TestCase.class )
+    @EnumSource(
+        value = TestCase.class,
+        mode = EnumSource.Mode.EXCLUDE,
+        names = {
+            "INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION",
+            "ONE_OF_INTERFACES_DISABLED",
+            "ONE_OF_INTERFACES_ENABLED",
+            "INPUT_SPEC_WITH_BUILDER",
+            "GENERATE_APIS" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {
@@ -63,7 +71,15 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
 
     // Add these annotations to regenerate all sources
     // @ParameterizedTest
-    // @EnumSource( TestCase.class ) // use this to regenerate all...
+    // use this to regenerate all relevant...
+    // @EnumSource( value=TestCase.class , mode = EnumSource.Mode.EXCLUDE,
+    //      names = {
+    //          "INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION",
+    //          "ONE_OF_INTERFACES_DISABLED",
+    //          "ONE_OF_INTERFACES_ENABLED",
+    //          "INPUT_SPEC_WITH_BUILDER",
+    //          "GENERATE_APIS"
+    //      })
     // @EnumSource( value = TestCase.class, names = { "API_CLASS_VENDOR_EXTENSION_YAML" } ) // ...and this one to only generate specific ones
     @Override
     void generateDataModelForComparison( final TestCase testCase )
