@@ -49,6 +49,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -62,6 +63,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.stubbing.Answer;
 
 import com.auth0.jwt.JWT;
@@ -1944,7 +1948,7 @@ class DestinationServiceTest
             .when(destinationServiceAdapter)
             .getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
 
-        Destination result = loader.tryGetDestination(destinationName).get();
+        loader.tryGetDestination(destinationName).get();
 
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
@@ -2002,5 +2006,63 @@ class DestinationServiceTest
 
         Destination result = loader.tryGetDestination(destinationName, options).get();
         assertThat(result.asHttp().getUri()).isEqualTo(URI.create(providerUrl));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestData")
+    void testPrependGetAllDestinationsCallSkipped(DestinationOptions options, String expectedPath) {
+        // Reset Cache to re-enable the PreLookupCheck
+        DestinationService.Cache.reset();
+
+        // additional mock for cross level test case
+        final String responseWithCrossLevel = """
+            {
+                "destinationConfiguration": {
+                    "Name": "%s",
+                    "Type": "HTTP",
+                    "URL": "https://foo.com",
+                    "Description": "%s level destination"
+                }
+            }
+            """;
+        doReturn(responseWithCrossLevel.formatted(destinationName, "subaccount"))
+            .when(destinationServiceAdapter)
+            .getConfigurationAsJson(eq(expectedPath), any());
+
+        // call single destination with options
+        loader.tryGetDestination(destinationName, options).get();
+
+        // verify that there was no call to all-destination endpoints
+        verify(destinationServiceAdapter, times(0)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
+        verify(destinationServiceAdapter, times(0)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
+        verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq(expectedPath), any());
+        verifyNoMoreInteractions(destinationServiceAdapter);
+    }
+
+    private static Stream<Arguments> provideTestData() {
+        final Header h1 = new Header("X-Custom-Header-1", "value-1");
+        final DestinationOptions optionsWithHeader =
+            DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1)).build();
+
+        final DestinationOptions optionsWithSubaccount =
+            DestinationOptions
+                .builder()
+                .augmentBuilder(
+                    DestinationServiceOptionsAugmenter
+                        .augmenter()
+                        .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT))
+                .build();
+
+        final DestinationOptions optionsWithFragment = DestinationOptions
+            .builder()
+            .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName("a-fragment"))
+            .build();
+
+
+        return Stream.of(
+            Arguments.of(optionsWithHeader, "/v1/destinations/" + destinationName),
+            Arguments.of(optionsWithSubaccount, "/v2/destinations/" + destinationName + "@subaccount"),
+            Arguments.of(optionsWithFragment, "/v1/destinations/" + destinationName)
+        );
     }
 }

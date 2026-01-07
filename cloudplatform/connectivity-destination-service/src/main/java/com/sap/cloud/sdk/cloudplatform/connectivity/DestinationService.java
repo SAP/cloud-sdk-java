@@ -121,9 +121,13 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        if( Cache.preLookupCheckEnabled && !preLookupCheckSuccessful(destinationName, options) ) {
-            final String msg = "Destination %s was not found among the destinations of the current tenant.";
-            return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
+        if (Cache.preLookupCheckEnabled) {
+            if (Cache.isUsingExperimentalFeatures(options)) {
+                log.warn("Using cache/change detection together with either fragments, cross-level options, or custom headers is discouraged. PreLookup check is skipped.");
+            } else if (!preLookupCheckSuccessful(destinationName, options)) {
+                final String msg = "Destination %s was not found among the destinations of the current tenant.";
+                return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
+            }
         }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
