@@ -1,10 +1,10 @@
 final Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
 {{#allParams}}{{#required}}
-    // verify the required parameter '{{paramName}}' is set
-    if ({{paramName}} == null) {
-    throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}")
-    .statusCode(400);
-    }
+// verify the required parameter '{{paramName}}' is set
+if ({{paramName}} == null) {
+throw new OpenApiRequestException("Missing the required parameter '{{paramName}}' when calling {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}")
+.statusCode(400);
+}
 {{/required}}{{/allParams}}
 // create path and map variables
 final String localVarPath = "{{{path}}}"{{#pathParams}}
@@ -17,78 +17,77 @@ final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
 final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
-        {{#queryParams}}
-            {{#isDeepObject}}
-                localVarQueryParameterBaseName = "{{{baseName}}}";
-                {{#isArray}}
-                    for (int i=0; i < {{paramName}}.size(); i++) {
-                    localVarQueryStringJoiner.add({{paramName}}.get(i).toUrlQueryString(String.format(Locale.ROOT, "{{baseName}}[%d]", i)));
-                    }
-                {{/isArray}}
-                {{^isArray}}
-                    localVarQueryStringJoiner.add({{paramName}}.toUrlQueryString("{{baseName}}"));
-                {{/isArray}}
-            {{/isDeepObject}}
-            {{^isDeepObject}}
-                {{#isExplode}}
-                    {{#hasVars}}
-                        {{#vars}}
-                            {{#isArray}}
-                                localVarQueryParams.addAll(ApiClient.parameterToPairs("multi", "{{baseName}}", {{paramName}}.{{getter}}()));
-                            {{/isArray}}
-                            {{^isArray}}
-                                localVarQueryParams.addAll(ApiClient.parameterToPair("{{baseName}}", {{paramName}}.{{getter}}()));
-                            {{/isArray}}
-                        {{/vars}}
-                    {{/hasVars}}
-                    {{^hasVars}}
-                        {{#isModel}}
-                            localVarQueryStringJoiner.add({{paramName}}.toUrlQueryString());
-                        {{/isModel}}
-                        {{^isModel}}
-                            {{#collectionFormat}}localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(ApiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
-                        {{/isModel}}
-                    {{/hasVars}}
-                {{/isExplode}}
-                {{^isExplode}}
+{{#queryParams}}
+    {{#isDeepObject}}
+        localVarQueryParameterBaseName = "{{{baseName}}}";
+        {{#isArray}}
+            for (int i=0; i < {{paramName}}.size(); i++) {
+            localVarQueryStringJoiner.add({{paramName}}.get(i).toUrlQueryString(String.format(Locale.ROOT, "{{baseName}}[%d]", i)));
+            }
+        {{/isArray}}
+        {{^isArray}}
+            localVarQueryStringJoiner.add({{paramName}}.toUrlQueryString("{{baseName}}"));
+        {{/isArray}}
+    {{/isDeepObject}}
+    {{^isDeepObject}}
+        {{#isExplode}}
+            {{#hasVars}}
+                {{#vars}}
+                    {{#isArray}}
+                        localVarQueryParams.addAll(ApiClient.parameterToPairs("multi", "{{baseName}}", {{paramName}}.{{getter}}()));
+                    {{/isArray}}
+                    {{^isArray}}
+                        localVarQueryParams.addAll(ApiClient.parameterToPair("{{baseName}}", {{paramName}}.{{getter}}()));
+                    {{/isArray}}
+                {{/vars}}
+            {{/hasVars}}
+            {{^hasVars}}
+                {{#isModel}}
+                    localVarQueryStringJoiner.add({{paramName}}.toUrlQueryString());
+                {{/isModel}}
+                {{^isModel}}
                     {{#collectionFormat}}localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(ApiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
-                {{/isExplode}}
-            {{/isDeepObject}}
-        {{/queryParams}}
-        {{#headerParams}}if ({{paramName}} != null)
-            localVarHeaderParams.put("{{baseName}}", ApiClient.parameterToString({{paramName}}));
-        {{/headerParams}}
+                {{/isModel}}
+            {{/hasVars}}
+        {{/isExplode}}
+        {{^isExplode}}
+            {{#collectionFormat}}localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", {{/collectionFormat}}{{^collectionFormat}}localVarQueryParams.addAll(ApiClient.parameterToPair({{/collectionFormat}}"{{baseName}}", {{paramName}}));
+        {{/isExplode}}
+    {{/isDeepObject}}
+{{/queryParams}}
+{{#headerParams}}if ({{paramName}} != null)
+    localVarHeaderParams.put("{{baseName}}", ApiClient.parameterToString({{paramName}}));
+{{/headerParams}}
+{{#formParams}}if ({{paramName}} != null)
+    localVarFormParams.put("{{baseName}}", {{paramName}});
+{{/formParams}}
 
-        {{#formParams}}if ({{paramName}} != null)
-            localVarFormParams.put("{{baseName}}", {{paramName}});
-        {{/formParams}}
+final String[] localVarAccepts = {
+{{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
+};
+final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+final String[] localVarContentTypes = {
+{{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
+};
+final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        final String[] localVarAccepts = {
-        {{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}
-        };
-        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+{{#returnType}}
+final TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{returnType}}}>() {};
+{{/returnType}}
+{{^returnType}}
+final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>() {};
+{{/returnType}}
 
-        final String[] localVarContentTypes = {
-        {{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}
-        };
-        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-
-        {{#returnType}}
-        final TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{returnType}}}>() {};
-        {{/returnType}}
-        {{^returnType}}
-        final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>() {};
-        {{/returnType}}
-        return apiClient.invokeAPI(
-        localVarPath,
-        "{{httpMethod}}",
-        localVarQueryParams,
-        localVarCollectionQueryParams,
-        localVarQueryStringJoiner.toString(),
-        localVarPostBody,
-        localVarHeaderParams,
-        localVarFormParams,
-        localVarAccept,
-        localVarContentType,
-        localVarReturnType
-        );
+return apiClient.invokeAPI(
+    localVarPath,
+    "{{httpMethod}}",
+    localVarQueryParams,
+    localVarCollectionQueryParams,
+    localVarQueryStringJoiner.toString(),
+    localVarPostBody,
+    localVarHeaderParams,
+    localVarFormParams,
+    localVarAccept,
+    localVarContentType,
+    localVarReturnType
+);

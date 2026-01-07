@@ -404,7 +404,12 @@ public class ApiClient
         buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
     {
         final StringBuilder url = new StringBuilder();
-        url.append(basePath).append(path);
+        if( basePath.endsWith("/") && path != null && path.startsWith("/") ) {
+            url.append(basePath, 0, basePath.length() - 1);
+        } else {
+            url.append(basePath);
+        }
+        url.append(path);
 
         if( queryParams != null && !queryParams.isEmpty() ) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
@@ -486,7 +491,7 @@ public class ApiClient
      *             API exception
      */
     @Beta
-    @Nonnull
+    @Nullable
     public <T> T invokeAPI(
         String path,
         String method,

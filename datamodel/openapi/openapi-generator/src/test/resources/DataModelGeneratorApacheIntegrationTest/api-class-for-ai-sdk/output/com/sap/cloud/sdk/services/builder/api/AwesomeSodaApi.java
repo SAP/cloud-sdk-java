@@ -56,60 +56,59 @@ public class AwesomeSodaApi extends BaseApi {
     }
 
 
-        /**
-        * <p>Add a new soda to the store
-        * <p>
-        * <p><b>201</b> - The newly added soda
-        * @param newSoda
-            *      The value for the parameter newSoda
-        * @return Soda
-        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-        */
-        @Nonnull
-        public Soda addSoda(@Nonnull final NewSoda newSoda) throws OpenApiRequestException {
-            final Object localVarPostBody = newSoda;
-            
-                // verify the required parameter 'newSoda' is set
-                if (newSoda == null) {
-                throw new OpenApiRequestException("Missing the required parameter 'newSoda' when calling addSoda")
-                .statusCode(400);
-                }
-            
-            // create path and map variables
-            final String localVarPath = "/sodas";
-            
-            final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
-            final List<Pair> localVarQueryParams = new ArrayList<Pair>();
-            final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-            final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-            
-                                
-                                
-                    final String[] localVarAccepts = {
-                    "application/json"
-                    };
-                    final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-            
-                    final String[] localVarContentTypes = {
-                    "application/json"
-                    };
-                    final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-            
-                    final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
-                                return apiClient.invokeAPI(
-                    localVarPath,
-                    "POST",
-                    localVarQueryParams,
-                    localVarCollectionQueryParams,
-                    localVarQueryStringJoiner.toString(),
-                    localVarPostBody,
-                    localVarHeaderParams,
-                    localVarFormParams,
-                    localVarAccept,
-                    localVarContentType,
-                    localVarReturnType
-                    );
+    /**
+    * <p>Add a new soda to the store
+    * <p>
+    * <p><b>201</b> - The newly added soda
+    * @param newSoda
+        *      The value for the parameter newSoda
+    * @return Soda
+    * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+    */
+    @Nonnull
+    public Soda addSoda(@Nonnull final NewSoda newSoda) throws OpenApiRequestException {
+        final Object localVarPostBody = newSoda;
+        
+        // verify the required parameter 'newSoda' is set
+        if (newSoda == null) {
+        throw new OpenApiRequestException("Missing the required parameter 'newSoda' when calling addSoda")
+        .statusCode(400);
         }
-        }
+        
+        // create path and map variables
+        final String localVarPath = "/sodas";
+        
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        String localVarQueryParameterBaseName;
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        
+                        
+        final String[] localVarAccepts = {
+        "application/json"
+        };
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {
+        "application/json"
+        };
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+        
+        final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
+                
+        return apiClient.invokeAPI(
+            localVarPath,
+            "POST",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            localVarPostBody,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType
+        );
+    }
+}

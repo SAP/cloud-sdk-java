@@ -65,63 +65,62 @@ public class DefaultApi extends BaseApi {
     }
 
 
-        /**
-        * <p>Get details of a specific soda
-        * <p>
-        * <p><b>200</b> - The requested soda
-        * <p><b>404</b> - The specified resource was not found
-        * <p><b>503</b> - The service is currently unavailable
-        * @param sodaId
-        *      ID of the soda to retrieve
-        * @return Soda
-        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-        */
-        @Nonnull
-        public Soda getSodaById(@Nonnull final Long sodaId) throws OpenApiRequestException {
-            final Object localVarPostBody = null;
-            
-                // verify the required parameter 'sodaId' is set
-                if (sodaId == null) {
-                throw new OpenApiRequestException("Missing the required parameter 'sodaId' when calling getSodaById")
-                .statusCode(400);
-                }
-            
-            // create path and map variables
-            final String localVarPath = "/sodas/{sodaId}"
-                .replaceAll("\\{" + "sodaId" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(sodaId)));
-            
-            final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
-            final List<Pair> localVarQueryParams = new ArrayList<Pair>();
-            final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-            final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-            
-                                
-                                
-                    final String[] localVarAccepts = {
-                    "application/json", "application/xml"
-                    };
-                    final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-            
-                    final String[] localVarContentTypes = {
-                    
-                    };
-                    final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-            
-                    final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
-                                return apiClient.invokeAPI(
-                    localVarPath,
-                    "GET",
-                    localVarQueryParams,
-                    localVarCollectionQueryParams,
-                    localVarQueryStringJoiner.toString(),
-                    localVarPostBody,
-                    localVarHeaderParams,
-                    localVarFormParams,
-                    localVarAccept,
-                    localVarContentType,
-                    localVarReturnType
-                    );
+    /**
+    * <p>Get details of a specific soda
+    * <p>
+    * <p><b>200</b> - The requested soda
+    * <p><b>404</b> - The specified resource was not found
+    * <p><b>503</b> - The service is currently unavailable
+    * @param sodaId
+    *      ID of the soda to retrieve
+    * @return Soda
+    * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+    */
+    @Nonnull
+    public Soda getSodaById(@Nonnull final Long sodaId) throws OpenApiRequestException {
+        final Object localVarPostBody = null;
+        
+        // verify the required parameter 'sodaId' is set
+        if (sodaId == null) {
+        throw new OpenApiRequestException("Missing the required parameter 'sodaId' when calling getSodaById")
+        .statusCode(400);
         }
-        }
+        
+        // create path and map variables
+        final String localVarPath = "/sodas/{sodaId}"
+            .replaceAll("\\{" + "sodaId" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(sodaId)));
+        
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        String localVarQueryParameterBaseName;
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        
+                        
+        final String[] localVarAccepts = {
+        "application/json", "application/xml"
+        };
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {
+        
+        };
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+        
+        final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
+                
+        return apiClient.invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            localVarPostBody,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType
+        );
+    }
+}

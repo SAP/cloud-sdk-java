@@ -62,52 +62,51 @@ public class DefaultApi extends BaseApi {
     }
 
 
-        /**
-        * <p>Get a list of all sodas
-        * <p>
-        * <p><b>200</b> - A list of sodas
-        * @return List&lt;OneOf&gt;
-        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-        */
-        @Nonnull
-        public List<OneOf> getSodas() throws OpenApiRequestException {
-            final Object localVarPostBody = null;
-            
-            // create path and map variables
-            final String localVarPath = "/sodas";
-            
-            final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
-            final List<Pair> localVarQueryParams = new ArrayList<Pair>();
-            final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-            final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-            
-                                
-                                
-                    final String[] localVarAccepts = {
-                    "application/json"
-                    };
-                    final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-            
-                    final String[] localVarContentTypes = {
-                    
-                    };
-                    final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-            
-                    final TypeReference<List<OneOf>> localVarReturnType = new TypeReference<List<OneOf>>() {};
-                                return apiClient.invokeAPI(
-                    localVarPath,
-                    "GET",
-                    localVarQueryParams,
-                    localVarCollectionQueryParams,
-                    localVarQueryStringJoiner.toString(),
-                    localVarPostBody,
-                    localVarHeaderParams,
-                    localVarFormParams,
-                    localVarAccept,
-                    localVarContentType,
-                    localVarReturnType
-                    );
-        }
-        }
+    /**
+    * <p>Get a list of all sodas
+    * <p>
+    * <p><b>200</b> - A list of sodas
+    * @return List&lt;OneOf&gt;
+    * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+    */
+    @Nonnull
+    public List<OneOf> getSodas() throws OpenApiRequestException {
+        final Object localVarPostBody = null;
+        
+        // create path and map variables
+        final String localVarPath = "/sodas";
+        
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        String localVarQueryParameterBaseName;
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        
+                        
+        final String[] localVarAccepts = {
+        "application/json"
+        };
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {
+        
+        };
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+        
+        final TypeReference<List<OneOf>> localVarReturnType = new TypeReference<List<OneOf>>() {};
+                
+        return apiClient.invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            localVarPostBody,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType
+        );
+    }
+}

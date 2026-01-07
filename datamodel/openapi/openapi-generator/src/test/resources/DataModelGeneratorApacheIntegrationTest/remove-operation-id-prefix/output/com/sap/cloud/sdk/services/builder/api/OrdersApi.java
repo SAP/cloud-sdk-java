@@ -62,60 +62,59 @@ public class OrdersApi extends BaseApi {
     }
 
 
-        /**
-        * <p>Create a new order
-        * <p>
-        * <p><b>201</b> - The created order
-        * @param order
-        *      The order details
-        * @return Order
-        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-        */
-        @Nonnull
-        public Order get(@Nonnull final Order order) throws OpenApiRequestException {
-            final Object localVarPostBody = order;
-            
-                // verify the required parameter 'order' is set
-                if (order == null) {
-                throw new OpenApiRequestException("Missing the required parameter 'order' when calling get")
-                .statusCode(400);
-                }
-            
-            // create path and map variables
-            final String localVarPath = "/orders";
-            
-            final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
-            final List<Pair> localVarQueryParams = new ArrayList<Pair>();
-            final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-            final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-            
-                                
-                                
-                    final String[] localVarAccepts = {
-                    "application/json"
-                    };
-                    final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-            
-                    final String[] localVarContentTypes = {
-                    "application/json"
-                    };
-                    final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-            
-                    final TypeReference<Order> localVarReturnType = new TypeReference<Order>() {};
-                                return apiClient.invokeAPI(
-                    localVarPath,
-                    "POST",
-                    localVarQueryParams,
-                    localVarCollectionQueryParams,
-                    localVarQueryStringJoiner.toString(),
-                    localVarPostBody,
-                    localVarHeaderParams,
-                    localVarFormParams,
-                    localVarAccept,
-                    localVarContentType,
-                    localVarReturnType
-                    );
+    /**
+    * <p>Create a new order
+    * <p>
+    * <p><b>201</b> - The created order
+    * @param order
+    *      The order details
+    * @return Order
+    * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+    */
+    @Nonnull
+    public Order get(@Nonnull final Order order) throws OpenApiRequestException {
+        final Object localVarPostBody = order;
+        
+        // verify the required parameter 'order' is set
+        if (order == null) {
+        throw new OpenApiRequestException("Missing the required parameter 'order' when calling get")
+        .statusCode(400);
         }
-        }
+        
+        // create path and map variables
+        final String localVarPath = "/orders";
+        
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        String localVarQueryParameterBaseName;
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        
+                        
+        final String[] localVarAccepts = {
+        "application/json"
+        };
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {
+        "application/json"
+        };
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+        
+        final TypeReference<Order> localVarReturnType = new TypeReference<Order>() {};
+                
+        return apiClient.invokeAPI(
+            localVarPath,
+            "POST",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            localVarPostBody,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType
+        );
+    }
+}
