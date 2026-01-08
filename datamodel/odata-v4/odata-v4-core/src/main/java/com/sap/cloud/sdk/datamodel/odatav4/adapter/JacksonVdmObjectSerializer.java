@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.google.common.base.Functions;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmEntity;
 import com.sap.cloud.sdk.datamodel.odatav4.core.VdmObject;
 import com.sap.cloud.sdk.result.ElementName;
@@ -79,7 +79,7 @@ public class JacksonVdmObjectSerializer extends StdSerializer<VdmObject<?>> impl
             Arrays
                 .stream(object.getClass().getDeclaredFields())
                 .filter(f -> f.getAnnotation(ElementName.class) != null)
-                .collect(Collectors.toMap(Functions.identity(), f -> getFieldValue(f, object)));
+                .collect(Collectors.toMap(Function.identity(), f -> getFieldValue(f, object)));
 
         for( final Map.Entry<Field, Option<Object>> propertyEntry : fieldValues.entrySet() ) {
             final Option<Object> propertyValueOption = propertyEntry.getValue();
