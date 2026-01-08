@@ -14,7 +14,7 @@
 
 ### ✨ New Functionality
 
-- 
+- Temporary: Use `email` as fallback principal id when `user_uuid` is missing. Will switch to using `sub` once IAS exposes `idtype` (tracked in [SCICAI-1323](https://jira.tools.sap/browse/SCICAI-1323)).
 
 ### 📈 Improvements
 
