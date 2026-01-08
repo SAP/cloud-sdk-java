@@ -123,7 +123,7 @@ public class DestinationService implements DestinationLoader
     {
         if (Cache.preLookupCheckEnabled) {
             if (Cache.isUsingExperimentalFeatures(options)) {
-                log.warn("Using cache/change detection together with either fragments, cross-level options, or custom headers is discouraged. PreLookup check is skipped.");
+                log.warn("Using pre-lookup check together with either fragments, cross-level options, or custom headers might lead to unexpected behaviour. Pre-lookup check is skipped.");
             } else if (!preLookupCheckSuccessful(destinationName, options)) {
                 final String msg = "Destination %s was not found among the destinations of the current tenant.";
                 return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
