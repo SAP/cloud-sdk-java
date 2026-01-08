@@ -5,18 +5,112 @@ The credential files are generated from command line. This process can be automa
 
 ## CREATE CLIENT CREDENTIALS
 
-* Generate key pair
-  ```bash
-  openssl req -x509 -newkey rsa:2048 -utf8 -days 3650 -nodes -config client-cert.conf -keyout client-cert.key -out client-cert.crt
+* Client keystore
+  ```
+  docker run --rm -v $(pwd)/certs:/certs eclipse-temurin:17-jre \
+   keytool -genkeypair \
+   -alias client1 \
+   -keyalg RSA \
+   -keysize 2048 \
+   -validity 3650 \
+   -storetype JKS \
+   -keystore /certs/client1.jks \
+   -storepass changeit \
+   -keypass changeit \
+   -dname "CN=client1"
   ```
 
-* Generate _PKCS#12_ keystore
-  ```bash
-  openssl pkcs12 -export -inkey client-cert.key -in client-cert.crt -out client-cert.p12 -password "pass:cca-password"
+  <details><summary>(Windows)</summary>
+
+  ```
+  docker run --rm -v ${pwd}/certs:/certs eclipse-temurin:17-jre keytool -genkeypair -alias client1 -keyalg RSA -keysize 2048 -validity 3650 -storetype JKS -keystore /certs/client1.jks -storepass changeit -keypass changeit -dname "CN=client1"
   ```
   
-* Transform to JKS
+  </details>
 
-  ```bash
-  keytool -importkeystore -deststorepass "cca-password" -destkeypass "cca-password" -srckeystore client-cert.p12 -srcstorepass "cca-password" -deststoretype pkcs12 -destkeystore client-cert.pkcs12
+* Export client certificate
   ```
+  docker run --rm -v $(pwd)/certs:/certs eclipse-temurin:17-jre \
+   keytool -exportcert \
+   -alias client1 \
+   -keystore /certs/client1.jks \
+   -storepass changeit \
+   -file /certs/client1.cer
+   ```
+
+  <details><summary>(Windows)</summary>
+
+  ```
+  docker run --rm -v ${pwd}/certs:/certs eclipse-temurin:17-jre keytool -exportcert -alias client1 -keystore /certs/client1.jks -storepass changeit -file /certs/client1.cer
+  ```
+
+  </details>
+
+* PKCS12 keystore for client
+
+  ```
+  docker run --rm -v $(pwd)/certs:/certs eclipse-temurin:17-jre \
+   keytool -importkeystore \
+   -srckeystore /certs/client1.jks \
+   -srcstoretype JKS \
+   -srcstorepass changeit \
+   -destkeystore /certs/client1.p12 \
+   -deststoretype PKCS12 \
+   -deststorepass changeit \
+   -destkeypass changeit
+  ```
+
+  <details><summary>(Windows)</summary>
+
+  ```
+  docker run --rm -v ${pwd}/certs:/certs eclipse-temurin:17-jre keytool -importkeystore -srckeystore /certs/client1.jks -srcstoretype JKS -srcstorepass changeit -destkeystore /certs/client1.p12 -deststoretype PKCS12 -deststorepass changeit -destkeypass changeit
+  ```
+  
+  </details>
+
+
+## CREATE SERVER CREDENTIALS
+
+* Server keystore. Run once
+  ```
+  docker run --rm -v $(pwd)/certs:/certs eclipse-temurin:17-jre \
+   keytool -genkeypair \
+   -alias wiremock-server \
+   -keyalg RSA \
+   -keysize 2048 \
+   -validity 3650 \
+   -storetype JKS \
+   -keystore /certs/server.jks \
+   -storepass changeit \
+   -keypass changeit \
+   -dname "CN=localhost" \
+   -ext SAN=dns:localhost,ip:127.0.0.1
+   ```
+
+  <details><summary>(Windows)</summary>
+  
+  ```
+  docker run --rm -v ${pwd}/certs:/certs eclipse-temurin:17-jre keytool -genkeypair -alias wiremock-server -keyalg RSA -keysize 2048 -validity 3650 -storetype JKS -keystore /certs/server.jks -storepass changeit -keypass changeit -dname "CN=localhost" -ext SAN=dns:localhost,ip:127.0.0.1
+  ```
+  
+  </details>
+
+* Truststore for wiremock
+
+  ```
+  docker run --rm -v $(pwd)/certs:/certs eclipse-temurin:17-jre \
+   keytool -importcert \
+   -alias client1 \
+   -file /certs/client1.cer \
+   -keystore /certs/truststore.jks \
+   -storepass changeit \
+   -noprompt
+  ```
+
+  <details><summary>(Windows)</summary>
+
+  ```
+  docker run --rm -v ${pwd}/certs:/certs eclipse-temurin:17-jre keytool -importcert -alias client1 -file /certs/client1.cer -keystore /certs/truststore.jks -storepass changeit -noprompt
+  ```
+  
+  </details>
