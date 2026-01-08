@@ -17,12 +17,10 @@ package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.annotations.Beta;
 
 /**
  * OneOfWithEnumDiscriminator
  */
-@Beta
 @JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "disc", visible = true )
 @JsonSubTypes( {
     @JsonSubTypes.Type( value = Bar.class, name = "disc_bar" ),

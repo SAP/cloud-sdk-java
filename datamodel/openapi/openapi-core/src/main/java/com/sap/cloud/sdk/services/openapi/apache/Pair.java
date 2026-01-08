@@ -12,29 +12,15 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import javax.annotation.Nonnull;
+
+import lombok.Value;
+
+@Value
 public class Pair
 {
-    private final String name;
-    private final String value;
-
-    public Pair( String name, String value )
-    {
-        this.name = isValidString(name) ? name : "";
-        this.value = isValidString(value) ? value : "";
-    }
-
-    public String getName()
-    {
-        return this.name;
-    }
-
-    public String getValue()
-    {
-        return this.value;
-    }
-
-    private static boolean isValidString( String arg )
-    {
-        return arg != null;
-    }
+    @Nonnull
+    String name;
+    @Nonnull
+    String value;
 }
