@@ -94,13 +94,13 @@ public class OrdersApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         final TypeReference<Order> localVarReturnType = new TypeReference<Order>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,

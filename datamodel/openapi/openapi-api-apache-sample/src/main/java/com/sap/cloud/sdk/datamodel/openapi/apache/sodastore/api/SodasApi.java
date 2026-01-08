@@ -101,7 +101,6 @@ public class SodasApi extends BaseApi
 
         final String[] localVarAccepts = { "application/octet-stream" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -110,6 +109,7 @@ public class SodasApi extends BaseApi
         final TypeReference<File> localVarReturnType = new TypeReference<File>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -154,7 +154,6 @@ public class SodasApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -163,6 +162,7 @@ public class SodasApi extends BaseApi
         final TypeReference<List<SodaWithId>> localVarReturnType = new TypeReference<List<SodaWithId>>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -218,7 +218,6 @@ public class SodasApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -227,6 +226,7 @@ public class SodasApi extends BaseApi
         final TypeReference<SodaWithId> localVarReturnType = new TypeReference<SodaWithId>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -283,13 +283,13 @@ public class SodasApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
