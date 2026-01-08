@@ -36,6 +36,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.StatusLine;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,6 +99,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws ParseException
      *             if response parsing fails
      */
+    @SuppressWarnings( "unchecked" )
     private T processResponse( ClassicHttpResponse response )
         throws OpenApiRequestException,
             IOException,
@@ -105,6 +107,9 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     {
         int statusCode = response.getCode();
         if( statusCode == HttpStatus.SC_NO_CONTENT ) {
+            if( returnType.getType().equals(OpenApiResponse.class) ) {
+                return (T) new OpenApiResponse(statusCode, transformResponseHeaders(response.getHeaders()));
+            }
             return null;
         }
 
@@ -112,8 +117,11 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             return deserialize(response);
         } else {
             Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-            String message = EntityUtils.toString(response.getEntity());
-            throw new OpenApiRequestException(message).statusCode(statusCode).responseHeaders(responseHeaders);
+            String message = new StatusLine(response).toString();
+            throw new OpenApiRequestException(message)
+                .statusCode(statusCode)
+                .responseHeaders(responseHeaders)
+                .responseBody(EntityUtils.toString(response.getEntity()));
         }
     }
 

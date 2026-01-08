@@ -66,31 +66,33 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.Value;
 import lombok.With;
 
-@Value
-@Getter( AccessLevel.NONE )
 @AllArgsConstructor( access = PRIVATE )
+@EqualsAndHashCode
+@ToString
 public class ApiClient
 {
     @Nonnull
-    CloseableHttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
     @With
+    @Getter
     @Nonnull
-    String basePath;
+    private final String basePath;
 
     @With( onMethod_ = @Beta )
     @Nonnull
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @With
     @Nullable
-    String tempFolderPath;
+    private final String tempFolderPath;
 
     // Methods that can have a request body
     private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
@@ -404,7 +406,12 @@ public class ApiClient
         buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
     {
         final StringBuilder url = new StringBuilder();
-        url.append(basePath).append(path);
+        if( basePath.endsWith("/") && path != null && path.startsWith("/") ) {
+            url.append(basePath, 0, basePath.length() - 1);
+        } else {
+            url.append(basePath);
+        }
+        url.append(path);
 
         if( queryParams != null && !queryParams.isEmpty() ) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
@@ -486,7 +493,7 @@ public class ApiClient
      *             API exception
      */
     @Beta
-    @Nonnull
+    @Nullable
     public <T> T invokeAPI(
         String path,
         String method,
