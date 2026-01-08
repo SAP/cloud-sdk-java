@@ -8,7 +8,9 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- We noticed an implicit behavior change for updated Apache HttpClient from `5.5.1` to `5.6`.
+  TLS/SSL connections are now checked for hostname verification on behalf of the provided server certificate.
+  Even with enabled trust-all-certificates flag, connections to servers with mismatching hostnames will be rejected.
 
 ### ✨ New Functionality
 

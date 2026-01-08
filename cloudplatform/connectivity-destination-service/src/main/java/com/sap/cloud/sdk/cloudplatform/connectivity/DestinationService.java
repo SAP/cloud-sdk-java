@@ -881,6 +881,11 @@ public class DestinationService implements DestinationLoader
             @Nullable
             final GetOrComputeAllDestinationsCommand getAllCommand;
             if( changeDetectionEnabled ) {
+                if( isUsingExperimentalFeatures(options) ) {
+                    log
+                        .warn(
+                            "Using change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.");
+                }
                 getAllCommand =
                     GetOrComputeAllDestinationsCommand
                         .prepareCommand(
@@ -915,7 +920,7 @@ public class DestinationService implements DestinationLoader
             if( isUsingExperimentalFeatures(options) ) {
                 log
                     .warn(
-                        "Using cache/change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected behaviour.");
+                        "Using caching together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.");
             }
 
             return GetOrComputeAllDestinationsCommand
