@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -882,9 +883,9 @@ public class DestinationService implements DestinationLoader
             final GetOrComputeAllDestinationsCommand getAllCommand;
             if( changeDetectionEnabled ) {
                 if( isUsingExperimentalFeatures(options) ) {
-                    log
-                        .warn(
-                            "Using change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.");
+                    final String msg =
+                        "Using change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.";
+                    log.warn(msg);
                 }
                 getAllCommand =
                     GetOrComputeAllDestinationsCommand
@@ -918,9 +919,9 @@ public class DestinationService implements DestinationLoader
             }
 
             if( isUsingExperimentalFeatures(options) ) {
-                log
-                    .warn(
-                        "Using caching together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.");
+                final String msg =
+                    "Using caching together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.";
+                log.warn(msg);
             }
 
             return GetOrComputeAllDestinationsCommand
@@ -930,8 +931,9 @@ public class DestinationService implements DestinationLoader
 
         private static boolean isUsingExperimentalFeatures( @Nonnull final DestinationOptions options )
         {
-            String[] featureNames = { "X-fragment-name", "crossLevelSetting", "customHeader" };
-            return options.getOptionKeys().stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::contains));
+            final String[] featureNames = { "X-fragment-name", "crossLevelSetting", "customHeader" };
+            final Set<String> keys = options.getOptionKeys();
+            return keys.stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::equalsIgnoreCase));
         }
 
         private Cache()
