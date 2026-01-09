@@ -1,5 +1,8 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.getRetrievalStrategy;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -122,15 +126,39 @@ public class DestinationService implements DestinationLoader
         Try<Destination>
         tryGetDestination( @Nonnull final String destinationName, @Nonnull final DestinationOptions options )
     {
-        if (Cache.preLookupCheckEnabled) {
-            if (Cache.isUsingExperimentalFeatures(options)) {
-                log.warn("Using pre-lookup check together with either fragments, cross-level options, or custom headers might lead to unexpected behaviour. Pre-lookup check is skipped.");
-            } else if (!preLookupCheckSuccessful(destinationName, options)) {
-                final String msg = "Destination %s was not found among the destinations of the current tenant.";
-                return Try.failure(new DestinationNotFoundException(destinationName, String.format(msg, destinationName)));
-            }
+        final Option<Exception> validationError = validateDestinationLookup(destinationName, options);
+        if( validationError.isDefined() ) {
+            return Try.failure(validationError.get());
         }
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
+    }
+
+    Option<Exception> validateDestinationLookup( String destinationName, DestinationOptions options )
+    {
+        final Option<Exception> VALID_LOOKUP = Option.none();
+        if( !Cache.preLookupCheckEnabled ) {
+            return VALID_LOOKUP;
+        }
+        if( !Cache.isEnabled() ) {
+            return VALID_LOOKUP;
+        }
+        if( Cache.isUsingExperimentalFeatures(options) ) {
+            final String msg =
+                "Using pre-lookup check together with either fragments, cross-level options, or custom headers might lead to unexpected behaviour. Pre-lookup check is skipped.";
+            log.warn(msg);
+            return VALID_LOOKUP;
+        }
+
+        final DestinationServiceRetrievalStrategy strategy = getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
+        final Collection<DestinationProperties> cachedDestinations = getAllDestinationProperties(strategy);
+        final Predicate<DestinationProperties> pred = p -> p.get(DestinationProperty.NAME).contains(destinationName);
+        if( cachedDestinations.stream().anyMatch(pred) ) {
+            return VALID_LOOKUP;
+        }
+
+        final String msgFormat = "Destination %s was not found among the destinations for %s.";
+        final String msg = String.format(msgFormat, destinationName, strategy);
+        return Option.some(new DestinationNotFoundException(destinationName, msg));
     }
 
     Destination loadAndParseDestination( final String destName, final DestinationOptions options )
@@ -201,7 +229,7 @@ public class DestinationService implements DestinationLoader
     @Nonnull
     public Collection<DestinationProperties> getAllDestinationProperties()
     {
-        return getAllDestinationProperties(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
+        return getAllDestinationProperties(CURRENT_TENANT);
     }
 
     /**
@@ -392,17 +420,6 @@ public class DestinationService implements DestinationLoader
     private static boolean hasCauseAssignableFrom( @Nonnull final Throwable t, @Nonnull final Class<?> cls )
     {
         return ExceptionUtils.getThrowableList(t).stream().map(Throwable::getClass).anyMatch(cls::isAssignableFrom);
-    }
-
-    private boolean preLookupCheckSuccessful( final String destinationName, final DestinationOptions options )
-    {
-        final DestinationServiceRetrievalStrategy retrievalStrategy =
-            DestinationServiceOptionsAugmenter
-                .getRetrievalStrategy(options)
-                .getOrElse(DestinationServiceRetrievalStrategy.CURRENT_TENANT);
-        return getAllDestinationProperties(retrievalStrategy)
-            .stream()
-            .anyMatch(properties -> properties.get(DestinationProperty.NAME).contains(destinationName));
     }
 
     /**
