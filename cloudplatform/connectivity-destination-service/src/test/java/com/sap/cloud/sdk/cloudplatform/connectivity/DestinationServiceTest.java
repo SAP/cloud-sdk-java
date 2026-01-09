@@ -1801,10 +1801,7 @@ class DestinationServiceTest
             .getConfigurationAsJson(any(), argThat(it -> it.fragment() == null));
 
         final Function<String, DestinationOptions> optsBuilder =
-            frag -> DestinationOptions
-                .builder()
-                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName(frag))
-                .build();
+            frag -> DestinationOptions.builder().augmentBuilder(augmenter().fragmentName(frag)).build();
 
         final Destination dA = loader.tryGetDestination("destination", optsBuilder.apply("a-fragment")).get();
         final Destination dB = loader.tryGetDestination("destination", optsBuilder.apply("b-fragment")).get();
@@ -2004,13 +2001,13 @@ class DestinationServiceTest
         final DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
 
-        Destination result = loader.tryGetDestination(destinationName, options).get();
+        final Destination result = loader.tryGetDestination(destinationName, options).get();
         assertThat(result.asHttp().getUri()).isEqualTo(URI.create(providerUrl));
     }
 
     @ParameterizedTest
-    @MethodSource( "provideTestData" )
-    void testPrependGetAllDestinationsCallSkipped( DestinationOptions options, String expectedPath )
+    @MethodSource("testCasesUncachedDestinationLookup")
+    void testPrependGetAllDestinationsCallSkipped( final DestinationOptions options, final String expectedPath )
     {
         // Reset Cache to re-enable the PreLookupCheck
         DestinationService.Cache.reset();
@@ -2040,26 +2037,22 @@ class DestinationServiceTest
         verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
-    private static Stream<Arguments> provideTestData()
+    private static Stream<Arguments> testCasesUncachedDestinationLookup()
     {
+        // custom header
         final Header h1 = new Header("X-Custom-Header-1", "value-1");
         final DestinationOptions optionsWithHeader =
             DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1)).build();
 
+        // cross-level consumption
+        final DestinationServiceOptionsAugmenter.CrossLevelScope crossLevelScope =
+            DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT;
         final DestinationOptions optionsWithSubaccount =
-            DestinationOptions
-                .builder()
-                .augmentBuilder(
-                    DestinationServiceOptionsAugmenter
-                        .augmenter()
-                        .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT))
-                .build();
+            DestinationOptions.builder().augmentBuilder(augmenter().crossLevelConsumption(crossLevelScope)).build();
 
+        // fragments
         final DestinationOptions optionsWithFragment =
-            DestinationOptions
-                .builder()
-                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName("a-fragment"))
-                .build();
+            DestinationOptions.builder().augmentBuilder(augmenter().fragmentName("a-fragment")).build();
 
         return Stream
             .of(
