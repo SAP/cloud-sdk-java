@@ -202,4 +202,35 @@ class AuthTokenDecoderIasTest
         assertThat(jwt).isNotNull();
         assertThat(jwt.getClaim("user_uuid").asString()).isEqualTo("5a21dfa1-fd90-45ff-a5d3-d1cfa446d25a");
     }
+
+    @Test
+    void testDecodeSucceedsWithEmailOnly( @Nonnull final WireMockRuntimeInfo wm )
+    {
+        final Token tokenOnlyEmail =
+            JwtGenerator
+                .getInstance(Service.IAS, "2aba8ab2-edc3-4666-b2ed-90b2b47e60e3")
+                .withHeaderParameter(TokenHeader.KEY_ID, "testKey")
+                .withClaimValue("iss", wm.getHttpBaseUrl())
+                .withClaimValues("aud", "1668e3ce-e2b8-4d27-a05b-3db47e7a4152", "2aba8ab2-edc3-4666-b2ed-90b2b47e60e3")
+                .withClaimValue("sub", "sub-only-email")
+                // intentionally omit user_uuid
+                .withClaimValue("email", "only.email@example.com")
+                .withExpiration(OffsetDateTime.now().plusDays(1).toInstant())
+                .withPrivateKey(RSA_KEYS.getPrivate())
+                .createToken();
+
+        final String tokenValue = tokenOnlyEmail.getTokenValue();
+
+        final RequestHeaderContainer headers =
+            DefaultRequestHeaderContainer
+                .fromSingleValueMap(Collections.singletonMap(HttpHeaders.AUTHORIZATION, "Bearer " + tokenValue));
+
+        final AuthToken authToken = new AuthTokenDecoderDefault().decode(headers).getOrNull();
+
+        assertThat(authToken).isNotNull();
+
+        final DecodedJWT jwt = authToken.getJwt();
+        assertThat(jwt).isNotNull();
+        assertThat(jwt.getClaim("email").asString()).isEqualTo("only.email@example.com");
+    }
 }
