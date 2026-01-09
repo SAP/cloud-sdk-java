@@ -1972,7 +1972,7 @@ class DestinationServiceTest
 
         assertThatThrownBy(() -> loader.tryGetDestination("thisDestinationDoesNotExist").get())
             .isInstanceOf(DestinationNotFoundException.class)
-            .hasMessageContaining("was not found among the destinations of the current tenant.");
+            .hasMessageContaining("was not found among the destinations for CurrentTenant.");
 
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/instanceDestinations"), any());
         verify(destinationServiceAdapter, times(1)).getConfigurationAsJson(eq("/v1/subaccountDestinations"), any());
@@ -2009,8 +2009,9 @@ class DestinationServiceTest
     }
 
     @ParameterizedTest
-    @MethodSource("provideTestData")
-    void testPrependGetAllDestinationsCallSkipped(DestinationOptions options, String expectedPath) {
+    @MethodSource( "provideTestData" )
+    void testPrependGetAllDestinationsCallSkipped( DestinationOptions options, String expectedPath )
+    {
         // Reset Cache to re-enable the PreLookupCheck
         DestinationService.Cache.reset();
 
@@ -2039,7 +2040,8 @@ class DestinationServiceTest
         verifyNoMoreInteractions(destinationServiceAdapter);
     }
 
-    private static Stream<Arguments> provideTestData() {
+    private static Stream<Arguments> provideTestData()
+    {
         final Header h1 = new Header("X-Custom-Header-1", "value-1");
         final DestinationOptions optionsWithHeader =
             DestinationOptions.builder().augmentBuilder(augmenter().customHeaders(h1)).build();
@@ -2053,16 +2055,16 @@ class DestinationServiceTest
                         .crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT))
                 .build();
 
-        final DestinationOptions optionsWithFragment = DestinationOptions
-            .builder()
-            .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName("a-fragment"))
-            .build();
+        final DestinationOptions optionsWithFragment =
+            DestinationOptions
+                .builder()
+                .augmentBuilder(DestinationServiceOptionsAugmenter.augmenter().fragmentName("a-fragment"))
+                .build();
 
-
-        return Stream.of(
-            Arguments.of(optionsWithHeader, "/v1/destinations/" + destinationName),
-            Arguments.of(optionsWithSubaccount, "/v2/destinations/" + destinationName + "@subaccount"),
-            Arguments.of(optionsWithFragment, "/v1/destinations/" + destinationName)
-        );
+        return Stream
+            .of(
+                Arguments.of(optionsWithHeader, "/v1/destinations/" + destinationName),
+                Arguments.of(optionsWithSubaccount, "/v2/destinations/" + destinationName + "@subaccount"),
+                Arguments.of(optionsWithFragment, "/v1/destinations/" + destinationName));
     }
 }
