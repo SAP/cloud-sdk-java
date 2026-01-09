@@ -133,13 +133,13 @@ public class DestinationService implements DestinationLoader
         return Cache.getOrComputeDestination(this, destinationName, options, this::loadAndParseDestination);
     }
 
-    Option<Exception> validateDestinationLookup( String destinationName, DestinationOptions options )
+    Option<Exception> validateDestinationLookup( final String destinationName, final DestinationOptions options )
     {
         final Option<Exception> VALID_LOOKUP = Option.none();
-        if( !Cache.preLookupCheckEnabled ) {
+        if( !Cache.isEnabled() ) {
             return VALID_LOOKUP;
         }
-        if( !Cache.isEnabled() ) {
+        if( !Cache.preLookupCheckEnabled ) {
             return VALID_LOOKUP;
         }
         if( Cache.isUsingExperimentalFeatures(options) ) {
