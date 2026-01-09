@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withUserToken;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationRetrievalStrategy.withoutToken;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.CrossLevelScope.PROVIDER_SUBACCOUNT;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_RETRIEVAL_STRATEGY_KEY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.DESTINATION_TOKEN_EXCHANGE_STRATEGY_KEY;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
@@ -51,6 +52,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import io.vavr.control.Option;
+import lombok.val;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHttpResponse;
@@ -2006,7 +2009,7 @@ class DestinationServiceTest
     }
 
     @ParameterizedTest
-    @MethodSource("testCasesUncachedDestinationLookup")
+    @MethodSource( "testCasesUncachedDestinationLookup" )
     void testPrependGetAllDestinationsCallSkipped( final DestinationOptions options, final String expectedPath )
     {
         // Reset Cache to re-enable the PreLookupCheck
@@ -2059,5 +2062,60 @@ class DestinationServiceTest
                 Arguments.of(optionsWithHeader, "/v1/destinations/" + destinationName),
                 Arguments.of(optionsWithSubaccount, "/v2/destinations/" + destinationName + "@subaccount"),
                 Arguments.of(optionsWithFragment, "/v1/destinations/" + destinationName));
+    }
+
+    @Test
+    void testValidateDestinationLookup()
+    {
+        val OPTIONS_EMPTY = DestinationOptions.builder().build();
+        val OPTIONS_EXPER =
+            DestinationOptions.builder().augmentBuilder(augmenter().crossLevelConsumption(PROVIDER_SUBACCOUNT)).build();
+        val OPTIONS_CURRT =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(CURRENT_TENANT)).build();
+        val OPTIONS_PROVT =
+            DestinationOptions.builder().augmentBuilder(augmenter().retrievalStrategy(ALWAYS_PROVIDER)).build();
+
+        val adapter = mock(DestinationServiceAdapter.class);
+        val sut = spy(new DestinationService(adapter));
+
+        val curr = List.of(DefaultHttpDestination.builder("http://current-tenant-1").name("current-dest-1").build());
+        doReturn(curr).when(sut).getAllDestinationProperties(CURRENT_TENANT);
+        val prov = List.of(DefaultHttpDestination.builder("http://provider-tenant-1").name("provider-dest-1").build());
+        doReturn(prov).when(sut).getAllDestinationProperties(ALWAYS_PROVIDER);
+
+        // valid case: disabled cache
+        DestinationService.Cache.disable();
+        assertThat(sut.validateDestinationLookup("unknown-dest-1", OPTIONS_EMPTY)).isEmpty();
+
+        // valid case: disabled pre-lookup check
+        DestinationService.Cache.reset();
+        DestinationService.Cache.disablePreLookupCheck();
+        assertThat(sut.validateDestinationLookup("unknown-dest-1", OPTIONS_EMPTY)).isEmpty();
+
+        // valid case: experimental properties
+        DestinationService.Cache.reset();
+        assertThat(sut.validateDestinationLookup("unknown-dest-1", OPTIONS_EXPER)).isEmpty();
+
+        // valid case: current tenant
+        DestinationService.Cache.reset();
+        assertThat(sut.validateDestinationLookup("current-dest-1", OPTIONS_CURRT)).isEmpty();
+
+        // valid case: provider tenant
+        DestinationService.Cache.reset();
+        assertThat(sut.validateDestinationLookup("provider-dest-1", OPTIONS_PROVT)).isEmpty();
+
+        // invalid case: current tenant
+        DestinationService.Cache.reset();
+        assertThat(sut.validateDestinationLookup("unknown-dest-1", OPTIONS_PROVT))
+            .allSatisfy(
+                e -> assertThat(e)
+                    .hasMessage("Destination unknown-dest-1 was not found among the destinations for AlwaysProvider."));
+
+        // invalid case: provider tenant
+        DestinationService.Cache.reset();
+        assertThat(sut.validateDestinationLookup("unknown-dest-1", OPTIONS_CURRT))
+            .allSatisfy(
+                e -> assertThat(e)
+                    .hasMessage("Destination unknown-dest-1 was not found among the destinations for CurrentTenant."));
     }
 }
