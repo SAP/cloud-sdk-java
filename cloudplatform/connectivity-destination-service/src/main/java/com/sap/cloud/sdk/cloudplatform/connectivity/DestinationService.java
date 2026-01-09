@@ -2,10 +2,12 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -847,6 +849,11 @@ public class DestinationService implements DestinationLoader
             @Nullable
             final GetOrComputeAllDestinationsCommand getAllCommand;
             if( changeDetectionEnabled ) {
+                if( isUsingExperimentalFeatures(options) ) {
+                    final String msg =
+                        "Using change detection together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.";
+                    log.warn(msg);
+                }
                 getAllCommand =
                     GetOrComputeAllDestinationsCommand
                         .prepareCommand(
@@ -878,9 +885,22 @@ public class DestinationService implements DestinationLoader
                 return destinationDownloader.apply(options);
             }
 
+            if( isUsingExperimentalFeatures(options) ) {
+                final String msg =
+                    "Using caching together with either fragments, cross-level options, or custom headers is discouraged and might lead to unexpected caching behaviour.";
+                log.warn(msg);
+            }
+
             return GetOrComputeAllDestinationsCommand
                 .prepareCommand(options, instanceAll(), isolationLocks(), destinationDownloader)
                 .execute();
+        }
+
+        private static boolean isUsingExperimentalFeatures( @Nonnull final DestinationOptions options )
+        {
+            final String[] featureNames = { "X-fragment-name", "crossLevelSetting", "customHeader" };
+            final Set<String> keys = options.getOptionKeys();
+            return keys.stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::equalsIgnoreCase));
         }
 
         private Cache()
