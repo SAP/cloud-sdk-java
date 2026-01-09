@@ -135,25 +135,25 @@ public class DestinationService implements DestinationLoader
 
     Option<Exception> validateDestinationLookup( final String destinationName, final DestinationOptions options )
     {
-        final Option<Exception> VALID_LOOKUP = Option.none();
+        final Option<Exception> validLookup = Option.none();
         if( !Cache.isEnabled() ) {
-            return VALID_LOOKUP;
+            return validLookup;
         }
         if( !Cache.preLookupCheckEnabled ) {
-            return VALID_LOOKUP;
+            return validLookup;
         }
         if( Cache.isUsingExperimentalFeatures(options) ) {
             final String msg =
                 "Using pre-lookup check together with either fragments, cross-level options, or custom headers might lead to unexpected behaviour. Pre-lookup check is skipped.";
             log.warn(msg);
-            return VALID_LOOKUP;
+            return validLookup;
         }
 
         final DestinationServiceRetrievalStrategy strategy = getRetrievalStrategy(options).getOrElse(CURRENT_TENANT);
         final Collection<DestinationProperties> cachedDestinations = getAllDestinationProperties(strategy);
         final Predicate<DestinationProperties> pred = p -> p.get(DestinationProperty.NAME).contains(destinationName);
         if( cachedDestinations.stream().anyMatch(pred) ) {
-            return VALID_LOOKUP;
+            return validLookup;
         }
 
         final String msgFormat = "Destination %s was not found among the destinations for %s.";
