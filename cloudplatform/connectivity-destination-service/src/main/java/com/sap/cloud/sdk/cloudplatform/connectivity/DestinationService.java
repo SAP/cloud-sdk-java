@@ -946,11 +946,15 @@ public class DestinationService implements DestinationLoader
                 .execute();
         }
 
-        private static boolean isUsingExperimentalFeatures( @Nonnull final DestinationOptions options )
+        static boolean isUsingExperimentalFeatures( @Nonnull final DestinationOptions options )
         {
-            final String[] featureNames = { "X-fragment-name", "crossLevelSetting", "customHeader" };
+            final String[] featureNames =
+                {
+                    DestinationServiceOptionsAugmenter.X_FRAGMENT_KEY,
+                    DestinationServiceOptionsAugmenter.CROSS_LEVEL_SETTING_KEY,
+                    DestinationServiceOptionsAugmenter.CUSTOM_HEADER_KEY };
             final Set<String> keys = options.getOptionKeys();
-            return keys.stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::equalsIgnoreCase));
+            return keys.stream().anyMatch(s -> Arrays.stream(featureNames).anyMatch(s::startsWith));
         }
 
         private Cache()
