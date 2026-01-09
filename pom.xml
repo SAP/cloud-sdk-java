@@ -703,6 +703,7 @@
 										<exclude>com.sap.cloud.sdk.datamodel:odata-api-sample</exclude>
 										<exclude>com.sap.cloud.sdk.datamodel:odata-v4-api-sample</exclude>
 										<exclude>com.sap.cloud.sdk.datamodel:openapi-api-sample</exclude>
+										<exclude>com.sap.cloud.sdk.datamodel:openapi-api-apache-sample</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
