@@ -16,6 +16,9 @@ import javax.annotation.Nonnull;
 
 import lombok.Value;
 
+/**
+ * Represents a name-value pair used for query parameters and form data.
+ */
 @Value
 public class Pair
 {

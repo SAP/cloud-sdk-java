@@ -66,6 +66,8 @@ class DestinationServiceAuthenticationTest
             .when(mockAdapter)
             .getConfigurationAsJson(anyString(), any());
         sut = new DestinationService(mockAdapter);
+        // Disable PreLookupCheck to simplify test setup
+        DestinationService.Cache.disablePreLookupCheck();
     }
 
     @Test
@@ -290,7 +292,7 @@ class DestinationServiceAuthenticationTest
         assertThat(dest.asHttp().getHeaders())
             .containsExactlyInAnyOrder(new Header("Authorization", "Bearer " + oAuthToken));
 
-        verify(mockAdapter, times(1)).getConfigurationAsJson(anyString(), eq(expectedStrategy));
+        verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
         verifyNoMoreInteractions(mockAdapter);
     }
 
@@ -382,7 +384,7 @@ class DestinationServiceAuthenticationTest
         assertThat(dest.asHttp().getAuthenticationType()).isEqualTo(AuthenticationType.SAP_ASSERTION_SSO);
         assertThat(dest.asHttp().getHeaders()).containsExactlyInAnyOrder(new Header("Cookie", assertionCookie));
 
-        verify(mockAdapter, times(1)).getConfigurationAsJson(anyString(), eq(expectedStrategy));
+        verify(mockAdapter, times(1)).getConfigurationAsJson(eq(SERVICE_PATH_DESTINATION), eq(expectedStrategy));
         verifyNoMoreInteractions(mockAdapter);
     }
 

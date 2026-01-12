@@ -99,6 +99,7 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
@@ -161,6 +162,7 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
         final String[] localVarContentTypes = {
 
         };
@@ -225,6 +227,7 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json", "application/xml", "text/xml", "text/html" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
         final String[] localVarContentTypes = {
 
         };
@@ -287,6 +290,7 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json", "application/xml", "text/xml", "text/html" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
         final String[] localVarContentTypes = {
 
         };
