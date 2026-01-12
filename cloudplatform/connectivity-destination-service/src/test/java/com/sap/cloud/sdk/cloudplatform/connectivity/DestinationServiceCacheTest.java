@@ -1,11 +1,20 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceOptionsAugmenter.augmenter;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ALWAYS_PROVIDER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceRetrievalStrategy.ONLY_SUBSCRIBER;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.EXCHANGE_ONLY;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.FORWARD_USER_TOKEN;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceTokenExchangeStrategy.LOOKUP_ONLY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -14,6 +23,7 @@ import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
 import com.sap.cloud.sdk.cloudplatform.resilience.CacheExpirationStrategy;
 
 import io.vavr.control.Option;
+import lombok.val;
 
 @Isolated( "Test interacts with global destination cache" )
 class DestinationServiceCacheTest
@@ -101,5 +111,39 @@ class DestinationServiceCacheTest
         DestinationService.Cache.disableSizeLimit();
         assertThat(cacheSingle).isNotSameAs(DestinationService.Cache.instanceSingle());
         assertThat(cacheAll).isSameAs(DestinationService.Cache.instanceAll());
+    }
+
+    @SuppressWarnings( "deprecation" )
+    @Test
+    @DisplayName( "Identification of experimental DestinationOptionsAugmenter settings in options" )
+    void testExperimentalSettingsIdentificationInOptions()
+    {
+        val experimentalAugmentersSet =
+            new DestinationServiceOptionsAugmenter[][] {
+                { augmenter().customHeaders(new Header("experimental-header", "value")) },
+                { augmenter().crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.SUBACCOUNT) },
+                { augmenter().crossLevelConsumption(DestinationServiceOptionsAugmenter.CrossLevelScope.INSTANCE) },
+                { augmenter().fragmentName("a-fragment") } };
+
+        val legacyAugmentersSet =
+            new DestinationServiceOptionsAugmenter[][] {
+                {},
+                { augmenter().refreshToken("a-token") },
+                { augmenter().retrievalStrategy(ALWAYS_PROVIDER) },
+                { augmenter().tokenExchangeStrategy(FORWARD_USER_TOKEN) },
+                { augmenter().tokenExchangeStrategy(EXCHANGE_ONLY), augmenter().retrievalStrategy(CURRENT_TENANT) },
+                { augmenter().tokenExchangeStrategy(LOOKUP_ONLY), augmenter().retrievalStrategy(ONLY_SUBSCRIBER) } };
+
+        for( final DestinationServiceOptionsAugmenter[] legacyAugmenters : legacyAugmentersSet ) {
+            val b = DestinationOptions.builder();
+            Arrays.stream(legacyAugmenters).forEach(b::augmentBuilder);
+            assertThat(DestinationService.Cache.isUsingExperimentalFeatures(b.build())).isFalse();
+        }
+
+        for( final DestinationServiceOptionsAugmenter[] experimentalAugmenters : experimentalAugmentersSet ) {
+            val b = DestinationOptions.builder();
+            Arrays.stream(experimentalAugmenters).forEach(b::augmentBuilder);
+            assertThat(DestinationService.Cache.isUsingExperimentalFeatures(b.build())).isTrue();
+        }
     }
 }
