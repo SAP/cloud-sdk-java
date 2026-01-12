@@ -131,10 +131,9 @@ class DeserializationTest
                             .withStatus(200)
                             .withHeader("Content-Type", "application/octet-stream")
                             .withBody(binaryData)));
-        //TODO: support byte[] for files? Do via review
-        //        final byte[] result = sut.sodasDownloadIdGet(1L);
-        //        assertThat(result).isNotNull();
-        //        assertThat(result).isEqualTo(binaryData);
+        final byte[] result = sut.sodasDownloadIdGet(1L);
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(binaryData);
     }
 
     private void stub( String responseBody )

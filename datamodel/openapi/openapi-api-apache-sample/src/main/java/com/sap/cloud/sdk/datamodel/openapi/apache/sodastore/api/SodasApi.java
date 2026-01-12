@@ -4,7 +4,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.api;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,12 +70,12 @@ public class SodasApi extends BaseApi
      *
      * @param id
      *            ID of the soda product to download
-     * @return File
+     * @return byte[]
      * @throws OpenApiRequestException
      *             if an error occurs while attempting to invoke the API
      */
     @Nonnull
-    public File sodasDownloadIdGet( @Nonnull final Long id )
+    public byte[] sodasDownloadIdGet( @Nonnull final Long id )
         throws OpenApiRequestException
     {
         final Object localVarPostBody = null;
@@ -106,7 +105,7 @@ public class SodasApi extends BaseApi
         };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-        final TypeReference<File> localVarReturnType = new TypeReference<File>()
+        final TypeReference<byte[]> localVarReturnType = new TypeReference<byte[]>()
         {
         };
 

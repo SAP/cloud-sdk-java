@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -73,7 +72,7 @@ class ApacheApiClientViaConstructorTest
         final String filterQueryValue = "emails.value eq \"my.email@test.com\"";
         final String filterQueryParam = "filter";
 
-        List<Pair> queryParams = ApiClient.parameterToPair(filterQueryParam, filterQueryValue);
+        final List<Pair> queryParams = ApiClient.parameterToPair(filterQueryParam, filterQueryValue);
 
         WireMock
             .stubFor(
@@ -105,8 +104,8 @@ class ApacheApiClientViaConstructorTest
 
     private static void httpRequest( TlsUpgrade toggle, String url )
     {
-        var httpClientFactory = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(toggle).build();
-        var httpClient = httpClientFactory.createHttpClient(DefaultHttpDestination.builder(url).build());
+        final var httpClientFactory = new ApacheHttpClient5FactoryBuilder().tlsUpgrade(toggle).build();
+        final var httpClient = httpClientFactory.createHttpClient(DefaultHttpDestination.builder(url).build());
         var apiClient = ApiClient.fromHttpClient((CloseableHttpClient) httpClient);
         apiClient = apiClient.withBasePath(url);
 
@@ -117,8 +116,8 @@ class ApacheApiClientViaConstructorTest
                 .invokeAPI(
                     RELATIVE_PATH,
                     "GET",
-                    null,
-                    null,
+                    List.of(),
+                    List.of(),
                     "",
                     null,
                     Map.of(),
@@ -151,9 +150,7 @@ class ApacheApiClientViaConstructorTest
     {
         private final String expectedBasePath;
 
-        MyTestApacheOpenApiService(
-            @Nonnull final com.sap.cloud.sdk.services.openapi.apache.ApiClient apiClient,
-            String expectedBasePath )
+        MyTestApacheOpenApiService( ApiClient apiClient, String expectedBasePath )
         {
             super(apiClient);
             this.expectedBasePath = expectedBasePath;
@@ -161,11 +158,11 @@ class ApacheApiClientViaConstructorTest
 
         void invokeApiEndpoint( @Nullable Object body )
         {
-            invokeApiEndpoint("POST", body, null);
+            invokeApiEndpoint("POST", body, List.of());
         }
 
         //make it apache reliant
-        void invokeApiEndpoint( String method, @Nullable Object body, @Nullable List<Pair> queryParams )
+        void invokeApiEndpoint( String method, Object body, List<Pair> queryParams )
         {
             assertThat(apiClient.getBasePath()).isEqualTo(expectedBasePath);
 
@@ -179,7 +176,7 @@ class ApacheApiClientViaConstructorTest
                         RELATIVE_PATH,
                         method,
                         queryParams,
-                        null,
+                        List.of(),
                         "",
                         body,
                         Map.of(),

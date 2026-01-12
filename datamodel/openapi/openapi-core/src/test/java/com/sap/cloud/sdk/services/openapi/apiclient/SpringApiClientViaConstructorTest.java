@@ -38,7 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
 @WireMockTest
-class ApiClientViaConstructorTest
+class SpringApiClientViaConstructorTest
 {
     private static final String RELATIVE_PATH = "/apiEndpoint";
     private static final String SUCCESS_BODY = "success";
