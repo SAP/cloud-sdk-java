@@ -73,6 +73,9 @@ import lombok.ToString;
 import lombok.Value;
 import lombok.With;
 
+/**
+ * API client for executing HTTP requests using Apache HttpClient 5.
+ */
 @AllArgsConstructor( access = PRIVATE )
 @EqualsAndHashCode
 @ToString
@@ -98,11 +101,25 @@ public class ApiClient
     private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
     private static final String DEFAULT_BASE_PATH = "http://localhost";
 
+    /**
+     * Creates an ApiClient instance from an existing HttpClient.
+     *
+     * @param httpClient
+     *            The HttpClient to use for requests
+     * @return A new ApiClient instance
+     */
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
         return new ApiClient(httpClient, DEFAULT_BASE_PATH, createDefaultObjectMapper(), null);
     }
 
+    /**
+     * Creates an ApiClient instance configured for the given destination.
+     *
+     * @param destination
+     *            The destination to use for requests
+     * @return A new ApiClient instance configured with the destination
+     */
     public static ApiClient create( @Nonnull final Destination destination )
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination))
@@ -110,6 +127,11 @@ public class ApiClient
 
     }
 
+    /**
+     * Creates an ApiClient instance with default configuration.
+     *
+     * @return A new ApiClient instance
+     */
     public static ApiClient create()
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
