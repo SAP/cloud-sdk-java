@@ -8,23 +8,36 @@
         <artifactId>openapi-parent</artifactId>
         <version>5.26.0-SNAPSHOT</version>
     </parent>
-
     <artifactId>openapi-api-apache-sample</artifactId>
-
-    <properties>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    <name>Data Model - OpenAPI Services - Sample API</name>
+    <description>Sample generated API classes of the OpenAPI VDM</description>
+    <url>https://sap.github.io/cloud-sdk/docs/java/getting-started</url>
+    <organization>
+        <name>SAP SE</name>
+        <url>https://www.sap.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>SAP</name>
+            <email>cloudsdk@sap.com</email>
+            <organization>SAP SE</organization>
+            <organizationUrl>https://www.sap.com</organizationUrl>
+        </developer>
+    </developers>
     <dependencies>
         <dependency>
             <groupId>com.sap.cloud.sdk.datamodel</groupId>
             <artifactId>openapi-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+            <artifactId>cloudplatform-connectivity</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -41,13 +54,25 @@
                 <groupId>com.sap.cloud.sdk.datamodel</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
+                    <apiMaturity>released</apiMaturity>
                     <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-                    <enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
                     <deleteOutputDirectory>true</deleteOutputDirectory>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>sample-generation</id>
+                        <id>sample-apache-swagger-v2</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/petstore-swagger2.json</inputSpec>
+                            <apiPackage>com.sap.cloud.sdk.datamodel.openapi.petstore.api</apiPackage>
+                            <modelPackage>com.sap.cloud.sdk.datamodel.openapi.petstore.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sample-apache-openapi-v3</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -57,19 +82,17 @@
                             <apiPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.api</apiPackage>
                             <modelPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.model</modelPackage>
                             <additionalProperties>
-                                <supportingFiles>true</supportingFiles>
-                                <invokerPackage>com.sap.cloud.sdk.services.openapi.apache</invokerPackage>
                                 <library>apache-httpclient</library>
                                 <supportUrlQuery>false</supportUrlQuery>
-                                <useOneOfInterfaces>true</useOneOfInterfaces>
-                                <enumUnknownDefaultCase>true</enumUnknownDefaultCase>
-                                <removeOperationIdPrefix>true</removeOperationIdPrefix>
-                                <removeOperationIdPrefixDelimiter>\.</removeOperationIdPrefixDelimiter>
-                                <removeOperationIdPrefixCount>3</removeOperationIdPrefixCount>
-                                <!-- Custom Cloud SDK settings -->
+                                <pojoBuilderMethodName>create</pojoBuilderMethodName>
                                 <pojoConstructorVisibility>protected</pojoConstructorVisibility>
+                                <useOneOfInterfaces>true</useOneOfInterfaces>
                                 <useOneOfCreators>true</useOneOfCreators>
+                                <enumUnknownDefaultCase>true</enumUnknownDefaultCase>
+                                <useFloatArrays>true</useFloatArrays>
                             </additionalProperties>
+                            <sapCopyrightHeader>true</sapCopyrightHeader>
+                            <enableOneOfAnyOfGeneration>true</enableOneOfAnyOfGeneration>
                         </configuration>
                     </execution>
                 </executions>
