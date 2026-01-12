@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -406,6 +406,14 @@ public class AllOf
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a new {@link AllOf} instance. No arguments are required.
+     */
+    public static AllOf create()
+    {
+        return new AllOf();
     }
 
 }

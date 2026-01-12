@@ -16,20 +16,41 @@ import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
+/**
+ * Base class for generated API classes, providing common functionality for API client management.
+ */
 public abstract class BaseApi
 {
+    /**
+     * The API client used to execute HTTP requests.
+     */
     protected final ApiClient apiClient;
 
+    /**
+     * Creates a new BaseApi instance with default configuration.
+     */
     protected BaseApi()
     {
         this(ApiClient.create());
     }
 
+    /**
+     * Creates a new BaseApi instance configured for the given destination.
+     *
+     * @param destination
+     *            The destination to use for API requests
+     */
     protected BaseApi( @Nonnull final Destination destination )
     {
         this(ApiClient.create(destination));
     }
 
+    /**
+     * Creates a new BaseApi instance with the given API client.
+     *
+     * @param apiClient
+     *            The API client to use for requests
+     */
     protected BaseApi( @Nonnull final ApiClient apiClient )
     {
         this.apiClient = apiClient;
