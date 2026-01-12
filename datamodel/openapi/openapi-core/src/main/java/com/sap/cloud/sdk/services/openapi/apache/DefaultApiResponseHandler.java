@@ -26,11 +26,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.ParseException;
@@ -65,17 +67,20 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @param returnType
      *            The type reference for response deserialization
      */
-    DefaultApiResponseHandler( ObjectMapper objectMapper, String tempFolderPath, TypeReference<T> returnType )
+    DefaultApiResponseHandler(
+        @Nonnull final ObjectMapper objectMapper,
+        @Nullable final String tempFolderPath,
+        @Nonnull final TypeReference<T> returnType )
     {
         this.objectMapper = objectMapper;
         this.tempFolderPath = tempFolderPath;
         this.returnType = returnType;
     }
 
+    @Nullable
     @Override
-    public T handleResponse( ClassicHttpResponse response )
-        throws HttpException,
-            IOException
+    public T handleResponse( @Nonnull final ClassicHttpResponse response )
+        throws IOException
     {
         try {
             return processResponse(response);
@@ -100,12 +105,13 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      *             if response parsing fails
      */
     @SuppressWarnings( "unchecked" )
-    private T processResponse( ClassicHttpResponse response )
+    @Nullable
+    private T processResponse( @Nonnull final ClassicHttpResponse response )
         throws OpenApiRequestException,
             IOException,
             ParseException
     {
-        int statusCode = response.getCode();
+        final int statusCode = response.getCode();
         if( statusCode == HttpStatus.SC_NO_CONTENT ) {
             if( returnType.getType().equals(OpenApiResponse.class) ) {
                 return (T) new OpenApiResponse(statusCode, transformResponseHeaders(response.getHeaders()));
@@ -116,8 +122,8 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
         if( isSuccessfulStatus(statusCode) ) {
             return deserialize(response);
         } else {
-            Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
-            String message = new StatusLine(response).toString();
+            final Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
+            final String message = new StatusLine(response).toString();
             throw new OpenApiRequestException(message)
                 .statusCode(statusCode)
                 .responseHeaders(responseHeaders)
@@ -138,34 +144,32 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws ParseException
      *             if response parsing fails
      */
+    @Nullable
     @SuppressWarnings( "unchecked" )
-    private T deserialize( ClassicHttpResponse response )
+    private T deserialize( @Nonnull final ClassicHttpResponse response )
         throws OpenApiRequestException,
             IOException,
             ParseException
     {
-        if( returnType == null ) {
-            return null;
-        }
 
         final Type valueRawType = returnType.getType();
         if( valueRawType.equals(OpenApiResponse.class) ) {
             final int statusCode = response.getCode();
-            Map<String, List<String>> headers = transformResponseHeaders(response.getHeaders());
+            final Map<String, List<String>> headers = transformResponseHeaders(response.getHeaders());
             return (T) new OpenApiResponse(statusCode, headers);
         }
 
-        HttpEntity entity = response.getEntity();
+        final HttpEntity entity = response.getEntity();
         if( valueRawType.equals(byte[].class) ) {
             return (T) EntityUtils.toByteArray(entity);
         } else if( valueRawType.equals(File.class) ) {
             return (T) downloadFileFromResponse(response);
         }
-        String mimeType = getResponseMimeType(response);
+        final String mimeType = getResponseMimeType(response);
         if( mimeType == null || isJsonMime(mimeType) ) {
             // Assume json if no mime type
             // convert input stream to string
-            String content = EntityUtils.toString(entity);
+            final String content = EntityUtils.toString(entity);
 
             if( "".equals(content) ) { // returns null for empty body
                 return null;
@@ -176,7 +180,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             // convert input stream to string
             return (T) EntityUtils.toString(entity);
         } else {
-            Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
+            final Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
             throw new OpenApiRequestException(
                 "Deserialization for content type '" + mimeType + "' not supported for type '" + returnType + "'")
                 .statusCode(response.getCode())
@@ -194,12 +198,13 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws IOException
      *             if an I/O error occurs during download
      */
-    private File downloadFileFromResponse( ClassicHttpResponse response )
+    @Nonnull
+    private File downloadFileFromResponse( @Nonnull final ClassicHttpResponse response )
         throws IOException
     {
-        Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
-        String contentDisposition = contentDispositionHeader == null ? null : contentDispositionHeader.getValue();
-        File file = prepareDownloadFile(contentDisposition);
+        final Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
+        final String contentDisposition = contentDispositionHeader == null ? null : contentDispositionHeader.getValue();
+        final File file = prepareDownloadFile(contentDisposition);
         Files.copy(response.getEntity().getContent(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return file;
     }
@@ -213,14 +218,15 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws IOException
      *             if the temporary file cannot be created
      */
-    private File prepareDownloadFile( String contentDisposition )
+    @Nonnull
+    private File prepareDownloadFile( @Nullable final String contentDisposition )
         throws IOException
     {
         String filename = null;
-        if( contentDisposition != null && !"".equals(contentDisposition) ) {
+        if( contentDisposition != null && !contentDisposition.isEmpty() ) {
             // Get filename from the Content-Disposition header.
-            Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
-            Matcher matcher = pattern.matcher(contentDisposition);
+            final Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
+            final Matcher matcher = pattern.matcher(contentDisposition);
             if( matcher.find() )
                 filename = matcher.group(1);
         }
@@ -231,7 +237,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             prefix = "download-";
             suffix = "";
         } else {
-            int pos = filename.lastIndexOf('.');
+            final int pos = filename.lastIndexOf('.');
             if( pos == -1 ) {
                 prefix = filename + "-";
             } else {
@@ -258,10 +264,11 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws OpenApiRequestException
      *             if the content type cannot be parsed
      */
-    private String getResponseMimeType( HttpResponse response )
+    @Nullable
+    private String getResponseMimeType( @Nonnull final HttpResponse response )
         throws OpenApiRequestException
     {
-        Header contentTypeHeader = response.getFirstHeader("Content-Type");
+        final Header contentTypeHeader = response.getFirstHeader("Content-Type");
         if( contentTypeHeader != null ) {
             return parseContentType(contentTypeHeader.getValue()).getMimeType();
         }
@@ -277,7 +284,8 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      * @throws OpenApiRequestException
      *             if the content type cannot be parsed
      */
-    private static ContentType parseContentType( String headerValue )
+    @Nonnull
+    private static ContentType parseContentType( @Nonnull final String headerValue )
         throws OpenApiRequestException
     {
         try {
@@ -295,9 +303,10 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      *            HTTP headers
      * @return a map of string array
      */
-    private static Map<String, List<String>> transformResponseHeaders( Header[] headers )
+    @Nonnull
+    private static Map<String, List<String>> transformResponseHeaders( @Nonnull final Header[] headers )
     {
-        Map<String, List<String>> headersMap = new HashMap<>();
+        final Map<String, List<String>> headersMap = new HashMap<>();
         for( Header header : headers ) {
             List<String> valuesList = headersMap.get(header.getName());
             if( valuesList != null ) {
@@ -311,7 +320,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
         return headersMap;
     }
 
-    private static boolean isSuccessfulStatus( int statusCode )
+    private static boolean isSuccessfulStatus( final int statusCode )
     {
         return statusCode >= 200 && statusCode < 300;
     }
@@ -324,9 +333,9 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
      *            MIME
      * @return True if MIME type is boolean
      */
-    static boolean isJsonMime( String mime )
+    static boolean isJsonMime( @Nullable final String mime )
     {
-        String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
+        final String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
         return mime != null && (mime.matches(jsonMime) || mime.equals("*/*"));
     }
 

@@ -12,18 +12,11 @@
 
 package com.sap.cloud.sdk.services.openapi.apache;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
-import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-import static com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION;
-import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static com.sap.cloud.sdk.services.openapi.apache.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -55,9 +48,13 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.annotations.Beta;
@@ -70,7 +67,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.Value;
 import lombok.With;
 
 /**
@@ -108,6 +104,7 @@ public class ApiClient
      *            The HttpClient to use for requests
      * @return A new ApiClient instance
      */
+    @Nonnull
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
         return new ApiClient(httpClient, DEFAULT_BASE_PATH, createDefaultObjectMapper(), null);
@@ -120,6 +117,7 @@ public class ApiClient
      *            The destination to use for requests
      * @return A new ApiClient instance configured with the destination
      */
+    @Nonnull
     public static ApiClient create( @Nonnull final Destination destination )
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination))
@@ -132,23 +130,26 @@ public class ApiClient
      *
      * @return A new ApiClient instance
      */
+    @Nonnull
     public static ApiClient create()
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
     }
 
+    @Nonnull
     private static ObjectMapper createDefaultObjectMapper()
     {
         return JsonMapper
             .builder()
             .addModule(new JavaTimeModule())
             .defaultDateFormat(new RFC3339DateFormat())
-            .visibility(GETTER, Visibility.NONE)
-            .visibility(SETTER, Visibility.NONE)
-            .defaultPropertyInclusion(JsonInclude.Value.construct(NON_NULL, NON_NULL))
-            .disable(FAIL_ON_UNKNOWN_PROPERTIES)
-            .disable(DEFAULT_VIEW_INCLUSION)
-            .disable(WRITE_DATES_AS_TIMESTAMPS)
+            .visibility(PropertyAccessor.GETTER, Visibility.NONE)
+            .visibility(PropertyAccessor.SETTER, Visibility.NONE)
+            .defaultPropertyInclusion(
+                JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
     }
 
@@ -159,7 +160,8 @@ public class ApiClient
      *            Date
      * @return Date in string format
      */
-    private static String formatDate( Date date )
+    @Nonnull
+    private static String formatDate( @Nonnull final Date date )
     {
         return new RFC3339DateFormat().format(date);
     }
@@ -171,19 +173,20 @@ public class ApiClient
      *            Object
      * @return Object in string format
      */
-    public static String parameterToString( Object param )
+    @Nonnull
+    public static String parameterToString( @Nullable final Object param )
     {
         if( param == null ) {
             return "";
-        } else if( param instanceof Date ) {
-            return formatDate((Date) param);
+        } else if( param instanceof Date date ) {
+            return formatDate(date);
         } else if( param instanceof Collection ) {
-            StringBuilder b = new StringBuilder();
+            final StringBuilder b = new StringBuilder();
             for( Object o : (Collection<?>) param ) {
-                if( b.length() > 0 ) {
+                if( !b.isEmpty() ) {
                     b.append(',');
                 }
-                b.append(String.valueOf(o));
+                b.append(o);
             }
             return b.toString();
         } else {
@@ -202,9 +205,10 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list containing a single {@code Pair} object.
      */
-    public static List<Pair> parameterToPair( String name, Object value )
+    @Nonnull
+    public static List<Pair> parameterToPair( @Nullable final String name, @Nullable final Object value )
     {
-        List<Pair> params = new ArrayList<Pair>();
+        final List<Pair> params = new ArrayList<>();
 
         // preconditions
         if( name == null || name.isEmpty() || value == null || value instanceof Collection ) {
@@ -228,9 +232,13 @@ public class ApiClient
      *            The value of the parameter.
      * @return A list of {@code Pair} objects.
      */
-    public static List<Pair> parameterToPairs( String collectionFormat, String name, Collection<?> value )
+    @Nonnull
+    public static List<Pair> parameterToPairs(
+        @Nonnull final String collectionFormat,
+        @Nullable final String name,
+        @Nullable final Collection<?> value )
     {
-        List<Pair> params = new ArrayList<Pair>();
+        final List<Pair> params = new ArrayList<>();
 
         // preconditions
         if( name == null || name.isEmpty() || value == null || value.isEmpty() ) {
@@ -246,19 +254,15 @@ public class ApiClient
         }
 
         // collectionFormat is assumed to be "csv" by default
-        String delimiter = ",";
+        final String delimiter = switch( collectionFormat ) {
+            case "ssv" -> escapeString(" ");
+            case "tsv" -> escapeString("\t");
+            case "pipes" -> escapeString("|");
+            default -> ",";
+            // escape all delimiters except commas, which are URI reserved characters
+        };
 
-        // escape all delimiters except commas, which are URI reserved
-        // characters
-        if( "ssv".equals(collectionFormat) ) {
-            delimiter = escapeString(" ");
-        } else if( "tsv".equals(collectionFormat) ) {
-            delimiter = escapeString("\t");
-        } else if( "pipes".equals(collectionFormat) ) {
-            delimiter = escapeString("|");
-        }
-
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for( Object item : value ) {
             sb.append(delimiter);
             sb.append(escapeString(parameterToString(item)));
@@ -278,7 +282,8 @@ public class ApiClient
      * @return The Accept header to use. If the given array is empty, null will be returned (not to set the Accept
      *         header explicitly).
      */
-    public static String selectHeaderAccept( String[] accepts )
+    @Nullable
+    public static String selectHeaderAccept( @Nonnull final String[] accepts )
     {
         if( accepts.length == 0 ) {
             return null;
@@ -299,7 +304,8 @@ public class ApiClient
      *            The Content-Type array to select from
      * @return The Content-Type header to use. If the given array is empty, or matches "any", JSON will be used.
      */
-    public static String selectHeaderContentType( String[] contentTypes )
+    @Nonnull
+    public static String selectHeaderContentType( @Nonnull final String[] contentTypes )
     {
         if( contentTypes.length == 0 || contentTypes[0].equals("*/*") ) {
             return "application/json";
@@ -319,20 +325,17 @@ public class ApiClient
      *            String
      * @return Escaped string
      */
-    public static String escapeString( String str )
+    @Nonnull
+    public static String escapeString( @Nonnull final String str )
     {
-        try {
-            return URLEncoder.encode(str, "utf8").replaceAll("\\+", "%20");
-        }
-        catch( UnsupportedEncodingException e ) {
-            return str;
-        }
+        return URLEncoder.encode(str, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
     }
 
     /**
      * Parse content type object from header value
      */
-    private ContentType getContentType( String headerValue )
+    @Nonnull
+    private ContentType getContentType( @Nonnull final String headerValue )
         throws OpenApiRequestException
     {
         try {
@@ -356,10 +359,14 @@ public class ApiClient
      * @throws OpenApiRequestException
      *             API exception
      */
-    private HttpEntity serialize( Object obj, Map<String, Object> formParams, ContentType contentType )
+    @Nonnull
+    private HttpEntity serialize(
+        @Nullable final Object obj,
+        @Nonnull final Map<String, Object> formParams,
+        @Nonnull final ContentType contentType )
         throws OpenApiRequestException
     {
-        String mimeType = contentType.getMimeType();
+        final String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
             try {
                 return new StringEntity(
@@ -370,17 +377,17 @@ public class ApiClient
                 throw new OpenApiRequestException(e);
             }
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
-            MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
+            final MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
             for( Entry<String, Object> paramEntry : formParams.entrySet() ) {
-                Object value = paramEntry.getValue();
-                if( value instanceof File ) {
-                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), (File) value);
-                } else if( value instanceof byte[] ) {
-                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), (byte[]) value);
+                final Object value = paramEntry.getValue();
+                if( value instanceof File file ) {
+                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), file);
+                } else if( value instanceof byte[] byteArray ) {
+                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), byteArray);
                 } else {
-                    Charset charset = contentType.getCharset();
+                    final Charset charset = contentType.getCharset();
                     if( charset != null ) {
-                        ContentType customContentType =
+                        final ContentType customContentType =
                             ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), charset);
                         multiPartBuilder
                             .addTextBody(
@@ -394,17 +401,17 @@ public class ApiClient
             }
             return multiPartBuilder.build();
         } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
-            List<NameValuePair> formValues = new ArrayList<>();
-            for( Entry<String, Object> paramEntry : formParams.entrySet() ) {
+            final List<NameValuePair> formValues = new ArrayList<>();
+            for( final Entry<String, Object> paramEntry : formParams.entrySet() ) {
                 formValues.add(new BasicNameValuePair(paramEntry.getKey(), parameterToString(paramEntry.getValue())));
             }
             return new UrlEncodedFormEntity(formValues, contentType.getCharset());
         } else {
             // Handle files with unknown content type
-            if( obj instanceof File ) {
-                return new FileEntity((File) obj, contentType);
-            } else if( obj instanceof byte[] ) {
-                return new ByteArrayEntity((byte[]) obj, contentType);
+            if( obj instanceof File file ) {
+                return new FileEntity(file, contentType);
+            } else if( obj instanceof byte[] byteArray ) {
+                return new ByteArrayEntity(byteArray, contentType);
             }
             throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
         }
@@ -423,9 +430,12 @@ public class ApiClient
      *            URL query string of the deep object parameters
      * @return The full URL
      */
-    private
-        String
-        buildUrl( String path, List<Pair> queryParams, List<Pair> collectionQueryParams, String urlQueryDeepObject )
+    @Nonnull
+    private String buildUrl(
+        @Nullable final String path,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject )
     {
         final StringBuilder url = new StringBuilder();
         if( basePath.endsWith("/") && path != null && path.startsWith("/") ) {
@@ -439,38 +449,34 @@ public class ApiClient
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
             String prefix = path.contains("?") ? "&" : "?";
             for( Pair param : queryParams ) {
-                if( param.getValue() != null ) {
-                    if( prefix != null ) {
-                        url.append(prefix);
-                        prefix = null;
-                    } else {
-                        url.append("&");
-                    }
-                    String value = parameterToString(param.getValue());
-                    // query parameter value already escaped as part of parameterToPair
-                    url.append(escapeString(param.getName())).append("=").append(value);
+                if( prefix != null ) {
+                    url.append(prefix);
+                    prefix = null;
+                } else {
+                    url.append("&");
                 }
+                final String value = parameterToString(param.getValue());
+                // query parameter value already escaped as part of parameterToPair
+                url.append(escapeString(param.getName())).append("=").append(value);
             }
         }
 
         if( collectionQueryParams != null && !collectionQueryParams.isEmpty() ) {
             String prefix = url.toString().contains("?") ? "&" : "?";
             for( Pair param : collectionQueryParams ) {
-                if( param.getValue() != null ) {
-                    if( prefix != null ) {
-                        url.append(prefix);
-                        prefix = null;
-                    } else {
-                        url.append("&");
-                    }
-                    String value = parameterToString(param.getValue());
-                    // collection query parameter value already escaped as part of parameterToPairs
-                    url.append(escapeString(param.getName())).append("=").append(value);
+                if( prefix != null ) {
+                    url.append(prefix);
+                    prefix = null;
+                } else {
+                    url.append("&");
                 }
+                final String value = parameterToString(param.getValue());
+                // collection query parameter value already escaped as part of parameterToPairs
+                url.append(escapeString(param.getName())).append("=").append(value);
             }
         }
 
-        if( urlQueryDeepObject != null && urlQueryDeepObject.length() > 0 ) {
+        if( urlQueryDeepObject != null && !urlQueryDeepObject.isEmpty() ) {
             url.append(url.toString().contains("?") ? "&" : "?");
             url.append(urlQueryDeepObject);
         }
@@ -478,7 +484,7 @@ public class ApiClient
         return url.toString();
     }
 
-    private static boolean isBodyAllowed( String method )
+    private static boolean isBodyAllowed( @Nonnull final String method )
     {
         return BODY_METHODS.contains(method);
     }
@@ -517,17 +523,17 @@ public class ApiClient
     @Beta
     @Nullable
     public <T> T invokeAPI(
-        String path,
-        String method,
-        List<Pair> queryParams,
-        List<Pair> collectionQueryParams,
-        String urlQueryDeepObject,
-        Object body,
-        Map<String, String> headerParams,
-        Map<String, Object> formParams,
-        String accept,
-        String contentType,
-        TypeReference<T> returnType )
+        @Nonnull final String path,
+        @Nonnull final String method,
+        @Nonnull final List<Pair> queryParams,
+        @Nonnull final List<Pair> collectionQueryParams,
+        @Nonnull final String urlQueryDeepObject,
+        @Nullable final Object body,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final Map<String, Object> formParams,
+        @Nullable final String accept,
+        @Nonnull final String contentType,
+        @Nonnull final TypeReference<T> returnType )
         throws OpenApiRequestException
     {
         if( body != null && !formParams.isEmpty() ) {
@@ -536,7 +542,7 @@ public class ApiClient
 
         final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
 
-        ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
+        final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
         builder.setUri(url);
 
         if( accept != null ) {
@@ -546,9 +552,9 @@ public class ApiClient
             builder.addHeader(keyValue.getKey(), keyValue.getValue());
         }
 
-        HttpClientContext context = HttpClientContext.create();
+        final HttpClientContext context = HttpClientContext.create();
 
-        ContentType contentTypeObj = getContentType(contentType);
+        final ContentType contentTypeObj = getContentType(contentType);
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(method) ) {
                 // Add entity if we have content and a valid method
@@ -562,7 +568,7 @@ public class ApiClient
         }
 
         try {
-            HttpClientResponseHandler<T> responseHandler =
+            final HttpClientResponseHandler<T> responseHandler =
                 new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType);
             return httpClient.execute(builder.build(), context, responseHandler);
         }
