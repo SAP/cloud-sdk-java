@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -484,6 +484,76 @@ public class SodaWithId
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a type-safe, fluent-api builder object to construct a new {@link SodaWithId} instance with all required
+     * arguments.
+     */
+    public static Builder create()
+    {
+        return ( name ) -> ( brand ) -> (
+            quantity ) -> ( price ) -> new SodaWithId().name(name).brand(brand).quantity(quantity).price(price);
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder
+    {
+        /**
+         * Set the name of this {@link SodaWithId} instance.
+         *
+         * @param name
+         *            The name of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder1 name( @Nonnull final String name );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder1
+    {
+        /**
+         * Set the brand of this {@link SodaWithId} instance.
+         *
+         * @param brand
+         *            The brand of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder2 brand( @Nonnull final String brand );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder2
+    {
+        /**
+         * Set the quantity of this {@link SodaWithId} instance.
+         *
+         * @param quantity
+         *            The quantity of this {@link SodaWithId}
+         * @return The SodaWithId builder.
+         */
+        Builder3 quantity( @Nonnull final Integer quantity );
+    }
+
+    /**
+     * Builder helper class.
+     */
+    public interface Builder3
+    {
+        /**
+         * Set the price of this {@link SodaWithId} instance.
+         *
+         * @param price
+         *            The price of this {@link SodaWithId}
+         * @return The SodaWithId instance.
+         */
+        SodaWithId price( @Nonnull final Float price );
     }
 
 }

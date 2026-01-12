@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -15,9 +15,6 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.apache.sample.model;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 /**
@@ -26,22 +23,22 @@ import javax.annotation.Nonnull;
 public interface ColaBarCode
 {
     /**
-     * Helper class to create {@code List<BigDecimal> } that implements {@link ColaBarCode}.
+     * Helper class to create {@code float[] } that implements {@link ColaBarCode}.
      */
-    record ListOfBigDecimals(@com.fasterxml.jackson.annotation.JsonValue @Nonnull List<BigDecimal> values) implements ColaBarCode {}
+    record ArrayOfFloats(@com.fasterxml.jackson.annotation.JsonValue @Nonnull float[] values) implements ColaBarCode {}
 
     /**
-     * Creator to enable deserialization of {@code List<BigDecimal> }.
+     * Creator to enable deserialization of {@code float[] }.
      *
      * @param val
      *            the value to use
-     * @return a new instance of {@link ListOfBigDecimals}.
+     * @return a new instance of {@link ArrayOfFloats}.
      */
     @com.fasterxml.jackson.annotation.JsonCreator
     @Nonnull
-    static ListOfBigDecimals createListOfBigDecimals( @Nonnull final List<BigDecimal> val )
+    static ArrayOfFloats createArrayOfFloats( @Nonnull final float[] val )
     {
-        return new ListOfBigDecimals(val);
+        return new ArrayOfFloats(val);
     }
 
     /**

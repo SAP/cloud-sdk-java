@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 SAP SE or an SAP affiliate company. All rights reserved.
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
 
 /*
@@ -302,6 +302,14 @@ public class Bar implements OneOfWithEnumDiscriminator
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    /**
+     * Create a new {@link Bar} instance. No arguments are required.
+     */
+    public static Bar create()
+    {
+        return new Bar();
     }
 
 }
