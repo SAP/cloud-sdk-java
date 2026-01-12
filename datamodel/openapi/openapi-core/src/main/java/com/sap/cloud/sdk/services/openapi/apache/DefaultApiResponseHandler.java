@@ -151,9 +151,6 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             IOException,
             ParseException
     {
-        if( returnType == null ) {
-            return null;
-        }
 
         final Type valueRawType = returnType.getType();
         if( valueRawType.equals(OpenApiResponse.class) ) {

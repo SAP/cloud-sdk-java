@@ -14,6 +14,7 @@
  */
 
 package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model;
+
 import javax.annotation.Nonnull;
 
 /**
