@@ -227,8 +227,9 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             // Get filename from the Content-Disposition header.
             final Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
             final Matcher matcher = pattern.matcher(contentDisposition);
-            if( matcher.find() )
+            if( matcher.find() ) {
                 filename = matcher.group(1);
+            }
         }
 
         String prefix;
@@ -245,14 +246,15 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
                 suffix = filename.substring(pos);
             }
             // Files.createTempFile requires the prefix to be at least three characters long
-            if( prefix.length() < 3 )
+            if( prefix.length() < 3 ) {
                 prefix = "download-";
+            }
         }
 
-        if( tempFolderPath == null )
+        if( tempFolderPath == null ) {
             return Files.createTempFile(prefix, suffix).toFile();
-        else
-            return Files.createTempFile(Paths.get(tempFolderPath), prefix, suffix).toFile();
+        }
+        return Files.createTempFile(Paths.get(tempFolderPath), prefix, suffix).toFile();
     }
 
     /**
@@ -292,7 +294,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             return ContentType.parse(headerValue);
         }
         catch( UnsupportedCharsetException e ) {
-            throw new OpenApiRequestException("Could not parse content type " + headerValue);
+            throw new OpenApiRequestException("Could not parse content type " + headerValue, e);
         }
     }
 
@@ -307,7 +309,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     private static Map<String, List<String>> transformResponseHeaders( @Nonnull final Header[] headers )
     {
         final Map<String, List<String>> headersMap = new HashMap<>();
-        for( Header header : headers ) {
+        for( final Header header : headers ) {
             List<String> valuesList = headersMap.get(header.getName());
             if( valuesList != null ) {
                 valuesList.add(header.getValue());

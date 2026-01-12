@@ -182,7 +182,7 @@ public class ApiClient
             return formatDate(date);
         } else if( param instanceof Collection ) {
             final StringBuilder b = new StringBuilder();
-            for( Object o : (Collection<?>) param ) {
+            for( final Object o : (Collection<?>) param ) {
                 if( !b.isEmpty() ) {
                     b.append(',');
                 }
@@ -247,7 +247,7 @@ public class ApiClient
 
         // create the params based on the collection format
         if( "multi".equals(collectionFormat) ) {
-            for( Object item : value ) {
+            for( final Object item : value ) {
                 params.add(new Pair(name, escapeString(parameterToString(item))));
             }
             return params;
@@ -263,7 +263,7 @@ public class ApiClient
         };
 
         final StringBuilder sb = new StringBuilder();
-        for( Object item : value ) {
+        for( final Object item : value ) {
             sb.append(delimiter);
             sb.append(escapeString(parameterToString(item)));
         }
@@ -288,7 +288,7 @@ public class ApiClient
         if( accepts.length == 0 ) {
             return null;
         }
-        for( String accept : accepts ) {
+        for( final String accept : accepts ) {
             if( isJsonMime(accept) ) {
                 return accept;
             }
@@ -310,7 +310,7 @@ public class ApiClient
         if( contentTypes.length == 0 || contentTypes[0].equals("*/*") ) {
             return "application/json";
         }
-        for( String contentType : contentTypes ) {
+        for( final String contentType : contentTypes ) {
             if( isJsonMime(contentType) ) {
                 return contentType;
             }
@@ -342,7 +342,7 @@ public class ApiClient
             return ContentType.parse(headerValue);
         }
         catch( UnsupportedCharsetException e ) {
-            throw new OpenApiRequestException("Could not parse content type " + headerValue);
+            throw new OpenApiRequestException("Could not parse content type " + headerValue, e);
         }
     }
 
@@ -378,7 +378,7 @@ public class ApiClient
             }
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             final MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-            for( Entry<String, Object> paramEntry : formParams.entrySet() ) {
+            for( final Entry<String, Object> paramEntry : formParams.entrySet() ) {
                 final Object value = paramEntry.getValue();
                 if( value instanceof File file ) {
                     multiPartBuilder.addBinaryBody(paramEntry.getKey(), file);
@@ -432,13 +432,13 @@ public class ApiClient
      */
     @Nonnull
     private String buildUrl(
-        @Nullable final String path,
+        @Nonnull final String path,
         @Nullable final List<Pair> queryParams,
         @Nullable final List<Pair> collectionQueryParams,
         @Nullable final String urlQueryDeepObject )
     {
         final StringBuilder url = new StringBuilder();
-        if( basePath.endsWith("/") && path != null && path.startsWith("/") ) {
+        if( basePath.endsWith("/") && path.startsWith("/") ) {
             url.append(basePath, 0, basePath.length() - 1);
         } else {
             url.append(basePath);
@@ -448,7 +448,7 @@ public class ApiClient
         if( queryParams != null && !queryParams.isEmpty() ) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
             String prefix = path.contains("?") ? "&" : "?";
-            for( Pair param : queryParams ) {
+            for( final Pair param : queryParams ) {
                 if( prefix != null ) {
                     url.append(prefix);
                     prefix = null;
@@ -463,7 +463,7 @@ public class ApiClient
 
         if( collectionQueryParams != null && !collectionQueryParams.isEmpty() ) {
             String prefix = url.toString().contains("?") ? "&" : "?";
-            for( Pair param : collectionQueryParams ) {
+            for( final Pair param : collectionQueryParams ) {
                 if( prefix != null ) {
                     url.append(prefix);
                     prefix = null;
@@ -548,7 +548,7 @@ public class ApiClient
         if( accept != null ) {
             builder.addHeader("Accept", accept);
         }
-        for( Entry<String, String> keyValue : headerParams.entrySet() ) {
+        for( final Entry<String, String> keyValue : headerParams.entrySet() ) {
             builder.addHeader(keyValue.getKey(), keyValue.getValue());
         }
 
