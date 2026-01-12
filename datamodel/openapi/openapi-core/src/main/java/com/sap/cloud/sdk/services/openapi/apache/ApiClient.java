@@ -47,7 +47,6 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -145,8 +144,6 @@ public class ApiClient
             .defaultDateFormat(new RFC3339DateFormat())
             .visibility(PropertyAccessor.GETTER, Visibility.NONE)
             .visibility(PropertyAccessor.SETTER, Visibility.NONE)
-            .defaultPropertyInclusion(
-                JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

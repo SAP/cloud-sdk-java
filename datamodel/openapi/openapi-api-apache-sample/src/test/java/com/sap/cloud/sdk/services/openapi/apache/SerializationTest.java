@@ -38,6 +38,7 @@ class SerializationTest
               "name": "Cola",
               "brand": "Coca-Cola",
               "quantity": 100,
+              "packaging" : null,
               "price": 1.5,
               "id": 0
             }
