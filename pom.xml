@@ -111,7 +111,7 @@
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.12</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
-		<maven-plugin-testing.version>3.4.0</maven-plugin-testing.version>
+		<maven-plugin-testing.version>3.5.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.3</caffeine.version>
 		<openapi-generator.version>7.18.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.41</io-swagger-core-v3.version>
