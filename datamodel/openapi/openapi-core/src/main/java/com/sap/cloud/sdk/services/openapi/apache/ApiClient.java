@@ -526,9 +526,9 @@ public class ApiClient
     public <T> T invokeAPI(
         @Nonnull final String path,
         @Nonnull final String method,
-        @Nonnull final List<Pair> queryParams,
-        @Nonnull final List<Pair> collectionQueryParams,
-        @Nonnull final String urlQueryDeepObject,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject,
         @Nullable final Object body,
         @Nonnull final Map<String, String> headerParams,
         @Nonnull final Map<String, Object> formParams,
