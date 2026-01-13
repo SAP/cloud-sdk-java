@@ -49,7 +49,9 @@ class OneOfDeserializationTest
     private static final String COLA_JSON = """
         {
           "sodaType": "Cola",
-          "caffeine": true
+          "caffeine": true,
+          "logo":null,
+          "barCode":null
         }""";
     private static final String FANTA_JSON = """
         {
@@ -260,7 +262,7 @@ class OneOfDeserializationTest
         throws JsonProcessingException
     {
         var expected = objectMapper.readValue(COLA_JSON, JsonNode.class);
-        var actual = objectMapper.valueToTree(expected);
+        var actual = objectMapper.valueToTree(COLA_OBJECT);
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -270,7 +272,7 @@ class OneOfDeserializationTest
         throws JsonProcessingException
     {
         var expected = objectMapper.readValue(FANTA_JSON, JsonNode.class);
-        var actual = objectMapper.valueToTree(expected);
+        var actual = objectMapper.valueToTree(FANTA_OBJECT);
 
         assertThat(actual).isEqualTo(expected);
     }
