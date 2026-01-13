@@ -38,6 +38,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
@@ -94,7 +95,7 @@ public class ApiClient
     private final String tempFolderPath;
 
     // Methods that can have a request body
-    private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
+    private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
     private static final String DEFAULT_BASE_PATH = "http://localhost";
 
     /**
@@ -484,7 +485,7 @@ public class ApiClient
         return url.toString();
     }
 
-    private static boolean isBodyAllowed( @Nonnull final String method )
+    private static boolean isBodyAllowed( @Nonnull final Method method )
     {
         return BODY_METHODS.contains(method);
     }
@@ -556,7 +557,7 @@ public class ApiClient
 
         final ContentType contentTypeObj = getContentType(contentType);
         if( body != null || !formParams.isEmpty() ) {
-            if( isBodyAllowed(method) ) {
+            if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
                 builder.setEntity(serialize(body, formParams, contentTypeObj));
             } else {

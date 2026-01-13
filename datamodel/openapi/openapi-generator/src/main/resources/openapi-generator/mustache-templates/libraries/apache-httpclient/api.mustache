@@ -44,54 +44,54 @@ import javax.annotation.Nullable;
 {{/useBeanValidation}}
 
 /**
-* {{appName}} in version {{version}}.
-*
-* {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
-*/
+ * {{appName}} in version {{version}}.
+ *
+ * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+ */
 {{!>generatedAnnotation}}
 {{#operations}}
 public class {{classname}} extends BaseApi {
 
     {{^aiSdkConstructor}}
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
     public {{classname}}() {}
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public {{classname}}( @Nonnull final Destination httpDestination )
     {
     super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     public {{classname}}(@Nonnull final ApiClient apiClient) {
     super(apiClient);
     }
     {{/aiSdkConstructor}}
     {{#aiSdkConstructor}}
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
     public {{classname}}()
     {
     super(new AiCoreService().getApiClient());
     }
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    *
-    * @param aiCoreService The configured connectivity instance to AI Core
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     *
+     * @param aiCoreService The configured connectivity instance to AI Core
+     */
     public {{classname}}( @Nonnull final AiCoreService aiCoreService )
     {
     super(aiCoreService.getApiClient());
@@ -101,35 +101,35 @@ public class {{classname}} extends BaseApi {
     {{#operation}}
         {{#hasOptionalParams}}
             /**
-            * <p>{{summary}}
-            * <p>{{notes}}
-            {{#responses}}
-            * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
-            {{/responses}}
-            {{#allParams}}
-            * @param {{paramName}} {{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}{{/isContainer}}){{/required}}
-            {{#description}}
-            *      {{description}}
-            {{/description}}
-            {{^description}}
-            *      The value for the parameter {{paramName}}
-            {{/description}}
-            {{/allParams}}
-            {{#returnType}}
-            * @return {{returnType}}
-            {{/returnType}}
-            {{^returnType}}
-            * @return An OpenApiResponse containing the status code of the HttpResponse.
-            {{/returnType}}
-            * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-            {{#externalDocs}}
-            * {{description}}
-            * @see <a href="{{url}}">{{summary}} Documentation</a>
-            {{/externalDocs}}
-            {{#isDeprecated}}
-            * @deprecated
-            {{/isDeprecated}}
-            */
+             * <p>{{summary}}
+             * <p>{{notes}}
+             {{#responses}}
+             * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
+             {{/responses}}
+             {{#allParams}}
+             * @param {{paramName}} {{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}{{/isContainer}}){{/required}}
+             {{#description}}
+             *      {{description}}
+             {{/description}}
+             {{^description}}
+             *      The value for the parameter {{paramName}}
+             {{/description}}
+             {{/allParams}}
+             {{#returnType}}
+             * @return {{returnType}}
+             {{/returnType}}
+             {{^returnType}}
+             * @return An OpenApiResponse containing the status code of the HttpResponse.
+             {{/returnType}}
+             * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+             {{#externalDocs}}
+             * {{description}}
+             * @see <a href="{{url}}">{{summary}} Documentation</a>
+             {{/externalDocs}}
+             {{#isDeprecated}}
+             * @deprecated
+             {{/isDeprecated}}
+             */
             {{#isDeprecated}}
             @Deprecated
             {{/isDeprecated}}
@@ -140,35 +140,35 @@ public class {{classname}} extends BaseApi {
         {{/hasOptionalParams}}
 
         /**
-        * <p>{{summary}}
-        * <p>{{notes}}
-        {{#responses}}
-        * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
-        {{/responses}}
-        {{#requiredParams}}
-        * @param {{paramName}}
-        {{#description}}
-        *      {{description}}
-        {{/description}}
-        {{^description}}
-            *      The value for the parameter {{paramName}}
-        {{/description}}
-        {{/requiredParams}}
-        {{#returnType}}
-        * @return {{returnType}}
-        {{/returnType}}
-        {{^returnType}}
-        * @return An OpenApiResponse containing the status code of the HttpResponse.
-        {{/returnType}}
-        * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-        {{#externalDocs}}
-            * {{description}}
-            * @see <a href="{{url}}">{{summary}} Documentation</a>
-        {{/externalDocs}}
-        {{#isDeprecated}}
-            * @deprecated
-        {{/isDeprecated}}
-        */
+         * <p>{{summary}}
+         * <p>{{notes}}
+         {{#responses}}
+         * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
+         {{/responses}}
+         {{#requiredParams}}
+         * @param {{paramName}}
+         {{#description}}
+         *      {{description}}
+         {{/description}}
+         {{^description}}
+             *      The value for the parameter {{paramName}}
+         {{/description}}
+         {{/requiredParams}}
+         {{#returnType}}
+         * @return {{returnType}}
+         {{/returnType}}
+         {{^returnType}}
+         * @return An OpenApiResponse containing the status code of the HttpResponse.
+         {{/returnType}}
+         * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+         {{#externalDocs}}
+             * {{description}}
+             * @see <a href="{{url}}">{{summary}} Documentation</a>
+         {{/externalDocs}}
+         {{#isDeprecated}}
+             * @deprecated
+         {{/isDeprecated}}
+         */
         {{#isDeprecated}}
             @Deprecated
         {{/isDeprecated}}
