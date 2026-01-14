@@ -1,7 +1,7 @@
 {{#copyrightHeader}}
 /*
-* {{copyrightHeader}}
-*/
+ * {{copyrightHeader}}
+ */
 {{/copyrightHeader}}
 
 package {{package}};
@@ -44,54 +44,54 @@ import javax.annotation.Nullable;
 {{/useBeanValidation}}
 
 /**
-* {{appName}} in version {{version}}.
-*
-* {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
-*/
+ * {{appName}} in version {{version}}.
+ *
+ * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+ */
 {{!>generatedAnnotation}}
 {{#operations}}
 public class {{classname}} extends BaseApi {
 
     {{^aiSdkConstructor}}
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
     public {{classname}}() {}
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}.
-    *
-    * @param httpDestination The destination that API should be used with
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
     public {{classname}}( @Nonnull final Destination httpDestination )
     {
     super(httpDestination);
     }
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
-    *
-    * @param apiClient
-    *            ApiClient to invoke the API on
-    */
+     * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
     public {{classname}}(@Nonnull final ApiClient apiClient) {
     super(apiClient);
     }
     {{/aiSdkConstructor}}
     {{#aiSdkConstructor}}
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
     public {{classname}}()
     {
     super(new AiCoreService().getApiClient());
     }
 
     /**
-    * Instantiates this API class to invoke operations on the {{appName}}
-    *
-    * @param aiCoreService The configured connectivity instance to AI Core
-    */
+     * Instantiates this API class to invoke operations on the {{appName}}
+     *
+     * @param aiCoreService The configured connectivity instance to AI Core
+     */
     public {{classname}}( @Nonnull final AiCoreService aiCoreService )
     {
     super(aiCoreService.getApiClient());

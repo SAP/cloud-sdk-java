@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
-*/
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 
 package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.api;
 
