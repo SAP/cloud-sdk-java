@@ -32,7 +32,6 @@ class SerializationTest
     @Test
     void testPutPayload()
     {
-        // TODO: discuss whether to ignore null on serialization? Do via review
         expected = """
             {
               "name": "Cola",

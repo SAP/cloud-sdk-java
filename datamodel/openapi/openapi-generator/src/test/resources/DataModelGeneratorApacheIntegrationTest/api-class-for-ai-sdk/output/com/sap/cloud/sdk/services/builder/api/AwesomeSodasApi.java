@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
-*/
+ * Copyright (c) 2026 SAP SE or an SAP affiliate company. All rights reserved.
+ */
 
 package com.sap.cloud.sdk.services.builder.api;
 
@@ -30,76 +30,76 @@ import com.sap.ai.sdk.core.AiCoreService;
 
 
 /**
-* Soda Store API in version 1.0.0.
-*
-* API for managing sodas in a soda store
-*/
+ * Soda Store API in version 1.0.0.
+ *
+ * API for managing sodas in a soda store
+ */
 public class AwesomeSodasApi extends BaseApi {
 
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API
+     */
     public AwesomeSodasApi()
     {
     super(new AiCoreService().getApiClient());
     }
 
     /**
-    * Instantiates this API class to invoke operations on the Soda Store API
-    *
-    * @param aiCoreService The configured connectivity instance to AI Core
-    */
+     * Instantiates this API class to invoke operations on the Soda Store API
+     *
+     * @param aiCoreService The configured connectivity instance to AI Core
+     */
     public AwesomeSodasApi( @Nonnull final AiCoreService aiCoreService )
     {
     super(aiCoreService.getApiClient());
     }
 
 
-    /**
-    * <p>Get a list of all sodas
-    * <p>
-    * <p><b>200</b> - A list of sodas
-    * @return List&lt;Soda&gt;
-    * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
-    */
-    @Nonnull
-    public List<Soda> getSodas() throws OpenApiRequestException {
-        final Object localVarPostBody = null;
-        
-        // create path and map variables
-        final String localVarPath = "/sodas";
-        
-        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
-        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-        
+        /**
+         * <p>Get a list of all sodas
+         * <p>
+         * <p><b>200</b> - A list of sodas
+         * @return List&lt;Soda&gt;
+         * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+         */
+        @Nonnull
+        public List<Soda> getSodas() throws OpenApiRequestException {
+            final Object localVarPostBody = null;
+            
+            // create path and map variables
+            final String localVarPath = "/sodas";
+            
+            final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+            String localVarQueryParameterBaseName;
+            final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+            final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+            final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+            
+                                    
+            final String[] localVarAccepts = {
+            "application/json"
+            };
+            final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+            final String[] localVarContentTypes = {
+            
+            };
+            final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+            
+            final TypeReference<List<Soda>> localVarReturnType = new TypeReference<List<Soda>>() {};
                         
-        final String[] localVarAccepts = {
-        "application/json"
-        };
-        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {
-        
-        };
-        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
-        
-        final TypeReference<List<Soda>> localVarReturnType = new TypeReference<List<Soda>>() {};
-                
-        return apiClient.invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            localVarPostBody,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType
-        );
-    }
-}
+            return apiClient.invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                localVarPostBody,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType
+            );
+        }
+        }

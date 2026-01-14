@@ -41,7 +41,6 @@ class ApacheApiClientViaConstructorTest
 
     private static final String RELATIVE_PATH = "/apiEndpoint";
     private static final String SUCCESS_BODY = "success";
-    private static final String BASE_PATH = "http://localhost:8080";
 
     @Test
     @Description( "Verify ApiClient's ObjectMapper ignores getters to avoid duplicate JSON properties." )
