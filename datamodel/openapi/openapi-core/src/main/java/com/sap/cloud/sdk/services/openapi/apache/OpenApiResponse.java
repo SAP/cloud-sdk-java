@@ -1,7 +1,9 @@
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +27,9 @@ public class OpenApiResponse
     OpenApiResponse( final int statusCode, @Nonnull final Map<String, List<String>> headers )
     {
         this.statusCode = statusCode;
-        this.headers = Map.copyOf(headers);
+
+        final var headersCopy = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+        headersCopy.putAll(headers);
+        this.headers = Collections.unmodifiableMap(headersCopy);
     }
 }

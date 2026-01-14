@@ -20,9 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -308,16 +308,9 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     @Nonnull
     private static Map<String, List<String>> transformResponseHeaders( @Nonnull final Header[] headers )
     {
-        final Map<String, List<String>> headersMap = new HashMap<>();
+        final Map<String, List<String>> headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         for( final Header header : headers ) {
-            List<String> valuesList = headersMap.get(header.getName());
-            if( valuesList != null ) {
-                valuesList.add(header.getValue());
-            } else {
-                valuesList = new ArrayList<>();
-                valuesList.add(header.getValue());
-                headersMap.put(header.getName(), valuesList);
-            }
+            headersMap.computeIfAbsent(header.getName(), k -> new ArrayList<>()).add(header.getValue());
         }
         return headersMap;
     }
