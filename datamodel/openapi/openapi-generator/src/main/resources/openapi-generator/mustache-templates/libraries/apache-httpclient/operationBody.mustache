@@ -1,4 +1,3 @@
-final Object localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
 {{#allParams}}{{#required}}
     // verify the required parameter '{{paramName}}' is set
     if ({{paramName}} == null) {
@@ -19,7 +18,6 @@ final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         {{#queryParams}}
             {{#isDeepObject}}
-                localVarQueryParameterBaseName = "{{{baseName}}}";
                 {{#isArray}}
                     for (int i=0; i < {{paramName}}.size(); i++) {
                     localVarQueryStringJoiner.add({{paramName}}.get(i).toUrlQueryString(String.format(Locale.ROOT, "{{baseName}}[%d]", i)));
@@ -85,7 +83,7 @@ final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
         localVarQueryParams,
         localVarCollectionQueryParams,
         localVarQueryStringJoiner.toString(),
-        localVarPostBody,
+        {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}},
         localVarHeaderParams,
         localVarFormParams,
         localVarAccept,
