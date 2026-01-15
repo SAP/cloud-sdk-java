@@ -25,7 +25,7 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 /**
  * Swagger Petstore in version 1.0.0.
- *
+ * <p>
  * A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification
  */
 public class DefaultApi extends BaseApi
@@ -79,7 +79,6 @@ public class DefaultApi extends BaseApi
     public Pet addPet( @Nonnull final PetInput pet )
         throws OpenApiRequestException
     {
-        final Object localVarPostBody = pet;
 
         // verify the required parameter 'pet' is set
         if( pet == null ) {
@@ -113,7 +112,7 @@ public class DefaultApi extends BaseApi
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                pet,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -140,7 +139,6 @@ public class DefaultApi extends BaseApi
     public OpenApiResponse deletePet( @Nonnull final Long id )
         throws OpenApiRequestException
     {
-        final Object localVarPostBody = null;
 
         // verify the required parameter 'id' is set
         if( id == null ) {
@@ -177,7 +175,7 @@ public class DefaultApi extends BaseApi
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -204,7 +202,6 @@ public class DefaultApi extends BaseApi
     public Pet findPetById( @Nonnull final Long id )
         throws OpenApiRequestException
     {
-        final Object localVarPostBody = null;
 
         // verify the required parameter 'id' is set
         if( id == null ) {
@@ -241,7 +238,7 @@ public class DefaultApi extends BaseApi
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -270,7 +267,6 @@ public class DefaultApi extends BaseApi
     public List<Pet> findPets( @Nullable final List<String> tags, @Nullable final Integer limit )
         throws OpenApiRequestException
     {
-        final Object localVarPostBody = null;
 
         // create path and map variables
         final String localVarPath = "/pets";
@@ -303,7 +299,7 @@ public class DefaultApi extends BaseApi
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
