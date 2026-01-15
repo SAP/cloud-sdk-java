@@ -98,13 +98,13 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = { "application/json" };
         final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         final TypeReference<Pet> localVarReturnType = new TypeReference<Pet>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -159,7 +159,6 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -168,6 +167,7 @@ public class DefaultApi extends BaseApi
         final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -222,7 +222,6 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json", "application/xml", "text/xml", "text/html" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -231,6 +230,7 @@ public class DefaultApi extends BaseApi
         final TypeReference<Pet> localVarReturnType = new TypeReference<Pet>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,
@@ -283,7 +283,6 @@ public class DefaultApi extends BaseApi
 
         final String[] localVarAccepts = { "application/json", "application/xml", "text/xml", "text/html" };
         final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
-
         final String[] localVarContentTypes = {
 
         };
@@ -292,6 +291,7 @@ public class DefaultApi extends BaseApi
         final TypeReference<List<Pet>> localVarReturnType = new TypeReference<List<Pet>>()
         {
         };
+
         return apiClient
             .invokeAPI(
                 localVarPath,

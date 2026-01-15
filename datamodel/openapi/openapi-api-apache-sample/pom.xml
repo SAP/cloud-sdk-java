@@ -47,6 +47,36 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -82,11 +112,11 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
-                            <apiPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.api</apiPackage>
-                            <modelPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sample.model</modelPackage>
+                            <apiPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.api</apiPackage>
+                            <modelPackage>com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model</modelPackage>
+                            <typeMappings>File=byte[]</typeMappings>
                             <additionalProperties>
                                 <library>apache-httpclient</library>
-                                <supportUrlQuery>false</supportUrlQuery>
                                 <pojoBuilderMethodName>create</pojoBuilderMethodName>
                                 <pojoConstructorVisibility>protected</pojoConstructorVisibility>
                                 <useOneOfInterfaces>true</useOneOfInterfaces>
