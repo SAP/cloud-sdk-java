@@ -90,7 +90,6 @@ public class DefaultApi extends BaseApi
         final String localVarPath = "/pets";
 
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -151,7 +150,6 @@ public class DefaultApi extends BaseApi
             "/pets/{id}".replaceAll("\\{" + "id" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(id)));
 
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -214,7 +212,6 @@ public class DefaultApi extends BaseApi
             "/pets/{id}".replaceAll("\\{" + "id" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(id)));
 
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -272,7 +269,6 @@ public class DefaultApi extends BaseApi
         final String localVarPath = "/pets";
 
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         final Map<String, String> localVarHeaderParams = new HashMap<String, String>();

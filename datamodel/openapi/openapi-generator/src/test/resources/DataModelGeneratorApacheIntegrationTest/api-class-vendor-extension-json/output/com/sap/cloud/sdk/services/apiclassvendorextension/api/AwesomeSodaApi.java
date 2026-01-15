@@ -85,7 +85,6 @@ public class AwesomeSodaApi extends BaseApi {
             final String localVarPath = "/sodas";
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
