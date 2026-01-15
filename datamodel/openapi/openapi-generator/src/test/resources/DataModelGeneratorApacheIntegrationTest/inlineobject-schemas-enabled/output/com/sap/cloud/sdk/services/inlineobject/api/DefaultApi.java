@@ -34,7 +34,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * Soda Store API in version 1.0.0.
- *
+ * <p>
  * API for managing sodas in a soda store
  */
 public class DefaultApi extends BaseApi {
@@ -78,7 +78,6 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public Soda getSodaById(@Nonnull final Long sodaId) throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // verify the required parameter 'sodaId' is set
             if (sodaId == null) {
@@ -115,7 +114,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,

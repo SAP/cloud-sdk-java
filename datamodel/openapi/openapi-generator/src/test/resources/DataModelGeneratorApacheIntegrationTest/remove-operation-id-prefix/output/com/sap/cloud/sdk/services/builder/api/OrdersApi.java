@@ -31,7 +31,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * SodaStore API in version 1.0.0.
- *
+ * <p>
  * API for managing soda products and orders in SodaStore.
  */
 public class OrdersApi extends BaseApi {
@@ -73,7 +73,6 @@ public class OrdersApi extends BaseApi {
          */
         @Nonnull
         public Order get(@Nonnull final Order order) throws OpenApiRequestException {
-            final Object localVarPostBody = order;
             
             // verify the required parameter 'order' is set
             if (order == null) {
@@ -109,7 +108,7 @@ public class OrdersApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                order,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,

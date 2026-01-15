@@ -32,7 +32,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * SodaStore API in version 1.0.0.
- *
+ * <p>
  * API for managing soda products and orders in SodaStore.
  */
 public class SodasApi extends BaseApi {
@@ -72,7 +72,6 @@ public class SodasApi extends BaseApi {
          */
         @Nonnull
         public List<SodaWithId> get() throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // create path and map variables
             final String localVarPath = "/sodas";
@@ -102,7 +101,7 @@ public class SodasApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -123,7 +122,6 @@ public class SodasApi extends BaseApi {
          */
         @Nonnull
         public SodaWithId sodasIdGet(@Nonnull final Long id) throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // verify the required parameter 'id' is set
             if (id == null) {
@@ -160,7 +158,7 @@ public class SodasApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -182,7 +180,6 @@ public class SodasApi extends BaseApi {
          */
         @Nullable
         public Soda sodasPut(@Nonnull final SodaWithId sodaWithId) throws OpenApiRequestException {
-            final Object localVarPostBody = sodaWithId;
             
             // verify the required parameter 'sodaWithId' is set
             if (sodaWithId == null) {
@@ -218,7 +215,7 @@ public class SodasApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                sodaWithId,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
