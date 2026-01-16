@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -44,6 +45,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Handles HTTP response processing for API client operations. This class encapsulates response deserialization, error
  * handling, and file download functionality.
@@ -51,31 +54,22 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
  * @param <T>
  *            The type of object to deserialize the response into
  */
+@RequiredArgsConstructor
 class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
 {
+    /** Jackson ObjectMapper for JSON deserialization */
+    @Nonnull
     private final ObjectMapper objectMapper;
+    /** Temporary folder path for file downloads (null for system default) */
+    @Nullable
     private final String tempFolderPath;
+    /** Type reference for response deserialization */
+    @Nonnull
     private final TypeReference<T> returnType;
 
-    /**
-     * Creates a new response handler with the specified configuration.
-     *
-     * @param objectMapper
-     *            The Jackson ObjectMapper for JSON deserialization
-     * @param tempFolderPath
-     *            The temporary folder path for file downloads (null for system default)
-     * @param returnType
-     *            The type reference for response deserialization
-     */
-    DefaultApiResponseHandler(
-        @Nonnull final ObjectMapper objectMapper,
-        @Nullable final String tempFolderPath,
-        @Nonnull final TypeReference<T> returnType )
-    {
-        this.objectMapper = objectMapper;
-        this.tempFolderPath = tempFolderPath;
-        this.returnType = returnType;
-    }
+    /** Optional listener for response metadata including status code and headers */
+    @Nullable
+    private final ResponseMetadataListener responseMetadataListener;
 
     @Nullable
     @Override
@@ -112,9 +106,14 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
             ParseException
     {
         final int statusCode = response.getCode();
+        final Map<String, List<String>> headers = transformResponseHeaders(response.getHeaders());
+        if( responseMetadataListener != null ) {
+            responseMetadataListener.onResponse(new OpenApiResponse(statusCode, headers));
+        }
+
         if( statusCode == HttpStatus.SC_NO_CONTENT ) {
             if( returnType.getType().equals(OpenApiResponse.class) ) {
-                return (T) new OpenApiResponse(statusCode, transformResponseHeaders(response.getHeaders()));
+                return (T) new OpenApiResponse(statusCode, headers);
             }
             return null;
         }
@@ -122,11 +121,10 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
         if( isSuccessfulStatus(statusCode) ) {
             return deserialize(response);
         } else {
-            final Map<String, List<String>> responseHeaders = transformResponseHeaders(response.getHeaders());
             final String message = new StatusLine(response).toString();
             throw new OpenApiRequestException(message)
                 .statusCode(statusCode)
-                .responseHeaders(responseHeaders)
+                .responseHeaders(headers)
                 .responseBody(EntityUtils.toString(response.getEntity()));
         }
     }
@@ -308,11 +306,11 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     @Nonnull
     private static Map<String, List<String>> transformResponseHeaders( @Nonnull final Header[] headers )
     {
-        final Map<String, List<String>> headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        final var headersMap = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         for( final Header header : headers ) {
             headersMap.computeIfAbsent(header.getName(), k -> new ArrayList<>()).add(header.getValue());
         }
-        return headersMap;
+        return Collections.unmodifiableMap(headersMap);
     }
 
     private static boolean isSuccessfulStatus( final int statusCode )

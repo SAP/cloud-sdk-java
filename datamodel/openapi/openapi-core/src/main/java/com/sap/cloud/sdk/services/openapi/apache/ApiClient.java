@@ -93,6 +93,9 @@ public class ApiClient
     @Nullable
     private final String tempFolderPath;
 
+    @With
+    private final ResponseMetadataListener responseMetadataListener;
+
     // Methods that can have a request body
     private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
     private static final String DEFAULT_BASE_PATH = "http://localhost";
@@ -107,7 +110,7 @@ public class ApiClient
     @Nonnull
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
-        return new ApiClient(httpClient, DEFAULT_BASE_PATH, createDefaultObjectMapper(), null);
+        return new ApiClient(httpClient, DEFAULT_BASE_PATH, createDefaultObjectMapper(), null, null);
     }
 
     /**
@@ -567,7 +570,7 @@ public class ApiClient
 
         try {
             final HttpClientResponseHandler<T> responseHandler =
-                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType);
+                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType, responseMetadataListener);
             return httpClient.execute(builder.build(), context, responseHandler);
         }
         catch( IOException e ) {

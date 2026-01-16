@@ -1,18 +1,18 @@
 package com.sap.cloud.sdk.services.openapi.apache;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Response object for Apache HTTP client OpenAPI calls containing status code and headers
  */
 @Getter
+@RequiredArgsConstructor
 public class OpenApiResponse
 {
 
@@ -20,16 +20,4 @@ public class OpenApiResponse
 
     @Nonnull
     private final Map<String, List<String>> headers;
-
-    /**
-     * Create a new OpenApiResponse with status code and headers.
-     */
-    OpenApiResponse( final int statusCode, @Nonnull final Map<String, List<String>> headers )
-    {
-        this.statusCode = statusCode;
-
-        final var headersCopy = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
-        headersCopy.putAll(headers);
-        this.headers = Collections.unmodifiableMap(headersCopy);
-    }
 }
