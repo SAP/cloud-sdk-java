@@ -105,13 +105,13 @@
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.21.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.0.1</junit.jupiter.version>
+		<junit.jupiter.version>6.0.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
 		<maven-plugin.version>3.9.12</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
-		<maven-plugin-testing.version>3.4.0</maven-plugin-testing.version>
+		<maven-plugin-testing.version>3.5.0</maven-plugin-testing.version>
 		<caffeine.version>3.2.3</caffeine.version>
 		<openapi-generator.version>7.18.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.41</io-swagger-core-v3.version>
@@ -736,7 +736,7 @@
 			<plugin>
 				<groupId>net.revelc.code</groupId>
 				<artifactId>impsort-maven-plugin</artifactId>
-				<version>1.12.0</version>
+				<version>1.13.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -1078,7 +1078,7 @@
 						<plugin>
 							<groupId>org.sonatype.central</groupId>
 							<artifactId>central-publishing-maven-plugin</artifactId>
-							<version>0.9.0</version>
+							<version>0.10.0</version>
 							<extensions>true</extensions>
 							<configuration>
 								<deploymentName>SAP Cloud SDK ${project.version}</deploymentName>
