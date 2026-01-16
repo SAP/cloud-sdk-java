@@ -230,7 +230,7 @@ class OAuth2Service
             additionalParameters.put("app_tid", tenantId);
             if( onBehalfOf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
                 // workaround until a fix is provided by IAS
-                additionalParameters.put("refresh_token", "0");
+                additionalParameters.put("refresh_expiry", "0");
             }
         }
     }
