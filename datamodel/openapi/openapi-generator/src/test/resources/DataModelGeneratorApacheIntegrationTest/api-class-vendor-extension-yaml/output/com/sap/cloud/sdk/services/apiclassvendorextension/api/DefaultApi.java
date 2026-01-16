@@ -33,7 +33,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * Soda Store API in version 1.0.0.
- *
+ * <p>
  * API for managing sodas in a soda store
  */
 public class DefaultApi extends BaseApi {
@@ -75,7 +75,6 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public Soda addSoda(@Nonnull final NewSoda newSoda) throws OpenApiRequestException {
-            final Object localVarPostBody = newSoda;
             
             // verify the required parameter 'newSoda' is set
             if (newSoda == null) {
@@ -87,7 +86,6 @@ public class DefaultApi extends BaseApi {
             final String localVarPath = "/sodas";
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -111,7 +109,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                newSoda,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -132,7 +130,6 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public OpenApiResponse deleteSodaById(@Nonnull final Long sodaId) throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // verify the required parameter 'sodaId' is set
             if (sodaId == null) {
@@ -145,7 +142,6 @@ public class DefaultApi extends BaseApi {
                 .replaceAll("\\{" + "sodaId" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(sodaId)));
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -169,7 +165,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -190,7 +186,6 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public Soda getSodaById(@Nonnull final Long sodaId) throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // verify the required parameter 'sodaId' is set
             if (sodaId == null) {
@@ -203,7 +198,6 @@ public class DefaultApi extends BaseApi {
                 .replaceAll("\\{" + "sodaId" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(sodaId)));
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -227,7 +221,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -245,13 +239,11 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public List<Soda> getSodas() throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // create path and map variables
             final String localVarPath = "/sodas";
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -275,7 +267,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
@@ -298,7 +290,6 @@ public class DefaultApi extends BaseApi {
          */
         @Nonnull
         public Soda updateSodaById(@Nonnull final Long sodaId, @Nonnull final UpdateSoda updateSoda) throws OpenApiRequestException {
-            final Object localVarPostBody = updateSoda;
             
             // verify the required parameter 'sodaId' is set
             if (sodaId == null) {
@@ -317,7 +308,6 @@ public class DefaultApi extends BaseApi {
                 .replaceAll("\\{" + "sodaId" + "\\}", ApiClient.escapeString(ApiClient.parameterToString(sodaId)));
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -341,7 +331,7 @@ public class DefaultApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                updateSoda,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,

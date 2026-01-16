@@ -22,7 +22,7 @@ import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
 
 /**
  * SodaStore API in version 1.0.0.
- *
+ * <p>
  * API for managing soda products and orders in SodaStore.
  */
 public class OrdersApi extends BaseApi
@@ -74,7 +74,6 @@ public class OrdersApi extends BaseApi
     public Order ordersPost( @Nonnull final Order order )
         throws OpenApiRequestException
     {
-        final Object localVarPostBody = order;
 
         // verify the required parameter 'order' is set
         if( order == null ) {
@@ -86,7 +85,6 @@ public class OrdersApi extends BaseApi
         final String localVarPath = "/orders";
 
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-        String localVarQueryParameterBaseName;
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
         final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -108,7 +106,7 @@ public class OrdersApi extends BaseApi
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                order,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,

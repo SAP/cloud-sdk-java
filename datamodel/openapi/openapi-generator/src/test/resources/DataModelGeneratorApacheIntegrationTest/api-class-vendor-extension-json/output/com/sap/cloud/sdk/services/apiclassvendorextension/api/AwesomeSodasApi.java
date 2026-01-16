@@ -31,7 +31,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
  * Soda Store API in version 1.0.0.
- *
+ * <p>
  * API for managing sodas in a soda store
  */
 public class AwesomeSodasApi extends BaseApi {
@@ -71,13 +71,11 @@ public class AwesomeSodasApi extends BaseApi {
          */
         @Nonnull
         public List<Soda> getSodas() throws OpenApiRequestException {
-            final Object localVarPostBody = null;
             
             // create path and map variables
             final String localVarPath = "/sodas";
             
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
-            String localVarQueryParameterBaseName;
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
             final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
@@ -101,7 +99,7 @@ public class AwesomeSodasApi extends BaseApi {
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),
-                localVarPostBody,
+                null,
                 localVarHeaderParams,
                 localVarFormParams,
                 localVarAccept,
