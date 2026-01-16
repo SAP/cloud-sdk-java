@@ -1,0 +1,186 @@
+{{#copyrightHeader}}
+/*
+ * {{copyrightHeader}}
+ */
+{{/copyrightHeader}}
+
+package {{package}};
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.OpenApiResponse;
+import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
+import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
+import com.sap.cloud.sdk.services.openapi.apache.Pair;
+
+{{#models.0}}
+    import {{modelPackage}}.*;
+{{/models.0}}
+
+{{#imports}}import {{import}};
+{{/imports}}
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringJoiner;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+{{^aiSdkConstructor}}import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+{{/aiSdkConstructor}}
+{{#aiSdkConstructor}}import com.sap.ai.sdk.core.AiCoreService;
+{{/aiSdkConstructor}}
+
+{{#useBeanValidation}}
+    import {{javaxPackage}}.validation.constraints.*;
+    import {{javaxPackage}}.validation.Valid;
+
+{{/useBeanValidation}}
+
+/**
+ * {{appName}} in version {{version}}.
+ * <p>
+ * {{#appDescription}}{{{appDescription}}}{{/appDescription}}{{^appDescription}}No description provided.{{/appDescription}}
+ */
+{{!>generatedAnnotation}}
+{{#operations}}
+public class {{classname}} extends BaseApi {
+
+    {{^aiSdkConstructor}}
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
+    public {{classname}}() {}
+
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}.
+     *
+     * @param httpDestination The destination that API should be used with
+     */
+    public {{classname}}( @Nonnull final Destination httpDestination )
+    {
+    super(httpDestination);
+    }
+
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}} based on a given {@link ApiClient}.
+     *
+     * @param apiClient
+     *            ApiClient to invoke the API on
+     */
+    public {{classname}}(@Nonnull final ApiClient apiClient) {
+    super(apiClient);
+    }
+    {{/aiSdkConstructor}}
+    {{#aiSdkConstructor}}
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}
+     */
+    public {{classname}}()
+    {
+    super(new AiCoreService().getApiClient());
+    }
+
+    /**
+     * Instantiates this API class to invoke operations on the {{appName}}
+     *
+     * @param aiCoreService The configured connectivity instance to AI Core
+     */
+    public {{classname}}( @Nonnull final AiCoreService aiCoreService )
+    {
+    super(aiCoreService.getApiClient());
+    }
+    {{/aiSdkConstructor}}
+
+    {{#operation}}
+        {{#hasOptionalParams}}
+            /**
+             * <p>{{summary}}
+             * <p>{{notes}}
+             {{#responses}}
+             * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
+             {{/responses}}
+             {{#allParams}}
+             * @param {{paramName}} {{#required}} (required){{/required}}{{^required}} (optional{{^isContainer}}{{#defaultValue}}, default to {{.}}{{/defaultValue}}{{/isContainer}}){{/required}}
+             {{#description}}
+             *      {{description}}
+             {{/description}}
+             {{^description}}
+             *      The value for the parameter {{paramName}}
+             {{/description}}
+             {{/allParams}}
+             {{#returnType}}
+             * @return {{returnType}}
+             {{/returnType}}
+             {{^returnType}}
+             * @return An OpenApiResponse containing the status code of the HttpResponse.
+             {{/returnType}}
+             * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+             {{#externalDocs}}
+             * {{description}}
+             * @see <a href="{{url}}">{{summary}} Documentation</a>
+             {{/externalDocs}}
+             {{#isDeprecated}}
+             * @deprecated
+             {{/isDeprecated}}
+             */
+            {{#isDeprecated}}
+            @Deprecated
+            {{/isDeprecated}}
+            {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
+            public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
+            {{>operationBody}}
+            }
+        {{/hasOptionalParams}}
+
+        /**
+         * <p>{{summary}}
+         * <p>{{notes}}
+         {{#responses}}
+         * <p><b>{{code}}</b>{{#message}} - {{message}}{{/message}}
+         {{/responses}}
+         {{#requiredParams}}
+         * @param {{paramName}}
+         {{#description}}
+         *      {{description}}
+         {{/description}}
+         {{^description}}
+             *      The value for the parameter {{paramName}}
+         {{/description}}
+         {{/requiredParams}}
+         {{#returnType}}
+         * @return {{returnType}}
+         {{/returnType}}
+         {{^returnType}}
+         * @return An OpenApiResponse containing the status code of the HttpResponse.
+         {{/returnType}}
+         * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
+         {{#externalDocs}}
+             * {{description}}
+             * @see <a href="{{url}}">{{summary}} Documentation</a>
+         {{/externalDocs}}
+         {{#isDeprecated}}
+             * @deprecated
+         {{/isDeprecated}}
+         */
+        {{#isDeprecated}}
+            @Deprecated
+        {{/isDeprecated}}
+        {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
+        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#requiredParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}) throws OpenApiRequestException {
+        {{#hasOptionalParams}}
+            return {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#hasRequiredParams}}{{#requiredParams}}{{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}, {{/hasRequiredParams}}{{#optionalParams}}null{{^-last}}, {{/-last}}{{/optionalParams}});
+        {{/hasOptionalParams}}
+        {{^hasOptionalParams}}
+            {{>operationBody}}
+        {{/hasOptionalParams}}
+        }
+    {{/operation}}
+        }
+{{/operations}}

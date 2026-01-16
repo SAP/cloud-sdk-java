@@ -49,6 +49,7 @@ class GenerationConfigurationConverter
         "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. All rights reserved.";
     static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("mustache-templates").toString();
     static final String LIBRARY_NAME = JavaClientCodegen.RESTTEMPLATE;
+    static final String SUPPORT_URL_QUERY = "supportUrlQuery";
 
     @Nonnull
     static ClientOptInput convertGenerationConfiguration(
@@ -190,6 +191,10 @@ class GenerationConfigurationConverter
             }
             result.put(k, v);
         });
+
+        // Always disable supportUrlQuery as it's not compatible with interface generation
+        result.put(SUPPORT_URL_QUERY, "false");
+
         return result;
     }
 }

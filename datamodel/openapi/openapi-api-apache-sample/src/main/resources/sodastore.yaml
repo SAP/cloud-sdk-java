@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: SodaStore API
+  version: 1.0.0
+  description: API for managing soda products and orders in SodaStore.
+tags:
+  - name: Sodas
+    description: Everything about our Sodas
+  - name: user
+    description: Operations about user
+  - name: Orders
+    description: Access to Sodastore orders
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Soda:
+      type: object
+      required:
+        - name
+        - brand
+        - quantity
+        - price
+      properties:
+        name:
+          type: string
+          example: Cola
+        brand:
+          type: string
+          example: Coca-Cola
+        quantity:
+          type: integer
+          format: int32
+          example: 100
+        packaging:
+          type: string
+          enum:
+            - glass
+            - carton
+            - can
+          nullable: false
+        price:
+          type: number
+          format: float
+          example: 1.5
+    SodaWithId:
+      allOf:
+        - $ref: '#/components/schemas/Soda'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 123
+    Order:
+      type: object
+      additionalProperties: true
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+          format: int64
+          example: 1
+        quantity:
+          type: integer
+          format: int32
+          example: 2
+        totalPrice:
+          type: number
+          format: float
+          example: 3
+        typelessProperty:
+          description: >-
+            Some typeless property, interpreted by the generator as nullable by
+            default (because typeless)
+        nullableProperty:
+          type: string
+          description: Some typed property that is deliberately made nullable
+          nullable: true
+    OrderWithTimestamp:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+    OneOfWithDiscriminatorAndMapping:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+      discriminator:
+        propertyName: sodaType
+        mapping:
+          cool_cola: '#/components/schemas/Cola'
+          fancy_fanta: '#/components/schemas/Fanta'
+    OneOfWithDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+      discriminator:
+        propertyName: sodaType
+    OneOfWithEnumDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/Foo'
+        - $ref: '#/components/schemas/Bar'
+      discriminator:
+        propertyName: disc
+        mapping:
+          disc_foo: '#/components/schemas/Foo'
+          disc_bar: '#/components/schemas/Bar'
+    Foo:
+      type: object
+      properties:
+        foo:
+          type: string
+        disc:
+          type: string
+          enum:
+            - disc_foo
+    Bar:
+      type: object
+      properties:
+        bar:
+          type: string
+        disc:
+          type: string
+          enum:
+            - disc_bar
+    OneOf:
+      oneOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    AnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    AllOf:
+      allOf:
+        - $ref: '#/components/schemas/Cola'
+        - $ref: '#/components/schemas/Fanta'
+    Cola:
+      type: object
+      properties:
+        sodaType:
+          type: string
+        caffeine:
+          type: boolean
+        logo:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+        barCode:
+          oneOf:
+            - type: array
+              items:
+                type: number
+            - type: string
+    Fanta:
+      type: object
+      properties:
+        sodaType:
+          type: string
+        color:
+          type: string
+        flavor:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: array
+              items:
+                $ref: '#/components/schemas/FlavorType'
+            - $ref: '#/components/schemas/FlavorType'
+    FlavorType:
+      type: object
+      properties:
+        intensity:
+          type: integer
+          description: The intensity of the flavor
+        nuance:
+          type: string
+          description: The nuance of the flavor
+paths:
+  /sodas:
+    get:
+      summary: Get all soda products
+      tags:
+        - Sodas
+      security:
+        - apiKeyAuth: [ ]
+      responses:
+        '200':
+          description: A list of soda products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SodaWithId'
+    put:
+      summary: Update a specific soda product by ID
+      tags:
+        - Sodas
+      security:
+        - apiKeyAuth: [ ]
+      requestBody:
+        description: The updated soda product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SodaWithId'
+      responses:
+        '200':
+          description: The updated soda product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+        '204':
+          description: Nothing has changed
+        '404':
+          description: Soda product not found
+  /sodas/{id}:
+    get:
+      summary: Get a specific soda product by ID
+      tags:
+        - Sodas
+      security:
+        - apiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          description: ID of the soda product to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The soda product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SodaWithId'
+        '404':
+          description: Soda product not found
+  /sodas/download/{id}:
+    get:
+      summary: Download soda product data as binary
+      tags:
+        - Sodas
+      parameters:
+        - name: id
+          in: path
+          description: ID of the soda product to download
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Soda product not found
+  /orders:
+    post:
+      summary: Create a new order
+      tags:
+        - Orders
+      security:
+        - apiKeyAuth: [ ]
+      requestBody:
+        description: The order details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: The created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+security:
+  - apiKeyAuth: [ ]
+  - bearerAuth: [ ]
