@@ -1,5 +1,7 @@
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import javax.annotation.Nonnull;
+
 /**
  * Listener for receiving metadata about HTTP responses.
  *
@@ -14,5 +16,5 @@ public interface ResponseMetadataListener
      * @param response
      *            The response metadata.
      */
-    void onResponse( OpenApiResponse response );
+    void onResponse(@Nonnull final OpenApiResponse response );
 }
