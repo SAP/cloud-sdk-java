@@ -67,9 +67,9 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     @Nonnull
     private final TypeReference<T> returnType;
 
-    /** Optional listener for response metadata including status code and headers */
+    /** Optional listener for OpenAPI response including status code and headers */
     @Nullable
-    private final ResponseMetadataListener responseMetadataListener;
+    private final OpenApiResponseListener responseMetadataListener;
 
     @Nullable
     @Override

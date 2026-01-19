@@ -94,7 +94,7 @@ public class ApiClient
     private final String tempFolderPath;
 
     @With
-    private final ResponseMetadataListener responseMetadataListener;
+    private final OpenApiResponseListener responseMetadataListener;
 
     // Methods that can have a request body
     private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);

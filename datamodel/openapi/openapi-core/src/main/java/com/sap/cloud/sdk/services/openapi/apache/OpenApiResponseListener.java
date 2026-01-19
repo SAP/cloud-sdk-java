@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * @since 5.25.0
  */
 @FunctionalInterface
-public interface ResponseMetadataListener
+public interface OpenApiResponseListener
 {
     /**
      * Called when an HTTP response is received.
@@ -16,5 +16,5 @@ public interface ResponseMetadataListener
      * @param response
      *            The response metadata.
      */
-    void onResponse(@Nonnull final OpenApiResponse response );
+    void onResponse( @Nonnull final OpenApiResponse response );
 }
