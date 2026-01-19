@@ -94,7 +94,7 @@ public class ApiClient
     private final String tempFolderPath;
 
     @With
-    private final OpenApiResponseListener responseMetadataListener;
+    private final OpenApiResponseListener openApiResponseListener;
 
     // Methods that can have a request body
     private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
@@ -570,7 +570,7 @@ public class ApiClient
 
         try {
             final HttpClientResponseHandler<T> responseHandler =
-                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType, responseMetadataListener);
+                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType, openApiResponseListener);
             return httpClient.execute(builder.build(), context, responseHandler);
         }
         catch( IOException e ) {

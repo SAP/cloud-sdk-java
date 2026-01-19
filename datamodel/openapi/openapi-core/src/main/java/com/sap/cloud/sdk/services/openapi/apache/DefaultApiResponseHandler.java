@@ -69,7 +69,7 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
 
     /** Optional listener for OpenAPI response including status code and headers */
     @Nullable
-    private final OpenApiResponseListener responseMetadataListener;
+    private final OpenApiResponseListener openApiResponseListener;
 
     @Nullable
     @Override
@@ -107,8 +107,8 @@ class DefaultApiResponseHandler<T> implements HttpClientResponseHandler<T>
     {
         final int statusCode = response.getCode();
         final Map<String, List<String>> headers = transformResponseHeaders(response.getHeaders());
-        if( responseMetadataListener != null ) {
-            responseMetadataListener.onResponse(new OpenApiResponse(statusCode, headers));
+        if( openApiResponseListener != null ) {
+            openApiResponseListener.onResponse(new OpenApiResponse(statusCode, headers));
         }
 
         if( statusCode == HttpStatus.SC_NO_CONTENT ) {
