@@ -89,7 +89,7 @@
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.20.1</jackson.version>
-		<jackson.annotations.version>2.20</jackson.annotations.version>
+		<jackson.annotations.version>2.21</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20251224</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -124,7 +124,7 @@
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
-		<byte-buddy.version>1.18.3</byte-buddy.version>
+		<byte-buddy.version>1.18.4</byte-buddy.version>
 		<snakeyaml.version>2.5</snakeyaml.version>
 		<commons-codec.version>1.20.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
