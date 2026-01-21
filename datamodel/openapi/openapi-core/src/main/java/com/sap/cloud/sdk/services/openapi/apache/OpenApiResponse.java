@@ -6,11 +6,13 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Response object for Apache HTTP client OpenAPI calls containing status code and headers
  */
 @Getter
+@RequiredArgsConstructor
 public class OpenApiResponse
 {
 
@@ -18,13 +20,4 @@ public class OpenApiResponse
 
     @Nonnull
     private final Map<String, List<String>> headers;
-
-    /**
-     * Create a new OpenApiResponse with status code and headers.
-     */
-    OpenApiResponse( final int statusCode, @Nonnull final Map<String, List<String>> headers )
-    {
-        this.statusCode = statusCode;
-        this.headers = Map.copyOf(headers);
-    }
 }
