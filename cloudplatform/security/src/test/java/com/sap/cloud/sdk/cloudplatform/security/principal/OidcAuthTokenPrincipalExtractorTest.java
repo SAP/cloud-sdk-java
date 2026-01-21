@@ -56,6 +56,16 @@ class OidcAuthTokenPrincipalExtractorTest
         assertThat(principal.getPrincipalId()).isEqualTo("principal id");
     }
 
+    @Test
+    void testReadPrincipalFromEmailFallback()
+    {
+        mockAuthTokenFacade(JWT.create().withClaim("email", "fallback@example.com"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("fallback@example.com");
+    }
+
     private void mockAuthTokenFacadeWithMissingAuthToken()
     {
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(new AuthTokenAccessException("Auth token not mocked.")));

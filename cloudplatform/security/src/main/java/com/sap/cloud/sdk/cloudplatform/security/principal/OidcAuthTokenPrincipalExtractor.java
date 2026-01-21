@@ -16,6 +16,7 @@ import io.vavr.control.Try;
 class OidcAuthTokenPrincipalExtractor implements PrincipalExtractor
 {
     private static final String JWT_USER_UUID_CLAIM = "user_uuid";
+    private static final String JWT_EMAIL_CLAIM = "email";
 
     @Override
     @Nonnull
@@ -43,11 +44,16 @@ class OidcAuthTokenPrincipalExtractor implements PrincipalExtractor
         return Try.of(() -> {
             final Claim userUuidClaim = jwt.getClaim(JWT_USER_UUID_CLAIM);
 
-            if( userUuidClaim.isMissing() || userUuidClaim.isNull() ) {
-                throw new PrincipalAccessException("The current JWT does not contain the IAS user uuid.");
+            if( userUuidClaim != null && !userUuidClaim.isMissing() && !userUuidClaim.isNull() ) {
+                return userUuidClaim.asString();
             }
 
-            return userUuidClaim.asString();
+            final Claim emailClaim = jwt.getClaim(JWT_EMAIL_CLAIM);
+            if( emailClaim != null && !emailClaim.isMissing() && !emailClaim.isNull() ) {
+                return emailClaim.asString();
+            }
+
+            throw new PrincipalAccessException("The current JWT does not contain the IAS user uuid or an email.");
         });
     }
 }

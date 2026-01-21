@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>datamodel-parent</artifactId>
-		<version>5.25.0-SNAPSHOT</version>
+		<version>5.26.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-parent</artifactId>
 	<packaging>pom</packaging>
@@ -34,6 +34,7 @@
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
 		<module>openapi-api-sample</module>
+		<module>openapi-api-apache-sample</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/SAP/cloud-sdk-java.git</connection>
@@ -63,6 +64,7 @@
 			</activation>
 			<modules>
 				<module>openapi-api-sample</module>
+				<module>openapi-api-apache-sample</module>
 			</modules>
 		</profile>
 		<profile>
