@@ -47,7 +47,7 @@ class ApacheApiClientResponseHandlingTest
 
         final AtomicReference<OpenApiResponse> metadata = new AtomicReference<>();
         final ApiClient apiClient =
-            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withOpenApiResponseListener(metadata::set);
+            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withResponseListener(metadata::set);
 
         final TestApi api = new TestApi(apiClient);
         final TestResponse result = api.executeRequest();
@@ -75,7 +75,7 @@ class ApacheApiClientResponseHandlingTest
 
         final AtomicReference<OpenApiResponse> capturedResponse = new AtomicReference<>();
         final ApiClient apiClient =
-            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withOpenApiResponseListener(capturedResponse::set);
+            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withResponseListener(capturedResponse::set);
 
         final TestApi api = new TestApi(apiClient);
         api.executeRequest();

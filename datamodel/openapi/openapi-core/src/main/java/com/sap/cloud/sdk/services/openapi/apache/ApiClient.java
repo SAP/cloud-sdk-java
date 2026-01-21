@@ -93,7 +93,7 @@ public class ApiClient
     @Nullable
     private final String tempFolderPath;
 
-    @With
+    @Nullable
     private final OpenApiResponseListener openApiResponseListener;
 
     // Methods that can have a request body
@@ -137,6 +137,12 @@ public class ApiClient
     public static ApiClient create()
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
+    }
+
+    @Beta
+    public ApiClient withResponseListener( @Nonnull final OpenApiResponseListener listener )
+    {
+        return new ApiClient(this.httpClient, this.basePath, this.objectMapper, this.tempFolderPath, listener);
     }
 
     @Nonnull
