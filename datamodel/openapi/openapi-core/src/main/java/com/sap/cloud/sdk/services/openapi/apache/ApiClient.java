@@ -93,6 +93,7 @@ public class ApiClient
     @Nullable
     private final String tempFolderPath;
 
+    @With( onMethod_ = @Beta )
     @Nullable
     private final OpenApiResponseListener openApiResponseListener;
 
@@ -137,12 +138,6 @@ public class ApiClient
     public static ApiClient create()
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
-    }
-
-    @Beta
-    public ApiClient withResponseListener( @Nonnull final OpenApiResponseListener listener )
-    {
-        return new ApiClient(this.httpClient, this.basePath, this.objectMapper, this.tempFolderPath, listener);
     }
 
     @Nonnull
