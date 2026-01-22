@@ -17,6 +17,7 @@
 - `DestinationService.tryGetDestination` now checks if the given destination exists before trying to call it directly.
   This behaviour is enabled by default and can be disabled via `DestinationService.Cache.disablePreLookupCheck`.
 - Temporary: Use `email` as fallback principal id when `user_uuid` is missing. Will switch to using `sub` once IAS exposes `idtype` (tracked in [SCICAI-1323](https://jira.tools.sap/browse/SCICAI-1323)).
+- Cloud SDK OpenAPI Generator now supports `apache-httpclient` library marking Spring dependencies as optional.
 
 ### 📈 Improvements
 
