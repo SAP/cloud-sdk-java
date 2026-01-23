@@ -24,4 +24,4 @@
 
 ### 🐛 Fixed Issues
 
-- 
+- Fixed IAS OAuth2 token requests to use correct `refresh_expiry=0` parameter instead of `refresh_token=0` to disable refresh token issuance in certain cases.
