@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.openapi.apache;
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,9 @@ import org.apache.hc.core5.http.message.StatusLine;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponse;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponseListener;
 
 import lombok.RequiredArgsConstructor;
 
