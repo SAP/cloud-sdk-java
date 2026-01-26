@@ -101,7 +101,7 @@
 		<spring.version>6.2.15</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
 		<slf4j.version>2.0.17</slf4j.version>
-		<assertj-core.version>3.27.6</assertj-core.version>
+		<assertj-core.version>3.27.7</assertj-core.version>
 		<assertj-vavr.version>0.4.3</assertj-vavr.version>
 		<mockito.version>5.21.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
