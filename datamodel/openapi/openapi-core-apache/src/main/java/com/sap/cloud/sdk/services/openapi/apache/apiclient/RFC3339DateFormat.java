@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 /**
  * Date format according to the <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC3339</a>.
  */
-public class RFC3339DateFormat extends DateFormat
+class RFC3339DateFormat extends DateFormat
 {
     private static final long serialVersionUID = 1L;
     private static final TimeZone TIMEZONE_Z = TimeZone.getTimeZone("UTC");
@@ -26,7 +26,7 @@ public class RFC3339DateFormat extends DateFormat
     /**
      * Default constructor
      */
-    public RFC3339DateFormat()
+    RFC3339DateFormat()
     {
         calendar = new GregorianCalendar();
         numberFormat = new DecimalFormat();
