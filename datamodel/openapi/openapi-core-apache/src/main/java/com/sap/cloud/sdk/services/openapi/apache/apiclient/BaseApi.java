@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.openapi.apache;
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import javax.annotation.Nonnull;
 

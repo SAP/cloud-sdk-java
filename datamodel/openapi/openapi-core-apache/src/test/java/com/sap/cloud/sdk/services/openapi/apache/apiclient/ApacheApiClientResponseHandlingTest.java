@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.services.openapi.apiclient;
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -20,11 +20,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
-import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
-import com.sap.cloud.sdk.services.openapi.apache.OpenApiResponse;
-import com.sap.cloud.sdk.services.openapi.apache.Pair;
-import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponse;
 
 import lombok.Data;
 

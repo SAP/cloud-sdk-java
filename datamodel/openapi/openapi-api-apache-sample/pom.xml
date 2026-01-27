@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sap.cloud.sdk.datamodel</groupId>
-            <artifactId>openapi-core</artifactId>
+            <artifactId>openapi-core-apache</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sap.cloud.sdk.cloudplatform</groupId>

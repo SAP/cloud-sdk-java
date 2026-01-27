@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.services.openapi.genericreturntype;
+package com.sap.cloud.sdk.services.openapi.apache.genericreturntype;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
@@ -59,7 +59,7 @@ class GenericReturnTypeTest
     static Stream<Arguments> provideContext()
     {
         return Stream
-            .of(Arguments.of((Function<HttpDestination, Object>) ( des ) -> new TestSpringApi(des).testMethod()));
+            .of(Arguments.of((Function<HttpDestination, Object>) ( des ) -> new TestApacheApi(des).testMethod()));
     }
 
     @MethodSource( "provideContext" )

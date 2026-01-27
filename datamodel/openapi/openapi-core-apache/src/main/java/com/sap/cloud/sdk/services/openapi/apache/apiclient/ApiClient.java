@@ -10,9 +10,9 @@
  * Do not edit the class manually.
  */
 
-package com.sap.cloud.sdk.services.openapi.apache;
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
-import static com.sap.cloud.sdk.services.openapi.apache.DefaultApiResponseHandler.isJsonMime;
+import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.io.File;
@@ -60,8 +60,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.services.openapi.apiclient.RFC3339DateFormat;
-import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponseListener;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
