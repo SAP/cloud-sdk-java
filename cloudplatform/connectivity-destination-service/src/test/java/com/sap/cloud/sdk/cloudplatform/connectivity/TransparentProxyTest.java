@@ -2,20 +2,23 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
@@ -45,11 +48,10 @@ class TransparentProxyTest
     {
         TransparentProxy.uri = null;
         TransparentProxy.providerTenantId = null;
-        HttpClientAccessor.setHttpClientFactory(null);
+        ApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     private <T> T executeWithTenant( java.util.concurrent.Callable<T> callable )
-        throws Exception
     {
         Tenant tenant = new DefaultTenant("tenant-id", "");
         return TenantAccessor.executeWithTenant(tenant, callable);
@@ -64,9 +66,14 @@ class TransparentProxyTest
         // Test with localhost which should always be reachable
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("127.0.0.1", "tenant-id");
 
@@ -85,9 +92,14 @@ class TransparentProxyTest
         // Test that http:// is automatically added to host without scheme
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "tenant-id");
 
@@ -105,9 +117,14 @@ class TransparentProxyTest
         // Test that existing http:// scheme is preserved
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("http://gateway", "tenant-id");
 
@@ -125,9 +142,14 @@ class TransparentProxyTest
         // Test that existing https:// scheme is preserved
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("https://gateway", "tenant-id");
 
@@ -173,9 +195,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", 8080, "provider-tenant-123");
 
@@ -189,9 +216,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         // Register with provider tenant ID
         TransparentProxy.register("gateway", 8080, "provider-tenant-fallback");
@@ -223,9 +255,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         // Register with provider tenant ID
         TransparentProxy.register("gateway", 8080, "provider-tenant-fallback");
@@ -236,6 +273,7 @@ class TransparentProxyTest
         Try<Destination> result =
             TenantAccessor.executeWithTenant(contextTenant, () -> loader.tryGetDestination("test-destination"));
 
+        assertThat(result).isNotNull();
         assertThat(result.isSuccess()).isTrue();
 
         HttpDestination destination = result.get().asHttp();
@@ -253,9 +291,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "provider-tenant-456");
 
@@ -272,9 +315,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("https://gateway", 443, "provider-tenant-789");
 
@@ -291,9 +339,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         // Test with 3-parameter version
         TransparentProxy.register("localhost", 8080, "tenant-abc");
@@ -324,9 +377,14 @@ class TransparentProxyTest
         throws IOException
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "provider-tenant-1");
 
@@ -344,9 +402,14 @@ class TransparentProxyTest
         throws Exception
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "tenant-id");
 
@@ -364,9 +427,14 @@ class TransparentProxyTest
         throws Exception
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "tenant-id");
 
@@ -386,9 +454,14 @@ class TransparentProxyTest
         throws Exception
     {
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("https://gateway", "tenant-id");
 
@@ -434,9 +507,14 @@ class TransparentProxyTest
         // Test that first registration succeeds
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         TransparentProxy.register("gateway", "tenant-id");
 
@@ -462,9 +540,14 @@ class TransparentProxyTest
         // Test that TransparentProxyLoader properly implements DestinationLoader
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         assertThat(loader).isInstanceOf(DestinationLoader.class);
 
@@ -489,9 +572,14 @@ class TransparentProxyTest
         // Test various schemes to ensure they are preserved
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         String[] schemes = { "http://", "https://", "ftp://", "custom://" };
         String hostname = "gateway";
@@ -518,9 +606,14 @@ class TransparentProxyTest
         TransparentProxy.register("https://gateway:9443", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("test-destination"));
         assertThat(result.isSuccess()).isTrue();
@@ -547,9 +640,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", 8080, "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("test-destination"));
         assertThat(result.isSuccess()).isTrue();
@@ -565,9 +663,14 @@ class TransparentProxyTest
         TransparentProxy.register("https://gateway", 443, "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("test-destination"));
         assertThat(result.isSuccess()).isTrue();
@@ -634,13 +737,17 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response =
-            new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
         response.setHeader("x-error-internal-code", "404");
         response.setHeader("x-error-message", expectedErrorMessage);
 
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("non-existent-destination"));
 
@@ -656,13 +763,17 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response =
-            new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
         response.setHeader("x-error-internal-code", "404");
         response.setHeader("x-error-message", expectedErrorMessage);
 
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result =
             executeWithTenant(
@@ -680,10 +791,15 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
 
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("existing-destination"));
 
@@ -698,11 +814,15 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response =
-            new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
 
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("destination-with-502"));
 
@@ -717,12 +837,16 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response =
-            new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_BAD_GATEWAY, "Bad Gateway");
         response.setHeader("x-error-internal-code", "500");
 
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("destination-with-different-error"));
 
@@ -758,9 +882,14 @@ class TransparentProxyTest
 
             // Set up mock after registration
             final HttpClient mockHttpClient = mock(HttpClient.class);
-            final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-            when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-            HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+            final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+            when(
+                mockHttpClient
+                    .execute(
+                        any(ClassicHttpRequest.class),
+                        ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+                .thenReturn(response);
+            ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
             // Verify the registration worked
             Try<Destination> result = executeWithTenant(() -> loader.tryGetDestination("test-destination"));
@@ -775,9 +904,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -809,9 +943,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -854,9 +993,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -881,9 +1025,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -915,9 +1064,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -950,9 +1104,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -984,9 +1143,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1018,9 +1182,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1051,9 +1220,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1090,9 +1264,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1138,9 +1317,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1167,9 +1351,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1197,9 +1386,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions
@@ -1223,9 +1417,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway", "tenant-id");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         DestinationOptions options =
             DestinationOptions.builder().augmentBuilder(DestinationServiceOptionsAugmenter.augmenter()).build();
@@ -1243,9 +1442,14 @@ class TransparentProxyTest
         TransparentProxy.register("gateway");
 
         final HttpClient mockHttpClient = mock(HttpClient.class);
-        final BasicHttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-        when(mockHttpClient.execute(org.mockito.ArgumentMatchers.any(HttpHead.class))).thenReturn(response);
-        HttpClientAccessor.setHttpClientFactory(dest -> mockHttpClient);
+        final ClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
+        when(
+            mockHttpClient
+                .execute(
+                    any(ClassicHttpRequest.class),
+                    ArgumentMatchers.<HttpClientResponseHandler<ClassicHttpResponse>> any()))
+            .thenReturn(response);
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> mockHttpClient);
 
         com.sap.cloud.sdk.cloudplatform.tenant.exception.TenantAccessException exception =
             assertThrows(

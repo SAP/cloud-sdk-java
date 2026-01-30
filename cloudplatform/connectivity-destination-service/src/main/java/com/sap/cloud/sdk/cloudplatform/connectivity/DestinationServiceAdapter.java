@@ -166,7 +166,7 @@ class DestinationServiceAdapter
                 return maybeBody.get();
             }
 
-            final String requestUri = request.getRequestUri();
+            final String requestUri = request.getPath();
             if( statusCode == HttpStatus.SC_NOT_FOUND ) {
                 throw new DestinationNotFoundException(
                     null,
