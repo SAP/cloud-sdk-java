@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.services.openapi.genericreturntype;
+package com.sap.cloud.sdk.services.openapi.apache.genericreturntype;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,9 @@ import javax.annotation.Nonnull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
-import com.sap.cloud.sdk.services.openapi.apache.Pair;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.ApiClient;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.BaseApi;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.Pair;
 
 class TestApacheApi extends BaseApi
 {
@@ -36,14 +37,12 @@ class TestApacheApi extends BaseApi
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
-        final String localVarAccept =
-            com.sap.cloud.sdk.services.openapi.apache.ApiClient.selectHeaderAccept(localVarAccepts);
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
 
         final String[] localVarContentTypes = {
 
         };
-        final String localVarContentType =
-            com.sap.cloud.sdk.services.openapi.apache.ApiClient.selectHeaderContentType(localVarContentTypes);
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
         final TypeReference<Object> localVarReturnType = new TypeReference<Object>()
         {

@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.services.openapi.apiclient;
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -29,9 +29,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5FactoryBuilder.TlsUpgrade;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
-import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
-import com.sap.cloud.sdk.services.openapi.apache.Pair;
 
 import jdk.jfr.Description;
 
