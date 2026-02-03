@@ -8,7 +8,8 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- [Connectivity Destination Service] Migrated to Apache Httpclient 5.
+  - Extensions of `DestinationServiceAdapter` need to be updated to use the new Httpclient 5 APIs.
 
 ### ✨ New Functionality
 
