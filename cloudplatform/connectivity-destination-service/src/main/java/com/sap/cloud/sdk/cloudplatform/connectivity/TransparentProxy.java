@@ -293,7 +293,7 @@ public class TransparentProxy implements DestinationLoader
                 destinationName);
         final Supplier<ClassicHttpResponse> tpDestinationVerifierSupplier = prepareSupplier(httpClient, headRequest);
         try(
-            final ClassicHttpResponse response =
+            ClassicHttpResponse response =
                 ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration) ) {
             verifyTransparentProxyResponse(response, destinationName);
             EntityUtils.consume(response.getEntity());
