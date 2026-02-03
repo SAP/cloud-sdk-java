@@ -41,10 +41,10 @@
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 			<artifactId>cloudplatform-connectivity</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>com.sap.cloud.sdk.cloudplatform</groupId>
-      <artifactId>connectivity-apache-httpclient5</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+			<artifactId>connectivity-apache-httpclient5</artifactId>
+		</dependency>
 		<!-- Included by default to serve as the default implementation -->
 		<dependency>
 			<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
