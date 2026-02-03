@@ -292,27 +292,17 @@ public class TransparentProxy implements DestinationLoader
                 "Performing HEAD request to destination with name {} to verify the destination exists",
                 destinationName);
         final Supplier<ClassicHttpResponse> tpDestinationVerifierSupplier = prepareSupplier(httpClient, headRequest);
-        ClassicHttpResponse response = null;
-        try {
-            response = ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration);
+        try(
+            final ClassicHttpResponse response =
+                ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration) ) {
             verifyTransparentProxyResponse(response, destinationName);
+            EntityUtils.consume(response.getEntity());
         }
-        catch( final ResilienceRuntimeException e ) {
+        catch( final ResilienceRuntimeException | IOException e ) {
             if( hasCauseAssignableFrom(e, DestinationNotFoundException.class) ) {
                 throw new DestinationNotFoundException(e);
             }
             throw new DestinationAccessException(e);
-        }
-        finally {
-            if( response != null ) {
-                try {
-                    EntityUtils.consume(response.getEntity());
-                    response.close();
-                }
-                catch( IOException e ) {
-                    log.warn("Failed to close HTTP response", e);
-                }
-            }
         }
 
         return destination;
