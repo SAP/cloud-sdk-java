@@ -430,6 +430,17 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.datamodel",
+    "artifactId": "openapi-core-apache",
+    "packaging": "jar",
+    "releaseAudience": "Public",
+    "releaseMaturity": "Stable",
+    "pomFile": "datamodel/openapi/openapi-core-apache/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.datamodel",
+    "parentArtifactId": "openapi-parent",
+    "excludeFromBlackDuckScan": false
+  },
+  {
+    "groupId": "com.sap.cloud.sdk.datamodel",
     "artifactId": "openapi-generator",
     "packaging": "jar",
     "releaseAudience": "Public",

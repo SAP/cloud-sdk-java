@@ -1,4 +1,4 @@
-package com.sap.cloud.sdk.services.openapi.apache;
+package com.sap.cloud.sdk.services.openapi.apache.core;
 
 import javax.annotation.Nonnull;
 
