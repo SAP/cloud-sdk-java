@@ -307,6 +307,7 @@ public class TransparentProxy implements DestinationLoader
             if( response != null ) {
                 try {
                     EntityUtils.consume(response.getEntity());
+                    response.close();
                 }
                 catch( IOException e ) {
                     log.warn("Failed to close HTTP response", e);
