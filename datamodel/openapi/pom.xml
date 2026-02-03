@@ -31,6 +31,7 @@
 	</developers>
 	<modules>
 		<module>openapi-core</module>
+		<module>openapi-core-apache</module>
 		<module>openapi-generator</module>
 		<module>openapi-generator-maven-plugin</module>
 		<module>openapi-api-sample</module>

@@ -12,7 +12,7 @@
 
 ### ✨ New Functionality
 
-- 
+- [OpenAPI] Cloud SDK OpenAPI Generator now supports `apache-httpclient` library besides Spring RestTemplate through the newly introduced module `openapi-core-apache`.
 
 ### 📈 Improvements
 

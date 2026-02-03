@@ -17,10 +17,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.Soda;
 import com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.model.SodaWithId;
-import com.sap.cloud.sdk.services.openapi.apache.ApiClient;
-import com.sap.cloud.sdk.services.openapi.apache.BaseApi;
-import com.sap.cloud.sdk.services.openapi.apache.Pair;
-import com.sap.cloud.sdk.services.openapi.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.ApiClient;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.BaseApi;
+import com.sap.cloud.sdk.services.openapi.apache.apiclient.Pair;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
 
 /**
  * SodaStore API in version 1.0.0.
