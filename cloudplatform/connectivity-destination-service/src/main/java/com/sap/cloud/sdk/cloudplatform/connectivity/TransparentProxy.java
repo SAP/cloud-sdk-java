@@ -11,11 +11,13 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpHead;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpMessage;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
@@ -76,7 +78,7 @@ public class TransparentProxy implements DestinationLoader
     private static final String SET_COOKIE_HEADER = "Set-Cookie";
     private static final Integer DEFAULT_PORT = 80;
     private static final String SCHEME_SEPARATOR = "://";
-    private static final String HTTP_SCHEME = org.apache.http.HttpHost.DEFAULT_SCHEME_NAME + SCHEME_SEPARATOR;
+    private static final String HTTP_SCHEME = HttpHost.DEFAULT_SCHEME.getId() + SCHEME_SEPARATOR;
     private static final String PORT_SEPARATOR = ":";
     private static final String HOST_CONTAINS_PATH_ERROR_MESSAGE_TEMPLATE =
         "Host '%s' contains a path '%s'. Paths are not allowed in host registration.";
@@ -279,7 +281,7 @@ public class TransparentProxy implements DestinationLoader
     private static TransparentProxyDestination verifyDestination(
         @Nonnull final TransparentProxyDestination destination )
     {
-        final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
         final URI destinationUri = URI.create(uri);
         final HttpHead headRequest = new HttpHead(destinationUri);
         final String destinationName = getDestinationName(destination, destinationUri);
@@ -288,27 +290,17 @@ public class TransparentProxy implements DestinationLoader
             .debug(
                 "Performing HEAD request to destination with name {} to verify the destination exists",
                 destinationName);
-        final Supplier<HttpResponse> tpDestinationVerifierSupplier = prepareSupplier(httpClient, headRequest);
-        HttpResponse response = null;
-        try {
-            response = ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration);
+        final Supplier<ClassicHttpResponse> tpDestinationVerifierSupplier = prepareSupplier(httpClient, headRequest);
+        try(
+            ClassicHttpResponse response =
+                ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration) ) {
             verifyTransparentProxyResponse(response, destinationName);
         }
-        catch( final ResilienceRuntimeException e ) {
+        catch( final ResilienceRuntimeException | IOException e ) {
             if( hasCauseAssignableFrom(e, DestinationNotFoundException.class) ) {
                 throw new DestinationNotFoundException(e);
             }
             throw new DestinationAccessException(e);
-        }
-        finally {
-            if( response != null ) {
-                try {
-                    org.apache.http.util.EntityUtils.consume(response.getEntity());
-                }
-                catch( IOException e ) {
-                    log.warn("Failed to close HTTP response", e);
-                }
-            }
         }
 
         return destination;
@@ -340,7 +332,7 @@ public class TransparentProxy implements DestinationLoader
             throw new DestinationAccessException(FAILED_TO_VERIFY_DESTINATION + "Response is null.");
         }
         if( response.containsHeader(SET_COOKIE_HEADER) ) {
-            final org.apache.http.Header[] header = response.getHeaders(SET_COOKIE_HEADER);
+            final org.apache.hc.core5.http.Header[] header = response.getHeaders(SET_COOKIE_HEADER);
             final List<String> cookieNames = Arrays.stream(header).map(h -> h.getValue().split("=", 2)[0]).toList();
             log
                 .warn(
@@ -348,7 +340,7 @@ public class TransparentProxy implements DestinationLoader
                     cookieNames);
         }
 
-        final int statusCode = response.getStatusLine().getStatusCode();
+        final int statusCode = response.getCode();
         final String errorInternalCode = getHeaderValue(response, X_ERROR_INTERNAL_CODE_HEADER);
         final String errorMessage = getHeaderValue(response, X_ERROR_MESSAGE_HEADER);
         final String errorOrigin = getHeaderValue(response, X_ERROR_ORIGIN_HEADER);
@@ -378,11 +370,14 @@ public class TransparentProxy implements DestinationLoader
     }
 
     @Nonnull
-    private static Supplier<HttpResponse> prepareSupplier( final HttpClient httpClient, final HttpHead headRequest )
+    private static
+        Supplier<ClassicHttpResponse>
+        prepareSupplier( final HttpClient httpClient, final HttpHead headRequest )
     {
         return () -> {
             try {
-                return httpClient.execute(headRequest);
+                // migration from apache httpclient4 to httpclient5 by possibly adding a response handler to httpClient.execute(headRequest);
+                return httpClient.execute(headRequest, classicHttpResponse -> classicHttpResponse);
             }
             catch( final IOException e ) {
                 throw new DestinationAccessException(FAILED_TO_VERIFY_DESTINATION, e);

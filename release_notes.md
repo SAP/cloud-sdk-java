@@ -8,7 +8,8 @@
 
 ### 🔧 Compatibility Notes
 
-- 
+- [Connectivity Destination Service] Migrated to Apache Httpclient 5.
+  - The replacement for `HttpClientAccessor` is `ApacheHttpClient5Accessor`
 
 ### ✨ New Functionality
 

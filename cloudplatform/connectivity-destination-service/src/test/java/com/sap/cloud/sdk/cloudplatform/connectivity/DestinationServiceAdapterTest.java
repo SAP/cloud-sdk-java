@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -40,10 +40,13 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +55,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 import com.auth0.jwt.JWT;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.environment.servicebinding.api.DefaultServiceBinding;
@@ -59,6 +63,7 @@ import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccesso
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceBindingAccessor;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
+import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationServiceAdapter.DestinationHttpClientResponseHandler;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationNotFoundException;
 import com.sap.cloud.sdk.cloudplatform.exception.MultipleServiceBindingsException;
@@ -92,6 +97,9 @@ class DestinationServiceAdapterTest
     private static ServiceBinding DEFAULT_SERVICE_BINDING;
 
     private String xsuaaToken;
+
+    @RegisterExtension
+    static final WireMockExtension server = WireMockExtension.newInstance().build();
 
     @BeforeAll
     static void setupSession()
@@ -434,20 +442,33 @@ class DestinationServiceAdapterTest
     @Test
     void testErrorHandling()
     {
-        final var httpClient = mock(HttpClient.class);
-        final var destination = DefaultHttpDestination.builder("http://foo").build();
-        HttpClientAccessor.setHttpClientFactory(( dest ) -> dest == destination ? httpClient : null);
+        final HttpClient httpClient = mock(HttpClient.class);
+        final HttpDestination destination = DefaultHttpDestination.builder("http://foo").build();
+        ApacheHttpClient5Accessor.setHttpClientFactory(dest -> httpClient);
 
         final var destinations = Collections.singletonMap(OnBehalfOf.TECHNICAL_USER_PROVIDER, destination);
         final var SUT = new DestinationServiceAdapter(destinations::get, () -> null, null);
 
-        // setup 400 response
-        var stream400 = spy(new ByteArrayInputStream("bad, evil request".getBytes(StandardCharsets.UTF_8)));
-        var response400 = new BasicHttpResponse(HttpVersion.HTTP_1_1, 400, "Bad Request");
-        response400.setEntity(new InputStreamEntity(stream400));
-        doReturn(response400).when(httpClient).execute(any());
+        // prepare 400 response with a spied input stream so we can verify it is closed
+        final var stream400 = spy(new ByteArrayInputStream("bad, evil request".getBytes(StandardCharsets.UTF_8)));
+        final var response400 = new BasicClassicHttpResponse(HttpStatus.SC_BAD_REQUEST, "Bad Request");
+        response400.setEntity(new InputStreamEntity(stream400, -1, ContentType.TEXT_PLAIN));
 
-        // test
+        // prepare 404 response with a spied input stream
+        final var stream404 = spy(new ByteArrayInputStream("Nothing here.".getBytes(StandardCharsets.UTF_8)));
+        final var response404 = new BasicClassicHttpResponse(HttpStatus.SC_NOT_FOUND, "Not Found");
+        response404.setEntity(new InputStreamEntity(stream404, -1, ContentType.TEXT_PLAIN));
+
+        // make the mocked httpClient call the provided response handler with our prepared responses
+        doAnswer(invocation -> {
+            final HttpClientResponseHandler<?> handler = invocation.getArgument(1);
+            return handler.handleResponse(response400);
+        }).doAnswer(invocation -> {
+            final HttpClientResponseHandler<?> handler = invocation.getArgument(1);
+            return handler.handleResponse(response404);
+        }).when(httpClient).execute(any(ClassicHttpRequest.class), any(DestinationHttpClientResponseHandler.class));
+
+        // first invocation -> 400 -> DestinationAccessException
         assertThatThrownBy(
             () -> SUT.getConfigurationAsJson("/service-path", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER)))
             .isInstanceOf(DestinationAccessException.class)
@@ -456,13 +477,7 @@ class DestinationServiceAdapterTest
         // verify closed stream
         Mockito.verify(stream400, atLeastOnce()).close();
 
-        // setup 404 response
-        var stream404 = spy(new ByteArrayInputStream("Nothing here.".getBytes(StandardCharsets.UTF_8)));
-        var response404 = new BasicHttpResponse(HttpVersion.HTTP_1_1, 404, "Not Found");
-        response404.setEntity(new InputStreamEntity(stream404));
-        doReturn(response404).when(httpClient).execute(any());
-
-        // test
+        // second invocation -> 404 -> DestinationNotFoundException
         assertThatThrownBy(
             () -> SUT.getConfigurationAsJson("/service-path", withoutToken(OnBehalfOf.TECHNICAL_USER_PROVIDER)))
             .describedAs("A 404 should produce a DestinationNotFoundException")
@@ -472,7 +487,7 @@ class DestinationServiceAdapterTest
         // verify closed stream
         Mockito.verify(stream404, atLeastOnce()).close();
 
-        HttpClientAccessor.setHttpClientFactory(null);
+        ApacheHttpClient5Accessor.setHttpClientFactory(null);
     }
 
     private static DestinationServiceAdapter createSut( @Nonnull final ServiceBinding... serviceBindings )
