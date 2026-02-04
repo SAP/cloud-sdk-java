@@ -296,7 +296,6 @@ public class TransparentProxy implements DestinationLoader
             ClassicHttpResponse response =
                 ResilienceDecorator.executeSupplier(tpDestinationVerifierSupplier, resilienceConfiguration) ) {
             verifyTransparentProxyResponse(response, destinationName);
-            EntityUtils.consume(response.getEntity());
         }
         catch( final ResilienceRuntimeException | IOException e ) {
             if( hasCauseAssignableFrom(e, DestinationNotFoundException.class) ) {
