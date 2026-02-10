@@ -52,33 +52,33 @@ public class DefaultConnectionPoolSettings implements ConnectionPoolSettings
      */
     @Nonnull
     @Builder.Default
-    Duration connectTimeout = ConnectionPoolSettings.DEFAULT_TIMEOUT;
+    Duration connectTimeout = DEFAULT_TIMEOUT;
 
     /**
      * The default socket timeout value for I/O operations on connections.
      */
     @Nonnull
     @Builder.Default
-    Duration socketTimeout = ConnectionPoolSettings.DEFAULT_TIMEOUT;
+    Duration socketTimeout = DEFAULT_TIMEOUT;
 
     /**
      * The timeout when requesting a connection lease from the connection pool.
      */
     @Nonnull
     @Builder.Default
-    Duration connectionRequestTimeout = ConnectionPoolSettings.DEFAULT_TIMEOUT;
+    Duration connectionRequestTimeout = DEFAULT_TIMEOUT;
 
     /**
      * The maximum number of total connections in the pool.
      */
     @Builder.Default
-    int maxConnectionsTotal = ConnectionPoolSettings.DEFAULT_MAX_CONNECTIONS_TOTAL;
+    int maxConnectionsTotal = DEFAULT_MAX_CONNECTIONS_TOTAL;
 
     /**
      * The maximum number of connections per route (e.g., per remote host).
      */
     @Builder.Default
-    int maxConnectionsPerRoute = ConnectionPoolSettings.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+    int maxConnectionsPerRoute = DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
 
     /**
      * Creates a new {@link DefaultConnectionPoolSettings} with default values.

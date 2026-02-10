@@ -55,6 +55,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
     }
 
     @Nonnull
+    @SuppressWarnings( "PMD.CloseResource" ) // The HttpClient instance and the connection manager instance are not being closed here.
     private CloseableHttpClient buildHttpClient(
         @Nullable final HttpDestinationProperties destination,
         @Nonnull final RequestConfig requestConfig )
