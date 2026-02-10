@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import java.net.URI;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
@@ -29,9 +34,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testGlobalReturnsSameManagerForAllCalls()
+    void testCachedGlobalReturnsSameManagerForAllCalls()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.global();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().by(destination -> true);
 
         final HttpClientConnectionManager manager1 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
         final HttpClientConnectionManager manager2 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
@@ -46,9 +51,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testByDestinationNameCachesByName()
+    void testCachedByDestinationNameCachesByName()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.byDestinationName();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byDestinationName();
 
         final HttpDestinationProperties dest1 =
             DefaultHttpDestination.builder(URI.create("http://example1.com")).name("dest-a").build();
@@ -67,21 +72,21 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testByDestinationNameHandlesNullDestination()
+    void testCachedByDestinationNameHandlesNullDestination()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.byDestinationName();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byDestinationName();
 
         final HttpClientConnectionManager manager1 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
         final HttpClientConnectionManager manager2 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
 
         assertThat(manager1).isNotNull();
-        assertThat(manager1).isSameAs(manager2);
+        assertThat(manager1).isNotSameAs(manager2);
     }
 
     @Test
-    void testByDestinationNameHandlesUnnamedDestination()
+    void testCachedByDestinationNameHandlesUnnamedDestination()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.byDestinationName();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byDestinationName();
 
         final HttpDestinationProperties unnamedDest =
             DefaultHttpDestination.builder(URI.create("http://example.com")).build();
@@ -91,13 +96,13 @@ class ConnectionPoolManagerProvidersTest
 
         // Both should use the same "null key" bucket
         assertThat(manager1).isNotNull();
-        assertThat(manager1).isSameAs(manager2);
+        assertThat(manager1).isNotSameAs(manager2);
     }
 
     @Test
-    void testByTenantCachesByTenant()
+    void testCachedByTenantCachesByTenant()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.byTenant();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byCurrentTenant();
 
         final HttpClientConnectionManager managerTenant1 =
             TenantAccessor
@@ -123,28 +128,29 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testByTenantHandlesNoTenant()
+    void testCachedByTenantHandlesNoTenant()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.byTenant();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byCurrentTenant();
 
         // Without tenant context
         final HttpClientConnectionManager manager1 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
         final HttpClientConnectionManager manager2 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
 
         assertThat(manager1).isNotNull();
-        assertThat(manager1).isSameAs(manager2);
+        assertThat(manager1).isNotSameAs(manager2);
     }
 
     @Test
-    void testWithCacheKeyCustomExtractor()
+    void testCachedWithCacheKeyCustomExtractor()
     {
         // Custom extractor that uses the URI host as cache key
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.withCacheKey(dest -> {
-            if( dest == null ) {
-                return "no-destination";
-            }
-            return dest.getUri().getHost();
-        });
+        final ConnectionPoolManagerProvider provider =
+            ConnectionPoolManagerProviders.cached().by(dest -> {
+                if( dest == null ) {
+                    return "no-destination";
+                }
+                return dest.getUri().getHost();
+            });
 
         final HttpDestinationProperties dest1 =
             DefaultHttpDestination.builder(URI.create("http://host-a.com/path1")).build();
@@ -163,11 +169,72 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
+    void testCachedWithCustomConcurrentMap()
+    {
+        // Use a custom ConcurrentMap
+        final ConcurrentMap<Object, HttpClientConnectionManager> customCache = new ConcurrentHashMap<>();
+
+        final ConnectionPoolManagerProvider provider =
+            ConnectionPoolManagerProviders.cached(customCache::computeIfAbsent).byDestinationName();
+
+        final HttpDestinationProperties dest =
+            DefaultHttpDestination.builder(URI.create("http://example.com")).name("my-dest").build();
+
+        final HttpClientConnectionManager manager1 = provider.getConnectionManager(DEFAULT_SETTINGS, dest);
+        final HttpClientConnectionManager manager2 = provider.getConnectionManager(DEFAULT_SETTINGS, dest);
+
+        assertThat(manager1).isNotNull();
+        assertThat(manager1).isSameAs(manager2);
+
+        // Verify the cache was used
+        assertThat(customCache).hasSize(1);
+        assertThat(customCache).containsKey("my-dest");
+        assertThat(customCache.get("my-dest")).isSameAs(manager1);
+    }
+
+    @Test
+    void testCachedWithCustomCacheFunction()
+    {
+        // Simulate a Caffeine-like cache with a custom BiFunction
+        final ConcurrentMap<Object, HttpClientConnectionManager> backingMap = new ConcurrentHashMap<>();
+        final AtomicInteger loadCount = new AtomicInteger(0);
+
+        final BiFunction<Object, Function<Object, HttpClientConnectionManager>, HttpClientConnectionManager> cacheFunction =
+            ( key, loader ) -> {
+                return backingMap.computeIfAbsent(key, k -> {
+                    loadCount.incrementAndGet();
+                    return loader.apply(k);
+                });
+            };
+
+        final ConnectionPoolManagerProvider provider =
+            ConnectionPoolManagerProviders.cached(cacheFunction).by(destination -> true);
+
+        // First call should load
+        final HttpClientConnectionManager manager1 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
+        assertThat(loadCount.get()).isEqualTo(1);
+
+        // Second call should use cache
+        final HttpClientConnectionManager manager2 = provider.getConnectionManager(DEFAULT_SETTINGS, null);
+        assertThat(loadCount.get()).isEqualTo(1); // Still 1, no new load
+
+        assertThat(manager1).isSameAs(manager2);
+    }
+
+    @Test
     void testNullCacheKeyExtractorThrowsException()
     {
         assertThatNullPointerException()
-            .isThrownBy(() -> ConnectionPoolManagerProviders.withCacheKey(null))
+            .isThrownBy(() -> ConnectionPoolManagerProviders.cached().by(null))
             .withMessageContaining("Cache key extractor must not be null");
+    }
+
+    @Test
+    void testNullCacheFunctionThrowsException()
+    {
+        assertThatNullPointerException()
+            .isThrownBy(() -> ConnectionPoolManagerProviders.cached(null))
+            .withMessageContaining("Cache function must not be null");
     }
 
     @Test

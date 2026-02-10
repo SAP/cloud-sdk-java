@@ -2,9 +2,10 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -12,7 +13,8 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
-import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
@@ -25,11 +27,13 @@ import org.apache.hc.core5.util.Timeout;
 
 import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
+import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.util.StringUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,24 +49,33 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <pre>
  * {@code
- * // Cache connection managers by tenant
+ * // No caching (default behavior)
  * ApacheHttpClient5Factory factory =
  *     new ApacheHttpClient5FactoryBuilder()
- *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.byTenant())
+ *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.noCache())
  *         .build();
  *
- * // Use a single global connection manager
+ * // Cache connection managers by tenant using default ConcurrentHashMap
  * ApacheHttpClient5Factory factory =
  *     new ApacheHttpClient5FactoryBuilder()
- *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.global())
+ *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached().byTenant())
  *         .build();
  *
- * // Custom caching strategy
+ * // Cache with custom ConcurrentMap
+ * ConcurrentMap<Object, HttpClientConnectionManager> myCache = new ConcurrentHashMap<>();
  * ApacheHttpClient5Factory factory =
  *     new ApacheHttpClient5FactoryBuilder()
- *         .connectionPoolManagerProvider(
- *             ConnectionPoolManagerProviders
- *                 .withCacheKey(dest -> dest.get(DestinationProperty.NAME).getOrElse("default")))
+ *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached(myCache::computeIfAbsent).byTenant())
+ *         .build();
+ *
+ * // Cache with Caffeine cache (supports expiration, size limits, etc.)
+ * Cache<Object, HttpClientConnectionManager> caffeineCache = Caffeine.newBuilder()
+ *     .expireAfterAccess(Duration.ofMinutes(30))
+ *     .maximumSize(100)
+ *     .build();
+ * ApacheHttpClient5Factory factory =
+ *     new ApacheHttpClient5FactoryBuilder()
+ *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached(caffeineCache::get).byDestinationName())
  *         .build();
  * }
  * </pre>
@@ -77,11 +90,9 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
 public final class ConnectionPoolManagerProviders
 {
-    // Constant keys for cache entries
-    private static final String GLOBAL_KEY = "__GLOBAL__";
-    private static final String NULL_KEY = "__NULL__";
+    private static final Duration DEFAULT_CACHE_DURATION = DefaultApacheHttpClient5Cache.DEFAULT_DURATION;
 
-    /**
+  /**
      * Creates a provider that does not cache connection managers.
      * <p>
      * A new {@link HttpClientConnectionManager} is created for each call. This is the default behavior and provides
@@ -97,115 +108,175 @@ public final class ConnectionPoolManagerProviders
     }
 
     /**
-     * Creates a provider that caches connection managers by the current tenant.
+     * Creates a builder for cached connection pool manager providers using a default {@link ConcurrentHashMap} as the
+     * cache.
      * <p>
-     * Connection managers are shared among all destinations accessed within the same tenant context. This is useful
-     * when tenant isolation is required but destination-level isolation is not necessary.
-     * </p>
-     * <p>
-     * If no tenant is available in the current context, a shared "no-tenant" connection manager is used.
+     * The returned builder allows selecting a caching strategy (by tenant, by destination name, global, or custom).
      * </p>
      *
-     * @return A provider that caches connection managers by tenant.
-     * @see TenantAccessor#tryGetCurrentTenant()
+     * <h3>Example Usage</h3>
+     *
+     * <pre>
+     * {@code
+     * // Cache by tenant
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byTenant();
+     *
+     * // Cache by destination name
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byDestinationName();
+     *
+     * // Single global cache
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().global();
+     *
+     * // Custom cache key
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached()
+     *     .withCacheKey(dest -> dest.getUri().getHost());
+     * }
+     * </pre>
+     *
+     * @return A builder for configuring the caching strategy.
      */
     @Nonnull
-    public static ConnectionPoolManagerProvider byTenant()
+    public static CachedProviderBuilder cached()
     {
-        return withCacheKey(dest -> TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull());
+      final Cache<Object, HttpClientConnectionManager> cache = Caffeine.newBuilder().expireAfterAccess(DEFAULT_CACHE_DURATION).build();
+      return new CachedProviderBuilder(cache::get);
     }
 
     /**
-     * Creates a provider that caches connection managers by destination name.
+     * Creates a builder for cached connection pool manager providers using a custom cache function.
      * <p>
-     * Connection managers are shared among all requests to destinations with the same name. This is useful when
-     * different destinations may have different TLS or proxy configurations.
+     * The cache function must have the signature {@code (key, loader) -> value}, which is compatible with:
      * </p>
-     * <p>
-     * If the destination has no name or is {@code null}, a shared "unnamed" connection manager is used.
-     * </p>
+     * <ul>
+     * <li>{@link java.util.concurrent.ConcurrentMap#computeIfAbsent(Object, Function)} - e.g.,
+     * {@code myMap::computeIfAbsent}</li>
+     * <li>{@code com.github.benmanes.caffeine.cache.Cache#get(Object, Function)} - e.g.,
+     * {@code caffeineCache::get}</li>
+     * </ul>
      *
-     * @return A provider that caches connection managers by destination name.
+     * <h3>Example Usage</h3>
+     *
+     * <pre>
+     * {@code
+     * // Using a custom ConcurrentMap
+     * ConcurrentMap<Object, HttpClientConnectionManager> myCache = new ConcurrentHashMap<>();
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders
+     *     .cached(myCache::computeIfAbsent)
+     *     .byTenant();
+     *
+     * // Using Caffeine cache with expiration
+     * Cache<Object, HttpClientConnectionManager> caffeineCache = Caffeine.newBuilder()
+     *     .expireAfterAccess(Duration.ofMinutes(30))
+     *     .maximumSize(100)
+     *     .build();
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders
+     *     .cached(caffeineCache::get)
+     *     .byDestinationName();
+     * }
+     * </pre>
+     *
+     * @param cacheFunction
+     *            A function that takes a cache key and a loader function, and returns the cached or newly computed
+     *            value. The signature matches {@code ConcurrentMap::computeIfAbsent} and {@code Cache::get}.
+     * @return A builder for configuring the caching strategy.
      */
     @Nonnull
-    public static ConnectionPoolManagerProvider byDestinationName()
+    public static CachedProviderBuilder cached(
+        @Nonnull final BiFunction<Object, Function<Object, HttpClientConnectionManager>, HttpClientConnectionManager> cacheFunction )
     {
-        return withCacheKey(dest -> dest != null ? dest.get(DestinationProperty.NAME).getOrNull() : null);
+        Objects.requireNonNull(cacheFunction, "Cache function must not be null");
+        return new CachedProviderBuilder(cacheFunction);
     }
 
     /**
-     * Creates a provider that uses a single global connection manager for all destinations.
+     * Builder class for creating cached {@link ConnectionPoolManagerProvider} instances with various caching
+     * strategies.
      * <p>
-     * This provides the lowest memory consumption but no isolation between tenants or destinations. Use this only when
-     * all destinations have compatible TLS configurations and isolation is not required.
-     * </p>
-     * <p>
-     * <strong>Warning:</strong> This strategy does not support destination-specific TLS configurations. All
-     * destinations will use the default TLS settings.
+     * Use {@link ConnectionPoolManagerProviders#cached()} or
+     * {@link ConnectionPoolManagerProviders#cached(BiFunction)} to obtain an instance of this builder.
      * </p>
      *
-     * @return A provider that uses a single global connection manager.
+     * @since 5.XX.0
      */
-    @Nonnull
-    public static ConnectionPoolManagerProvider global()
+    @Beta
+    @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
+    public static final class CachedProviderBuilder
     {
-        return withCacheKey(dest -> GLOBAL_KEY);
-    }
+        @Nonnull
+        private final BiFunction<Object, Function<Object, HttpClientConnectionManager>, HttpClientConnectionManager> cacheFunction;
 
-    /**
-     * Creates a provider that caches connection managers using a custom cache key extractor.
-     * <p>
-     * The cache key extractor function is called for each request to determine which cached connection manager to use.
-     * Requests that produce equal cache keys (via {@link Object#equals(Object)}) will share the same connection
-     * manager.
-     * </p>
-     * <p>
-     * <strong>Note:</strong> The cache key extractor should return consistent keys for destinations that can safely
-     * share a connection manager. Consider TLS configuration, proxy settings, and isolation requirements when designing
-     * the key extraction logic.
-     * </p>
-     *
-     * @param cacheKeyExtractor
-     *            A function that extracts a cache key from the destination. The function receives {@code null} when
-     *            creating a generic (non-destination-specific) connection manager. The returned key may be {@code null}
-     *            to indicate a shared "null-key" bucket.
-     * @return A provider that caches connection managers using the custom key extractor.
-     */
-    @Nonnull
-    public static ConnectionPoolManagerProvider withCacheKey(
-        @Nonnull final Function<HttpDestinationProperties, Object> cacheKeyExtractor )
-    {
-        Objects.requireNonNull(cacheKeyExtractor, "Cache key extractor must not be null");
-        return new CachingProvider(cacheKeyExtractor);
-    }
-
-    /**
-     * Provider that caches connection managers using a custom key extractor.
-     */
-    private static final class CachingProvider implements ConnectionPoolManagerProvider
-    {
-        private final Function<HttpDestinationProperties, Object> cacheKeyExtractor;
-        private final ConcurrentMap<Object, HttpClientConnectionManager> cache = new ConcurrentHashMap<>();
-
-        CachingProvider( final Function<HttpDestinationProperties, Object> cacheKeyExtractor )
+        /**
+         * Creates a provider that caches connection managers by the current tenant.
+         * <p>
+         * Connection managers are shared among all destinations accessed within the same tenant context. This is useful
+         * when tenant isolation is required but destination-level isolation is not necessary.
+         * </p>
+         * <p>
+         * If no tenant is available in the current context, a new connection manager is used.
+         * </p>
+         *
+         * @return A provider that caches connection managers by tenant.
+         * @see TenantAccessor#tryGetCurrentTenant()
+         */
+        @Nonnull
+        public ConnectionPoolManagerProvider byCurrentTenant()
         {
-            this.cacheKeyExtractor = cacheKeyExtractor;
+            return by(dest -> TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull());
         }
 
+        /**
+         * Creates a provider that caches connection managers by destination name.
+         * <p>
+         * Connection managers are shared among all requests to destinations with the same name. This is useful when
+         * different destinations may have different TLS or proxy configurations.
+         * </p>
+         * <p>
+         * If the destination has no name or is {@code null}, a new connection manager is used.
+         * </p>
+         *
+         * @return A provider that caches connection managers by destination name.
+         */
         @Nonnull
-        @Override
-        public HttpClientConnectionManager getConnectionManager(
-            @Nonnull final ConnectionPoolSettings settings,
-            @Nullable final HttpDestinationProperties destination )
-            throws HttpClientInstantiationException
+        public ConnectionPoolManagerProvider byDestinationName()
         {
-            final Object rawKey = cacheKeyExtractor.apply(destination);
-            final Object cacheKey = rawKey != null ? rawKey : NULL_KEY;
+            return by(dest -> dest != null ? dest.get(DestinationProperty.NAME).getOrNull() : null);
+        }
 
-            return cache.computeIfAbsent(cacheKey, key -> {
-                log.debug("Creating new connection manager for cache key: {}", rawKey);
-                return createConnectionManager(settings, destination);
-            });
+        /**
+         * Creates a provider that caches connection managers using a custom cache key extractor.
+         * <p>
+         * The cache key extractor function is called for each request to determine which cached connection manager to
+         * use. Requests that produce equal cache keys (via {@link Object#equals(Object)}) will share the same
+         * connection manager.
+         * </p>
+         * <p>
+         * <strong>Note:</strong> The cache key extractor should return consistent keys for destinations that can safely
+         * share a connection manager. Consider TLS configuration, proxy settings, and isolation requirements when
+         * designing the key extraction logic.
+         * </p>
+         *
+         * @param cacheKeyExtractor
+         *            A function that extracts a cache key from the destination. The function receives {@code null} when
+         *            creating a generic (non-destination-specific) connection manager. The returned key may be
+         *            {@code null} to indicate a new uncached entry.
+         * @return A provider that caches connection managers using the custom key extractor.
+         */
+        @Nonnull
+        public ConnectionPoolManagerProvider by(
+            @Nonnull final Function<HttpDestinationProperties, Object> cacheKeyExtractor )
+        {
+            Objects.requireNonNull(cacheKeyExtractor, "Cache key extractor must not be null");
+            return ( settings, destination ) -> {
+                final Object rawKey = cacheKeyExtractor.apply(destination);
+                if(rawKey==null) {
+                  log.debug("Creating new connection manager due to missing cache key for destination: {}", destination);
+                  return createConnectionManager(settings, destination);
+                }
+                return cacheFunction.apply(rawKey, key -> {
+                    log.debug("Creating new connection manager for cache key: {}", rawKey);
+                    return createConnectionManager(settings, destination);
+                });
+            };
         }
     }
 
@@ -213,7 +284,7 @@ public final class ConnectionPoolManagerProviders
      * Creates a new connection manager with the given settings and destination-specific TLS configuration.
      */
     @Nonnull
-    private static HttpClientConnectionManager createConnectionManager(
+    static HttpClientConnectionManager createConnectionManager(
         @Nonnull final ConnectionPoolSettings settings,
         @Nullable final HttpDestinationProperties destination )
         throws HttpClientInstantiationException
