@@ -80,11 +80,11 @@ class DefaultApacheHttpClient5FactoryTest
         requestInterceptor = mock(HttpRequestInterceptor.class);
         doNothing().when(requestInterceptor).process(any(), any(), any());
 
+        final ConnectionPoolSettings settings = DefaultConnectionPoolSettings.ofDefaults();
         sut =
             new DefaultApacheHttpClient5Factory(
-                CLIENT_TIMEOUT,
-                MAX_CONNECTIONS,
-                MAX_CONNECTIONS_PER_ROUTE,
+                settings,
+                ConnectionPoolManagerProviders.noCache(),
                 requestInterceptor,
                 AUTOMATIC);
     }
@@ -95,19 +95,31 @@ class DefaultApacheHttpClient5FactoryTest
     {
         WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/timeout")).willReturn(ok().withFixedDelay(5_000)));
 
+        final Duration tooLittleTimeout = Duration.ofSeconds(3L);
+        final ConnectionPoolSettings settingsTooLittle =
+            DefaultConnectionPoolSettings
+                .ofDefaults()
+                .withConnectTimeout(tooLittleTimeout)
+                .withSocketTimeout(tooLittleTimeout)
+                .withConnectionRequestTimeout(tooLittleTimeout);
         final ApacheHttpClient5Factory factoryWithTooLittleTimeout =
             new DefaultApacheHttpClient5Factory(
-                Duration.ofSeconds(3L),
-                MAX_CONNECTIONS,
-                MAX_CONNECTIONS_PER_ROUTE,
+                settingsTooLittle,
+                ConnectionPoolManagerProviders.noCache(),
                 requestInterceptor,
                 AUTOMATIC);
 
+        final Duration enoughTimeout = Duration.ofSeconds(7L);
+        final ConnectionPoolSettings settingsEnough =
+            DefaultConnectionPoolSettings
+                .ofDefaults()
+                .withConnectTimeout(enoughTimeout)
+                .withSocketTimeout(enoughTimeout)
+                .withConnectionRequestTimeout(enoughTimeout);
         final ApacheHttpClient5Factory factoryWithEnoughTimeout =
             new DefaultApacheHttpClient5Factory(
-                Duration.ofSeconds(7L),
-                MAX_CONNECTIONS,
-                MAX_CONNECTIONS_PER_ROUTE,
+                settingsEnough,
+                ConnectionPoolManagerProviders.noCache(),
                 requestInterceptor,
                 AUTOMATIC);
 
@@ -132,11 +144,19 @@ class DefaultApacheHttpClient5FactoryTest
         WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-1")).willReturn(ok()));
         WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-2")).willReturn(ok()));
 
+        final Duration timeout = Duration.ofSeconds(3L); // this timeout is also used for the connection lease
+        final ConnectionPoolSettings settings =
+            DefaultConnectionPoolSettings
+                .builder()
+                .connectTimeout(timeout)
+                .socketTimeout(timeout)
+                .connectionRequestTimeout(timeout)
+                .maxConnectionsTotal(1)
+                .build();
         final ApacheHttpClient5Factory sut =
             new DefaultApacheHttpClient5Factory(
-                Duration.ofSeconds(3L), // this timeout is also used for the connection lease
-                1,
-                MAX_CONNECTIONS_PER_ROUTE,
+                settings,
+                ConnectionPoolManagerProviders.noCache(),
                 requestInterceptor,
                 AUTOMATIC);
 
@@ -155,11 +175,19 @@ class DefaultApacheHttpClient5FactoryTest
         WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
         SECOND_WIRE_MOCK_SERVER.stubFor(get(urlEqualTo("/max-connections-per-route")).willReturn(ok()));
 
+        final Duration timeout = Duration.ofSeconds(3L); // this timeout is also used for the connection lease
+        final ConnectionPoolSettings settings =
+            DefaultConnectionPoolSettings
+                .builder()
+                .connectTimeout(timeout)
+                .socketTimeout(timeout)
+                .connectionRequestTimeout(timeout)
+                .maxConnectionsPerRoute(1)
+                .build();
         final ApacheHttpClient5Factory sut =
             new DefaultApacheHttpClient5Factory(
-                Duration.ofSeconds(3L), // this timeout is also used for the connection lease
-                MAX_CONNECTIONS,
-                1,
+                settings,
+                ConnectionPoolManagerProviders.noCache(),
                 requestInterceptor,
                 AUTOMATIC);
 
