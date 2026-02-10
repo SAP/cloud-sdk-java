@@ -237,6 +237,19 @@ public final class ConnectionPoolManagerProviders
             return by(dest -> dest != null ? dest.get(DestinationProperty.NAME).getOrNull() : null);
         }
 
+        /**
+         * Creates a provider that reuses the connection managers for different tenants if the destination is
+         * tenant-independent.
+         * <p>
+         * The provider checks for the presence of {@link OnBehalfOf} indicators in the destination's custom header
+         * providers. If all indicators show that the destination is on behalf of a provider tenant, the same connection
+         * manager is reused across tenants. Otherwise, tenant information is included in the cache key to ensure
+         * isolation.
+         * </p>
+         *
+         * @return A provider that reuses the connection managers for different tenants if the destination is
+         *         tenant-independent.
+         */
         @Nonnull
         public ConnectionPoolManagerProvider byOnBehalfOf()
         {
