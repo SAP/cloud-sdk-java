@@ -14,6 +14,16 @@
 ### ✨ New Functionality
 
 - [OpenAPI] Cloud SDK OpenAPI Generator now supports `apache-httpclient` library besides Spring RestTemplate through the newly introduced module `openapi-core-apache`.
+- [Connectivity HttpClient5] _(Experimental)_ Added opt-in API for caching HTTP connection pool managers to reduce memory consumption. 
+  Connection pool managers can consume ~100KB each, and this feature allows sharing them based on configurable caching strategies:
+  ```java
+  ApacheHttpClient5Factory factory = new ApacheHttpClient5FactoryBuilder()
+    .connectionPoolManagerProvider(ConnectionPoolManagerProviders.noCache()) // new API (default behavior)
+    .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf()) // new API
+    .build();
+  ```
+  Available caching strategies include `byCurrentTenant()`, `byDestinationName()`, `byIndicatedBehalfOf()`, and custom key extractors via `by(Function)`.
+  The `byIndicatedBehalfOf()` strategy intelligently determines tenant isolation requirements based on the destination's `OnBehalfOf` indication.
 
 ### 📈 Improvements
 

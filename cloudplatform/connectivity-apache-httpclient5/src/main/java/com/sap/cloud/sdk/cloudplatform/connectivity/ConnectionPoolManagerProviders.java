@@ -37,9 +37,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
-
 /**
  * Factory class providing pre-built {@link ConnectionPoolManagerProvider} implementations with various caching
  * strategies.
@@ -101,7 +98,7 @@ public final class ConnectionPoolManagerProviders
      * maximum isolation but highest memory consumption.
      * </p>
      *
-     * @return A provider that creates a new connection manager for each request.
+     * @return A provider that creates a new connection manager for each http-client.
      */
     @Nonnull
     public static ConnectionPoolManagerProvider noCache()
@@ -225,8 +222,8 @@ public final class ConnectionPoolManagerProviders
         /**
          * Creates a provider that caches connection managers by destination name.
          * <p>
-         * Connection managers are shared among all requests to destinations with the same name. This is useful when
-         * different destinations may have different TLS or proxy configurations.
+         * Connection managers are shared among all HttpClients and their requests to destinations with the same name.
+         * This is useful when different destinations may have different TLS or proxy configurations.
          * </p>
          * <p>
          * If the destination has no name or is {@code null}, a new connection manager is used.
@@ -244,32 +241,41 @@ public final class ConnectionPoolManagerProviders
         public ConnectionPoolManagerProvider byIndicatedBehalfOf()
         {
             return by(destination -> {
+                // Check if the destination has any OnBehalfOf indicators in its custom header providers
                 if( !(destination instanceof final DefaultHttpDestination dest) ) {
                     return null;
                 }
-                final boolean indicatesCurrentTenant =
-                    dest
-                        .getCustomHeaderProviders()
+                final List<DestinationHeaderProvider> headerProviders = dest.getCustomHeaderProviders();
+                final List<OnBehalfOf> behalfOfIndicators =
+                    headerProviders
                         .stream()
                         .filter(IsOnBehalfOf.class::isInstance)
                         .map(d -> ((IsOnBehalfOf) d).getOnBehalfOf())
-                        .anyMatch(b -> b == NAMED_USER_CURRENT_TENANT || b == TECHNICAL_USER_CURRENT_TENANT);
+                        .filter(Objects::nonNull)
+                        .toList();
 
-                // If the destination indicates that it is on behalf of the current tenant, include the tenant ID in the cache key to ensure proper isolation.
-                if( indicatesCurrentTenant ) {
-                    return List.of(TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull(), dest);
+                // If no OnBehalfOf indicators are present, return null to avoid caching
+                if( behalfOfIndicators.isEmpty() && !headerProviders.isEmpty() ) {
+                    return null;
                 }
 
-                // Otherwise, return a cache key that does not include tenant information, allowing sharing across tenants if other properties match.
-                return dest;
+                final boolean indicatesProviderTenant =
+                    behalfOfIndicators.stream().allMatch(b -> b == OnBehalfOf.TECHNICAL_USER_PROVIDER);
+
+                // If the destination indicates that it is on behalf of a provider tenant, return a cache key that does not include tenant information, allowing sharing across tenants if other properties match.
+                if( indicatesProviderTenant ) {
+                    return dest;
+                }
+                // For other cases, include tenant information in the cache key to ensure proper isolation
+                return List.of(TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull(), dest);
             });
         }
 
         /**
          * Creates a provider that caches connection managers using a custom cache key extractor.
          * <p>
-         * The cache key extractor function is called for each request to determine which cached connection manager to
-         * use. Requests that produce equal cache keys (via {@link Object#equals(Object)}) will share the same
+         * The cache key extractor function is called for each HttpClient to determine which cached connection manager
+         * to use. Calls that produce equal cache keys (via {@link Object#equals(Object)}) will share the same
          * connection manager.
          * </p>
          * <p>
@@ -292,14 +298,11 @@ public final class ConnectionPoolManagerProviders
             return ( settings, destination ) -> {
                 final Object rawKey = cacheKeyExtractor.apply(destination);
                 if( rawKey == null ) {
-                    log
-                        .debug(
-                            "Creating new connection manager due to missing cache key for destination: {}",
-                            destination);
+                    log.debug("Creating new uncached connection manager for destination: {}", destination);
                     return createConnectionManager(settings, destination);
                 }
                 return cacheFunction.apply(rawKey, key -> {
-                    log.debug("Creating new connection manager for cache key: {}", rawKey);
+                    log.debug("Creating new cached connection manager for key: {}", rawKey);
                     return createConnectionManager(settings, destination);
                 });
             };
