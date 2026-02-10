@@ -19,7 +19,7 @@ import com.google.common.annotations.Beta;
  *
  * @see ConnectionPoolManagerProviders
  * @see DefaultConnectionPoolSettings
- * @since 5.XX.0
+ * @since 5.27.0
  */
 @Beta
 public interface ConnectionPoolSettings

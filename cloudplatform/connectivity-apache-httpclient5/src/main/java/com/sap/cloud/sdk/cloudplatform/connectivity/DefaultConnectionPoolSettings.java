@@ -25,11 +25,13 @@ import lombok.With;
  * ConnectionPoolSettings settings = DefaultConnectionPoolSettings.ofDefaults();
  *
  * // Using builder
- * ConnectionPoolSettings settings = DefaultConnectionPoolSettings.builder()
- *     .connectTimeout(Duration.ofSeconds(30))
- *     .socketTimeout(Duration.ofMinutes(1))
- *     .maxConnectionsTotal(500)
- *     .build();
+ * ConnectionPoolSettings settings =
+ *     DefaultConnectionPoolSettings
+ *         .builder()
+ *         .connectTimeout(Duration.ofSeconds(30))
+ *         .socketTimeout(Duration.ofMinutes(1))
+ *         .maxConnectionsTotal(500)
+ *         .build();
  *
  * // Using with() for copy-with-modification
  * DefaultConnectionPoolSettings modified = settings.withMaxConnectionsTotal(1000);
@@ -37,7 +39,7 @@ import lombok.With;
  * </pre>
  *
  * @see ConnectionPoolSettings
- * @since 5.XX.0
+ * @since 5.27.0
  */
 @Beta
 @Value

@@ -44,7 +44,7 @@ public class ApacheHttpClient5FactoryBuilder
      *
      * @see DefaultConnectionPoolSettings#ofDefaults()
      * @see DefaultConnectionPoolSettings#builder()
-     * @since 5.XX.0
+     * @since 5.27.0
      */
     @Setter( onMethod_ = @Beta )
     @Nonnull
@@ -82,7 +82,7 @@ public class ApacheHttpClient5FactoryBuilder
      *
      * @see ConnectionPoolManagerProvider
      * @see ConnectionPoolManagerProviders
-     * @since 5.XX.0
+     * @since 5.27.0
      */
     @Setter( onMethod_ = @Beta )
     @Nonnull

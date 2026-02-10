@@ -11,14 +11,23 @@ import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor
-class OAuth2HeaderProvider implements DestinationHeaderProvider
+class OAuth2HeaderProvider implements DestinationHeaderProvider, IsOnBehalfOf
 {
     @Nonnull
     private final OAuth2Service oauth2service;
+
     @Nonnull
     private final String authHeaderName;
+
+    @Nullable
+    @Override
+    public OnBehalfOf getOnBehalfOf()
+    {
+        return oauth2service.getOnBehalfOf();
+    }
 
     @Nonnull
     @Override

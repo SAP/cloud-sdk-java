@@ -36,7 +36,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstanti
  *
  * @see ConnectionPoolManagerProviders
  * @see ApacheHttpClient5FactoryBuilder#connectionPoolManagerProvider(ConnectionPoolManagerProvider)
- * @since 5.XX.0
+ * @since 5.27.0
  */
 @Beta
 @FunctionalInterface

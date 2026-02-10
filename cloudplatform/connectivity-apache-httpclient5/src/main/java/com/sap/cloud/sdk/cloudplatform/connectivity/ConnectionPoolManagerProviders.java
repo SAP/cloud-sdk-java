@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -35,6 +36,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.NAMED_USER_CURRENT_TENANT;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.OnBehalfOf.TECHNICAL_USER_CURRENT_TENANT;
 
 /**
  * Factory class providing pre-built {@link ConnectionPoolManagerProvider} implementations with various caching
@@ -69,10 +73,8 @@ import lombok.extern.slf4j.Slf4j;
  *         .build();
  *
  * // Cache with Caffeine cache (supports expiration, size limits, etc.)
- * Cache<Object, HttpClientConnectionManager> caffeineCache = Caffeine.newBuilder()
- *     .expireAfterAccess(Duration.ofMinutes(30))
- *     .maximumSize(100)
- *     .build();
+ * Cache<Object, HttpClientConnectionManager> caffeineCache =
+ *     Caffeine.newBuilder().expireAfterAccess(Duration.ofMinutes(30)).maximumSize(100).build();
  * ApacheHttpClient5Factory factory =
  *     new ApacheHttpClient5FactoryBuilder()
  *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached(caffeineCache::get).byDestinationName())
@@ -83,7 +85,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see ConnectionPoolManagerProvider
  * @see ConnectionPoolSettings
  * @see ApacheHttpClient5FactoryBuilder#connectionPoolManagerProvider(ConnectionPoolManagerProvider)
- * @since 5.XX.0
+ * @since 5.27.0
  */
 @Beta
 @Slf4j
@@ -92,7 +94,7 @@ public final class ConnectionPoolManagerProviders
 {
     private static final Duration DEFAULT_CACHE_DURATION = DefaultApacheHttpClient5Cache.DEFAULT_DURATION;
 
-  /**
+    /**
      * Creates a provider that does not cache connection managers.
      * <p>
      * A new {@link HttpClientConnectionManager} is created for each call. This is the default behavior and provides
@@ -128,8 +130,8 @@ public final class ConnectionPoolManagerProviders
      * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().global();
      *
      * // Custom cache key
-     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached()
-     *     .withCacheKey(dest -> dest.getUri().getHost());
+     * ConnectionPoolManagerProvider provider =
+     *     ConnectionPoolManagerProviders.cached().withCacheKey(dest -> dest.getUri().getHost());
      * }
      * </pre>
      *
@@ -138,8 +140,9 @@ public final class ConnectionPoolManagerProviders
     @Nonnull
     public static CachedProviderBuilder cached()
     {
-      final Cache<Object, HttpClientConnectionManager> cache = Caffeine.newBuilder().expireAfterAccess(DEFAULT_CACHE_DURATION).build();
-      return new CachedProviderBuilder(cache::get);
+        final Cache<Object, HttpClientConnectionManager> cache =
+            Caffeine.newBuilder().expireAfterAccess(DEFAULT_CACHE_DURATION).build();
+        return new CachedProviderBuilder(cache::get);
     }
 
     /**
@@ -160,18 +163,13 @@ public final class ConnectionPoolManagerProviders
      * {@code
      * // Using a custom ConcurrentMap
      * ConcurrentMap<Object, HttpClientConnectionManager> myCache = new ConcurrentHashMap<>();
-     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders
-     *     .cached(myCache::computeIfAbsent)
-     *     .byTenant();
+     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached(myCache::computeIfAbsent).byTenant();
      *
      * // Using Caffeine cache with expiration
-     * Cache<Object, HttpClientConnectionManager> caffeineCache = Caffeine.newBuilder()
-     *     .expireAfterAccess(Duration.ofMinutes(30))
-     *     .maximumSize(100)
-     *     .build();
-     * ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders
-     *     .cached(caffeineCache::get)
-     *     .byDestinationName();
+     * Cache<Object, HttpClientConnectionManager> caffeineCache =
+     *     Caffeine.newBuilder().expireAfterAccess(Duration.ofMinutes(30)).maximumSize(100).build();
+     * ConnectionPoolManagerProvider provider =
+     *     ConnectionPoolManagerProviders.cached(caffeineCache::get).byDestinationName();
      * }
      * </pre>
      *
@@ -192,11 +190,11 @@ public final class ConnectionPoolManagerProviders
      * Builder class for creating cached {@link ConnectionPoolManagerProvider} instances with various caching
      * strategies.
      * <p>
-     * Use {@link ConnectionPoolManagerProviders#cached()} or
-     * {@link ConnectionPoolManagerProviders#cached(BiFunction)} to obtain an instance of this builder.
+     * Use {@link ConnectionPoolManagerProviders#cached()} or {@link ConnectionPoolManagerProviders#cached(BiFunction)}
+     * to obtain an instance of this builder.
      * </p>
      *
-     * @since 5.XX.0
+     * @since 5.27.0
      */
     @Beta
     @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
@@ -242,6 +240,31 @@ public final class ConnectionPoolManagerProviders
             return by(dest -> dest != null ? dest.get(DestinationProperty.NAME).getOrNull() : null);
         }
 
+        @Nonnull
+        public ConnectionPoolManagerProvider byIndicatedBehalfOf()
+        {
+            return by(destination -> {
+                if( !(destination instanceof final DefaultHttpDestination dest) ) {
+                    return null;
+                }
+                final boolean indicatesCurrentTenant =
+                    dest
+                        .getCustomHeaderProviders()
+                        .stream()
+                        .filter(IsOnBehalfOf.class::isInstance)
+                        .map(d -> ((IsOnBehalfOf) d).getOnBehalfOf())
+                        .anyMatch(b -> b == NAMED_USER_CURRENT_TENANT || b == TECHNICAL_USER_CURRENT_TENANT);
+
+                // If the destination indicates that it is on behalf of the current tenant, include the tenant ID in the cache key to ensure proper isolation.
+                if( indicatesCurrentTenant ) {
+                    return List.of(TenantAccessor.tryGetCurrentTenant().map(Tenant::getTenantId).getOrNull(), dest);
+                }
+
+                // Otherwise, return a cache key that does not include tenant information, allowing sharing across tenants if other properties match.
+                return dest;
+            });
+        }
+
         /**
          * Creates a provider that caches connection managers using a custom cache key extractor.
          * <p>
@@ -268,9 +291,12 @@ public final class ConnectionPoolManagerProviders
             Objects.requireNonNull(cacheKeyExtractor, "Cache key extractor must not be null");
             return ( settings, destination ) -> {
                 final Object rawKey = cacheKeyExtractor.apply(destination);
-                if(rawKey==null) {
-                  log.debug("Creating new connection manager due to missing cache key for destination: {}", destination);
-                  return createConnectionManager(settings, destination);
+                if( rawKey == null ) {
+                    log
+                        .debug(
+                            "Creating new connection manager due to missing cache key for destination: {}",
+                            destination);
+                    return createConnectionManager(settings, destination);
                 }
                 return cacheFunction.apply(rawKey, key -> {
                     log.debug("Creating new connection manager for cache key: {}", rawKey);
