@@ -249,9 +249,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testCachedByIndicatedBehalfOfWithCurrentTenantHeaderProvider()
+    void testCachedByOnBehalfOfWithCurrentTenantHeaderProvider()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byOnBehalfOf();
 
         // Create a header provider that indicates NAMED_USER_CURRENT_TENANT
         final DestinationHeaderProvider namedUserProvider =
@@ -286,9 +286,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testCachedByIndicatedBehalfOfWithTechnicalUserCurrentTenant()
+    void testCachedByOnBehalfOfWithTechnicalUserCurrentTenant()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byOnBehalfOf();
 
         final DefaultHttpDestination dest =
             DefaultHttpDestination
@@ -311,9 +311,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testCachedByIndicatedBehalfOfWithProviderUserSharesAcrossTenants()
+    void testCachedByOnBehalfOfWithProviderUserSharesAcrossTenants()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byOnBehalfOf();
 
         // Create a header provider that indicates TECHNICAL_USER_PROVIDER (not current tenant)
         final DefaultHttpDestination dest =
@@ -336,9 +336,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testCachedByIndicatedBehalfOfWithNoHeaderProvider()
+    void testCachedByOnBehalfOfWithNoHeaderProvider()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byOnBehalfOf();
 
         // Destination without any header provider
         final DefaultHttpDestination dest = DefaultHttpDestination.builder("http://example.com").build();
@@ -357,9 +357,9 @@ class ConnectionPoolManagerProvidersTest
     }
 
     @Test
-    void testCachedByIndicatedBehalfOfWithNonDefaultHttpDestination()
+    void testCachedByOnBehalfOfWithNonDefaultHttpDestination()
     {
-        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf();
+        final ConnectionPoolManagerProvider provider = ConnectionPoolManagerProviders.cached().byOnBehalfOf();
 
         // Non-DefaultHttpDestination should return null key and create new manager each time
         final HttpDestinationProperties nonDefaultDest = DefaultHttpDestination.builder("http://example.com").build();

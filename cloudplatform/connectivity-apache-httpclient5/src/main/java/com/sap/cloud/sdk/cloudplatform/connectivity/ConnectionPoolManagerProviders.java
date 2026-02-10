@@ -238,7 +238,7 @@ public final class ConnectionPoolManagerProviders
         }
 
         @Nonnull
-        public ConnectionPoolManagerProvider byIndicatedBehalfOf()
+        public ConnectionPoolManagerProvider byOnBehalfOf()
         {
             return by(destination -> {
                 // Check if the destination has any OnBehalfOf indicators in its custom header providers

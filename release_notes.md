@@ -19,11 +19,11 @@
   ```java
   ApacheHttpClient5Factory factory = new ApacheHttpClient5FactoryBuilder()
     .connectionPoolManagerProvider(ConnectionPoolManagerProviders.noCache()) // new API (default behavior)
-    .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached().byIndicatedBehalfOf()) // new API
+    .connectionPoolManagerProvider(ConnectionPoolManagerProviders.cached().byOnBehalfOf()) // new API
     .build();
   ```
-  Available caching strategies include `byCurrentTenant()`, `byDestinationName()`, `byIndicatedBehalfOf()`, and custom key extractors via `by(Function)`.
-  The `byIndicatedBehalfOf()` strategy intelligently determines tenant isolation requirements based on the destination's `OnBehalfOf` indication.
+  Available caching strategies include `byCurrentTenant()`, `byDestinationName()`, `byOnBehalfOf()`, and custom key extractors via `by(Function)`.
+  The `byOnBehalfOf()` strategy intelligently determines tenant isolation requirements based on the destination's `OnBehalfOf` indication.
 
 ### 📈 Improvements
 
