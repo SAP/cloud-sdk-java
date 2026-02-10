@@ -5,13 +5,13 @@ import static java.util.Collections.singletonList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
 import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor
 class OAuth2HeaderProvider implements DestinationHeaderProvider, IsOnBehalfOf

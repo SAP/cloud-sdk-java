@@ -3,13 +3,13 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.time.Duration;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.common.annotations.Beta;
+
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.

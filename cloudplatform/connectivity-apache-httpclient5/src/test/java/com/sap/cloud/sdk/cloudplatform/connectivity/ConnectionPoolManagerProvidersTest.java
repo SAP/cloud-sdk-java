@@ -3,23 +3,24 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import javax.annotation.Nonnull;
+
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 class ConnectionPoolManagerProvidersTest
 {
