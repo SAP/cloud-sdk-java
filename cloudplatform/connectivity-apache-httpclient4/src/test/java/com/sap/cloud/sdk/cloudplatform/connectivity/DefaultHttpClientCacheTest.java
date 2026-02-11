@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import lombok.SneakyThrows;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -355,6 +357,37 @@ class DefaultHttpClientCacheTest
         assertThat(unclearedClientWithDestination)
             .isSameAs(sut.tryGetHttpClient(USER_TOKEN_EXCHANGE_DESTINATION, FACTORY).get());
         assertThat(unclearedClientWithoutDestination).isSameAs(sut.tryGetHttpClient(FACTORY).get());
+    }
+
+    @SneakyThrows
+    @Test
+    void testHttpClientWrapperWithDestinationIsCalledWhenDestinationIsProvided()
+    {
+        final DefaultHttpDestination destination1 = DefaultHttpDestination.builder("http://foo.com").build();
+        final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(((HttpClientWrapper) client1).getDestination()).isSameAs(destination1);
+
+        final DefaultHttpDestination destination2 = DefaultHttpDestination.builder("http://foo.com").build();
+        final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
+        assertThat(((HttpClientWrapper) client2).getDestination()).isSameAs(destination2);
+
+        // Verify the destinations are equal but not the same reference
+        assertThat(destination1).isEqualTo(destination2);
+        assertThat(destination1).isNotSameAs(destination2);
+
+        // Http clients are distinct instances, since the cache key contains the destination reference and not its content
+        assertThat(client1).isNotSameAs(client2);
+
+        // When using the exact same destination object, the same http-client wrapper should be returned
+        final HttpClient client1Again = sut.tryGetHttpClient(destination1, FACTORY).get();
+        assertThat(client1Again).isSameAs(client1);
+        assertThat(((HttpClientWrapper) client1Again).getDestination()).isSameAs(destination1);
+
+        // simulate garbage collection
+        ((HttpClientWrapper) client1).close();
+
+        // since client1 inherited client2 connection manager, client2 is shut down as well
+        assertThatCode(() -> client2.execute(new HttpGet())).hasMessage("Connection pool shut down");
     }
 
     @Test
