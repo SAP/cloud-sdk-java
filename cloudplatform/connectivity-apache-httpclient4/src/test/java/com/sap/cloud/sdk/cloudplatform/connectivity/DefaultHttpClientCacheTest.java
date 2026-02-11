@@ -361,7 +361,7 @@ class DefaultHttpClientCacheTest
 
     @SneakyThrows
     @Test
-    void testHttpClientWrapperOutlivesGarbageCollector()
+    void testCachedEqualHttpClientsClosingBehavior()
     {
         final DefaultHttpDestination destination1 = DefaultHttpDestination.builder("http://foo.com").build();
         final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
