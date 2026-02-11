@@ -361,18 +361,22 @@ class DefaultHttpClientCacheTest
 
     @SneakyThrows
     @Test
-    void testHttpClientWrapperWithDestinationIsCalledWhenDestinationIsProvided()
+    void testHttpClientWrapperOutlivesGarbageCollector()
     {
         final DefaultHttpDestination destination1 = DefaultHttpDestination.builder("http://foo.com").build();
         final HttpClient client1 = sut.tryGetHttpClient(destination1, FACTORY).get();
         assertThat(((HttpClientWrapper) client1).getDestination()).isSameAs(destination1);
 
-        final DefaultHttpDestination destination2 = DefaultHttpDestination.builder("http://foo.com").build();
+        final DefaultHttpDestination destination2 =
+            DefaultHttpDestination
+                .builder("http://foo.com")
+                .headerProviders(c -> List.of(new Header("Authorization", "Bearer foo")))
+                .build();
         final HttpClient client2 = sut.tryGetHttpClient(destination2, FACTORY).get();
         assertThat(((HttpClientWrapper) client2).getDestination()).isSameAs(destination2);
 
         // Verify the destinations are equal but not the same reference
-        assertThat(destination1).isEqualTo(destination2);
+        assertThat(destination1).isEqualTo(destination2); // header providers are not part of the equality check
         assertThat(destination1).isNotSameAs(destination2);
 
         // Http clients are distinct instances, since the cache key contains the destination reference and not its content
@@ -383,7 +387,7 @@ class DefaultHttpClientCacheTest
         assertThat(client1Again).isSameAs(client1);
         assertThat(((HttpClientWrapper) client1Again).getDestination()).isSameAs(destination1);
 
-        // simulate garbage collection
+        // simulate garbage collection on client1
         ((HttpClientWrapper) client1).close();
 
         // since client1 inherited client2 connection manager, client2 is shut down as well
