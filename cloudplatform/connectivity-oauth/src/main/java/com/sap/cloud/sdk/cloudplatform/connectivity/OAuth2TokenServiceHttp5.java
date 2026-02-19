@@ -17,19 +17,29 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.net.ssl.SSLContext;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sap.cloud.security.client.DefaultTokenClientConfiguration;
+import com.sap.cloud.security.client.HttpClientException;
+import com.sap.cloud.security.config.ClientCertificate;
+import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.mtls.SSLContextFactory;
 import com.sap.cloud.security.servlet.MDCHelper;
 import com.sap.cloud.security.xsuaa.Assertions;
 import com.sap.cloud.security.xsuaa.client.AbstractOAuth2TokenService;
@@ -205,6 +215,60 @@ public class OAuth2TokenServiceHttp5 extends AbstractOAuth2TokenService
         }
         catch( final InterruptedException e ) {
             LOGGER.warn("Thread.sleep has been interrupted. Retry starts now.");
+        }
+    }
+
+    /**
+     * Creates a CloseableHttpClient (HttpClient5) based on ClientIdentity details, replicating the logic of
+     * HttpClientFactory.create(identity) for HttpClient5.
+     * <p>
+     * For ClientIdentity that is certificate based it will resolve HTTPS client using the provided ClientIdentity. If
+     * the ClientIdentity wasn't provided or is not certificate-based, it will return default HttpClient.
+     *
+     * @param clientIdentity
+     *            for X.509 certificate based communication {@link ClientCertificate} implementation of ClientIdentity
+     *            interface should be provided
+     * @return HTTP or HTTPS client (HttpClient5)
+     * @throws HttpClientException
+     *             in case HTTPS Client could not be setup
+     */
+    @Nonnull
+    public static CloseableHttpClient createHttpClient5WithIdentityValidation(
+        @Nonnull final ClientIdentity clientIdentity )
+        throws HttpClientException
+    {
+        if( clientIdentity == null ) {
+            LOGGER.debug("No ClientIdentity provided, creating default HttpClient5");
+            return HttpClients.createDefault();
+        }
+
+        if( !(clientIdentity instanceof ClientCertificate) ) {
+            LOGGER.debug("ClientIdentity is not certificate-based, creating default HttpClient5");
+            return HttpClients.createDefault();
+        }
+
+        final ClientCertificate clientCertificate = (ClientCertificate) clientIdentity;
+        LOGGER
+            .debug(
+                "Creating HTTPS HttpClient5 with certificate-based authentication for client '{}'",
+                clientCertificate.getId());
+
+        try {
+            // Use the SSLContextFactory to create a KeyStore from the ClientIdentity
+            final var keyStore = SSLContextFactory.getInstance().createKeyStore(clientIdentity);
+            final char[] password = {}; // Empty password as per the factory pattern
+
+            final SSLContext sslContext = SSLContextBuilder.create().loadKeyMaterial(keyStore, password).build();
+
+            final var tlsStrategy = new DefaultClientTlsStrategy(sslContext);
+            final var connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create().setTlsSocketStrategy(tlsStrategy).build();
+
+            return HttpClientBuilder.create().setConnectionManager(connectionManager).build();
+        }
+        catch( final Exception e ) {
+            throw new HttpClientException(
+                "Failed to create HTTPS HttpClient5 with certificate authentication: " + e.getMessage());
         }
     }
 }

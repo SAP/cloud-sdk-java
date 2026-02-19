@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -33,10 +33,8 @@ import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedExce
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
-import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.token.Token;
-import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
@@ -114,7 +112,9 @@ class OAuth2Service
                     false); // disable cache statistics
 
         if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
+            return new OAuth2TokenServiceHttp5(
+                OAuth2TokenServiceHttp5.createHttpClient5WithIdentityValidation(identity),
+                tokenCacheConfiguration);
         }
 
         final DefaultHttpDestination destination =
@@ -127,8 +127,8 @@ class OAuth2Service
                 .keyStore(((ZtisClientIdentity) identity).getKeyStore())
                 .build();
         try {
-            return new DefaultOAuth2TokenService(
-                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
+            return new OAuth2TokenServiceHttp5(
+                (CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination),
                 tokenCacheConfiguration);
         }
         catch( final ClassCastException e ) {
