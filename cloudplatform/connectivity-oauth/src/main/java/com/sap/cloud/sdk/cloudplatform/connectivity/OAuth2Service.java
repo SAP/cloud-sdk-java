@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -109,14 +111,13 @@ class OAuth2Service
                     tokenCacheParameters.getTokenExpirationDelta(),
                     false); // disable cache statistics
 
-        if( identity instanceof ZtisClientIdentity ztisIdentity ) {
-            // For ZTIS, use the KeyStore directly from the identity
-            return new HttpClient5OAuth2TokenService(
-                HttpClient5Factory.create(identity, ztisIdentity.getKeyStore()),
-                tokenCacheConfiguration);
-        }
+        // For ZTIS, use the KeyStore directly from the identity
+        final CloseableHttpClient httpClient =
+            identity instanceof final ZtisClientIdentity ztisIdentity
+                ? HttpClient5OAuth2TokenService.createHttpClient(identity, ztisIdentity.getKeyStore())
+                : HttpClient5OAuth2TokenService.createHttpClient(identity);
 
-        return new HttpClient5OAuth2TokenService(HttpClient5Factory.create(identity), tokenCacheConfiguration);
+        return new HttpClient5OAuth2TokenService(httpClient, tokenCacheConfiguration);
     }
 
     @Nonnull
