@@ -6,7 +6,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.pool.AbstractConnPool;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheKey;
@@ -14,6 +18,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstanti
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Provides caching functionality to the {@code HttpClientAccessor}.
@@ -89,9 +94,16 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
         final Cache<CacheKey, HttpClient> cache = maybeCache.get();
         final CacheKey cacheKey = maybeKey.get();
 
-        final HttpClient httpClient;
+        HttpClient httpClient;
         try {
             httpClient = cache.get(cacheKey, anyKey -> createHttpClient.get());
+
+            if( !isHealthy(httpClient) ) {
+                log.warn("The HttpClient retrieved from the cache has a shutdown connection pool.");
+                cache.invalidate(cacheKey);
+                httpClient = cache.get(cacheKey, anyKey -> createHttpClient.get());
+            }
+
             Objects
                 .requireNonNull(
                     httpClient,
@@ -107,6 +119,27 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
             return Try.success(((HttpClientWrapper) httpClient).withDestination(destination));
         }
         return Try.success(httpClient);
+    }
+
+    @SuppressWarnings( "PMD.CloseResource" ) // no new resource is opened
+    private static boolean isHealthy( final HttpClient httpClient )
+        throws IllegalArgumentException,
+            NullPointerException
+    {
+        if( !(httpClient instanceof HttpClientWrapper) ) {
+            log.trace("Cannot verify health of HttpClient: {}", httpClient);
+            return true;
+        }
+        try {
+            val hc = (CloseableHttpClient) FieldUtils.readField(httpClient, "httpClient", true);
+            val cm = (PoolingHttpClientConnectionManager) FieldUtils.readField(hc, "connManager", true);
+            val cp = (AbstractConnPool<?, ?, ?>) FieldUtils.readField(cm, "pool", true);
+            return !cp.isShutdown();
+        }
+        catch( final Exception e ) {
+            log.warn("Failed to access connection manager.", e);
+            return true;
+        }
     }
 
     /**
