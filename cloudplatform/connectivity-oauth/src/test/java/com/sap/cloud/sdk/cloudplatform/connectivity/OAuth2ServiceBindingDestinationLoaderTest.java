@@ -240,7 +240,19 @@ class OAuth2ServiceBindingDestinationLoaderTest
             sut.tryGetDestination(OPTIONS_WITH_EMPTY_BINDING).map(HttpDestinationProperties::getHeaders);
 
         assertThat(result.isFailure()).isTrue();
-        assertThat(result.getCause()).hasRootCauseExactlyInstanceOf(HttpClientException.class);
+        // The root cause can be either HttpClientException (when using DefaultOAuth2TokenService with HttpClient 4)
+        // or a security exception like CertificateException (when using HttpClient5OAuth2TokenService)
+        final Throwable rootCause = getRootCause(result.getCause());
+        assertThat(rootCause).isInstanceOfAny(HttpClientException.class, java.security.GeneralSecurityException.class);
+    }
+
+    private static Throwable getRootCause( Throwable throwable )
+    {
+        Throwable cause = throwable;
+        while( cause.getCause() != null && cause.getCause() != cause ) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     @Test
