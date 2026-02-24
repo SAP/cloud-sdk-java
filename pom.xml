@@ -816,7 +816,7 @@
 				<!-- Needed because GitHub actions uses an old Maven version <3.9.0 -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.4</version>
+				<version>3.5.5</version>
 				<configuration>
 					<includes>
 						<include>${surefire.include}</include>
