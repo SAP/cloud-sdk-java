@@ -133,10 +133,10 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
                     .build();
             });
         }
+        catch( final OAuth2ServiceException e ) {
+            throw e;
+        }
         catch( final IOException e ) {
-            if( e instanceof OAuth2ServiceException ) {
-                throw (OAuth2ServiceException) e;
-            } else {
                 final var exception =
                     OAuth2ServiceException
                         .builder("Error requesting access token!")
@@ -146,7 +146,6 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
                         .build();
                 exception.initCause(e);
                 throw exception;
-            }
         }
     }
 
