@@ -137,15 +137,15 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             throw e;
         }
         catch( final IOException e ) {
-                final var exception =
-                    OAuth2ServiceException
-                        .builder("Error requesting access token!")
-                        .withUri(tokenUri)
-                        .withRequestHeaders(getHeadersAsStringArray(httpPost.getHeaders()))
-                        .withResponseBody(e.getMessage())
-                        .build();
-                exception.initCause(e);
-                throw exception;
+            final var exception =
+                OAuth2ServiceException
+                    .builder("Error requesting access token!")
+                    .withUri(tokenUri)
+                    .withRequestHeaders(getHeadersAsStringArray(httpPost.getHeaders()))
+                    .withResponseBody(e.getMessage())
+                    .build();
+            exception.initCause(e);
+            throw exception;
         }
     }
 
