@@ -92,9 +92,9 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
 
     @Override
     protected
-    OAuth2TokenResponse
-    requestAccessToken( final URI tokenUri, final HttpHeaders headers, final Map<String, String> parameters )
-        throws OAuth2ServiceException
+        OAuth2TokenResponse
+        requestAccessToken( final URI tokenUri, final HttpHeaders headers, final Map<String, String> parameters )
+            throws OAuth2ServiceException
     {
         Assertions.assertNotNull(tokenUri, "Token endpoint URI must not be null!");
         return convertToOAuth2TokenResponse(
@@ -279,9 +279,9 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
      */
     @Nonnull
     static
-    CloseableHttpClient
-    createHttpClient( @Nullable final ClientIdentity clientIdentity, @Nullable final KeyStore keyStore )
-        throws HttpClientException
+        CloseableHttpClient
+        createHttpClient( @Nullable final ClientIdentity clientIdentity, @Nullable final KeyStore keyStore )
+            throws HttpClientException
     {
         // If a KeyStore is provided directly (e.g., for ZTIS), use it
         if( keyStore != null ) {
