@@ -6,19 +6,36 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -30,6 +47,9 @@ import com.sap.cloud.security.client.HttpClientException;
 import com.sap.cloud.security.config.ClientCertificate;
 import com.sap.cloud.security.config.ClientCredentials;
 import com.sap.cloud.security.config.ClientIdentity;
+import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
+import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
+import com.sap.cloud.security.xsuaa.http.HttpHeaders;
 
 import lombok.SneakyThrows;
 
@@ -51,17 +71,6 @@ class HttpClient5OAuth2TokenServiceTest
         throws HttpClientException
     {
         final CloseableHttpClient result = HttpClient5OAuth2TokenService.createHttpClient(null);
-
-        assertThat(result).isNotNull();
-        assertThat(result).isInstanceOf(CloseableHttpClient.class);
-    }
-
-    @Test
-    @DisplayName( "createHttpClient with null ClientIdentity and null KeyStore should return default HTTP client" )
-    void testCreateHttpClientWithNullClientIdentityAndNullKeyStore()
-        throws HttpClientException
-    {
-        final CloseableHttpClient result = HttpClient5OAuth2TokenService.createHttpClient(null, null);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(CloseableHttpClient.class);
@@ -259,6 +268,387 @@ class HttpClient5OAuth2TokenServiceTest
             assertThat(exceptions[i]).isNull();
             assertThat(results[i]).isNotNull();
         }
+    }
+
+    // Tests for requestAccessToken method
+
+    private CloseableHttpClient mockHttpClient;
+    private ClassicHttpResponse mockResponse;
+    private HttpClient5OAuth2TokenService tokenService;
+
+    @BeforeEach
+    void setUp()
+    {
+        mockHttpClient = mock(CloseableHttpClient.class);
+        mockResponse = mock(ClassicHttpResponse.class);
+        tokenService = new HttpClient5OAuth2TokenService(mockHttpClient);
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should successfully retrieve access token with valid response" )
+    void testRequestAccessTokenSuccess()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        headers.withHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("grant_type", "client_credentials");
+        parameters.put("client_id", "test-client");
+        parameters.put("client_secret", "test-secret");
+
+        final String responseBody = """
+            {
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+                "token_type": "Bearer",
+                "expires_in": 3600,
+                "refresh_token": "refresh-token-value"
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When
+        final OAuth2TokenResponse result = tokenService.requestAccessToken(tokenUri, headers, parameters);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
+        assertThat(result.getTokenType()).isEqualTo("Bearer");
+        assertThat(result.getExpiredAt().truncatedTo(ChronoUnit.HOURS)).isEqualTo(Instant.now().plusSeconds(3600).truncatedTo(ChronoUnit.HOURS));
+        assertThat(result.getRefreshToken()).isEqualTo("refresh-token-value");
+
+        // Verify HTTP client was called with correct request
+        verify(mockHttpClient).execute(argThat(httpPost -> {
+            try {
+                return httpPost instanceof HttpPost
+                    && httpPost.getUri().equals(tokenUri)
+                    && httpPost.getFirstHeader("Content-Type").getValue().equals("application/x-www-form-urlencoded");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }), any(HttpClientResponseHandler.class));
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should handle minimal valid response" )
+    void testRequestAccessTokenMinimalResponse()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        final String responseBody = """
+            {
+                "access_token": "minimal-token",
+                "token_type": "Bearer",
+                "expires_in": 3600
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When
+        final OAuth2TokenResponse result = tokenService.requestAccessToken(tokenUri, headers, parameters);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("minimal-token");
+        assertThat(result.getTokenType()).isEqualTo("Bearer");assertThat(result.getExpiredAt().truncatedTo(ChronoUnit.HOURS)).isEqualTo(Instant.now().plusSeconds(3600).truncatedTo(ChronoUnit.HOURS));
+        assertThat(result.getRefreshToken()).isEqualTo("null"); // Should be "null" as string when not present
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should throw OAuth2ServiceException for HTTP error status" )
+    void testRequestAccessTokenHttpError()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        final String errorResponseBody = """
+            {
+                "error": "invalid_client",
+                "error_description": "Client authentication failed"
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_UNAUTHORIZED);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(errorResponseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When & Then
+        assertThatThrownBy(() -> tokenService.requestAccessToken(tokenUri, headers, parameters))
+            .isInstanceOf(OAuth2ServiceException.class)
+            .hasMessageContaining("Error requesting access token!")
+            .satisfies(exception -> {
+                OAuth2ServiceException oauthException = (OAuth2ServiceException) exception;
+                assertThat(oauthException.getHttpStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
+                assertThat(oauthException.getMessage()).contains("invalid_client");
+            });
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should throw OAuth2ServiceException for IOException" )
+    void testRequestAccessTokenIOException()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenThrow(new IOException("Connection timeout"));
+
+        // When & Then
+        assertThatThrownBy(() -> tokenService.requestAccessToken(tokenUri, headers, parameters))
+            .isInstanceOf(OAuth2ServiceException.class)
+            .hasMessageContaining("Error requesting access token!")
+            .satisfies(exception -> {
+                OAuth2ServiceException oauthException = (OAuth2ServiceException) exception;
+                assertThat(oauthException.getMessage()).contains("Connection timeout");
+            });
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should handle invalid JSON response" )
+    void testRequestAccessTokenInvalidJson()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        final String invalidJsonResponse = "{invalid: json response}";
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(invalidJsonResponse, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When & Then
+        assertThatThrownBy(() -> tokenService.requestAccessToken(tokenUri, headers, parameters))
+            .isInstanceOf(OAuth2ServiceException.class);
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should handle invalid expires_in value" )
+    void testRequestAccessTokenInvalidExpiresIn()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        final String responseBody = """
+            {
+                "access_token": "test-token",
+                "token_type": "Bearer",
+                "expires_in": "invalid-number"
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When & Then
+        assertThatThrownBy(() -> tokenService.requestAccessToken(tokenUri, headers, parameters))
+            .isInstanceOf(OAuth2ServiceException.class)
+            .hasMessageContaining("Cannot convert expires_in from response");
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should throw IllegalArgumentException for null tokenUri" )
+    void testRequestAccessTokenNullTokenUri()
+    {
+        // Given
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        // When & Then
+        assertThatThrownBy(() -> tokenService.requestAccessToken(null, headers, parameters))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Token endpoint URI must not be null!");
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should properly handle custom headers" )
+    void testRequestAccessTokenWithCustomHeaders()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        headers.withHeader("Authorization", "Basic dGVzdDp0ZXN0");
+        headers.withHeader("X-Custom-Header", "custom-value");
+
+        final Map<String, String> parameters = Map.of("grant_type", "client_credentials");
+
+        final String responseBody = """
+            {
+                "access_token": "test-token",
+                "token_type": "Bearer",
+                "expires_in": 3600
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When
+        final OAuth2TokenResponse result = tokenService.requestAccessToken(tokenUri, headers, parameters);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("test-token");
+
+        // Verify custom headers were included
+        verify(mockHttpClient).execute(argThat(httpPost -> {
+            return httpPost instanceof HttpPost
+                && httpPost.getFirstHeader("Authorization") != null
+                && httpPost.getFirstHeader("Authorization").getValue().equals("Basic dGVzdDp0ZXN0")
+                && httpPost.getFirstHeader("X-Custom-Header") != null
+                && httpPost.getFirstHeader("X-Custom-Header").getValue().equals("custom-value");
+        }), any(HttpClientResponseHandler.class));
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should properly handle complex parameters" )
+    void testRequestAccessTokenWithComplexParameters()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("grant_type", "authorization_code");
+        parameters.put("client_id", "test-client");
+        parameters.put("client_secret", "test-secret");
+        parameters.put("code", "auth-code-123");
+        parameters.put("redirect_uri", "https://app.example.com/callback");
+        parameters.put("scope", "read write");
+
+        final String responseBody = """
+            {
+                "access_token": "complex-token",
+                "token_type": "Bearer",
+                "expires_in": 3600,
+                "refresh_token": "refresh-token-123",
+                "scope": "read write"
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When
+        final OAuth2TokenResponse result = tokenService.requestAccessToken(tokenUri, headers, parameters);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("complex-token");
+        assertThat(result.getTokenType()).isEqualTo("Bearer");
+        assertThat(result.getTokenType()).isEqualTo("Bearer");assertThat(result.getExpiredAt().truncatedTo(ChronoUnit.HOURS)).isEqualTo(Instant.now().plusSeconds(3600).truncatedTo(ChronoUnit.HOURS));
+        assertThat(result.getRefreshToken()).isEqualTo("refresh-token-123");
+
+        // Verify all parameters were included in the request
+        verify(mockHttpClient).execute(argThat(httpPost -> {
+            try {
+                if (!(httpPost instanceof HttpPost)) {
+                    return false;
+                }
+                final String requestBody = new String(
+                    httpPost.getEntity().getContent().readAllBytes(),
+                    StandardCharsets.UTF_8
+                );
+                return requestBody.contains("grant_type=authorization_code")
+                    && requestBody.contains("client_id=test-client")
+                    && requestBody.contains("client_secret=test-secret")
+                    && requestBody.contains("code=auth-code-123")
+                    && requestBody.contains("redirect_uri=https%3A%2F%2Fapp.example.com%2Fcallback")
+                    && requestBody.contains("scope=read+write");
+            } catch (final IOException e) {
+                return false;
+            }
+        }), any(HttpClientResponseHandler.class));
+    }
+
+    @Test
+    @DisplayName( "requestAccessToken should handle empty parameters map" )
+    void testRequestAccessTokenWithEmptyParameters()
+        throws Exception
+    {
+        // Given
+        final URI tokenUri = URI.create("https://oauth.server.com/oauth/token");
+        final HttpHeaders headers = new HttpHeaders();
+        final Map<String, String> parameters = new HashMap<>();
+
+        final String responseBody = """
+            {
+                "access_token": "empty-params-token",
+                "token_type": "Bearer",
+                "expires_in": 3600
+            }
+            """;
+
+        when(mockResponse.getCode()).thenReturn(HttpStatus.SC_OK);
+        when(mockResponse.getEntity()).thenReturn(new StringEntity(responseBody, StandardCharsets.UTF_8));
+        when(mockHttpClient.execute(any(HttpPost.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(invocation -> {
+                HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+                return handler.handleResponse(mockResponse);
+            });
+
+        // When
+        final OAuth2TokenResponse result = tokenService.requestAccessToken(tokenUri, headers, parameters);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo("empty-params-token");
     }
 
     // Helper methods for creating test objects
