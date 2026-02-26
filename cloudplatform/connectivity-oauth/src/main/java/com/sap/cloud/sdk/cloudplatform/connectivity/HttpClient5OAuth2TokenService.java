@@ -134,8 +134,8 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             });
         }
         catch( final IOException e ) {
-            if( e instanceof final OAuth2ServiceException oAuth2Exception ) {
-                throw oAuth2Exception;
+            if( e instanceof OAuth2ServiceException ) {
+                throw (OAuth2ServiceException) e;
             } else {
                 final var exception =
                     OAuth2ServiceException
