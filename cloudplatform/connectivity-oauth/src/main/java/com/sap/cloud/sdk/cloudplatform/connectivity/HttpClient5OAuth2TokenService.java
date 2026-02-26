@@ -114,9 +114,9 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             return httpClient.execute(httpPost, response -> {
                 final int statusCode = response.getCode();
                 final String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                log.debug("Received statusCode {} from host {}", statusCode, tokenUri.getHost());
+                log.debug("Received statusCode {} from token endpoint", statusCode);
                 if( HttpStatus.SC_OK == statusCode ) {
-                    log.debug("Successfully retrieved access token from host {}.", tokenUri.getHost());
+                    log.debug("Successfully retrieved access token from token endpoint");
                     return body;
                 } else if( attemptsLeft > 0 && config.getRetryStatusCodes().contains(statusCode) ) {
                     log.warn("Request failed with status {} but is retryable. Retrying...", statusCode);
