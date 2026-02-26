@@ -4,7 +4,13 @@
 
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.*;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.ACCESS_TOKEN;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.ASSERTION;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.CLIENT_SECRET;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.EXPIRES_IN;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.PASSWORD;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.REFRESH_TOKEN;
+import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.TOKEN_TYPE;
 
 import java.io.IOException;
 import java.net.URI;
@@ -110,19 +116,14 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
         throws OAuth2ServiceException
     {
         final HttpPost httpPost = createHttpPost(tokenUri, createRequestHeaders(headers), parameters);
-        log
-            .debug(
-                "Requesting access token from url {} with headers {} and {} retries left",
-                tokenUri,
-                headers,
-                attemptsLeft);
+        log.debug("Requesting access token with {} retries left", attemptsLeft);
         try {
             return httpClient.execute(httpPost, response -> {
                 final int statusCode = response.getCode();
                 final String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                log.debug("Received statusCode {} from {}", statusCode, tokenUri);
+                log.debug("Received statusCode {} from host {}", statusCode, tokenUri.getHost());
                 if( HttpStatus.SC_OK == statusCode ) {
-                    log.debug("Successfully retrieved access token from {} with params {}.", tokenUri, parameters);
+                    log.debug("Successfully retrieved access token from host {}.", tokenUri.getHost());
                     return body;
                 } else if( attemptsLeft > 0 && config.getRetryStatusCodes().contains(statusCode) ) {
                     log.warn("Request failed with status {} but is retryable. Retrying...", statusCode);
@@ -143,12 +144,15 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             if( e instanceof final OAuth2ServiceException oAuth2Exception ) {
                 throw oAuth2Exception;
             } else {
-                throw OAuth2ServiceException
-                    .builder("Error requesting access token!")
-                    .withUri(tokenUri)
-                    .withRequestHeaders(getHeadersAsStringArray(httpPost.getHeaders()))
-                    .withResponseBody(e.getMessage())
-                    .build();
+                final var exception =
+                    OAuth2ServiceException
+                        .builder("Error requesting access token!")
+                        .withUri(tokenUri)
+                        .withRequestHeaders(getHeadersAsStringArray(httpPost.getHeaders()))
+                        .withResponseBody(e.getMessage())
+                        .build();
+                exception.initCause(e);
+                throw exception;
             }
         }
     }
@@ -189,7 +193,9 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             httpPost.addHeader(org.apache.hc.core5.http.HttpHeaders.USER_AGENT, HttpClientUtil.getUserAgent());
         }
         catch( final Exception e ) {
-            throw new OAuth2ServiceException("Unexpected error parsing URI: " + e.getMessage());
+            final var exception = new OAuth2ServiceException("Unexpected error parsing URI: " + e.getMessage());
+            exception.initCause(e);
+            throw exception;
         }
         logRequest(headers, parameters);
         return httpPost;
@@ -213,8 +219,11 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             return Long.parseLong(expiresIn);
         }
         catch( final NumberFormatException e ) {
-            throw new OAuth2ServiceException(
-                String.format("Cannot convert expires_in from response (%s) to long", expiresIn));
+            final var exception =
+                new OAuth2ServiceException(
+                    String.format("Cannot convert expires_in from response (%s) to long", expiresIn));
+            exception.initCause(e);
+            throw exception;
         }
     }
 
@@ -310,8 +319,11 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             return createHttpClientWithKeyStore(identityKeyStore);
         }
         catch( final Exception e ) {
-            throw new HttpClientException(
-                "Failed to create HTTPS HttpClient5 with certificate authentication: " + e.getMessage());
+            final var exception =
+                new HttpClientException(
+                    "Failed to create HTTPS HttpClient5 with certificate authentication: " + e.getMessage());
+            exception.initCause(e);
+            throw exception;
         }
     }
 
@@ -335,7 +347,10 @@ class HttpClient5OAuth2TokenService extends AbstractOAuth2TokenService
             return HttpClientBuilder.create().useSystemProperties().setConnectionManager(connectionManager).build();
         }
         catch( final Exception e ) {
-            throw new HttpClientException("Failed to create HTTPS HttpClient5 with KeyStore: " + e.getMessage());
+            final var exception =
+                new HttpClientException("Failed to create HTTPS HttpClient5 with KeyStore: " + e.getMessage());
+            exception.initCause(e);
+            throw exception;
         }
     }
 }
