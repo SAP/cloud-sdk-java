@@ -242,17 +242,9 @@ class OAuth2ServiceBindingDestinationLoaderTest
         assertThat(result.isFailure()).isTrue();
         // The root cause can be either HttpClientException (when using DefaultOAuth2TokenService with HttpClient 4)
         // or a security exception like CertificateException (when using HttpClient5OAuth2TokenService)
-        final Throwable rootCause = getRootCause(result.getCause());
-        assertThat(rootCause).isInstanceOfAny(HttpClientException.class, java.security.GeneralSecurityException.class);
-    }
-
-    private static Throwable getRootCause( Throwable throwable )
-    {
-        Throwable cause = throwable;
-        while( cause.getCause() != null && cause.getCause() != cause ) {
-            cause = cause.getCause();
-        }
-        return cause;
+        assertThat(result.getCause())
+            .rootCause()
+            .isInstanceOfAny(HttpClientException.class, java.security.GeneralSecurityException.class);
     }
 
     @Test
