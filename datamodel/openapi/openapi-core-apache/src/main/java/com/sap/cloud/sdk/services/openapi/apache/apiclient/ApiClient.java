@@ -586,7 +586,7 @@ public class ApiClient
         }
     }
 
-    private HttpEntity serializeGzip( Object body, ContentType contentType )
+    private HttpEntity serializeGzip( final Object body, final ContentType contentType )
     {
         val outputStream = new ByteArrayOutputStream();
         try( val gzip = new GZIPOutputStream(outputStream) ) {
