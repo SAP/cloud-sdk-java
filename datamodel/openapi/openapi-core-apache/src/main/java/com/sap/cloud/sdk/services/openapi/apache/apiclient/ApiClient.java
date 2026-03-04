@@ -15,6 +15,7 @@ package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,6 +70,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
+import lombok.val;
 
 /**
  * API client for executing HTTP requests using Apache HttpClient 5.
@@ -560,7 +563,11 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                builder.setEntity(serialize(body, formParams, contentTypeObj));
+                if( "gzip".equals(headerParams.get("Content-Encoding")) ) {
+                    builder.setEntity(serializeGzip(body, contentTypeObj));
+                } else {
+                    builder.setEntity(serialize(body, formParams, contentTypeObj));
+                }
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -577,5 +584,17 @@ public class ApiClient
         catch( IOException e ) {
             throw new OpenApiRequestException(e);
         }
+    }
+
+    private HttpEntity serializeGzip( Object body, ContentType contentType )
+    {
+        val outputStream = new ByteArrayOutputStream();
+        try( val gzip = new GZIPOutputStream(outputStream) ) {
+            gzip.write(objectMapper.writeValueAsBytes(body));
+        }
+        catch( IOException e ) {
+            throw new OpenApiRequestException(e);
+        }
+        return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
     }
 }
