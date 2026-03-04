@@ -563,11 +563,11 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                if( "gzip".equals(headerParams.get("Content-Encoding")) ) {
-                    builder.setEntity(serializeGzip(body, contentTypeObj));
-                } else {
-                    builder.setEntity(serialize(body, formParams, contentTypeObj));
-                }
+                builder
+                    .setEntity(
+                        "gzip".equals(headerParams.get("Content-Encoding"))
+                            ? serializeGzip(body, contentTypeObj)
+                            : serialize(body, formParams, contentTypeObj));
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
