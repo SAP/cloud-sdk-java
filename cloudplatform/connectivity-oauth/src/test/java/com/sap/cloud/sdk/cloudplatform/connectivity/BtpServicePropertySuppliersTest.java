@@ -789,6 +789,75 @@ class BtpServicePropertySuppliersTest
             }
         }
 
+        @Test
+        void testTokenFormatExplicitJwt()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .withOption(IasOptions.withApplicationName("app-name"))
+                    .withOption(IasOptions.withTokenFormat("jwt"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:name:app-name",
+                            "app_tid",
+                            PROVIDER_TENANT_ID,
+                            "token_format",
+                            "jwt"));
+        }
+
+        @Test
+        void testTokenFormatExplicitSaml()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .withOption(IasOptions.withApplicationName("app-name"))
+                    .withOption(IasOptions.withTokenFormat("saml"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map
+                        .of(
+                            "resource",
+                            "urn:sap:identity:application:provider:name:app-name",
+                            "app_tid",
+                            PROVIDER_TENANT_ID,
+                            "token_format",
+                            "saml"));
+        }
+
+        @Test
+        void testTokenFormatWithoutApplicationName()
+        {
+            final ServiceBindingDestinationOptions options =
+                ServiceBindingDestinationOptions
+                    .forService(BINDING)
+                    .onBehalfOf(OnBehalfOf.NAMED_USER_CURRENT_TENANT)
+                    .withOption(IasOptions.withTokenFormat("jwt"))
+                    .build();
+
+            final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+
+            assertThat(oAuth2Options.getAdditionalTokenRetrievalParameters())
+                .containsExactlyInAnyOrderEntriesOf(Map.of("app_tid", PROVIDER_TENANT_ID, "token_format", "jwt"));
+        }
+
         @SneakyThrows
         private static void assertThatClientCertificateIsContained( @Nonnull final KeyStore keyStore )
         {
