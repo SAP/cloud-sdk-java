@@ -162,7 +162,7 @@ class OAuth2Service
             }
         }, resilienceConfiguration);
 
-        if( tokenResponse == null ) {
+        if(    tokenResponse == null ) {
             final String message = "OAuth2 token request failed";
             log.debug(message);
             throw new DestinationOAuthTokenException(null, message);
@@ -231,6 +231,7 @@ class OAuth2Service
             if( onBehalfOf == OnBehalfOf.NAMED_USER_CURRENT_TENANT ) {
                 // workaround until a fix is provided by IAS
                 additionalParameters.put("refresh_expiry", "0");
+                additionalParameters.put("token_format", "jwt");
             }
         }
     }
@@ -475,6 +476,6 @@ class OAuth2Service
     enum TenantPropagationStrategy
     {
         TENANT_SUBDOMAIN,
-        ZID_HEADER;
+        ZID_HEADER
     }
 }
