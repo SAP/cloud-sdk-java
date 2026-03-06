@@ -10,6 +10,7 @@
 
 - [Connectivity Destination Service] Migrated to Apache Httpclient 5.
   - The replacement for `HttpClientAccessor` is `ApacheHttpClient5Accessor`
+- [OAuth2] Set `token_format=jwt` for `NAMED_USER_CURRENT_TENANT` IAS token exchange.
 
 ### ✨ New Functionality
 
