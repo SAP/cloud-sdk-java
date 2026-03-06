@@ -148,21 +148,16 @@ class OAuth2Service
                 onBehalfOf,
                 identity.getId());
 
-        final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> {
-            switch( onBehalfOf ) {
-                case TECHNICAL_USER_PROVIDER:
-                    return executeClientCredentialsFlow(null);
-                case TECHNICAL_USER_CURRENT_TENANT:
-                    final Tenant tenant = TenantAccessor.tryGetCurrentTenant().getOrNull();
-                    return executeClientCredentialsFlow(tenant);
-                case NAMED_USER_CURRENT_TENANT:
-                    return executeUserExchangeFlow();
-                default:
-                    throw new IllegalStateException("Unknown behalf " + onBehalfOf);
-            }
+        final OAuth2TokenResponse tokenResponse = ResilienceDecorator.executeSupplier(() -> switch (onBehalfOf) {
+          case TECHNICAL_USER_PROVIDER -> executeClientCredentialsFlow(null);
+          case TECHNICAL_USER_CURRENT_TENANT -> {
+            final Tenant tenant = TenantAccessor.tryGetCurrentTenant().getOrNull();
+            yield executeClientCredentialsFlow(tenant);
+          }
+          case NAMED_USER_CURRENT_TENANT -> executeUserExchangeFlow();
         }, resilienceConfiguration);
 
-        if(    tokenResponse == null ) {
+        if( tokenResponse == null ) {
             final String message = "OAuth2 token request failed";
             log.debug(message);
             throw new DestinationOAuthTokenException(null, message);
