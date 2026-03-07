@@ -53,7 +53,25 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
         new ODataGenericConverter<>(Duration.class, Duration::toString, Duration::parse);
 
     private static final ODataGenericConverter<byte[]> BINARY =
-        new ODataGenericConverter<>(byte[].class, Base64.getEncoder()::encodeToString, Base64.getDecoder()::decode);
+        new ODataGenericConverter<>(
+            byte[].class,
+            Base64.getEncoder()::encodeToString,
+            ODataGenericConverter::decodeBinary);
+
+    @Nonnull
+    private static byte[] decodeBinary( @Nonnull final String value )
+    {
+        final boolean containsBase64Alphabet = value.indexOf('+') >= 0 || value.indexOf('/') >= 0;
+        final boolean containsBase64UrlAlphabet = value.indexOf('-') >= 0 || value.indexOf('_') >= 0;
+
+        if( containsBase64Alphabet && containsBase64UrlAlphabet ) {
+            throw new IllegalArgumentException(
+                "Invalid binary value: mixed Base64 and Base64URL alphabets are not allowed.");
+        }
+
+        final Base64.Decoder decoder = containsBase64UrlAlphabet ? Base64.getUrlDecoder() : Base64.getDecoder();
+        return decoder.decode(value);
+    }
 
     private static final ODataGenericConverter<String> STRING =
         new ODataGenericConverter<>(String.class, Function.identity(), Function.identity());

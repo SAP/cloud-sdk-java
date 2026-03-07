@@ -41,17 +41,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
-class FieldSerializationTest
-{
+class FieldSerializationTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @EqualsAndHashCode( doNotUseGetters = true, callSuper = true )
-    @JsonAdapter( GsonVdmAdapterFactory.class )
-    @JsonSerialize( using = JacksonVdmObjectSerializer.class )
-    @JsonDeserialize( using = JacksonVdmObjectDeserializer.class )
-    public static class ReferenceObject extends VdmEntity<ReferenceObject>
-    {
+    @EqualsAndHashCode(doNotUseGetters = true, callSuper = true)
+    @JsonAdapter(GsonVdmAdapterFactory.class)
+    @JsonSerialize(using = JacksonVdmObjectSerializer.class)
+    @JsonDeserialize(using = JacksonVdmObjectDeserializer.class)
+    public static class ReferenceObject extends VdmEntity<ReferenceObject> {
         @Getter
         private final String odataType = "TestEntity";
 
@@ -61,134 +59,160 @@ class FieldSerializationTest
         @Getter
         private final Class<ReferenceObject> type = ReferenceObject.class;
 
-        @ElementName( "ByteValue" )
-        @SerializedName( "ByteValue" )
-        @JsonProperty( "ByteValue" )
+        @ElementName("ByteValue")
+        @SerializedName("ByteValue")
+        @JsonProperty("ByteValue")
         short byteValue;
 
-        @ElementName( "SByteValue" )
-        @SerializedName( "SByteValue" )
-        @JsonProperty( "SByteValue" )
+        @ElementName("SByteValue")
+        @SerializedName("SByteValue")
+        @JsonProperty("SByteValue")
         Byte sByteValue;
 
-        @ElementName( "Int16Value" )
-        @SerializedName( "Int16Value" )
-        @JsonProperty( "Int16Value" )
+        @ElementName("Int16Value")
+        @SerializedName("Int16Value")
+        @JsonProperty("Int16Value")
         short int16Value;
 
-        @ElementName( "Int32Value" )
-        @SerializedName( "Int32Value" )
-        @JsonProperty( "Int32Value" )
+        @ElementName("Int32Value")
+        @SerializedName("Int32Value")
+        @JsonProperty("Int32Value")
         int int32Value;
 
-        @ElementName( "Int64Value" )
-        @SerializedName( "Int64Value" )
-        @JsonProperty( "Int64Value" )
+        @ElementName("Int64Value")
+        @SerializedName("Int64Value")
+        @JsonProperty("Int64Value")
         long int64Value;
 
-        @ElementName( "SingleValue" )
-        @SerializedName( "SingleValue" )
-        @JsonProperty( "SingleValue" )
+        @ElementName("SingleValue")
+        @SerializedName("SingleValue")
+        @JsonProperty("SingleValue")
         float singleValue;
 
-        @ElementName( "DoubleValue" )
-        @SerializedName( "DoubleValue" )
-        @JsonProperty( "DoubleValue" )
+        @ElementName("DoubleValue")
+        @SerializedName("DoubleValue")
+        @JsonProperty("DoubleValue")
         double doubleValue;
 
-        @ElementName( "DecimalValue" )
-        @SerializedName( "DecimalValue" )
-        @JsonProperty( "DecimalValue" )
+        @ElementName("DecimalValue")
+        @SerializedName("DecimalValue")
+        @JsonProperty("DecimalValue")
         BigDecimal decimalValue;
 
-        @ElementName( "BooleanValue" )
-        @SerializedName( "BooleanValue" )
-        @JsonProperty( "BooleanValue" )
+        @ElementName("BooleanValue")
+        @SerializedName("BooleanValue")
+        @JsonProperty("BooleanValue")
         boolean booleanValue;
 
-        @ElementName( "StringValue" )
-        @SerializedName( "StringValue" )
-        @JsonProperty( "StringValue" )
+        @ElementName("StringValue")
+        @SerializedName("StringValue")
+        @JsonProperty("StringValue")
         String stringValue;
 
-        @ElementName( "BinaryValue" )
-        @SerializedName( "BinaryValue" )
-        @JsonProperty( "BinaryValue" )
+        @ElementName("BinaryValue")
+        @SerializedName("BinaryValue")
+        @JsonProperty("BinaryValue")
         byte[] binaryValue;
 
-        @ElementName( "GuidValue" )
-        @SerializedName( "GuidValue" )
-        @JsonProperty( "GuidValue" )
+        @ElementName("GuidValue")
+        @SerializedName("GuidValue")
+        @JsonProperty("GuidValue")
         UUID guidValue;
 
-        @ElementName( "TimeOfDayValue" )
-        @SerializedName( "TimeOfDayValue" )
-        @JsonProperty( "TimeOfDayValue" )
+        @ElementName("TimeOfDayValue")
+        @SerializedName("TimeOfDayValue")
+        @JsonProperty("TimeOfDayValue")
         LocalTime timeOfDayValue;
 
-        @ElementName( "DateValue" )
-        @SerializedName( "DateValue" )
-        @JsonProperty( "DateValue" )
+        @ElementName("DateValue")
+        @SerializedName("DateValue")
+        @JsonProperty("DateValue")
         LocalDate dateValue;
 
-        @ElementName( "DateTimeOffsetValue" )
-        @SerializedName( "DateTimeOffsetValue" )
-        @JsonProperty( "DateTimeOffsetValue" )
+        @ElementName("DateTimeOffsetValue")
+        @SerializedName("DateTimeOffsetValue")
+        @JsonProperty("DateTimeOffsetValue")
         OffsetDateTime dateTimeOffsetValue;
 
         // https://docs.oasis-open.org/odata/odata-json-format/v4.01/csprd06/odata-json-format-v4.01-csprd06.html#sec_PrimitiveValue
         private static final String PAYLOAD_ODATA_REFERENCE = """
-            {\
-            "@odata.type":"#TestEntity",\
-            "ByteValue":255,\
-            "SByteValue":-128,\
-            "Int16Value":1,\
-            "Int32Value":-1234,\
-            "Int64Value":1234567890,\
-            "SingleValue":1234.5677,\
-            "DoubleValue":1234.5678,\
-            "DecimalValue":110,\
-            "BooleanValue":false,\
-            "StringValue":"test",\
-            "BinaryValue":"AQID",\
-            "GuidValue":"00000000-1111-2222-3333-444444444444",\
-            "TimeOfDayValue":"12:00:00",\
-            "DateValue":"1999-03-14",\
-            "DateTimeOffsetValue":"1999-03-14T00:00:00Z",\
-            "GeographyPoint":{"type":"Point","coordinates":[142.1,64.1]}\
-            }\
-            """;
+                {\
+                "@odata.type":"#TestEntity",\
+                "ByteValue":255,\
+                "SByteValue":-128,\
+                "Int16Value":1,\
+                "Int32Value":-1234,\
+                "Int64Value":1234567890,\
+                "SingleValue":1234.5677,\
+                "DoubleValue":1234.5678,\
+                "DecimalValue":110,\
+                "BooleanValue":false,\
+                "StringValue":"test",\
+                "BinaryValue":"AQID",\
+                "GuidValue":"00000000-1111-2222-3333-444444444444",\
+                "TimeOfDayValue":"12:00:00",\
+                "DateValue":"1999-03-14",\
+                "DateTimeOffsetValue":"1999-03-14T00:00:00Z",\
+                "GeographyPoint":{"type":"Point","coordinates":[142.1,64.1]}\
+                }\
+                """;
+
+        private static final String PAYLOAD_ODATA_REFERENCE_BASE64URL =
+                PAYLOAD_ODATA_REFERENCE.replace("\"BinaryValue\":\"AQID\"", "\"BinaryValue\":\"-__v\"");
+
+        private static final String PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET =
+                PAYLOAD_ODATA_REFERENCE.replace("\"BinaryValue\":\"AQID\"", "\"BinaryValue\":\"+__v\"");
     }
 
     @Test
-    void testBinaryFieldParsingFromResponsePayload()
-    {
+    void testBinaryFieldParsingFromResponsePayload() {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[] { 1, 2, 3 });
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[]{1, 2, 3});
 
         final String ser =
-            new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
+                new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
         assertThat(ser).isEqualTo(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
     }
 
     @Test
-    void testCustomFieldParsingFromResponsePayload()
-    {
+    void testBinaryFieldParsingFromBase64UrlResponsePayload() {
+        final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE_BASE64URL);
+        final ReferenceObject referenceResult = result.as(ReferenceObject.class);
+
+        Objects.requireNonNull(referenceResult);
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[]{(byte) 0xfb, (byte) 0xff, (byte) 0xef});
+
+        final String ser =
+                new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
+        assertThat(ser).contains("\"BinaryValue\":\"+//v\"");
+    }
+
+    @Test
+    void testCustomFieldParsingFromResponsePayload() {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
 
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
         assertThat(referenceResult.getCustomFieldNames()).containsExactly("GeographyPoint");
-        assertThat(referenceResult.<Object> getCustomField("GeographyPoint")).isInstanceOf(Map.class);
+        assertThat(referenceResult.<Object>getCustomField("GeographyPoint")).isInstanceOf(Map.class);
+    }
+
+    @Test
+    void testBinaryFieldParsingFromMixedBase64AlphabetFails() {
+        final ODataRequestResultGeneric result =
+                mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET);
+        final ReferenceObject referenceResult = result.as(ReferenceObject.class);
+
+        Objects.requireNonNull(referenceResult);
+        assertThat(referenceResult.getBinaryValue()).isNull();
     }
 
     @SneakyThrows
-    private static ODataRequestResultGeneric mockRequestResult( final String payload )
-    {
+    private static ODataRequestResultGeneric mockRequestResult(final String payload) {
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
