@@ -5,6 +5,7 @@ import static java.util.Collections.singletonList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
@@ -13,12 +14,20 @@ import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class OAuth2HeaderProvider implements DestinationHeaderProvider
+class OAuth2HeaderProvider implements DestinationHeaderProvider, IsOnBehalfOf
 {
     @Nonnull
     private final OAuth2Service oauth2service;
+
     @Nonnull
     private final String authHeaderName;
+
+    @Nullable
+    @Override
+    public OnBehalfOf getOnBehalfOf()
+    {
+        return oauth2service.getOnBehalfOf();
+    }
 
     @Nonnull
     @Override
