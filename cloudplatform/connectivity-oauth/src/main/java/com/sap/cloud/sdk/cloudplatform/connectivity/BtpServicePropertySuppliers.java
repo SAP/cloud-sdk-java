@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.TokenFormat;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
@@ -189,6 +190,9 @@ class BtpServicePropertySuppliers
             } else {
                 attachIasCommunicationOptions(builder);
                 builder.withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
+                options
+                    .getOption(TokenFormat.class)
+                    .peek(format -> builder.withTokenRetrievalParameter("token_format", format));
             }
             attachClientKeyStore(builder);
 
