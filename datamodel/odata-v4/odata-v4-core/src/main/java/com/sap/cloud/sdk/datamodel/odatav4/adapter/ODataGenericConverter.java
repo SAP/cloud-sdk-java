@@ -22,48 +22,50 @@ import lombok.RequiredArgsConstructor;
 /**
  * Generic fluent helper converters for String based OData V4 primitives.
  *
- * @param <JavaT> The Java type to which conversion happens.
+ * @param <JavaT>
+ *            The Java type to which conversion happens.
  */
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, String> {
+@RequiredArgsConstructor( access = AccessLevel.PRIVATE )
+final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, String>
+{
     private static final ODataGenericConverter<LocalDate> LOCAL_DATE =
-            new ODataGenericConverter<>(
-                    LocalDate.class,
-                    o -> o.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                    s -> LocalDate.parse(s, DateTimeFormatter.ISO_LOCAL_DATE));
+        new ODataGenericConverter<>(
+            LocalDate.class,
+            o -> o.format(DateTimeFormatter.ISO_LOCAL_DATE),
+            s -> LocalDate.parse(s, DateTimeFormatter.ISO_LOCAL_DATE));
 
     private static final ODataGenericConverter<LocalTime> LOCAL_TIME =
-            new ODataGenericConverter<>(
-                    LocalTime.class,
-                    o -> o.format(DateTimeFormatter.ISO_LOCAL_TIME),
-                    s -> LocalTime.parse(s, DateTimeFormatter.ISO_LOCAL_TIME));
+        new ODataGenericConverter<>(
+            LocalTime.class,
+            o -> o.format(DateTimeFormatter.ISO_LOCAL_TIME),
+            s -> LocalTime.parse(s, DateTimeFormatter.ISO_LOCAL_TIME));
 
     private static final ODataGenericConverter<OffsetDateTime> OFFSET_DATE_TIME =
-            new ODataGenericConverter<>(
-                    OffsetDateTime.class,
-                    o -> o.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                    s -> OffsetDateTime.parse(s, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        new ODataGenericConverter<>(
+            OffsetDateTime.class,
+            o -> o.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+            s -> OffsetDateTime.parse(s, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
     private static final ODataGenericConverter<UUID> GUID =
-            new ODataGenericConverter<>(UUID.class, UUID::toString, UUID::fromString);
+        new ODataGenericConverter<>(UUID.class, UUID::toString, UUID::fromString);
 
     private static final ODataGenericConverter<Duration> DURATION =
-            new ODataGenericConverter<>(Duration.class, Duration::toString, Duration::parse);
+        new ODataGenericConverter<>(Duration.class, Duration::toString, Duration::parse);
 
     private static final ODataGenericConverter<byte[]> BINARY =
-            new ODataGenericConverter<>(
-                    byte[].class,
-                    Base64.getEncoder()::encodeToString,
-                    ODataGenericConverter::decodeBinary);
+        new ODataGenericConverter<>(
+            byte[].class,
+            Base64.getEncoder()::encodeToString,
+            ODataGenericConverter::decodeBinary);
 
     private static final ODataGenericConverter<String> STRING =
-            new ODataGenericConverter<>(String.class, Function.identity(), Function.identity());
+        new ODataGenericConverter<>(String.class, Function.identity(), Function.identity());
 
     /**
      * Array of OData value converters for primitive types.
      */
     public static final ODataGenericConverter<?>[] DEFAULT_CONVERTERS =
-            {LOCAL_DATE, LOCAL_TIME, OFFSET_DATE_TIME, GUID, DURATION, BINARY, STRING};
+        { LOCAL_DATE, LOCAL_TIME, OFFSET_DATE_TIME, GUID, DURATION, BINARY, STRING };
 
     @Getter
     private final Class<JavaT> type;
@@ -75,13 +77,14 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
     private final Function<String, JavaT> deserializer;
 
     @Nonnull
-    private static byte[] decodeBinary(@Nonnull final String value) {
+    private static byte[] decodeBinary( @Nonnull final String value )
+    {
         final boolean containsBase64Alphabet = value.indexOf('+') >= 0 || value.indexOf('/') >= 0;
         final boolean containsBase64UrlAlphabet = value.indexOf('-') >= 0 || value.indexOf('_') >= 0;
 
-        if (containsBase64Alphabet && containsBase64UrlAlphabet) {
+        if( containsBase64Alphabet && containsBase64UrlAlphabet ) {
             throw new IllegalArgumentException(
-                    "Invalid binary value: mixed Base64 and Base64URL alphabets are not allowed.");
+                "Invalid binary value: mixed Base64 and Base64URL alphabets are not allowed.");
         }
 
         final Base64.Decoder decoder = containsBase64UrlAlphabet ? Base64.getUrlDecoder() : Base64.getDecoder();
@@ -90,13 +93,15 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
 
     @Nonnull
     @Override
-    public ConvertedObject<String> toDomainNonNull(@Nonnull final JavaT object) {
+    public ConvertedObject<String> toDomainNonNull( @Nonnull final JavaT object )
+    {
         return ConvertedObject.of(serializer.apply(object));
     }
 
     @Nonnull
     @Override
-    public ConvertedObject<JavaT> fromDomainNonNull(@Nonnull final String domainObject) {
+    public ConvertedObject<JavaT> fromDomainNonNull( @Nonnull final String domainObject )
+    {
         final Try<JavaT> maybe = Try.of(() -> deserializer.apply(domainObject));
         return maybe.map(ConvertedObject::of).getOrElse(ConvertedObject::ofNotConvertible);
     }
