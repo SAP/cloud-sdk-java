@@ -1,0 +1,21 @@
+{
+  "d" : {
+    "__metadata" : {
+      "id" : "https://127.0.0.1/endpoint/url/Ticket('1000001')",
+      "uri" : "https://127.0.0.1/endpoint/url/Ticket('1000001')",
+      "type" : "API_TICKET.TicketType"
+    },
+    "Ticket" : "1000001",
+    "TicketCategory" : "2",
+    "TicketName" : "TESTSUPPLIER01",
+    "TicketGrouping" : "BP02",
+    "TicketUUID" : "34c6020a-aaaa-1111-2222-af75a376b0f9",
+    "CorrespondenceLanguage" : "",
+    "CreatedByUser" : "ABC34c6020a",
+    "CreationDate" : "\/Date(1430784000000)\/",
+    "CreationTime" : "PT09H50M04S",
+    "TicketIsBlocked" : false,
+    "TicketType" : "",
+    "ETag" : "ABC20180116144654"
+  }
+}
