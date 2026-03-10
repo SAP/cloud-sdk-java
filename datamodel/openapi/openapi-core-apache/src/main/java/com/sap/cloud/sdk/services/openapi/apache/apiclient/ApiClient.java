@@ -368,18 +368,30 @@ public class ApiClient
     private HttpEntity serialize(
         @Nullable final Object obj,
         @Nonnull final Map<String, Object> formParams,
-        @Nonnull final ContentType contentType )
+        @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
-            try {
-                return new StringEntity(
-                    objectMapper.writeValueAsString(obj),
-                    contentType.withCharset(StandardCharsets.UTF_8));
-            }
-            catch( JsonProcessingException e ) {
-                throw new OpenApiRequestException(e);
+            if( "gzip".equals(headerParams.get("Content-Encoding")) ) {
+                val outputStream = new ByteArrayOutputStream();
+                try( val gzip = new GZIPOutputStream(outputStream) ) {
+                    gzip.write(objectMapper.writeValueAsBytes(obj));
+                }
+                catch( IOException e ) {
+                    throw new OpenApiRequestException(e);
+                }
+                return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
+            } else {
+                try {
+                    return new StringEntity(
+                        objectMapper.writeValueAsString(obj),
+                        contentType.withCharset(StandardCharsets.UTF_8));
+                }
+                catch( JsonProcessingException e ) {
+                    throw new OpenApiRequestException(e);
+                }
             }
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             final MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
@@ -563,11 +575,7 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                builder
-                    .setEntity(
-                        "gzip".equals(headerParams.get("Content-Encoding"))
-                            ? serializeGzip(body, contentTypeObj)
-                            : serialize(body, formParams, contentTypeObj));
+                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams));
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -584,17 +592,5 @@ public class ApiClient
         catch( IOException e ) {
             throw new OpenApiRequestException(e);
         }
-    }
-
-    private HttpEntity serializeGzip( final Object body, final ContentType contentType )
-    {
-        val outputStream = new ByteArrayOutputStream();
-        try( val gzip = new GZIPOutputStream(outputStream) ) {
-            gzip.write(objectMapper.writeValueAsBytes(body));
-        }
-        catch( IOException e ) {
-            throw new OpenApiRequestException(e);
-        }
-        return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
     }
 }
