@@ -80,7 +80,7 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
     private static byte[] normalizeBinary( @Nonnull final String value )
     {
         // Normalize URL-safe characters to standard Base64
-        String normalized = value.replace('-', '+').replace('_', '/');
+        final String normalized = value.replace('-', '+').replace('_', '/');
 
         return Base64.getDecoder().decode(normalized);
     }
