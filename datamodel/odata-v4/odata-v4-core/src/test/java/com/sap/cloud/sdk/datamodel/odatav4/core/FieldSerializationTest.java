@@ -207,14 +207,18 @@ class FieldSerializationTest
     }
 
     @Test
-    void testBinaryFieldParsingFromMixedBase64AlphabetFails()
+    void testBinaryFieldParsingFromMixedBase64AlphabetNormalized()
     {
         final ODataRequestResultGeneric result =
             mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET);
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isNull();
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[] { (byte) 0xfb, (byte) 0xff, (byte) 0xef });
+
+        final String ser =
+            new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
+        assertThat(ser).contains("\"BinaryValue\":\"+//v\"");
     }
 
     @SneakyThrows
