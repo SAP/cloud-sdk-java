@@ -56,7 +56,7 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
         new ODataGenericConverter<>(
             byte[].class,
             Base64.getEncoder()::encodeToString,
-            ODataGenericConverter::normalizeBinary);
+            ODataGenericConverter::decodeBinary);
 
     private static final ODataGenericConverter<String> STRING =
         new ODataGenericConverter<>(String.class, Function.identity(), Function.identity());
@@ -77,7 +77,7 @@ final class ODataGenericConverter<JavaT> extends AbstractTypeConverter<JavaT, St
     private final Function<String, JavaT> deserializer;
 
     @Nonnull
-    private static byte[] normalizeBinary( @Nonnull final String value )
+    private static byte[] decodeBinary( @Nonnull final String value )
     {
         // Normalize URL-safe characters to standard Base64
         final String normalized = value.replace('-', '+').replace('_', '/');

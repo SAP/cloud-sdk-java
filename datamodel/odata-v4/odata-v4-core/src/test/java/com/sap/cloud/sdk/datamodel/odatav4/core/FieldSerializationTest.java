@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -187,7 +188,7 @@ class FieldSerializationTest
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[] { (byte) 0xfb, (byte) 0xff, (byte) 0xef });
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getUrlDecoder().decode("-__v"));
 
         final String ser =
             new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
@@ -214,7 +215,7 @@ class FieldSerializationTest
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isEqualTo(new byte[] { (byte) 0xfb, (byte) 0xff, (byte) 0xef });
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getDecoder().decode("+//v"));
 
         final String ser =
             new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
