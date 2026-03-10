@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 @Slf4j
-class OAuth2Service
+class OAuth2Service implements IsOnBehalfOf
 {
     /**
      * Cache to reuse OAuth2TokenService and with that reuse the underlying response cache.
@@ -83,6 +83,7 @@ class OAuth2Service
     @Nonnull
     private final ClientIdentity identity;
     @Nonnull
+    @Getter
     private final OnBehalfOf onBehalfOf;
     @Nonnull
     private final TenantPropagationStrategy tenantPropagationStrategy;

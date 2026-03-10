@@ -79,11 +79,8 @@ public abstract class AbstractHttpClientCache implements HttpClientCache
         final Try<CacheKey> maybeKey = destination != null ? getCacheKey(destination) : getCacheKey();
 
         if( maybeKey.isFailure() ) {
-            return Try
-                .failure(
-                    new HttpClientInstantiationException(
-                        "Failed to create cache key for HttpClient",
-                        maybeKey.getCause()));
+            final String msg = "Failed to create cache key for HttpClient";
+            return Try.failure(new HttpClientInstantiationException(msg, maybeKey.getCause()));
         }
 
         final Cache<CacheKey, HttpClient> cache = maybeCache.get();

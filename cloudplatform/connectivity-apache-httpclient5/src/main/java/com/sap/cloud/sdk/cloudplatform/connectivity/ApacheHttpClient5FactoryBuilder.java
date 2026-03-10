@@ -8,18 +8,85 @@ import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.common.annotations.Beta;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * Builder class for a default implementation of the {@link ApacheHttpClient5Factory} interface.
  *
  * @since 4.20.0
  */
+@Accessors( fluent = true )
 public class ApacheHttpClient5FactoryBuilder
 {
+    /**
+     * The {@code Upgrade} header. Only {@link ProxyType#INTERNET} has the {@code Upgrade} header by default.
+     * <p>
+     * <b>{@link TlsUpgrade#DISABLED} only works for {@link ProxyType#INTERNET}</b>
+     * <p>
+     * <b>{@link TlsUpgrade#ENABLED} only works for {@link ProxyType#ON_PREMISE}</b>
+     *
+     * @since 5.14.0
+     */
+    @Setter
     @Nonnull
-    private Duration timeout = DefaultApacheHttpClient5Factory.DEFAULT_TIMEOUT;
     private TlsUpgrade tlsUpgrade = TlsUpgrade.AUTOMATIC;
-    private int maxConnectionsTotal = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_TOTAL;
-    private int maxConnectionsPerRoute = DefaultApacheHttpClient5Factory.DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+
+    /**
+     * The {@link ConnectionPoolSettings} to use for configuring connection pool managers and request timeouts.
+     * <p>
+     * This replaces any previously configured settings from {@link #timeout(Duration)},
+     * {@link #maxConnectionsTotal(int)}, or {@link #maxConnectionsPerRoute(int)}.
+     * </p>
+     * <p>
+     * This is an <b>optional</b> parameter. By default, settings use the default values.
+     * </p>
+     *
+     * @see DefaultConnectionPoolSettings#ofDefaults()
+     * @see DefaultConnectionPoolSettings#builder()
+     * @since 5.27.0
+     */
+    @Setter( onMethod_ = @Beta )
+    @Nonnull
+    private DefaultConnectionPoolSettings settings = DefaultConnectionPoolSettings.ofDefaults();
+
+    /**
+     * A custom {@link ConnectionPoolManagerProvider} for creating and managing HTTP connection pool managers.
+     * <p>
+     * This allows customization of how connection managers are created and cached. Use
+     * {@link ConnectionPoolManagerProviders} to obtain pre-built implementations with common caching strategies:
+     * </p>
+     * <ul>
+     * <li>{@link ConnectionPoolManagerProviders#noCache()} - No caching (default behavior)</li>
+     * <li>{@link ConnectionPoolManagerProviders#byTenant()} - Cache by current tenant</li>
+     * <li>{@link ConnectionPoolManagerProviders#byDestinationName()} - Cache by destination name</li>
+     * <li>{@link ConnectionPoolManagerProviders#global()} - Single global connection manager</li>
+     * <li>{@link ConnectionPoolManagerProviders#withCacheKey(java.util.function.Function)} - Custom cache key</li>
+     * </ul>
+     * <p>
+     * This is an <b>optional</b> parameter. By default, a new connection manager is created for each HTTP client
+     * without caching.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     *
+     * <pre>
+     * {@code
+     * // Cache connection managers by tenant to reduce memory consumption
+     * ApacheHttpClient5Factory factory =
+     *     new ApacheHttpClient5FactoryBuilder()
+     *         .connectionPoolManagerProvider(ConnectionPoolManagerProviders.byTenant())
+     *         .build();
+     * }
+     * </pre>
+     *
+     * @see ConnectionPoolManagerProvider
+     * @see ConnectionPoolManagerProviders
+     * @since 5.27.0
+     */
+    @Setter( onMethod_ = @Beta )
+    @Nonnull
+    private ConnectionPoolManagerProvider connectionPoolManagerProvider = ConnectionPoolManagerProviders.noCache();
 
     /**
      * Enum to control the automatic TLS upgrade feature for insecure connections.
@@ -88,7 +155,8 @@ public class ApacheHttpClient5FactoryBuilder
     @Nonnull
     public ApacheHttpClient5FactoryBuilder timeout( @Nonnull final Duration timeout )
     {
-        this.timeout = timeout;
+        settings =
+            settings.withConnectTimeout(timeout).withSocketTimeout(timeout).withConnectionRequestTimeout(timeout);
         return this;
     }
 
@@ -106,23 +174,7 @@ public class ApacheHttpClient5FactoryBuilder
     @Nonnull
     public ApacheHttpClient5FactoryBuilder maxConnectionsTotal( final int maxConnectionsTotal )
     {
-        this.maxConnectionsTotal = maxConnectionsTotal;
-        return this;
-    }
-
-    /**
-     * Sets the {@code Upgrade} header. Only {@link ProxyType#INTERNET} has the {@code Upgrade} header by default.
-     * <p>
-     * <b>{@link TlsUpgrade#DISABLED} only works for {@link ProxyType#INTERNET}</b>
-     * <p>
-     * <b>{@link TlsUpgrade#ENABLED} only works for {@link ProxyType#ON_PREMISE}</b>
-     *
-     * @since 5.14.0
-     */
-    @Nonnull
-    public ApacheHttpClient5FactoryBuilder tlsUpgrade( @Nonnull final TlsUpgrade tlsUpgrade )
-    {
-        this.tlsUpgrade = tlsUpgrade;
+        settings = settings.withMaxConnectionsTotal(maxConnectionsTotal);
         return this;
     }
 
@@ -141,7 +193,7 @@ public class ApacheHttpClient5FactoryBuilder
     @Nonnull
     public ApacheHttpClient5FactoryBuilder maxConnectionsPerRoute( final int maxConnectionsPerRoute )
     {
-        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+        settings = settings.withMaxConnectionsPerRoute(maxConnectionsPerRoute);
         return this;
     }
 
@@ -153,11 +205,6 @@ public class ApacheHttpClient5FactoryBuilder
     @Nonnull
     public ApacheHttpClient5Factory build()
     {
-        return new DefaultApacheHttpClient5Factory(
-            timeout,
-            maxConnectionsTotal,
-            maxConnectionsPerRoute,
-            null,
-            tlsUpgrade);
+        return new DefaultApacheHttpClient5Factory(settings, connectionPoolManagerProvider, null, tlsUpgrade);
     }
 }
