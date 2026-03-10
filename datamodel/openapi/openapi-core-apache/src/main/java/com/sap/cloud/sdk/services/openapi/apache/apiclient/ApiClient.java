@@ -352,89 +352,6 @@ public class ApiClient
     }
 
     /**
-     * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
-     *
-     * @param obj
-     *            Object
-     * @param contentType
-     *            Content type
-     * @param formParams
-     *            Form parameters
-     * @return Object
-     * @throws OpenApiRequestException
-     *             API exception
-     */
-    @Nonnull
-    private HttpEntity serialize(
-        @Nullable final Object obj,
-        @Nonnull final Map<String, Object> formParams,
-        @Nonnull final ContentType contentType,
-        @Nonnull final Map<String, String> headerParams )
-        throws OpenApiRequestException
-    {
-        final String mimeType = contentType.getMimeType();
-        if( isJsonMime(mimeType) ) {
-            if( "gzip".equals(headerParams.get("Content-Encoding")) ) {
-                val outputStream = new ByteArrayOutputStream();
-                try( val gzip = new GZIPOutputStream(outputStream) ) {
-                    gzip.write(objectMapper.writeValueAsBytes(obj));
-                }
-                catch( IOException e ) {
-                    throw new OpenApiRequestException(e);
-                }
-                return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
-            } else {
-                try {
-                    return new StringEntity(
-                        objectMapper.writeValueAsString(obj),
-                        contentType.withCharset(StandardCharsets.UTF_8));
-                }
-                catch( JsonProcessingException e ) {
-                    throw new OpenApiRequestException(e);
-                }
-            }
-        } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
-            final MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
-            for( final Entry<String, Object> paramEntry : formParams.entrySet() ) {
-                final Object value = paramEntry.getValue();
-                if( value instanceof File file ) {
-                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), file);
-                } else if( value instanceof byte[] byteArray ) {
-                    multiPartBuilder.addBinaryBody(paramEntry.getKey(), byteArray);
-                } else {
-                    final Charset charset = contentType.getCharset();
-                    if( charset != null ) {
-                        final ContentType customContentType =
-                            ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), charset);
-                        multiPartBuilder
-                            .addTextBody(
-                                paramEntry.getKey(),
-                                parameterToString(paramEntry.getValue()),
-                                customContentType);
-                    } else {
-                        multiPartBuilder.addTextBody(paramEntry.getKey(), parameterToString(paramEntry.getValue()));
-                    }
-                }
-            }
-            return multiPartBuilder.build();
-        } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
-            final List<NameValuePair> formValues = new ArrayList<>();
-            for( final Entry<String, Object> paramEntry : formParams.entrySet() ) {
-                formValues.add(new BasicNameValuePair(paramEntry.getKey(), parameterToString(paramEntry.getValue())));
-            }
-            return new UrlEncodedFormEntity(formValues, contentType.getCharset());
-        } else {
-            // Handle files with unknown content type
-            if( obj instanceof File file ) {
-                return new FileEntity(file, contentType);
-            } else if( obj instanceof byte[] byteArray ) {
-                return new ByteArrayEntity(byteArray, contentType);
-            }
-            throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
-        }
-    }
-
-    /**
      * Build full URL by concatenating base URL, the given sub path and query parameters.
      *
      * @param path
@@ -575,7 +492,7 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams));
+                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams.get("Content-Encoding")));
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -592,5 +509,113 @@ public class ApiClient
         catch( IOException e ) {
             throw new OpenApiRequestException(e);
         }
+    }
+
+    /**
+     * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
+     *
+     * @param body
+     *            Object
+     * @param contentType
+     *            Content type
+     * @param formParams
+     *            Form parameters
+     * @return Object
+     * @throws OpenApiRequestException
+     *             API exception
+     */
+    @Nonnull
+    private HttpEntity serialize(
+        @Nullable final Object body,
+        @Nonnull final Map<String, Object> formParams,
+        @Nonnull final ContentType contentType,
+        @Nonnull final String contentEncoding )
+        throws OpenApiRequestException
+    {
+        final String mimeType = contentType.getMimeType();
+        if( isJsonMime(mimeType) ) {
+            return serializeJson(body, contentType, contentEncoding);
+        } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
+            return serializeMultipart(formParams, contentType);
+        } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
+            return serializeFormUrlEncoded(formParams, contentType);
+        } else if( body instanceof File file ) {
+            return new FileEntity(file, contentType);
+        } else if( body instanceof byte[] byteArray ) {
+            return new ByteArrayEntity(byteArray, contentType);
+        }
+        throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
+    }
+
+    @Nonnull
+    private HttpEntity serializeJson(
+        @Nullable final Object body,
+        @Nonnull final ContentType contentType,
+        @Nonnull final String contentEncoding )
+        throws OpenApiRequestException
+    {
+        if( "gzip".equals(contentEncoding) ) {
+            val outputStream = new ByteArrayOutputStream();
+            try( val gzip = new GZIPOutputStream(outputStream) ) {
+                gzip.write(objectMapper.writeValueAsBytes(body));
+            }
+            catch( IOException e ) {
+                throw new OpenApiRequestException(e);
+            }
+            return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
+        }
+        try {
+            return new StringEntity(
+                objectMapper.writeValueAsString(body),
+                contentType.withCharset(StandardCharsets.UTF_8));
+        }
+        catch( JsonProcessingException e ) {
+            throw new OpenApiRequestException(e);
+        }
+    }
+
+    @Nonnull
+    private
+        HttpEntity
+        serializeMultipart( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
+    {
+        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        for( final Entry<String, Object> entry : formParams.entrySet() ) {
+            final Object value = entry.getValue();
+            if( value instanceof File file ) {
+                builder.addBinaryBody(entry.getKey(), file);
+            } else if( value instanceof byte[] byteArray ) {
+                builder.addBinaryBody(entry.getKey(), byteArray);
+            } else {
+                addMultipartTextField(builder, entry, contentType);
+            }
+        }
+        return builder.build();
+    }
+
+    private void addMultipartTextField(
+        @Nonnull final MultipartEntityBuilder builder,
+        @Nonnull final Entry<String, Object> entry,
+        @Nonnull final ContentType contentType )
+    {
+        final Charset charset = contentType.getCharset();
+        if( charset != null ) {
+            final ContentType textContentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), charset);
+            builder.addTextBody(entry.getKey(), parameterToString(entry.getValue()), textContentType);
+        } else {
+            builder.addTextBody(entry.getKey(), parameterToString(entry.getValue()));
+        }
+    }
+
+    @Nonnull
+    private
+        HttpEntity
+        serializeFormUrlEncoded( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
+    {
+        final List<NameValuePair> formValues = new ArrayList<>();
+        for( final Entry<String, Object> entry : formParams.entrySet() ) {
+            formValues.add(new BasicNameValuePair(entry.getKey(), parameterToString(entry.getValue())));
+        }
+        return new UrlEncodedFormEntity(formValues, contentType.getCharset());
     }
 }
