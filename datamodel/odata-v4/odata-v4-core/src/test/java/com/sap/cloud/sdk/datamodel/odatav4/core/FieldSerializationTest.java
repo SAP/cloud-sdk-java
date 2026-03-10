@@ -165,6 +165,9 @@ class FieldSerializationTest
 
         private static final String PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET =
             PAYLOAD_ODATA_REFERENCE.replace("\"BinaryValue\":\"AQID\"", "\"BinaryValue\":\"+__v\"");
+
+        static final String Base_64 = "+//v";
+        static final String Base_64_Url = "-__v";
     }
 
     @Test
@@ -188,11 +191,12 @@ class FieldSerializationTest
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getUrlDecoder().decode("-__v"));
+        assertThat(referenceResult.getBinaryValue())
+            .isEqualTo(Base64.getUrlDecoder().decode(ReferenceObject.Base_64_Url));
 
         final String ser =
             new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
-        assertThat(ser).contains("\"BinaryValue\":\"+//v\"");
+        assertThat(ser).contains("\"BinaryValue\":\"" + ReferenceObject.Base_64 + "\"");
     }
 
     @Test
@@ -215,11 +219,11 @@ class FieldSerializationTest
         final ReferenceObject referenceResult = result.as(ReferenceObject.class);
 
         Objects.requireNonNull(referenceResult);
-        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getDecoder().decode("+//v"));
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getDecoder().decode(ReferenceObject.Base_64));
 
         final String ser =
             new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
-        assertThat(ser).contains("\"BinaryValue\":\"+//v\"");
+        assertThat(ser).contains("\"BinaryValue\":\"" + ReferenceObject.Base_64 + "\"");
     }
 
     @SneakyThrows
