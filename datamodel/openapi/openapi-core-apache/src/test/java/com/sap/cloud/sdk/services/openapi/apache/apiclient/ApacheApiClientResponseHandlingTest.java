@@ -3,6 +3,8 @@ package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -30,6 +32,7 @@ class ApacheApiClientResponseHandlingTest
 {
     private static final String TEST_PATH = "/test";
     private static final String TEST_RESPONSE_BODY = "{\"message\": \"success\"}";
+    private static final String TEST_POST_PATH = "/test-post";
 
     @Test
     void testResponseMetadataListener( final WireMockRuntimeInfo wmInfo )
@@ -84,6 +87,22 @@ class ApacheApiClientResponseHandlingTest
         assertThat(headers.get("X-CUSTOM-HEADER")).contains("some-value");
     }
 
+    @Test
+    void testGzipEncodedPayload( final WireMockRuntimeInfo wmInfo )
+    {
+        stubFor(post(urlEqualTo(TEST_POST_PATH)).willReturn(aResponse().withStatus(200).withBody(TEST_RESPONSE_BODY)));
+
+        final ApiClient apiClient = ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl());
+
+        final TestPostApi api = new TestPostApi(apiClient);
+        final TestResponse result = api.executeGzipRequest();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getMessage()).isEqualTo("success");
+
+        verify(1, postRequestedFor(urlEqualTo(TEST_POST_PATH)));
+    }
+
     private static class TestApi extends BaseApi
     {
         private final String path;
@@ -104,7 +123,7 @@ class ApacheApiClientResponseHandlingTest
         {
             final List<Pair> localVarQueryParams = new ArrayList<>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<>();
-            final Map<String, String> localVarHeaderParams = new HashMap<>();
+            final Map<String, String> localVarHeaderParams = Map.of("Content-Encoding", "gzip");
             final Map<String, Object> localVarFormParams = new HashMap<>();
 
             final String[] localVarAccepts = { "application/json" };
@@ -113,7 +132,7 @@ class ApacheApiClientResponseHandlingTest
             final String[] localVarContentTypes = {};
             final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
 
-            final TypeReference<TestResponse> localVarReturnType = new TypeReference<TestResponse>()
+            final TypeReference<TestResponse> localVarReturnType = new TypeReference<>()
             {
             };
 
@@ -125,6 +144,59 @@ class ApacheApiClientResponseHandlingTest
                     localVarCollectionQueryParams,
                     null,
                     null,
+                    localVarHeaderParams,
+                    localVarFormParams,
+                    localVarAccept,
+                    localVarContentType,
+                    localVarReturnType);
+        }
+    }
+
+    private static class TestPostApi extends BaseApi
+    {
+        private final String path;
+
+        TestPostApi( final ApiClient apiClient )
+        {
+            this(apiClient, TEST_POST_PATH);
+        }
+
+        TestPostApi( final ApiClient apiClient, final String path )
+        {
+            super(apiClient);
+            this.path = path;
+        }
+
+        TestResponse executeGzipRequest()
+            throws OpenApiRequestException
+        {
+            final TestResponse requestBody = new TestResponse();
+            requestBody.setMessage("test payload");
+
+            final List<Pair> localVarQueryParams = new ArrayList<>();
+            final List<Pair> localVarCollectionQueryParams = new ArrayList<>();
+            final Map<String, String> localVarHeaderParams = new HashMap<>();
+            localVarHeaderParams.put("Content-Encoding", "gzip");
+            final Map<String, Object> localVarFormParams = new HashMap<>();
+
+            final String[] localVarAccepts = { "application/json" };
+            final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
+            final String[] localVarContentTypes = { "application/json" };
+            final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+
+            final TypeReference<TestResponse> localVarReturnType = new TypeReference<>()
+            {
+            };
+
+            return apiClient
+                .invokeAPI(
+                    path,
+                    "POST",
+                    localVarQueryParams,
+                    localVarCollectionQueryParams,
+                    null,
+                    requestBody,
                     localVarHeaderParams,
                     localVarFormParams,
                     localVarAccept,
