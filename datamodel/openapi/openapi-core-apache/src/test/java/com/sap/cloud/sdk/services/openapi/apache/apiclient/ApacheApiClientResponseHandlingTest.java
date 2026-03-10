@@ -123,7 +123,7 @@ class ApacheApiClientResponseHandlingTest
         {
             final List<Pair> localVarQueryParams = new ArrayList<>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<>();
-            final Map<String, String> localVarHeaderParams = Map.of("Content-Encoding", "gzip");
+          final Map<String, String> localVarHeaderParams = new HashMap<>();
             final Map<String, Object> localVarFormParams = new HashMap<>();
 
             final String[] localVarAccepts = { "application/json" };
