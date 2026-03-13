@@ -10,22 +10,30 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
 import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponse;
 
+import io.vavr.control.Try;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 @WireMockTest
 class ApacheApiClientResponseHandlingTest
@@ -88,14 +96,19 @@ class ApacheApiClientResponseHandlingTest
     }
 
     @Test
+    @SneakyThrows
     void testGzipEncodedPayload( final WireMockRuntimeInfo wmInfo )
     {
         stubFor(post(urlEqualTo(TEST_POST_PATH)).willReturn(aResponse().withStatus(200).withBody(TEST_RESPONSE_BODY)));
 
-        final ApiClient apiClient = ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl());
-
+        final CloseableHttpClient client = Mockito.spy((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
+        final ApiClient apiClient = ApiClient.fromHttpClient(client).withBasePath(wmInfo.getHttpBaseUrl());
         final TestPostApi api = new TestPostApi(apiClient);
         final TestResponse result = api.executeGzipRequest();
+        Mockito.verify(client, Mockito.times(1)).execute(Mockito.argThat(request -> {
+            final byte[] c = Try.of(() -> new GZIPInputStream(request.getEntity().getContent()).readAllBytes()).get();
+            return new String(c, StandardCharsets.UTF_8).contains("test payload");
+        }), Mockito.any(HttpContext.class), Mockito.any());
 
         assertThat(result).isNotNull();
         assertThat(result.getMessage()).isEqualTo("success");

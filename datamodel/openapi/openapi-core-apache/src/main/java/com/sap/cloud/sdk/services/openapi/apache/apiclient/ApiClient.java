@@ -14,6 +14,7 @@ package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -492,7 +493,7 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams.get("Content-Encoding")));
+                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams));
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -520,6 +521,8 @@ public class ApiClient
      *            Content type
      * @param formParams
      *            Form parameters
+     * @param headerParams
+     *            Header parameters, used to check content encoding for JSON serialization
      * @return Object
      * @throws OpenApiRequestException
      *             API exception
@@ -529,12 +532,12 @@ public class ApiClient
         @Nullable final Object body,
         @Nonnull final Map<String, Object> formParams,
         @Nonnull final ContentType contentType,
-        @Nullable final String contentEncoding )
+        @Nonnull final Map<String, String> headerParams )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
-            return serializeJson(body, contentType, contentEncoding);
+            return serializeJson(body, contentType, headerParams);
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             return serializeMultipart(formParams, contentType);
         } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
@@ -551,18 +554,22 @@ public class ApiClient
     private HttpEntity serializeJson(
         @Nullable final Object body,
         @Nonnull final ContentType contentType,
-        @Nullable final String contentEncoding )
+        @Nonnull final Map<String, String> headerParams )
         throws OpenApiRequestException
     {
-        if( "gzip".equals(contentEncoding) ) {
+        if( "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING))
+            || "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING.toLowerCase())) ) {
             val outputStream = new ByteArrayOutputStream();
             try( val gzip = new GZIPOutputStream(outputStream) ) {
                 gzip.write(objectMapper.writeValueAsBytes(body));
             }
             catch( IOException e ) {
-                throw new OpenApiRequestException(e);
+                throw new OpenApiRequestException("Failed to GZIP compress request body", e);
             }
-            return new ByteArrayEntity(outputStream.toByteArray(), contentType.withCharset(StandardCharsets.UTF_8));
+            return new ByteArrayEntity(
+                outputStream.toByteArray(),
+                contentType.withCharset(StandardCharsets.UTF_8),
+                "gzip");
         }
         try {
             return new StringEntity(
