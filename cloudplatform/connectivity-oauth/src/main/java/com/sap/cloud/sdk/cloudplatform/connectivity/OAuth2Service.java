@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -33,10 +33,8 @@ import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedExce
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
-import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.token.Token;
-import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
@@ -113,29 +111,13 @@ class OAuth2Service
                     tokenCacheParameters.getTokenExpirationDelta(),
                     false); // disable cache statistics
 
-        if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
-        }
+        // For ZTIS, use the KeyStore directly from the identity
+        final CloseableHttpClient httpClient =
+            identity instanceof final ZtisClientIdentity ztisIdentity
+                ? HttpClient5OAuth2TokenService.createHttpClient(identity, ztisIdentity.getKeyStore())
+                : HttpClient5OAuth2TokenService.createHttpClient(identity);
 
-        final DefaultHttpDestination destination =
-            DefaultHttpDestination
-                // Giving an empty URL here as a workaround
-                // If we were to give the token URL here we can't change the subdomain later
-                // But the subdomain represents the tenant in case of IAS, so we have to change the subdomain per-tenant
-                .builder("")
-                .name("oauth-destination-ztis-" + identity.getId().hashCode())
-                .keyStore(((ZtisClientIdentity) identity).getKeyStore())
-                .build();
-        try {
-            return new DefaultOAuth2TokenService(
-                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
-                tokenCacheConfiguration);
-        }
-        catch( final ClassCastException e ) {
-            final String msg =
-                "For the X509_ATTESTED credential type the 'HttpClientAccessor' must return instances of 'CloseableHttpClient'";
-            throw new DestinationAccessException(msg, e);
-        }
+        return new HttpClient5OAuth2TokenService(httpClient, tokenCacheConfiguration);
     }
 
     @Nonnull
