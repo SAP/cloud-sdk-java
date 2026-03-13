@@ -529,7 +529,7 @@ public class ApiClient
         @Nullable final Object body,
         @Nonnull final Map<String, Object> formParams,
         @Nonnull final ContentType contentType,
-        @Nonnull final String contentEncoding )
+        @Nullable final String contentEncoding )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
@@ -551,7 +551,7 @@ public class ApiClient
     private HttpEntity serializeJson(
         @Nullable final Object body,
         @Nonnull final ContentType contentType,
-        @Nonnull final String contentEncoding )
+        @Nullable final String contentEncoding )
         throws OpenApiRequestException
     {
         if( "gzip".equals(contentEncoding) ) {
