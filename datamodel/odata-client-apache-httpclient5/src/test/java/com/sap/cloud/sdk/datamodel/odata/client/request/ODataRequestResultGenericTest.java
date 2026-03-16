@@ -19,14 +19,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;

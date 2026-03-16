@@ -10,8 +10,8 @@ import java.util.function.BiFunction;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
@@ -116,7 +116,7 @@ final class HttpEntityReader
         @Nonnull final ODataRequestResult result,
         @Nonnull final CheckedFunction1<JsonReader, T> readerConsumer )
     {
-        final HttpResponse httpResponse = result.getHttpResponse();
+        final ClassicHttpResponse httpResponse = result.getHttpResponse();
         final ODataRequestGeneric request = result.getODataRequest();
         final BiFunction<String, Throwable, RuntimeException> errorHandler =
             ( msg, e ) -> new ODataDeserializationException(request, httpResponse, msg, e);

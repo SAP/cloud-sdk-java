@@ -20,10 +20,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.BufferedHttpEntity;
 import org.apache.http.message.BasicHeader;
 import org.junit.jupiter.api.Test;
 

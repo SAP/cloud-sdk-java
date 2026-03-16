@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -34,7 +34,7 @@ class ODataHttpRequestTest
         final ODataHttpRequest httpRequest = ODataHttpRequest.withoutBody(odataRequest, httpClient);
         httpRequest.requestGet();
 
-        final ArgumentCaptor<HttpRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpRequestBase.class);
+        final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
         Mockito.verify(httpClient).execute(argumentCaptor.capture());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
@@ -52,7 +52,7 @@ class ODataHttpRequestTest
         final ODataHttpRequest httpRequest = ODataHttpRequest.withoutBody(odataRequest, httpClient);
         httpRequest.requestGet();
 
-        final ArgumentCaptor<HttpRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpRequestBase.class);
+        final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
         Mockito.verify(httpClient).execute(argumentCaptor.capture());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
@@ -72,7 +72,7 @@ class ODataHttpRequestTest
 
         httpRequest.requestGet();
 
-        final ArgumentCaptor<HttpRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpRequestBase.class);
+        final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
         Mockito.verify(httpClient).execute(argumentCaptor.capture());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
@@ -93,7 +93,7 @@ class ODataHttpRequestTest
 
         httpRequest.requestGet();
 
-        final ArgumentCaptor<HttpRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpRequestBase.class);
+        final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
         Mockito.verify(httpClient).execute(argumentCaptor.capture());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");

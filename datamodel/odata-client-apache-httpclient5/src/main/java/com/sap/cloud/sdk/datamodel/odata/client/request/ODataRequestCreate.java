@@ -4,8 +4,8 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpHeaders;
 
 import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;

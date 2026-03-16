@@ -5,14 +5,13 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.google.common.base.Strings;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -144,11 +143,11 @@ public class ODataRequestFunction extends ODataRequestGeneric
     public ODataRequestResultGeneric execute( @Nonnull final HttpClient httpClient )
     {
         final ODataHttpRequest request = ODataHttpRequest.withoutBody(this, httpClient);
-        final Try<ODataRequestResultGeneric> result =
-            csrfTokenRetriever == null
-                ? tryExecute(request::requestGet, httpClient)
-                : tryExecuteWithCsrfToken(httpClient, request::requestGet);
-        return result.get();
+        //        final Try<ODataRequestResultGeneric> result =
+        //            csrfTokenRetriever == null
+        //                ? tryExecute(request::requestGet, httpClient)
+        //                : tryExecuteWithCsrfToken(httpClient, request::requestGet);
+        return tryExecute(request::requestGet, httpClient).get();
     }
 
     @Override

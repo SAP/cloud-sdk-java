@@ -6,10 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;

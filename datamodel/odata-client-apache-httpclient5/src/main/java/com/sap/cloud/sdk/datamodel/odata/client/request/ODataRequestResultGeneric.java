@@ -21,12 +21,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.ContentType;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.StatusLine;
 
 import com.google.common.base.Strings;
 import com.google.common.reflect.TypeToken;
@@ -35,7 +36,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonToken;
-import com.sap.cloud.sdk.cloudplatform.connectivity.UriQueryMerger;
 import com.sap.cloud.sdk.datamodel.odata.client.JsonPath;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataResponseDeserializer;
@@ -74,7 +74,7 @@ public class ODataRequestResultGeneric
 
     @Nonnull
     @Getter
-    private final HttpResponse httpResponse;
+    private final ClassicHttpResponse httpResponse;
 
     private NumberDeserializationStrategy numberStrategy = NumberDeserializationStrategy.DOUBLE;
 
@@ -95,7 +95,7 @@ public class ODataRequestResultGeneric
      */
     public ODataRequestResultGeneric(
         @Nonnull final ODataRequestGeneric oDataRequest,
-        @Nonnull final HttpResponse httpResponse )
+        @Nonnull final ClassicHttpResponse httpResponse )
     {
         this(oDataRequest, httpResponse, null);
     }
@@ -113,7 +113,7 @@ public class ODataRequestResultGeneric
      */
     public ODataRequestResultGeneric(
         @Nonnull final ODataRequestGeneric oDataRequest,
-        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final ClassicHttpResponse httpResponse,
         @Nullable final HttpClient httpClient )
     {
         this.oDataRequest = oDataRequest;
@@ -128,7 +128,7 @@ public class ODataRequestResultGeneric
     @Override
     public StatusLine getStatusLine()
     {
-        return httpResponse.getStatusLine();
+        return new StatusLine(httpResponse);
     }
 
     /**
@@ -347,7 +347,7 @@ public class ODataRequestResultGeneric
         assertResultTypeIsNotVoid(objectType);
         if( isPrimitiveOrWrapperOrString(objectType) ) {
             @Nullable
-            final ContentType contentType = ContentType.get(getHttpResponse().getEntity());
+            final ContentType contentType = ContentType.parse(getHttpResponse().getEntity().getContentType());
 
             // parse text/plain responses directly, do not use JSON deserializers
             if( contentType != null
@@ -406,7 +406,7 @@ public class ODataRequestResultGeneric
         throws ODataDeserializationException
     {
         final ODataRequestGeneric r = getODataRequest();
-        final HttpResponse httpResponse = getHttpResponse();
+        final ClassicHttpResponse httpResponse = getHttpResponse();
 
         final String objectText =
             Try
@@ -511,7 +511,7 @@ public class ODataRequestResultGeneric
             if( resultElement != null ) {
                 String nextLink = resultElement.asString();
                 log.debug("Found reference to next page: {}", nextLink);
-                nextLink = removeDuplicateQueryParameters(nextLink);
+                //                nextLink = removeDuplicateQueryParameters(nextLink); // JONAS: this is done internally in the ApacheHttpClient5Wrapper
                 return Option.of(nextLink);
             }
         }
@@ -707,30 +707,30 @@ public class ODataRequestResultGeneric
 
     }
 
-    @Nonnull
-    private String removeDuplicateQueryParameters( @Nonnull final String nextLink )
-    {
-        if( !(httpClient instanceof UriQueryMerger) ) {
-            return nextLink;
-        }
-        final String query = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create("")).getRawQuery();
-        if( query == null ) {
-            return nextLink;
-        }
-        final String[] segments = nextLink.split("\\?", 2);
-        final String[] queryArguments = query.split("&");
-        for( final String argument : queryArguments ) {
-            if( segments[1].contains(argument) ) {
-                segments[1] = segments[1].replace(argument, "");
-            }
-        }
-        if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
-            return nextLink;
-        }
-        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "?foo=bar&"
-        segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
-        final String updatedLink = segments[0] + "?" + segments[1];
-        log.debug("Updated reference to next page: {}", updatedLink);
-        return updatedLink;
-    }
+    //    @Nonnull
+    //    private String removeDuplicateQueryParameters( @Nonnull final String nextLink )
+    //    {
+    //        if( !(httpClient instanceof ApacheHttpClient5Wrapper) ) {
+    //            return nextLink;
+    //        }
+    //        final String query = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create("")).getRawQuery();
+    //        if( query == null ) {
+    //            return nextLink;
+    //        }
+    //        final String[] segments = nextLink.split("\\?", 2);
+    //        final String[] queryArguments = query.split("&");
+    //        for( final String argument : queryArguments ) {
+    //            if( segments[1].contains(argument) ) {
+    //                segments[1] = segments[1].replace(argument, "");
+    //            }
+    //        }
+    //        if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
+    //            return nextLink;
+    //        }
+    //        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "?foo=bar&"
+    //        segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
+    //        final String updatedLink = segments[0] + "?" + segments[1];
+    //        log.debug("Updated reference to next page: {}", updatedLink);
+    //        return updatedLink;
+    //    }
 }

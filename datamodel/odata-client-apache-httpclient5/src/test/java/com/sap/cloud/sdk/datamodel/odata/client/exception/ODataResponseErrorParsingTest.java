@@ -25,10 +25,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpVersion;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

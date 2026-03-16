@@ -3,7 +3,7 @@ package com.sap.cloud.sdk.datamodel.odata.client.exception;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 
@@ -42,7 +42,7 @@ public class ODataServiceErrorException extends ODataResponseException
      */
     public ODataServiceErrorException(
         @Nonnull final ODataRequestGeneric request,
-        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final ClassicHttpResponse httpResponse,
         @Nonnull final String message,
         @Nullable final Throwable cause,
         @Nonnull final ODataServiceError odataError )

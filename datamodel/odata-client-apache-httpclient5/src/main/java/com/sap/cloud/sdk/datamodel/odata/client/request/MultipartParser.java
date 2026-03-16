@@ -20,10 +20,11 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
 
 import io.vavr.control.Try;
 import lombok.AccessLevel;
@@ -57,7 +58,7 @@ class MultipartParser implements AutoCloseable
      * @return A new instance of {@link MultipartParser}.
      */
     @SuppressWarnings( "PMD.CloseResource" ) // The attached InputStream is closed by the MultipartParser itself.
-    public static MultipartParser ofHttpResponse( @Nonnull final HttpResponse httpResponse )
+    public static MultipartParser ofHttpResponse( @Nonnull final ClassicHttpResponse httpResponse )
     {
         final HttpEntity entity = httpResponse.getEntity();
         if( entity == null ) {
@@ -75,7 +76,7 @@ class MultipartParser implements AutoCloseable
 
         final Charset charsetValue =
             Try
-                .of(() -> ContentType.get(entity))
+                .of(() -> ContentType.parse(entity.getContentType()))
                 .onFailure(e -> log.debug("Unable to detect charset, using to default charset {}", DEFAULT_CHARSET))
                 .toOption()
                 .map(ContentType::getCharset)
@@ -237,7 +238,7 @@ class MultipartParser implements AutoCloseable
     @Nonnull
     private static Optional<String> getDelimiterFromHttpResponse( @Nonnull final HttpResponse httpResponse )
     {
-        final List<Header> headers = Arrays.asList(httpResponse.getAllHeaders());
+        final List<Header> headers = Arrays.asList(httpResponse.getHeaders());
         final ContentType contentType = MultipartHttpResponse.getContentType(headers).orElse(null);
         if( contentType == null ) {
             return Optional.empty();

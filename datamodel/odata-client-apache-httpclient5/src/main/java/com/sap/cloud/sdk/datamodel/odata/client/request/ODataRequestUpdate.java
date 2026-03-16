@@ -2,19 +2,18 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 
 import java.net.URI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import com.google.common.collect.Lists;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -152,9 +151,9 @@ public class ODataRequestUpdate extends ODataRequestGeneric
         this.updateStrategy = updateStrategy;
         this.versionIdentifier = versionIdentifier;
 
-        final Header contentType = httpEntity.getContentType();
+        final String contentType = httpEntity.getContentType();
         if( contentType != null ) {
-            headers.putIfAbsent(CONTENT_TYPE, Lists.newArrayList(contentType.getValue()));
+            headers.putIfAbsent(CONTENT_TYPE, Lists.newArrayList(contentType));
         }
     }
 
@@ -219,7 +218,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
         private ComparableHttpEntity( final String json )
         {
             this(json, new StringEntity(json, ContentType.APPLICATION_JSON));
-            ((StringEntity) delegate).setContentType(ContentType.APPLICATION_JSON.getMimeType());
+            //            ((StringEntity) delegate).setContentType(ContentType.APPLICATION_JSON.getMimeType()); // JONAS: find out what to do here.
         }
     }
 }

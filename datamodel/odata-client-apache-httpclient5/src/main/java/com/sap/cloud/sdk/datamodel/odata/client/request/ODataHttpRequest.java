@@ -9,19 +9,22 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
-import org.apache.http.entity.StringEntity;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.HttpClient;
+//import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase; // instead of HttpRequestBase
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+//import org.apache.http.HttpEntityEnclosingRequest; use instead:
+import org.apache.hc.core5.http.HttpEntityContainer;
+//import org.apache.http.conn.ConnectionPoolTimeoutException; //
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -55,8 +58,7 @@ class ODataHttpRequest
         @Nonnull final HttpClient httpClient,
         @Nonnull final String json )
     {
-        final StringEntity requestBody = new StringEntity(json, UTF_8);
-        requestBody.setContentType("application/json");
+        final StringEntity requestBody = new StringEntity(json, ContentType.APPLICATION_JSON);
         return forHttpEntity(requestGeneric, httpClient, requestBody);
     }
 
@@ -88,16 +90,16 @@ class ODataHttpRequest
      * @return The HTTP response.
      */
     @Nonnull
-    private HttpResponse requestResource( @Nonnull final Function<URI, HttpRequestBase> requestCreator )
+    private ClassicHttpResponse requestResource( @Nonnull final Function<URI, HttpUriRequestBase> requestCreator )
     {
-        final HttpRequestBase httpRequest = requestCreator.apply(getUri());
+        final HttpUriRequestBase httpRequest = requestCreator.apply(getUri());
 
         odataRequest.getHeaders().forEach(( k, values ) -> values.forEach(v -> httpRequest.addHeader(k, v)));
 
         // add optional request body
-        if( httpRequest instanceof HttpEntityEnclosingRequest ) {
+        if( httpRequest instanceof HttpEntityContainer ) {
             if( requestBody != null ) {
-                ((HttpEntityEnclosingRequest) httpRequest).setEntity(requestBody);
+                ((HttpEntityContainer) httpRequest).setEntity(requestBody);
             } else {
                 log.warn("The HTTP request {} was expecting an entity, but none was provided.", httpRequest);
             }
@@ -106,7 +108,7 @@ class ODataHttpRequest
         odataRequest.getListeners().forEach(v -> v.listenOnRequest(httpRequest));
 
         try {
-            return httpClient.execute(httpRequest);
+            return httpClient.execute(httpRequest, response -> response); // JONAS: fix this
         }
         catch( final ClientProtocolException e ) {
             log.debug("Connection could not be established.", e);
@@ -116,18 +118,19 @@ class ODataHttpRequest
                 "Connection could not be established.",
                 e);
         }
-        catch( final ConnectionPoolTimeoutException e ) {
-            log.debug("Connection pool timed out.", e);
-            throw new ODataConnectionException(
-                this.odataRequest,
-                httpRequest,
-                """
-                    Time out occurred because of a probable connection leak. Please execute your request with try-with-resources to ensure resources are properly closed.\
-                    If you are using the OData client instead to execute your request, explicitly consume the entity of the associated HttpResponse using EntityUtils.consume(httpEntity)\
-                    """,
-                e);
-
-        }
+        // JONAS: find out which exception to catch here
+        //        catch( final ConnectionPoolTimeoutException e ) {
+        //            log.debug("Connection pool timed out.", e);
+        //            throw new ODataConnectionException(
+        //                this.odataRequest,
+        //                httpRequest,
+        //                """
+        //                    Time out occurred because of a probable connection leak. Please execute your request with try-with-resources to ensure resources are properly closed.\
+        //                    If you are using the OData client instead to execute your request, explicitly consume the entity of the associated ClassicHttpResponse using EntityUtils.consume(httpEntity)\
+        //                    """,
+        //                e);
+        //
+        //        }
         catch( final IOException e ) {
             log.debug("Connection was aborted.", e);
             throw new ODataConnectionException(this.odataRequest, httpRequest, "Connection was aborted.", e);
@@ -148,7 +151,7 @@ class ODataHttpRequest
      *             When an error occurred while handling the HTTP connection.
      */
     @Nonnull
-    HttpResponse requestGet()
+    ClassicHttpResponse requestGet()
     {
         return requestResource(HttpGet::new);
     }
@@ -163,7 +166,7 @@ class ODataHttpRequest
      *             When an error occurred while handling the HTTP connection.
      */
     @Nonnull
-    HttpResponse requestPost()
+    ClassicHttpResponse requestPost()
     {
         return requestResource(HttpPost::new);
     }
@@ -178,7 +181,7 @@ class ODataHttpRequest
      *             When an error occurred while handling the HTTP connection.
      */
     @Nonnull
-    HttpResponse requestPatch()
+    ClassicHttpResponse requestPatch()
     {
         return requestResource(HttpPatch::new);
     }
@@ -193,7 +196,7 @@ class ODataHttpRequest
      *             When an error occurred while handling the HTTP connection.
      */
     @Nonnull
-    HttpResponse requestPut()
+    ClassicHttpResponse requestPut()
     {
         return requestResource(HttpPut::new);
     }
@@ -208,7 +211,7 @@ class ODataHttpRequest
      *             When an error occurred while handling the HTTP connection.
      */
     @Nonnull
-    HttpResponse requestDelete()
+    ClassicHttpResponse requestDelete()
     {
         return requestResource(HttpDelete::new);
     }

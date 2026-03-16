@@ -7,9 +7,10 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 
@@ -63,13 +64,13 @@ public class ODataResponseException extends ODataException
      */
     public ODataResponseException(
         @Nonnull final ODataRequestGeneric request,
-        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final ClassicHttpResponse httpResponse,
         @Nonnull final String message,
         @Nullable final Throwable cause )
     {
         super(request, message, cause);
-        httpCode = httpResponse.getStatusLine().getStatusCode();
-        httpHeaders = Arrays.asList(httpResponse.getAllHeaders());
+        httpCode = httpResponse.getCode();
+        httpHeaders = Arrays.asList(httpResponse.getHeaders());
         httpBody =
             Try
                 .of(() -> EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8))

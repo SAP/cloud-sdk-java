@@ -9,9 +9,10 @@ import java.util.TreeMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
 
 /**
  * Generic type of an OData request result.
@@ -32,7 +33,7 @@ public interface ODataRequestResult
      * @return The HttpResponse.
      */
     @Nonnull
-    HttpResponse getHttpResponse();
+    ClassicHttpResponse getHttpResponse();
 
     /**
      * Get the HTTP response object status line.
@@ -42,7 +43,7 @@ public interface ODataRequestResult
     @Nullable
     default StatusLine getStatusLine()
     {
-        return getHttpResponse().getStatusLine();
+        return new StatusLine(getHttpResponse());
     }
 
     /**
@@ -78,7 +79,7 @@ public interface ODataRequestResult
     @Nonnull
     default Map<String, Iterable<String>> getAllHeaderValues()
     {
-        final Header[] allHeaders = getHttpResponse().getAllHeaders();
+        final Header[] allHeaders = getHttpResponse().getHeaders();
         final Map<String, Collection<String>> result = new TreeMap<>(String::compareToIgnoreCase);
 
         for( final Header header : allHeaders ) {

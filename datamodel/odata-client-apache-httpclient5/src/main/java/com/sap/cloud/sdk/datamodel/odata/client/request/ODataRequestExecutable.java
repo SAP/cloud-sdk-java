@@ -2,7 +2,7 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;

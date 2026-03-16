@@ -13,8 +13,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 
 class ODataRequestResultTest

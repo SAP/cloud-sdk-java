@@ -6,10 +6,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.StatusLine;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException;
@@ -38,10 +38,10 @@ public class ODataRequestResultMultipartGeneric
 
     @Getter
     @Nonnull
-    private final HttpResponse httpResponse;
+    private final ClassicHttpResponse httpResponse;
 
     @Nonnull
-    private final Lazy<Try<List<List<HttpResponse>>>> batchResponses = Lazy.of(this::loadBatchResponses);
+    private final Lazy<Try<List<List<ClassicHttpResponse>>>> batchResponses = Lazy.of(this::loadBatchResponses);
 
     @Nonnull
     private final List<Runnable> closeHandlers = new ArrayList<>();
@@ -56,7 +56,7 @@ public class ODataRequestResultMultipartGeneric
      */
     ODataRequestResultMultipartGeneric(
         @Nonnull final ODataRequestBatch oDataRequest,
-        @Nonnull final HttpResponse httpResponse )
+        @Nonnull final ClassicHttpResponse httpResponse )
     {
         batchRequest = oDataRequest;
         this.httpResponse = httpResponse;
@@ -66,7 +66,7 @@ public class ODataRequestResultMultipartGeneric
     @Override
     public StatusLine getStatusLine()
     {
-        return httpResponse.getStatusLine();
+        return new StatusLine(httpResponse);
     }
 
     /**
@@ -108,16 +108,16 @@ public class ODataRequestResultMultipartGeneric
         }
 
         log.debug("Looking for request {} in batch response at position {}", request, responsePosition);
-        final List<List<HttpResponse>> batchResponseItems = getBatchedResponses();
+        final List<List<ClassicHttpResponse>> batchResponseItems = getBatchedResponses();
         if( responsePosition._1() >= batchResponseItems.size() ) {
             String msg = "Unable to extract batch response item at position %s. The response contains only %s items.";
             msg = String.format(msg, responsePosition._1() + 1, batchResponseItems.size());
             throw new ODataResponseException(batchRequest, httpResponse, msg, null);
         }
-        final List<HttpResponse> subResponses = batchResponseItems.get(responsePosition._1());
+        final List<ClassicHttpResponse> subResponses = batchResponseItems.get(responsePosition._1());
 
         final boolean isSingleResponse = responsePosition._2() == null || responsePosition._2() >= subResponses.size();
-        final HttpResponse response = subResponses.get(isSingleResponse ? 0 : responsePosition._2());
+        final ClassicHttpResponse response = subResponses.get(isSingleResponse ? 0 : responsePosition._2());
 
         if( response == null ) {
             final String msg = "Illegal payload for " + batchRequest.getProtocol() + " batch response item.";
@@ -138,7 +138,7 @@ public class ODataRequestResultMultipartGeneric
      * @return The virtual HTTP response objects.
      */
     @Nonnull
-    public List<List<HttpResponse>> getBatchedResponses()
+    public List<List<ClassicHttpResponse>> getBatchedResponses()
     {
         return batchResponses
             .get()
@@ -151,7 +151,7 @@ public class ODataRequestResultMultipartGeneric
     }
 
     @Nonnull
-    private Try<List<List<HttpResponse>>> loadBatchResponses()
+    private Try<List<List<ClassicHttpResponse>>> loadBatchResponses()
     {
         return Try.of(() -> {
             @SuppressWarnings( "resource" ) // resource will be registered in the close handlers

@@ -17,20 +17,16 @@ import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpHeaders;
 
 import com.google.common.collect.ImmutableMap;
-import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfToken;
-import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -163,23 +159,23 @@ public class ODataRequestBatch extends ODataRequestGeneric
     @Nonnull
     public ODataRequestResultMultipartGeneric execute( @Nonnull final HttpClient httpClient )
     {
-        final CsrfTokenRetriever csrfTokenRetriever =
-            Option.of(this.csrfTokenRetriever).getOrElse(DefaultCsrfTokenRetriever::new);
-
-        if( !csrfTokenRetriever.isEnabled()
-            || getHeaders().containsKey(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY) ) {
-            log.debug("CSRF token already present, skipping retrieval.");
-            return tryExecute(httpClient).get();
-        }
-
-        final Try<CsrfToken> csrfToken = tryGetCsrfToken(httpClient, csrfTokenRetriever);
-        csrfToken.onSuccess(token -> addHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, token.getToken()));
+        //        final CsrfTokenRetriever csrfTokenRetriever =
+        //            Option.of(this.csrfTokenRetriever).getOrElse(DefaultCsrfTokenRetriever::new);
+        //
+        //        if( !csrfTokenRetriever.isEnabled()
+        //            || getHeaders().containsKey(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY) ) {
+        //            log.debug("CSRF token already present, skipping retrieval.");
+        //            return tryExecute(httpClient).get();
+        //        }
+        //
+        //        final Try<CsrfToken> csrfToken = tryGetCsrfToken(httpClient, csrfTokenRetriever);
+        //        csrfToken.onSuccess(token -> addHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, token.getToken()));
 
         final Try<ODataRequestResultMultipartGeneric> batchRequest = tryExecute(httpClient);
 
-        if( batchRequest.isFailure() && csrfToken.isFailure() ) {
-            batchRequest.getCause().addSuppressed(csrfToken.getCause());
-        }
+        //        if( batchRequest.isFailure() && csrfToken.isFailure() ) {
+        //            batchRequest.getCause().addSuppressed(csrfToken.getCause());
+        //        }
         return batchRequest.get();
     }
 

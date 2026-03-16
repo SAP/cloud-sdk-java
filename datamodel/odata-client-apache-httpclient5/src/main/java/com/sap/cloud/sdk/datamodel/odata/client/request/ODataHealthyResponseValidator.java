@@ -3,9 +3,10 @@ package com.sap.cloud.sdk.datamodel.odata.client.request;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.message.StatusLine;
 
 import com.google.gson.JsonObject;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
@@ -44,7 +45,7 @@ class ODataHealthyResponseValidator
             return;
         }
 
-        final HttpResponse httpResponse = result.getHttpResponse();
+        final ClassicHttpResponse httpResponse = result.getHttpResponse();
         final ODataRequestGeneric requestRelevantForException =
             findPotentialBatchItem(httpResponse, originalRequest).getOrElse(originalRequest);
 

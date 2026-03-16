@@ -13,13 +13,12 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;

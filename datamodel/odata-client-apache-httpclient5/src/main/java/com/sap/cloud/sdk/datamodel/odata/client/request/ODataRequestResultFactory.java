@@ -5,11 +5,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.BufferedHttpEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.slf4j.Logger;
 
 import io.vavr.control.Option;
@@ -30,10 +30,10 @@ interface ODataRequestResultFactory
      * Strategy that buffers the response by creating a copy of it.
      */
     ODataRequestResultFactory WITH_BUFFER = ( oDataRequest, httpResponse, httpClient ) -> {
-        final StatusLine status = httpResponse.getStatusLine();
-        final BasicHttpResponse copy = new BasicHttpResponse(status);
+        final StatusLine status = new StatusLine(httpResponse);
+        final BasicClassicHttpResponse copy = new BasicClassicHttpResponse(status.getStatusCode());
         Option.of(httpResponse.getLocale()).peek(copy::setLocale);
-        Option.of(httpResponse.getAllHeaders()).peek(copy::setHeaders);
+        Option.of(httpResponse.getHeaders()).peek(copy::setHeaders);
 
         final Logger log = getLogger(ODataRequestResultFactory.class);
         Option
@@ -48,6 +48,6 @@ interface ODataRequestResultFactory
 
     ODataRequestResultGeneric create(
         @Nonnull final ODataRequestGeneric oDataRequest,
-        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final ClassicHttpResponse httpResponse,
         @Nullable final HttpClient httpClient );
 }

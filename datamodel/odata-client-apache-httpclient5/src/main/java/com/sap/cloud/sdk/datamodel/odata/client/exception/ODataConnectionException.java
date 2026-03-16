@@ -3,8 +3,9 @@ package com.sap.cloud.sdk.datamodel.odata.client.exception;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
+//import org.apache.http.client.methods.HttpUriRequest;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 
 import lombok.EqualsAndHashCode;

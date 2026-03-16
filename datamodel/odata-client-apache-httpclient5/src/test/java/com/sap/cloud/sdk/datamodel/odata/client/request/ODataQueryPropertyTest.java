@@ -18,17 +18,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy.REPLACE_WITH_PUT;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.HttpHeaders.ACCEPT;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

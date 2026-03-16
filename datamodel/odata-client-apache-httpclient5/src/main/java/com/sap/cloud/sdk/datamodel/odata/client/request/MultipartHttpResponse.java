@@ -12,18 +12,17 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpVersion;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.StatusLine;
 
 import io.vavr.control.Try;
 import lombok.Getter;
@@ -33,7 +32,8 @@ import lombok.extern.slf4j.Slf4j;
  * Helper class to construct an HttpResponse object on behalf of serialized HTTP protocol content.
  */
 @Slf4j
-class MultipartHttpResponse extends BasicHttpResponse
+@SuppressWarnings( "serial" ) // JONAS: Discuss this in review
+class MultipartHttpResponse extends BasicClassicHttpResponse
 {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Pattern PATTERN_STATUS_LINE = Pattern.compile("^HTTP/(\\d).(\\d) (\\d+) (.*)");
@@ -49,7 +49,8 @@ class MultipartHttpResponse extends BasicHttpResponse
         @Nonnull final HttpEntity entity,
         @Nullable final Integer contentId )
     {
-        super(statusLine);
+        super(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+        setVersion(statusLine.getProtocolVersion());
         headers.forEach(this::addHeader);
         setEntity(entity);
         this.contentId = contentId;
@@ -60,7 +61,7 @@ class MultipartHttpResponse extends BasicHttpResponse
      * line is the status line, the following lines are headers, the optional body is introduced with an empty line.
      *
      * @param entry
-     *            The HTTP protocol content, consisting of status line, headers, (emptyline) and payload.
+     *            The HTTP protocol content, consisting of status line, headers, (empty-line) and payload.
      * @return A new HTTP response instance.
      */
     @Nonnull
@@ -93,7 +94,7 @@ class MultipartHttpResponse extends BasicHttpResponse
 
         final List<Header> headers = getHeadersFromString(header.toString());
         final ContentType contentType = getContentType(headers).orElse(ContentType.APPLICATION_JSON);
-        final ContentType contentTypeCharset = withFallbackCharset(contentType, DEFAULT_CHARSET);
+        final ContentType contentTypeCharset = withFallbackCharset(contentType);
         final StringEntity httpEntity = new StringEntity(payload.toString(), contentTypeCharset);
         return new MultipartHttpResponse(statusLine, headers, httpEntity, contentId);
     }
@@ -122,14 +123,13 @@ class MultipartHttpResponse extends BasicHttpResponse
     }
 
     @Nonnull
-    private static
-        ContentType
-        withFallbackCharset( @Nonnull final ContentType contentType, @Nonnull final Charset fallbackCharset )
+    private static ContentType withFallbackCharset( @Nonnull final ContentType contentType )
     {
         if( contentType.getCharset() != null ) {
             return contentType;
         }
-        return contentType.withParameters(new BasicNameValuePair("charset", fallbackCharset.name()));
+        return contentType
+            .withParameters(new BasicNameValuePair("charset", MultipartHttpResponse.DEFAULT_CHARSET.name()));
     }
 
     @Nonnull
@@ -141,9 +141,9 @@ class MultipartHttpResponse extends BasicHttpResponse
             final int minor = Integer.parseInt(m.group(2));
             final int code = Integer.parseInt(m.group(3));
             final String reason = m.group(4);
-            return new BasicStatusLine(new HttpVersion(major, minor), code, reason);
+            return new StatusLine(new HttpVersion(major, minor), code, reason);
         }
         log.error("Failed to construct status line for HTTP protocol response: {}", firstLine);
-        return new BasicStatusLine(HttpVersion.HTTP_1_1, 0, "Unknown");
+        return new StatusLine(HttpVersion.HTTP_1_1, 0, "Unknown");
     }
 }

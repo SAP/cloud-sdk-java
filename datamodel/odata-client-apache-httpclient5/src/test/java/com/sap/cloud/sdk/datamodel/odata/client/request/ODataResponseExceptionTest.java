@@ -10,11 +10,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpVersion;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHttpResponse;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 

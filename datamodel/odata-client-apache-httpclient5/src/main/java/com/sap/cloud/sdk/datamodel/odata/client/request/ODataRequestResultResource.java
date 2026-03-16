@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import com.google.common.annotations.Beta;
 
@@ -43,7 +43,7 @@ public class ODataRequestResultResource extends ODataRequestResultGeneric implem
      */
     ODataRequestResultResource(
         @Nonnull final ODataRequestGeneric oDataRequest,
-        @Nonnull final HttpResponse httpResponse,
+        @Nonnull final ClassicHttpResponse httpResponse,
         @Nullable final HttpClient httpClient )
     {
         super(oDataRequest, httpResponse, httpClient);

@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
