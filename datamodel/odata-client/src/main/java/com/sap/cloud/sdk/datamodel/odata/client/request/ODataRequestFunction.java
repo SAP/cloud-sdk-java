@@ -171,9 +171,7 @@ public class ODataRequestFunction extends ODataRequestGeneric
         if( protocol.isEqualTo(ODataProtocol.V2) ) {
             return path;
         }
-        final ODataResourcePath appendedPath = new ODataResourcePath();
-        path.getSegments().forEach(s -> appendedPath.addSegment(s._1, s._2));
-        return appendedPath.addParameterToLastSegment(parameters);
+        return path.addParameterToLastSegment(parameters);
     }
 
     @Nullable
