@@ -306,4 +306,15 @@ class ODataRequestReadTest
         assertThat(actual).isEqualTo(expected);
         assertThat(actual.getQueryString()).isEqualTo(expected.getQueryString());
     }
+
+    @Test
+    void testConstructorWithStructuredQueryDoesNotMutateResourcePath()
+    {
+        final StructuredQuery structuredQuery = StructuredQuery.onEntity("Authors", ODataProtocol.V4).withInlineCount();
+        final ODataResourcePath resourcePath = ODataResourcePath.of("Authors");
+
+        new ODataRequestRead("/some/service/path", resourcePath, structuredQuery);
+
+        assertThat(resourcePath.toString()).isEqualTo("/Authors");
+    }
 }
