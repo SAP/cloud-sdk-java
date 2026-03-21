@@ -244,7 +244,7 @@
         }
       }
     },
-    "value" : 5.129866917952024,
+    "value" : 5.129937839937839,
     "weight" : 1.0,
     "confidence" : 10.0,
     "usedValues" : [ {
@@ -2445,7 +2445,7 @@
         "type" : "ProjectPopularityScore",
         "name" : "Open-source project popularity score"
       },
-      "value" : 0.25866666666666666,
+      "value" : 0.25933333333333336,
       "weight" : 0.5,
       "confidence" : 10.0,
       "usedValues" : [ {
@@ -2470,7 +2470,7 @@
           "type" : "PositiveIntegerFeature",
           "name" : "Number of projects on GitHub that use an open source project"
         },
-        "number" : 316,
+        "number" : 317,
         "explanation" : [ ]
       } ],
       "explanation" : [ ],
