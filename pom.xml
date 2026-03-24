@@ -88,7 +88,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.21.1</jackson.version>
+		<jackson.version>2.21.2</jackson.version>
 		<jackson.annotations.version>2.21</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20251224</json.version>
