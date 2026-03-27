@@ -31,13 +31,6 @@ public class SodasApi extends BaseApi
 {
 
     /**
-     * Instantiates this API class to invoke operations on the SodaStore API
-     */
-    public SodasApi()
-    {
-    }
-
-    /**
      * Instantiates this API class to invoke operations on the SodaStore API.
      *
      * @param httpDestination
