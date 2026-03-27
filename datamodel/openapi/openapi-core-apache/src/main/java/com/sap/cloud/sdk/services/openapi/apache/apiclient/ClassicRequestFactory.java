@@ -1,9 +1,12 @@
+/*
+ * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+
 package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
@@ -17,13 +20,10 @@ import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -31,45 +31,52 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
-import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponseListener;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.With;
+import lombok.experimental.UtilityClass;
 
-@RequiredArgsConstructor
-class ApiClientInvokerDefault implements ApiClientInvoker
+/**
+ * Factory for building Apache HttpClient 5 classic requests from OpenAPI parameters.
+ */
+@UtilityClass
+class ClassicRequestFactory
 {
-    @Nonnull
-    private final CloseableHttpClient httpClient;
-
-    @With
-    @Getter
-    @Nonnull
-    private final String basePath;
-
-    @With( onMethod_ = @Beta )
-    @Nonnull
-    private final ObjectMapper objectMapper;
-
-    @With
-    @Nullable
-    private final String tempFolderPath;
-
-    @With( onMethod_ = @Beta )
-    @Nullable
-    private final OpenApiResponseListener openApiResponseListener;
-
-    // Methods that can have a request body
     private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
 
-    @Nullable
-    @Override
-    public <T> T invokeAPI(
+    /**
+     * Builds a ClassicRequestBuilder with the specified parameters, including URL construction, content type parsing,
+     * entity creation, and header population.
+     *
+     * @param basePath
+     *            The base path for the URL
+     * @param path
+     *            The sub path for the URL
+     * @param method
+     *            The HTTP method (e.g., GET, POST, PUT, DELETE)
+     * @param queryParams
+     *            The query parameters
+     * @param collectionQueryParams
+     *            The collection query parameters
+     * @param urlQueryDeepObject
+     *            URL query string of the deep object parameters
+     * @param body
+     *            The request body object
+     * @param headerParams
+     *            Map of header names to values
+     * @param formParams
+     *            The form parameters
+     * @param accept
+     *            The Accept header value, or null if not specified
+     * @param contentType
+     *            The content type header value
+     * @param objectMapper
+     *            The ObjectMapper for JSON serialization
+     * @return A configured ClassicRequestBuilder ready to be built
+     */
+    @Nonnull
+    static ClassicRequestBuilder buildClassicRequest(
+        @Nonnull final String basePath,
         @Nonnull final String path,
         @Nonnull final String method,
         @Nullable final List<Pair> queryParams,
@@ -80,13 +87,15 @@ class ApiClientInvokerDefault implements ApiClientInvoker
         @Nonnull final Map<String, Object> formParams,
         @Nullable final String accept,
         @Nonnull final String contentType,
-        @Nonnull final TypeReference<T> returnType )
+        @Nonnull final ObjectMapper objectMapper )
     {
         if( body != null && !formParams.isEmpty() ) {
             throw new OpenApiRequestException("Cannot have body and form params");
         }
 
-        final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
+        final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
+        final ContentType contentTypeObj = getContentType(contentType);
+        final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, objectMapper);
 
         final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
         builder.setUri(url);
@@ -99,36 +108,39 @@ class ApiClientInvokerDefault implements ApiClientInvoker
             builder.addHeader(keyValue.getKey(), keyValue.getValue());
         }
 
-        final HttpClientContext context = HttpClientContext.create();
+        builder.setEntity(entity);
 
-        final ContentType contentTypeObj = getContentType(contentType);
+        return builder;
+    }
+
+    /**
+     * Creates the HTTP entity for the request based on the method, body, and form parameters.
+     */
+    @Nonnull
+    private static HttpEntity createEntity(
+        @Nonnull final String method,
+        @Nullable final Object body,
+        @Nonnull final Map<String, Object> formParams,
+        @Nonnull final ContentType contentType,
+        @Nonnull final ObjectMapper objectMapper )
+        throws OpenApiRequestException
+    {
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
-                // Add entity if we have content and a valid method
-                builder.setEntity(serialize(body, formParams, contentTypeObj));
+                return serialize(body, formParams, contentType, objectMapper);
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
-        } else {
-            // for empty body
-            builder.setEntity(new StringEntity("", contentTypeObj));
         }
-
-        try {
-            final HttpClientResponseHandler<T> responseHandler =
-                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, returnType, openApiResponseListener);
-            return httpClient.execute(builder.build(), context, responseHandler);
-        }
-        catch( final IOException e ) {
-            throw new OpenApiRequestException(e);
-        }
+        // for empty body
+        return new StringEntity("", contentType);
     }
 
     /**
      * Parse content type object from header value
      */
     @Nonnull
-    private ContentType getContentType( @Nonnull final String headerValue )
+    private static ContentType getContentType( @Nonnull final String headerValue )
         throws OpenApiRequestException
     {
         try {
@@ -141,22 +153,13 @@ class ApiClientInvokerDefault implements ApiClientInvoker
 
     /**
      * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
-     *
-     * @param obj
-     *            Object
-     * @param contentType
-     *            Content type
-     * @param formParams
-     *            Form parameters
-     * @return Object
-     * @throws OpenApiRequestException
-     *             API exception
      */
     @Nonnull
-    private HttpEntity serialize(
+    private static HttpEntity serialize(
         @Nullable final Object obj,
         @Nonnull final Map<String, Object> formParams,
-        @Nonnull final ContentType contentType )
+        @Nonnull final ContentType contentType,
+        @Nonnull final ObjectMapper objectMapper )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
@@ -217,19 +220,10 @@ class ApiClientInvokerDefault implements ApiClientInvoker
 
     /**
      * Build full URL by concatenating base URL, the given sub path and query parameters.
-     *
-     * @param path
-     *            The sub path
-     * @param queryParams
-     *            The query parameters
-     * @param collectionQueryParams
-     *            The collection query parameters
-     * @param urlQueryDeepObject
-     *            URL query string of the deep object parameters
-     * @return The full URL
      */
     @Nonnull
-    private String buildUrl(
+    private static String buildUrl(
+        @Nonnull final String basePath,
         @Nonnull final String path,
         @Nullable final List<Pair> queryParams,
         @Nullable final List<Pair> collectionQueryParams,
