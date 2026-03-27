@@ -20,6 +20,7 @@ import java.util.function.UnaryOperator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -80,6 +81,10 @@ public class ApiClient
     @Nonnull
     private final UnaryOperator<ClassicRequestBuilder> requestCustomizer;
 
+    private static OpenApiResponseListener EMPTY_RESPONSE_LISTENER = r -> {
+    };
+    private static UnaryOperator<ClassicRequestBuilder> EMPTY_REQUEST_CUSTOMIZER = r -> r;
+
     /**
      * Creates an ApiClient instance from an existing HttpClient.
      *
@@ -107,8 +112,13 @@ public class ApiClient
         ApiClient
         fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull final String basePath )
     {
-        return new ApiClient(httpClient, basePath, createDefaultObjectMapper(), null, r -> {
-        }, r -> r);
+        return new ApiClient(
+            httpClient,
+            basePath,
+            createDefaultObjectMapper(),
+            null,
+            EMPTY_RESPONSE_LISTENER,
+            EMPTY_REQUEST_CUSTOMIZER);
     }
 
     /**
@@ -121,9 +131,8 @@ public class ApiClient
     @Nonnull
     public static ApiClient create( @Nonnull final Destination destination )
     {
-        final CloseableHttpClient httpClient =
-            (CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination);
-        return fromHttpClient(httpClient, destination.asHttp().getUri().toString());
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
+        return fromHttpClient((CloseableHttpClient) httpClient, destination.asHttp().getUri().toString());
     }
 
     /**
