@@ -99,6 +99,8 @@ class ClassicRequestFactory
 
         final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
         final ContentType contentTypeObj = getContentType(contentType);
+
+        @SuppressWarnings( "PMD.CloseResource" ) // constructed entity is not a closeable resource
         final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, headerParams, objectMapper);
 
         final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
@@ -231,7 +233,7 @@ class ClassicRequestFactory
         if( "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING))
             || "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING.toLowerCase())) ) {
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try( final GZIPOutputStream gzip = new GZIPOutputStream(outputStream) ) {
+            try( GZIPOutputStream gzip = new GZIPOutputStream(outputStream) ) {
                 gzip.write(objectMapper.writeValueAsBytes(body));
             }
             catch( final IOException e ) {
