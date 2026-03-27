@@ -10,7 +10,6 @@ import java.util.function.UnaryOperator;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ public class ApiClientWithRequestCustomizerTest
                 .containsExactlyInAnyOrder("Accept", "X-Custom-Header");
             assertThat(req.getFirstHeader("X-Custom-Header").getValue()).isEqualTo("custom-value");
             assertThat(req.getFirstHeader("Accept").getValue()).isEqualTo("application/json");
-        }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
+        }).isSuccess()), any(HttpContext.class), any());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class ApiClientWithRequestCustomizerTest
         verify(httpClient).execute(argThat(req -> Try.run(() -> {
             assertThat(req.getFirstHeader("X-Correlation-Id").getValue()).isEqualTo("12345");
             assertThat(req.getFirstHeader("X-Tenant-Id").getValue()).isEqualTo("tenant-abc");
-        }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
+        }).isSuccess()), any(HttpContext.class), any());
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ApiClientWithRequestCustomizerTest
             assertThat(req.getRequestUri()).isEqualTo("/pets");
             assertThat(req.getMethod()).isEqualTo("GET");
             assertThat(req.getFirstHeader("Accept").getValue()).isEqualTo("application/json");
-        }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
+        }).isSuccess()), any(HttpContext.class), any());
     }
 
     @Test
@@ -93,6 +92,6 @@ public class ApiClientWithRequestCustomizerTest
 
         verify(httpClient).execute(argThat(req -> Try.run(() -> {
             assertThat(req.getUri().toString()).isEqualTo("https://api.example.com/pets");
-        }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
+        }).isSuccess()), any(HttpContext.class), any());
     }
 }

@@ -103,7 +103,7 @@ public class ApiClient
      * @return A new ApiClient instance
      */
     @Nonnull
-    public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull String basePath )
+    public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull final String basePath )
     {
         return new ApiClient(httpClient, basePath, createDefaultObjectMapper(), null, r -> {
         }, r -> r);
@@ -270,7 +270,7 @@ public class ApiClient
     {
         if( param == null ) {
             return "";
-        } else if( param instanceof Date date ) {
+        } else if( param instanceof final Date date ) {
             return formatDate(date);
         } else if( param instanceof Collection ) {
             final StringBuilder b = new StringBuilder();
