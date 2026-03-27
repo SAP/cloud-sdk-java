@@ -10,6 +10,7 @@ import java.util.function.UnaryOperator;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
@@ -30,38 +31,31 @@ public class ApiClientWithRequestCustomizerTest
 
         // Use the withRequestCustomizer API to add a custom header
         final UnaryOperator<ClassicRequestBuilder> customizer =
-            builder -> builder.addHeader("X-Custom-Header", "custom-value");
+            builder -> builder.setPath("/custom-path").addHeader("X-Custom", "custom");
 
         final var apiClient = ApiClient.fromHttpClient(httpClient).withRequestCustomizer(customizer);
         new DefaultApi(apiClient).findPets();
 
         verify(httpClient).execute(argThat(req -> Try.run(() -> {
-            assertThat(req.getRequestUri()).isEqualTo("/pets");
+            assertThat(req.getRequestUri()).isEqualTo("/custom-path");
             assertThat(req.getMethod()).isEqualTo("GET");
-            assertThat(req.getHeaders())
-                .extracting(Header::getName)
-                .containsExactlyInAnyOrder("Accept", "X-Custom-Header");
-            assertThat(req.getFirstHeader("X-Custom-Header").getValue()).isEqualTo("custom-value");
+            assertThat(req.getHeaders()).extracting(Header::getName).containsExactlyInAnyOrder("Accept", "X-Custom");
+            assertThat(req.getFirstHeader("X-Custom").getValue()).isEqualTo("custom");
             assertThat(req.getFirstHeader("Accept").getValue()).isEqualTo("application/json");
         }).isSuccess()), any(HttpContext.class), any());
     }
 
     @Test
     @SneakyThrows
-    void testRequestCustomizerWithMultipleHeaders()
+    void testRequestCustomizerWithEntity()
     {
         final CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
 
-        // Chain multiple customizations
-        final UnaryOperator<ClassicRequestBuilder> customizer =
-            builder -> builder.addHeader("X-Correlation-Id", "12345").addHeader("X-Tenant-Id", "tenant-abc");
-
-        final var apiClient = ApiClient.fromHttpClient(httpClient).withRequestCustomizer(customizer);
+        final var apiClient = ApiClient.fromHttpClient(httpClient).withRequestCustomizer(b -> b.setEntity("foo"));
         new DefaultApi(apiClient).findPets();
 
         verify(httpClient).execute(argThat(req -> Try.run(() -> {
-            assertThat(req.getFirstHeader("X-Correlation-Id").getValue()).isEqualTo("12345");
-            assertThat(req.getFirstHeader("X-Tenant-Id").getValue()).isEqualTo("tenant-abc");
+            assertThat(EntityUtils.toString(req.getEntity())).isEqualTo("foo");
         }).isSuccess()), any(HttpContext.class), any());
     }
 
