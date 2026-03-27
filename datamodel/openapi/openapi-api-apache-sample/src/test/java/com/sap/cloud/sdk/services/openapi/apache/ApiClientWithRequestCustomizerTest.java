@@ -21,10 +21,8 @@ import com.sap.cloud.sdk.services.openapi.apache.apiclient.ApiClient;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 
-@SuppressWarnings( "unchecked" )
 public class ApiClientWithRequestCustomizerTest
 {
-    @SuppressWarnings( "rawtypes" )
     @Test
     @SneakyThrows
     void testRequestCustomizer()
@@ -49,7 +47,6 @@ public class ApiClientWithRequestCustomizerTest
         }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Test
     @SneakyThrows
     void testRequestCustomizerWithMultipleHeaders()
@@ -69,7 +66,6 @@ public class ApiClientWithRequestCustomizerTest
         }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Test
     @SneakyThrows
     void testBasicApiCall()
@@ -86,7 +82,6 @@ public class ApiClientWithRequestCustomizerTest
         }).isSuccess()), any(HttpContext.class), any(HttpClientResponseHandler.class));
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Test
     @SneakyThrows
     void testWithBasePath()
