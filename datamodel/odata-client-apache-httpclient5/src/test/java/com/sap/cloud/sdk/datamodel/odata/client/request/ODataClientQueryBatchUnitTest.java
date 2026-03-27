@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
@@ -117,7 +116,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -146,7 +145,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -175,7 +174,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);
@@ -205,7 +204,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         try {
@@ -218,7 +217,7 @@ class ODataClientQueryBatchUnitTest
         catch( final Exception e ) {
             assertThat(e)
                 .isInstanceOf(ODataConnectionException.class)
-                .hasRootCauseExactlyInstanceOf(ConnectionPoolTimeoutException.class)
+                .hasRootCauseExactlyInstanceOf(IOException.class)
                 .hasMessageContaining(
                     "Please execute your request with try-with-resources to ensure resources are properly closed.");
         }
@@ -244,7 +243,7 @@ class ODataClientQueryBatchUnitTest
         assertThat(request.getBatchRequestBody()).isEqualTo(requestBody);
 
         // check request execution
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer.stubFor(post(urlPathEqualTo(SERVICE_PATH_BATCH)).willReturn(okJson("{}")));
 
         final ODataRequestResult result = request.execute(client);

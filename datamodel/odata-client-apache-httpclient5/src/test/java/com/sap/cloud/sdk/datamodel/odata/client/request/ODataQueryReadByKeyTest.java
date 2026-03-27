@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -70,7 +70,7 @@ class ODataQueryReadByKeyTest
     @Test
     void testRequestByEntityKey()
     {
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer
             .stubFor(get(urlPathEqualTo(SERVICE_PATH + ENTITY_COLLECTION + ENTITY_KEY)).willReturn(okJson("{}")));
 
@@ -89,7 +89,7 @@ class ODataQueryReadByKeyTest
     @Test
     void testQueryParameters()
     {
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer
             .stubFor(get(urlPathEqualTo(SERVICE_PATH + ENTITY_COLLECTION + ENTITY_KEY)).willReturn(okJson("{}")));
 

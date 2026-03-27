@@ -25,7 +25,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 import io.vavr.control.Try;
@@ -187,7 +187,7 @@ class ODataNextLinkTest
             final String[] queryArgParts = queryArg.split("=", 2);
             destinationBuilder.property("URL.queries." + queryArgParts[0], queryArgParts[1]);
         }
-        final HttpClient client = HttpClientAccessor.getHttpClient(destinationBuilder.build());
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destinationBuilder.build());
 
         // TEST EXECUTION: Run OData request on behalf of HttpClient
         final ODataRequestRead request =
@@ -220,13 +220,13 @@ class ODataNextLinkTest
 
         // case 1: query parameters are EQUAL in destination and in nextLink -> remove redundant query parameter
         final Destination dest1 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "bar").build();
-        final HttpClient client1 = HttpClientAccessor.getHttpClient(dest1);
+        final HttpClient client1 = ApacheHttpClient5Accessor.getHttpClient(dest1);
         final ODataRequestResultGeneric result1 = new ODataRequestResultGeneric(request, httpResponse, client1);
         assertThat(result1.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n");
 
         // case 2: query parameters are NOT EQUAL in destination and in nextLink -> retain query parameter
         final Destination dest2 = DefaultHttpDestination.builder(baseUrl).property("URL.queries.foo", "SAP").build();
-        final HttpClient client2 = HttpClientAccessor.getHttpClient(dest2);
+        final HttpClient client2 = ApacheHttpClient5Accessor.getHttpClient(dest2);
         final ODataRequestResultGeneric result2 = new ODataRequestResultGeneric(request, httpResponse, client2);
         assertThat(result2.getNextLink()).contains("/v1/foo/bar/endpoint?$skiptoken=s3cReT-t0k3n&foo=bar");
     }

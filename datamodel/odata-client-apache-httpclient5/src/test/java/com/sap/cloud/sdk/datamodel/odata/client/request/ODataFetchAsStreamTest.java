@@ -24,7 +24,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpEntityUtil;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -59,7 +59,7 @@ class ODataFetchAsStreamTest
 
         final Destination destination = DefaultHttpDestination.builder(SERVER.baseUrl()).build();
 
-        final ODataRequestResult result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResult result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
         resultValidator.accept(result);
 
         try( InputStream actualFileStream = result.getHttpResponse().getEntity().getContent(); ) {

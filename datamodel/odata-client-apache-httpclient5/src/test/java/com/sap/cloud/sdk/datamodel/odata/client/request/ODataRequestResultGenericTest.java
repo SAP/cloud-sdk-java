@@ -1,6 +1,5 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
@@ -20,12 +19,15 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -48,7 +50,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric mockClientRequest = mock(ODataRequestGeneric.class);
         when(mockClientRequest.getProtocol()).thenReturn(mock(ODataProtocol.class));
 
-        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         final ODataRequestResultGeneric mockResult = new ODataRequestResultGeneric(mockClientRequest, httpResponse);
 
         assertSoftly(softly -> {
@@ -75,7 +77,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         doReturn(ODataProtocol.V2).when(request).getProtocol();
 
-        final HttpResponse mockHttpResponse = new BasicHttpResponse(HTTP_1_1, 200, "");
+        final ClassicHttpResponse mockHttpResponse = new BasicClassicHttpResponse(200, "");
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, mockHttpResponse);
 
         assertThatThrownBy(() -> result.as(ODataRequestResultGenericTest.class))
@@ -99,7 +101,7 @@ class ODataRequestResultGenericTest
         doThrow(SocketException.class).when(httpEntity).writeTo(any());
 
         // create HTTP response
-        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "");
         httpResponse.setEntity(httpEntity);
 
         // create OData response
@@ -116,8 +118,8 @@ class ODataRequestResultGenericTest
     void getHeaderValuesShouldHandleKeyInsensitivity()
     {
         final ODataRequestResult result = mock(ODataRequestResult.class);
-        final HttpResponse mockedResponse = mock(HttpResponse.class);
-        when(mockedResponse.getAllHeaders())
+        final ClassicHttpResponse mockedResponse = mock(ClassicHttpResponse.class);
+        when(mockedResponse.getHeaders())
             .thenReturn(
                 new BasicHeader[] {
                     new BasicHeader("CoNtEnT-TyPe", "someType"),
@@ -145,7 +147,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric oDataRequest =
             new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
 
-        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
         final String json = "{\"value\":[],\"@odata.nextLink\": \"Foo?$count=true&$select=BarID&$skiptoken='ABCD'\"}";
         httpResponse.setEntity(new StringEntity(json));
 
@@ -175,10 +177,10 @@ class ODataRequestResultGenericTest
             new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
 
         // test setup for streamed http response
-        final BasicHttpResponse httpResponse = new BasicHttpResponse(HTTP_1_1, 200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
         final String json = "{\"value\":[]}";
         final InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-        httpResponse.setEntity(new InputStreamEntity(inputStream, json.length()));
+        httpResponse.setEntity(new InputStreamEntity(inputStream, json.length(), ContentType.APPLICATION_JSON));
 
         // system under test
         try(
@@ -186,7 +188,7 @@ class ODataRequestResultGenericTest
                 new ODataRequestResultResource(oDataRequest, httpResponse, null) ) {
             // sanity checks do not consume the response
             assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
-            assertThat(testResult.getHttpResponse().getStatusLine().getStatusCode()).isEqualTo(200);
+            assertThat(new StatusLine(testResult.getHttpResponse()).getStatusCode()).isEqualTo(200);
 
             // true-positive, successfully read once
             assertThat(testResult.asListOfMaps()).isEmpty();

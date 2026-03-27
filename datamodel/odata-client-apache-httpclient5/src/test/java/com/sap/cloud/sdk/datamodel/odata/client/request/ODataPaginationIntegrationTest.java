@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 @Disabled( "Test runs against a reference service on odata.org. Use it only to manually verify behaviour." )
@@ -19,7 +19,7 @@ class ODataPaginationIntegrationTest
     private static final Destination destination =
         DefaultHttpDestination.builder("https://services.odata.org/").build();
 
-    private static final HttpClient httpClient = HttpClientAccessor.getHttpClient(destination);
+    private static final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
 
     @Test
     void testCountOverPages()

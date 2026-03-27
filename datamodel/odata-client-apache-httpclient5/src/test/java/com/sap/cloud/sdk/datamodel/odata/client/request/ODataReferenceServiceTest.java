@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.result.ElementName;
 
@@ -48,7 +48,7 @@ class ODataReferenceServiceTest
     void testGetFiltered()
     {
         final Destination httpDestination = DefaultHttpDestination.builder("https://services.odata.org").build();
-        final HttpClient httpClient = HttpClientAccessor.getHttpClient(httpDestination);
+        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(httpDestination);
 
         final String queryString = "$top=1&$filter=(UserName%20eq%20'angelhuffman')";
         final ODataRequestRead request =

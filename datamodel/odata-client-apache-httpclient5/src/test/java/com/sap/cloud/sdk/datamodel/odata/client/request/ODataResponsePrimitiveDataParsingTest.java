@@ -20,11 +20,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.BufferedHttpEntity;
-import org.apache.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -225,13 +225,13 @@ class ODataResponsePrimitiveDataParsingTest
             final HttpEntity httpEntity = spy(HttpEntity.class);
             when(httpEntity.getContentLength()).thenReturn(0L);
             when(httpEntity.isRepeatable()).thenReturn(true);
-            when(httpEntity.getContentType()).thenReturn(new BasicHeader("Content-Type", "application/json"));
-            when(httpEntity.getContentEncoding()).thenReturn(new BasicHeader("Content-Encoding", "identity"));
+            when(httpEntity.getContentType()).thenReturn("application/json");
+            when(httpEntity.getContentEncoding()).thenReturn("identity");
             when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(payload.getBytes()));
             final HttpEntity bufferedHttpEntity = new BufferedHttpEntity(httpEntity);
 
-            final HttpResponse httpResponse = mock(HttpResponse.class);
-            when(httpResponse.getAllHeaders()).thenReturn(new Header[0]);
+            final ClassicHttpResponse httpResponse = mock(ClassicHttpResponse.class);
+            when(httpResponse.getHeaders()).thenReturn(new Header[0]);
             when(httpResponse.getEntity()).thenReturn(bufferedHttpEntity);
 
             return new ODataRequestResultGeneric(request, httpResponse);

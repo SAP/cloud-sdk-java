@@ -15,7 +15,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -52,7 +52,7 @@ class ODataRequestCountTest
         final ODataRequestCount requestCount = new ODataRequestCount(SERVICE_PATH, ENTITY_NAME, "", protocol);
 
         final ODataRequestResultGeneric result =
-            requestCount.execute(HttpClientAccessor.getHttpClient(httpDestination));
+            requestCount.execute(ApacheHttpClient5Accessor.getHttpClient(httpDestination));
 
         final Long count = result.as(Long.class);
 
@@ -67,7 +67,7 @@ class ODataRequestCountTest
         final ODataRequestCount requestCount = new ODataRequestCount(SERVICE_PATH, ENTITY_NAME, "", protocol);
 
         final ODataRequestResultGeneric result =
-            requestCount.execute(HttpClientAccessor.getHttpClient(httpDestination));
+            requestCount.execute(ApacheHttpClient5Accessor.getHttpClient(httpDestination));
 
         final Long count = result.as(Long.class);
 

@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -67,7 +67,7 @@ class ODataQueryPropertyTest
     {
 
         final Destination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
-        httpClient = HttpClientAccessor.getHttpClient(destination);
+        httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
     }
 
     @Test

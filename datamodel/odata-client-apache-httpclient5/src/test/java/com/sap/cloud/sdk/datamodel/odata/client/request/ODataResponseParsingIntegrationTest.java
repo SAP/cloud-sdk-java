@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
@@ -183,7 +183,7 @@ class ODataResponseParsingIntegrationTest
     void configure()
     {
         final Destination dest = DefaultHttpDestination.builder("https://services.odata.org").build();
-        httpClient = HttpClientAccessor.getHttpClient(dest);
+        httpClient = ApacheHttpClient5Accessor.getHttpClient(dest);
     }
 
     //Validating response for primitive collections

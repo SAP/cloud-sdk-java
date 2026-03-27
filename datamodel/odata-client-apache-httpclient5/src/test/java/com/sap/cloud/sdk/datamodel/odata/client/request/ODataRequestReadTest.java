@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.common.net.UrlEscapers;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -56,7 +56,7 @@ class ODataRequestReadTest
     @Test
     void testQueryParameters()
     {
-        final HttpClient client = HttpClientAccessor.getHttpClient(destination);
+        final HttpClient client = ApacheHttpClient5Accessor.getHttpClient(destination);
         wireMockServer
             .stubFor(get(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ENTITY_COLLECTION)).willReturn(okJson("{}")));
 

@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
@@ -68,7 +68,7 @@ class ODataRequestFunctionTest
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
         final Destination destination = DefaultHttpDestination.builder(wireMockServer.baseUrl()).build();
-        client = HttpClientAccessor.getHttpClient(destination);
+        client = ApacheHttpClient5Accessor.getHttpClient(destination);
     }
 
     @AfterEach

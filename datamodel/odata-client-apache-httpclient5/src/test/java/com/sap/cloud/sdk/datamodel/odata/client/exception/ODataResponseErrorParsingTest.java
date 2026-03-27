@@ -8,11 +8,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
-import static org.apache.http.HttpStatus.SC_FORBIDDEN;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
-import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
+import static org.apache.hc.core5.http.HttpStatus.SC_BAD_REQUEST;
+import static org.apache.hc.core5.http.HttpStatus.SC_FORBIDDEN;
+import static org.apache.hc.core5.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.hc.core5.http.HttpStatus.SC_NOT_FOUND;
+import static org.apache.hc.core5.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,8 +27,9 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.HttpVersion;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.collect.ImmutableMap;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestRead;
 
@@ -55,7 +56,7 @@ class ODataResponseErrorParsingTest
     void setup( @Nonnull final WireMockRuntimeInfo wm )
     {
         httpClient =
-            HttpClientAccessor.getHttpClient((Destination) DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build());
+            ApacheHttpClient5Accessor.getHttpClient((Destination) DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build());
     }
 
     @Test
@@ -98,8 +99,8 @@ class ODataResponseErrorParsingTest
     void testWithoutHttpEntity()
     {
         final HttpClient mockedClient = mock(HttpClient.class);
-        final BasicStatusLine statusLine = new BasicStatusLine(HttpVersion.HTTP_1_1, 500, "oh");
-        doReturn(new BasicHttpResponse(statusLine)).when(mockedClient).execute(any(HttpUriRequest.class));
+        final StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1, 500, "oh");
+        doReturn(new BasicClassicHttpResponse(statusLine)).when(mockedClient).execute(any(HttpUriRequest.class));
 
         final ODataRequestRead request = new ODataRequestRead(ODATA_SERVICE_PATH, "", "", ODataProtocol.V4);
         assertThatExceptionOfType(ODataResponseException.class)

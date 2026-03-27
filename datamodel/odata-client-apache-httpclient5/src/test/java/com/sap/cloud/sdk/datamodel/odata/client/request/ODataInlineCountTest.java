@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataDeserializationException;
 
@@ -43,7 +43,7 @@ class ODataInlineCountTest
                 "$inlinecount=allpages&$format=json",
                 ODataProtocol.V2);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
 
         assertThat(result.getInlineCount()).isEqualTo(2);
     }
@@ -64,7 +64,7 @@ class ODataInlineCountTest
                 "$inlinecount=allpages&$format=json",
                 ODataProtocol.V2);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
         assertThat(result.getInlineCount()).isEqualTo(2);
         assertThat(result.asMap()).containsKeys("results", "__count");
         assertThat(result.asMap().get("results")).isNotNull();
@@ -82,7 +82,7 @@ class ODataInlineCountTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true", ODataProtocol.V4);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
 
         assertThat(result.getInlineCount()).isEqualTo(2);
     }
@@ -99,7 +99,7 @@ class ODataInlineCountTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true", ODataProtocol.V4);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
         assertThat(result.getInlineCount()).isEqualTo(2);
         assertThat(result.asMap()).containsKeys("value", "@odata.count");
         assertThat(result.asMap().get("value")).isNotNull();
@@ -117,7 +117,7 @@ class ODataInlineCountTest
         final ODataRequestRead request =
             new ODataRequestRead("TripPinRESTierService", "People", "$count=true", ODataProtocol.V4);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
 
         assertThatExceptionOfType(ODataDeserializationException.class).isThrownBy(result::getInlineCount);
     }
@@ -138,7 +138,7 @@ class ODataInlineCountTest
                 "$inlinecount=allpages&$format=json",
                 ODataProtocol.V2);
 
-        final ODataRequestResultGeneric result = request.execute(HttpClientAccessor.getHttpClient(destination));
+        final ODataRequestResultGeneric result = request.execute(ApacheHttpClient5Accessor.getHttpClient(destination));
 
         assertThatExceptionOfType(ODataDeserializationException.class).isThrownBy(result::getInlineCount);
     }

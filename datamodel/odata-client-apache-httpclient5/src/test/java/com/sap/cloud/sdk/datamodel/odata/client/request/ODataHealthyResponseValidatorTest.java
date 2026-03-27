@@ -1,6 +1,6 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static org.apache.http.HttpVersion.HTTP_1_1;
+import static org.apache.hc.core5.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 

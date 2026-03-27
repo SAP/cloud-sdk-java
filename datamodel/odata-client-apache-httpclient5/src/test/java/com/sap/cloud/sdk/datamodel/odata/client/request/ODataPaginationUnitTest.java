@@ -17,9 +17,9 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataEntityKey;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataFunctionParameters;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestFunction;
@@ -78,7 +78,7 @@ class ODataResponseParsingTest
     void setupHttpClient( @Nonnull final WireMockRuntimeInfo wm )
     {
         final Destination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
-        client = HttpClientAccessor.getHttpClient(destination);
+        client = ApacheHttpClient5Accessor.getHttpClient(destination);
     }
 
     @Test
