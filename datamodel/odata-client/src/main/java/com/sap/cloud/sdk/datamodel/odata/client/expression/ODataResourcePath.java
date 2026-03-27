@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.expression;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,20 @@ public final class ODataResourcePath
      */
     @Getter( AccessLevel.PUBLIC )
     @Nonnull
-    private final List<Tuple2<String, AbstractODataParameters>> segments = new ArrayList<>();
+    private final List<Tuple2<String, AbstractODataParameters>> segments;
+
+    /**
+     * Default constructor to create an empty resource path.
+     */
+    public ODataResourcePath()
+    {
+        this(Collections.emptyList());
+    }
+
+    private ODataResourcePath( @Nonnull final List<Tuple2<String, AbstractODataParameters>> segments )
+    {
+        this.segments = List.copyOf(segments);
+    }
 
     /**
      * Convenience method for {@code new ODataResourcePath().addSegment(segment)}. It creates a new resource path for
@@ -97,8 +111,9 @@ public final class ODataResourcePath
         ODataResourcePath
         addSegment( @Nonnull final String segment, @Nullable final AbstractODataParameters parameters )
     {
-        segments.add(Tuple.of(segment, parameters));
-        return this;
+        final var newSegments = new ArrayList<>(segments);
+        newSegments.add(Tuple.of(segment, parameters));
+        return new ODataResourcePath(newSegments);
     }
 
     /**
@@ -128,8 +143,9 @@ public final class ODataResourcePath
                         lastSegment._2());
             throw new IllegalStateException(msg);
         }
-        segments.set(segments.size() - 1, lastSegment.update2(parameters));
-        return this;
+        final var newSegments = new ArrayList<>(segments);
+        newSegments.set(newSegments.size() - 1, lastSegment.update2(parameters));
+        return new ODataResourcePath(newSegments);
     }
 
     /**

@@ -8,13 +8,12 @@
 
 ### 🔧 Compatibility Notes
 
-- [Connectivity Destination Service] Migrated to Apache Httpclient 5.
-  - The replacement for `HttpClientAccessor` is `ApacheHttpClient5Accessor`
+- `ODataResourcePath#addSegment(...)` and `addParameterToLastSegment(...)` now return a new path instance instead of mutating the existing one. Custom extensions that relied on in-place mutation need to reassign the returned path.
+- [OpenAPI Apache Generator] Remove no args constructor in generated API clients.
 
 ### ✨ New Functionality
 
-- [OpenAPI] Cloud SDK OpenAPI Generator now supports `apache-httpclient` library besides Spring RestTemplate through the newly introduced module `openapi-core-apache`.
-- [IAS] Add `IasOptions.withTokenFormat()` to allow specifying token format
+- Added support for SAP Cloud Identity Services (SCI) `sap_id_type` and `sub` claims in OIDC principal extraction. When `sap_id_type=user`, the `sub` claim is now used as the [Subject Name Identifier](https://help.sap.com/docs/SAP_DATASPHERE/9f804b8efa8043539289f42f372c4862/fac3155d77154775b919ceba36ffc325.html) (User ID, Email, or Custom Attribute as configured in SCI).
 
 ### 📈 Improvements
 
@@ -22,4 +21,4 @@
 
 ### 🐛 Fixed Issues
 
-- [OData v4] Binary deserialization can now handle both `Base64URL` and `Base64`.
+- Fixed stateful OData request path construction caused by shared `ODataResourcePath` instances being mutated when building count, read-by-key, and function requests.

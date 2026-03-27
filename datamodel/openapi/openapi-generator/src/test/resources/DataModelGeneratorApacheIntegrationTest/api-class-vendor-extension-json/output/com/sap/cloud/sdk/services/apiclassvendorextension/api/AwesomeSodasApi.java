@@ -37,11 +37,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 public class AwesomeSodasApi extends BaseApi {
 
     /**
-     * Instantiates this API class to invoke operations on the Soda Store API
-     */
-    public AwesomeSodasApi() {}
-
-    /**
      * Instantiates this API class to invoke operations on the Soda Store API.
      *
      * @param httpDestination The destination that API should be used with

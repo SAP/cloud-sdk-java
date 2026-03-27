@@ -32,13 +32,6 @@ public class DefaultApi extends BaseApi
 {
 
     /**
-     * Instantiates this API class to invoke operations on the Swagger Petstore
-     */
-    public DefaultApi()
-    {
-    }
-
-    /**
      * Instantiates this API class to invoke operations on the Swagger Petstore.
      *
      * @param httpDestination
