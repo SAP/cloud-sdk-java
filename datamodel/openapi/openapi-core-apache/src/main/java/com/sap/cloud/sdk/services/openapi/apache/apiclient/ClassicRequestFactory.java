@@ -5,8 +5,11 @@
 package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,7 +99,7 @@ class ClassicRequestFactory
 
         final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
         final ContentType contentTypeObj = getContentType(contentType);
-        final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, objectMapper);
+        final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, headerParams, objectMapper);
 
         final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
         builder.setUri(url);
@@ -122,12 +126,13 @@ class ClassicRequestFactory
         @Nullable final Object body,
         @Nonnull final Map<String, Object> formParams,
         @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
         @Nonnull final ObjectMapper objectMapper )
         throws OpenApiRequestException
     {
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
-                return serialize(body, formParams, contentType, objectMapper);
+                return serialize(body, formParams, contentType, headerParams, objectMapper);
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -159,19 +164,13 @@ class ClassicRequestFactory
         @Nullable final Object obj,
         @Nonnull final Map<String, Object> formParams,
         @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
         @Nonnull final ObjectMapper objectMapper )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
-            try {
-                return new StringEntity(
-                    objectMapper.writeValueAsString(obj),
-                    contentType.withCharset(StandardCharsets.UTF_8));
-            }
-            catch( final JsonProcessingException e ) {
-                throw new OpenApiRequestException(e);
-            }
+            return serializeJson(obj, contentType, headerParams, objectMapper);
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             final MultipartEntityBuilder multiPartBuilder = MultipartEntityBuilder.create();
             for( final Map.Entry<String, Object> paramEntry : formParams.entrySet() ) {
@@ -215,6 +214,41 @@ class ClassicRequestFactory
                 return new ByteArrayEntity(byteArray, contentType);
             }
             throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
+        }
+    }
+
+    /**
+     * Serialize JSON body, with optional GZIP compression if Content-Encoding header is set to "gzip".
+     */
+    @Nonnull
+    private static HttpEntity serializeJson(
+        @Nullable final Object body,
+        @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final ObjectMapper objectMapper )
+        throws OpenApiRequestException
+    {
+        if( "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING))
+            || "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING.toLowerCase())) ) {
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try( final GZIPOutputStream gzip = new GZIPOutputStream(outputStream) ) {
+                gzip.write(objectMapper.writeValueAsBytes(body));
+            }
+            catch( final IOException e ) {
+                throw new OpenApiRequestException("Failed to GZIP compress request body", e);
+            }
+            return new ByteArrayEntity(
+                outputStream.toByteArray(),
+                contentType.withCharset(StandardCharsets.UTF_8),
+                "gzip");
+        }
+        try {
+            return new StringEntity(
+                objectMapper.writeValueAsString(body),
+                contentType.withCharset(StandardCharsets.UTF_8));
+        }
+        catch( final JsonProcessingException e ) {
+            throw new OpenApiRequestException(e);
         }
     }
 

@@ -6,7 +6,6 @@ package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -46,7 +45,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
-import lombok.val;
 
 /**
  * API client for executing HTTP requests using Apache HttpClient 5.
@@ -105,7 +103,9 @@ public class ApiClient
      * @return A new ApiClient instance
      */
     @Nonnull
-    public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull final String basePath )
+    public static
+        ApiClient
+        fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull final String basePath )
     {
         return new ApiClient(httpClient, basePath, createDefaultObjectMapper(), null, r -> {
         }, r -> r);
