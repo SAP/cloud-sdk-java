@@ -9,6 +9,7 @@
 ### 🔧 Compatibility Notes
 
 - `ODataResourcePath#addSegment(...)` and `addParameterToLastSegment(...)` now return a new path instance instead of mutating the existing one. Custom extensions that relied on in-place mutation need to reassign the returned path.
+- [OpenAPI Apache Generator] Remove no args constructor in generated API clients.
 
 ### ✨ New Functionality
 
