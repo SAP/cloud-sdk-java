@@ -81,9 +81,9 @@ public class ApiClient
     @Nonnull
     private final UnaryOperator<ClassicRequestBuilder> requestCustomizer;
 
-    private static OpenApiResponseListener EMPTY_RESPONSE_LISTENER = r -> {
+    private static final OpenApiResponseListener EMPTY_RESPONSE_LISTENER = r -> {
     };
-    private static UnaryOperator<ClassicRequestBuilder> EMPTY_REQUEST_CUSTOMIZER = r -> r;
+    private static final UnaryOperator<ClassicRequestBuilder> EMPTY_REQUEST_CUSTOMIZER = r -> r;
 
     /**
      * Creates an ApiClient instance from an existing HttpClient.
