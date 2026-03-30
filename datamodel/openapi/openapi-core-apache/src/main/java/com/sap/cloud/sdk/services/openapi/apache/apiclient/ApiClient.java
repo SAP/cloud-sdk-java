@@ -122,11 +122,8 @@ public class ApiClient
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
         if( !httpClient.getClass().getName().startsWith("com.sap.cloud.sdk.cloudplatform.connectivity") ) {
-            log
-                .debug(
-                    "Creating ApiClient from HttpClient of type {}. The default base-path is \"{}\".",
-                    httpClient.getClass().getName(),
-                    DEFAULT_BASE_PATH);
+            val msg = "Creating ApiClient from HttpClient of type {}. The default base-path is \"{}\".";
+            log.debug(msg, httpClient.getClass().getName(), DEFAULT_BASE_PATH);
         }
         return fromHttpClient(httpClient, DEFAULT_BASE_PATH);
     }
@@ -517,8 +514,7 @@ public class ApiClient
                 headerParams,
                 formParams,
                 accept,
-                contentType,
-                objectMapper);
+                contentType);
 
         return invokeAPI(builder, returnType);
     }
@@ -555,7 +551,7 @@ public class ApiClient
     }
 
     @Nonnull
-    private static ClassicRequestBuilder buildClassicRequest(
+    private ClassicRequestBuilder buildClassicRequest(
         @Nonnull final String basePath,
         @Nonnull final String path,
         @Nonnull final String method,
@@ -566,8 +562,7 @@ public class ApiClient
         @Nonnull final Map<String, String> headerParams,
         @Nonnull final Map<String, Object> formParams,
         @Nullable final String accept,
-        @Nonnull final String contentType,
-        @Nonnull final ObjectMapper objectMapper )
+        @Nonnull final String contentType )
     {
         if( body != null && !formParams.isEmpty() ) {
             throw new OpenApiRequestException("Cannot have body and form params");
@@ -588,7 +583,7 @@ public class ApiClient
         if( body != null || !formParams.isEmpty() ) {
             if( isBodyAllowed(Method.valueOf(method)) ) {
                 // Add entity if we have content and a valid method
-                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams, objectMapper));
+                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams));
             } else {
                 throw new OpenApiRequestException("method " + method + " does not support a request body");
             }
@@ -599,35 +594,17 @@ public class ApiClient
         return builder;
     }
 
-    /**
-     * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
-     *
-     * @param body
-     *            Object
-     * @param contentType
-     *            Content type
-     * @param formParams
-     *            Form parameters
-     * @param headerParams
-     *            Header parameters, used to check content encoding for JSON serialization
-     * @param objectMapper
-     *            Object mapper for JSON serialization
-     * @return Object
-     * @throws OpenApiRequestException
-     *             API exception
-     */
     @Nonnull
-    private static HttpEntity serialize(
+    private HttpEntity serialize(
         @Nullable final Object body,
         @Nonnull final Map<String, Object> formParams,
         @Nonnull final ContentType contentType,
-        @Nonnull final Map<String, String> headerParams,
-        @Nonnull final ObjectMapper objectMapper )
+        @Nonnull final Map<String, String> headerParams )
         throws OpenApiRequestException
     {
         final String mimeType = contentType.getMimeType();
         if( isJsonMime(mimeType) ) {
-            return serializeJson(body, contentType, headerParams, objectMapper);
+            return serializeJson(body, contentType, headerParams);
         } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
             return serializeMultipart(formParams, contentType);
         } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
@@ -641,11 +618,10 @@ public class ApiClient
     }
 
     @Nonnull
-    private static HttpEntity serializeJson(
+    private HttpEntity serializeJson(
         @Nullable final Object body,
         @Nonnull final ContentType contentType,
-        @Nonnull final Map<String, String> headerParams,
-        @Nonnull final ObjectMapper objectMapper )
+        @Nonnull final Map<String, String> headerParams )
         throws OpenApiRequestException
     {
         if( "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING))
@@ -673,7 +649,7 @@ public class ApiClient
     }
 
     @Nonnull
-    private static
+    private
         HttpEntity
         serializeMultipart( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
     {
@@ -691,7 +667,7 @@ public class ApiClient
         return builder.build();
     }
 
-    private static void addMultipartTextField(
+    private void addMultipartTextField(
         @Nonnull final MultipartEntityBuilder builder,
         @Nonnull final Entry<String, Object> entry,
         @Nonnull final ContentType contentType )
@@ -706,7 +682,7 @@ public class ApiClient
     }
 
     @Nonnull
-    private static
+    private
         HttpEntity
         serializeFormUrlEncoded( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
     {
