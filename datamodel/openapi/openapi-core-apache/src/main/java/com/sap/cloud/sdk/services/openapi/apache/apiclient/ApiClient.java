@@ -99,6 +99,11 @@ public class ApiClient
     // At runtime "localhost" will be replaced as basepath by the Destination's URI.
     private static final String DEFAULT_BASE_PATH = "http://localhost";
 
+    /**
+     * Http request customizer that can be used to manipulate OpenAPI requests before invocation.
+     *
+     * @since 5.28.0
+     */
     @With( onMethod_ = @Beta )
     @Nonnull
     private final UnaryOperator<ClassicRequestBuilder> requestCustomizer;
@@ -132,7 +137,9 @@ public class ApiClient
      * @param basePath
      *            The base path to use for requests
      * @return A new ApiClient instance
+     * @since 5.28.0
      */
+    @Beta
     @Nonnull
     public static
         ApiClient
