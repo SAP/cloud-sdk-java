@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
 
 /**
  * Base class for generated API classes, providing common functionality for API client management.
@@ -64,6 +65,37 @@ public abstract class BaseApi
         this.apiClient = apiClient;
     }
 
+    /**
+     * Invoke API by sending HTTP request with the given options.
+     *
+     * @param <T>
+     *            Type
+     * @param path
+     *            The sub-path of the HTTP URL
+     * @param method
+     *            The request method, one of "GET", "POST", "PUT", and "DELETE"
+     * @param queryParams
+     *            The query parameters
+     * @param collectionQueryParams
+     *            The collection query parameters
+     * @param urlQueryDeepObject
+     *            A URL query string for deep object parameters
+     * @param body
+     *            The request body object - if it is not binary, otherwise null
+     * @param headerParams
+     *            The header parameters
+     * @param formParams
+     *            The form parameters
+     * @param accept
+     *            The request's Accept header
+     * @param contentType
+     *            The request's Content-Type header
+     * @param returnType
+     *            Return type
+     * @return The response body in type of string
+     * @throws OpenApiRequestException
+     *             API exception
+     */
     @Nonnull
     protected <T> T invokeAPI(
         @Nonnull final String path,
