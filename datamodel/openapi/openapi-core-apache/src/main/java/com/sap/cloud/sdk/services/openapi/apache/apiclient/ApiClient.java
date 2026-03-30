@@ -6,24 +6,42 @@ package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
 import static lombok.AccessLevel.PRIVATE;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_ENCODING;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.val;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.FileEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -46,6 +64,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 /**
  * API client for executing HTTP requests using Apache HttpClient 5.
@@ -192,20 +211,19 @@ public class ApiClient
         @Nonnull final TypeReference<T> returnType )
     {
         final ClassicRequestBuilder builder =
-            ClassicRequestFactory
-                .buildClassicRequest(
-                    basePath,
-                    path,
-                    method,
-                    queryParams,
-                    collectionQueryParams,
-                    urlQueryDeepObject,
-                    body,
-                    headerParams,
-                    formParams,
-                    accept,
-                    contentType,
-                    objectMapper);
+            buildClassicRequest(
+                basePath,
+                path,
+                method,
+                queryParams,
+                collectionQueryParams,
+                urlQueryDeepObject,
+                body,
+                headerParams,
+                formParams,
+                accept,
+                contentType,
+                objectMapper);
 
         return invokeAPI(builder, returnType);
     }
@@ -239,6 +257,71 @@ public class ApiClient
         catch( final IOException e ) {
             throw new OpenApiRequestException(e);
         }
+    }
+
+    @Nonnull
+    private static ClassicRequestBuilder buildClassicRequest(
+        @Nonnull final String basePath,
+        @Nonnull final String path,
+        @Nonnull final String method,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject,
+        @Nullable final Object body,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final Map<String, Object> formParams,
+        @Nullable final String accept,
+        @Nonnull final String contentType,
+        @Nonnull final ObjectMapper objectMapper )
+    {
+        if( body != null && !formParams.isEmpty() ) {
+            throw new OpenApiRequestException("Cannot have body and form params");
+        }
+
+        final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
+        final ContentType contentTypeObj = getContentType(contentType);
+
+        @SuppressWarnings( "PMD.CloseResource" ) // constructed entity is not a closeable resource
+        final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, headerParams, objectMapper);
+
+        final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
+        builder.setUri(url);
+
+        if( accept != null ) {
+            builder.addHeader("Accept", accept);
+        }
+
+        for( final Map.Entry<String, String> keyValue : headerParams.entrySet() ) {
+            builder.addHeader(keyValue.getKey(), keyValue.getValue());
+        }
+
+        builder.setEntity(entity);
+
+        return builder;
+    }
+
+    /**
+     * Creates the HTTP entity for the request based on the method, body, and form parameters.
+     */
+    @Nonnull
+    private static HttpEntity createEntity(
+        @Nonnull final String method,
+        @Nullable final Object body,
+        @Nonnull final Map<String, Object> formParams,
+        @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final ObjectMapper objectMapper )
+        throws OpenApiRequestException
+    {
+        if( body != null || !formParams.isEmpty() ) {
+            if( isBodyAllowed(Method.valueOf(method)) ) {
+                return serialize(body, formParams, contentType, headerParams, objectMapper);
+            } else {
+                throw new OpenApiRequestException("method " + method + " does not support a request body");
+            }
+        }
+        // for empty body
+        return new StringEntity("", contentType);
     }
 
     @Nonnull
@@ -432,5 +515,212 @@ public class ApiClient
     public static String escapeString( @Nonnull final String str )
     {
         return URLEncoder.encode(str, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+    }
+
+    /**
+     * Parse content type object from header value
+     */
+    @Nonnull
+    private static ContentType getContentType( @Nonnull final String headerValue )
+        throws OpenApiRequestException
+    {
+        try {
+            return ContentType.parse(headerValue);
+        }
+        catch( UnsupportedCharsetException e ) {
+            throw new OpenApiRequestException("Could not parse content type " + headerValue, e);
+        }
+    }
+
+    /**
+     * Build full URL by concatenating base URL, the given sub path and query parameters.
+     *
+     * @param path
+     *            The sub path
+     * @param queryParams
+     *            The query parameters
+     * @param collectionQueryParams
+     *            The collection query parameters
+     * @param urlQueryDeepObject
+     *            URL query string of the deep object parameters
+     * @return The full URL
+     */
+    @Nonnull
+    private static String buildUrl(
+        @Nonnull final String basePath,
+        @Nonnull final String path,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject )
+    {
+        final StringBuilder url = new StringBuilder();
+        if( basePath.endsWith("/") && path.startsWith("/") ) {
+            url.append(basePath, 0, basePath.length() - 1);
+        } else {
+            url.append(basePath);
+        }
+        url.append(path);
+
+        if( queryParams != null && !queryParams.isEmpty() ) {
+            // support (constant) query string in `path`, e.g. "/posts?draft=1"
+            String prefix = path.contains("?") ? "&" : "?";
+            for( final Pair param : queryParams ) {
+                if( prefix != null ) {
+                    url.append(prefix);
+                    prefix = null;
+                } else {
+                    url.append("&");
+                }
+                final String value = parameterToString(param.getValue());
+                // query parameter value already escaped as part of parameterToPair
+                url.append(escapeString(param.getName())).append("=").append(value);
+            }
+        }
+
+        if( collectionQueryParams != null && !collectionQueryParams.isEmpty() ) {
+            String prefix = url.toString().contains("?") ? "&" : "?";
+            for( final Pair param : collectionQueryParams ) {
+                if( prefix != null ) {
+                    url.append(prefix);
+                    prefix = null;
+                } else {
+                    url.append("&");
+                }
+                final String value = parameterToString(param.getValue());
+                // collection query parameter value already escaped as part of parameterToPairs
+                url.append(escapeString(param.getName())).append("=").append(value);
+            }
+        }
+
+        if( urlQueryDeepObject != null && !urlQueryDeepObject.isEmpty() ) {
+            url.append(url.toString().contains("?") ? "&" : "?");
+            url.append(urlQueryDeepObject);
+        }
+
+        return url.toString();
+    }
+
+    private static boolean isBodyAllowed( @Nonnull final Method method )
+    {
+        final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
+        return BODY_METHODS.contains(method);
+    }
+
+    /**
+     * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
+     *
+     * @param body
+     *            Object
+     * @param formParams
+     *            Form parameters
+     * @param contentType
+     *            Content type
+     * @param headerParams
+     *            Header parameters, used to check content encoding for JSON serialization
+     * @param objectMapper
+     *            Object mapper for JSON serialization
+     * @return Object
+     * @throws OpenApiRequestException
+     *             API exception
+     */
+    @Nonnull
+    private static HttpEntity serialize(
+        @Nullable final Object body,
+        @Nonnull final Map<String, Object> formParams,
+        @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final ObjectMapper objectMapper )
+        throws OpenApiRequestException
+    {
+        final String mimeType = contentType.getMimeType();
+        if( isJsonMime(mimeType) ) {
+            return serializeJson(body, contentType, headerParams, objectMapper);
+        } else if( mimeType.equals(ContentType.MULTIPART_FORM_DATA.getMimeType()) ) {
+            return serializeMultipart(formParams, contentType);
+        } else if( mimeType.equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) ) {
+            return serializeFormUrlEncoded(formParams, contentType);
+        } else if( body instanceof File file ) {
+            return new FileEntity(file, contentType);
+        } else if( body instanceof byte[] byteArray ) {
+            return new ByteArrayEntity(byteArray, contentType);
+        }
+        throw new OpenApiRequestException("Serialization for content type '" + contentType + "' not supported");
+    }
+
+    @Nonnull
+    private static HttpEntity serializeJson(
+        @Nullable final Object body,
+        @Nonnull final ContentType contentType,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final ObjectMapper objectMapper )
+        throws OpenApiRequestException
+    {
+        if( "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING))
+            || "gzip".equalsIgnoreCase(headerParams.get(CONTENT_ENCODING.toLowerCase())) ) {
+            val outputStream = new ByteArrayOutputStream();
+            try( val gzip = new GZIPOutputStream(outputStream) ) {
+                gzip.write(objectMapper.writeValueAsBytes(body));
+            }
+            catch( IOException e ) {
+                throw new OpenApiRequestException("Failed to GZIP compress request body", e);
+            }
+            return new ByteArrayEntity(
+                outputStream.toByteArray(),
+                contentType.withCharset(StandardCharsets.UTF_8),
+                "gzip");
+        }
+        try {
+            return new StringEntity(
+                objectMapper.writeValueAsString(body),
+                contentType.withCharset(StandardCharsets.UTF_8));
+        }
+        catch( JsonProcessingException e ) {
+            throw new OpenApiRequestException(e);
+        }
+    }
+
+    @Nonnull
+    private static
+        HttpEntity
+        serializeMultipart( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
+    {
+        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        for( final Map.Entry<String, Object> entry : formParams.entrySet() ) {
+            final Object value = entry.getValue();
+            if( value instanceof File file ) {
+                builder.addBinaryBody(entry.getKey(), file);
+            } else if( value instanceof byte[] byteArray ) {
+                builder.addBinaryBody(entry.getKey(), byteArray);
+            } else {
+                addMultipartTextField(builder, entry, contentType);
+            }
+        }
+        return builder.build();
+    }
+
+    private static void addMultipartTextField(
+        @Nonnull final MultipartEntityBuilder builder,
+        @Nonnull final Map.Entry<String, Object> entry,
+        @Nonnull final ContentType contentType )
+    {
+        final Charset charset = contentType.getCharset();
+        if( charset != null ) {
+            final ContentType textContentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), charset);
+            builder.addTextBody(entry.getKey(), parameterToString(entry.getValue()), textContentType);
+        } else {
+            builder.addTextBody(entry.getKey(), parameterToString(entry.getValue()));
+        }
+    }
+
+    @Nonnull
+    private static
+        HttpEntity
+        serializeFormUrlEncoded( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
+    {
+        final List<NameValuePair> formValues = new ArrayList<>();
+        for( final Map.Entry<String, Object> entry : formParams.entrySet() ) {
+            formValues.add(new BasicNameValuePair(entry.getKey(), parameterToString(entry.getValue())));
+        }
+        return new UrlEncodedFormEntity(formValues, contentType.getCharset());
     }
 }
