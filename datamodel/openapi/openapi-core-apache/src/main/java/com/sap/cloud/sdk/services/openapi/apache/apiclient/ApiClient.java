@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 SAP SE or an SAP affiliate company. All rights reserved.
- */
-
 package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
 import static com.sap.cloud.sdk.services.openapi.apache.apiclient.DefaultApiResponseHandler.isJsonMime;
@@ -28,9 +24,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
@@ -45,9 +38,11 @@ import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -66,7 +61,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * API client for executing HTTP requests using Apache HttpClient 5.
@@ -373,7 +369,7 @@ public class ApiClient
      * Parse content type object from header value
      */
     @Nonnull
-    private static ContentType getContentType( @Nonnull final String headerValue )
+    private ContentType getContentType( @Nonnull final String headerValue )
         throws OpenApiRequestException
     {
         try {
@@ -398,7 +394,7 @@ public class ApiClient
      * @return The full URL
      */
     @Nonnull
-    private static String buildUrl(
+    private String buildUrl(
         @Nonnull final String basePath,
         @Nonnull final String path,
         @Nullable final List<Pair> queryParams,
@@ -594,6 +590,21 @@ public class ApiClient
         return builder;
     }
 
+    /**
+     * Serialize the given Java object into string according the given Content-Type (only JSON is supported for now).
+     *
+     * @param body
+     *            Object
+     * @param contentType
+     *            Content type
+     * @param formParams
+     *            Form parameters
+     * @param headerParams
+     *            Header parameters, used to check content encoding for JSON serialization
+     * @return Object
+     * @throws OpenApiRequestException
+     *             API exception
+     */
     @Nonnull
     private HttpEntity serialize(
         @Nullable final Object body,
