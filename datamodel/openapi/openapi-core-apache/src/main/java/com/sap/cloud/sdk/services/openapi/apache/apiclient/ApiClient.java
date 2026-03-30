@@ -507,7 +507,6 @@ public class ApiClient
     {
         final ClassicRequestBuilder builder =
             buildClassicRequest(
-                basePath,
                 path,
                 method,
                 queryParams,
@@ -555,7 +554,6 @@ public class ApiClient
 
     @Nonnull
     private ClassicRequestBuilder buildClassicRequest(
-        @Nonnull final String basePath,
         @Nonnull final String path,
         @Nonnull final String method,
         @Nullable final List<Pair> queryParams,
