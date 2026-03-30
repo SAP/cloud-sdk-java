@@ -139,8 +139,8 @@ public class ApiClient
     @Nonnull
     public static ApiClient create( @Nonnull final Destination destination )
     {
-        final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
-        return fromHttpClient((CloseableHttpClient) httpClient);
+        return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient(destination))
+            .withBasePath(destination.asHttp().getUri().toString());
     }
 
     /**
