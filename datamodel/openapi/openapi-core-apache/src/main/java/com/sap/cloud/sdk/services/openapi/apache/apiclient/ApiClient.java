@@ -395,7 +395,6 @@ public class ApiClient
      */
     @Nonnull
     private String buildUrl(
-        @Nonnull final String basePath,
         @Nonnull final String path,
         @Nullable final List<Pair> queryParams,
         @Nullable final List<Pair> collectionQueryParams,
@@ -564,7 +563,7 @@ public class ApiClient
             throw new OpenApiRequestException("Cannot have body and form params");
         }
 
-        final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
+        final String url = buildUrl(path, queryParams, collectionQueryParams, urlQueryDeepObject);
 
         final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
         builder.setUri(url);
