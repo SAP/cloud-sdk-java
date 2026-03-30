@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.zip.GZIPOutputStream;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -72,10 +74,9 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 @AllArgsConstructor( access = PRIVATE )
 @EqualsAndHashCode
 @ToString
+@Slf4j
 public class ApiClient
 {
-    private static final String DEFAULT_BASE_PATH = "http://localhost";
-
     @Nonnull
     private final CloseableHttpClient httpClient;
 
@@ -96,6 +97,12 @@ public class ApiClient
     @Nonnull
     private final OpenApiResponseListener openApiResponseListener;
 
+    // Methods that can have a request body
+    private static final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
+
+    // At runtime "localhost" will be replaced as basepath by the Destination's URI.
+    private static final String DEFAULT_BASE_PATH = "http://localhost";
+
     @With( onMethod_ = @Beta )
     @Nonnull
     private final UnaryOperator<ClassicRequestBuilder> requestCustomizer;
@@ -114,6 +121,13 @@ public class ApiClient
     @Nonnull
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
+        if( !httpClient.getClass().getName().startsWith("com.sap.cloud.sdk.cloudplatform.connectivity") ) {
+            log
+                .debug(
+                    "Creating ApiClient from HttpClient of type {}. The default base-path is \"{}\".",
+                    httpClient.getClass().getName(),
+                    DEFAULT_BASE_PATH);
+        }
         return fromHttpClient(httpClient, DEFAULT_BASE_PATH);
     }
 
@@ -163,165 +177,6 @@ public class ApiClient
     public static ApiClient create()
     {
         return fromHttpClient((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
-    }
-
-    /**
-     * Invoke API by sending HTTP request with the given options.
-     *
-     * @param <T>
-     *            Type
-     * @param path
-     *            The sub-path of the HTTP URL
-     * @param method
-     *            The request method, one of "GET", "POST", "PUT", and "DELETE"
-     * @param queryParams
-     *            The query parameters
-     * @param collectionQueryParams
-     *            The collection query parameters
-     * @param urlQueryDeepObject
-     *            A URL query string for deep object parameters
-     * @param body
-     *            The request body object - if it is not binary, otherwise null
-     * @param headerParams
-     *            The header parameters
-     * @param formParams
-     *            The form parameters
-     * @param accept
-     *            The request's Accept header
-     * @param contentType
-     *            The request's Content-Type header
-     * @param returnType
-     *            Return type
-     * @return The response body in type of string
-     * @throws OpenApiRequestException
-     *             API exception
-     */
-    @Nullable
-    public <T> T invokeAPI(
-        @Nonnull final String path,
-        @Nonnull final String method,
-        @Nullable final List<Pair> queryParams,
-        @Nullable final List<Pair> collectionQueryParams,
-        @Nullable final String urlQueryDeepObject,
-        @Nullable final Object body,
-        @Nonnull final Map<String, String> headerParams,
-        @Nonnull final Map<String, Object> formParams,
-        @Nullable final String accept,
-        @Nonnull final String contentType,
-        @Nonnull final TypeReference<T> returnType )
-    {
-        final ClassicRequestBuilder builder =
-            buildClassicRequest(
-                basePath,
-                path,
-                method,
-                queryParams,
-                collectionQueryParams,
-                urlQueryDeepObject,
-                body,
-                headerParams,
-                formParams,
-                accept,
-                contentType,
-                objectMapper);
-
-        return invokeAPI(builder, returnType);
-    }
-
-    /**
-     * Invoke API by sending HTTP request with the given request builder.
-     *
-     * @param <T>
-     *            Type
-     * @param requestBuilder
-     *            The request builder with all parameters configured
-     * @param resultType
-     *            Return type
-     * @return The response body
-     * @throws OpenApiRequestException
-     *             API exception
-     */
-    @Nonnull
-    protected <T> T invokeAPI(
-        @Nonnull final ClassicRequestBuilder requestBuilder,
-        @Nonnull final TypeReference<T> resultType )
-    {
-        final ClassicRequestBuilder finalBuilder = requestCustomizer.apply(requestBuilder);
-
-        final HttpClientContext context = HttpClientContext.create();
-        try {
-            final HttpClientResponseHandler<T> responseHandler =
-                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, resultType, openApiResponseListener);
-            return httpClient.execute(finalBuilder.build(), context, responseHandler);
-        }
-        catch( final IOException e ) {
-            throw new OpenApiRequestException(e);
-        }
-    }
-
-    @Nonnull
-    private static ClassicRequestBuilder buildClassicRequest(
-        @Nonnull final String basePath,
-        @Nonnull final String path,
-        @Nonnull final String method,
-        @Nullable final List<Pair> queryParams,
-        @Nullable final List<Pair> collectionQueryParams,
-        @Nullable final String urlQueryDeepObject,
-        @Nullable final Object body,
-        @Nonnull final Map<String, String> headerParams,
-        @Nonnull final Map<String, Object> formParams,
-        @Nullable final String accept,
-        @Nonnull final String contentType,
-        @Nonnull final ObjectMapper objectMapper )
-    {
-        if( body != null && !formParams.isEmpty() ) {
-            throw new OpenApiRequestException("Cannot have body and form params");
-        }
-
-        final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
-        final ContentType contentTypeObj = getContentType(contentType);
-
-        @SuppressWarnings( "PMD.CloseResource" ) // constructed entity is not a closeable resource
-        final HttpEntity entity = createEntity(method, body, formParams, contentTypeObj, headerParams, objectMapper);
-
-        final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
-        builder.setUri(url);
-
-        if( accept != null ) {
-            builder.addHeader("Accept", accept);
-        }
-
-        for( final Map.Entry<String, String> keyValue : headerParams.entrySet() ) {
-            builder.addHeader(keyValue.getKey(), keyValue.getValue());
-        }
-
-        builder.setEntity(entity);
-
-        return builder;
-    }
-
-    /**
-     * Creates the HTTP entity for the request based on the method, body, and form parameters.
-     */
-    @Nonnull
-    private static HttpEntity createEntity(
-        @Nonnull final String method,
-        @Nullable final Object body,
-        @Nonnull final Map<String, Object> formParams,
-        @Nonnull final ContentType contentType,
-        @Nonnull final Map<String, String> headerParams,
-        @Nonnull final ObjectMapper objectMapper )
-        throws OpenApiRequestException
-    {
-        if( body != null || !formParams.isEmpty() ) {
-            if( isBodyAllowed(Method.valueOf(method)) ) {
-                return serialize(body, formParams, contentType, headerParams, objectMapper);
-            } else {
-                throw new OpenApiRequestException("method " + method + " does not support a request body");
-            }
-        }
-        // for empty body
-        return new StringEntity("", contentType);
     }
 
     @Nonnull
@@ -602,8 +457,146 @@ public class ApiClient
 
     private static boolean isBodyAllowed( @Nonnull final Method method )
     {
-        final Set<Method> BODY_METHODS = Set.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
         return BODY_METHODS.contains(method);
+    }
+
+    /**
+     * Invoke API by sending HTTP request with the given options.
+     *
+     * @param <T>
+     *            Type
+     * @param path
+     *            The sub-path of the HTTP URL
+     * @param method
+     *            The request method, one of "GET", "POST", "PUT", and "DELETE"
+     * @param queryParams
+     *            The query parameters
+     * @param collectionQueryParams
+     *            The collection query parameters
+     * @param urlQueryDeepObject
+     *            A URL query string for deep object parameters
+     * @param body
+     *            The request body object - if it is not binary, otherwise null
+     * @param headerParams
+     *            The header parameters
+     * @param formParams
+     *            The form parameters
+     * @param accept
+     *            The request's Accept header
+     * @param contentType
+     *            The request's Content-Type header
+     * @param returnType
+     *            Return type
+     * @return The response body in type of string
+     * @throws OpenApiRequestException
+     *             API exception
+     */
+    @Nullable
+    public <T> T invokeAPI(
+        @Nonnull final String path,
+        @Nonnull final String method,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject,
+        @Nullable final Object body,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final Map<String, Object> formParams,
+        @Nullable final String accept,
+        @Nonnull final String contentType,
+        @Nonnull final TypeReference<T> returnType )
+    {
+        final ClassicRequestBuilder builder =
+            buildClassicRequest(
+                basePath,
+                path,
+                method,
+                queryParams,
+                collectionQueryParams,
+                urlQueryDeepObject,
+                body,
+                headerParams,
+                formParams,
+                accept,
+                contentType,
+                objectMapper);
+
+        return invokeAPI(builder, returnType);
+    }
+
+    /**
+     * Invoke API by sending HTTP request with the given request builder.
+     *
+     * @param <T>
+     *            Type
+     * @param requestBuilder
+     *            The request builder with all parameters configured
+     * @param resultType
+     *            Return type
+     * @return The response body
+     * @throws OpenApiRequestException
+     *             API exception
+     */
+    @Nonnull
+    protected <T> T invokeAPI(
+        @Nonnull final ClassicRequestBuilder requestBuilder,
+        @Nonnull final TypeReference<T> resultType )
+    {
+        final ClassicRequestBuilder finalBuilder = requestCustomizer.apply(requestBuilder);
+
+        final HttpClientContext context = HttpClientContext.create();
+        try {
+            final HttpClientResponseHandler<T> responseHandler =
+                new DefaultApiResponseHandler<>(objectMapper, tempFolderPath, resultType, openApiResponseListener);
+            return httpClient.execute(finalBuilder.build(), context, responseHandler);
+        }
+        catch( final IOException e ) {
+            throw new OpenApiRequestException(e);
+        }
+    }
+
+    @Nonnull
+    private static ClassicRequestBuilder buildClassicRequest(
+        @Nonnull final String basePath,
+        @Nonnull final String path,
+        @Nonnull final String method,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject,
+        @Nullable final Object body,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final Map<String, Object> formParams,
+        @Nullable final String accept,
+        @Nonnull final String contentType,
+        @Nonnull final ObjectMapper objectMapper )
+    {
+        if( body != null && !formParams.isEmpty() ) {
+            throw new OpenApiRequestException("Cannot have body and form params");
+        }
+
+        final String url = buildUrl(basePath, path, queryParams, collectionQueryParams, urlQueryDeepObject);
+
+        final ClassicRequestBuilder builder = ClassicRequestBuilder.create(method);
+        builder.setUri(url);
+
+        if( accept != null ) {
+            builder.addHeader("Accept", accept);
+        }
+        for( final Entry<String, String> keyValue : headerParams.entrySet() ) {
+            builder.addHeader(keyValue.getKey(), keyValue.getValue());
+        }
+        final ContentType contentTypeObj = getContentType(contentType);
+        if( body != null || !formParams.isEmpty() ) {
+            if( isBodyAllowed(Method.valueOf(method)) ) {
+                // Add entity if we have content and a valid method
+                builder.setEntity(serialize(body, formParams, contentTypeObj, headerParams, objectMapper));
+            } else {
+                throw new OpenApiRequestException("method " + method + " does not support a request body");
+            }
+        } else {
+            // for empty body
+            builder.setEntity(new StringEntity("", contentTypeObj));
+        }
+        return builder;
     }
 
     /**
@@ -611,10 +604,10 @@ public class ApiClient
      *
      * @param body
      *            Object
-     * @param formParams
-     *            Form parameters
      * @param contentType
      *            Content type
+     * @param formParams
+     *            Form parameters
      * @param headerParams
      *            Header parameters, used to check content encoding for JSON serialization
      * @param objectMapper
@@ -685,7 +678,7 @@ public class ApiClient
         serializeMultipart( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
     {
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        for( final Map.Entry<String, Object> entry : formParams.entrySet() ) {
+        for( final Entry<String, Object> entry : formParams.entrySet() ) {
             final Object value = entry.getValue();
             if( value instanceof File file ) {
                 builder.addBinaryBody(entry.getKey(), file);
@@ -700,7 +693,7 @@ public class ApiClient
 
     private static void addMultipartTextField(
         @Nonnull final MultipartEntityBuilder builder,
-        @Nonnull final Map.Entry<String, Object> entry,
+        @Nonnull final Entry<String, Object> entry,
         @Nonnull final ContentType contentType )
     {
         final Charset charset = contentType.getCharset();
@@ -718,7 +711,7 @@ public class ApiClient
         serializeFormUrlEncoded( @Nonnull final Map<String, Object> formParams, @Nonnull final ContentType contentType )
     {
         final List<NameValuePair> formValues = new ArrayList<>();
-        for( final Map.Entry<String, Object> entry : formParams.entrySet() ) {
+        for( final Entry<String, Object> entry : formParams.entrySet() ) {
             formValues.add(new BasicNameValuePair(entry.getKey(), parameterToString(entry.getValue())));
         }
         return new UrlEncodedFormEntity(formValues, contentType.getCharset());
