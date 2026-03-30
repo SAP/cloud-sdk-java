@@ -173,7 +173,7 @@ public class ApiClient
     }
 
     @Nonnull
-    static ObjectMapper createDefaultObjectMapper()
+    private static ObjectMapper createDefaultObjectMapper()
     {
         return JsonMapper
             .builder()
@@ -483,6 +483,7 @@ public class ApiClient
      * @throws OpenApiRequestException
      *             API exception
      */
+    @Beta
     @Nullable
     public <T> T invokeAPI(
         @Nonnull final String path,
