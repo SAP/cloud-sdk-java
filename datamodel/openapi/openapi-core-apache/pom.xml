@@ -65,10 +65,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <!-- scope "provided" -->
         <dependency>
             <groupId>org.projectlombok</groupId>

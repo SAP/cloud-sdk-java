@@ -61,7 +61,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -70,7 +69,6 @@ import lombok.val;
 @AllArgsConstructor( access = PRIVATE )
 @EqualsAndHashCode
 @ToString
-@Slf4j
 public class ApiClient
 {
     @Nonnull
@@ -122,32 +120,9 @@ public class ApiClient
     @Nonnull
     public static ApiClient fromHttpClient( @Nonnull final CloseableHttpClient httpClient )
     {
-        if( !httpClient.getClass().getName().startsWith("com.sap.cloud.sdk.cloudplatform.connectivity") ) {
-            val msg = "Creating ApiClient from HttpClient of type {}. The default base-path is \"{}\".";
-            log.debug(msg, httpClient.getClass().getName(), DEFAULT_BASE_PATH);
-        }
-        return fromHttpClient(httpClient, DEFAULT_BASE_PATH);
-    }
-
-    /**
-     * Creates an ApiClient instance from an existing HttpClient.
-     *
-     * @param httpClient
-     *            The HttpClient to use for requests
-     * @param basePath
-     *            The base path to use for requests
-     * @return A new ApiClient instance
-     * @since 5.28.0
-     */
-    @Beta
-    @Nonnull
-    public static
-        ApiClient
-        fromHttpClient( @Nonnull final CloseableHttpClient httpClient, @Nonnull final String basePath )
-    {
         return new ApiClient(
             httpClient,
-            basePath,
+            DEFAULT_BASE_PATH,
             createDefaultObjectMapper(),
             null,
             EMPTY_RESPONSE_LISTENER,
@@ -165,7 +140,7 @@ public class ApiClient
     public static ApiClient create( @Nonnull final Destination destination )
     {
         final HttpClient httpClient = ApacheHttpClient5Accessor.getHttpClient(destination);
-        return fromHttpClient((CloseableHttpClient) httpClient, destination.asHttp().getUri().toString());
+        return fromHttpClient((CloseableHttpClient) httpClient);
     }
 
     /**
