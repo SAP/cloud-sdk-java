@@ -56,6 +56,19 @@ public class OrdersApi extends BaseApi {
     super(apiClient);
     }
 
+    /**
+    * Creates a new API instance with additional default headers.
+    *
+    * @param defaultHeaders Additional headers to include in all requests
+    * @return A new API instance with the combined headers
+    */
+    public OrdersApi withDefaultHeaders(@Nonnull final Map<String, String> defaultHeaders) {
+        final var api = new OrdersApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
 
         /**
          * <p>Create a new order
@@ -96,7 +109,7 @@ public class OrdersApi extends BaseApi {
             
             final TypeReference<Order> localVarReturnType = new TypeReference<Order>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "POST",
                 localVarQueryParams,

@@ -56,6 +56,19 @@ public class AwesomeSodasApi extends BaseApi {
     super(apiClient);
     }
 
+    /**
+    * Creates a new API instance with additional default headers.
+    *
+    * @param defaultHeaders Additional headers to include in all requests
+    * @return A new API instance with the combined headers
+    */
+    public AwesomeSodasApi withDefaultHeaders(@Nonnull final Map<String, String> defaultHeaders) {
+        final var api = new AwesomeSodasApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
 
         /**
          * <p>Get a list of all sodas
@@ -88,7 +101,7 @@ public class AwesomeSodasApi extends BaseApi {
             
             final TypeReference<List<Soda>> localVarReturnType = new TypeReference<List<Soda>>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,

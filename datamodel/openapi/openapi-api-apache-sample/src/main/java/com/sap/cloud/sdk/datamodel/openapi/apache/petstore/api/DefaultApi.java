@@ -54,6 +54,21 @@ public class DefaultApi extends BaseApi
     }
 
     /**
+     * Creates a new API instance with additional default headers.
+     *
+     * @param defaultHeaders
+     *            Additional headers to include in all requests
+     * @return A new API instance with the combined headers
+     */
+    public DefaultApi withDefaultHeaders( @Nonnull final Map<String, String> defaultHeaders )
+    {
+        final var api = new DefaultApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
+    /**
      * <p>
      * <p>
      * Creates a new pet in the store. Duplicates are allowed
@@ -97,19 +112,18 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "POST",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                pet,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "POST",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            pet,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -159,19 +173,18 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "DELETE",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "DELETE",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -221,19 +234,18 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "GET",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -281,19 +293,18 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "GET",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**

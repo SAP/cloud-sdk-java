@@ -55,6 +55,23 @@ public class DefaultApi extends BaseApi {
     super(aiCoreService.getApiClient());
     }
 
+    private DefaultApi(@Nonnull final ApiClient apiClient) {
+        super(apiClient);
+    }
+
+    /**
+    * Creates a new API instance with additional default headers.
+    *
+    * @param defaultHeaders Additional headers to include in all requests
+    * @return A new API instance with the combined headers
+    */
+    public DefaultApi withDefaultHeaders(@Nonnull final Map<String, String> defaultHeaders) {
+        final var api = new DefaultApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
 
         /**
          * <p>Delete a specific soda from the store
@@ -97,7 +114,7 @@ public class DefaultApi extends BaseApi {
             
                         final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>() {};
             
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "DELETE",
                 localVarQueryParams,
@@ -153,7 +170,7 @@ public class DefaultApi extends BaseApi {
             
             final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,
@@ -217,7 +234,7 @@ public class DefaultApi extends BaseApi {
             
             final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "PUT",
                 localVarQueryParams,

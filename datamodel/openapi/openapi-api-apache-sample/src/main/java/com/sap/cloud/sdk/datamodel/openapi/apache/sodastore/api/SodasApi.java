@@ -53,6 +53,21 @@ public class SodasApi extends BaseApi
     }
 
     /**
+     * Creates a new API instance with additional default headers.
+     *
+     * @param defaultHeaders
+     *            Additional headers to include in all requests
+     * @return A new API instance with the combined headers
+     */
+    public SodasApi withDefaultHeaders( @Nonnull final Map<String, String> defaultHeaders )
+    {
+        final var api = new SodasApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
+    /**
      * <p>
      * Download soda product data as binary
      * <p>
@@ -100,19 +115,18 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "GET",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -151,19 +165,18 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "GET",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -213,19 +226,18 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "GET",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                null,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "GET",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            null,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 
     /**
@@ -274,18 +286,17 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return apiClient
-            .invokeAPI(
-                localVarPath,
-                "PUT",
-                localVarQueryParams,
-                localVarCollectionQueryParams,
-                localVarQueryStringJoiner.toString(),
-                sodaWithId,
-                localVarHeaderParams,
-                localVarFormParams,
-                localVarAccept,
-                localVarContentType,
-                localVarReturnType);
+        return invokeAPI(
+            localVarPath,
+            "PUT",
+            localVarQueryParams,
+            localVarCollectionQueryParams,
+            localVarQueryStringJoiner.toString(),
+            sodaWithId,
+            localVarHeaderParams,
+            localVarFormParams,
+            localVarAccept,
+            localVarContentType,
+            localVarReturnType);
     }
 }

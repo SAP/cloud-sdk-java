@@ -75,7 +75,7 @@ final TypeReference<{{{returnType}}}> localVarReturnType = new TypeReference<{{{
 final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>() {};
 {{/returnType}}
 
-return apiClient.invokeAPI(
+return invokeAPI(
     localVarPath,
     "{{httpMethod}}",
     localVarQueryParams,

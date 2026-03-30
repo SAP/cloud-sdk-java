@@ -57,6 +57,19 @@ public class SodasApi extends BaseApi {
     super(apiClient);
     }
 
+    /**
+    * Creates a new API instance with additional default headers.
+    *
+    * @param defaultHeaders Additional headers to include in all requests
+    * @return A new API instance with the combined headers
+    */
+    public SodasApi withDefaultHeaders(@Nonnull final Map<String, String> defaultHeaders) {
+        final var api = new SodasApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
+    }
+
 
         /**
          * <p>Get all soda products
@@ -89,7 +102,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<List<SodaWithId>> localVarReturnType = new TypeReference<List<SodaWithId>>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,
@@ -145,7 +158,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<SodaWithId> localVarReturnType = new TypeReference<SodaWithId>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,
@@ -201,7 +214,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
                         
-            return apiClient.invokeAPI(
+            return invokeAPI(
                 localVarPath,
                 "PUT",
                 localVarQueryParams,

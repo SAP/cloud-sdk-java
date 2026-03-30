@@ -12,8 +12,14 @@
 
 package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
-import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 
 /**
@@ -25,6 +31,8 @@ public abstract class BaseApi
      * The API client used to execute HTTP requests.
      */
     protected final ApiClient apiClient;
+
+    protected final Map<String, String> defaultHeaders = new HashMap<>();
 
     /**
      * Creates a new BaseApi instance with default configuration.
@@ -54,5 +62,37 @@ public abstract class BaseApi
     protected BaseApi( @Nonnull final ApiClient apiClient )
     {
         this.apiClient = apiClient;
+    }
+
+    @Nonnull
+    protected <T> T invokeAPI(
+        @Nonnull final String path,
+        @Nonnull final String method,
+        @Nullable final List<Pair> queryParams,
+        @Nullable final List<Pair> collectionQueryParams,
+        @Nullable final String urlQueryDeepObject,
+        @Nullable final Object body,
+        @Nonnull final Map<String, String> headerParams,
+        @Nonnull final Map<String, Object> formParams,
+        @Nullable final String accept,
+        @Nonnull final String contentType,
+        @Nonnull final TypeReference<T> returnType )
+    {
+
+        final var mergedHeaderParams = new HashMap<>(defaultHeaders);
+        mergedHeaderParams.putAll(headerParams);
+        return apiClient
+            .invokeAPI(
+                path,
+                method,
+                queryParams,
+                collectionQueryParams,
+                urlQueryDeepObject,
+                body,
+                mergedHeaderParams,
+                formParams,
+                accept,
+                contentType,
+                returnType);
     }
 }
