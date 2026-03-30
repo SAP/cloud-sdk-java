@@ -33,6 +33,9 @@ public abstract class BaseApi
      */
     protected final ApiClient apiClient;
 
+    /**
+     * Default headers to be included in every request.
+     */
     protected final Map<String, String> defaultHeaders = new HashMap<>();
 
     /**
