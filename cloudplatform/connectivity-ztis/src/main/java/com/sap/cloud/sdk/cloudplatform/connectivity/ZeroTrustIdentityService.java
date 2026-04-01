@@ -49,6 +49,8 @@ public class ZeroTrustIdentityService
     private static final String DEFAULT_SOCKET_PATH = "unix:///tmp/spire-agent/public/api.sock";
     private static final String SOCKET_ENVIRONMENT_VARIABLE = "SPIFFE_ENDPOINT_SOCKET";
     private static final Duration DEFAULT_SOCKET_TIMEOUT = Duration.ofSeconds(10);
+    // Invalidate the cached KeyStore this long before the SVID expires to tolerate slow SPIRE rotation
+    static final Duration SVID_EXPIRY_SAFETY_MARGIN = Duration.ofDays(1);
     @Getter
     private static final ZeroTrustIdentityService instance = new ZeroTrustIdentityService();
     private final Lazy<X509Source> source = Lazy.of(this::initX509Source);
@@ -223,8 +225,12 @@ public class ZeroTrustIdentityService
 
     boolean isKeyStoreCached( @Nonnull final X509Svid svid )
     {
-        // X509Svid does implement equals, so we don't have to manually compare the certificates
-        return keyStoreCache != null && svid.equals(keyStoreCache.svid());
+        if( keyStoreCache == null || !svid.getSpiffeId().equals(keyStoreCache.svid().getSpiffeId()) ) {
+            return false;
+        }
+        // Treat as not cached if the SVID is already expired or expires within the safety margin.
+        final Instant expiryWithMargin = svid.getLeaf().getNotAfter().toInstant().minus(SVID_EXPIRY_SAFETY_MARGIN);
+        return Instant.now().isBefore(expiryWithMargin);
     }
 
     @RequiredArgsConstructor

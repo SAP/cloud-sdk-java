@@ -22,3 +22,4 @@
 ### 🐛 Fixed Issues
 
 - Fixed stateful OData request path construction caused by shared `ODataResourcePath` instances being mutated when building count, read-by-key, and function requests.
+- Fixed using expired Zero Trust Identity Service certificates
