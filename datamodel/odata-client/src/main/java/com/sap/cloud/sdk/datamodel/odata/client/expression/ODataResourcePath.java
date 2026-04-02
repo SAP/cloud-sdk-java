@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.request.AbstractODataParameters;
 import com.sap.cloud.sdk.datamodel.odata.client.request.UriEncodingStrategy;
 
@@ -185,7 +186,9 @@ public final class ODataResourcePath
      * Creates a defensive copy of this resource path.
      *
      * @return A new {@link ODataResourcePath} with the same segments as this path.
+     * @since 5.28.0
      */
+    @Beta
     @Nonnull
     public ODataResourcePath copy()
     {
