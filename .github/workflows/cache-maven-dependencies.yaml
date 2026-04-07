@@ -13,6 +13,8 @@ env:
 jobs:
   update-cache:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to delete existing caches
     steps:
       - name: "Checkout"
         uses: actions/checkout@v6
@@ -36,7 +38,7 @@ jobs:
               gh cache delete "${CACHE_ID}"
           done
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Cache Dependencies"
         uses: actions/cache/save@v5

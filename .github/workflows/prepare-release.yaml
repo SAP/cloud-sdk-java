@@ -308,21 +308,21 @@ jobs:
         if: ${{ needs.create-release.outputs.release-url != '' }}
         run: gh release delete --repo "${{ github.repository }}" ${{ needs.create-release.outputs.release-name }} --yes
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: "Delete Release Branch"
         if: ${{ needs.bump-version.outputs.release-branch != '' }}
         run: git push --delete origin ${{ needs.bump-version.outputs.release-branch }}
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: "Delete Release Tag"
         if: ${{ needs.bump-version.outputs.release-tag != '' }}
         run: git push --delete origin ${{ needs.bump-version.outputs.release-tag }}
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: "Delete Release Notes PR"

@@ -146,7 +146,7 @@ jobs:
       - name: "Publish the Draft Release"
         run: gh release edit ${{ needs.prerequisites.outputs.release-tag }} --draft=false --repo "${{ github.repository }}"
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Merge Release Notes PR"
         if: ${{ inputs.skip-pr-merge != 'true' }}
