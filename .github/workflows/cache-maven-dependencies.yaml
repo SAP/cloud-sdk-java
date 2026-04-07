@@ -14,7 +14,7 @@ jobs:
   update-cache:
     runs-on: ubuntu-latest
     permissions:
-      actions: write # needed to delete existing caches
+      actions: write # needed to delete caches
     steps:
       - name: "Checkout"
         uses: actions/checkout@v6
