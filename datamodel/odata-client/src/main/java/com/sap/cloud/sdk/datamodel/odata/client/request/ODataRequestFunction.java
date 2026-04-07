@@ -128,7 +128,10 @@ public class ODataRequestFunction extends ODataRequestGeneric
         @Nonnull final ODataResourcePath functionPath,
         @Nonnull final StructuredQuery structQuery )
     {
-        super(servicePath, functionPath.addSegment(structQuery.getEntityOrPropertyName()), structQuery.getProtocol());
+        super(
+            servicePath,
+            functionPath.copy().addSegment(structQuery.getEntityOrPropertyName()),
+            structQuery.getProtocol());
         this.query = structQuery.getEncodedQueryString();
     }
 
@@ -171,7 +174,7 @@ public class ODataRequestFunction extends ODataRequestGeneric
         if( protocol.isEqualTo(ODataProtocol.V2) ) {
             return path;
         }
-        return path.addParameterToLastSegment(parameters);
+        return path.copy().addParameterToLastSegment(parameters);
     }
 
     @Nullable
