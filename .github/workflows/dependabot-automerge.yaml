@@ -14,12 +14,20 @@ env:
 jobs:
   review-prs:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: "Create GitHub App Token"
+        id: create-app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.SAP_CLOUD_SDK_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SAP_CLOUD_SDK_BOT_PRIVATE_KEY }}
+          owner: SAP
+          repositories: cloud-sdk-java
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Approve and Merge PRs
         run: |
@@ -47,4 +55,4 @@ jobs:
             gh pr review "$PR_NUMBER" --approve
           done <<< "$PR_NUMBERS"
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ steps.create-app-token.outputs.token }}

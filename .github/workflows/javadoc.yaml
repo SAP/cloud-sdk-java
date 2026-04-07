@@ -57,12 +57,23 @@ jobs:
       - name: "Generate aggregated Javadoc"
         run: mvn clean javadoc:aggregate -Drelease -Djava.failOnWarning=false --projects "${PROJECTS}" --quiet
 
+      - name: "Create GitHub App Token"
+        id: create-app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.SAP_CLOUD_SDK_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SAP_CLOUD_SDK_BOT_PRIVATE_KEY }}
+          owner: SAP
+          repositories: cloud-sdk
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: "Checkout Docs Repository"
         uses: actions/checkout@v6
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
-          token: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          token: ${{ steps.create-app-token.outputs.token }}
 
       - name: "Replace JavaDoc"
         id: replace-javadoc
@@ -107,4 +118,4 @@ jobs:
           echo "PR_URL=$PR_URL" >> $GITHUB_OUTPUT
           echo "PR: $PR_URL" >> $GITHUB_STEP_SUMMARY
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ steps.create-app-token.outputs.token }}
