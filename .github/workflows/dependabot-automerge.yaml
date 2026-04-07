@@ -18,8 +18,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: "Create GitHub App Token"
-        id: create-app-token
+      - name: 'Create GitHub App Token'
+        id: app-token
         uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.SAP_CLOUD_SDK_BOT_CLIENT_ID }}
@@ -37,14 +37,14 @@ jobs:
             if [[ -z "$GROUP" ]]; then
               continue
             fi
-          
+
             MATCHES=$(jq -r --arg group "$GROUP" '.[] | select(.title | contains($group)) | .number' <<< "$PRS")
             echo "[DEBUG] Found PRs for group '$GROUP': '$MATCHES'"
-          
+
             PR_NUMBERS="$MATCHES"$'\n'"$PR_NUMBERS"
           done <<< "${{ env.DEPENDABOT_GROUPS }}"
           echo "[DEBUG] Approving and Merging following PRs: '$PR_NUMBERS'"
-          
+
           while IFS= read -r PR_NUMBER; do
             if [[ -z "$PR_NUMBER" ]]; then
               continue
@@ -55,4 +55,4 @@ jobs:
             gh pr review "$PR_NUMBER" --approve
           done <<< "$PR_NUMBERS"
         env:
-          GH_TOKEN: ${{ steps.create-app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
