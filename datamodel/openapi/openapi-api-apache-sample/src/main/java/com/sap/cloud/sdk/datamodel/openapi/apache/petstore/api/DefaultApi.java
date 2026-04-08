@@ -100,7 +100,7 @@ public class DefaultApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
@@ -112,18 +112,19 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "POST",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            pet,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "POST",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                pet,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -159,7 +160,7 @@ public class DefaultApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
@@ -173,18 +174,19 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "DELETE",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "DELETE",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -220,7 +222,7 @@ public class DefaultApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json", "application/xml", "text/xml", "text/html" };
@@ -234,18 +236,19 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -276,7 +279,7 @@ public class DefaultApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         localVarCollectionQueryParams.addAll(ApiClient.parameterToPairs("csv", "tags", tags));
@@ -293,18 +296,19 @@ public class DefaultApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**

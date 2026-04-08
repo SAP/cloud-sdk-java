@@ -87,7 +87,7 @@ public class SodasApi extends BaseApi {
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+            final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
             final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
             
                                     
@@ -102,7 +102,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<List<SodaWithId>> localVarReturnType = new TypeReference<List<SodaWithId>>() {};
                         
-            return invokeAPI(
+            return apiClient.invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,
@@ -143,7 +143,7 @@ public class SodasApi extends BaseApi {
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+            final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
             final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
             
                                     
@@ -158,7 +158,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<SodaWithId> localVarReturnType = new TypeReference<SodaWithId>() {};
                         
-            return invokeAPI(
+            return apiClient.invokeAPI(
                 localVarPath,
                 "GET",
                 localVarQueryParams,
@@ -199,7 +199,7 @@ public class SodasApi extends BaseApi {
             final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
             final List<Pair> localVarQueryParams = new ArrayList<Pair>();
             final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-            final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+            final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
             final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
             
                                     
@@ -214,7 +214,7 @@ public class SodasApi extends BaseApi {
             
             final TypeReference<Soda> localVarReturnType = new TypeReference<Soda>() {};
                         
-            return invokeAPI(
+            return apiClient.invokeAPI(
                 localVarPath,
                 "PUT",
                 localVarQueryParams,

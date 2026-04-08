@@ -101,7 +101,7 @@ public class SodasApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/octet-stream" };
@@ -115,18 +115,19 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -151,7 +152,7 @@ public class SodasApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
@@ -165,18 +166,19 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -212,7 +214,7 @@ public class SodasApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
@@ -226,18 +228,19 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "GET",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            null,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 
     /**
@@ -274,7 +277,7 @@ public class SodasApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };
@@ -286,17 +289,18 @@ public class SodasApi extends BaseApi
         {
         };
 
-        return invokeAPI(
-            localVarPath,
-            "PUT",
-            localVarQueryParams,
-            localVarCollectionQueryParams,
-            localVarQueryStringJoiner.toString(),
-            sodaWithId,
-            localVarHeaderParams,
-            localVarFormParams,
-            localVarAccept,
-            localVarContentType,
-            localVarReturnType);
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "PUT",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                sodaWithId,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
     }
 }
