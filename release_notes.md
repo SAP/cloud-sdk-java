@@ -8,7 +8,6 @@
 
 ### 🔧 Compatibility Notes
 
-- `ODataResourcePath#addSegment(...)` and `addParameterToLastSegment(...)` now return a new path instance instead of mutating the existing one. Custom extensions that relied on in-place mutation need to reassign the returned path.
 - [OpenAPI Apache Generator] Remove no args constructor in generated API clients.
 
 ### ✨ New Functionality
@@ -22,3 +21,4 @@
 ### 🐛 Fixed Issues
 
 - Fixed stateful OData request path construction caused by shared `ODataResourcePath` instances being mutated when building count, read-by-key, and function requests.
+- `ODataRequestRead`, `ODataRequestCount`, `ODataRequesReadByKey`, `ODataRequestFunction` and `ServiceWithNavigableEntitiesImpl` now create a defensive copy of the `ODataResourcePath` to prevent unintended side effects from shared mutable state.
