@@ -6,10 +6,9 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
-import lombok.EqualsAndHashCode;
-
 import com.sap.cloud.security.config.ClientIdentity;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 
@@ -46,7 +45,9 @@ final class SecurityLibWorkarounds
                 return keyStoreSource.get();
             }
             catch( final Exception e ) {
-                throw new CloudPlatformException("Failed to load X509 certificate for credential type X509_ATTESTED.", e);
+                throw new CloudPlatformException(
+                    "Failed to load X509 certificate for credential type X509_ATTESTED.",
+                    e);
             }
         }
     }

@@ -99,7 +99,7 @@ class OAuth2Service
         final CacheKey key = CacheKey.fromIds(tenantId, null).append(identity);
         // ZTIS certificates rotate at runtime, thus we explicitly add the current KeyStore as cache key
         // once the certificate rotates, this produces a cache miss, ensuring we construct a new HTTP client with a new certificate
-        if (identity instanceof final ZtisClientIdentity ztisIdentity) {
+        if( identity instanceof final ZtisClientIdentity ztisIdentity ) {
             key.append(ztisIdentity.getKeyStore());
         }
         return tokenServiceCache.get(key, this::createTokenService);

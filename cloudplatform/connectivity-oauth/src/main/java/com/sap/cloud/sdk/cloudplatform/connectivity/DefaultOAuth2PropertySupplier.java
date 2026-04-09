@@ -2,7 +2,6 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

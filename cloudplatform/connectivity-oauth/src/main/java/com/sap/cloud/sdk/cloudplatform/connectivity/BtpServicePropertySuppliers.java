@@ -267,6 +267,8 @@ class BtpServicePropertySuppliers
         {
             final KeyStore maybeClientStore = getClientKeyStore();
             if( maybeClientStore != null ) {
+                // note: in case the KS is loaded from ZTIS, the KS used for token retrieval and the KS registered here for mTLS to the target system may diverge
+                // Token retrieval supports certificate rotation in place, but mTLS to the target system requires re-loading the destination instead.
                 optionsBuilder.withClientKeyStore(maybeClientStore);
             }
         }
@@ -275,7 +277,6 @@ class BtpServicePropertySuppliers
         private KeyStore getClientKeyStore()
         {
             final ClientIdentity clientIdentity = getClientIdentity();
-            //TODO: this doesn't work well with a dynamic keystore, check use cases
             if( clientIdentity instanceof ZtisClientIdentity ztisClientIdentity ) {
                 return ztisClientIdentity.getKeyStore();
             }
