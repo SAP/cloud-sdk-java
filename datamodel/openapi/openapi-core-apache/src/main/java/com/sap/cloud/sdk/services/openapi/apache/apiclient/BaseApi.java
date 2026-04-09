@@ -12,6 +12,9 @@
 
 package com.sap.cloud.sdk.services.openapi.apache.apiclient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
@@ -25,6 +28,11 @@ public abstract class BaseApi
      * The API client used to execute HTTP requests.
      */
     protected final ApiClient apiClient;
+
+    /**
+     * Default headers to be included in every request.
+     */
+    protected final Map<String, String> defaultHeaders = new HashMap<>();
 
     /**
      * Creates a new BaseApi instance with default configuration.
