@@ -17,7 +17,7 @@
 
 ### 📈 Improvements
 
-- 
+- Improved the support for the credential type `X509_ATTESTED`. `HttpDestination` objects created via `ServiceBindingDestinationLoader` no longer need to be re-created for the rotation of certificates to take effect.
 
 ### 🐛 Fixed Issues
 

@@ -275,8 +275,9 @@ class BtpServicePropertySuppliers
         private KeyStore getClientKeyStore()
         {
             final ClientIdentity clientIdentity = getClientIdentity();
-            if( clientIdentity instanceof ZtisClientIdentity ) {
-                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
+            //TODO: this doesn't work well with a dynamic keystore, check use cases
+            if( clientIdentity instanceof ZtisClientIdentity ztisClientIdentity ) {
+                return ztisClientIdentity.getKeyStore();
             }
             if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;

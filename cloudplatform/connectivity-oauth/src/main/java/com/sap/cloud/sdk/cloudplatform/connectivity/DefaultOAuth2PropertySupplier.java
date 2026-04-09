@@ -173,14 +173,7 @@ public class DefaultOAuth2PropertySupplier implements OAuth2PropertySupplier
         }
         final ZeroTrustIdentityService ztis = ZeroTrustIdentityService.getInstance();
 
-        final KeyStore keyStore;
-        try {
-            keyStore = ztis.getOrCreateKeyStore();
-        }
-        catch( final Exception e ) {
-            throw new CloudPlatformException("Failed to load X509 certificate for credential type X509_ATTESTED.", e);
-        }
-        return new ZtisClientIdentity(clientid, keyStore);
+        return new ZtisClientIdentity(clientid, ztis::getOrCreateKeyStore);
     }
 
     @Nonnull
