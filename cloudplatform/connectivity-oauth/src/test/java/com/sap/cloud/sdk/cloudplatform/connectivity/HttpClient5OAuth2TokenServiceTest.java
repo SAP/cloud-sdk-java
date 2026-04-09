@@ -159,7 +159,7 @@ class HttpClient5OAuth2TokenServiceTest
     void testCreateHttpClientWithZtisClientIdentity()
     {
         final KeyStore keyStore = createEmptyKeyStore();
-        final ClientIdentity ztisIdentity = new ZtisClientIdentity("ztis-client-id", keyStore);
+        final ClientIdentity ztisIdentity = new ZtisClientIdentity("ztis-client-id", () -> keyStore);
 
         // ZtisClientIdentity is certificate-based but doesn't implement certificate methods properly
         // This should fail with certificate validation error
@@ -175,7 +175,7 @@ class HttpClient5OAuth2TokenServiceTest
     {
         final KeyStore embeddedKeyStore = createEmptyKeyStore();
         final KeyStore explicitKeyStore = createEmptyKeyStore();
-        final ClientIdentity ztisIdentity = new ZtisClientIdentity("ztis-client-id", embeddedKeyStore);
+        final ClientIdentity ztisIdentity = new ZtisClientIdentity("ztis-client-id", () -> embeddedKeyStore);
 
         final CloseableHttpClient result =
             HttpClient5OAuth2TokenService.createHttpClient(ztisIdentity, explicitKeyStore);

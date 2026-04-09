@@ -216,7 +216,7 @@ class OAuth2IntegrationTest
     {
         final KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(null, null);
-        final ClientIdentity identity = new SecurityLibWorkarounds.ZtisClientIdentity("myClientId", ks);
+        final ClientIdentity identity = new SecurityLibWorkarounds.ZtisClientIdentity("myClientId", () -> ks);
 
         stubFor(
             post("/oauth2/token")
