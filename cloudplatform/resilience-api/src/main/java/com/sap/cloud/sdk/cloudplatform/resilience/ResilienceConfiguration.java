@@ -429,6 +429,18 @@ public class ResilienceConfiguration
         public static final Duration DEFAULT_WAIT_DURATION = Duration.ofSeconds(10);
 
         /**
+         * The default duration threshold above which calls are considered as slow.
+         * Matches the Resilience4j default of 60 seconds.
+         */
+        public static final Duration DEFAULT_SLOW_CALL_DURATION_THRESHOLD = Duration.ofSeconds(60);
+
+        /**
+         * The default slow call rate threshold (as percentage within [0, 100]).
+         * Matches the Resilience4j default of 100%.
+         */
+        public static final float DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100;
+
+        /**
          * Flag to indicate active CircuitBreakerConfiguration.
          */
         @Getter( AccessLevel.NONE )
@@ -460,6 +472,22 @@ public class ResilienceConfiguration
          * is the maximum number of requests that may take place in parallel during the <i>HALF OPEN</i> state.
          */
         private int halfOpenBufferSize = DEFAULT_HALF_OPEN_BUFFER_SIZE;
+
+        /**
+         * The duration threshold above which calls are considered as slow and increase the slow call rate.
+         * When the percentage of slow calls is equal to or greater than {@link #slowCallRateThreshold},
+         * the CircuitBreaker transitions to <i>OPEN</i> and starts short-circuiting calls.
+         */
+        @Nonnull
+        private Duration slowCallDurationThreshold = DEFAULT_SLOW_CALL_DURATION_THRESHOLD;
+
+        /**
+         * The slow call rate threshold (as percentage within [0, 100]). The CircuitBreaker considers a call as slow
+         * when the call duration is greater than {@link #slowCallDurationThreshold}. When the percentage of slow calls
+         * is equal to or greater than the threshold, the CircuitBreaker transitions to <i>OPEN</i> and starts
+         * short-circuiting calls.
+         */
+        private float slowCallRateThreshold = DEFAULT_SLOW_CALL_RATE_THRESHOLD;
 
         /**
          * Get the status indicator for the CircuitBreaker.
