@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sap.cloud.sdk</groupId>
 	<artifactId>sdk-parent</artifactId>
-	<version>5.28.0-SNAPSHOT</version>
+	<version>5.29.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SAP Cloud SDK - Parent POM</name>
 	<description>Parent POM of the SAP Cloud SDK.</description>
@@ -49,7 +49,7 @@
 	</distributionManagement>
 	<properties>
 		<!--  do not modify the following line, it is updated by the versioning script  -->
-		<sdk.version>5.28.0-SNAPSHOT</sdk.version>
+		<sdk.version>5.29.0-SNAPSHOT</sdk.version>
 		<maven.version>3.5</maven.version>
 		<java.version>17</java.version>
 		<java.failOnWarning>true</java.failOnWarning>
@@ -124,7 +124,7 @@
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
-		<byte-buddy.version>1.18.7</byte-buddy.version>
+		<byte-buddy.version>1.18.8</byte-buddy.version>
 		<snakeyaml.version>2.6</snakeyaml.version>
 		<commons-codec.version>1.21.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
