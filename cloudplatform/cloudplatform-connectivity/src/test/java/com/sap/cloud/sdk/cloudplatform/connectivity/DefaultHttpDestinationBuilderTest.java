@@ -96,7 +96,7 @@ class DefaultHttpDestinationBuilderTest
         assertThat(sut.get("bar", v -> (int) v)).containsExactly(42);
         assertThat(sut.headers).containsExactly(header);
         assertThat(sut.customHeaderProviders).containsExactly(headerProvider);
-        assertThat(sut.keyStore).isSameAs(keyStore);
+        assertThat(sut.keystoreSupplier.get().getOrNull()).isSameAs(keyStore);
         assertThat(sut.trustStore).isSameAs(trustStore);
         assertThat(sut.get(DestinationProperty.TRUST_ALL)).containsExactly(true);
 

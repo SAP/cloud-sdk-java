@@ -7,13 +7,11 @@ import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySuppl
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
@@ -265,27 +263,17 @@ class BtpServicePropertySuppliers
 
         private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )
         {
-            final KeyStore maybeClientStore = getClientKeyStore();
-            if( maybeClientStore != null ) {
-                // note: in case the KS is loaded from ZTIS, the KS used for token retrieval and the KS registered here for mTLS to the target system may diverge
-                // Token retrieval supports certificate rotation in place, but mTLS to the target system requires re-loading the destination instead.
-                optionsBuilder.withClientKeyStore(maybeClientStore);
-            }
-        }
-
-        @Nullable
-        private KeyStore getClientKeyStore()
-        {
             final ClientIdentity clientIdentity = getClientIdentity();
+
             if( clientIdentity instanceof ZtisClientIdentity ztisClientIdentity ) {
-                return ztisClientIdentity.getKeyStore();
+                optionsBuilder.withClientKeyStoreSupplier(ztisClientIdentity::getKeyStore);
+                return;
             }
             if( !(clientIdentity instanceof ClientCertificate) ) {
-                return null;
+                return;
             }
-
             try {
-                return SSLContextFactory.getInstance().createKeyStore(clientIdentity);
+                optionsBuilder.withClientKeyStore(SSLContextFactory.getInstance().createKeyStore(clientIdentity));
             }
             catch( final Exception e ) {
                 throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);

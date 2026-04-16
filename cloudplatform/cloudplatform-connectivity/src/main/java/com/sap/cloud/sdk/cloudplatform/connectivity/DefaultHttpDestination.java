@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,8 +53,8 @@ public final class DefaultHttpDestination implements HttpDestination
     @Delegate
     private final DestinationProperties baseProperties;
 
-    @Nullable
-    private final KeyStore keyStore;
+    @Nonnull
+    private final Supplier<Option<KeyStore>> keyStore;
 
     @Nullable
     private final KeyStore trustStore;
@@ -98,7 +99,7 @@ public final class DefaultHttpDestination implements HttpDestination
         @Nonnull final DestinationProperties baseProperties,
         @Nonnull final ComplexDestinationPropertyFactory destinationPropertyFactory,
         @Nullable final List<Header> customHeaders,
-        @Nullable final KeyStore keyStore,
+        @Nonnull final Supplier<Option<KeyStore>> keyStore,
         @Nullable final KeyStore trustStore,
         @Nullable final List<DestinationHeaderProvider> customHeaderProviders )
     {
@@ -296,7 +297,7 @@ public final class DefaultHttpDestination implements HttpDestination
     @Override
     public Option<KeyStore> getKeyStore()
     {
-        return Option.of(keyStore);
+        return keyStore.get();
     }
 
     @Nonnull
@@ -516,7 +517,7 @@ public final class DefaultHttpDestination implements HttpDestination
             builder
                 .headerProviders(httpDestination.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
 
-            httpDestination.getKeyStore().map(builder::keyStore);
+            builder.keyStoreSupplier(httpDestination.keyStore);
             httpDestination.getTrustStore().map(builder::trustStore);
         }
 
@@ -538,7 +539,9 @@ public final class DefaultHttpDestination implements HttpDestination
         return new EqualsBuilder()
             .append(baseProperties, that.baseProperties)
             .append(customHeaders, that.customHeaders)
-            .append(resolveCertificatesOnly(keyStore), resolveCertificatesOnly(that.keyStore))
+            .append(
+                resolveCertificatesOnly(keyStore.get().getOrNull()),
+                resolveCertificatesOnly(that.keyStore.get().getOrNull()))
             .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
             .isEquals();
     }
@@ -549,7 +552,7 @@ public final class DefaultHttpDestination implements HttpDestination
         return new HashCodeBuilder(17, 37)
             .append(baseProperties)
             .append(customHeaders)
-            .append(resolveKeyStoreHashCode(keyStore))
+            .append(resolveKeyStoreHashCode(keyStore.get().getOrNull()))
             .append(resolveKeyStoreHashCode(trustStore))
             .toHashCode();
     }
@@ -568,11 +571,28 @@ public final class DefaultHttpDestination implements HttpDestination
         private DefaultHttpDestinationBuilderProxyHandler proxyHandler =
             new DefaultHttpDestinationBuilderProxyHandler();
 
+        @Nonnull
+        Supplier<Option<KeyStore>> keystoreSupplier = Option::none;
+
         /**
          * The {@link KeyStore} to be used when communicating over HTTP.
          */
-        @Setter( onParam_ = @Nullable )
-        KeyStore keyStore = null;
+        @Nonnull
+        public Builder keyStore( @Nullable final KeyStore keyStore )
+        {
+            this.keystoreSupplier = () -> Option.of(keyStore);
+            return this;
+        }
+
+        /**
+         * A {@link Supplier<KeyStore>} to allow for dynamically resolve certificates at runtime for HTTP communication.
+         */
+        @Nonnull
+        Builder keyStoreSupplier( @Nonnull final Supplier<Option<KeyStore>> supplier )
+        {
+            this.keystoreSupplier = supplier;
+            return this;
+        }
 
         /**
          * The trust store to be used when communicating over HTTP.
@@ -1022,7 +1042,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 builder.build(),
                 new ComplexDestinationPropertyFactory(),
                 headers,
-                keyStore,
+                keystoreSupplier,
                 trustStore,
                 customHeaderProviders);
         }

@@ -4,6 +4,7 @@ import java.security.KeyStore;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,13 +64,20 @@ public final class OAuth2Options
     @Nonnull
     @Getter
     private final TimeLimiterConfiguration timeLimiter;
+
     /**
      * The {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>. This
      * {@link KeyStore} <b>is not used</b> to build an mTLS connection towards the OAuth2 token service.
      */
     @Nullable
-    @Getter
-    private final KeyStore clientKeyStore;
+    public KeyStore getClientKeyStore()
+    {
+        return clientKeyStoreSupplier != null ? clientKeyStoreSupplier.get() : null;
+    }
+
+    @Nullable
+    @Getter( AccessLevel.PACKAGE )
+    private final Supplier<KeyStore> clientKeyStoreSupplier;
 
     /**
      * Configuration for caching OAuth2 tokens.
@@ -121,7 +129,7 @@ public final class OAuth2Options
     {
         private boolean skipTokenRetrieval = false;
         private final Map<String, String> additionalTokenRetrievalParameters = new HashMap<>();
-        private KeyStore clientKeyStore;
+        private Supplier<KeyStore> clientKeyStoreSupplier;
         private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = DEFAULT_TOKEN_CACHE_PARAMETERS;
 
@@ -182,7 +190,14 @@ public final class OAuth2Options
         @Nonnull
         public Builder withClientKeyStore( @Nonnull final KeyStore clientKeyStore )
         {
-            this.clientKeyStore = clientKeyStore;
+            this.clientKeyStoreSupplier = () -> clientKeyStore;
+            return this;
+        }
+
+        @Nonnull
+        Builder withClientKeyStoreSupplier( @Nonnull final Supplier<KeyStore> clientKeyStore )
+        {
+            this.clientKeyStoreSupplier = clientKeyStore;
             return this;
         }
 
@@ -236,7 +251,7 @@ public final class OAuth2Options
                 skipTokenRetrieval,
                 new HashMap<>(additionalTokenRetrievalParameters),
                 timeLimiter,
-                clientKeyStore,
+                clientKeyStoreSupplier,
                 tokenCacheParameters);
         }
     }
