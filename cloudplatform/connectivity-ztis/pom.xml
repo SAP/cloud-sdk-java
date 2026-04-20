@@ -81,6 +81,11 @@
 		<!-- Override grpc versions from spiffe -->
 		<dependency>
 			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
 			<scope>runtime</scope>
 		</dependency>
