@@ -594,6 +594,7 @@
 									</excludes>
 									<includes>
 										<include>org.slf4j:slf4j-simple:*:*:test</include>
+										<include>commons-logging:commons-logging:*:*:test</include>
 									</includes>
 								</bannedDependencies>
 							</rules>
