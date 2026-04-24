@@ -30,6 +30,10 @@ updates:
       test:
         dependency-type: "development"
     ignore:
+      - dependency-name: "org.springframework.boot:*"
+        versions: [ ">=4.0.0" ]
+      - dependency-name: "org.springframework:*"
+        versions: [ ">=7.0.0" ]
       # updating leads to ignoring our formatting rules
       - dependency-name: 'net.revelc.code.formatter:formatter-maven-plugin'
       # updating leads to unintended formatting of POM files
@@ -45,6 +49,9 @@ updates:
         versions: ['3.6.1', '3.6.2']
       - dependency-name: 'com.sap.cloud.security:env'
         versions: ['3.6.1', '3.6.2']
+      # needs Java 21
+      - dependency-name: 'com.puppycrawl.tools:checkstyle'
+        versions: [ ">=13.0.0" ]
 
   # archetype updates
   # Dependabot seems to be unable to handle those, so this is disabled for now

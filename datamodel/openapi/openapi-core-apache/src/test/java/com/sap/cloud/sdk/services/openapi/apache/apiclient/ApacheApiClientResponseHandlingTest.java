@@ -1,0 +1,227 @@
+package com.sap.cloud.sdk.services.openapi.apache.apiclient;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponse;
+
+import io.vavr.control.Try;
+import lombok.Data;
+import lombok.SneakyThrows;
+
+@WireMockTest
+class ApacheApiClientResponseHandlingTest
+{
+    private static final String TEST_PATH = "/test";
+    private static final String TEST_RESPONSE_BODY = "{\"message\": \"success\"}";
+    private static final String TEST_POST_PATH = "/test-post";
+
+    @Test
+    void testResponseMetadataListener( final WireMockRuntimeInfo wmInfo )
+    {
+        stubFor(
+            get(urlEqualTo(TEST_PATH))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("x-custom-header", "some-value")
+                        .withBody(TEST_RESPONSE_BODY)));
+
+        final AtomicReference<OpenApiResponse> metadata = new AtomicReference<>();
+        final ApiClient apiClient =
+            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withOpenApiResponseListener(metadata::set);
+
+        final TestApi api = new TestApi(apiClient);
+        final TestResponse result = api.executeRequest();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getMessage()).isEqualTo("success");
+        assertThat(metadata.get()).isNotNull();
+        assertThat(metadata.get().getStatusCode()).isEqualTo(200);
+        assertThat(metadata.get().getHeaders()).isNotEmpty();
+        assertThat(metadata.get().getHeaders()).containsKey("x-custom-header");
+
+        verify(1, getRequestedFor(urlEqualTo(TEST_PATH)));
+    }
+
+    @Test
+    void testCaseInsensitiveHeaderLookup( final WireMockRuntimeInfo wmInfo )
+    {
+        stubFor(
+            get(urlEqualTo(TEST_PATH))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withBody(TEST_RESPONSE_BODY)
+                        .withHeader("x-custom-header", "some-value")));
+
+        final AtomicReference<OpenApiResponse> capturedResponse = new AtomicReference<>();
+        final ApiClient apiClient =
+            ApiClient.create().withBasePath(wmInfo.getHttpBaseUrl()).withOpenApiResponseListener(capturedResponse::set);
+
+        final TestApi api = new TestApi(apiClient);
+        api.executeRequest();
+
+        // Verify case-insensitive access works
+        final Map<String, List<String>> headers = capturedResponse.get().getHeaders();
+        assertThat(headers.get("x-custom-header")).contains("some-value");
+        assertThat(headers.get("X-Custom-Header")).contains("some-value");
+        assertThat(headers.get("X-CUSTOM-HEADER")).contains("some-value");
+    }
+
+    @Test
+    @SneakyThrows
+    void testGzipEncodedPayload( final WireMockRuntimeInfo wmInfo )
+    {
+        stubFor(post(urlEqualTo(TEST_POST_PATH)).willReturn(aResponse().withStatus(200).withBody(TEST_RESPONSE_BODY)));
+
+        final CloseableHttpClient client = Mockito.spy((CloseableHttpClient) ApacheHttpClient5Accessor.getHttpClient());
+        final ApiClient apiClient = ApiClient.fromHttpClient(client).withBasePath(wmInfo.getHttpBaseUrl());
+        final TestPostApi api = new TestPostApi(apiClient);
+        final TestResponse result = api.executeGzipRequest();
+        Mockito.verify(client, Mockito.times(1)).execute(Mockito.argThat(request -> {
+            final byte[] c = Try.of(() -> new GZIPInputStream(request.getEntity().getContent()).readAllBytes()).get();
+            return new String(c, StandardCharsets.UTF_8).contains("test payload");
+        }), Mockito.any(HttpContext.class), Mockito.any());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getMessage()).isEqualTo("success");
+
+        verify(1, postRequestedFor(urlEqualTo(TEST_POST_PATH)));
+    }
+
+    private static class TestApi extends BaseApi
+    {
+        private final String path;
+
+        TestApi( final ApiClient apiClient )
+        {
+            this(apiClient, TEST_PATH);
+        }
+
+        TestApi( final ApiClient apiClient, final String path )
+        {
+            super(apiClient);
+            this.path = path;
+        }
+
+        TestResponse executeRequest()
+            throws OpenApiRequestException
+        {
+            final List<Pair> localVarQueryParams = new ArrayList<>();
+            final List<Pair> localVarCollectionQueryParams = new ArrayList<>();
+            final Map<String, String> localVarHeaderParams = new HashMap<>();
+            final Map<String, Object> localVarFormParams = new HashMap<>();
+
+            final String[] localVarAccepts = { "application/json" };
+            final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
+            final String[] localVarContentTypes = {};
+            final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+
+            final TypeReference<TestResponse> localVarReturnType = new TypeReference<>()
+            {
+            };
+
+            return apiClient
+                .invokeAPI(
+                    path,
+                    "GET",
+                    localVarQueryParams,
+                    localVarCollectionQueryParams,
+                    null,
+                    null,
+                    localVarHeaderParams,
+                    localVarFormParams,
+                    localVarAccept,
+                    localVarContentType,
+                    localVarReturnType);
+        }
+    }
+
+    private static class TestPostApi extends BaseApi
+    {
+        private final String path;
+
+        TestPostApi( final ApiClient apiClient )
+        {
+            this(apiClient, TEST_POST_PATH);
+        }
+
+        TestPostApi( final ApiClient apiClient, final String path )
+        {
+            super(apiClient);
+            this.path = path;
+        }
+
+        TestResponse executeGzipRequest()
+            throws OpenApiRequestException
+        {
+            final TestResponse requestBody = new TestResponse();
+            requestBody.setMessage("test payload");
+
+            final List<Pair> localVarQueryParams = new ArrayList<>();
+            final List<Pair> localVarCollectionQueryParams = new ArrayList<>();
+            final Map<String, String> localVarHeaderParams = new HashMap<>();
+            localVarHeaderParams.put("Content-Encoding", "gzip");
+            final Map<String, Object> localVarFormParams = new HashMap<>();
+
+            final String[] localVarAccepts = { "application/json" };
+            final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+
+            final String[] localVarContentTypes = { "application/json" };
+            final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+
+            final TypeReference<TestResponse> localVarReturnType = new TypeReference<>()
+            {
+            };
+
+            return apiClient
+                .invokeAPI(
+                    path,
+                    "POST",
+                    localVarQueryParams,
+                    localVarCollectionQueryParams,
+                    null,
+                    requestBody,
+                    localVarHeaderParams,
+                    localVarFormParams,
+                    localVarAccept,
+                    localVarContentType,
+                    localVarReturnType);
+        }
+    }
+
+    @Data
+    private static class TestResponse
+    {
+        @JsonProperty( "message" )
+        private String message;
+    }
+}

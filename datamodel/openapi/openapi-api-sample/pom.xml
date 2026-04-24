@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.datamodel</groupId>
 		<artifactId>openapi-parent</artifactId>
-		<version>5.25.0-SNAPSHOT</version>
+		<version>5.29.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>openapi-api-sample</artifactId>
 	<name>Data Model - OpenAPI Services - Sample API</name>
@@ -123,9 +123,9 @@
 							<inputSpec>${project.basedir}/src/main/resources/sodastore.yaml</inputSpec>
 							<apiPackage>com.sap.cloud.sdk.datamodel.openapi.sample.api</apiPackage>
 							<modelPackage>com.sap.cloud.sdk.datamodel.openapi.sample.model</modelPackage>
+                            <typeMappings>File=byte[]</typeMappings>
 							<additionalProperties>
 								<pojoBuilderMethodName>create</pojoBuilderMethodName>
-								<pojoBuildMethodName />
 								<pojoConstructorVisibility>protected</pojoConstructorVisibility>
 								<useOneOfInterfaces>true</useOneOfInterfaces>
 								<useOneOfCreators>true</useOneOfCreators>

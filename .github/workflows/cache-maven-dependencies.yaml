@@ -13,9 +13,11 @@ env:
 jobs:
   update-cache:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # needed to delete caches
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.MAVEN_CACHE_REF }}
 
@@ -36,10 +38,10 @@ jobs:
               gh cache delete "${CACHE_ID}"
           done
         env:
-          GH_TOKEN: ${{ secrets.BOT_SDK_JS_FOR_DOCS_REPO_PR }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Cache Dependencies"
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ env.MAVEN_CACHE_DIR }}
           key: ${{ env.MAVEN_CACHE_KEY }}

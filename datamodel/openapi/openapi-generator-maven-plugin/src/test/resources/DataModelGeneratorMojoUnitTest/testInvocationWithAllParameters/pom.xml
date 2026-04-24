@@ -5,7 +5,7 @@
 
 	<groupId>com.company</groupId>
 	<artifactId>application</artifactId>
-	<version>5.25.0-SNAPSHOT</version>
+	<version>5.29.0-SNAPSHOT</version>
 
 	<build>
 		<plugins>
@@ -20,7 +20,14 @@
 					<verbose>true</verbose>
 					<outputDirectory>output-directory</outputDirectory>
 					<deleteOutputDirectory>true</deleteOutputDirectory>
-				</configuration>
+                    <typeMappings>
+                        <typeMapping>binary=org.springframework.core.io.Resource</typeMapping>
+                        <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
+                    </typeMappings>
+                    <importMappings>
+                        <importMapping>org.springframework.core.io.Resource=org.springframework.core.io.Resource</importMapping>
+                    </importMappings>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>

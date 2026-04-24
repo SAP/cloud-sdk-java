@@ -41,23 +41,24 @@ import lombok.Value;
 @WireMockTest
 class GenericParameterTest
 {
+    final static String EXPECTED_BODY = """
+        {\
+        "id":"foo",\
+        "fieldPopulatedAsStringWithAnnotation":{"foo": "bar"},\
+        "fieldPopulatedAsStringWithoutAnnotation":"{\\"foo\\": \\"bar\\"}",\
+        "fieldPopulatedAsJacksonJsonNode":{"foo":"bar"}\
+        }\
+        """;
+
     @Test
     void testInvocationWithGenericParameter( @Nonnull final WireMockRuntimeInfo wm )
         throws JsonProcessingException
     {
-        final String expectedBody = """
-            {\
-            "id":"foo",\
-            "fieldPopulatedAsStringWithAnnotation":{"foo": "bar"},\
-            "fieldPopulatedAsStringWithoutAnnotation":"{\\"foo\\": \\"bar\\"}",\
-            "fieldPopulatedAsJacksonJsonNode":{"foo":"bar"}\
-            }\
-            """;
 
         WireMock
             .stubFor(
                 post(urlEqualTo("/api"))
-                    .withRequestBody(equalTo(expectedBody))
+                    .withRequestBody(equalTo(EXPECTED_BODY))
                     .willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 
         final DefaultHttpDestination httpDestination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
@@ -67,16 +68,17 @@ class GenericParameterTest
         //this is how you pass a JSON representation into a parameter of type Object
         final JsonNode jacksonJsonNode = new ObjectMapper().readTree(jsonString);
 
-        new TestApi(httpDestination)
-            .testMethod(
-                TestModelPOST
-                    .builder()
-                    .id("foo")
-                    .fieldPopulatedAsStringWithAnnotation(jsonString)
-                    .fieldPopulatedAsStringWithoutAnnotation(jsonString)
-                    .fieldPopulatedAsJacksonJsonNode(jacksonJsonNode)
-                    .build());
-        verify(postRequestedFor(urlEqualTo("/api")).withRequestBody(equalTo(expectedBody)));
+        final TestModelPOST testModelPOST =
+            TestModelPOST
+                .builder()
+                .id("foo")
+                .fieldPopulatedAsStringWithAnnotation(jsonString)
+                .fieldPopulatedAsStringWithoutAnnotation(jsonString)
+                .fieldPopulatedAsJacksonJsonNode(jacksonJsonNode)
+                .build();
+
+        new TestSpringApi(httpDestination).testMethod(testModelPOST);
+        verify(1, postRequestedFor(urlEqualTo("/api")).withRequestBody(equalTo(EXPECTED_BODY)));
     }
 
     @Value
@@ -97,9 +99,9 @@ class GenericParameterTest
         Object fieldPopulatedAsJacksonJsonNode;
     }
 
-    private static class TestApi extends AbstractOpenApiService
+    private static class TestSpringApi extends AbstractOpenApiService
     {
-        public TestApi( @Nonnull final Destination httpDestination )
+        public TestSpringApi( @Nonnull final Destination httpDestination )
         {
             super(httpDestination);
         }

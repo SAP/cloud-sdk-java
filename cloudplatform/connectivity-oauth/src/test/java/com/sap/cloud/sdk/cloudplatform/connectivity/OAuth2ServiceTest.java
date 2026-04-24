@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +29,7 @@ import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -244,7 +246,7 @@ class OAuth2ServiceTest
                     2,
                     postRequestedFor(urlEqualTo("/oauth/token"))
                         .withRequestBody(containing("app_tid=" + tenant.getTenantId()))
-                        .withRequestBody(containing("refresh_token=0"))
+                        .withRequestBody(containing("refresh_expiry=0"))
                         .withRequestBody(
                             containing("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer".replace(":", "%3A")))
                         .withRequestBody(containing("assertion=")));
@@ -401,15 +403,47 @@ class OAuth2ServiceTest
     {
         final KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(null, null);
-        ClientIdentity identity = new ZtisClientIdentity("id", ks);
+        ClientIdentity identity = new ZtisClientIdentity("id", () -> ks);
         OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
 
         final OAuth2TokenService result = service.getTokenService(null);
         assertThat(result).isSameAs(service.getTokenService(null));
 
-        identity = new ZtisClientIdentity("other-id", ks);
+        identity = new ZtisClientIdentity("other-id", () -> ks);
         service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
 
         assertThat(result).isNotSameAs(service.getTokenService(null));
+    }
+
+    @Test
+    @SneakyThrows
+    void testZeroTrustCertificateRotationCausesCacheMiss()
+    {
+        // we need to use actual KeyStores here because the code will build an HTTP Client and mocks don't suffice
+        final KeyStore ks1 = KeyStore.getInstance("JKS");
+        final KeyStore ks2 = KeyStore.getInstance("JKS");
+        ks1.load(null, null);
+        ks2.load(null, null);
+
+        assertThat(ks1).describedAs("Sanity check: objects should be different").isNotSameAs(ks2).isNotEqualTo(ks2);
+
+        @SuppressWarnings( "unchecked" )
+        final Supplier<KeyStore> mockZtis = mock(Supplier.class);
+        when(mockZtis.get()).thenReturn(ks1);
+
+        final ZtisClientIdentity identity = new ZtisClientIdentity("id", mockZtis);
+
+        final OAuth2Service service =
+            OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
+
+        // Before rotation: same KeyStore → cache hit
+        final OAuth2TokenService tokenService1 = service.getTokenService(null);
+        assertThat(tokenService1).isSameAs(service.getTokenService(null));
+
+        when(mockZtis.get()).thenReturn(ks2);
+
+        // After rotation: different KeyStore → cache miss → new token service with new certificate
+        final OAuth2TokenService tokenService2 = service.getTokenService(null);
+        assertThat(tokenService2).isNotSameAs(tokenService1);
     }
 }

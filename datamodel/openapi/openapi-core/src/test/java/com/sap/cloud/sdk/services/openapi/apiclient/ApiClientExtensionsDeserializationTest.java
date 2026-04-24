@@ -31,17 +31,50 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.sdk.services.openapi.core.AbstractOpenApiService;
 
 import lombok.Getter;
 import lombok.Setter;
 
+@WireMockTest
 class ApiClientExtensionsDeserializationTest
 {
     @Nonnull
     private static final String BASE_PATH = "http://localhost:8080";
     @Nonnull
     private static final String RELATIVE_PATH = "/outer";
+    @Nonnull
+    private static final String RESPONSE = """
+        {
+          "message": "Hello from the outer level.",
+          "code": 1337,
+          "inner": {
+            "message": "Hello from the inner level.",
+            "code": 7331,
+            "innerComplexExtension": {
+              "innerString": "inner",
+              "innerInteger": 24
+            },
+            "innerListExtension": [
+              "oof",
+              "rab",
+              "zab"
+            ],
+            "innerPrimitiveExtension": "additionalInnerValue"
+          },
+          "outerComplexExtension": {
+            "outerString": "outer",
+            "outerInteger": 42
+          },
+          "outerListExtension": [
+            "foo",
+            "bar",
+            "baz"
+          ],
+          "outerPrimitiveExtension": "additionalOuterValue"
+        }
+        """;
 
     @Test
     void testDeserializeResponseWithNestedExtensions()
@@ -53,42 +86,17 @@ class ApiClientExtensionsDeserializationTest
         server
             .expect(ExpectedCount.once(), requestTo(BASE_PATH + RELATIVE_PATH))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(MockRestResponseCreators.withSuccess("""
-                {
-                  "message": "Hello from the outer level.",
-                  "code": 1337,
-                  "inner": {
-                    "message": "Hello from the inner level.",
-                    "code": 7331,
-                    "innerComplexExtension": {
-                      "innerString": "inner",
-                      "innerInteger": 24
-                    },
-                    "innerListExtension": [
-                      "oof",
-                      "rab",
-                      "zab"
-                    ],
-                    "innerPrimitiveExtension": "additionalInnerValue"
-                  },
-                  "outerComplexExtension": {
-                    "outerString": "outer",
-                    "outerInteger": 42
-                  },
-                  "outerListExtension": [
-                    "foo",
-                    "bar",
-                    "baz"
-                  ],
-                  "outerPrimitiveExtension": "additionalOuterValue"
-                }
-                """, MediaType.APPLICATION_JSON));
+            .andRespond(MockRestResponseCreators.withSuccess(RESPONSE, MediaType.APPLICATION_JSON));
 
-        final TestApi api = new TestApi(apiClient);
+        final TestSpringApi api = new TestSpringApi(apiClient);
         final Outer result = api.getOuter();
 
         server.verify();
+        assertResult(result);
+    }
 
+    private static void assertResult( Outer result )
+    {
         assertThat(result.getMessage()).isEqualTo("Hello from the outer level.");
         assertThat(result.getCode()).isEqualTo(1337);
         assertThat(result.getCustomFieldNames())
@@ -128,9 +136,9 @@ class ApiClientExtensionsDeserializationTest
         });
     }
 
-    private static class TestApi extends AbstractOpenApiService
+    private static class TestSpringApi extends AbstractOpenApiService
     {
-        public TestApi( final ApiClient apiClient )
+        public TestSpringApi( final ApiClient apiClient )
         {
             super(apiClient);
         }

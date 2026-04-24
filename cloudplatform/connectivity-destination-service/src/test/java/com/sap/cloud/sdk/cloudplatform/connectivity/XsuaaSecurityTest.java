@@ -5,17 +5,15 @@ import static com.sap.cloud.security.xsuaa.client.OAuth2TokenServiceConstants.GR
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,10 +96,9 @@ class XsuaaSecurityTest
         final HttpGet request = new HttpGet(RULE.getApplicationServerUri() + "/app");
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue());
 
-        try( CloseableHttpResponse response = HttpClients.createDefault().execute(request) ) {
-            final String responseBody = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-            assertThat(responseBody).isEmpty();
-            assertThat(response.getStatusLine().getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        try( CloseableHttpClient client = HttpClients.createDefault() ) {
+            String response = client.execute(request, new BasicHttpClientResponseHandler());
+            assertThat(response).isEmpty();
         }
     }
 

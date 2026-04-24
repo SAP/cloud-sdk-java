@@ -1,7 +1,12 @@
 package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -127,6 +132,18 @@ public class DataModelGeneratorMojo extends AbstractMojo
     private boolean generateApis;
 
     /**
+     * Type mappings to override OpenAPI specification types and the types used in your generated code.
+     */
+    @Parameter( property = "openapi.generate.typeMappings" )
+    private List<String> typeMappings;
+
+    /**
+     * Import mappings to specify alternative imports statement to use for a given class name.
+     */
+    @Parameter( property = "openapi.generate.importMappings" )
+    private List<String> importMappings;
+
+    /**
      * Defines a list of additional properties that will be passed to the Java generator.
      */
     @Parameter( property = "openapi.generate.additionalProperties" )
@@ -189,6 +206,8 @@ public class DataModelGeneratorMojo extends AbstractMojo
                     .oneOfAnyOfGenerationEnabled(enableOneOfAnyOfGeneration)
                     .generateModels(generateModels)
                     .generateApis(generateApis)
+                    .typeMappings(parseMapping(typeMappings))
+                    .importMappings(parseMapping(importMappings))
                     .build());
     }
 
@@ -198,4 +217,16 @@ public class DataModelGeneratorMojo extends AbstractMojo
         this.outputDirectory = outputDirectory;
     }
 
+    @Nonnull
+    private Map<String, String> parseMapping( @Nonnull final List<String> mappings )
+    {
+        return mappings
+            .stream()
+            .filter(Objects::nonNull)
+            .filter(line -> line.contains("="))
+            .map(line -> line.split("=", 2))
+            .map(parts -> new String[] { parts[0].trim(), parts[1].trim() })
+            .filter(parts -> !parts[0].isEmpty() && !parts[1].isEmpty())
+            .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1]));
+    }
 }

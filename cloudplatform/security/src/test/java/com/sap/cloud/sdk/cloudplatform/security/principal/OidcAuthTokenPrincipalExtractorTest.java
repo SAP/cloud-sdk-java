@@ -56,6 +56,66 @@ class OidcAuthTokenPrincipalExtractorTest
         assertThat(principal.getPrincipalId()).isEqualTo("principal id");
     }
 
+    @Test
+    void testReadPrincipalFromEmailFallback()
+    {
+        mockAuthTokenFacade(JWT.create().withClaim("email", "fallback@example.com"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("fallback@example.com");
+    }
+
+    @Test
+    void testReadPrincipalFromSapIdTypeAndSub()
+    {
+        mockAuthTokenFacade(JWT.create().withClaim("sap_id_type", "user").withClaim("sub", "P123456"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("P123456");
+    }
+
+    @Test
+    void testSapIdTypeAndSubPreferredOverUserUuid()
+    {
+        mockAuthTokenFacade(
+            JWT
+                .create()
+                .withClaim("sap_id_type", "user")
+                .withClaim("sub", "preferred-id")
+                .withClaim("user_uuid", "legacy-uuid"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("preferred-id");
+    }
+
+    @Test
+    void testIgnoreSapIdTypeIfNotUser()
+    {
+        mockAuthTokenFacade(
+            JWT
+                .create()
+                .withClaim("sap_id_type", "app")
+                .withClaim("sub", "client-id")
+                .withClaim("user_uuid", "user-id"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("user-id");
+    }
+
+    @Test
+    void testIgnoreSapIdTypeIfSubMissing()
+    {
+        mockAuthTokenFacade(JWT.create().withClaim("sap_id_type", "user").withClaim("email", "user@example.com"));
+
+        final Principal principal = new OidcAuthTokenPrincipalExtractor().tryGetCurrentPrincipal().get();
+
+        assertThat(principal.getPrincipalId()).isEqualTo("user@example.com");
+    }
+
     private void mockAuthTokenFacadeWithMissingAuthToken()
     {
         AuthTokenAccessor.setAuthTokenFacade(() -> Try.failure(new AuthTokenAccessException("Auth token not mocked.")));

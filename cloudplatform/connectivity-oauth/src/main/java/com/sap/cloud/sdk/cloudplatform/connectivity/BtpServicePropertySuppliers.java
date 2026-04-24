@@ -2,6 +2,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.TokenFormat;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
@@ -189,6 +190,9 @@ class BtpServicePropertySuppliers
             } else {
                 attachIasCommunicationOptions(builder);
                 builder.withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
+                options
+                    .getOption(TokenFormat.class)
+                    .peek(format -> builder.withTokenRetrievalParameter("token_format", format));
             }
             attachClientKeyStore(builder);
 
@@ -263,6 +267,8 @@ class BtpServicePropertySuppliers
         {
             final KeyStore maybeClientStore = getClientKeyStore();
             if( maybeClientStore != null ) {
+                // note: in case the KS is loaded from ZTIS, the KS used for token retrieval and the KS registered here for mTLS to the target system may diverge
+                // Token retrieval supports certificate rotation in place, but mTLS to the target system requires re-loading the destination instead.
                 optionsBuilder.withClientKeyStore(maybeClientStore);
             }
         }
@@ -271,8 +277,8 @@ class BtpServicePropertySuppliers
         private KeyStore getClientKeyStore()
         {
             final ClientIdentity clientIdentity = getClientIdentity();
-            if( clientIdentity instanceof ZtisClientIdentity ) {
-                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
+            if( clientIdentity instanceof ZtisClientIdentity ztisClientIdentity ) {
+                return ztisClientIdentity.getKeyStore();
             }
             if( !(clientIdentity instanceof ClientCertificate) ) {
                 return null;

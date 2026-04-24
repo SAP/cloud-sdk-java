@@ -25,7 +25,7 @@ import lombok.SneakyThrows;
 class DataModelGeneratorIntegrationTest
 {
     @RequiredArgsConstructor
-    private enum TestCase
+    enum TestCase
     {
         API_CLASS_FOR_AI_SDK(
             "api-class-for-ai-sdk",
@@ -236,7 +236,7 @@ class DataModelGeneratorIntegrationTest
         new DataModelGenerator().generateDataModel(build).onFailure(Throwable::printStackTrace);
     }
 
-    private static Path getInputDirectory( final TestCase testCase )
+    Path getInputDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory = getTestCaseDirectory(testCase);
         final Path inputDirectory = testCaseDirectory.resolve("input");
@@ -246,20 +246,17 @@ class DataModelGeneratorIntegrationTest
         return inputDirectory;
     }
 
-    private static Path getTestCaseDirectory( final TestCase testCase )
+    private Path getTestCaseDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory =
-            Paths
-                .get(
-                    "src/test/resources/" + DataModelGeneratorIntegrationTest.class.getSimpleName(),
-                    testCase.testCaseName);
+            Paths.get("src/test/resources/" + this.getClass().getSimpleName(), testCase.testCaseName);
 
         assertThat(testCaseDirectory).exists().isDirectory().isReadable();
 
         return testCaseDirectory;
     }
 
-    private static Path getComparisonDirectory( final TestCase testCase )
+    Path getComparisonDirectory( final TestCase testCase )
     {
         final Path testCaseDirectory = getTestCaseDirectory(testCase);
         final Path comparisonDirectory = testCaseDirectory.resolve("output");
@@ -271,7 +268,7 @@ class DataModelGeneratorIntegrationTest
 
     @SuppressWarnings( "resource" )
     @SneakyThrows
-    private static void assertThatDirectoriesHaveSameContent( final Path a, final Path b )
+    static void assertThatDirectoriesHaveSameContent( final Path a, final Path b )
     {
         final Predicate<Path> isFile = p -> p.toFile().isFile();
         Files.walk(a).filter(isFile).forEach(p -> assertThat(p).hasSameTextualContentAs(b.resolve(a.relativize(p))));

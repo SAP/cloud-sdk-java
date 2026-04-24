@@ -90,7 +90,12 @@ class GetOrComputeAllDestinationsCommandTest
         assertThat(result.get()).containsExactly(destination);
 
         assertThat(allDestinationsCache.estimatedSize()).isEqualTo(1);
-        assertThat(allDestinationsCache.getIfPresent(CacheKey.ofNoIsolation().append(EMPTY_OPTIONS)))
+        assertThat(
+            allDestinationsCache
+                .getIfPresent(
+                    CacheKey
+                        .ofNoIsolation()
+                        .append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(EMPTY_OPTIONS))))
             .containsExactly(destination);
         verify(tryGetAllDestinations, times(1)).get();
     }
@@ -104,8 +109,10 @@ class GetOrComputeAllDestinationsCommandTest
         final CountDownLatch mainThreadLatch = new CountDownLatch(1);
         final CountDownLatch getAllLatch = new CountDownLatch(1);
         final AtomicInteger lockInvocations = new AtomicInteger();
-        final CacheKey t1Key = CacheKey.of(t1, null).append(EMPTY_OPTIONS);
-        final CacheKey t2Key = CacheKey.of(t2, null).append(EMPTY_OPTIONS);
+        final CacheKey t1Key =
+            CacheKey.of(t1, null).append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(EMPTY_OPTIONS));
+        final CacheKey t2Key =
+            CacheKey.of(t2, null).append(DestinationServiceOptionsAugmenter.getRetrievalStrategy(EMPTY_OPTIONS));
         final ReentrantLock tenantIsolationLock = spy(ReentrantLock.class);
 
         doAnswer(invocation -> {

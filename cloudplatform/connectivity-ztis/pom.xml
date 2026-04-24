@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
 		<artifactId>cloudplatform-parent</artifactId>
-		<version>5.25.0-SNAPSHOT</version>
+		<version>5.29.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>connectivity-ztis</artifactId>
 	<name>Connectivity - Zero Trust Identity Service</name>
@@ -28,13 +28,25 @@
 			<organizationUrl>https://www.sap.com</organizationUrl>
 		</developer>
 	</developers>
+	<properties>
+		<netty.version>4.1.132.Final</netty.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<!-- resolve inconsistent versions coming from spiffe -> io.grpc -->
 			<dependency>
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-bom</artifactId>
-				<version>1.77.0</version>
+				<version>1.80.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- Enforce minor netty dependency upgrade for grpc-netty -->
+			<!-- Remove when CVE-2026-33870 and CVE-2026-33871 are no longer affected. -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-bom</artifactId>
+				<version>${netty.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -60,7 +72,7 @@
 		<dependency>
 			<groupId>io.spiffe</groupId>
 			<artifactId>java-spiffe-core</artifactId>
-			<version>0.8.13</version>
+			<version>0.8.16</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
@@ -75,10 +87,15 @@
 		<dependency>
 			<groupId>io.spiffe</groupId>
 			<artifactId>grpc-netty-linux</artifactId>
-			<version>0.8.13</version>
+			<version>0.8.16</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Override grpc versions from spiffe -->
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
@@ -101,6 +118,61 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler-proxy</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-common</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-transport</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-socks</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-buffer</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-resolver</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-transport-native-unix-common</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

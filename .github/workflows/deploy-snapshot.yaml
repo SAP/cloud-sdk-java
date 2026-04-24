@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Setup java"
         uses: actions/setup-java@v5
@@ -36,4 +36,17 @@ jobs:
         env:
           DEPLOYMENT_USER: ${{ secrets.ARTIFACTORY_COMMON_USER }}
           DEPLOYMENT_PASS: ${{ secrets.ARTIFACTORY_COMMON_PASSWORD }}
+
+      - name: 'Slack Notification'
+        if: failure()
+        uses: slackapi/slack-github-action@v3.0.1
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            blocks:
+              - type: "section"
+                text:
+                    type: "mrkdwn"
+                    text: "⚠️ Deploy Snapshot to SAP Common Artifactory failed! 😬 Please inspect & fix by clicking <https://github.com/SAP/ai-sdk-java/actions/runs/${{ github.run_id }}|here>. Authentication problems can be fixed by updating the `ARTIFACTORY_COMMON_PASSWORD`: Go to <https://common.repositories.cloud.sap/|Artifactory>, login with user `asa1_fin_cloud_oper`, Edit Profile and Generate an Identity Token. "
 
