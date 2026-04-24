@@ -63,7 +63,7 @@
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
 		<vavr.version>1.0.1</vavr.version>
-		<guava.version>33.5.0-jre</guava.version>
+		<guava.version>33.6.0-jre</guava.version>
 		<!-- collection utilities, @Beta annotation -->
 		<commons-io.version>2.21.0</commons-io.version>
 		<!-- Apache file utils for SOAP (deprecated, we do not maintain!) -->
