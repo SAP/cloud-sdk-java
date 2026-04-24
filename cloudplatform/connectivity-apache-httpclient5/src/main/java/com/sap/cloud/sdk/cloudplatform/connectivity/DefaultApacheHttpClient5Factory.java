@@ -30,6 +30,7 @@ import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -241,12 +242,15 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
 
     private static class LoggingHttpRequestRetryStrategy extends DefaultHttpRequestRetryStrategy
     {
-        final @Nullable HttpDestinationProperties destination;
+        private static final int MAX_RETRIES = 1; // default
+        private static final Duration RETRY_INTERVAL = Duration.ofSeconds(1L); // default
+
+        private final @Nonnull String destinationRef;
 
         public LoggingHttpRequestRetryStrategy( final @Nullable HttpDestinationProperties destination )
         {
-            super();
-            this.destination = destination;
+            super(MAX_RETRIES, TimeValue.of(RETRY_INTERVAL));
+            this.destinationRef = destination == null ? "" : " for destination " + destination;
         }
 
         @Override
@@ -254,8 +258,8 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
         {
             final boolean retry = super.retryRequest(response, execCount, context);
             if( retry ) {
-                final String msg = "Retrying request for destination {} due to response {}. Retry attempt #{}.";
-                log.debug(msg, destination, response.getCode(), execCount);
+                final String msg = "Retrying request{} due to response {}. Retry attempt {}/{} after {}s.";
+                log.warn(msg, destinationRef, response.getCode(), execCount, MAX_RETRIES, RETRY_INTERVAL.getSeconds());
             }
             return retry;
         }
@@ -270,8 +274,17 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             final boolean retry = super.retryRequest(req, exception, execCount, context);
             if( retry ) {
                 final String msg =
-                    "Retrying {} request for destination {} to {} due to exception \"{}\". Retry attempt #{}.";
-                log.debug(msg, req.getMethod(), destination, req.getRequestUri(), exception.getMessage(), execCount);
+                    "Retrying {} request{} to {} due to exception \"{}\". Retry attempt {}/{} after {}s.";
+                log
+                    .warn(
+                        msg,
+                        req.getMethod(),
+                        destinationRef,
+                        req.getRequestUri(),
+                        exception.getMessage(),
+                        execCount,
+                        MAX_RETRIES,
+                        RETRY_INTERVAL.getSeconds());
             }
             return retry;
         }
