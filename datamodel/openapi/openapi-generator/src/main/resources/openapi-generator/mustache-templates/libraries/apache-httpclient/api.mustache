@@ -146,7 +146,7 @@ public class {{classname}} extends BaseApi {
             @Deprecated
             {{/isDeprecated}}
             {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
-            public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
+            public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#allParams}}{{>nullable_var_annotations}} final {{#isFile}}File{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}} {{^-last}}, {{/-last}}{{/allParams}}) throws OpenApiRequestException {
             {{>operationBody}}
             }
         {{/hasOptionalParams}}
@@ -185,7 +185,7 @@ public class {{classname}} extends BaseApi {
             @Deprecated
         {{/isDeprecated}}
         {{#vendorExtensions.x-return-nullable}}@Nullable{{/vendorExtensions.x-return-nullable}}{{^vendorExtensions.x-return-nullable}}@Nonnull{{/vendorExtensions.x-return-nullable}}
-        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#requiredParams}}{{>nullable_var_annotations}} final {{{dataType}}} {{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}) throws OpenApiRequestException {
+        public {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}OpenApiResponse {{/returnType}}{{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#requiredParams}}{{>nullable_var_annotations}} final {{#isFile}}File{{/isFile}}{{^isFile}}{{{dataType}}}{{/isFile}} {{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}) throws OpenApiRequestException {
         {{#hasOptionalParams}}
             return {{#vendorExtensions.x-sap-cloud-sdk-operation-name}}{{vendorExtensions.x-sap-cloud-sdk-operation-name}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}{{^vendorExtensions.x-sap-cloud-sdk-operation-name}}{{operationId}}{{/vendorExtensions.x-sap-cloud-sdk-operation-name}}({{#hasRequiredParams}}{{#requiredParams}}{{paramName}}{{^-last}}, {{/-last}}{{/requiredParams}}, {{/hasRequiredParams}}{{#optionalParams}}null{{^-last}}, {{/-last}}{{/optionalParams}});
         {{/hasOptionalParams}}

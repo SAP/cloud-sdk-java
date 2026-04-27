@@ -36,7 +36,8 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             6,
-            Map.of("aiSdkConstructor", "true", "fixRedundantIsBooleanPrefix", "true", "useFloatArrays", "true")),
+            Map.of("aiSdkConstructor", "true", "fixRedundantIsBooleanPrefix", "true", "useFloatArrays", "true"),
+            Map.of()),
         API_CLASS_VENDOR_EXTENSION_YAML(
             "api-class-vendor-extension-yaml",
             "sodastore.yaml",
@@ -46,6 +47,7 @@ class DataModelGeneratorIntegrationTest
             false,
             true,
             4,
+            Map.of(),
             Map.of()),
         API_CLASS_VENDOR_EXTENSION_JSON(
             "api-class-vendor-extension-json",
@@ -56,6 +58,7 @@ class DataModelGeneratorIntegrationTest
             false,
             true,
             6,
+            Map.of(),
             Map.of()),
         INLINEOBJECT_SCHEMA_NAME(
             "inlineobject-schemas-enabled",
@@ -66,7 +69,8 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             5,
-            Map.of("fixResponseSchemaTitles", "true")),
+            Map.of("fixResponseSchemaTitles", "true"),
+            Map.of()),
         PARTIAL_GENERATION(
             "partial-generation",
             "sodastore.json",
@@ -80,7 +84,8 @@ class DataModelGeneratorIntegrationTest
                 .ofEntries(
                     entry("excludePaths", "/sodas,/foobar/{baz}"),
                     entry("excludeProperties", "Foo.bar,Soda.embedding,Soda.flavor,UpdateSoda.flavor,SodaWithFoo.foo"),
-                    entry("removeUnusedComponents", "true"))),
+                    entry("removeUnusedComponents", "true")),
+            Map.of()),
         INPUT_SPEC_WITH_UPPERCASE_FILE_EXTENSION(
             "input-spec-with-uppercase-file-extension",
             "sodastore.JSON",
@@ -90,6 +95,7 @@ class DataModelGeneratorIntegrationTest
             false,
             true,
             6,
+            Map.of(),
             Map.of()),
         ONE_OF_INTERFACES_DISABLED(
             "oneof-interfaces-disabled",
@@ -100,6 +106,7 @@ class DataModelGeneratorIntegrationTest
             false,
             true,
             9,
+            Map.of(),
             Map.of()),
         ONE_OF_INTERFACES_ENABLED(
             "oneof-interfaces-enabled",
@@ -110,7 +117,8 @@ class DataModelGeneratorIntegrationTest
             true,
             true,
             11,
-            Map.of("useOneOfInterfaces", "true", "useOneOfCreators", "true", "useFloatArrays", "true")),
+            Map.of("useOneOfInterfaces", "true", "useOneOfCreators", "true", "useFloatArrays", "true"),
+            Map.of()),
         INPUT_SPEC_WITH_BUILDER(
             "input-spec-with-builder",
             "sodastore.JSON",
@@ -127,7 +135,8 @@ class DataModelGeneratorIntegrationTest
                     "pojoBuildMethodName",
                     "build",
                     "pojoConstructorVisibility",
-                    "private")),
+                    "private"),
+            Map.of()),
         REMOVE_OPERATION_ID_PREFIX(
             "remove-operation-id-prefix",
             "sodastore.json",
@@ -144,7 +153,8 @@ class DataModelGeneratorIntegrationTest
                     "removeOperationIdPrefixDelimiter",
                     "\\.",
                     "removeOperationIdPrefixCount",
-                    "3")),
+                    "3"),
+            Map.of()),
         GENERATE_APIS(
             "generate-apis",
             "sodastore.yaml",
@@ -154,7 +164,19 @@ class DataModelGeneratorIntegrationTest
             true,
             false,
             7,
-            Map.of());
+            Map.of(),
+            Map.of()),
+        FILE_HANDLING(
+            "file-handling",
+            "file-handling.yaml",
+            "com.sap.cloud.sdk.services.filehandling.api",
+            "com.sap.cloud.sdk.services.filehandling.model",
+            ApiMaturity.RELEASED,
+            false,
+            true,
+            1,
+            Map.of(),
+            Map.of("File", "byte[]"));
 
         final String testCaseName;
         final String inputSpecFileName;
@@ -165,10 +187,11 @@ class DataModelGeneratorIntegrationTest
         final boolean generateApis;
         final int expectedNumberOfGeneratedFiles;
         final Map<String, String> additionalProperties;
+        final Map<String, String> typeMappings;
     }
 
     @ParameterizedTest
-    @EnumSource( TestCase.class )
+    @EnumSource( value = TestCase.class, mode = EnumSource.Mode.EXCLUDE, names = { "FILE_HANDLING" } )
     void integrationTests( final TestCase testCase, @TempDir final Path path )
         throws Throwable
     {
@@ -194,7 +217,8 @@ class DataModelGeneratorIntegrationTest
                 .outputDirectory(tempOutputDirectory.toAbsolutePath().toString())
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
-                .additionalProperty("useAbstractionForFiles", "true");
+                .additionalProperty("useAbstractionForFiles", "true")
+                .typeMappings(testCase.typeMappings);
         testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
         final Try<GenerationResult> maybeGenerationResult =
@@ -229,7 +253,8 @@ class DataModelGeneratorIntegrationTest
                 .deleteOutputDirectory(true)
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
-                .additionalProperty("useAbstractionForFiles", "true");
+                .additionalProperty("useAbstractionForFiles", "true")
+                .typeMappings(testCase.typeMappings);
         testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
         GenerationConfiguration build = generationConfiguration.build();
