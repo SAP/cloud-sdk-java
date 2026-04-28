@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: Soda Store API
+  version: 1.0.0
+  description: API for managing sodas in a soda store
+
+paths:
+  /files/import:
+    post:
+      operationId: importFile
+      tags:
+        - Files
+      summary: Upload a file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File imported successfully
+  /files/export:
+    get:
+      operationId: exportFile
+      tags:
+        - Files
+      summary: Download a file
+      responses:
+        '200':
+          description: File content as binary
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
