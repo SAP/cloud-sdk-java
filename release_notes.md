@@ -4,19 +4,20 @@
 
 ### 🚧 Known Issues
 
-- 
+-
 
 ### 🔧 Compatibility Notes
 
-- 
+- [OpenAPI] In Apache HttpClient generator, file upload parameters are now pinned to type `java.io.File`, unmodifiable with `<typeMappings>` in generator configuration.
 
 ### ✨ New Functionality
 
-- 
+-
 
 ### 📈 Improvements
 
-- 
+- Enable Retry behavior for HttpClient5 instances, to mirror legacy behvior for HttpClient4: `1` retry with `1s` delay
+  for response codes `429` (Too Many Requests) and `503` (Service Unavailable).
 
 ### 🐛 Fixed Issues
 
