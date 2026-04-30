@@ -19,7 +19,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.sap.cloud.sdk.datamodel.odata.client.request.UpdateStrategy.REPLACE_WITH_PUT;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
-import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.hc.core5.http.HttpHeaders.ACCEPT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
@@ -137,7 +137,7 @@ class ODataQueryPropertyTest
         verify(getRequestedFor(urlEqualTo(SERVICE_URL + resourceV2)));
 
         final HttpEntity entity = result.getHttpResponse().getEntity();
-        assertThat(entity.getContentType().getValue()).isEqualTo(XML);
+        assertThat(entity.getContentType()).isEqualTo(XML);
         assertThat(entity.getContent()).hasSameContentAs(new ByteArrayInputStream(payloadBytes));
     }
 
@@ -233,7 +233,7 @@ class ODataQueryPropertyTest
         verify(getRequestedFor(urlEqualTo(SERVICE_URL + resourceV4)));
 
         final HttpEntity entity = result.getHttpResponse().getEntity();
-        assertThat(entity.getContentType().getValue()).isEqualTo(XML);
+        assertThat(entity.getContentType()).isEqualTo(XML);
         assertThat(entity.getContent()).hasSameContentAs(new ByteArrayInputStream(payloadBytes));
     }
 

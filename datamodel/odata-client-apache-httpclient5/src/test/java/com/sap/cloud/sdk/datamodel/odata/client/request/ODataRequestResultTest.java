@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
 
 class ODataRequestResultTest
@@ -22,8 +23,8 @@ class ODataRequestResultTest
     @Test
     void testGetAllHeaderHeaderValuesRemovesNullValues()
     {
-        final HttpResponse httpResponse =
-            mockResponseWithHeaders(entry("Header", Arrays.asList("Value", null, "   ", null)));
+        final BasicClassicHttpResponse httpResponse =
+            (BasicClassicHttpResponse) mockResponseWithHeaders(entry("Header", Arrays.asList("Value", null, "   ", null)));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -37,8 +38,8 @@ class ODataRequestResultTest
     @Test
     void testGetAllHeaderValuesDoesNotSplitValues()
     {
-        final HttpResponse httpResponse =
-            mockResponseWithHeaders(entry("Header", Collections.singletonList("Value1-1, Value1-2")));
+        final BasicClassicHttpResponse httpResponse =
+            (BasicClassicHttpResponse) mockResponseWithHeaders(entry("Header", Collections.singletonList("Value1-1, Value1-2")));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -52,8 +53,8 @@ class ODataRequestResultTest
     @Test
     void testGetAllHeaderValuesDoesNotSplitCookieValues()
     {
-        final HttpResponse httpResponse =
-            mockResponseWithHeaders(entry("Set-Cookie", Collections.singletonList("Value1-1; Value1-2")));
+        final BasicClassicHttpResponse httpResponse =
+            (BasicClassicHttpResponse) mockResponseWithHeaders(entry("Set-Cookie", Collections.singletonList("Value1-1; Value1-2")));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -67,8 +68,8 @@ class ODataRequestResultTest
     @Test
     void testGetAllHeaderValuesMergesNamesCaseInsensitively()
     {
-        final HttpResponse httpResponse =
-            mockResponseWithHeaders(
+        final BasicClassicHttpResponse httpResponse =
+            (BasicClassicHttpResponse) mockResponseWithHeaders(
                 entry("Header", Collections.singletonList("Value1-1")),
                 entry("header", Collections.singletonList("Value1-2")));
 
@@ -97,7 +98,7 @@ class ODataRequestResultTest
             }
         }
         final HttpResponse response = mock(HttpResponse.class);
-        when(response.getAllHeaders()).thenReturn(headers.toArray(new Header[0]));
+        when(response.getHeaders()).thenReturn(headers.toArray(new Header[0]));
 
         return response;
     }

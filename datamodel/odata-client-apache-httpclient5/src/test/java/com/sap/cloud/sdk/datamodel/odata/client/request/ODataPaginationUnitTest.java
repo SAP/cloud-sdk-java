@@ -15,11 +15,10 @@ import java.util.List;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.client5.http.ConnectTimeoutException;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 
@@ -129,7 +128,7 @@ class ODataPaginationUnitTest
     @SneakyThrows
     private HttpResponse createHttpResponse( final String message )
     {
-        final BasicHttpResponse page = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK"));
+        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(200, "OK");
         page.setEntity(new StringEntity(message));
         return page;
     }
@@ -137,8 +136,8 @@ class ODataPaginationUnitTest
     @SneakyThrows
     private HttpResponse createHttpResponseError( final String message )
     {
-        final BasicHttpResponse page =
-            new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, 500, "Internal Server Error"));
+        final BasicClassicHttpResponse page =
+            new BasicClassicHttpResponse(500, "Internal Server Error");
         page.setEntity(new StringEntity(message));
         return page;
     }

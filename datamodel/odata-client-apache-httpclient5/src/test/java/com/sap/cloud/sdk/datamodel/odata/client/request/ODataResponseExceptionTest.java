@@ -11,9 +11,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpVersion;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -55,7 +54,7 @@ class ODataResponseExceptionTest
     {
         final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
-        final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        final BasicClassicHttpResponse response = new BasicClassicHttpResponse( 200, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain", parameters.charset)));
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);
@@ -72,7 +71,7 @@ class ODataResponseExceptionTest
     {
         final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
-        final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(200, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain"))); // no charset
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);

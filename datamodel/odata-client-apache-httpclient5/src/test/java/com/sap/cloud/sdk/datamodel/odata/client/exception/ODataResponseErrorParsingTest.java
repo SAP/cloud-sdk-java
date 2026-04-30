@@ -26,9 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
-import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,8 +97,7 @@ class ODataResponseErrorParsingTest
     void testWithoutHttpEntity()
     {
         final HttpClient mockedClient = mock(HttpClient.class);
-        final StatusLine statusLine = new StatusLine(HttpVersion.HTTP_1_1, 500, "oh");
-        doReturn(new BasicClassicHttpResponse(statusLine)).when(mockedClient).execute(any(HttpUriRequest.class));
+        doReturn(new BasicClassicHttpResponse(500, "oh")).when(mockedClient).execute(any(HttpUriRequest.class));
 
         final ODataRequestRead request = new ODataRequestRead(ODATA_SERVICE_PATH, "", "", ODataProtocol.V4);
         assertThatExceptionOfType(ODataResponseException.class)

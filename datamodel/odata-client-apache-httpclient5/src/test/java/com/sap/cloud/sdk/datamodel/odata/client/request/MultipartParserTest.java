@@ -23,6 +23,8 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,7 +69,7 @@ class MultipartParserTest
         assertThat(result.get(0)).hasSize(1);
         assertThat(result.get(0).get(0).getPayload()).startsWith("HTTP/1.1 200 OK");
 
-        assertThat(httpResponse.getAllHeaders()).satisfiesExactly(header -> {
+        assertThat(httpResponse.getHeaders()).satisfiesExactly(header -> {
             assertThat(header.getName()).isEqualTo("Content-Type");
             assertThat(header.getValue()).isEqualTo("application/json; odata.metadata=minimal; odata.streaming=true");
         }, header -> {
@@ -75,11 +77,11 @@ class MultipartParserTest
             assertThat(header.getValue()).isEqualTo("4.0");
         });
 
-        assertThat(httpResponse.getStatusLine().getProtocolVersion()).isEqualTo(HttpVersion.HTTP_1_1);
-        assertThat(httpResponse.getStatusLine().getStatusCode()).isEqualTo(200);
-        assertThat(httpResponse.getStatusLine().getReasonPhrase()).isEqualTo("OK");
+        assertThat(new StatusLine(httpResponse).getProtocolVersion()).isEqualTo(HttpVersion.HTTP_1_1);
+        assertThat(new StatusLine(httpResponse).getStatusCode()).isEqualTo(200);
+        assertThat(new StatusLine(httpResponse).getReasonPhrase()).isEqualTo("OK");
         assertThat(httpResponse.getEntity().getContent()).hasContent("{\"foØ\":\"bär\"}");
-        assertThat(httpResponse.getEntity().getContentType().getValue())
+        assertThat(httpResponse.getEntity().getContentType())
             .isEqualTo("application/json; odata.metadata=minimal; odata.streaming=true; charset=UTF-8");
     }
 
@@ -141,7 +143,7 @@ class MultipartParserTest
     @Test
     void testEmptyHttpResponse()
     {
-        final HttpResponse httpResponse = mock(HttpResponse.class);
+        final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
         assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("HTTP response does not contain a content.");
@@ -154,7 +156,7 @@ class MultipartParserTest
         final HttpEntity httpEntity = mock(HttpEntity.class);
         when(httpEntity.getContent()).thenThrow(IOException.class);
 
-        final HttpResponse httpResponse = mock(HttpResponse.class);
+        final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
 
         assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
@@ -165,7 +167,7 @@ class MultipartParserTest
     @Test
     void testMissingDelimiter()
     {
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
         httpResponse.setEntity(new StringEntity("", Charset.defaultCharset()));
         httpResponse.setHeader(HttpHeaders.CONTENT_TYPE, "multipart/mixed");
 
@@ -199,7 +201,7 @@ class MultipartParserTest
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultUncached( @Nonnull final String newLine )
     {
-        final BasicHttpResponse resp = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(200, "Ok");
         resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
@@ -219,7 +221,7 @@ class MultipartParserTest
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultCached( @Nonnull final String newLine )
     {
-        final BasicHttpResponse resp = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(200, "Ok");
         resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 

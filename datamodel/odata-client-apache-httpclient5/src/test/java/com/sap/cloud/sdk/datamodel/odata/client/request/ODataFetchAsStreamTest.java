@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -25,7 +26,7 @@ import com.google.common.io.Resources;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpEntityUtil;
+//import com.sap.cloud.sdk.cloudplatform.connectivity.HttpEntityUtil;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -121,7 +122,7 @@ class ODataFetchAsStreamTest
         final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
 
         assertThatIOException()
-            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .isThrownBy(() -> EntityUtils.toString(result.getHttpResponse().getEntity(), StandardCharsets.UTF_8))
             .withMessage("Stream closed");
     }
 
@@ -134,7 +135,7 @@ class ODataFetchAsStreamTest
         final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, lazyRequest, VALIDATOR_LAZY);
 
         assertThatIOException()
-            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .isThrownBy(() -> EntityUtils.toString(result.getHttpResponse().getEntity(), StandardCharsets.UTF_8))
             .withMessage("Stream closed");
     }
 
@@ -147,7 +148,7 @@ class ODataFetchAsStreamTest
         final ODataRequestResult result = testStreamedFileForRequest(TEXT_FILE_NAME, request, VALIDATOR_LAZY);
 
         assertThatIOException()
-            .isThrownBy(() -> HttpEntityUtil.getResponseBody(result.getHttpResponse()))
+            .isThrownBy(() -> EntityUtils.toString(result.getHttpResponse().getEntity(), StandardCharsets.UTF_8))
             .withMessage("Stream closed");
     }
 

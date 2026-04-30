@@ -14,9 +14,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -213,7 +212,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request =
             new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
 
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
 
         final String baseUrl = "http://blub/?high=five";
@@ -237,7 +236,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -250,7 +249,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -266,7 +265,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         httpResponse.setEntity(new StringEntity(emptyToken, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -282,7 +281,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final HttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
         httpResponse.setEntity(new StringEntity(noLink, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
