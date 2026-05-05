@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
  * Helper class to construct an HttpResponse object on behalf of serialized HTTP protocol content.
  */
 @Slf4j
-@SuppressWarnings( "serial" ) // JONAS: Discuss this in review
 class MultipartHttpResponse extends BasicClassicHttpResponse
 {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -145,5 +145,11 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
         }
         log.error("Failed to construct status line for HTTP protocol response: {}", firstLine);
         return new StatusLine(HttpVersion.HTTP_1_1, 0, "Unknown");
+    }
+
+    @Serial
+    private void readObject(java.io.ObjectInputStream in ) throws java.io.NotSerializableException
+    {
+        throw new java.io.NotSerializableException(getClass().getName());
     }
 }

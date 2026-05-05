@@ -11,19 +11,17 @@ import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.HttpClient;
-//import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase; // instead of HttpRequestBase
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-//import org.apache.http.HttpEntityEnclosingRequest; use instead:
 import org.apache.hc.core5.http.HttpEntityContainer;
-//import org.apache.http.conn.ConnectionPoolTimeoutException; //
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
@@ -108,7 +106,7 @@ class ODataHttpRequest
         odataRequest.getListeners().forEach(v -> v.listenOnRequest(httpRequest));
 
         try {
-            return httpClient.execute(httpRequest, response -> response); // JONAS: fix this
+            return httpClient.executeOpen(null, httpRequest, null);
         }
         catch( final ClientProtocolException e ) {
             log.debug("Connection could not be established.", e);
@@ -118,19 +116,20 @@ class ODataHttpRequest
                 "Connection could not be established.",
                 e);
         }
-        // JONAS: find out which exception to catch here
-        //        catch( final ConnectionPoolTimeoutException e ) {
-        //            log.debug("Connection pool timed out.", e);
-        //            throw new ODataConnectionException(
-        //                this.odataRequest,
-        //                httpRequest,
-        //                """
-        //                    Time out occurred because of a probable connection leak. Please execute your request with try-with-resources to ensure resources are properly closed.\
-        //                    If you are using the OData client instead to execute your request, explicitly consume the entity of the associated ClassicHttpResponse using EntityUtils.consume(httpEntity)\
-        //                    """,
-        //                e);
-        //
-        //        }
+        catch( final ConnectionRequestTimeoutException e ) {
+            log.debug("Connection pool timed out.", e);
+            throw new ODataConnectionException(
+                this.odataRequest,
+                httpRequest,
+                """                                                                                                                                                                                                    
+                  Time out occurred because of a probable connection leak. Please execute your request \
+                  with try-with-resources to ensure resources are properly closed. \
+                  If you are using the OData client instead to execute your request, explicitly consume \
+                  the entity of the associated ClassicHttpResponse using EntityUtils.consume(httpEntity)\
+                  """,
+                e);
+
+        }
         catch( final IOException e ) {
             log.debug("Connection was aborted.", e);
             throw new ODataConnectionException(this.odataRequest, httpRequest, "Connection was aborted.", e);
