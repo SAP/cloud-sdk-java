@@ -1,12 +1,10 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static org.apache.hc.core5.http.HttpVersion.HTTP_1_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
@@ -33,7 +31,8 @@ class ODataHealthyResponseValidatorTest
     @Test
     void testNotFound()
     {
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_NOT_FOUND, "Not Found");
+        final BasicClassicHttpResponse httpResponse =
+            new BasicClassicHttpResponse(HttpStatus.SC_NOT_FOUND, "Not Found");
         final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 
         assertThatExceptionOfType(ODataResponseException.class)
@@ -65,7 +64,8 @@ class ODataHealthyResponseValidatorTest
             }
             """;
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
+        final BasicClassicHttpResponse httpResponse =
+            new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Oh!");
         httpResponse.setEntity(new StringEntity(odata_error_json, StandardCharsets.UTF_8));
         final ODataRequestResult odataResult = new ODataRequestResultGeneric(REQUEST, httpResponse);
 

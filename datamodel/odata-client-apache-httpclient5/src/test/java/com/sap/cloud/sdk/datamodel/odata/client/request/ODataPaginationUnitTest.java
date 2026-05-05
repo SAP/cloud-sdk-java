@@ -13,11 +13,11 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
-import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
@@ -136,8 +136,7 @@ class ODataPaginationUnitTest
     @SneakyThrows
     private HttpResponse createHttpResponseError( final String message )
     {
-        final BasicClassicHttpResponse page =
-            new BasicClassicHttpResponse(500, "Internal Server Error");
+        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(500, "Internal Server Error");
         page.setEntity(new StringEntity(message));
         return page;
     }

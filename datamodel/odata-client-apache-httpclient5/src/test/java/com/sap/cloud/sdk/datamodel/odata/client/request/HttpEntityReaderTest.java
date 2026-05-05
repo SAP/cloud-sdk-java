@@ -10,11 +10,8 @@ import static org.mockito.Mockito.when;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
-import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +26,7 @@ class HttpEntityReaderTest
     private final ODataRequestResult odataResult = mock(ODataRequestResult.class);
     private final ODataRequestGeneric odataRequest = mock(ODataRequestGeneric.class);
     private final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
-//    private final StatusLine httpResponseStatusLine = mock(StatusLine.class);
+    //    private final StatusLine httpResponseStatusLine = mock(StatusLine.class);
 
     @BeforeEach
     void adjustMocks()
@@ -37,9 +34,9 @@ class HttpEntityReaderTest
         lenient().when(odataRequest.getProtocol()).thenReturn(ODataProtocol.V2);
         lenient().when(odataResult.getHttpResponse()).thenReturn(httpResponse);
         lenient().when(odataResult.getODataRequest()).thenReturn(odataRequest);
-//        lenient().when(httpResponse.getStatusLine()).thenReturn(httpResponseStatusLine);
+        //        lenient().when(httpResponse.getStatusLine()).thenReturn(httpResponseStatusLine);
         lenient().when(httpResponse.getHeaders()).thenReturn(new Header[0]);
-//        lenient().when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+        //        lenient().when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
     }
 
     @Test

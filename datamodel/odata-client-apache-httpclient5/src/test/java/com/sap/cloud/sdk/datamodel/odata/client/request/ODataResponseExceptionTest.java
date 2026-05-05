@@ -54,7 +54,7 @@ class ODataResponseExceptionTest
     {
         final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
-        final BasicClassicHttpResponse response = new BasicClassicHttpResponse( 200, "OK");
+        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(200, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain", parameters.charset)));
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);

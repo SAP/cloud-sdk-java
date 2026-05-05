@@ -1,9 +1,6 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
-import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.noContent;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -22,11 +19,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.gson.GsonBuilder;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 //import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
 //import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 
@@ -65,11 +62,11 @@ class ODataRequestActionTest
                 postRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION))
                     .withHeader("Content-Type", equalTo("application/json")));
 
-//        wireMockServer
-//            .verify(
-//                1,
-//                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
-//                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
+        //        wireMockServer
+        //            .verify(
+        //                1,
+        //                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
+        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
     }
 
     @Test
@@ -98,11 +95,11 @@ class ODataRequestActionTest
                 postRequestedFor((urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)))
                     .withHeader("Content-Type", equalTo("application/json")));
 
-//        wireMockServer
-//            .verify(
-//                1,
-//                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
-//                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
+        //        wireMockServer
+        //            .verify(
+        //                1,
+        //                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
+        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
     }
 
     @Test
@@ -124,15 +121,15 @@ class ODataRequestActionTest
         final ODataRequestAction request =
             new ODataRequestAction(ODATA_SERVICE_PATH, ODataResourcePath.of(ODATA_ACTION), null, ODataProtocol.V4);
 
-//        request.setCsrfTokenRetriever(CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER);
+        //        request.setCsrfTokenRetriever(CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER);
 
         final ODataRequestResult result = request.execute(client);
         assertThat(result).isNotNull();
 
-//        wireMockServer
-//            .verify(
-//                0,
-//                headRequestedFor(anyUrl())
-//                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
+        //        wireMockServer
+        //            .verify(
+        //                0,
+        //                headRequestedFor(anyUrl())
+        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
     }
 }
