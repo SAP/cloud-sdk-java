@@ -77,14 +77,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     @Getter( AccessLevel.PROTECTED )
     private final Map<String, String> queryParameters = new TreeMap<>();
 
-    //    /**
-    //     * The CSRF token retriever.
-    //     */
-    //    @Nullable
-    //    @Setter
-    //    protected CsrfTokenRetriever csrfTokenRetriever;
-    // JONAS: In conectivity-apache-httpclient5 CSRF token handling is integrated into the ApacheHttpClient5Wrapper which automatically handles CSRF tokens when needed
-
     /**
      * The response buffer strategy to use for this request.
      */
@@ -235,43 +227,11 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
 
-    /**
-     * Internal execute method. It will attempt to retrieve a CSRF token before issuing the actual request via
-     * {@link ODataRequestGeneric#tryExecute(Supplier, HttpClient)}.
-     * <p>
-     * CSRF token retrieval is skipped, if a token is already present. The actual request is performed regardless
-     * whether or not a CSRF token was retrieved.
-     *
-     * @param httpClient
-     *            An {@link HttpClient} to execute the CSRF token retrieval.
-     * @param httpOperation
-     *            The HTTP operation to perform, e.g. {@link ODataHttpRequest#requestGet()}
-     * @return A {@code Try} containing either a successful {@link ODataRequestResultGeneric} or an
-     *         {@code ODataException}.
-     */
     @Nonnull
     protected Try<ODataRequestResultGeneric> tryExecuteWithCsrfToken(
         @Nonnull final HttpClient httpClient,
         @Nonnull final Supplier<ClassicHttpResponse> httpOperation )
     {
-        //        final CsrfTokenRetriever csrfTokenRetriever =
-        //            Option.of(this.csrfTokenRetriever).getOrElse(DefaultCsrfTokenRetriever::new);
-        //
-        //        if( !csrfTokenRetriever.isEnabled()
-        //            || getHeaders().containsKey(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY) ) {
-        //            log.debug("CSRF token already present, skipping retrieval.");
-        //            return tryExecute(httpOperation, httpClient);
-        //        }
-        //
-        //        final Try<CsrfToken> csrfToken = tryGetCsrfToken(httpClient, csrfTokenRetriever);
-        //        csrfToken.onSuccess(token -> addHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, token.getToken()));
-        //
-        //        final Try<ODataRequestResultGeneric> oDataRequest = tryExecute(httpOperation, httpClient);
-        //
-        //        if( oDataRequest.isFailure() && csrfToken.isFailure() ) {
-        //            oDataRequest.getCause().addSuppressed(csrfToken.getCause());
-        //        }
-        //        return oDataRequest;
         return tryExecute(httpOperation, httpClient);
     }
 
@@ -286,13 +246,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
     {
         return new TreeMap<>(headers);
     }
-
-    //    @Nonnull
-    //    Try<CsrfToken>
-    //        tryGetCsrfToken( @Nonnull final HttpClient httpClient, @Nonnull final CsrfTokenRetriever csrfTokenRetriever )
-    //    {
-    //        return Try.of(() -> csrfTokenRetriever.retrieveCsrfToken(httpClient, servicePath, getHeaders()));
-    //    }
 
     void addVersionIdentifierToHeaderIfPresent( @Nullable final String versionIdentifier )
     {

@@ -159,24 +159,7 @@ public class ODataRequestBatch extends ODataRequestGeneric
     @Nonnull
     public ODataRequestResultMultipartGeneric execute( @Nonnull final HttpClient httpClient )
     {
-        //        final CsrfTokenRetriever csrfTokenRetriever =
-        //            Option.of(this.csrfTokenRetriever).getOrElse(DefaultCsrfTokenRetriever::new);
-        //
-        //        if( !csrfTokenRetriever.isEnabled()
-        //            || getHeaders().containsKey(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY) ) {
-        //            log.debug("CSRF token already present, skipping retrieval.");
-        //            return tryExecute(httpClient).get();
-        //        }
-        //
-        //        final Try<CsrfToken> csrfToken = tryGetCsrfToken(httpClient, csrfTokenRetriever);
-        //        csrfToken.onSuccess(token -> addHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, token.getToken()));
-
-        final Try<ODataRequestResultMultipartGeneric> batchRequest = tryExecute(httpClient);
-
-        //        if( batchRequest.isFailure() && csrfToken.isFailure() ) {
-        //            batchRequest.getCause().addSuppressed(csrfToken.getCause());
-        //        }
-        return batchRequest.get();
+        return tryExecute(httpClient).get();
     }
 
     private Try<ODataRequestResultMultipartGeneric> tryExecute( @Nonnull final HttpClient httpClient )

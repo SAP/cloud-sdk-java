@@ -98,7 +98,12 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             builder.addRequestInterceptorFirst(requestInterceptor);
         }
 
-        return builder.build();
+        final CloseableHttpClient[] holder = new CloseableHttpClient[1];
+        builder
+            .addRequestInterceptorLast(
+                ( req, entity, ctx ) -> new CsrfTokenInterceptor(holder[0]).process(req, entity, ctx));
+        holder[0] = builder.build();
+        return holder[0];
     }
 
     @Nonnull

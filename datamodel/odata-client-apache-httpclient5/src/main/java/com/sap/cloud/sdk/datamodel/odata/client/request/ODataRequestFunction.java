@@ -143,10 +143,6 @@ public class ODataRequestFunction extends ODataRequestGeneric
     public ODataRequestResultGeneric execute( @Nonnull final HttpClient httpClient )
     {
         final ODataHttpRequest request = ODataHttpRequest.withoutBody(this, httpClient);
-        //        final Try<ODataRequestResultGeneric> result =
-        //            csrfTokenRetriever == null
-        //                ? tryExecute(request::requestGet, httpClient)
-        //                : tryExecuteWithCsrfToken(httpClient, request::requestGet);
         return tryExecute(request::requestGet, httpClient).get();
     }
 
