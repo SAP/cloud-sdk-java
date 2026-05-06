@@ -1,6 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.isNull;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ class ODataHttpRequestTest
         httpRequest.requestGet();
 
         final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
-        Mockito.verify(httpClient).execute(argumentCaptor.capture());
+        Mockito.verify(httpClient).executeOpen(isNull(), argumentCaptor.capture(), isNull());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
         assertThat(acceptHeader).isNotEmpty();
@@ -53,7 +54,7 @@ class ODataHttpRequestTest
         httpRequest.requestGet();
 
         final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
-        Mockito.verify(httpClient).execute(argumentCaptor.capture());
+        Mockito.verify(httpClient).executeOpen(isNull(), argumentCaptor.capture(), isNull());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
         assertThat(acceptHeader).isNotEmpty();
@@ -73,7 +74,7 @@ class ODataHttpRequestTest
         httpRequest.requestGet();
 
         final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
-        Mockito.verify(httpClient).execute(argumentCaptor.capture());
+        Mockito.verify(httpClient).executeOpen(isNull(), argumentCaptor.capture(), isNull());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
         assertThat(acceptHeader).isNotEmpty();
@@ -94,7 +95,7 @@ class ODataHttpRequestTest
         httpRequest.requestGet();
 
         final ArgumentCaptor<HttpUriRequestBase> argumentCaptor = ArgumentCaptor.forClass(HttpUriRequestBase.class);
-        Mockito.verify(httpClient).execute(argumentCaptor.capture());
+        Mockito.verify(httpClient).executeOpen(isNull(), argumentCaptor.capture(), isNull());
 
         final Header[] acceptHeader = argumentCaptor.getValue().getHeaders("Accept");
         assertThat(acceptHeader).isNotEmpty();

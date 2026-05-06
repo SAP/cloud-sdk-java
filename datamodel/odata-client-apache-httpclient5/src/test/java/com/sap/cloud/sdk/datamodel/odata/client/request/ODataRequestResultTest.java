@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +86,7 @@ class ODataRequestResultTest
 
     @SafeVarargs
     @Nonnull
-    private static HttpResponse mockResponseWithHeaders(
+    private static BasicClassicHttpResponse mockResponseWithHeaders(
         @Nonnull final Map.Entry<String, Collection<String>>... entries )
     {
         final Collection<Header> headers = new ArrayList<>();
@@ -100,7 +99,7 @@ class ODataRequestResultTest
                 headers.add(header);
             }
         }
-        final HttpResponse response = mock(HttpResponse.class);
+        final BasicClassicHttpResponse response = mock(BasicClassicHttpResponse.class);
         when(response.getHeaders()).thenReturn(headers.toArray(new Header[0]));
 
         return response;

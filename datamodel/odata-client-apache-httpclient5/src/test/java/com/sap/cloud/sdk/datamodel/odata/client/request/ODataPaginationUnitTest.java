@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -53,7 +54,7 @@ class ODataPaginationUnitTest
             createHttpResponse(page2),
             createHttpResponse(page3),
             createHttpResponse(page4),
-            createHttpResponse(page5)).when(httpClient).execute(any(HttpUriRequest.class));
+            createHttpResponse(page5)).when(httpClient).executeOpen(isNull(), any(HttpUriRequest.class), isNull());
 
         final ODataRequestRead request =
             new ODataRequestRead("V4/Northwind/Northwind.svc", "Customers", "$count=true", ODataProtocol.V4);
@@ -74,7 +75,7 @@ class ODataPaginationUnitTest
         int countItems = 0;
         int countRequests = 1;
         for( final List<Object> nextPage : initialResponse.iteratePages(Object.class) ) {
-            verify(httpClient, times(countRequests++)).execute(argThat(headerMatcher));
+            verify(httpClient, times(countRequests++)).executeOpen(isNull(), argThat(headerMatcher), isNull());
             countItems += nextPage.size();
         }
 
@@ -89,7 +90,7 @@ class ODataPaginationUnitTest
         final HttpClient httpClient = mock(HttpClient.class);
         doReturn(createHttpResponse(page1), createHttpResponse(page2), createHttpResponseError("Something went wrong!"))
             .when(httpClient)
-            .execute(any(HttpUriRequest.class));
+            .executeOpen(isNull(), any(HttpUriRequest.class), isNull());
 
         final ODataRequestRead request =
             new ODataRequestRead("V4/Northwind/Northwind.svc", "Customers", "$count=true", ODataProtocol.V4);
@@ -109,7 +110,7 @@ class ODataPaginationUnitTest
     {
         final HttpClient httpClient = mock(HttpClient.class);
 
-        when(httpClient.execute(any(HttpUriRequest.class)))
+        when(httpClient.executeOpen(isNull(), any(HttpUriRequest.class), isNull()))
             .thenReturn(createHttpResponse(page1), createHttpResponse(page2), createHttpResponse(page3))
             .thenThrow(ConnectTimeoutException.class);
 
@@ -126,7 +127,7 @@ class ODataPaginationUnitTest
     }
 
     @SneakyThrows
-    private HttpResponse createHttpResponse( final String message )
+    private BasicClassicHttpResponse createHttpResponse( final String message )
     {
         final BasicClassicHttpResponse page = new BasicClassicHttpResponse(200, "OK");
         page.setEntity(new StringEntity(message));

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -152,7 +153,7 @@ class ODataRequestResultGenericTest
         httpResponse.setEntity(new StringEntity(json));
 
         final HttpClient httpClient = mock(HttpClient.class);
-        when(httpClient.execute(any())).thenReturn(httpResponse);
+        when(httpClient.executeOpen(isNull(), any(), isNull())).thenReturn(httpResponse);
 
         final ODataRequestResultGeneric testResult =
             new ODataRequestResultGeneric(oDataRequest, httpResponse, httpClient);

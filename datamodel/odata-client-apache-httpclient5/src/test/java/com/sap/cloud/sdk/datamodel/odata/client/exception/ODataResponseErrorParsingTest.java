@@ -16,6 +16,7 @@ import static org.apache.hc.core5.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -98,7 +99,7 @@ class ODataResponseErrorParsingTest
     void testWithoutHttpEntity()
     {
         final HttpClient mockedClient = mock(HttpClient.class);
-        doReturn(new BasicClassicHttpResponse(500, "oh")).when(mockedClient).execute(any(HttpUriRequest.class));
+        doReturn(new BasicClassicHttpResponse(500, "oh")).when(mockedClient).executeOpen(isNull(), any(HttpUriRequest.class), isNull());
 
         final ODataRequestRead request = new ODataRequestRead(ODATA_SERVICE_PATH, "", "", ODataProtocol.V4);
         assertThatExceptionOfType(ODataResponseException.class)
