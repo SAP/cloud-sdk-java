@@ -35,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class MultipartHttpResponse extends BasicClassicHttpResponse
 {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Pattern PATTERN_STATUS_LINE = Pattern.compile("^HTTP/(\\d).(\\d) (\\d+) (.*)");
     private static final Pattern PATTERN_NEW_LINE = Pattern.compile("\\R");
@@ -148,7 +151,15 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
     }
 
     @Serial
-    private void readObject(java.io.ObjectInputStream in ) throws java.io.NotSerializableException
+    private void readObject( java.io.ObjectInputStream in )
+        throws java.io.NotSerializableException
+    {
+        throw new java.io.NotSerializableException(getClass().getName());
+    }
+
+    @Serial
+    private void writeObject( java.io.ObjectOutputStream out )
+        throws java.io.NotSerializableException
     {
         throw new java.io.NotSerializableException(getClass().getName());
     }

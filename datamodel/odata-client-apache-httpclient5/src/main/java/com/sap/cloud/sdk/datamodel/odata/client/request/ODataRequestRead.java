@@ -13,7 +13,6 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.query.StructuredQuery;
 
-import io.vavr.control.Try;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

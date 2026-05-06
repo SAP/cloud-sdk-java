@@ -711,28 +711,30 @@ public class ODataRequestResultGeneric
     }
 
     @Nonnull
-    private static String removeDuplicateQueryParameters(
-        @Nonnull final String nextLinkQuery,
-        @Nonnull final String currentRequestQuery )
+    private static
+        String
+        removeDuplicateQueryParameters( @Nonnull final String nextLinkQuery, @Nonnull final String currentRequestQuery )
     {
         if( currentRequestQuery.isEmpty() ) {
             return nextLinkQuery;
         }
-        final Set<String> currentKeys = Arrays
-            .stream(currentRequestQuery.split("&"))
-            .map(param -> param.split("=", 2)[0])
-            .collect(Collectors.toSet());
+        final Set<String> currentKeys =
+            Arrays
+                .stream(currentRequestQuery.split("&"))
+                .map(param -> param.split("=", 2)[0])
+                .collect(Collectors.toSet());
 
-        final String deduped = Arrays
-            .stream(nextLinkQuery.split("&"))
-            .filter(param -> {
-                final String key = param.split("=", 2)[0];
-                return key.startsWith("$") || !currentKeys.contains(key);
-            })
-            .collect(Collectors.joining("&"));
+        final String deduped = Arrays.stream(nextLinkQuery.split("&")).filter(param -> {
+            final String key = param.split("=", 2)[0];
+            return key.startsWith("$") || !currentKeys.contains(key);
+        }).collect(Collectors.joining("&"));
 
         if( !deduped.equals(nextLinkQuery) ) {
-            log.debug("Removed duplicate query parameters from next page link. Before: {}, After: {}", nextLinkQuery, deduped);
+            log
+                .debug(
+                    "Removed duplicate query parameters from next page link. Before: {}, After: {}",
+                    nextLinkQuery,
+                    deduped);
         }
         return deduped;
     }

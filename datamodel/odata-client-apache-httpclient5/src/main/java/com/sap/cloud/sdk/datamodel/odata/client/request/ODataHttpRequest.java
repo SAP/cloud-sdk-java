@@ -118,16 +118,12 @@ class ODataHttpRequest
         }
         catch( final ConnectionRequestTimeoutException e ) {
             log.debug("Connection pool timed out.", e);
-            throw new ODataConnectionException(
-                this.odataRequest,
-                httpRequest,
-                """                                                                                                                                                                                                    
-                  Time out occurred because of a probable connection leak. Please execute your request \
-                  with try-with-resources to ensure resources are properly closed. \
-                  If you are using the OData client instead to execute your request, explicitly consume \
-                  the entity of the associated ClassicHttpResponse using EntityUtils.consume(httpEntity)\
-                  """,
-                e);
+            throw new ODataConnectionException(this.odataRequest, httpRequest, """
+                Time out occurred because of a probable connection leak. Please execute your request \
+                with try-with-resources to ensure resources are properly closed. \
+                If you are using the OData client instead to execute your request, explicitly consume \
+                the entity of the associated ClassicHttpResponse using EntityUtils.consume(httpEntity)\
+                """, e);
 
         }
         catch( final IOException e ) {
