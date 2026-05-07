@@ -217,7 +217,7 @@ public class ODataRequestUpdate extends ODataRequestGeneric
          */
         private ComparableHttpEntity( final String json )
         {
-            this(json, new StringEntity(json, ContentType.APPLICATION_JSON));
+            this(json, new StringEntity(json, ContentType.create("application/json")));
         }
     }
 }

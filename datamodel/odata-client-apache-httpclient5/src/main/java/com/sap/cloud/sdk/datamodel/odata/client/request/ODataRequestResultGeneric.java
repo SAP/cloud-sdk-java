@@ -10,15 +10,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +36,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonToken;
+import com.sap.cloud.sdk.cloudplatform.connectivity.UriQueryMerger;
 import com.sap.cloud.sdk.datamodel.odata.client.JsonPath;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataResponseDeserializer;
@@ -514,6 +512,7 @@ public class ODataRequestResultGeneric
             if( resultElement != null ) {
                 String nextLink = resultElement.asString();
                 log.debug("Found reference to next page: {}", nextLink);
+                nextLink = removeDuplicateQueryParameters(nextLink);
                 return Option.of(nextLink);
             }
         }
@@ -648,8 +647,7 @@ public class ODataRequestResultGeneric
             getNextLink()
                 .toTry(() -> new IllegalStateException("Current page of result-set does not reference a next page."))
                 .map(URI::create)
-                .map(URI::getRawQuery)
-                .map(q -> removeDuplicateQueryParameters(q, request.getQueryString()));
+                .map(URI::getRawQuery);
 
         if( nextQuery.isFailure() ) {
             final String message = "Unable to extract query parameters for querying next page of result-set.";
@@ -711,31 +709,32 @@ public class ODataRequestResultGeneric
     }
 
     @Nonnull
-    private static
-        String
-        removeDuplicateQueryParameters( @Nonnull final String nextLinkQuery, @Nonnull final String currentRequestQuery )
+    private String removeDuplicateQueryParameters( @Nonnull final String nextLink )
     {
-        if( currentRequestQuery.isEmpty() ) {
-            return nextLinkQuery;
+        if( !(httpClient instanceof UriQueryMerger) ) {
+            return nextLink;
         }
-        final Set<String> currentKeys =
-            Arrays
-                .stream(currentRequestQuery.split("&"))
-                .map(param -> param.split("=", 2)[0])
-                .collect(Collectors.toSet());
-
-        final String deduped = Arrays.stream(nextLinkQuery.split("&")).filter(param -> {
-            final String key = param.split("=", 2)[0];
-            return key.startsWith("$") || !currentKeys.contains(key);
-        }).collect(Collectors.joining("&"));
-
-        if( !deduped.equals(nextLinkQuery) ) {
-            log
-                .debug(
-                    "Removed duplicate query parameters from next page link. Before: {}, After: {}",
-                    nextLinkQuery,
-                    deduped);
+        final String query = ((UriQueryMerger) httpClient).mergeRequestUri(URI.create("")).getRawQuery();
+        if( query == null ) {
+            return nextLink;
         }
-        return deduped;
+        final String[] segments = nextLink.split("\\?", 2);
+        if( segments.length < 2 ) {
+            return nextLink;
+        }
+        final String[] queryArguments = query.split("&");
+        for( final String argument : queryArguments ) {
+            if( segments[1].contains(argument) ) {
+                segments[1] = segments[1].replace(argument, "");
+            }
+        }
+        if( nextLink.length() + 1 == segments[0].length() + segments[1].length() ) {
+            return nextLink;
+        }
+        // after removal of arguments clean-up query: fix "?foo=bar&&&one=1", fix "?&one=1", fix "?foo=bar&"
+        segments[1] = segments[1].replaceAll("&&+", "&").replace("?&", "?").replaceAll("&$", "");
+        final String updatedLink = segments[0] + "?" + segments[1];
+        log.debug("Updated reference to next page: {}", updatedLink);
+        return updatedLink;
     }
 }

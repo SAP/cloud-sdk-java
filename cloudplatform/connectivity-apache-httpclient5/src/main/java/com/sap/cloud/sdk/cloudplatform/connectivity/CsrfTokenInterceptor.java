@@ -56,7 +56,8 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
             return;
         }
 
-        final HttpHead headRequest = new HttpHead(requestUri);
+        final URI csrfFetchUri = deriveServiceRootUri(requestUri);
+        final HttpHead headRequest = new HttpHead(csrfFetchUri);
         headRequest.addHeader(X_CSRF_TOKEN_HEADER_KEY, X_CSRF_TOKEN_FETCH_VALUE);
 
         try {
@@ -93,5 +94,35 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
     static Set<String> getMutatingMethods()
     {
         return MUTATING_METHODS;
+    }
+
+    /**
+     * Derives the service root URI from the full request URI by truncating the path at the first OData resource
+     * segment. This matches the HC4 behavior where the CSRF token HEAD request was always sent to the service path
+     * root rather than the specific resource path.
+     * <p>
+     * The service root is identified as the path up to and including the trailing slash before the first resource
+     * segment. Example: {@code http://host/service/$batch} → {@code http://host/service/},
+     * {@code http://host/service/Entity} → {@code http://host/service/}
+     */
+    @Nonnull
+    static URI deriveServiceRootUri( @Nonnull final URI requestUri )
+    {
+        final String path = requestUri.getRawPath();
+        // Service root is everything up to and including the trailing slash before the first resource segment.
+        // Find the last '/' that is followed by at least one more character (i.e., there is a resource segment).
+        final int lastSlash = path.lastIndexOf('/');
+        // If the path ends with '/' already (e.g. "/service/"), use it as-is.
+        // Otherwise strip the last segment (e.g. "/service/Entity" -> "/service/", "/service/$batch" -> "/service/").
+        final String servicePath = (lastSlash >= 0 && lastSlash < path.length() - 1)
+            ? path.substring(0, lastSlash + 1)
+            : path;
+        try {
+            return new URI(requestUri.getScheme(), requestUri.getAuthority(), servicePath, null, null);
+        }
+        catch( final Exception e ) {
+            log.debug("Failed to derive service root URI, falling back to full request URI.", e);
+            return requestUri;
+        }
     }
 }

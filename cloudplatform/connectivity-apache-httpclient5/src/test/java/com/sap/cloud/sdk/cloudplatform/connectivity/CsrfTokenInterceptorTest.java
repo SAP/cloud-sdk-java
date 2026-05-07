@@ -41,7 +41,8 @@ import lombok.SneakyThrows;
 class CsrfTokenInterceptorTest
 {
     private static final String CSRF_TOKEN = "test-csrf-token";
-    private static final String SERVICE_PATH = "/service/path";
+    private static final String SERVICE_ROOT = "/service/";
+    private static final String REQUEST_PATH = "/service/entity";
 
     private HttpClient mockHttpClient;
     private CsrfTokenInterceptor sut;
@@ -73,17 +74,17 @@ class CsrfTokenInterceptorTest
     static HttpRequest[] mutatingMethods()
     {
         return new HttpRequest[] {
-            new HttpPost(SERVICE_PATH),
-            new HttpPut(SERVICE_PATH),
-            new HttpPatch(SERVICE_PATH),
-            new HttpDelete(SERVICE_PATH) };
+            new HttpPost(REQUEST_PATH),
+            new HttpPut(REQUEST_PATH),
+            new HttpPatch(REQUEST_PATH),
+            new HttpDelete(REQUEST_PATH) };
     }
 
     @Test
     @SneakyThrows
     void tokenIsNotFetchedForGetRequest()
     {
-        final HttpGet request = new HttpGet(SERVICE_PATH);
+        final HttpGet request = new HttpGet(REQUEST_PATH);
 
         sut.process(request, null, null);
 
@@ -95,7 +96,7 @@ class CsrfTokenInterceptorTest
     @SneakyThrows
     void tokenIsNotFetchedForHeadRequest()
     {
-        final HttpHead request = new HttpHead(SERVICE_PATH);
+        final HttpHead request = new HttpHead(REQUEST_PATH);
 
         sut.process(request, null, null);
 
@@ -107,7 +108,7 @@ class CsrfTokenInterceptorTest
     @SneakyThrows
     void tokenIsNotFetchedWhenAlreadyPresent()
     {
-        final HttpPost request = new HttpPost(SERVICE_PATH);
+        final HttpPost request = new HttpPost(REQUEST_PATH);
         request.addHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, "existing-token");
 
         sut.process(request, null, null);
@@ -121,18 +122,18 @@ class CsrfTokenInterceptorTest
     @SneakyThrows
     void requestProceedsWithoutTokenWhenServerReturnsNoHeader( final WireMockRuntimeInfo wm )
     {
-        wm.getWireMock().register(head(urlEqualTo(SERVICE_PATH)).willReturn(ok()));
+        wm.getWireMock().register(head(urlEqualTo(SERVICE_ROOT)).willReturn(ok()));
 
         final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         final HttpClient realClient = new ApacheHttpClient5FactoryBuilder().build().createHttpClient(destination);
         final CsrfTokenInterceptor interceptor = new CsrfTokenInterceptor(realClient);
 
-        final HttpPost request = new HttpPost(SERVICE_PATH);
+        final HttpPost request = new HttpPost(REQUEST_PATH);
 
         assertThatCode(() -> interceptor.process(request, null, null)).doesNotThrowAnyException();
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY)).isNull();
 
-        wm.getWireMock().verifyThat(headRequestedFor(urlEqualTo(SERVICE_PATH)));
+        wm.getWireMock().verifyThat(headRequestedFor(urlEqualTo(SERVICE_ROOT)));
     }
 
     @Test
@@ -142,7 +143,7 @@ class CsrfTokenInterceptorTest
         when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
             .thenThrow(new IOException("Connection refused"));
 
-        final HttpPost request = new HttpPost(SERVICE_PATH);
+        final HttpPost request = new HttpPost(REQUEST_PATH);
 
         assertThatCode(() -> sut.process(request, null, null)).doesNotThrowAnyException();
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY)).isNull();
@@ -155,14 +156,14 @@ class CsrfTokenInterceptorTest
         wm
             .getWireMock()
             .register(
-                head(urlEqualTo(SERVICE_PATH))
+                head(urlEqualTo(SERVICE_ROOT))
                     .willReturn(ok().withHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, CSRF_TOKEN)));
 
         final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
         final HttpClient realClient = new ApacheHttpClient5FactoryBuilder().build().createHttpClient(destination);
         final CsrfTokenInterceptor interceptor = new CsrfTokenInterceptor(realClient);
 
-        final HttpPost request = new HttpPost(SERVICE_PATH);
+        final HttpPost request = new HttpPost(REQUEST_PATH);
         interceptor.process(request, null, null);
 
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
