@@ -23,8 +23,7 @@ class ODataRequestResultTest
     void testGetAllHeaderHeaderValuesRemovesNullValues()
     {
         final BasicClassicHttpResponse httpResponse =
-            (BasicClassicHttpResponse) mockResponseWithHeaders(
-                entry("Header", Arrays.asList("Value", null, "   ", null)));
+            mockResponseWithHeaders(entry("Header", Arrays.asList("Value", null, "   ", null)));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -39,8 +38,7 @@ class ODataRequestResultTest
     void testGetAllHeaderValuesDoesNotSplitValues()
     {
         final BasicClassicHttpResponse httpResponse =
-            (BasicClassicHttpResponse) mockResponseWithHeaders(
-                entry("Header", Collections.singletonList("Value1-1, Value1-2")));
+            mockResponseWithHeaders(entry("Header", Collections.singletonList("Value1-1, Value1-2")));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -55,8 +53,7 @@ class ODataRequestResultTest
     void testGetAllHeaderValuesDoesNotSplitCookieValues()
     {
         final BasicClassicHttpResponse httpResponse =
-            (BasicClassicHttpResponse) mockResponseWithHeaders(
-                entry("Set-Cookie", Collections.singletonList("Value1-1; Value1-2")));
+            mockResponseWithHeaders(entry("Set-Cookie", Collections.singletonList("Value1-1; Value1-2")));
 
         final ODataRequestResult sut = mock(ODataRequestResult.class);
         when(sut.getHttpResponse()).thenReturn(httpResponse);
@@ -71,7 +68,7 @@ class ODataRequestResultTest
     void testGetAllHeaderValuesMergesNamesCaseInsensitively()
     {
         final BasicClassicHttpResponse httpResponse =
-            (BasicClassicHttpResponse) mockResponseWithHeaders(
+            mockResponseWithHeaders(
                 entry("Header", Collections.singletonList("Value1-1")),
                 entry("header", Collections.singletonList("Value1-2")));
 

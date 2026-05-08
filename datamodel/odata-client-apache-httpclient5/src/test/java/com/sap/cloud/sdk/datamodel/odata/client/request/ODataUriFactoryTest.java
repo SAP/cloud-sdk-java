@@ -150,7 +150,12 @@ class ODataUriFactoryTest
 
         final String rootPath = wireMockServer.url("root-path/");
         final URI uri = URI.create(rootPath).resolve(subPath + "?" + query);
-        HttpClients.createDefault().execute(new HttpGet(uri));
+        try(
+            final var client = HttpClients.createDefault();
+            final var response = client.executeOpen(null, new HttpGet(uri), null) ) {
+            // response is unused; we only car about that the request was made
+            response.setCode(200);
+        }
 
         wireMockServer.stop();
         wireMockServer.verify(getRequestedFor(urlEqualTo("/root-path/sub-path/Entity(Key=123,Value='%3F')" + // escaped question mark

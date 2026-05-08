@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
+
 import org.apache.hc.client5.http.config.Configurable;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -21,8 +23,6 @@ import com.sap.cloud.sdk.cloudplatform.exception.ShouldNotHappenException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.annotation.Nonnull;
 
 /**
  * Decorates the HttpClient of a given destination. This will allow the HttpClient user to send the relative url path

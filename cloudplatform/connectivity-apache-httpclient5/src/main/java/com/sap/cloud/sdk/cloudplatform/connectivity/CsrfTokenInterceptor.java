@@ -98,8 +98,8 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
 
     /**
      * Derives the service root URI from the full request URI by truncating the path at the first OData resource
-     * segment. This matches the HC4 behavior where the CSRF token HEAD request was always sent to the service path
-     * root rather than the specific resource path.
+     * segment. This matches the HC4 behavior where the CSRF token HEAD request was always sent to the service path root
+     * rather than the specific resource path.
      * <p>
      * The service root is identified as the path up to and including the trailing slash before the first resource
      * segment. Example: {@code http://host/service/$batch} → {@code http://host/service/},
@@ -113,10 +113,9 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
         // Find the last '/' that is followed by at least one more character (i.e., there is a resource segment).
         final int lastSlash = path.lastIndexOf('/');
         // If the path ends with '/' already (e.g. "/service/"), use it as-is.
-        // Otherwise strip the last segment (e.g. "/service/Entity" -> "/service/", "/service/$batch" -> "/service/").
-        final String servicePath = (lastSlash >= 0 && lastSlash < path.length() - 1)
-            ? path.substring(0, lastSlash + 1)
-            : path;
+        // Otherwise, strip the last segment (e.g. "/service/Entity" -> "/service/", "/service/$batch" -> "/service/").
+        final String servicePath =
+            (lastSlash >= 0 && lastSlash < path.length() - 1) ? path.substring(0, lastSlash + 1) : path;
         try {
             return new URI(requestUri.getScheme(), requestUri.getAuthority(), servicePath, null, null);
         }
