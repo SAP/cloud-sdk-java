@@ -281,6 +281,27 @@ paths:
                 format: binary
         '404':
           description: Soda product not found
+  /sodas/upload:
+    post:
+      summary: Import soda data from a file
+      operationId: sodasImportPost
+      tags:
+        - Sodas
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imported successfully
   /orders:
     post:
       summary: Create a new order

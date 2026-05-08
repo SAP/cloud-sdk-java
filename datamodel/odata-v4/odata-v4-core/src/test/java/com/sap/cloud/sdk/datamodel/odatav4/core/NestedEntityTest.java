@@ -175,6 +175,19 @@ class NestedEntityTest
     }
 
     @Test
+    void testCountNestedTripToRequestIsStable()
+    {
+        final Person personByKey = Person.builder().userName("russellwhyte").build();
+        final CountRequestBuilder<Trip> countBuilder =
+            service.forEntity(personByKey).navigateTo(Person.TO_TRIPS).count();
+
+        assertThat(countBuilder.toRequest().getRelativeUri())
+            .hasToString("/TripPinServiceRW/People('russellwhyte')/Trips/$count");
+        assertThat(countBuilder.toRequest().getRelativeUri())
+            .hasToString("/TripPinServiceRW/People('russellwhyte')/Trips/$count");
+    }
+
+    @Test
     void testGetByKeyNestedPlanItem()
     {
         final Person personByKey = Person.builder().userName("russellwhyte").build();

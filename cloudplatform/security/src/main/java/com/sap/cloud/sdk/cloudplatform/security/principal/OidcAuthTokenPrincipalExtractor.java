@@ -15,6 +15,9 @@ import io.vavr.control.Try;
  */
 class OidcAuthTokenPrincipalExtractor implements PrincipalExtractor
 {
+    private static final String JWT_SAP_ID_TYPE_CLAIM = "sap_id_type";
+    private static final String JWT_SAP_ID_TYPE_USER_VALUE = "user";
+    private static final String JWT_SUB_CLAIM = "sub";
     private static final String JWT_USER_UUID_CLAIM = "user_uuid";
     private static final String JWT_EMAIL_CLAIM = "email";
 
@@ -42,18 +45,39 @@ class OidcAuthTokenPrincipalExtractor implements PrincipalExtractor
     private Try<String> tryGetPrincipalId( @Nonnull final DecodedJWT jwt )
     {
         return Try.of(() -> {
-            final Claim userUuidClaim = jwt.getClaim(JWT_USER_UUID_CLAIM);
-
-            if( userUuidClaim != null && !userUuidClaim.isMissing() && !userUuidClaim.isNull() ) {
-                return userUuidClaim.asString();
+            // First, try to use the new sap_id_type and sub claims (preferred approach)
+            final String sapIdType = getClaimAsString(jwt, JWT_SAP_ID_TYPE_CLAIM);
+            if( JWT_SAP_ID_TYPE_USER_VALUE.equals(sapIdType) ) {
+                final String sub = getClaimAsString(jwt, JWT_SUB_CLAIM);
+                if( sub != null ) {
+                    return sub;
+                }
             }
 
-            final Claim emailClaim = jwt.getClaim(JWT_EMAIL_CLAIM);
-            if( emailClaim != null && !emailClaim.isMissing() && !emailClaim.isNull() ) {
-                return emailClaim.asString();
+            // Fallback to legacy user_uuid claim
+            final String userUuid = getClaimAsString(jwt, JWT_USER_UUID_CLAIM);
+            if( userUuid != null ) {
+                return userUuid;
             }
 
-            throw new PrincipalAccessException("The current JWT does not contain the IAS user uuid or an email.");
+            // Fallback to email claim
+            final String email = getClaimAsString(jwt, JWT_EMAIL_CLAIM);
+            if( email != null ) {
+                return email;
+            }
+
+            throw new PrincipalAccessException(
+                "The current JWT does not contain a valid principal identifier. "
+                    + "Expected one of: sap_id_type='user' with sub claim, user_uuid, or email.");
         });
+    }
+
+    private String getClaimAsString( @Nonnull final DecodedJWT jwt, @Nonnull final String claimName )
+    {
+        final Claim claim = jwt.getClaim(claimName);
+        if( claim != null && !claim.isMissing() && !claim.isNull() ) {
+            return claim.asString();
+        }
+        return null;
     }
 }

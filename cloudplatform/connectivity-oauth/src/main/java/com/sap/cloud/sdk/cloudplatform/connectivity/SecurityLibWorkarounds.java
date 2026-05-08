@@ -1,19 +1,16 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationKeyStoreComparator.resolveCertificatesOnly;
-import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationKeyStoreComparator.resolveKeyStoreHashCode;
-
 import java.security.KeyStore;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
+import com.sap.cloud.sdk.cloudplatform.exception.CloudPlatformException;
 import com.sap.cloud.security.config.ClientIdentity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Value;
 
 final class SecurityLibWorkarounds
 {
@@ -22,14 +19,18 @@ final class SecurityLibWorkarounds
         throw new IllegalStateException("This utility class should never be instantiated.");
     }
 
-    @Getter
-    @AllArgsConstructor
+    @Value
     static class ZtisClientIdentity implements ClientIdentity
     {
         @Nonnull
-        private final String id;
+        String id;
+
+        // Exclude certificates from equals & hash code since they rotate dynamically at runtime
+        // Instead, the OAuth2Service cache explicitly checks for outdated KeyStores
         @Nonnull
-        private final KeyStore keyStore;
+        @EqualsAndHashCode.Exclude
+        @ToString.Exclude
+        Supplier<KeyStore> keyStoreSource;
 
         @Override
         public boolean isCertificateBased()
@@ -37,29 +38,17 @@ final class SecurityLibWorkarounds
             return true;
         }
 
-        // The identity will be used as cache key, so it's important we correctly implement equals/hashCode
-        @Override
-        public boolean equals( final Object obj )
+        @Nonnull
+        KeyStore getKeyStore()
         {
-            if( this == obj ) {
-                return true;
+            try {
+                return keyStoreSource.get();
             }
-
-            if( obj == null || getClass() != obj.getClass() ) {
-                return false;
+            catch( final Exception e ) {
+                throw new CloudPlatformException(
+                    "Failed to load X509 certificate for credential type X509_ATTESTED.",
+                    e);
             }
-
-            final ZtisClientIdentity that = (ZtisClientIdentity) obj;
-            return new EqualsBuilder()
-                .append(id, that.id)
-                .append(resolveCertificatesOnly(keyStore), resolveCertificatesOnly(that.keyStore))
-                .isEquals();
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return new HashCodeBuilder(41, 71).append(id).append(resolveKeyStoreHashCode(keyStore)).build();
         }
     }
 }

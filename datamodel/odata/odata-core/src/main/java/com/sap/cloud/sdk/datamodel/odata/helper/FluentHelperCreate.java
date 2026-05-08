@@ -86,8 +86,8 @@ public abstract class FluentHelperCreate<FluentHelperT, EntityT extends VdmEntit
         if( linkFromParentEntity != null && parentEntity != null ) {
             resourcePath =
                 ODataResourcePath
-                    .of(parentEntity.getEntityCollection(), ODataEntityKey.of(parentEntity.getKey(), ODataProtocol.V2));
-            resourcePath.addSegment(linkFromParentEntity.getFieldName());
+                    .of(parentEntity.getEntityCollection(), ODataEntityKey.of(parentEntity.getKey(), ODataProtocol.V2))
+                    .addSegment(linkFromParentEntity.getFieldName());
         } else {
             resourcePath = ODataResourcePath.of(getEntityCollection());
         }

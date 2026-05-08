@@ -757,8 +757,12 @@ class BtpServicePropertySuppliersTest
 
             final OAuth2PropertySupplier sut = IDENTITY_AUTHENTICATION.resolve(options);
             assertThat(sut).isNotNull();
+            assertThat(sut.getClientIdentity()).isInstanceOf(SecurityLibWorkarounds.ZtisClientIdentity.class);
 
-            assertThatThrownBy(sut::getClientIdentity)
+            final var identity = (SecurityLibWorkarounds.ZtisClientIdentity) sut.getClientIdentity();
+            assertThat(identity.getId()).isEqualTo("ias-client-id");
+
+            assertThatThrownBy(identity::getKeyStore)
                 .isInstanceOf(CloudPlatformException.class)
                 .describedAs("We are not mocking the ZTIS service here so this should fail")
                 .hasRootCauseInstanceOf(ServiceBindingAccessException.class);

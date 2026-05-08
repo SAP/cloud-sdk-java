@@ -206,9 +206,15 @@ class DefaultOAuth2PropertySupplierTest
         sut = new DefaultOAuth2PropertySupplier(options);
 
         assertThat(sut.getCredentialType()).isEqualTo(CredentialType.X509_ATTESTED);
-        assertThatThrownBy(sut::getClientIdentity)
+        assertThat(sut).isNotNull();
+        assertThat(sut.getClientIdentity()).isInstanceOf(SecurityLibWorkarounds.ZtisClientIdentity.class);
+
+        final var identity = (SecurityLibWorkarounds.ZtisClientIdentity) sut.getClientIdentity();
+        assertThat(identity.getId()).isEqualTo("id");
+
+        assertThatThrownBy(identity::getKeyStore)
             .isInstanceOf(CloudPlatformException.class)
-            .describedAs("We are not mocking the Zero Trust Identity Service here, so this should be a failure")
+            .describedAs("We are not mocking the ZTIS service here so this should fail")
             .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
     }
 
