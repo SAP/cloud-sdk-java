@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -168,5 +169,99 @@ class CsrfTokenInterceptorTest
 
         assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
             .isEqualTo(CSRF_TOKEN);
+    }
+
+    @Test
+    @SneakyThrows
+    void nonPrintableCharactersAreStrippedFromToken()
+    {
+        final String tokenWithNonPrintable = "valid\u0001token\u007f";
+        final ClassicHttpResponse headResponse = new BasicClassicHttpResponse(200);
+        headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, tokenWithNonPrintable));
+
+        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(inv -> ((HttpClientResponseHandler<?>) inv.getArgument(1)).handleResponse(headResponse));
+
+        final HttpPost request = new HttpPost(REQUEST_PATH);
+        sut.process(request, null, null);
+
+        assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
+            .isEqualTo("validtoken");
+    }
+
+    @Test
+    @SneakyThrows
+    void onlyFirstTokenHeaderIsUsedWhenMultipleReturned()
+    {
+        final ClassicHttpResponse headResponse = new BasicClassicHttpResponse(200);
+        headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, "first-token"));
+        headResponse.addHeader(new BasicHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, "second-token"));
+
+        when(mockHttpClient.execute(any(HttpHead.class), any(HttpClientResponseHandler.class)))
+            .thenAnswer(inv -> ((HttpClientResponseHandler<?>) inv.getArgument(1)).handleResponse(headResponse));
+
+        final HttpPost request = new HttpPost(REQUEST_PATH);
+        sut.process(request, null, null);
+
+        assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
+            .isEqualTo("first-token");
+    }
+
+    @Test
+    @SneakyThrows
+    void headRequestIsSentToServiceRootNotResourcePath( final WireMockRuntimeInfo wm )
+    {
+        wm
+            .getWireMock()
+            .register(
+                head(urlEqualTo(SERVICE_ROOT))
+                    .willReturn(ok().withHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY, CSRF_TOKEN)));
+
+        final DefaultHttpDestination destination = DefaultHttpDestination.builder(wm.getHttpBaseUrl()).build();
+        final HttpClient realClient = new ApacheHttpClient5FactoryBuilder().build().createHttpClient(destination);
+        final CsrfTokenInterceptor interceptor = new CsrfTokenInterceptor(realClient);
+
+        // Request targets a specific resource, but HEAD for CSRF must go to the service root
+        final HttpPost request = new HttpPost("/service/Entity(1)");
+        interceptor.process(request, null, null);
+
+        wm.getWireMock().verifyThat(headRequestedFor(urlEqualTo(SERVICE_ROOT)));
+        assertThat(request.getFirstHeader(CsrfTokenInterceptor.X_CSRF_TOKEN_HEADER_KEY).getValue())
+            .isEqualTo(CSRF_TOKEN);
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsLastSegment()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/service/Entity")))
+            .isEqualTo(URI.create("http://host/service/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_preservesTrailingSlash()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/service/")))
+            .isEqualTo(URI.create("http://host/service/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_stripsDollarBatchSegment()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/service/$batch")))
+            .isEqualTo(URI.create("http://host/service/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_handlesRootPath()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/")))
+            .isEqualTo(URI.create("http://host/"));
+    }
+
+    @Test
+    void deriveServiceRootUri_handlesDeeplyNestedPath()
+    {
+        assertThat(CsrfTokenInterceptor.deriveServiceRootUri(URI.create("http://host/a/b/c/Entity")))
+            .isEqualTo(URI.create("http://host/a/b/c/"));
     }
 }

@@ -120,6 +120,12 @@ public class ODataResponseDeserializer
         return null;
     }
 
+    @Nonnull
+    private String cleanJsonForLogs( @Nullable final JsonElement json )
+    {
+        return String.valueOf(json).replace('\r', ' ').replace('\n', ' ').replace('\t', ' ');
+    }
+
     @Nullable
     private JsonElement getResultJsonElement( @Nonnull final JsonElement element, @Nonnull final JsonPath path )
     {
@@ -127,14 +133,23 @@ public class ODataResponseDeserializer
         JsonElement resultElement = element;
         for( int i = 0; i < nodes.size(); i++ ) {
             if( resultElement == null || !resultElement.isJsonObject() ) {
-                log.warn("JSON path {} could not be resolved for {} at position {}.", path, resultElement, i);
+                log
+                    .warn(
+                        "JSON path {} could not be resolved for {} at position {}.",
+                        path,
+                        cleanJsonForLogs(resultElement),
+                        i);
                 return null;
             }
             if( nodes.get(i).equals("*") ) {
                 if( !resultElement.getAsJsonObject().entrySet().isEmpty() ) {
                     resultElement = resultElement.getAsJsonObject().entrySet().iterator().next().getValue();
                 } else {
-                    log.warn("Wildcard in JSON path {}  did not match anything for {}.", path, resultElement);
+                    log
+                        .warn(
+                            "Wildcard in JSON path {}  did not match anything for {}.",
+                            path,
+                            cleanJsonForLogs(resultElement));
                     return null;
                 }
             } else {

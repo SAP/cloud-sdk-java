@@ -3,6 +3,7 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +27,7 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
     private static final String X_CSRF_TOKEN_FETCH_VALUE = "fetch";
 
     private static final Set<String> MUTATING_METHODS = Set.of("POST", "PUT", "PATCH", "DELETE");
-    private static final String NON_PRINTABLE_CHARS = "[^ -~]";
+    private static final Pattern NON_PRINTABLE_CHARS = Pattern.compile("[^ -~]");
 
     @Nonnull
     private final HttpClient httpClient;
@@ -65,13 +66,13 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
                 final Header header = response.getFirstHeader(X_CSRF_TOKEN_HEADER_KEY);
                 if( header == null || header.getValue() == null ) {
                     log
-                        .debug(
+                        .warn(
                             "Target system did not respond with a {} header. "
                                 + "The subsequent request may fail if a CSRF token is required.",
                             X_CSRF_TOKEN_HEADER_KEY);
                     return null;
                 }
-                return header.getValue().replaceAll(NON_PRINTABLE_CHARS, "");
+                return NON_PRINTABLE_CHARS.matcher(header.getValue()).replaceAll("");
             });
 
             if( token != null ) {
@@ -81,19 +82,11 @@ class CsrfTokenInterceptor implements HttpRequestInterceptor
         }
         catch( final Exception e ) {
             log
-                .debug(
+                .warn(
                     "CSRF token retrieval failed: the HEAD request was not successful. "
                         + "The subsequent request may fail if a CSRF token is required.",
                     e);
         }
-    }
-
-    /**
-     * Returns the request methods for which this interceptor will attempt to fetch a CSRF token. Used for testing.
-     */
-    static Set<String> getMutatingMethods()
-    {
-        return MUTATING_METHODS;
     }
 
     /**
