@@ -338,6 +338,6 @@ class ODataResponseParsingIntegrationTest
             .isThrownBy(result::getInlineCount)
             .havingRootCause()
             .isInstanceOf(IOException.class)
-            .withMessage("Attempted read from closed stream.");
+            .withMessage("Stream closed");
     }
 }

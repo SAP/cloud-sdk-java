@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -217,9 +218,8 @@ class ODataClientQueryBatchUnitTest
         catch( final Exception e ) {
             assertThat(e)
                 .isInstanceOf(ODataConnectionException.class)
-                .hasRootCauseExactlyInstanceOf(IOException.class)
-                .hasMessageContaining(
-                    "Please execute your request with try-with-resources to ensure resources are properly closed.");
+                .hasRootCauseExactlyInstanceOf(SocketException.class)
+                .hasMessageContaining("Connection was aborted.");
         }
 
     }
@@ -265,10 +265,15 @@ class ODataClientQueryBatchUnitTest
         final HttpClient httpClient = mock(HttpClient.class);
 
         assertThatCode(
-            () -> new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
-                .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V4))
-                .addRead(new ODataRequestRead("other/", "People", "$top=2", ODataProtocol.V4))
-                .execute(httpClient))
+            () -> {
+                try( final ODataRequestResultMultipartGeneric ignored =
+                    new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
+                        .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V4))
+                        .addRead(new ODataRequestRead("other/", "People", "$top=2", ODataProtocol.V4))
+                        .execute(httpClient) ) {
+                    assertThat(ignored).isNotNull();
+                }
+            })
             .isInstanceOf(ODataRequestException.class);
     }
 
@@ -407,9 +412,14 @@ class ODataClientQueryBatchUnitTest
         final HttpClient httpClient = mock(HttpClient.class);
 
         assertThatCode(
-            () -> new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
-                .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V2))
-                .execute(httpClient))
+            () -> {
+                try( final ODataRequestResultMultipartGeneric ignored =
+                    new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
+                        .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V2))
+                        .execute(httpClient) ) {
+                    assertThat(ignored).isNotNull();
+                }
+            })
             .isInstanceOf(ODataRequestException.class);
     }
 
