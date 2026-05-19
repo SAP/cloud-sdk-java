@@ -100,7 +100,7 @@
 		<!-- see https://github.wdf.sap.corp/xs2-java/xs-java-buildpack/blob/master/resources/pom.xml -->
 		<spring.version>6.2.18</spring.version>
 		<spring-security.version>6.1.5</spring-security.version>
-		<slf4j.version>2.0.17</slf4j.version>
+		<slf4j.version>2.0.18</slf4j.version>
 		<assertj-core.version>3.27.7</assertj-core.version>
 		<assertj-vavr.version>0.5.0</assertj-vavr.version>
 		<mockito.version>5.23.0</mockito.version>
@@ -109,13 +109,13 @@
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
-		<maven-plugin.version>3.9.15</maven-plugin.version>
+		<maven-plugin.version>3.9.16</maven-plugin.version>
 		<maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
 		<maven-plugin-testing.version>3.5.1</maven-plugin-testing.version>
 		<caffeine.version>3.2.4</caffeine.version>
 		<openapi-generator.version>7.22.0</openapi-generator.version>
-		<io-swagger-core-v3.version>2.2.49</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.41</io-swagger-parser-v3.version>
+		<io-swagger-core-v3.version>2.2.50</io-swagger-core-v3.version>
+		<io-swagger-parser-v3.version>2.1.42</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.3.0</stax2-api.version>
