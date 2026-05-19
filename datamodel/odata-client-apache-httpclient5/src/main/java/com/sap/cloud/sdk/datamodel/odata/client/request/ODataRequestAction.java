@@ -125,6 +125,6 @@ public class ODataRequestAction extends ODataRequestGeneric
     public ODataRequestResultGeneric execute( @Nonnull final HttpClient httpClient )
     {
         final ODataHttpRequest request = ODataHttpRequest.forBodyJson(this, httpClient, actionParameters);
-        return tryExecuteWithCsrfToken(httpClient, request::requestPost).get();
+        return tryExecute(request::requestPost, httpClient).get();
     }
 }

@@ -227,14 +227,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
             .andThenTry(ODataHealthyResponseValidator::requireHealthyResponse);
     }
 
-    @Nonnull
-    protected Try<ODataRequestResultGeneric> tryExecuteWithCsrfToken(
-        @Nonnull final HttpClient httpClient,
-        @Nonnull final Supplier<ClassicHttpResponse> httpOperation )
-    {
-        return tryExecute(httpOperation, httpClient);
-    }
-
     /**
      * Get the list of headers that will be sent with this request. To add headers, please use
      * {@link #addHeader(String, String) addHeader} and {@link #addHeaderIfAbsent(String, String) addHeaderIfAbsent}

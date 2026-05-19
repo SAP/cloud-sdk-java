@@ -87,6 +87,6 @@ public class ODataRequestDelete extends ODataRequestGeneric
 
         addVersionIdentifierToHeaderIfPresent(versionIdentifier);
 
-        return tryExecuteWithCsrfToken(httpClient, request::requestDelete).get();
+        return tryExecute(request::requestDelete, httpClient).get();
     }
 }

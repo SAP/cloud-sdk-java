@@ -82,6 +82,6 @@ public class ODataRequestCreate extends ODataRequestGeneric
     {
         final ODataHttpRequest request = ODataHttpRequest.forBodyJson(this, httpClient, serializedEntity);
 
-        return tryExecuteWithCsrfToken(httpClient, request::requestPost).get();
+        return tryExecute(request::requestPost, httpClient).get();
     }
 }

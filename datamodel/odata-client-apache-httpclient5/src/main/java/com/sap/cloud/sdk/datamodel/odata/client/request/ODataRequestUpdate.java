@@ -173,9 +173,9 @@ public class ODataRequestUpdate extends ODataRequestGeneric
 
         switch( updateStrategy ) {
             case MODIFY_WITH_PATCH, MODIFY_WITH_PATCH_RECURSIVE_DELTA, MODIFY_WITH_PATCH_RECURSIVE_FULL:
-                return tryExecuteWithCsrfToken(httpClient, request::requestPatch).get();
+                return tryExecute(request::requestPatch, httpClient).get();
             case REPLACE_WITH_PUT:
-                return tryExecuteWithCsrfToken(httpClient, request::requestPut).get();
+                return tryExecute(request::requestPut, httpClient).get();
             default:
                 throw new IllegalStateException("Unexpected update Strategy: " + updateStrategy);
         }
