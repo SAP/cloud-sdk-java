@@ -58,7 +58,7 @@
 		<scp-cf.xsuaa-client.version>4.0.5</scp-cf.xsuaa-client.version>
 		<java-jwt.version>4.5.2</java-jwt.version>
 		<!-- Utility stuff -->
-		<slf4j.version>2.0.17</slf4j.version>
+		<slf4j.version>2.0.18</slf4j.version>
 		<lombok.version>1.18.46</lombok.version>
 		<findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 		<!-- @Nonnull/@Nullable annotations -->
