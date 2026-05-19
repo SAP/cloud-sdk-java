@@ -40,7 +40,8 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataRequestException;
 
-class ODataClientQueryBatchUnitTest {
+class ODataClientQueryBatchUnitTest
+{
     private static final WireMockConfiguration WIREMOCK_CONFIGURATION = wireMockConfig().dynamicPort();
     private static final String SERVICE_PATH = "/service/";
     private static final String ENTITY_COLLECTION = "Entity";
@@ -60,7 +61,8 @@ class ODataClientQueryBatchUnitTest {
     private final Supplier<UUID> uuidProvider = () -> new UUID(0, uuidCounter.incrementAndGet());
 
     @BeforeEach
-    void setup() {
+    void setup()
+    {
         wireMockServer = new WireMockServer(WIREMOCK_CONFIGURATION);
         wireMockServer.start();
         wireMockServer
@@ -70,12 +72,14 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @AfterEach
-    void teardown() {
+    void teardown()
+    {
         wireMockServer.stop();
     }
 
     @BeforeAll
-    static void setupRequests() {
+    static void setupRequests()
+    {
         SAMPLE_REQUEST_READ_MULTIPLE =
             new ODataRequestRead(SERVICE_PATH, ENTITY_COLLECTION, "$filter=Fieldname%20eq%20'hello'", ODataProtocol.V4);
 
@@ -102,7 +106,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testEmptyBatch() {
+    void testEmptyBatch()
+    {
         final String requestBody =
             readResourceFileClrf(ODataClientQueryBatchUnitTest.class, "BatchEmptyRequestBody.txt");
 
@@ -129,7 +134,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testEmptyChangesetBatch() {
+    void testEmptyChangesetBatch()
+    {
         final String requestBody =
             readResourceFileClrf(ODataClientQueryBatchUnitTest.class, "BatchEmptyChangesetRequestBody.txt");
 
@@ -157,7 +163,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testReadOnlyBatch() {
+    void testReadOnlyBatch()
+    {
         final String requestBody =
             readResourceFileClrf(ODataClientQueryBatchUnitTest.class, "BatchReadRequestBody.txt");
 
@@ -185,8 +192,9 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    @Disabled("Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour.")
-    void testReadOnlyBatchForceConnectionLeaks() {
+    @Disabled( "Test triggers a ConnectionPoolTimeoutException. Use it only to manually verify behaviour." )
+    void testReadOnlyBatchForceConnectionLeaks()
+    {
         final String requestBody =
             readResourceFileClrf(ODataClientQueryBatchUnitTest.class, "BatchReadRequestBody.txt");
 
@@ -202,11 +210,12 @@ class ODataClientQueryBatchUnitTest {
 
         try {
             //Try executing multiple batch requests re-using the same client to exhaust the connection pool
-            for (int i = 0; i < 200; i++) {
+            for( int i = 0; i < 200; i++ ) {
                 final ODataRequestResult result = request.execute(client);
                 assertThat(result).isNotNull();
             }
-        } catch (final Exception e) {
+        }
+        catch( final Exception e ) {
             assertThat(e)
                 .isInstanceOf(ODataConnectionException.class)
                 .hasRootCauseExactlyInstanceOf(SocketException.class)
@@ -216,7 +225,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testCombinedBatch() {
+    void testCombinedBatch()
+    {
         final String requestBody = readResourceFileClrf(ODataClientQueryBatchUnitTest.class, "BatchAllRequestBody.txt");
 
         // create batch request
@@ -250,24 +260,25 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testBatchErrorWithDifferentServicePath() {
+    void testBatchErrorWithDifferentServicePath()
+    {
         final HttpClient httpClient = mock(HttpClient.class);
 
-        assertThatCode(
-            () -> {
-                try (final ODataRequestResultMultipartGeneric ignored =
-                         new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
-                             .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V4))
-                             .addRead(new ODataRequestRead("other/", "People", "$top=2", ODataProtocol.V4))
-                             .execute(httpClient)) {
-                    assertThat(ignored).isNotNull();
-                }
-            })
-            .isInstanceOf(ODataRequestException.class);
+        assertThatCode(() -> {
+            try(
+                final ODataRequestResultMultipartGeneric ignored =
+                    new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
+                        .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V4))
+                        .addRead(new ODataRequestRead("other/", "People", "$top=2", ODataProtocol.V4))
+                        .execute(httpClient) ) {
+                assertThat(ignored).isNotNull();
+            }
+        }).isInstanceOf(ODataRequestException.class);
     }
 
     @Test
-    void testServicePathLacksLeadingSlashAndHasTrailingSlash() {
+    void testServicePathLacksLeadingSlashAndHasTrailingSlash()
+    {
         final String servicePath = "service-path/";
         final String entityPath = "entity-path";
 
@@ -285,7 +296,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testServicePathHasLeadingSlashAndLacksTrailingSlash() {
+    void testServicePathHasLeadingSlashAndLacksTrailingSlash()
+    {
         final String servicePath = "/service-path";
         final String entityPath = "entity-path";
 
@@ -303,7 +315,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testServicePathHasLeadingAndTrailingSlash() {
+    void testServicePathHasLeadingAndTrailingSlash()
+    {
         final String servicePath = "/service-path/";
         final String entityPath = "entity-path";
 
@@ -321,7 +334,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testEntityPathContainsSpecialCharacter() {
+    void testEntityPathContainsSpecialCharacter()
+    {
         final String servicePath = "/service-path/";
         final String entityPath = "entity-päth";
 
@@ -339,7 +353,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testServicePathContainsSpecialCharacter() {
+    void testServicePathContainsSpecialCharacter()
+    {
         final String servicePath = "service-päth;v=001";
         final String entityPath = "entity-path";
 
@@ -360,7 +375,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testSingleRequestPathWithSpecialCharacterUnlikeBatchRequestServicePath() {
+    void testSingleRequestPathWithSpecialCharacterUnlikeBatchRequestServicePath()
+    {
         assertThatExceptionOfType(ODataRequestException.class)
             .isThrownBy(
                 () -> new ODataRequestBatch("service-path", ODataProtocol.V4, uuidProvider)
@@ -370,7 +386,8 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testDifferentLeadingSlashesOnBatchAndSingleRequestServicePath() {
+    void testDifferentLeadingSlashesOnBatchAndSingleRequestServicePath()
+    {
         final String batchRequestServicePath = "service-path";
         final String singleRequestServicePath = "/service-path";
         final String entityPath = "entity-path";
@@ -389,30 +406,33 @@ class ODataClientQueryBatchUnitTest {
     }
 
     @Test
-    void testBatchErrorWithDifferentServiceVersions() {
+    void testBatchErrorWithDifferentServiceVersions()
+    {
         final HttpClient httpClient = mock(HttpClient.class);
 
-        assertThatCode(
-            () -> {
-                try (final ODataRequestResultMultipartGeneric ignored =
-                         new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
-                             .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V2))
-                             .execute(httpClient)) {
-                    assertThat(ignored).isNotNull();
-                }
-            })
-            .isInstanceOf(ODataRequestException.class);
+        assertThatCode(() -> {
+            try(
+                final ODataRequestResultMultipartGeneric ignored =
+                    new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
+                        .addRead(new ODataRequestRead("this/", "People", "$top=1", ODataProtocol.V2))
+                        .execute(httpClient) ) {
+                assertThat(ignored).isNotNull();
+            }
+        }).isInstanceOf(ODataRequestException.class);
     }
 
-    private static String readResourceFileClrf(final Class<?> cls, final String resourceFileName) {
+    private static String readResourceFileClrf( final Class<?> cls, final String resourceFileName )
+    {
         return readResourceFile(cls, resourceFileName).replaceAll("(?<!\\r)\\n", "" + ((char) 13) + (char) 10);
     }
 
-    private static String readResourceFile(final Class<?> cls, final String resourceFileName) {
+    private static String readResourceFile( final Class<?> cls, final String resourceFileName )
+    {
         try {
             final URL resourceUrl = cls.getClassLoader().getResource(cls.getSimpleName() + "/" + resourceFileName);
             return Resources.toString(resourceUrl, StandardCharsets.UTF_8);
-        } catch (final IOException e) {
+        }
+        catch( final IOException e ) {
             throw new IllegalStateException(e);
         }
     }
