@@ -135,8 +135,7 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurab
     public URI mergeRequestUri( @Nonnull final URI requestUri )
     {
         final UriPathMerger merger = new UriPathMerger();
-        URI merged;
-        merged = merger.merge(destination.getUri(), requestUri);
+        final URI merged = merger.merge(destination.getUri(), requestUri);
         final String queryString = String.join("&", QueryParamGetter.getQueryParameters(destination));
         return merger.merge(merged, URI.create("/?" + queryString));
     }

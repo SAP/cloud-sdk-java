@@ -36,6 +36,7 @@ class ODataHealthyResponseValidator
      * @throws ODataServiceErrorException
      *             When the response contains an OData error message according to specification.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // response lifecycle is owned by the caller
     static void requireHealthyResponse( @Nonnull final ODataRequestResult result )
     {
         final ODataRequestGeneric originalRequest = result.getODataRequest();

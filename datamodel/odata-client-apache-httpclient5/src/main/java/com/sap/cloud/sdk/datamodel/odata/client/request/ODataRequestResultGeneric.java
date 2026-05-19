@@ -25,7 +25,6 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.StatusLine;
 
@@ -402,6 +401,7 @@ public class ODataRequestResultGeneric
                     e));
     }
 
+    @SuppressWarnings( "PMD.CloseResource" ) // The response is not being consumed here, closing it here would prematurely end the response.
     @Nonnull
     private <T> T getPrimitiveObjectFromPlainText( @Nonnull final Class<T> objectType )
         throws ODataDeserializationException

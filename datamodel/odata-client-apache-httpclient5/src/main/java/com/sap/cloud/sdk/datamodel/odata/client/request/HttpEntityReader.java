@@ -112,6 +112,7 @@ final class HttpEntityReader
      * @throws ODataDeserializationException
      *             When streamed deserialization process failed.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // response lifecycle is owned by the caller via ODataRequestResult (Closeable)
     static <T> T stream(
         @Nonnull final ODataRequestResult result,
         @Nonnull final CheckedFunction1<JsonReader, T> readerConsumer )

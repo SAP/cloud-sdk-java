@@ -94,6 +94,7 @@ public class ODataRequestResultMultipartGeneric
      * @throws ODataServiceErrorException
      *             When the response contains an OData error message according to specification.
      */
+    @SuppressWarnings( "PMD.CloseResource" ) // response lifecycle is owned by the caller
     @Nonnull
     @Override
     public ODataRequestResultGeneric getResult( @Nonnull final ODataRequestGeneric request )
@@ -166,6 +167,7 @@ public class ODataRequestResultMultipartGeneric
      *
      * @since 5.5.0
      */
+    @SuppressWarnings( "PMD.CloseResource" )
     @Override
     public void close()
     {

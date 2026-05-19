@@ -132,7 +132,7 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
             return contentType;
         }
         return contentType
-            .withParameters(new BasicNameValuePair("charset", MultipartHttpResponse.DEFAULT_CHARSET.name()));
+            .withParameters(new BasicNameValuePair("charset", DEFAULT_CHARSET.name()));
     }
 
     @Nonnull
@@ -150,6 +150,9 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
         return new StatusLine(HttpVersion.HTTP_1_1, 0, "Unknown");
     }
 
+    // Parameters are mandated by the Java serialization mechanism and cannot be removed.
+    // The method unconditionally throws to prevent serialization of this class.
+    @SuppressWarnings( "PMD.UnusedFormalParameter" )
     @Serial
     private void readObject( java.io.ObjectInputStream in )
         throws java.io.NotSerializableException
@@ -157,6 +160,9 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
         throw new java.io.NotSerializableException(getClass().getName());
     }
 
+    // Parameters are mandated by the Java serialization mechanism and cannot be removed.
+    // The method unconditionally throws to prevent serialization of this class.
+    @SuppressWarnings( "PMD.UnusedFormalParameter" )
     @Serial
     private void writeObject( java.io.ObjectOutputStream out )
         throws java.io.NotSerializableException
