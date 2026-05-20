@@ -68,6 +68,7 @@ class ODataHealthyResponseValidator
         throw new ODataResponseException(requestRelevantForException, httpResponse, msg, null);
     }
 
+    @SuppressWarnings( "PMD.CloseResource" ) // response lifecycle is owned by the caller
     @Nonnull
     private static
         Option<ODataRequestGeneric>
