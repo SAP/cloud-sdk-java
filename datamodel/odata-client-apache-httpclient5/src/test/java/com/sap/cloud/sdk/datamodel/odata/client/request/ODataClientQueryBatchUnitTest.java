@@ -11,8 +11,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -264,7 +264,7 @@ class ODataClientQueryBatchUnitTest
     {
         final HttpClient httpClient = mock(HttpClient.class);
 
-        assertThatCode(() -> {
+        assertThatThrownBy(() -> {
             try(
                 final ODataRequestResultMultipartGeneric ignored =
                     new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)
@@ -410,7 +410,7 @@ class ODataClientQueryBatchUnitTest
     {
         final HttpClient httpClient = mock(HttpClient.class);
 
-        assertThatCode(() -> {
+        assertThatThrownBy(() -> {
             try(
                 final ODataRequestResultMultipartGeneric ignored =
                     new ODataRequestBatch("this/", ODataProtocol.V4, uuidProvider)

@@ -4,7 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static com.sap.cloud.sdk.datamodel.odata.client.request.MultipartParser.Entry;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -143,7 +143,7 @@ class MultipartParserTest
     void testEmptyHttpResponse()
     {
         final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
-        assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
+        assertThatThrownBy(() -> MultipartParser.ofHttpResponse(httpResponse))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("HTTP response does not contain a content.");
     }
@@ -158,7 +158,7 @@ class MultipartParserTest
         final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
 
-        assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
+        assertThatThrownBy(() -> MultipartParser.ofHttpResponse(httpResponse))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("Unable to read HTTP content.");
     }
@@ -170,7 +170,7 @@ class MultipartParserTest
         httpResponse.setEntity(new StringEntity("", Charset.defaultCharset()));
         httpResponse.setHeader(HttpHeaders.CONTENT_TYPE, "multipart/mixed");
 
-        assertThatCode(() -> MultipartParser.ofHttpResponse(httpResponse))
+        assertThatThrownBy(() -> MultipartParser.ofHttpResponse(httpResponse))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("No delimiter found in HTTP header.");
     }
@@ -190,7 +190,7 @@ class MultipartParserTest
         // assert behavior
         assertThat(result.count()).isEqualTo(2); // first access successful
 
-        assertThatCode(result::count) // second access error
+        assertThatThrownBy(result::count) // second access error
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("stream has already been operated upon or closed");
     }
@@ -210,7 +210,7 @@ class MultipartParserTest
         // assert behavior
         assertThat(result.count()).isEqualTo(2); // first access successful
 
-        assertThatCode(result::count) // second access error
+        assertThatThrownBy(result::count) // second access error
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("stream has already been operated upon or closed");
     }

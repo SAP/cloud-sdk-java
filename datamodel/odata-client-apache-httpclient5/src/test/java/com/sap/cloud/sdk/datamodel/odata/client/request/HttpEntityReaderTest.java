@@ -1,8 +1,8 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -77,9 +77,9 @@ class HttpEntityReaderTest
 
         HttpEntityReader.stream(odataResult, reader -> {
             reader.beginObject();
-            assertThatCode(reader::nextName).isInstanceOf(MalformedJsonException.class);
-            assertThatCode(reader::nextString).isInstanceOf(IllegalStateException.class);
-            assertThatCode(reader::endObject).isInstanceOf(IllegalStateException.class);
+            assertThatThrownBy(reader::nextName).isInstanceOf(MalformedJsonException.class);
+            assertThatThrownBy(reader::nextString).isInstanceOf(IllegalStateException.class);
+            assertThatThrownBy(reader::endObject).isInstanceOf(IllegalStateException.class);
             return null;
         });
     }

@@ -1,7 +1,7 @@
 package com.sap.cloud.sdk.datamodel.odata.client.expression;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -313,7 +313,7 @@ class ExpressionsTest
         assertThat(Expressions.createOperand(LocalTime.now())).isInstanceOf(ValueTimeOfDay.class);
         assertThat(Expressions.createOperand(null)).isInstanceOf(Expressions.OperandSingle.class);
         assertThat(Expressions.createOperand(numberFloat)).isEqualTo(numberFloat);
-        assertThatCode(() -> Expressions.createOperand(this)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Expressions.createOperand(this)).isInstanceOf(IllegalArgumentException.class);
 
         assertThat(FieldReference.ofPath("Friends", "NestedFriends").getFieldName())
             .isEqualTo(FieldReference.ofPath("Friends/NestedFriends").getFieldName());

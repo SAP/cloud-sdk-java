@@ -1,8 +1,8 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -302,7 +302,7 @@ class ODataResponseParsingIntegrationTest
                 "People",
                 "$filter=contains(Emails,'Russell@example.com')",
                 ODataProtocol.V4);
-        assertThatCode(() -> request.execute(httpClient)).isInstanceOf(ODataServiceErrorException.class);
+        assertThatThrownBy(() -> request.execute(httpClient)).isInstanceOf(ODataServiceErrorException.class);
     }
 
     @Test
