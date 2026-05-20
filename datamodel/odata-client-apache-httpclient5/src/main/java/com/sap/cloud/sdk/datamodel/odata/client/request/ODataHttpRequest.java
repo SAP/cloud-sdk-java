@@ -21,7 +21,6 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataConnectionException;
@@ -95,9 +94,9 @@ class ODataHttpRequest
         odataRequest.getHeaders().forEach(( k, values ) -> values.forEach(v -> httpRequest.addHeader(k, v)));
 
         // add optional request body
-        if( httpRequest instanceof HttpEntityContainer ) {
+        if( httpRequest != null ) {
             if( requestBody != null ) {
-                ((HttpEntityContainer) httpRequest).setEntity(requestBody);
+                httpRequest.setEntity(requestBody);
             } else {
                 log.warn("The HTTP request {} was expecting an entity, but none was provided.", httpRequest);
             }
