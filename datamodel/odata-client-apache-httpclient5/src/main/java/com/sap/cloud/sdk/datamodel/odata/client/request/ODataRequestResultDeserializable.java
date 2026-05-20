@@ -12,6 +12,8 @@ import com.sap.cloud.sdk.result.ResultElement;
 
 /**
  * Generic type of an OData request result.
+ *
+ * @since 5.31.0
  */
 public interface ODataRequestResultDeserializable
 {

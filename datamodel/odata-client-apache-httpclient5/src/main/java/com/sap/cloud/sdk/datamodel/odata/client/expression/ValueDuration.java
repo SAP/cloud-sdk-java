@@ -9,6 +9,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression operand of type Edm.Duration
+ *
+ * @since 5.31.0
  */
 public interface ValueDuration
     extends

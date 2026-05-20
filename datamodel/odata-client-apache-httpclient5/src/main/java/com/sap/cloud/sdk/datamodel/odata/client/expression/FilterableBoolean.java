@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Boolean operations for generic OData filter expression operands.
+ *
+ * @since 5.31.0
  */
 public interface FilterableBoolean extends Expressions.Operand
 {

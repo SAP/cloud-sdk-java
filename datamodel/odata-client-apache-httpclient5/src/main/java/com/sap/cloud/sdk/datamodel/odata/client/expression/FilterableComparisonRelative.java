@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Logical operations for generic OData filter expression operands.
+ *
+ * @since 5.31.0
  */
 public interface FilterableComparisonRelative extends Expressions.Operand
 {

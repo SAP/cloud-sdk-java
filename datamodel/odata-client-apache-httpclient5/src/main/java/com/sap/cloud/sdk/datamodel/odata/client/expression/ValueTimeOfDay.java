@@ -9,6 +9,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression operand of type Edm.TimeOfDay in case of OData 4.0 or Edm.Time in case of OData 2.0.
+ *
+ * @since 5.31.0
  */
 public interface ValueTimeOfDay
     extends

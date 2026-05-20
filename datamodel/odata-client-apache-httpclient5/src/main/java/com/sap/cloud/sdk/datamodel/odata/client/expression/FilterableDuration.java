@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Duration operations for generic OData filter expression operands.
+ *
+ * @since 5.31.0
  */
 public interface FilterableDuration extends Expressions.Operand
 {

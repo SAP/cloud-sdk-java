@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * OData filter expression operand of type Edm.Guid
+ *
+ * @since 5.31.0
  */
 public interface ValueGuid extends Expressions.OperandSingle, FilterableComparisonAbsolute, FilterableComparisonRelative
 {

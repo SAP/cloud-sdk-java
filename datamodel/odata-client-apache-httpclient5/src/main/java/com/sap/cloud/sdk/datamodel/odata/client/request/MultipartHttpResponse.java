@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Helper class to construct an HttpResponse object on behalf of serialized HTTP protocol content.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 class MultipartHttpResponse extends BasicClassicHttpResponse
@@ -131,8 +133,7 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
         if( contentType.getCharset() != null ) {
             return contentType;
         }
-        return contentType
-            .withParameters(new BasicNameValuePair("charset", DEFAULT_CHARSET.name()));
+        return contentType.withParameters(new BasicNameValuePair("charset", DEFAULT_CHARSET.name()));
     }
 
     @Nonnull

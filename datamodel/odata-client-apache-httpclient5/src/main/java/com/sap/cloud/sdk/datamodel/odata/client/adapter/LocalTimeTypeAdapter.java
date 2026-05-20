@@ -15,6 +15,8 @@ import io.vavr.control.Try;
 
 /**
  * GSON type adapter for parsing and serialization of {@link LocalTime}.
+ *
+ * @since 5.31.0
  */
 public class LocalTimeTypeAdapter extends TypeAdapter<LocalTime>
 {

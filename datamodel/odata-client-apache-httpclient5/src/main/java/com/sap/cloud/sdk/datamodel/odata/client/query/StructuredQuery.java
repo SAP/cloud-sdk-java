@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
  * {@code StructuredQuery} acts as a builder for OData 2.0 or 4.0 queries. It assists with assembling request parameters
  * such as {@code $select, $filter, ...}. This API does not differentiate between OData versions. Only leveraging
  * features e.g. within filters that conform to the selected protocol version is the responsibility of the consumer.
+ *
+ * @since 5.31.0
  */
 @RequiredArgsConstructor( access = AccessLevel.PRIVATE )
 public final class StructuredQuery implements QuerySerializable

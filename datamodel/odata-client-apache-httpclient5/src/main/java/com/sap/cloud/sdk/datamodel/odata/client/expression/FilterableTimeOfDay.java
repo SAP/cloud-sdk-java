@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Time-of-day operations for generic OData filter expression operands.
+ *
+ * @since 5.31.0
  */
 public interface FilterableTimeOfDay extends Expressions.Operand
 {

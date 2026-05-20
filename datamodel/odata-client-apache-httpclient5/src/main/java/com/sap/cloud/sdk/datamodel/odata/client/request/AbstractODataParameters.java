@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 /**
  * Abstract class to build parameter expressions for the URL path. Parameters can resemble an entity key or function
  * parameters.
+ *
+ * @since 5.31.0
  */
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )
 public abstract class AbstractODataParameters

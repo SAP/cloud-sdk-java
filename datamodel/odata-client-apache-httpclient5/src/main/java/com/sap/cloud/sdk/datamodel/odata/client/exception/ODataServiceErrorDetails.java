@@ -6,6 +6,8 @@ import io.vavr.control.Option;
 
 /**
  * Interface that resembles which information OData errors must contain and which information is optional.
+ *
+ * @since 5.31.0
  */
 public interface ODataServiceErrorDetails
 {

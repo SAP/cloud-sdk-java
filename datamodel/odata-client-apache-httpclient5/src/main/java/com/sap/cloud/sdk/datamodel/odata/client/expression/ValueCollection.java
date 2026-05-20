@@ -11,6 +11,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression for a generic collection.
+ *
+ * @since 5.31.0
  */
 public interface ValueCollection
     extends

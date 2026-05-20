@@ -15,6 +15,8 @@ import io.vavr.control.Try;
 
 /**
  * GSON type adapter for parsing and serialization of {@link OffsetDateTime}.
+ *
+ * @since 5.31.0
  */
 public class OffsetDateTimeTypeAdapter extends TypeAdapter<OffsetDateTime>
 {

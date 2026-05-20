@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Generic interface to describe an OData filter expression.
+ *
+ * @since 5.31.0
  */
 public interface FilterExpression extends Expressions.Operand
 {

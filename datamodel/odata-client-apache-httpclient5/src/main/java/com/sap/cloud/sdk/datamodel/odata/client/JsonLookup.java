@@ -13,6 +13,8 @@ import lombok.Value;
 
 /**
  * An ordered collection of {@link JsonPath}.
+ *
+ * @since 5.31.0
  */
 @Getter
 @Value

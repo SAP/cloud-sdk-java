@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation to deserialize OData responses based on a given {@link ODataProtocol}.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 @RequiredArgsConstructor

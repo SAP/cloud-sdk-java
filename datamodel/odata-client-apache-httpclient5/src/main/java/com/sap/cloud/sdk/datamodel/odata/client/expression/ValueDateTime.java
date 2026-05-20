@@ -9,6 +9,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression operand of type Edm.DateTime (OData 2.0 only)
+ *
+ * @since 5.31.0
  */
 public interface ValueDateTime
     extends

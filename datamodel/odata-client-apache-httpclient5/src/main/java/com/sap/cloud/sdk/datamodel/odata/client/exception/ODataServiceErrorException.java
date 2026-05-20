@@ -13,6 +13,8 @@ import lombok.Getter;
 /**
  * An {@link ODataException} representing an erroneous response from the service where the payload contained detailed
  * OData error information.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode( callSuper = true )
 @Getter

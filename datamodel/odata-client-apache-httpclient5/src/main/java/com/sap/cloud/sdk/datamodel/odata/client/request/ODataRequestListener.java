@@ -6,6 +6,8 @@ import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 
 /**
  * Consumer class for the Listener Pattern to monitor and react on OData actions.
+ *
+ * @since 5.31.0
  */
 public interface ODataRequestListener
 {

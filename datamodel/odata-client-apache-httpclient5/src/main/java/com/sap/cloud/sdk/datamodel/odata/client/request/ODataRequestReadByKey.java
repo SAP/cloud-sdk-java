@@ -17,6 +17,8 @@ import lombok.Getter;
 
 /**
  * The result type of the OData read by key request.
+ *
+ * @since 5.31.0
  */
 @Getter
 @EqualsAndHashCode( callSuper = true )
@@ -128,8 +130,6 @@ public class ODataRequestReadByKey extends ODataRequestGeneric
 
     /**
      * Disable pre-buffering of http response entity.
-     *
-     * @since 5.21.0
      */
     @Beta
     @Nonnull

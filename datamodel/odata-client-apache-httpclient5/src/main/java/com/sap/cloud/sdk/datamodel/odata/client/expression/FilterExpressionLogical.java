@@ -7,6 +7,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Set of OData filter functions for logical types.
+ *
+ * @since 5.31.0
  */
 public interface FilterExpressionLogical
 {

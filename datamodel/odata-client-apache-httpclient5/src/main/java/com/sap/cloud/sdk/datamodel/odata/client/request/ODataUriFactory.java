@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Builds up OData URLs and ensures correct encoding.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 public class ODataUriFactory

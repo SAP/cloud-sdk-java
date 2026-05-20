@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * <b>Note:</b> This class is not thread-safe. The HTTP response object should not be consumed by multiple threads at
  * the same time.
  *
- * @since 5.21.0
+ * @since 5.31.0
  */
 @Slf4j
 @Beta

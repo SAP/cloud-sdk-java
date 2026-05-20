@@ -35,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Helper class to parse an {@link InputStream} to an {@link Iterable} multi-part response. One part can have multiple
  * segments (e.g. changeset). For that reason the API exposes {@code Iterable<Iterable<T>>}.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 @RequiredArgsConstructor( access = AccessLevel.PACKAGE )

@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Generic type of an OData request result.
+ *
+ * @since 5.31.0
  */
 public interface ODataRequestResultMultipart
 {

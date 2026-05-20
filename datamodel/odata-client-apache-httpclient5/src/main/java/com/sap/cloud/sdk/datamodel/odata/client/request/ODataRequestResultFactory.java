@@ -17,6 +17,8 @@ import io.vavr.control.Try;
 
 /**
  * Enum representing the strategy for buffering HTTP responses.
+ *
+ * @since 5.31.0
  */
 @FunctionalInterface
 interface ODataRequestResultFactory

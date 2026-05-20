@@ -7,6 +7,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression operand of type Edm.String
+ *
+ * @since 5.31.0
  */
 public interface ValueString
     extends

@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * A class representing order expressions over fields, maintaining an order over them.
+ *
+ * @since 5.31.0
  */
 @NoArgsConstructor( access = AccessLevel.PRIVATE )
 public final class OrderExpression

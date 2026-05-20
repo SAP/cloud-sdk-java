@@ -24,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * OData request result for reading entities.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 public class ODataRequestResultMultipartGeneric
@@ -164,8 +166,6 @@ public class ODataRequestResultMultipartGeneric
 
     /**
      * Closes the underlying HTTP response entity.
-     *
-     * @since 5.5.0
      */
     @SuppressWarnings( "PMD.CloseResource" )
     @Override

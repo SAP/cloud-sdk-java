@@ -34,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * OData error to serve the standard specification.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode
 @ToString

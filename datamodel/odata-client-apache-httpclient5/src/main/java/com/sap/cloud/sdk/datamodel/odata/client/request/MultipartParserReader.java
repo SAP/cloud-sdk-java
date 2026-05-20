@@ -11,6 +11,8 @@ import lombok.Getter;
 
 /**
  * Helper class to manage read operations on a Reader object.
+ *
+ * @since 5.31.0
  */
 class MultipartParserReader
 {

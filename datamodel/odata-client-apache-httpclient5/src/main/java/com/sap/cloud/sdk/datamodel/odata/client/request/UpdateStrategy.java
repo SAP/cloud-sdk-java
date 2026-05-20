@@ -4,6 +4,8 @@ import com.google.common.annotations.Beta;
 
 /**
  * The strategy to use when updating existing entities.
+ *
+ * @since 5.31.0
  */
 public enum UpdateStrategy
 {
@@ -23,8 +25,6 @@ public enum UpdateStrategy
      * including the changes in nested non-entity type fields.
      *
      * The request payload contains only the changed fields. Navigation properties are not supported.
-     *
-     * @since 5.16.0
      */
     @Beta
     MODIFY_WITH_PATCH_RECURSIVE_DELTA,
@@ -35,8 +35,6 @@ public enum UpdateStrategy
      *
      * The request payload contains the full value of complex fields for changes in any nested field. Navigation
      * properties are not supported.
-     *
-     * @since 5.16.0
      */
     @Beta
     MODIFY_WITH_PATCH_RECURSIVE_FULL;

@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Set of OData filter functions for collection types.
+ *
+ * @since 5.31.0
  */
 public interface FilterExpressionCollection
 {

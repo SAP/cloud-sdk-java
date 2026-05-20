@@ -25,6 +25,8 @@ import lombok.Getter;
  * <li><strong>{@link ODataServiceErrorException}</strong><br>
  * If the response contains an OData error in the payload.</li>
  * </ul>
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode( callSuper = true )
 @Getter

@@ -7,6 +7,8 @@ import io.vavr.control.Option;
 
 /**
  * Strategy options for sending IF-MATCH headers.
+ *
+ * @since 5.31.0
  */
 public enum ETagSubmissionStrategy
 {

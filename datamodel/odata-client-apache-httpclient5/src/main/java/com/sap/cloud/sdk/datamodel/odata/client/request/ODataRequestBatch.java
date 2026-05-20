@@ -35,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * The OData Batch request.
+ *
+ * @since 5.31.0
  */
 @Getter
 @EqualsAndHashCode( callSuper = true )

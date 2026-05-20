@@ -26,6 +26,8 @@ import lombok.Getter;
  * {@code Entity(key='val')/NavigationProperty/Model.Function(1)/ResultProperty}.
  * <p>
  * Of the result only the property {@code ResultProperty} is accessed.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode
 public final class ODataResourcePath

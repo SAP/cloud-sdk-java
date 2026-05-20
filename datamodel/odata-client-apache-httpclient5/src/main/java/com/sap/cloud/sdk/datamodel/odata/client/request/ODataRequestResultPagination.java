@@ -15,6 +15,8 @@ import io.vavr.control.Try;
  * This class provides methods to lazily iterate through the pages of an OData read request result-set. It allows for
  * memory-efficient exploration / parsing with continuous requests to the OData endpoint. It enables the consumption of
  * all data through server-driven pagination.
+ *
+ * @since 5.31.0
  */
 public interface ODataRequestResultPagination extends Iterable<ResultElement>
 {

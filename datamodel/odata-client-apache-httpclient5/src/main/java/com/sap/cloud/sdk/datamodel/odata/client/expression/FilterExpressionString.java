@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Set of OData filter functions for string types.
+ *
+ * @since 5.31.0
  */
 public interface FilterExpressionString
 {

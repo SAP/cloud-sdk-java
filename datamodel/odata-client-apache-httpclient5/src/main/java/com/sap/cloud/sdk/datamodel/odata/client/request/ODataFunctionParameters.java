@@ -9,6 +9,8 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 
 /**
  * Fluent API class to build and hold function parameters.
+ *
+ * @since 5.31.0
  */
 public class ODataFunctionParameters extends AbstractODataParameters
 {

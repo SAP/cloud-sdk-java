@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Set of OData filter functions for temporal types.
+ *
+ * @since 5.31.0
  */
 @SuppressWarnings( "overloads" )
 public interface FilterExpressionTemporal

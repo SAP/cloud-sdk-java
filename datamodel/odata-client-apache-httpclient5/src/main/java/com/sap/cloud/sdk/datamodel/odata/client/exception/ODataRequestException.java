@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Generic OData request exception indicating errors while trying to request a service resource.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode( callSuper = true )
 public class ODataRequestException extends ODataException

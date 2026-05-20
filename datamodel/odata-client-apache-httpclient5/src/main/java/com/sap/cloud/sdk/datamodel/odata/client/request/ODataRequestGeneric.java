@@ -29,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic OData request class to provide default features for service requests.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode
 @Slf4j
@@ -159,7 +161,6 @@ public abstract class ODataRequestGeneric implements ODataRequestExecutable
      *            The header name.
      * @param values
      *            The header values.
-     * @since 4.27.0
      */
     public void setHeader( @Nonnull final String key, @Nonnull final Collection<String> values )
     {

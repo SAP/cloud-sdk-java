@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * The implementation for the pagination based iterator of OData result-set, The methods are acting lazily.
+ *
+ * @since 5.31.0
  */
 @Slf4j
 class ODataRequestResultPaginationIterator implements Iterator<ODataRequestResultPagination>

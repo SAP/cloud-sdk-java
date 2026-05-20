@@ -21,6 +21,8 @@ import com.sap.cloud.sdk.result.ElementNameGsonFieldNamingStrategy;
 
 /**
  * Factory class to manage GSON references.
+ *
+ * @since 5.31.0
  */
 public final class ODataGsonBuilder
 {

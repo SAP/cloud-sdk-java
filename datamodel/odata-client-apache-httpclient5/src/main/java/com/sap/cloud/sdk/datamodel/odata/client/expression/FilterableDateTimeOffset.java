@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Date-Time-Offset operations for generic OData filter expression operands.
+ *
+ * @since 5.31.0
  */
 public interface FilterableDateTimeOffset extends Expressions.Operand
 {

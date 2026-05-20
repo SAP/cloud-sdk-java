@@ -10,6 +10,8 @@ import lombok.experimental.Delegate;
 
 /**
  * OData filter expression operand of type Edm.Date
+ *
+ * @since 5.31.0
  */
 public interface ValueDate
     extends

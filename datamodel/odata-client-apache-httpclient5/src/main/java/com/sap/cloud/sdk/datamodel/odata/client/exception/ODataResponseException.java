@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * A generic {@link ODataException} representing an erroneous service response. This exception class comprises details
  * of the HTTP response.
+ *
+ * @since 5.31.0
  */
 @EqualsAndHashCode( callSuper = true )
 @Slf4j

@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Descriptor for protocol specific information on serializing type literals for filter expressions and entity keys.
+ *
+ * @since 5.31.0
  */
 public interface ODataLiteralSerializer
 {
