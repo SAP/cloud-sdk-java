@@ -65,7 +65,7 @@ class KeyStoreReader
             IOException
     {
         final List<Certificate> certs = new ArrayList<>();
-        final CertificateFactory factory = CertificateFactory.getInstance("X509");
+        final CertificateFactory factory = CertificateFactory.getInstance("X.509");
 
         try( PEMParser pemParser = new PEMParser(certReader) ) {
             PemObject object;
