@@ -53,7 +53,7 @@ class KeyStoreReader
             Try.of(() -> loadCertificates(certReader)).getOrElseThrow(e -> new DestinationAccessException(MSG_CERT, e));
         final PrivateKey privateKey =
             Try.of(() -> loadKey(keyReader, password)).getOrElseThrow(e -> new DestinationAccessException(MSG_KEY, e));
-        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        final KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null);
         keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
         return keyStore;
