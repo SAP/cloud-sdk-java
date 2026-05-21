@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.annotations.Beta;
 import com.sap.cloud.sdk.datamodel.odata.client.request.AbstractODataParameters;
 import com.sap.cloud.sdk.datamodel.odata.client.request.UriEncodingStrategy;
 
@@ -182,4 +183,21 @@ public final class ODataResourcePath
                 .map(t -> t._1() + t._2())
                 .collect(Collectors.joining("/"));
     }
+
+    /**
+     * Creates a defensive copy of this resource path.
+     *
+     * @return A new {@link ODataResourcePath} with the same segments as this path.
+     */
+    @Beta
+    @Nonnull
+    public ODataResourcePath copy()
+    {
+        final var copy = new ODataResourcePath();
+        for( final var segment : segments ) {
+            copy.addSegment(segment._1(), segment._2());
+        }
+        return copy;
+    }
+
 }

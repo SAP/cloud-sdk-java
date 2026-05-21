@@ -132,9 +132,6 @@ class ODataRequestActionTest
         assertThat(result).isNotNull();
 
         wireMockServer
-            .verify(
-                0,
-                headRequestedFor(anyUrl())
-                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
+            .verify(0, headRequestedFor(anyUrl()).withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
     }
 }
