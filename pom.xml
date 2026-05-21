@@ -934,6 +934,13 @@
 	</build>
 	<profiles>
 		<profile>
+			<id>fips-approved</id>
+			<properties>
+				<argLine>-Xmx${surefire.maxMemorySize} -Dfile.encoding=${project.build.sourceEncoding} -Dorg.slf4j.simpleLogger.defaultLogLevel=${surefire.logLevel} -Dorg.bouncycastle.fips.approved_only=true</argLine>
+				<surefire.groups>fips-approved</surefire.groups>
+			</properties>
+		</profile>
+		<profile>
 			<id>skip-openapi-vdm-generation</id>
 			<properties>
 				<openapi.generate.skip>true</openapi.generate.skip>

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -36,6 +37,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
  * Read the readme.md in the resources folder on how to generate keys, certificates and key stores. Certificates expire
  * after 50 years in around 2070.
  */
+@Tag( "fips-incompatible" )
 class HttpClientAndServerTrustTest
 {
     private static final String RELATIVE_PATH = "some/path";

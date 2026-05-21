@@ -139,4 +139,68 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>fips-approved</id>
+			<!--
+			    Replaces the non-FIPS Bouncy Castle family with BC FIPS for the fips-approved test profile.
+			    This replicates the user scenario from FIPS analysis User Analysis A/B:
+			    the application excludes bcprov/bcpkix-jdk18on and adds bc-fips/bcpkix-fips.
+
+			    The exclusions prevent non-FIPS BC from entering through the cloudplatform-connectivity
+			    transitive dependency. BC FIPS artifacts are added as test scope only.
+			-->
+			<dependencies>
+				<dependency>
+					<groupId>com.sap.cloud.sdk.cloudplatform</groupId>
+					<artifactId>cloudplatform-connectivity</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>org.bouncycastle</groupId>
+							<artifactId>bcprov-jdk18on</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.bouncycastle</groupId>
+							<artifactId>bcpkix-jdk18on</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<!-- BC FIPS JCA/JCE provider — replaces bcprov-jdk18on -->
+				<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bc-fips</artifactId>
+					<version>2.1.2</version>
+					<scope>test</scope>
+				</dependency>
+				<!-- BC FIPS PKIX / PEM / PKCS support — replaces bcpkix-jdk18on -->
+				<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-fips</artifactId>
+					<version>2.1.9</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<configuration>
+							<ignoredUnusedDeclaredDependencies combine.children="append">
+								<!--
+								    bcpkix-fips is used by FipsApprovedSmokeTest via bcpkix-fips classes
+								    at runtime. The dependency analyzer runs without the fips-approved
+								    profile active and sees no direct bytecode imports, so it incorrectly
+								    flags this as unused. The actual usage is in FipsApprovedSmokeTest
+								    which only compiles and runs under the fips-approved profile.
+								-->
+								<ignoredUnusedDeclaredDependency>org.bouncycastle:bcpkix-fips</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.bouncycastle:bc-fips</ignoredUnusedDeclaredDependency>
+							</ignoredUnusedDeclaredDependencies>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
