@@ -46,7 +46,7 @@ class DataModelGeneratorIntegrationTest
             ApiMaturity.RELEASED,
             false,
             true,
-            4,
+            5,
             Map.of(),
             Map.of()),
         API_CLASS_VENDOR_EXTENSION_JSON(
