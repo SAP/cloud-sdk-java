@@ -149,23 +149,10 @@ class OAuth2ServiceBuilderTest
     }
 
     @Test
-    void testBtpTenantApiUriAppendsTenantLoginInfoPath()
+    void testBtpTenantApiUriIsStored()
     {
         final URI base = URI.create("https://api.authentication.eu12.hana.ondemand.com");
-        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(base);
-
-        assertThat(sut.getBtpTenantApiUri())
-            .hasToString("https://api.authentication.eu12.hana.ondemand.com/sap/rest/tenantLoginInfo");
-    }
-
-    @Test
-    void testBtpTenantApiUriWithTrailingSlashAppendsTenantLoginInfoPath()
-    {
-        final URI base = URI.create("https://api.authentication.eu12.hana.ondemand.com/");
-        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(base);
-
-        assertThat(sut.getBtpTenantApiUri())
-            .hasToString("https://api.authentication.eu12.hana.ondemand.com/sap/rest/tenantLoginInfo");
+        assertThat(OAuth2Service.builder().withBtpTenantApiUri(base).getBtpTenantApiUri()).isEqualTo(base);
     }
 
     @Test
@@ -177,8 +164,6 @@ class OAuth2ServiceBuilderTest
     @Test
     void testBtpTenantApiUriNullInputIsNoop()
     {
-        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(null);
-
-        assertThat(sut.getBtpTenantApiUri()).isNull();
+        assertThat(OAuth2Service.builder().withBtpTenantApiUri(null).getBtpTenantApiUri()).isNull();
     }
 }

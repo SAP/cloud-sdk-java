@@ -45,6 +45,7 @@ import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -92,7 +93,10 @@ class OAuth2Service
     @Nonnull
     private final TokenCacheParameters tokenCacheParameters;
     @Nullable
-    private final URI btpTenantApiTokenUri;
+    private final URI btpTenantApiUri;
+    @Nonnull
+    @Setter( AccessLevel.PACKAGE )
+    private IasTenantHostResolver iasTenantHostResolver = IasTenantHostResolver.DEFAULT_INSTANCE;
 
     // package-private for testing
     @Nonnull
@@ -251,16 +255,16 @@ class OAuth2Service
             return null;
         }
 
-        if( !(tenant instanceof TenantWithSubdomain tenantWithSubdomain) ) {
-            final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
-            throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
+        if( tenant instanceof TenantWithSubdomain tenantWithSubdomain && tenantWithSubdomain.getSubdomain() != null ) {
+            return tenantWithSubdomain.getSubdomain();
         }
-        final var subdomain = tenantWithSubdomain.getSubdomain();
-        if( subdomain == null ) {
+        log.debug("IAS tenant host is unknown for tenant {}. Performing IAS host lookup.", tenant.getTenantId());
+        if( btpTenantApiUri == null ) {
             throw new DestinationAccessException(
-                "The given tenant '%s' does not have a subdomain defined.".formatted(tenant));
+                "Failed to dynamically resolve IAS tenant host: The BTP API URL is not given. "
+                    + "Ensure your IAS service binding contains the BTP tenant API URL in the property 'btp-tenant-api'.");
         }
-        return subdomain;
+        return iasTenantHostResolver.resolve(btpTenantApiUri, tenant.getTenantId());
     }
 
     @Nullable
@@ -432,12 +436,7 @@ class OAuth2Service
         @Nonnull
         Builder withBtpTenantApiUri( @Nullable final URI btpTenantApiBaseUri )
         {
-            if( btpTenantApiBaseUri == null ) {
-                return this;
-            }
-            final String base = btpTenantApiBaseUri.toString();
-            final String withoutTrailingSlash = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
-            this.btpTenantApiUri = URI.create(withoutTrailingSlash + "/sap/rest/tenantLoginInfo");
+            this.btpTenantApiUri = btpTenantApiBaseUri;
             return this;
         }
 
