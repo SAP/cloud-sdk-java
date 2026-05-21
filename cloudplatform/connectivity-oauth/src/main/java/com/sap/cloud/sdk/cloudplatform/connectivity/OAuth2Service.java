@@ -430,7 +430,7 @@ class OAuth2Service
         }
 
         @Nonnull
-        Builder withBtpTenantApiUri(@Nullable final URI btpTenantApiBaseUri )
+        Builder withBtpTenantApiUri( @Nullable final URI btpTenantApiBaseUri )
         {
             if( btpTenantApiBaseUri == null ) {
                 return this;
@@ -472,7 +472,7 @@ class OAuth2Service
                 additionalParameters,
                 resilienceConfig,
                 tokenCacheParameters,
-                    btpTenantApiUri);
+                btpTenantApiUri);
         }
     }
 
