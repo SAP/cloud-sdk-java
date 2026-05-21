@@ -26,7 +26,6 @@ class HttpEntityReaderTest
     private final ODataRequestResult odataResult = mock(ODataRequestResult.class);
     private final ODataRequestGeneric odataRequest = mock(ODataRequestGeneric.class);
     private final BasicClassicHttpResponse httpResponse = mock(BasicClassicHttpResponse.class);
-    //    private final StatusLine httpResponseStatusLine = mock(StatusLine.class);
 
     @BeforeEach
     void adjustMocks()
@@ -34,9 +33,7 @@ class HttpEntityReaderTest
         lenient().when(odataRequest.getProtocol()).thenReturn(ODataProtocol.V2);
         lenient().when(odataResult.getHttpResponse()).thenReturn(httpResponse);
         lenient().when(odataResult.getODataRequest()).thenReturn(odataRequest);
-        //        lenient().when(httpResponse.getStatusLine()).thenReturn(httpResponseStatusLine);
         lenient().when(httpResponse.getHeaders()).thenReturn(new Header[0]);
-        //        lenient().when(httpResponseStatusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
     }
 
     @Test

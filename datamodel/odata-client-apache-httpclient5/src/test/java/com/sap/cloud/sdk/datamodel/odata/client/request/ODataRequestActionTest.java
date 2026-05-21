@@ -1,6 +1,9 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToIgnoreCase;
+import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.noContent;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -20,8 +23,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.google.gson.GsonBuilder;
 import com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor;
-//import com.sap.cloud.sdk.cloudplatform.connectivity.CsrfTokenRetriever;
-//import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultCsrfTokenRetriever;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
@@ -33,6 +34,7 @@ class ODataRequestActionTest
 
     private static final String ODATA_SERVICE_PATH = "/service/";
     private static final String ODATA_ACTION = "TestAction";
+    private static final String X_CSRF_TOKEN_HEADER_KEY = "x-csrf-token";
 
     @RegisterExtension
     static final WireMockExtension wireMockServer =
@@ -62,11 +64,11 @@ class ODataRequestActionTest
                 postRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION))
                     .withHeader("Content-Type", equalTo("application/json")));
 
-        //        wireMockServer
-        //            .verify(
-        //                1,
-        //                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
-        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
+        wireMockServer
+            .verify(
+                1,
+                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
+                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
     }
 
     @Test
@@ -95,11 +97,11 @@ class ODataRequestActionTest
                 postRequestedFor((urlPathEqualTo(ODATA_SERVICE_PATH + ODATA_ACTION)))
                     .withHeader("Content-Type", equalTo("application/json")));
 
-        //        wireMockServer
-        //            .verify(
-        //                1,
-        //                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
-        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
+        wireMockServer
+            .verify(
+                1,
+                headRequestedFor(urlPathEqualTo(ODATA_SERVICE_PATH))
+                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalTo("fetch")));
     }
 
     @Test
@@ -121,15 +123,18 @@ class ODataRequestActionTest
         final ODataRequestAction request =
             new ODataRequestAction(ODATA_SERVICE_PATH, ODataResourcePath.of(ODATA_ACTION), null, ODataProtocol.V4);
 
-        //        request.setCsrfTokenRetriever(CsrfTokenRetriever.DISABLED_CSRF_TOKEN_RETRIEVER);
+        // In HC5, CSRF handling is in CsrfTokenInterceptor which skips retrieval if the token header is already
+        // present. Pre-setting it is the HC5 equivalent of setCsrfTokenRetriever(DISABLED): the interceptor
+        // short-circuits and no HEAD request is issued.
+        request.addHeader(X_CSRF_TOKEN_HEADER_KEY, "skip");
 
         final ODataRequestResult result = request.execute(client);
         assertThat(result).isNotNull();
 
-        //        wireMockServer
-        //            .verify(
-        //                0,
-        //                headRequestedFor(anyUrl())
-        //                    .withHeader(DefaultCsrfTokenRetriever.X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
+        wireMockServer
+            .verify(
+                0,
+                headRequestedFor(anyUrl())
+                    .withHeader(X_CSRF_TOKEN_HEADER_KEY, equalToIgnoreCase("fetch")));
     }
 }

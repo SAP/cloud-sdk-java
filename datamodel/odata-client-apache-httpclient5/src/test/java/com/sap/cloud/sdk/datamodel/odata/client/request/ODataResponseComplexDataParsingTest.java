@@ -438,7 +438,6 @@ class ODataResponseComplexDataParsingTest
             final ClassicHttpResponse httpResponse = mock(ClassicHttpResponse.class);
             when(httpResponse.getHeaders()).thenReturn(new Header[0]);
             when(httpResponse.getEntity()).thenReturn(bufferedHttpEntity);
-            //            when(httpResponse.getStatusLine()).thenReturn(statusLine);
 
             return new ODataRequestResultGeneric(request, httpResponse);
         }
