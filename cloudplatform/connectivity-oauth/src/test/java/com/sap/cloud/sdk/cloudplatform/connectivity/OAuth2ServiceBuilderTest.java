@@ -147,4 +147,38 @@ class OAuth2ServiceBuilderTest
         sut.withTokenUri("https://foo.bar").withIdentity(new ClientCredentials("id", "secret"));
         assertThat(sut.build().getResilienceConfiguration().timeLimiterConfiguration()).isSameAs(tl);
     }
+
+    @Test
+    void testBtpTenantApiUriAppendsTenantLoginInfoPath()
+    {
+        final URI base = URI.create("https://api.authentication.eu12.hana.ondemand.com");
+        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(base);
+
+        assertThat(sut.getBtpTenantApiUri())
+            .hasToString("https://api.authentication.eu12.hana.ondemand.com/sap/rest/tenantLoginInfo");
+    }
+
+    @Test
+    void testBtpTenantApiUriWithTrailingSlashAppendsTenantLoginInfoPath()
+    {
+        final URI base = URI.create("https://api.authentication.eu12.hana.ondemand.com/");
+        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(base);
+
+        assertThat(sut.getBtpTenantApiUri())
+            .hasToString("https://api.authentication.eu12.hana.ondemand.com/sap/rest/tenantLoginInfo");
+    }
+
+    @Test
+    void testBtpTenantApiUriIsNullWhenNotSet()
+    {
+        assertThat(OAuth2Service.builder().getBtpTenantApiUri()).isNull();
+    }
+
+    @Test
+    void testBtpTenantApiUriNullInputIsNoop()
+    {
+        final OAuth2Service.Builder sut = OAuth2Service.builder().withBtpTenantApiUri(null);
+
+        assertThat(sut.getBtpTenantApiUri()).isNull();
+    }
 }

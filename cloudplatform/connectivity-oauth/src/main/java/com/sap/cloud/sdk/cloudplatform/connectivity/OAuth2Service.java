@@ -91,6 +91,8 @@ class OAuth2Service
     private final ResilienceConfiguration resilienceConfiguration;
     @Nonnull
     private final TokenCacheParameters tokenCacheParameters;
+    @Nullable
+    private final URI btpTenantApiTokenUri;
 
     // package-private for testing
     @Nonnull
@@ -341,6 +343,8 @@ class OAuth2Service
         private final Map<String, String> additionalParameters = new HashMap<>();
         private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = OAuth2Options.DEFAULT_TOKEN_CACHE_PARAMETERS;
+        @Nullable
+        private URI btpTenantApiUri;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -426,6 +430,18 @@ class OAuth2Service
         }
 
         @Nonnull
+        Builder withBtpTenantApiUri(@Nullable final URI btpTenantApiBaseUri )
+        {
+            if( btpTenantApiBaseUri == null ) {
+                return this;
+            }
+            final String base = btpTenantApiBaseUri.toString();
+            final String withoutTrailingSlash = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+            this.btpTenantApiUri = URI.create(withoutTrailingSlash + "/sap/rest/tenantLoginInfo");
+            return this;
+        }
+
+        @Nonnull
         OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
@@ -455,7 +471,8 @@ class OAuth2Service
                 tenantPropagationStrategy,
                 additionalParameters,
                 resilienceConfig,
-                tokenCacheParameters);
+                tokenCacheParameters,
+                    btpTenantApiUri);
         }
     }
 
