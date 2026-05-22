@@ -45,6 +45,8 @@ interface ODataRequestResultFactory
             .peek(b -> b.onSuccess(v -> log.debug("Successfully buffered the HTTP response entity.")))
             .peek(b -> b.onFailure(e -> log.warn("Failed to buffer HTTP response entity: {}", status, e)));
 
+        Try.run(httpResponse::close).onFailure(e -> log.warn("Failed to close HTTP response: {}", status, e));
+
         return new ODataRequestResultGeneric(oDataRequest, copy, httpClient);
     };
 
