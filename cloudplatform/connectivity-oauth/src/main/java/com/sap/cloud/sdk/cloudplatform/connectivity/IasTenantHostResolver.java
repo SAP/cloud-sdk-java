@@ -82,7 +82,7 @@ class IasTenantHostResolver
         }
         catch( final Exception e ) {
             throw new DestinationAccessException(
-                "Failed to extract IAS tenant host from the BTP tenant API response. The response did not conform to to the expected format: "
+                "Failed to extract IAS tenant host from the BTP tenant API response. The response did not conform to the expected format: "
                     + responseBody,
                 e);
         }
