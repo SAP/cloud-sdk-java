@@ -47,7 +47,7 @@ class GenerationConfigurationConverter
     static final String COPYRIGHT_PROPERTY_KEY = "copyrightHeader";
 
     static final String SAP_COPYRIGHT_HEADER =
-        "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. All rights reserved.";
+        "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. " + "All rights reserved.";
     static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("mustache-templates").toString();
     static final String LIBRARY_NAME = JavaClientCodegen.RESTTEMPLATE;
     static final String SUPPORT_URL_QUERY = "supportUrlQuery";
@@ -191,7 +191,7 @@ class GenerationConfigurationConverter
     /**
      * Identifies wrapper schemas that have only oneOf/anyOf with a single reference.
      */
-    @SuppressWarnings( { "rawtypes"} )
+    @SuppressWarnings( { "rawtypes" } )
     private static Map<String, String> identifyWrapperSchemas( @Nonnull final Map<String, Schema> schemas )
     {
         final Map<String, String> replacements = new HashMap<>();
@@ -366,7 +366,8 @@ class GenerationConfigurationConverter
         config.getAdditionalProperties().forEach(( k, v ) -> {
             if( result.containsKey(k) ) {
                 final var msg =
-                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.";
+                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user "
+                        + "provided configuration.";
                 log.info(msg, result.get(k), k, v);
             }
             result.put(k, v);
