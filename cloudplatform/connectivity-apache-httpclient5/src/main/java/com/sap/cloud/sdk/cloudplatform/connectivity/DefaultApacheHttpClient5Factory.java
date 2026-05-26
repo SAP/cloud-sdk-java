@@ -14,6 +14,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -24,8 +25,12 @@ import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
@@ -92,6 +97,7 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
                 .custom()
                 .setConnectionManager(getConnectionManager(destination))
                 .setDefaultRequestConfig(requestConfig)
+                .setRetryStrategy(new LoggingHttpRequestRetryStrategy(destination))
                 .setProxy(getProxy(destination));
 
         if( requestInterceptor != null ) {
@@ -232,5 +238,55 @@ class DefaultApacheHttpClient5Factory implements ApacheHttpClient5Factory
             return false;
         }
         return true;
+    }
+
+    private static class LoggingHttpRequestRetryStrategy extends DefaultHttpRequestRetryStrategy
+    {
+        private static final int MAX_RETRIES = 1; // default
+        private static final Duration RETRY_INTERVAL = Duration.ofSeconds(1L); // default
+
+        private final @Nonnull String destinationRef;
+
+        public LoggingHttpRequestRetryStrategy( final @Nullable HttpDestinationProperties destination )
+        {
+            super(MAX_RETRIES, TimeValue.of(RETRY_INTERVAL));
+            this.destinationRef = destination == null ? "" : " for destination " + destination;
+        }
+
+        @Override
+        public boolean retryRequest( final HttpResponse response, final int execCount, final HttpContext context )
+        {
+            final boolean retry = super.retryRequest(response, execCount, context);
+            if( retry ) {
+                final String msg = "Retrying request{} due to response {}. Retry attempt {}/{} after {}s.";
+                log.warn(msg, destinationRef, response.getCode(), execCount, MAX_RETRIES, RETRY_INTERVAL.getSeconds());
+            }
+            return retry;
+        }
+
+        @Override
+        public boolean retryRequest(
+            final HttpRequest req,
+            final IOException exception,
+            final int execCount,
+            final HttpContext context )
+        {
+            final boolean retry = super.retryRequest(req, exception, execCount, context);
+            if( retry ) {
+                final String msg =
+                    "Retrying {} request{} to {} due to exception \"{}\". Retry attempt {}/{} after {}s.";
+                log
+                    .warn(
+                        msg,
+                        req.getMethod(),
+                        destinationRef,
+                        req.getRequestUri(),
+                        exception.getMessage(),
+                        execCount,
+                        MAX_RETRIES,
+                        RETRY_INTERVAL.getSeconds());
+            }
+            return retry;
+        }
     }
 }

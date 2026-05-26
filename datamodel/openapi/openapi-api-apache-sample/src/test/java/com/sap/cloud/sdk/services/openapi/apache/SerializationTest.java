@@ -1,6 +1,13 @@
 package com.sap.cloud.sdk.services.openapi.apache;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aMultipart;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,12 +105,28 @@ class SerializationTest
         assertThat(new ObjectMapper().readValue(expected, Order.class)).isEqualTo(order);
     }
 
+    @Test
+    void testFileUploadHasFilenameInContentDisposition()
+        throws IOException
+    {
+        WireMock.stubFor(WireMock.post(urlEqualTo("/sodas/upload")).willReturn(WireMock.ok()));
+
+        final var tempFile = File.createTempFile("test-soda-import", ".csv");
+        tempFile.deleteOnExit();
+
+        sut.sodasImportPost(tempFile);
+
+        final var filePart =
+            aMultipart("file").withHeader("Content-Disposition", containing(tempFile.getName())).build();
+        WireMock.verify(postRequestedFor(urlEqualTo("/sodas/upload")).withRequestBodyPart(filePart));
+    }
+
     private void verify( String requestBody )
     {
         WireMock
             .verify(
                 WireMock
-                    .putRequestedFor(WireMock.urlEqualTo("/sodas"))
+                    .putRequestedFor(urlEqualTo("/sodas"))
                     .withHeader("Content-Type", WireMock.equalTo("application/json; charset=UTF-8"))
                     .withRequestBody(WireMock.equalToJson(requestBody)));
     }

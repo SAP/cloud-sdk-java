@@ -12,7 +12,8 @@
 
 ### ✨ New Functionality
 
-- 
+- OAuth token requests to IAS now attempt to dynamically resolve the IAS tenant host, if not given.
+  When the current tenant does not contain a subdomain, and the IAS service binding contains the property `btp-tenant-api`, then an HTTP call to that URL is performed to obtain the IAS tenant host.
 
 ### 📈 Improvements
 

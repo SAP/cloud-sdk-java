@@ -4,6 +4,7 @@
 
 package com.sap.cloud.sdk.datamodel.openapi.apache.sodastore.api;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.sap.cloud.sdk.services.openapi.apache.apiclient.ApiClient;
 import com.sap.cloud.sdk.services.openapi.apache.apiclient.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.apiclient.Pair;
 import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiRequestException;
+import com.sap.cloud.sdk.services.openapi.apache.core.OpenApiResponse;
 
 /**
  * SodaStore API in version 1.0.0.
@@ -232,6 +234,68 @@ public class SodasApi extends BaseApi
             .invokeAPI(
                 localVarPath,
                 "GET",
+                localVarQueryParams,
+                localVarCollectionQueryParams,
+                localVarQueryStringJoiner.toString(),
+                null,
+                localVarHeaderParams,
+                localVarFormParams,
+                localVarAccept,
+                localVarContentType,
+                localVarReturnType);
+    }
+
+    /**
+     * <p>
+     * Import soda data from a file
+     * <p>
+     * <p>
+     * <b>200</b> - Imported successfully
+     *
+     * @param _file
+     *            The value for the parameter _file
+     * @return An OpenApiResponse containing the status code of the HttpResponse.
+     * @throws OpenApiRequestException
+     *             if an error occurs while attempting to invoke the API
+     */
+    @Nonnull
+    public OpenApiResponse sodasImportPost( @Nonnull final File _file )
+        throws OpenApiRequestException
+    {
+
+        // verify the required parameter '_file' is set
+        if( _file == null ) {
+            throw new OpenApiRequestException("Missing the required parameter '_file' when calling sodasImportPost")
+                .statusCode(400);
+        }
+
+        // create path and map variables
+        final String localVarPath = "/sodas/upload";
+
+        final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
+        final List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
+        final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        if( _file != null )
+            localVarFormParams.put("file", _file);
+
+        final String[] localVarAccepts = {
+
+        };
+        final String localVarAccept = ApiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { "multipart/form-data" };
+        final String localVarContentType = ApiClient.selectHeaderContentType(localVarContentTypes);
+
+        final TypeReference<OpenApiResponse> localVarReturnType = new TypeReference<OpenApiResponse>()
+        {
+        };
+
+        return apiClient
+            .invokeAPI(
+                localVarPath,
+                "POST",
                 localVarQueryParams,
                 localVarCollectionQueryParams,
                 localVarQueryStringJoiner.toString(),

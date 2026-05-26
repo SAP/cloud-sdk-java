@@ -22,14 +22,8 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.List;
-
-import javax.annotation.Nullable;
 
 import org.apache.http.HttpHeaders;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,10 +31,8 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.exception.HttpClientInstantiationException;
 import com.sap.cloud.sdk.cloudplatform.tenant.DefaultTenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
-import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 
@@ -58,35 +50,6 @@ class OAuth2IntegrationTest
           "jti": "abc456"
         }
         """;
-
-    private List<HttpClientFactory> oldFactories = List.of();
-
-    @BeforeEach
-    void mockClientFactory()
-    {
-        oldFactories = HttpClientFactory.services;
-        HttpClientFactory.services.clear();
-
-        // `useSystemProperties` is needed for the WireMock proxying
-        HttpClientFactory.services.add(identity -> HttpClientBuilder.create().useSystemProperties().build());
-        HttpClientAccessor.setHttpClientFactory(new DefaultHttpClientFactory()
-        {
-            @Override
-            protected HttpClientBuilder getHttpClientBuilder( @Nullable HttpDestinationProperties destination )
-                throws HttpClientInstantiationException
-            {
-                return super.getHttpClientBuilder(destination).useSystemProperties();
-            }
-        });
-    }
-
-    @AfterEach
-    void restoreClientFactories()
-    {
-        HttpClientFactory.services.clear();
-        HttpClientFactory.services.addAll(oldFactories);
-        HttpClientAccessor.setHttpClientFactory(null);
-    }
 
     @Test
     void testIasTokenFlow()
