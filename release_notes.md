@@ -17,7 +17,7 @@
 
 ### 📈 Improvements
 
-- 
+- (Generic OData Client) Allow for parameters in OData v4 expand sub-queries.
 
 ### 🐛 Fixed Issues
 
