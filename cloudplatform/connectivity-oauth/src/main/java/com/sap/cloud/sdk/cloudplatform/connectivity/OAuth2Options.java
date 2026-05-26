@@ -1,5 +1,6 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import java.net.URI;
 import java.security.KeyStore;
 import java.time.Duration;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public final class OAuth2Options
      * for the target system connection.
      */
     public static final OAuth2Options DEFAULT =
-        new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null, DEFAULT_TOKEN_CACHE_PARAMETERS);
+        new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null, DEFAULT_TOKEN_CACHE_PARAMETERS, null);
 
     private final boolean skipTokenRetrieval;
     @Nonnull
@@ -79,6 +80,15 @@ public final class OAuth2Options
     @Nonnull
     @Getter
     private final TokenCacheParameters tokenCacheParameters;
+
+    /**
+     * Base URI of the BTP tenant API endpoint from the IAS service binding (the {@code btp-tenant-api} credential).
+     * When present, {@link OAuth2Service} uses it to derive a per-tenant token URL instead of the static {@code url}.
+     * Package-private; not part of the public API.
+     */
+    @Nullable
+    @Getter( AccessLevel.PACKAGE )
+    private final URI btpTenantApiBaseUri;
 
     /**
      * Indicates whether to skip the OAuth2 token flow.
@@ -124,6 +134,8 @@ public final class OAuth2Options
         private KeyStore clientKeyStore;
         private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = DEFAULT_TOKEN_CACHE_PARAMETERS;
+        @Nullable
+        private URI btpTenantApiBaseUri;
 
         /**
          * Indicates whether to skip the OAuth2 token flow.
@@ -216,6 +228,13 @@ public final class OAuth2Options
             return this;
         }
 
+        @Nonnull
+        Builder withBtpTenantApiBaseUri( @Nullable final URI btpTenantApiBaseUri )
+        {
+            this.btpTenantApiBaseUri = btpTenantApiBaseUri;
+            return this;
+        }
+
         /**
          * Creates a new {@link OAuth2Options} instance.
          *
@@ -237,7 +256,8 @@ public final class OAuth2Options
                 new HashMap<>(additionalTokenRetrievalParameters),
                 timeLimiter,
                 clientKeyStore,
-                tokenCacheParameters);
+                tokenCacheParameters,
+                btpTenantApiBaseUri);
         }
     }
 
