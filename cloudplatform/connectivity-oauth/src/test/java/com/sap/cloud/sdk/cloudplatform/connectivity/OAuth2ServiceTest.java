@@ -185,7 +185,6 @@ class OAuth2ServiceTest
             TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
 
             // if a tenant without subdomain is given, the subdomain will be dynamically resolved using the BTP API
-            // mock the resolver to prevent
             service.setIasTenantHostResolver(mockResolver);
             TenantAccessor.executeWithTenant(new DefaultTenant("t3"), service::retrieveAccessToken);
 
