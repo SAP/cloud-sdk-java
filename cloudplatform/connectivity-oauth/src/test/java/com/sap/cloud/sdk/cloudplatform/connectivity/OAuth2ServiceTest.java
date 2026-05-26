@@ -174,7 +174,8 @@ class OAuth2ServiceTest
                 .withIdentity(IDENTITY_1)
                 .withAdditionalParameter("app_tid", "provider")
                 .withBtpTenantApiUri(URI.create("http://should.not.exist"))
-                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN);
+                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN)
+                .withIasTenantHostResolver(mockResolver);
         {
             // behalf: current tenant
             OAuth2Service service = serviceBuilder.build();
@@ -185,7 +186,6 @@ class OAuth2ServiceTest
             TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
 
             // if a tenant without subdomain is given, the subdomain will be dynamically resolved using the BTP API
-            service.setIasTenantHostResolver(mockResolver);
             TenantAccessor.executeWithTenant(new DefaultTenant("t3"), service::retrieveAccessToken);
 
             SERVER_1
@@ -485,8 +485,8 @@ class OAuth2ServiceTest
                 .withIdentity(IDENTITY_1)
                 .withBtpTenantApiUri(URI.create("http://should.not.exist"))
                 .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN)
+                .withIasTenantHostResolver(mockResolver)
                 .build();
-        service.setIasTenantHostResolver(mockResolver);
 
         assertThatThrownBy(
             () -> TenantAccessor.executeWithTenant(new DefaultTenant("t1"), service::retrieveAccessToken))

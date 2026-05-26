@@ -45,7 +45,6 @@ import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -95,8 +94,7 @@ class OAuth2Service
     @Nullable
     private final URI btpTenantApiUri;
     @Nonnull
-    @Setter( AccessLevel.PACKAGE )
-    private IasTenantHostResolver iasTenantHostResolver = IasTenantHostResolver.DEFAULT_INSTANCE;
+    private IasTenantHostResolver iasTenantHostResolver;
 
     // package-private for testing
     @Nonnull
@@ -349,6 +347,8 @@ class OAuth2Service
         private TokenCacheParameters tokenCacheParameters = OAuth2Options.DEFAULT_TOKEN_CACHE_PARAMETERS;
         @Nullable
         private URI btpTenantApiUri;
+        @Nullable
+        private IasTenantHostResolver iasTenantHostResolver;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -441,6 +441,13 @@ class OAuth2Service
         }
 
         @Nonnull
+        Builder withIasTenantHostResolver( @Nullable final IasTenantHostResolver iasTenantHostResolver )
+        {
+            this.iasTenantHostResolver = iasTenantHostResolver;
+            return this;
+        }
+
+        @Nonnull
         OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
@@ -463,6 +470,9 @@ class OAuth2Service
             // copy the additional parameters to prevent accidental manipulation after the `OAuth2Service` instance has been created.
             final Map<String, String> additionalParameters = new HashMap<>(this.additionalParameters);
 
+            final var resolver =
+                iasTenantHostResolver != null ? iasTenantHostResolver : IasTenantHostResolver.DEFAULT_INSTANCE;
+
             return new OAuth2Service(
                 tokenUri,
                 identity,
@@ -471,7 +481,8 @@ class OAuth2Service
                 additionalParameters,
                 resilienceConfig,
                 tokenCacheParameters,
-                btpTenantApiUri);
+                btpTenantApiUri,
+                resolver);
         }
     }
 
