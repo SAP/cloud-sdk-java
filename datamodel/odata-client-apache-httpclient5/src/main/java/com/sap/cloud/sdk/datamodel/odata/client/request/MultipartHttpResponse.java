@@ -1,5 +1,8 @@
 package com.sap.cloud.sdk.datamodel.odata.client.request;
 
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class MultipartHttpResponse extends BasicClassicHttpResponse
 {
+    // this class is serializable by inheritance but should never be serialized
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -155,19 +159,19 @@ class MultipartHttpResponse extends BasicClassicHttpResponse
     // The method unconditionally throws to prevent serialization of this class.
     @SuppressWarnings( "PMD.UnusedFormalParameter" )
     @Serial
-    private void readObject( java.io.ObjectInputStream in )
-        throws java.io.NotSerializableException
+    private void readObject( ObjectInputStream in )
+        throws NotSerializableException
     {
-        throw new java.io.NotSerializableException(getClass().getName());
+        throw new NotSerializableException(getClass().getName());
     }
 
     // Parameters are mandated by the Java serialization mechanism and cannot be removed.
     // The method unconditionally throws to prevent serialization of this class.
     @SuppressWarnings( "PMD.UnusedFormalParameter" )
     @Serial
-    private void writeObject( java.io.ObjectOutputStream out )
-        throws java.io.NotSerializableException
+    private void writeObject( ObjectOutputStream out )
+        throws NotSerializableException
     {
-        throw new java.io.NotSerializableException(getClass().getName());
+        throw new NotSerializableException(getClass().getName());
     }
 }
