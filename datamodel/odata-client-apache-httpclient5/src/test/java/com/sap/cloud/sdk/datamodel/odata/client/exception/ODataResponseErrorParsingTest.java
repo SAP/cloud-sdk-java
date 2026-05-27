@@ -99,7 +99,7 @@ class ODataResponseErrorParsingTest
     void testWithoutHttpEntity()
     {
         final HttpClient mockedClient = mock(HttpClient.class);
-        doReturn(new BasicClassicHttpResponse(500, "oh"))
+        doReturn(new BasicClassicHttpResponse(SC_INTERNAL_SERVER_ERROR, "oh"))
             .when(mockedClient)
             .executeOpen(isNull(), any(HttpUriRequest.class), isNull());
 
@@ -107,7 +107,7 @@ class ODataResponseErrorParsingTest
         assertThatExceptionOfType(ODataResponseException.class)
             .isThrownBy(() -> request.execute(mockedClient))
             .satisfies(e -> {
-                assertThat(e.getHttpCode()).isEqualTo(500);
+                assertThat(e.getHttpCode()).isEqualTo(SC_INTERNAL_SERVER_ERROR);
                 assertThat(e.getHttpBody()).isEmpty();
             });
     }
@@ -235,7 +235,7 @@ class ODataResponseErrorParsingTest
             .isThrownBy(() -> request.execute(httpClient))
             .satisfies(e -> {
                 assertThat(e.getSuppressed()).isEmpty();
-                assertThat(e.getHttpCode()).isEqualTo(400);
+                assertThat(e.getHttpCode()).isEqualTo(SC_BAD_REQUEST);
                 assertThat(e.getHttpBody()).containsExactly(json);
             });
     }
@@ -255,7 +255,7 @@ class ODataResponseErrorParsingTest
             .isThrownBy(() -> request.execute(httpClient))
             .satisfies(e -> {
                 assertThat(e.getSuppressed()).isEmpty();
-                assertThat(e.getHttpCode()).isEqualTo(400);
+                assertThat(e.getHttpCode()).isEqualTo(SC_BAD_REQUEST);
                 assertThat(e.getHttpBody()).containsExactly(json);
             });
     }
@@ -273,7 +273,7 @@ class ODataResponseErrorParsingTest
             .isThrownBy(() -> request.execute(httpClient))
             .satisfies(e -> {
                 assertThat(e.getSuppressed()).isEmpty();
-                assertThat(e.getHttpCode()).isEqualTo(400);
+                assertThat(e.getHttpCode()).isEqualTo(SC_BAD_REQUEST);
                 assertThat(e.getHttpBody()).containsExactly("foo");
             });
     }
@@ -291,7 +291,7 @@ class ODataResponseErrorParsingTest
             .isThrownBy(() -> request.execute(httpClient))
             .satisfies(e -> {
                 assertThat(e.getSuppressed()).isEmpty();
-                assertThat(e.getHttpCode()).isEqualTo(400);
+                assertThat(e.getHttpCode()).isEqualTo(SC_BAD_REQUEST);
                 assertThat(e.getHttpBody()).containsExactly("foo");
             });
     }

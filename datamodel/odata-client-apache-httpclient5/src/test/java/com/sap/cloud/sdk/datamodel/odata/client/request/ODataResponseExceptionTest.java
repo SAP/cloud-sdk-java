@@ -11,6 +11,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,12 +55,12 @@ class ODataResponseExceptionTest
     {
         final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
-        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain", parameters.charset)));
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);
         assertThat(message).hasMessage(MESSAGE).hasCause(CAUSE);
-        assertThat(message.getHttpCode()).isEqualTo(200);
+        assertThat(message.getHttpCode()).isEqualTo(HttpStatus.SC_OK);
         assertThat(message.getHttpHeaders()).isEmpty();
         assertThat(message.getHttpBody()).containsExactly(parameters.text);
     }
@@ -71,12 +72,12 @@ class ODataResponseExceptionTest
     {
         final byte[] encodedString = parameters.text.getBytes(parameters.charset);
 
-        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse response = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         response.setEntity(new ByteArrayEntity(encodedString, ContentType.create("text/plain"))); // no charset
 
         final ODataResponseException message = new ODataResponseException(REQUEST, response, MESSAGE, CAUSE);
         assertThat(message).hasMessage(MESSAGE).hasCause(CAUSE);
-        assertThat(message.getHttpCode()).isEqualTo(200);
+        assertThat(message.getHttpCode()).isEqualTo(HttpStatus.SC_OK);
         assertThat(message.getHttpHeaders()).isEmpty();
         assertThat(message.getHttpBody()).containsExactly(parameters.textMissingCharset);
     }

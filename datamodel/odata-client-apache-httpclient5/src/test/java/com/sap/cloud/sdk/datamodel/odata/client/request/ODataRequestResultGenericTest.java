@@ -24,6 +24,7 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
@@ -51,7 +52,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric mockClientRequest = mock(ODataRequestGeneric.class);
         when(mockClientRequest.getProtocol()).thenReturn(mock(ODataProtocol.class));
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         final ODataRequestResultGeneric mockResult = new ODataRequestResultGeneric(mockClientRequest, httpResponse);
 
         assertSoftly(softly -> {
@@ -78,7 +79,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         doReturn(ODataProtocol.V2).when(request).getProtocol();
 
-        final ClassicHttpResponse mockHttpResponse = new BasicClassicHttpResponse(200, "");
+        final ClassicHttpResponse mockHttpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "");
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, mockHttpResponse);
 
         assertThatThrownBy(() -> result.as(ODataRequestResultGenericTest.class))
@@ -102,7 +103,7 @@ class ODataRequestResultGenericTest
         doThrow(SocketException.class).when(httpEntity).writeTo(any());
 
         // create HTTP response
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "");
         httpResponse.setEntity(httpEntity);
 
         // create OData response
@@ -148,7 +149,7 @@ class ODataRequestResultGenericTest
         final ODataRequestGeneric oDataRequest =
             new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         final String json = "{\"value\":[],\"@odata.nextLink\": \"Foo?$count=true&$select=BarID&$skiptoken='ABCD'\"}";
         httpResponse.setEntity(new StringEntity(json));
 
@@ -178,7 +179,7 @@ class ODataRequestResultGenericTest
             new ODataRequestRead("generic/service/path", "entity(123)", null, ODataProtocol.V4);
 
         // test setup for streamed http response
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         final String json = "{\"value\":[]}";
         final InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
         httpResponse.setEntity(new InputStreamEntity(inputStream, json.length(), ContentType.APPLICATION_JSON));
@@ -189,7 +190,7 @@ class ODataRequestResultGenericTest
                 new ODataRequestResultResource(oDataRequest, httpResponse, null) ) {
             // sanity checks do not consume the response
             assertThat(testResult.getHeaderValues("Content-Length")).isEmpty();
-            assertThat(new StatusLine(testResult.getHttpResponse()).getStatusCode()).isEqualTo(200);
+            assertThat(new StatusLine(testResult.getHttpResponse()).getStatusCode()).isEqualTo(HttpStatus.SC_OK);
 
             // true-positive, successfully read once
             assertThat(testResult.asListOfMaps()).isEmpty();

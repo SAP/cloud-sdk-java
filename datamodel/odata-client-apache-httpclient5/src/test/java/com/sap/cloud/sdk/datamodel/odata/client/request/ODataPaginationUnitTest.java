@@ -18,6 +18,7 @@ import org.apache.hc.client5.http.ConnectTimeoutException;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
@@ -129,7 +130,7 @@ class ODataPaginationUnitTest
     @SneakyThrows
     private BasicClassicHttpResponse createHttpResponse( final String message )
     {
-        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         page.setEntity(new StringEntity(message));
         return page;
     }
@@ -137,7 +138,7 @@ class ODataPaginationUnitTest
     @SneakyThrows
     private HttpResponse createHttpResponseError( final String message )
     {
-        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(500, "Internal Server Error");
+        final BasicClassicHttpResponse page = new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
         page.setEntity(new StringEntity(message));
         return page;
     }

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class ODataDeltaLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity("{}", ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -40,7 +41,7 @@ class ODataDeltaLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity("{}", ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -53,7 +54,7 @@ class ODataDeltaLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_DELTA_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -66,7 +67,7 @@ class ODataDeltaLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_DELTA_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -82,7 +83,7 @@ class ODataDeltaLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(emptyToken, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 

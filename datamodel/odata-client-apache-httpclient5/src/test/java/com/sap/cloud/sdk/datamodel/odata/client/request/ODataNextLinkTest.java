@@ -4,7 +4,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,6 +12,7 @@ import static org.mockito.Mockito.when;
 import javax.annotation.Nonnull;
 
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
@@ -212,7 +212,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request =
             new ODataRequestRead("/v1/foo/bar/", "endpoint", "blub=42", ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
 
         final String baseUrl = "http://blub/?high=five";
@@ -236,7 +236,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V4);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -249,7 +249,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(PAYLOAD_NEXT_LINK, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -265,7 +265,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(emptyToken, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 
@@ -281,7 +281,7 @@ class ODataNextLinkTest
         final ODataRequestGeneric request = mock(ODataRequestGeneric.class);
         when(request.getProtocol()).thenReturn(ODataProtocol.V2);
 
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         httpResponse.setEntity(new StringEntity(noLink, ContentType.APPLICATION_JSON));
         final ODataRequestResultGeneric result = new ODataRequestResultGeneric(request, httpResponse);
 

@@ -10,6 +10,7 @@ import java.net.URI;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -154,7 +155,7 @@ class ODataUriFactoryTest
             final var client = HttpClients.createDefault();
             final var response = client.executeOpen(null, new HttpGet(uri), null) ) {
             // response is unused; we only car about that the request was made
-            response.setCode(200);
+            response.setCode(HttpStatus.SC_OK);
         }
 
         wireMockServer.stop();

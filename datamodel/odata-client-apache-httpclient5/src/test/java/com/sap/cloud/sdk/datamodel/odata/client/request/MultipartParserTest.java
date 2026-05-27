@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
@@ -77,7 +78,7 @@ class MultipartParserTest
         });
 
         assertThat(new StatusLine(httpResponse).getProtocolVersion()).isEqualTo(HttpVersion.HTTP_1_1);
-        assertThat(new StatusLine(httpResponse).getStatusCode()).isEqualTo(200);
+        assertThat(new StatusLine(httpResponse).getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         assertThat(new StatusLine(httpResponse).getReasonPhrase()).isEqualTo("OK");
         assertThat(httpResponse.getEntity().getContent()).hasContent("{\"foØ\":\"bär\"}");
         assertThat(httpResponse.getEntity().getContentType())
@@ -166,7 +167,7 @@ class MultipartParserTest
     @Test
     void testMissingDelimiter()
     {
-        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(200, "OK");
+        final BasicClassicHttpResponse httpResponse = new BasicClassicHttpResponse(HttpStatus.SC_OK, "OK");
         httpResponse.setEntity(new StringEntity("", Charset.defaultCharset()));
         httpResponse.setHeader(HttpHeaders.CONTENT_TYPE, "multipart/mixed");
 
@@ -200,7 +201,7 @@ class MultipartParserTest
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultUncached( @Nonnull final String newLine )
     {
-        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
@@ -220,7 +221,7 @@ class MultipartParserTest
     @MethodSource( "getNewLineDelimiters" )
     void testWriteResultCached( @Nonnull final String newLine )
     {
-        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(200, "Ok");
+        final BasicClassicHttpResponse resp = new BasicClassicHttpResponse(HttpStatus.SC_OK, "Ok");
         resp.setEntity(new StringEntity(readResourceFileClrf("BatchWriteResponseBody.txt", newLine)));
         resp.setHeader("Content-Type", "multipart/mixed; boundary=batchresponse_76ef6b0a-a0e2-4f31-9f70-f5d3f73a6bef");
 
