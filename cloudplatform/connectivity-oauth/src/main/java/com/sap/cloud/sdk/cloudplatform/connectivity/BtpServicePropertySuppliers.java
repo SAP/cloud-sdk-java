@@ -195,6 +195,7 @@ class BtpServicePropertySuppliers
                     .peek(format -> builder.withTokenRetrievalParameter("token_format", format));
             }
             attachClientKeyStore(builder);
+            getCredential(URI.class, "btp-tenant-api").peek(builder::withBtpTenantApiBaseUri);
 
             return builder.build();
         }
