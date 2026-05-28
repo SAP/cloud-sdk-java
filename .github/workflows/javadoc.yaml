@@ -17,6 +17,8 @@ jobs:
   build:
     name: 'JavaDoc to Documentation Portal'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # all write operations use app token
 
     steps:
       - name: 'Prepare git'
