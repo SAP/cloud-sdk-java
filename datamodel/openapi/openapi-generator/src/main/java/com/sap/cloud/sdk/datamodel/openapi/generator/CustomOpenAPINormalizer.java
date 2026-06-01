@@ -8,9 +8,20 @@ import org.openapitools.codegen.utils.ModelUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 
+/**
+ * Fix Api client methods with oneOf primitive param to stay simplified from OpenAPI generator 7.22.0
+ */
 public class CustomOpenAPINormalizer extends OpenAPINormalizer
 {
 
+    /**
+     * Initializes OpenAPI Normalizer with a set of rules
+     *
+     * @param openAPI
+     *            OpenAPI
+     * @param inputRules
+     *            a map of rules
+     */
     public CustomOpenAPINormalizer( final OpenAPI openAPI, final Map<String, String> inputRules )
     {
         super(openAPI, inputRules);
