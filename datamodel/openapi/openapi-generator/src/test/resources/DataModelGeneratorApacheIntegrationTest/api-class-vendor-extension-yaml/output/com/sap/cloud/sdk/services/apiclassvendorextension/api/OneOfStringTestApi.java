@@ -13,7 +13,6 @@ import com.sap.cloud.sdk.services.openapi.apache.apiclient.BaseApi;
 import com.sap.cloud.sdk.services.openapi.apache.apiclient.Pair;
 
 
-import com.sap.cloud.sdk.services.apiclassvendorextension.model.OneOfString;
 import com.sap.cloud.sdk.services.apiclassvendorextension.model.Soda;
 
 import java.util.ArrayList;
@@ -81,7 +80,7 @@ public class OneOfStringTestApi extends BaseApi {
          * @throws OpenApiRequestException if an error occurs while attempting to invoke the API
          */
         @Nonnull
-        public List<Soda> sodasDelete(@Nonnull final OneOfString executionId) throws OpenApiRequestException {
+        public List<Soda> sodasDelete(@Nonnull final String executionId) throws OpenApiRequestException {
             
             // verify the required parameter 'executionId' is set
             if (executionId == null) {

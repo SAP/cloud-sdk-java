@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
@@ -47,7 +46,7 @@ class GenerationConfigurationConverter
     static final String COPYRIGHT_PROPERTY_KEY = "copyrightHeader";
 
     static final String SAP_COPYRIGHT_HEADER =
-        "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. " + "All rights reserved.";
+        "Copyright (c) " + Year.now() + " SAP SE or an SAP affiliate company. All rights reserved.";
     static final String TEMPLATE_DIRECTORY = Paths.get("openapi-generator").resolve("mustache-templates").toString();
     static final String LIBRARY_NAME = JavaClientCodegen.RESTTEMPLATE;
     static final String SUPPORT_URL_QUERY = "supportUrlQuery";
@@ -69,6 +68,7 @@ class GenerationConfigurationConverter
         config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
         config.typeMapping().putAll(generationConfiguration.getTypeMappings());
         config.importMapping().putAll(generationConfiguration.getImportMappings());
+        config.openapiNormalizer().put("NORMALIZER_CLASS", CustomOpenAPINormalizer.class.getName());
 
         final var openAPI = parseOpenApiSpec(inputSpecFile, generationConfiguration);
 
@@ -133,9 +133,6 @@ class GenerationConfigurationConverter
         void
         preprocessSpecification( @Nonnull final OpenAPI openAPI, @Nonnull final GenerationConfiguration config )
     {
-        // Simplify oneOf/anyOf schemas that have only a single option
-        //simplifyComposedSchemas(openAPI);
-
         if( !FIX_RESPONSE_SCHEMA_TITLES.isEnabled(config) ) {
             return;
         }
@@ -159,182 +156,6 @@ class GenerationConfigurationConverter
                 }
             });
         });
-    }
-
-    /**
-     * Simplifies oneOf/anyOf schemas that have only a single option by removing the composition constraint and
-     * flattening to the referenced schema. This prevents the creation of unnecessary wrapper classes.
-     *
-     * @param openAPI
-     *            the OpenAPI specification to preprocess
-     */
-    @SuppressWarnings( "rawtypes" )
-    private static void simplifyComposedSchemas( @Nonnull final OpenAPI openAPI )
-    {
-        final Components components = openAPI.getComponents();
-        if( components == null || components.getSchemas() == null ) {
-            return;
-        }
-
-        final Map<String, Schema> schemas = components.getSchemas();
-        final Map<String, String> schemaReplacements = identifyWrapperSchemas(schemas);
-
-        if( !schemaReplacements.isEmpty() ) {
-            replaceSchemaReferences(openAPI, schemaReplacements);
-            schemaReplacements.keySet().forEach(schemas::remove);
-        }
-
-        // Simplify remaining composed schemas
-        new HashMap<>(schemas).forEach(( name, schema ) -> simplifyComposedSchema(schema));
-    }
-
-    /**
-     * Identifies wrapper schemas that have only oneOf/anyOf with a single reference.
-     */
-    @SuppressWarnings( { "rawtypes" } )
-    private static Map<String, String> identifyWrapperSchemas( @Nonnull final Map<String, Schema> schemas )
-    {
-        final Map<String, String> replacements = new HashMap<>();
-
-        for( final Map.Entry<String, Schema> entry : schemas.entrySet() ) {
-            final Schema schema = entry.getValue();
-            final Schema referencedSchema = extractSingleComposedOption(schema);
-
-            if( referencedSchema != null && referencedSchema.get$ref() != null ) {
-                final String refName = extractRefName(referencedSchema.get$ref());
-                replacements.put(entry.getKey(), refName);
-                log.error("Identified wrapper schema {} that should be replaced with {}", entry.getKey(), refName);
-            }
-        }
-
-        return replacements;
-    }
-
-    /**
-     * Extracts the single referenced schema from oneOf or anyOf, if it's the only composition option.
-     */
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
-    @Nullable
-    private static Schema extractSingleComposedOption( @Nonnull final Schema schema )
-    {
-        if( schema.getEnum() != null ) {
-            return null;
-        }
-
-        if( isSimpleComposition(schema.getOneOf(), schema.getAnyOf(), schema.getAllOf(), schema.getProperties()) ) {
-            if( schema.getOneOf() != null && schema.getOneOf().size() == 1 ) {
-                return (Schema) schema.getOneOf().get(0);
-            }
-            if( schema.getAnyOf() != null && schema.getAnyOf().size() == 1 ) {
-                return (Schema) schema.getAnyOf().get(0);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if a schema has only a single composition type with no other composition or properties.
-     */
-    private static boolean isSimpleComposition(
-        @Nullable final java.util.List<?> oneOf,
-        @Nullable final java.util.List<?> anyOf,
-        @Nullable final java.util.List<?> allOf,
-        @Nullable final Map<String, ?> properties )
-    {
-        final boolean hasOneOf = oneOf != null && oneOf.size() == 1;
-        final boolean hasAnyOf = anyOf != null && anyOf.size() == 1;
-
-        // Ensure only one composition type is present, and no properties
-        return ((hasOneOf ^ hasAnyOf) && allOf == null && properties == null);
-    }
-
-    /**
-     * Extracts the schema name from a $ref string like "#/components/schemas/SchemaName".
-     */
-    private static String extractRefName( @Nonnull final String ref )
-    {
-        return ref.substring(ref.lastIndexOf('/') + 1);
-    }
-
-    /**
-     * Replaces all references to wrapper schemas with the actual referenced schema throughout the OpenAPI spec.
-     */
-    private static
-        void
-        replaceSchemaReferences( @Nonnull final OpenAPI openAPI, @Nonnull final Map<String, String> replacements )
-    {
-        final Components components = openAPI.getComponents();
-        if( components != null && components.getParameters() != null ) {
-            components.getParameters().values().forEach(param -> replaceSchemaRef(param.getSchema(), replacements));
-        }
-
-        if( openAPI.getPaths() != null ) {
-            openAPI.getPaths().values().forEach(pathItem -> pathItem.readOperationsMap().values().forEach(operation -> {
-                if( operation.getParameters() != null ) {
-                    operation.getParameters().forEach(param -> replaceSchemaRef(param.getSchema(), replacements));
-                }
-            }));
-        }
-    }
-
-    /**
-     * Replaces a schema reference if it matches one of the wrapper schemas.
-     */
-    @SuppressWarnings( "rawtypes" )
-    private static
-        void
-        replaceSchemaRef( @Nullable final Schema schema, @Nonnull final Map<String, String> replacements )
-    {
-        if( schema != null && schema.get$ref() != null ) {
-            final String refName = extractRefName(schema.get$ref());
-            final String newRefName = replacements.get(refName);
-            if( newRefName != null ) {
-                schema.set$ref("#/components/schemas/" + newRefName);
-                log.error("Replaced schema reference {} with {}", refName, newRefName);
-            }
-        }
-    }
-
-    /**
-     * Recursively simplifies a single schema by clearing oneOf/anyOf constraints and processing nested schemas.
-     */
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
-    private static void simplifyComposedSchema( @Nullable final Schema schema )
-    {
-        if( schema == null ) {
-            return;
-        }
-
-        // Clear single-option composition constraints
-        clearSingleOptionComposition(schema);
-
-        // Recursively simplify nested schemas
-        if( schema.getProperties() != null ) {
-            schema.getProperties().values().forEach(s -> simplifyComposedSchema((Schema) s));
-        }
-        if( schema.getItems() != null ) {
-            simplifyComposedSchema(schema.getItems());
-        }
-        if( schema.getAdditionalProperties() instanceof Schema ) {
-            simplifyComposedSchema((Schema) schema.getAdditionalProperties());
-        }
-        if( schema.getAllOf() != null ) {
-            schema.getAllOf().forEach(s -> simplifyComposedSchema((Schema) s));
-        }
-    }
-
-    /**
-     * Clears oneOf/anyOf constraints when they have only a single option.
-     */
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
-    private static void clearSingleOptionComposition( @Nonnull final Schema schema )
-    {
-        if( schema.getOneOf() != null && schema.getOneOf().size() == 1 ) {
-            schema.setOneOf(null);
-        }
-        if( schema.getAnyOf() != null && schema.getAnyOf().size() == 1 ) {
-            schema.setAnyOf(null);
-        }
     }
 
     private static Map<String, Object> getAdditionalProperties( @Nonnull final GenerationConfiguration config )
@@ -366,8 +187,7 @@ class GenerationConfigurationConverter
         config.getAdditionalProperties().forEach(( k, v ) -> {
             if( result.containsKey(k) ) {
                 final var msg =
-                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user "
-                        + "provided configuration.";
+                    "Replacing default value \"{}\" for additional property \"{}\" with \"{}\" from user provided configuration.";
                 log.info(msg, result.get(k), k, v);
             }
             result.put(k, v);
