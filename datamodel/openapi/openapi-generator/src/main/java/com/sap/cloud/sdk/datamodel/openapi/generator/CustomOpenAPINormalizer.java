@@ -2,6 +2,8 @@ package com.sap.cloud.sdk.datamodel.openapi.generator;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.openapitools.codegen.OpenAPINormalizer;
 import org.openapitools.codegen.utils.ModelUtils;
 
@@ -22,7 +24,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
      * @param inputRules
      *            a map of rules
      */
-    public CustomOpenAPINormalizer( final OpenAPI openAPI, final Map<String, String> inputRules )
+    public CustomOpenAPINormalizer( final @Nonnull OpenAPI openAPI, final @Nonnull Map<String, String> inputRules )
     {
         super(openAPI, inputRules);
     }
@@ -35,7 +37,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
      */
     @Override
     @SuppressWarnings( { "unchecked", "rawtypes" } )
-    protected void normalizeReferenceSchema( Schema schema )
+    protected void normalizeReferenceSchema( final @Nonnull Schema schema )
     {
         if( schema.getType() != null || schema.getTypes() != null && !schema.getTypes().isEmpty() ) {
             // clears type(s) given that $ref is set
@@ -70,7 +72,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
             // The swagger-parser may copy properties (description, example, etc.) from the
             // referenced schema onto the $ref schema object. Wrapping primitives in allOf
             // prevents proper type simplification (e.g., oneOf with a single primitive).
-            Schema referencedSchema = ModelUtils.getReferencedSchema(openAPI, schema);
+            final Schema referencedSchema = ModelUtils.getReferencedSchema(openAPI, schema);
             if( referencedSchema != null
                 && (ModelUtils.isStringSchema(referencedSchema)
                     || ModelUtils.isIntegerSchema(referencedSchema)
