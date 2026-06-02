@@ -26,7 +26,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
@@ -37,7 +36,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 
 import lombok.SneakyThrows;
 
-@Tag( "fips-incompatible" )
 class ClientCertificateAuthenticationLocalTest
 {
     private static final String CCA_PASSWORD = "cca-password";
