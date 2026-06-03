@@ -89,7 +89,7 @@
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
 		<jackson.version>2.21.3</jackson.version>
-		<jackson.annotations.version>2.21</jackson.annotations.version>
+		<jackson.annotations.version>2.22</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20251224</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
@@ -105,7 +105,7 @@
 		<assertj-vavr.version>0.5.0</assertj-vavr.version>
 		<mockito.version>5.23.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.0.3</junit.jupiter.version>
+		<junit.jupiter.version>6.1.0</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -124,7 +124,7 @@
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
 		<checkstyle.version>12.3.1</checkstyle.version>
-		<byte-buddy.version>1.18.8</byte-buddy.version>
+		<byte-buddy.version>1.18.9</byte-buddy.version>
 		<snakeyaml.version>2.6</snakeyaml.version>
 		<commons-codec.version>1.22.0</commons-codec.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
@@ -817,7 +817,7 @@
 				<!-- Needed because GitHub actions uses an old Maven version <3.9.0 -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.5</version>
+				<version>3.5.6</version>
 				<configuration>
 					<includes>
 						<include>${surefire.include}</include>
