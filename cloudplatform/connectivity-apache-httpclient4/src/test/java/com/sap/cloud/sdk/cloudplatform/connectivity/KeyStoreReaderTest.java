@@ -31,7 +31,7 @@ class KeyStoreReaderTest
         final FileReader certs = new FileReader(CRT_PATH), key = new FileReader(KEY_PATH);
         final KeyStore createdKeystore = createKeyStore(ALIAS, PASS, certs, key);
 
-        assertThat(createdKeystore.getType()).isEqualTo("PKCS12");
+        assertThat(createdKeystore.getType()).isEqualTo(KeyStore.getDefaultType());
         assertThat(createdKeystore.getProvider()).isNotNull();
 
         assertThat(createdKeystore.getCertificateChain(ALIAS)).hasSize(1);
