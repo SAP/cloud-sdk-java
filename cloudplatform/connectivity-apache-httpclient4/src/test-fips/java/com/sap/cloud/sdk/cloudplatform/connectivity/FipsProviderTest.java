@@ -58,7 +58,7 @@ class FipsProviderTest
         final KeyStore keyStore =
             KeyStoreReader.createKeyStore(ALIAS, EMPTY_PASSWORD, new FileReader(CRT_PATH), new FileReader(KEY_PATH));
 
-        assertThat(keyStore.getType()).isEqualTo("PKCS12");
+        assertThat(keyStore.getType()).isEqualTo("pkcs12");
     }
 
     @Test
