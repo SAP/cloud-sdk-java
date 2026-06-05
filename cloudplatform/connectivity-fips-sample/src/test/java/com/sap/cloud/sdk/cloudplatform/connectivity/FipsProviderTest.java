@@ -25,7 +25,7 @@ import lombok.SneakyThrows;
 @Tag( "fips-approved" )
 class FipsProviderTest
 {
-    private static final String RES = "src/test/resources/ClientCertificateAuthenticationLocalTest";
+    private static final String RES = "src/test/resources/certificates";
     private static final String CRT_PATH = RES + "/client-cert.crt";
     private static final String KEY_PATH = RES + "/client-cert.key";
     private static final String ALIAS = "client-cert";
