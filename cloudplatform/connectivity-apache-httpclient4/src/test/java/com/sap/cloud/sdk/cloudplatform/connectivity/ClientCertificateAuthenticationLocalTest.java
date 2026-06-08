@@ -39,7 +39,7 @@ import lombok.SneakyThrows;
 class ClientCertificateAuthenticationLocalTest
 {
     private static final String CCA_PASSWORD = "cca-password";
-    private static final String JKS_PATH =
+    private static final String PKCS_PATH =
         "src/test/resources/" + ClientCertificateAuthenticationLocalTest.class.getSimpleName() + "/client-cert.pkcs12";
 
     @BeforeEach
@@ -127,9 +127,9 @@ class ClientCertificateAuthenticationLocalTest
             .httpDisabled(true)
             .dynamicHttpsPort()
             .needClientAuth(true)
-            .trustStorePath(JKS_PATH)
+            .trustStorePath(PKCS_PATH)
             .trustStorePassword(CCA_PASSWORD)
-            .trustStoreType("JKS");
+            .trustStoreType("PKCS12");
     }
 
     private static KeyStore getClientKeyStore()
@@ -139,7 +139,7 @@ class ClientCertificateAuthenticationLocalTest
             NoSuchAlgorithmException
     {
         final KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        keyStore.load(new FileInputStream(JKS_PATH), CCA_PASSWORD.toCharArray());
+        keyStore.load(new FileInputStream(PKCS_PATH), CCA_PASSWORD.toCharArray());
         return keyStore;
     }
 }

@@ -155,11 +155,11 @@ class DefaultHttpDestinationTest
         final KeyPair keyPair = DestinationKeyStoreComparatorTest.generateKeyPair();
         final Certificate cert = DestinationKeyStoreComparatorTest.generateCertificate(keyPair, "a");
 
-        final KeyStore keystore1 = KeyStore.getInstance("JKS");
+        final KeyStore keystore1 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore1.load(null);
         keystore1.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
-        final KeyStore keystore2 = KeyStore.getInstance("JKS");
+        final KeyStore keystore2 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore2.load(null);
         keystore2.setKeyEntry("a", keyPair.getPrivate(), new char[0], new Certificate[] { cert });
 
@@ -171,7 +171,7 @@ class DefaultHttpDestinationTest
         assertThat(dest1).hasSameHashCodeAs(dest2);
 
         // check for destination with empty key-store
-        final KeyStore keystore3 = KeyStore.getInstance("JKS");
+        final KeyStore keystore3 = KeyStore.getInstance(KeyStore.getDefaultType());
         keystore3.load(null);
 
         final DefaultHttpDestination dest3 = DefaultHttpDestination.builder(VALID_URI).keyStore(keystore3).build();
