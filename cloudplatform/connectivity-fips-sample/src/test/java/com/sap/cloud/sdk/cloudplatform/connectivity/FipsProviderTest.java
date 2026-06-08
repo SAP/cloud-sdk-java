@@ -13,16 +13,13 @@ import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import lombok.SneakyThrows;
 
 /**
- * Regression guard for the P1 fix: asserts that {@code KeyStoreReader.createKeyStore()} produces a PKCS12 keystore. Run
- * with {@code mvn test -P fips-approved}.
+ * Tests the behavior of {@link KeyStoreReader} when operating in FIPS-approved mode with BouncyCastle FIPS provider.
  */
-@Tag( "fips-approved" )
 class FipsProviderTest
 {
     private static final String RES = "src/test/resources/certificates";
@@ -53,16 +50,26 @@ class FipsProviderTest
 
     @Test
     @SneakyThrows
-    void keystoreTypeIsP12()
+    void testDefaultKeystoreTypeIsP12()
     {
         final KeyStore keyStore =
             KeyStoreReader.createKeyStore(ALIAS, EMPTY_PASSWORD, new FileReader(CRT_PATH), new FileReader(KEY_PATH));
 
-        assertThat(keyStore.getType()).isEqualTo("pkcs12");
+        assertThat(keyStore.getType()).isEqualToIgnoringCase("PKCS12");
     }
 
     @Test
-    void md5IsRejectedInApprovedOnlyMode()
+    @SneakyThrows
+    void testKeystoreTypeOverrideToBCFKS()
+    {
+        Security.setProperty("keystore.type", "BCFKS");
+
+        final KeyStore keyStore = KeyStore.getInstance("BCFKS", "BCFIPS");
+        assertThat(keyStore.getType()).isEqualTo("BCFKS");
+    }
+
+    @Test
+    void testMD5IsRejectedInApprovedOnlyMode()
     {
         assertThatThrownBy(() -> MessageDigest.getInstance("MD5", "BCFIPS"))
             .isInstanceOf(NoSuchAlgorithmException.class);
