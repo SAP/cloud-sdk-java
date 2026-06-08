@@ -64,7 +64,7 @@ class FipsProviderTest
     {
         Security.setProperty("keystore.type", "BCFKS");
 
-        final KeyStore keyStore = KeyStore.getInstance("BCFKS", "BCFIPS");
+        final KeyStore keyStore = KeyStore.getInstance("BCFKS");
         assertThat(keyStore.getType()).isEqualTo("BCFKS");
     }
 
