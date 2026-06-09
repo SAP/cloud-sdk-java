@@ -42,7 +42,6 @@
 		<module>connectivity-oauth</module>
 		<module>connectivity-apache-httpclient4</module>
 		<module>connectivity-apache-httpclient5</module>
-		<module>connectivity-fips-sample</module>
 		<module>resilience</module>
 		<module>resilience-api</module>
 		<module>resilience4j</module>
