@@ -407,7 +407,7 @@ class OAuth2ServiceTest
             IOException,
             NoSuchAlgorithmException
     {
-        final KeyStore ks = KeyStore.getInstance("JKS");
+        final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(null, null);
         ClientIdentity identity = new ZtisClientIdentity("id", () -> ks);
         OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
@@ -426,8 +426,8 @@ class OAuth2ServiceTest
     void testZeroTrustCertificateRotationCausesCacheMiss()
     {
         // we need to use actual KeyStores here because the code will build an HTTP Client and mocks don't suffice
-        final KeyStore ks1 = KeyStore.getInstance("JKS");
-        final KeyStore ks2 = KeyStore.getInstance("JKS");
+        final KeyStore ks1 = KeyStore.getInstance(KeyStore.getDefaultType());
+        final KeyStore ks2 = KeyStore.getInstance(KeyStore.getDefaultType());
         ks1.load(null, null);
         ks2.load(null, null);
 

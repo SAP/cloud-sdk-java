@@ -177,7 +177,7 @@ class OAuth2IntegrationTest
             IOException,
             NoSuchAlgorithmException
     {
-        final KeyStore ks = KeyStore.getInstance("JKS");
+        final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(null, null);
         final ClientIdentity identity = new SecurityLibWorkarounds.ZtisClientIdentity("myClientId", () -> ks);
 

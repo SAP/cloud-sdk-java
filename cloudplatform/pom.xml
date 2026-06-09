@@ -60,6 +60,17 @@
 	</properties>
 	<profiles>
 		<profile>
+			<id>non-release</id>
+			<activation>
+				<property>
+					<name>!release</name>
+				</property>
+			</activation>
+			<modules>
+				<module>connectivity-fips-sample</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>release</id>
 			<activation>
 				<property>
