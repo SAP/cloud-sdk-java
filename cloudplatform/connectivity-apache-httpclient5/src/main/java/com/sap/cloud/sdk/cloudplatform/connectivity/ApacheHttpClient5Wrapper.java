@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
+
 import org.apache.hc.client5.http.config.Configurable;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -27,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * and it will append the url configured in the destination.
  */
 @Slf4j
-class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurable
+class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurable, UriQueryMerger
 {
     private final CloseableHttpClient httpClient;
     @Getter( AccessLevel.PACKAGE )
@@ -126,5 +128,15 @@ class ApacheHttpClient5Wrapper extends CloseableHttpClient implements Configurab
     public RequestConfig getConfig()
     {
         return requestConfig;
+    }
+
+    @Nonnull
+    @Override
+    public URI mergeRequestUri( @Nonnull final URI requestUri )
+    {
+        final UriPathMerger merger = new UriPathMerger();
+        final URI merged = merger.merge(destination.getUri(), requestUri);
+        final String queryString = String.join("&", QueryParamGetter.getQueryParameters(destination));
+        return merger.merge(merged, URI.create("/?" + queryString));
     }
 }
