@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -43,6 +44,7 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.sap.cloud.sdk.cloudplatform.cache.CacheManager;
 import com.sap.cloud.sdk.cloudplatform.connectivity.OAuth2Service.TenantPropagationStrategy;
 import com.sap.cloud.sdk.cloudplatform.connectivity.SecurityLibWorkarounds.ZtisClientIdentity;
+import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationOAuthTokenException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceIsolationMode;
@@ -86,11 +88,14 @@ class OAuth2ServiceTest
     @RegisterExtension
     static TestContext context = TestContext.withThreadContext().resetCaches();
 
+    private final IasTenantHostResolver mockResolver = mock(IasTenantHostResolver.class);
+
     @BeforeEach
     void setUp()
     {
         SERVER_1.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_1))));
         SERVER_2.stubFor(post("/oauth/token").willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_2))));
+        doReturn("localhost").when(mockResolver).resolve(any(), any());
     }
 
     @Test
@@ -168,7 +173,9 @@ class OAuth2ServiceTest
                 .withTokenUri(SERVER_1.baseUrl())
                 .withIdentity(IDENTITY_1)
                 .withAdditionalParameter("app_tid", "provider")
-                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN);
+                .withBtpTenantApiUri(URI.create("http://should.not.exist"))
+                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN)
+                .withIasTenantHostResolver(mockResolver);
         {
             // behalf: current tenant
             OAuth2Service service = serviceBuilder.build();
@@ -178,10 +185,8 @@ class OAuth2ServiceTest
             TenantAccessor.executeWithTenant(new DefaultTenant("t1", "localhost"), service::retrieveAccessToken);
             TenantAccessor.executeWithTenant(new DefaultTenant("t2", "localhost"), service::retrieveAccessToken);
 
-            // if a tenant is explicitly defined, the subdomain is mandatory for the subdomain strategy
-            assertThatThrownBy(
-                () -> TenantAccessor.executeWithTenant(new DefaultTenant("t3"), service::retrieveAccessToken))
-                .hasMessageContaining("does not have a subdomain");
+            // if a tenant without subdomain is given, the subdomain will be dynamically resolved using the BTP API
+            TenantAccessor.executeWithTenant(new DefaultTenant("t3"), service::retrieveAccessToken);
 
             SERVER_1
                 .verify(
@@ -189,6 +194,7 @@ class OAuth2ServiceTest
                     postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=provider")));
             SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=t1")));
             SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=t2")));
+            SERVER_1.verify(1, postRequestedFor(urlEqualTo("/oauth/token")).withRequestBody(containing("app_tid=t3")));
         }
         {
             // behalf provider
@@ -401,7 +407,7 @@ class OAuth2ServiceTest
             IOException,
             NoSuchAlgorithmException
     {
-        final KeyStore ks = KeyStore.getInstance("JKS");
+        final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(null, null);
         ClientIdentity identity = new ZtisClientIdentity("id", () -> ks);
         OAuth2Service service = OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(identity).build();
@@ -420,8 +426,8 @@ class OAuth2ServiceTest
     void testZeroTrustCertificateRotationCausesCacheMiss()
     {
         // we need to use actual KeyStores here because the code will build an HTTP Client and mocks don't suffice
-        final KeyStore ks1 = KeyStore.getInstance("JKS");
-        final KeyStore ks2 = KeyStore.getInstance("JKS");
+        final KeyStore ks1 = KeyStore.getInstance(KeyStore.getDefaultType());
+        final KeyStore ks2 = KeyStore.getInstance(KeyStore.getDefaultType());
         ks1.load(null, null);
         ks2.load(null, null);
 
@@ -445,5 +451,45 @@ class OAuth2ServiceTest
         // After rotation: different KeyStore → cache miss → new token service with new certificate
         final OAuth2TokenService tokenService2 = service.getTokenService(null);
         assertThat(tokenService2).isNotSameAs(tokenService1);
+    }
+
+    @Test
+    void testSubdomainStrategyThrowsWhenBtpApiUriMissing()
+    {
+        final OAuth2Service service =
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN)
+                // no withBtpTenantApiUri
+                .build();
+
+        assertThatThrownBy(
+            () -> TenantAccessor.executeWithTenant(new DefaultTenant("t1"), service::retrieveAccessToken))
+            .hasMessageContaining("BTP API URL is not given")
+            .hasMessageContaining("property 'btp-tenant-api'")
+            .hasRootCauseInstanceOf(DestinationAccessException.class);
+    }
+
+    @Test
+    void testSubdomainStrategyPropagatesResolverException()
+    {
+        final DestinationAccessException resolverError = new DestinationAccessException("resolver failed");
+        doThrow(resolverError).when(mockResolver).resolve(any(), any());
+
+        final OAuth2Service service =
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withBtpTenantApiUri(URI.create("http://should.not.exist"))
+                .withTenantPropagationStrategy(TenantPropagationStrategy.TENANT_SUBDOMAIN)
+                .withIasTenantHostResolver(mockResolver)
+                .build();
+
+        assertThatThrownBy(
+            () -> TenantAccessor.executeWithTenant(new DefaultTenant("t1"), service::retrieveAccessToken))
+            .hasRootCause(resolverError);
     }
 }

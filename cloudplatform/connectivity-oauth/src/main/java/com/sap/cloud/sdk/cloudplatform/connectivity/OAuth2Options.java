@@ -1,10 +1,10 @@
 package com.sap.cloud.sdk.cloudplatform.connectivity;
 
+import java.net.URI;
 import java.security.KeyStore;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public final class OAuth2Options
      * for the target system connection.
      */
     public static final OAuth2Options DEFAULT =
-        new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null, DEFAULT_TOKEN_CACHE_PARAMETERS);
+        new OAuth2Options(false, Map.of(), DEFAULT_TIMEOUT, null, DEFAULT_TOKEN_CACHE_PARAMETERS, null);
 
     private final boolean skipTokenRetrieval;
     @Nonnull
@@ -64,20 +64,13 @@ public final class OAuth2Options
     @Nonnull
     @Getter
     private final TimeLimiterConfiguration timeLimiter;
-
     /**
      * The {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>. This
      * {@link KeyStore} <b>is not used</b> to build an mTLS connection towards the OAuth2 token service.
      */
     @Nullable
-    public KeyStore getClientKeyStore()
-    {
-        return clientKeyStoreSupplier != null ? clientKeyStoreSupplier.get() : null;
-    }
-
-    @Nullable
-    @Getter( AccessLevel.PACKAGE )
-    private final Supplier<KeyStore> clientKeyStoreSupplier;
+    @Getter
+    private final KeyStore clientKeyStore;
 
     /**
      * Configuration for caching OAuth2 tokens.
@@ -87,6 +80,15 @@ public final class OAuth2Options
     @Nonnull
     @Getter
     private final TokenCacheParameters tokenCacheParameters;
+
+    /**
+     * Base URI of the BTP tenant API endpoint from the IAS service binding (the {@code btp-tenant-api} credential).
+     * When present, {@link OAuth2Service} uses it to derive a per-tenant token URL instead of the static {@code url}.
+     * Package-private; not part of the public API.
+     */
+    @Nullable
+    @Getter( AccessLevel.PACKAGE )
+    private final URI btpTenantApiBaseUri;
 
     /**
      * Indicates whether to skip the OAuth2 token flow.
@@ -129,9 +131,11 @@ public final class OAuth2Options
     {
         private boolean skipTokenRetrieval = false;
         private final Map<String, String> additionalTokenRetrievalParameters = new HashMap<>();
-        private Supplier<KeyStore> clientKeyStoreSupplier;
+        private KeyStore clientKeyStore;
         private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = DEFAULT_TOKEN_CACHE_PARAMETERS;
+        @Nullable
+        private URI btpTenantApiBaseUri;
 
         /**
          * Indicates whether to skip the OAuth2 token flow.
@@ -190,14 +194,7 @@ public final class OAuth2Options
         @Nonnull
         public Builder withClientKeyStore( @Nonnull final KeyStore clientKeyStore )
         {
-            this.clientKeyStoreSupplier = () -> clientKeyStore;
-            return this;
-        }
-
-        @Nonnull
-        Builder withClientKeyStoreSupplier( @Nonnull final Supplier<KeyStore> clientKeyStore )
-        {
-            this.clientKeyStoreSupplier = clientKeyStore;
+            this.clientKeyStore = clientKeyStore;
             return this;
         }
 
@@ -231,6 +228,13 @@ public final class OAuth2Options
             return this;
         }
 
+        @Nonnull
+        Builder withBtpTenantApiBaseUri( @Nullable final URI btpTenantApiBaseUri )
+        {
+            this.btpTenantApiBaseUri = btpTenantApiBaseUri;
+            return this;
+        }
+
         /**
          * Creates a new {@link OAuth2Options} instance.
          *
@@ -251,8 +255,9 @@ public final class OAuth2Options
                 skipTokenRetrieval,
                 new HashMap<>(additionalTokenRetrievalParameters),
                 timeLimiter,
-                clientKeyStoreSupplier,
-                tokenCacheParameters);
+                clientKeyStore,
+                tokenCacheParameters,
+                btpTenantApiBaseUri);
         }
     }
 

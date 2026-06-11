@@ -36,6 +36,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Soda'
 
+    delete:
+      summary: String parameter test
+      description: Should simplify the parameter to a string
+      parameters:
+        - $ref: '#/components/parameters/OneOfStringParam'
+      tags:
+        - OneOfStringTest
+      responses:
+        '200':
+          description: A list of soda products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Soda'
+
   /sodas/{sodaId}:
     get:
       summary: Get details of a specific soda
@@ -103,7 +120,26 @@ paths:
           description: Soda not found
 
 components:
+  parameters:
+    OneOfStringParam:
+      name: executionId
+      description: The Id of an execution
+      schema:
+        $ref: '#/components/schemas/OneOfString'
+      in: query
+      required: true
   schemas:
+    OneOfString:
+      type: string
+      example: aa97b177-9383-4934-8543-0f91b7a0283a
+      oneOf:
+        - $ref: '#/components/schemas/String'
+      description: ID of the deployment/execution
+    String:
+      description: Generic ID
+      pattern: ^[\w.-]{4,64}$
+      type: string
+      example: aa97b177-9383-4934-8543-0f91b7a0283a
     Soda:
       type: object
       properties:

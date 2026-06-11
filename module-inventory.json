@@ -122,6 +122,17 @@
   },
   {
     "groupId": "com.sap.cloud.sdk.cloudplatform",
+    "artifactId": "connectivity-fips-sample",
+    "packaging": "jar",
+    "releaseAudience": "None",
+    "releaseMaturity": "Stable",
+    "pomFile": "cloudplatform/connectivity-fips-sample/pom.xml",
+    "parentGroupId": "com.sap.cloud.sdk.cloudplatform",
+    "parentArtifactId": "cloudplatform-parent",
+    "excludeFromBlackDuckScan": true
+  },
+  {
+    "groupId": "com.sap.cloud.sdk.cloudplatform",
     "artifactId": "connectivity-oauth",
     "packaging": "jar",
     "releaseAudience": "Public",

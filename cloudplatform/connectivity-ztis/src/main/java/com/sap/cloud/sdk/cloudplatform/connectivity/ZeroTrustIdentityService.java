@@ -209,7 +209,7 @@ public class ZeroTrustIdentityService
         final KeyStore.Entry privateKeyEntry = new PrivateKeyEntry(svid.getPrivateKey(), svid.getChainArray());
         final KeyStore keyStore;
         try {
-            keyStore = KeyStore.getInstance("JKS");
+            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(null);
             keyStore.setEntry("spiffe", privateKeyEntry, new KeyStore.PasswordProtection(new char[0]));
         }

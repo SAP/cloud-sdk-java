@@ -329,6 +329,7 @@ public class OAuth2ServiceBindingDestinationLoader implements ServiceBindingDest
                 .withAdditionalParameters(oAuth2Options.getAdditionalTokenRetrievalParameters())
                 .withTimeLimiter(oAuth2Options.getTimeLimiter())
                 .withTokenCacheParameters(oAuth2Options.getTokenCacheParameters())
+                .withBtpTenantApiUri(oAuth2Options.getBtpTenantApiBaseUri())
                 .build();
         return new OAuth2HeaderProvider(oAuth2Service, authHeader);
     }
