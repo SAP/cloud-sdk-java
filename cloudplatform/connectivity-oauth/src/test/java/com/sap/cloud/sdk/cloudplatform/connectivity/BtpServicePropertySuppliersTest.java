@@ -807,6 +807,16 @@ class BtpServicePropertySuppliersTest
                 .isInstanceOf(CloudPlatformException.class)
                 .describedAs("We are not mocking the ZTIS service here so this should fail")
                 .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
+
+            // verify that the OAuth2Options holds a dynamic supplier (not a static KeyStore copy)
+            final OAuth2Options oAuth2Options = sut.getOAuth2Options();
+            assertThat(oAuth2Options.getClientKeyStoreSupplier())
+                .describedAs("ZTIS binding must use a dynamic KeyStore supplier")
+                .isNotNull();
+            assertThatThrownBy(oAuth2Options::getClientKeyStore)
+                .isInstanceOf(CloudPlatformException.class)
+                .describedAs("Supplier invocation must propagate ZTIS failure")
+                .hasRootCauseInstanceOf(ServiceBindingAccessException.class);
         }
 
         @Test

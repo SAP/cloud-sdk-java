@@ -38,6 +38,7 @@ import com.sap.cloud.sdk.cloudplatform.security.ClientCertificate;
 import com.sap.cloud.sdk.cloudplatform.security.ClientCredentials;
 import com.sap.cloud.sdk.cloudplatform.security.Credentials;
 
+import io.vavr.control.Option;
 import lombok.SneakyThrows;
 
 class DefaultHttpDestinationTest
@@ -204,6 +205,22 @@ class DefaultHttpDestinationTest
 
         assertThat(defaultHttpDestination.getKeyStore().get()).isSameAs(keyStore);
         assertThat(defaultHttpDestination.getKeyStorePassword().get()).isEqualTo(keyStorePassword);
+    }
+
+    @Test
+    void testDynamicKeyStoreSupplierIsInvokedOnEachAccess()
+    {
+        final KeyStore keyStore1 = mock(KeyStore.class);
+        final KeyStore keyStore2 = mock(KeyStore.class);
+        final KeyStore[] current = { keyStore1 };
+
+        final DefaultHttpDestination destination =
+            DefaultHttpDestination.builder("some-uri").keyStoreSupplier(() -> Option.of(current[0])).build();
+
+        assertThat(destination.getKeyStore().get()).isSameAs(keyStore1);
+
+        current[0] = keyStore2;
+        assertThat(destination.getKeyStore().get()).isSameAs(keyStore2);
     }
 
     @Test
@@ -706,7 +723,7 @@ class DefaultHttpDestinationTest
         assertThat(sut.get("bar", v -> (int) v)).containsExactly(42);
         assertThat(sut.headers).containsExactly(header);
         assertThat(sut.customHeaderProviders).containsExactly(headerProvider);
-        assertThat(sut.keyStore).isSameAs(keyStore);
+        assertThat(sut.keystoreSupplier.get().getOrNull()).isSameAs(keyStore);
         assertThat(sut.trustStore).isSameAs(trustStore);
         assertThat(sut.get(DestinationProperty.TRUST_ALL)).containsExactly(true);
     }
