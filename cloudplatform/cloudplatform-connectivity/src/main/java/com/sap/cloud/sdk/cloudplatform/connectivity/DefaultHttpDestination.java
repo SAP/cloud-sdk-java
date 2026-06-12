@@ -54,7 +54,7 @@ public final class DefaultHttpDestination implements HttpDestination
     private final DestinationProperties baseProperties;
 
     @Nonnull
-    private final Supplier<Option<KeyStore>> keyStore;
+    private final Supplier<Option<KeyStore>> keyStoreSupplier;
 
     @Nullable
     private final KeyStore trustStore;
@@ -99,7 +99,7 @@ public final class DefaultHttpDestination implements HttpDestination
         @Nonnull final DestinationProperties baseProperties,
         @Nonnull final ComplexDestinationPropertyFactory destinationPropertyFactory,
         @Nullable final List<Header> customHeaders,
-        @Nonnull final Supplier<Option<KeyStore>> keyStore,
+        @Nonnull final Supplier<Option<KeyStore>> keyStoreSupplier,
         @Nullable final KeyStore trustStore,
         @Nullable final List<DestinationHeaderProvider> customHeaderProviders )
     {
@@ -124,7 +124,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 ? ImmutableList.<DestinationHeaderProvider> builder().addAll(customHeaderProviders).build()
                 : ImmutableList.of();
 
-        this.keyStore = keyStore;
+        this.keyStoreSupplier = keyStoreSupplier;
         this.trustStore = trustStore;
 
         cachedProxyConfiguration = destinationPropertyFactory.getProxyConfiguration(baseProperties);
@@ -297,7 +297,7 @@ public final class DefaultHttpDestination implements HttpDestination
     @Override
     public Option<KeyStore> getKeyStore()
     {
-        return keyStore.get();
+        return keyStoreSupplier.get();
     }
 
     @Nonnull
@@ -517,7 +517,7 @@ public final class DefaultHttpDestination implements HttpDestination
             builder
                 .headerProviders(httpDestination.getCustomHeaderProviders().toArray(new DestinationHeaderProvider[0]));
 
-            builder.keyStoreSupplier(httpDestination.keyStore);
+            builder.keyStoreSupplier(httpDestination.keyStoreSupplier);
             httpDestination.getTrustStore().map(builder::trustStore);
         }
 
@@ -540,8 +540,8 @@ public final class DefaultHttpDestination implements HttpDestination
             .append(baseProperties, that.baseProperties)
             .append(customHeaders, that.customHeaders)
             .append(
-                resolveCertificatesOnly(keyStore.get().getOrNull()),
-                resolveCertificatesOnly(that.keyStore.get().getOrNull()))
+                resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
+                resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
             .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
             .isEquals();
     }
@@ -552,7 +552,7 @@ public final class DefaultHttpDestination implements HttpDestination
         return new HashCodeBuilder(17, 37)
             .append(baseProperties)
             .append(customHeaders)
-            .append(resolveKeyStoreHashCode(keyStore.get().getOrNull()))
+            .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
             .append(resolveKeyStoreHashCode(trustStore))
             .toHashCode();
     }
