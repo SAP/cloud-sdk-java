@@ -575,6 +575,14 @@ public final class DefaultHttpDestination implements HttpDestination
         Supplier<Option<KeyStore>> keystoreSupplier = Option::none;
 
         /**
+         * The trust store to be used when communicating over HTTP.
+         */
+        @Setter( onParam_ = @Nullable )
+        KeyStore trustStore = null;
+
+        final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
+
+        /**
          * The {@link KeyStore} to be used when communicating over HTTP.
          */
         @Nonnull
@@ -593,14 +601,6 @@ public final class DefaultHttpDestination implements HttpDestination
             this.keystoreSupplier = supplier;
             return this;
         }
-
-        /**
-         * The trust store to be used when communicating over HTTP.
-         */
-        @Setter( onParam_ = @Nullable )
-        KeyStore trustStore = null;
-
-        final List<DestinationHeaderProvider> customHeaderProviders = new ArrayList<>();
 
         /**
          * Adds the given key-value pair to the destination to be created. This will overwrite any property already
