@@ -593,7 +593,8 @@ public final class DefaultHttpDestination implements HttpDestination
         }
 
         /**
-         * A {@link Supplier<KeyStore>} to allow for dynamically resolving certificates at runtime for HTTP communication.
+         * A {@link Supplier<KeyStore>} to allow for dynamically resolving certificates at runtime for HTTP
+         * communication.
          */
         @Nonnull
         Builder keyStoreSupplier( @Nonnull final Supplier<Option<KeyStore>> supplier )
