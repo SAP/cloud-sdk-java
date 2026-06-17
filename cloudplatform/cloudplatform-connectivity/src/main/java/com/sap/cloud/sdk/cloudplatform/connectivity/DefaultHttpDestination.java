@@ -572,7 +572,7 @@ public final class DefaultHttpDestination implements HttpDestination
             new DefaultHttpDestinationBuilderProxyHandler();
 
         @Nonnull
-        Supplier<Option<KeyStore>> keystoreSupplier = Option::none;
+        Supplier<Option<KeyStore>> keyStoreSupplier = Option::none;
 
         /**
          * The trust store to be used when communicating over HTTP.
@@ -588,7 +588,7 @@ public final class DefaultHttpDestination implements HttpDestination
         @Nonnull
         public Builder keyStore( @Nullable final KeyStore keyStore )
         {
-            this.keystoreSupplier = () -> Option.of(keyStore);
+            this.keyStoreSupplier = () -> Option.of(keyStore);
             return this;
         }
 
@@ -598,7 +598,7 @@ public final class DefaultHttpDestination implements HttpDestination
         @Nonnull
         Builder keyStoreSupplier( @Nonnull final Supplier<Option<KeyStore>> supplier )
         {
-            this.keystoreSupplier = supplier;
+            this.keyStoreSupplier = supplier;
             return this;
         }
 
@@ -1042,7 +1042,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 builder.build(),
                 new ComplexDestinationPropertyFactory(),
                 headers,
-                keystoreSupplier,
+                keyStoreSupplier,
                 trustStore,
                 customHeaderProviders);
         }
