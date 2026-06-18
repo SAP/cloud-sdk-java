@@ -5,6 +5,7 @@ import java.security.KeyStore;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,12 +66,11 @@ public final class OAuth2Options
     @Getter
     private final TimeLimiterConfiguration timeLimiter;
     /**
-     * The {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>. This
+     * A supplier for the {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>. This
      * {@link KeyStore} <b>is not used</b> to build an mTLS connection towards the OAuth2 token service.
      */
     @Nullable
-    @Getter
-    private final KeyStore clientKeyStore;
+    private final Supplier<KeyStore> clientKeyStoreSupplier;
 
     /**
      * Configuration for caching OAuth2 tokens.
@@ -113,6 +113,26 @@ public final class OAuth2Options
     }
 
     /**
+     * Returns the {@link KeyStore} to use for building an mTLS connection towards the <b>target system</b>, or
+     * {@code null} if no key store is configured.
+     */
+    @Nullable
+    public KeyStore getClientKeyStore()
+    {
+        return clientKeyStoreSupplier != null ? clientKeyStoreSupplier.get() : null;
+    }
+
+    /**
+     * Returns the supplier for the {@link KeyStore} to use for building an mTLS connection towards the <b>target
+     * system</b>, or {@code null} if no key store is configured.
+     */
+    @Nullable
+    Supplier<KeyStore> getClientKeyStoreSupplier()
+    {
+        return clientKeyStoreSupplier;
+    }
+
+    /**
      * Returns a new {@link Builder} instance that can be used to create a customized {@link OAuth2Options} instance.
      *
      * @return A new {@link Builder}.
@@ -131,7 +151,8 @@ public final class OAuth2Options
     {
         private boolean skipTokenRetrieval = false;
         private final Map<String, String> additionalTokenRetrievalParameters = new HashMap<>();
-        private KeyStore clientKeyStore;
+        @Nullable
+        private Supplier<KeyStore> clientKeyStoreSupplier;
         private TimeLimiterConfiguration timeLimiter = DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = DEFAULT_TOKEN_CACHE_PARAMETERS;
         @Nullable
@@ -194,7 +215,23 @@ public final class OAuth2Options
         @Nonnull
         public Builder withClientKeyStore( @Nonnull final KeyStore clientKeyStore )
         {
-            this.clientKeyStore = clientKeyStore;
+            this.clientKeyStoreSupplier = () -> clientKeyStore;
+            return this;
+        }
+
+        /**
+         * Sets a supplier for the {@link KeyStore} to use for building an mTLS connection towards the <b>target
+         * system</b>. The supplier is invoked on every request, allowing the key store to be rotated at runtime. This
+         * {@link KeyStore} <b>is not used</b> to build an mTLS connection towards the OAuth2 token service.
+         *
+         * @param supplier
+         *            A supplier providing the {@link KeyStore} for mTLS towards the <b>target system</b>.
+         * @return This {@link Builder}.
+         */
+        @Nonnull
+        Builder withClientKeyStoreSupplier( @Nonnull final Supplier<KeyStore> supplier )
+        {
+            this.clientKeyStoreSupplier = supplier;
             return this;
         }
 
@@ -255,7 +292,7 @@ public final class OAuth2Options
                 skipTokenRetrieval,
                 new HashMap<>(additionalTokenRetrievalParameters),
                 timeLimiter,
-                clientKeyStore,
+                clientKeyStoreSupplier,
                 tokenCacheParameters,
                 btpTenantApiBaseUri);
         }

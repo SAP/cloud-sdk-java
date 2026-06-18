@@ -16,7 +16,7 @@
 
 ### 📈 Improvements
 
-- 
+- Further improve the automated certificate rotation support for the credential type `X509_ATTESTED`.  
 
 ### 🐛 Fixed Issues
 
