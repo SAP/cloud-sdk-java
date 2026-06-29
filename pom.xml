@@ -105,7 +105,7 @@
 		<assertj-vavr.version>0.5.1</assertj-vavr.version>
 		<mockito.version>5.23.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.1.0</junit.jupiter.version>
+		<junit.jupiter.version>6.1.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -115,7 +115,7 @@
 		<caffeine.version>3.2.4</caffeine.version>
 		<openapi-generator.version>7.23.0</openapi-generator.version>
 		<io-swagger-core-v3.version>2.2.52</io-swagger-core-v3.version>
-		<io-swagger-parser-v3.version>2.1.44</io-swagger-parser-v3.version>
+		<io-swagger-parser-v3.version>2.1.45</io-swagger-parser-v3.version>
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.3.0</stax2-api.version>
