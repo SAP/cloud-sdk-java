@@ -105,7 +105,7 @@
 		<assertj-vavr.version>0.5.1</assertj-vavr.version>
 		<mockito.version>5.23.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.1.0</junit.jupiter.version>
+		<junit.jupiter.version>6.1.1</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
