@@ -52,7 +52,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: 'Checkout Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: 'Check Whether Code PR Can Be Merged'
         if: ${{ inputs.skip-pr-merge != 'true' }}

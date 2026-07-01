@@ -35,7 +35,7 @@ jobs:
       contents: write # needed for git push
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -88,7 +88,7 @@ jobs:
       statuses: write # needed to update the commit status
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
 
@@ -124,7 +124,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
 
@@ -167,7 +167,7 @@ jobs:
       statuses: write # needed to update the commit status
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.create-release.outputs.release-name }}
       - name: 'Trigger workflow (ignore failures)'
@@ -199,12 +199,12 @@ jobs:
           permission-pull-requests: write
 
       - name: 'Checkout Code Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
           token: ${{ steps.app-token.outputs.token }}
       - name: 'Checkout Docs Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
@@ -290,7 +290,7 @@ jobs:
           permission-pull-requests: write
 
       - name: 'Checkout Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.bump-version.outputs.release-branch }}
           token: ${{ steps.app-token.outputs.token }} # this is needed so that the same token is used when pushing our changes later. Otherwise, our on: push workflows (i.e. our continuous integration) won't be triggered.
@@ -337,7 +337,7 @@ jobs:
     if: ${{ failure() }}
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.branch }}
 

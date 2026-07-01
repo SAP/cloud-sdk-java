@@ -87,7 +87,7 @@ jobs:
       contents: read
     steps:
       - name: "Checkout Repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -116,7 +116,7 @@ jobs:
       contents: read # upload-artifacts does not use github-token
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -128,7 +128,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
@@ -172,7 +172,7 @@ jobs:
       contents: read
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -184,7 +184,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
@@ -235,7 +235,7 @@ jobs:
     name: "Run ${{ matrix.task.name }} Analysis"
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -247,7 +247,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.M2_ROOT }}
@@ -279,7 +279,7 @@ jobs:
       security-events: write # needed for Perform CodeQL Analysis
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -291,7 +291,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
@@ -336,7 +336,7 @@ jobs:
 
       - name: "Restore Dependencies"
         id: restore-dependencies
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: ${{ env.MAVEN_CACHE_KEY }}
           path: ${{ env.MAVEN_CACHE_DIR }}
@@ -417,7 +417,7 @@ jobs:
       contents: read
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
@@ -435,7 +435,7 @@ jobs:
       contents: write # needed for Run FOSStars Rating
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.context.outputs.commit }}
 
