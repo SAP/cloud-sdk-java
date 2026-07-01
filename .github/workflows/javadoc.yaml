@@ -27,7 +27,7 @@ jobs:
           git config --global user.name "SAP Cloud SDK Bot"
 
       - name: 'Checkout Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -71,7 +71,7 @@ jobs:
           permission-pull-requests: write
 
       - name: 'Checkout Docs Repository'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ env.DOCS_REPO }}
           path: .cloud-sdk-docs
