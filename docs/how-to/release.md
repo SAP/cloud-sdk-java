@@ -8,10 +8,10 @@
 When the workflow runs successfully, it will have created a `RELEASE-X.Y.Z` branch.
 Additionally, the workflow will create a few PRs:
 
-1. One to update our JavaDocs in [the Documentation Repository](https://github.com/sap/cloud-sdk)
-2. Another one to update our release notes, also in [the Documentation Repository](https://github.com/sap/cloud-sdk)
+1. One to update our JavaDocs in [the Documentation Repository](https://github.com/SAP/cloud-sdk/pulls)
+2. Another one to update our release notes, also in [the Documentation Repository](https://github.com/SAP/cloud-sdk/pulls)
     * **Note** As we are splitting our release notes every 15 minor versions, some manual adjustment might be needed to both `index.jsx` and `release-notes.mdx`
-3. A third one for the actual changes in [the Code Repository](https://github.com/sap/cloud-sdk-java)
+3. A third one for the actual changes in [the Code Repository](https://github.com/SAP/cloud-sdk-java/pulls)
 
 Lastly, the workflow also creates a new draft release and an according tag.
 All of these things will be linked in the Code PR, so that they can be found easily.
@@ -20,7 +20,7 @@ All of these things will be linked in the Code PR, so that they can be found eas
 
 As the second to last step, you will trigger the [Perform Release Workflow](https://github.com/SAP/cloud-sdk-java/actions/workflows/perform-release.yml).
 
-This workflow will take care of merging the PRs and creates a **staging release** in [Sonatype](https://oss.sonatype.org/).
+This workflow will take care of merging the PRs and creates a **staging release** in [Sonatype](https://central.sonatype.com/publishing/deployments).
 As the very last step, once the _Perform Release_ workflow has finished successfully, you need to log into _Sonatype_ and publish the staging release using the `Technical User for Releases` account.
 
 That's it!
