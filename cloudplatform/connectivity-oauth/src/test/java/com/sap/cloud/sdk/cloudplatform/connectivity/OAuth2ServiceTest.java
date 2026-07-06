@@ -287,7 +287,12 @@ class OAuth2ServiceTest
                     .willReturn(okJson(RESPONSE_TEMPLATE.formatted(TOKEN_1)).withHeader("Set-Cookie", "myCookie=123")));
 
         final OAuth2Service service =
-            OAuth2Service.builder().withTokenUri(SERVER_1.baseUrl()).withIdentity(IDENTITY_1).build();
+            OAuth2Service
+                .builder()
+                .withTokenUri(SERVER_1.baseUrl())
+                .withIdentity(IDENTITY_1)
+                .withTimeLimiter(ResilienceConfiguration.TimeLimiterConfiguration.disabled())
+                .build();
 
         TenantAccessor.executeWithTenant(new DefaultTenant("tenant1"), service::retrieveAccessToken);
         TenantAccessor.executeWithTenant(new DefaultTenant("tenant2"), service::retrieveAccessToken);
