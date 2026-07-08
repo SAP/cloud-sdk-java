@@ -2,17 +2,16 @@ package com.sap.cloud.sdk.cloudplatform.connectivity;
 
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.AuthenticationServiceOptions.TargetUri;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.IasCommunicationOptions;
+import static com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.IasOptions.TokenFormat;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.MultiUrlPropertySupplier.REMOVE_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.sap.cloud.environment.servicebinding.api.ServiceIdentifier;
 import com.sap.cloud.sdk.cloudplatform.connectivity.BtpServiceOptions.BusinessLoggingOptions;
@@ -189,8 +188,12 @@ class BtpServicePropertySuppliers
             } else {
                 attachIasCommunicationOptions(builder);
                 builder.withTokenRetrievalParameter("app_tid", getCredentialOrThrow(String.class, "app_tid"));
+                options
+                    .getOption(TokenFormat.class)
+                    .peek(format -> builder.withTokenRetrievalParameter("token_format", format));
             }
             attachClientKeyStore(builder);
+            getCredential(URI.class, "btp-tenant-api").peek(builder::withBtpTenantApiBaseUri);
 
             return builder.build();
         }
@@ -261,25 +264,17 @@ class BtpServicePropertySuppliers
 
         private void attachClientKeyStore( @Nonnull final OAuth2Options.Builder optionsBuilder )
         {
-            final KeyStore maybeClientStore = getClientKeyStore();
-            if( maybeClientStore != null ) {
-                optionsBuilder.withClientKeyStore(maybeClientStore);
-            }
-        }
-
-        @Nullable
-        private KeyStore getClientKeyStore()
-        {
             final ClientIdentity clientIdentity = getClientIdentity();
-            if( clientIdentity instanceof ZtisClientIdentity ) {
-                return ((ZtisClientIdentity) clientIdentity).getKeyStore();
+
+            if( clientIdentity instanceof ZtisClientIdentity ztisClientIdentity ) {
+                optionsBuilder.withClientKeyStoreSupplier(ztisClientIdentity::getKeyStore);
+                return;
             }
             if( !(clientIdentity instanceof ClientCertificate) ) {
-                return null;
+                return;
             }
-
             try {
-                return SSLContextFactory.getInstance().createKeyStore(clientIdentity);
+                optionsBuilder.withClientKeyStore(SSLContextFactory.getInstance().createKeyStore(clientIdentity));
             }
             catch( final Exception e ) {
                 throw new DestinationAccessException("Unable to extract client key store from IAS service binding.", e);

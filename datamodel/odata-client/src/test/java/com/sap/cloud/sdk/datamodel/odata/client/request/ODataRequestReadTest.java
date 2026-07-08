@@ -6,6 +6,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V2;
+import static com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol.V4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,7 +25,6 @@ import com.google.common.net.UrlEscapers;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
-import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.FieldReference;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.expression.OrderExpression;
@@ -63,7 +64,7 @@ class ODataRequestReadTest
         final String queryString = "$select=select1&$expand=expand1,expand2($select=nestedSelect;$top=10)&$top=1";
 
         final ODataRequestRead request =
-            new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, queryString, ODataProtocol.V4);
+            new ODataRequestRead(ODATA_SERVICE_PATH, ODATA_ENTITY_COLLECTION, queryString, V4);
         request.addQueryParameter("query-param1", "qp1");
         request.addQueryParameter("query-param2", "qp2");
         request.addHeader("header-key1", "hk1");
@@ -91,10 +92,10 @@ class ODataRequestReadTest
     @Test
     void testV4QueryExpand()
     {
-        final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V4);
-        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V4);
-        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", ODataProtocol.V4);
-        final StructuredQuery subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V4);
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V4);
+        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V4);
+        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V4);
+        final StructuredQuery subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V4);
         subQuery2.select(subQuery3);
         subQuery1.select(subQuery2);
         query.select(subQuery1);
@@ -102,11 +103,26 @@ class ODataRequestReadTest
     }
 
     @Test
+    void testV4QueryExpandWithOptions()
+    {
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V4),
+            subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V4).skip(3).top(10),
+            subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V4).orderBy("Duration", Order.DESC),
+            subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V4).withInlineCount();
+        subQuery2.select(subQuery3);
+        subQuery1.select(subQuery2);
+        query.select(subQuery1);
+        assertThat(query.getQueryString())
+            .isEqualTo(
+                "$expand=relatedBook($expand=relatedMovies($expand=relatedBook($count=true);$orderby=Duration desc);$top=10;$skip=3)");
+    }
+
+    @Test
     void testV4QuerySelectAndFilter()
     {
-        final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V4);
-        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V4);
-        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", ODataProtocol.V4);
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V4);
+        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V4);
+        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V4);
         subQuery1.select(subQuery2);
         query.select(subQuery1);
 
@@ -128,10 +144,10 @@ class ODataRequestReadTest
     @Test
     void testV2QueryExpand()
     {
-        final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V2);
-        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V2);
-        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", ODataProtocol.V2);
-        final StructuredQuery subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V2);
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V2);
+        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V2);
+        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V2);
+        final StructuredQuery subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V2);
         subQuery2.select(subQuery3);
         subQuery1.select(subQuery2);
         query.select(subQuery1);
@@ -144,11 +160,25 @@ class ODataRequestReadTest
     }
 
     @Test
+    void testV2QueryExpandWithOptionsIgnored()
+    {
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V2),
+            subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V2).skip(3).top(10),
+            subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V2).orderBy("Duration", Order.DESC),
+            subQuery3 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V2).withInlineCount();
+        subQuery2.select(subQuery3);
+        subQuery1.select(subQuery2);
+        query.select(subQuery1);
+        assertThat(query.getQueryString())
+            .isEqualTo("$expand=relatedBook,relatedBook/relatedMovies,relatedBook/relatedMovies/relatedBook");
+    }
+
+    @Test
     void testV2QuerySelectAndFilter()
     {
-        final StructuredQuery query = StructuredQuery.onEntity("Movies", ODataProtocol.V2);
-        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", ODataProtocol.V2);
-        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", ODataProtocol.V2);
+        final StructuredQuery query = StructuredQuery.onEntity("Movies", V2);
+        final StructuredQuery subQuery1 = StructuredQuery.asNestedQueryOnProperty("relatedBook", V2);
+        final StructuredQuery subQuery2 = StructuredQuery.asNestedQueryOnProperty("relatedMovies", V2);
         subQuery1.select(subQuery2);
         query.select(subQuery1);
 
@@ -178,8 +208,7 @@ class ODataRequestReadTest
         final String unencodedQuery = "$orderby=name asc,ID";
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(
-                () -> new ODataRequestRead(servicePath, entityName, unencodedQuery, ODataProtocol.V4).getRelativeUri());
+            .isThrownBy(() -> new ODataRequestRead(servicePath, entityName, unencodedQuery, V4).getRelativeUri());
     }
 
     @Test
@@ -192,8 +221,7 @@ class ODataRequestReadTest
 
         final String encodedQuery = UrlEscapers.urlFragmentEscaper().escape(unencodedQuery);
 
-        final URI relativeUri =
-            new ODataRequestRead(servicePath, entityName, encodedQuery, ODataProtocol.V4).getRelativeUri();
+        final URI relativeUri = new ODataRequestRead(servicePath, entityName, encodedQuery, V4).getRelativeUri();
 
         final String expectedUri = "/odata/v4/Service/Authors?$orderby=name%20asc,ID";
 
@@ -208,15 +236,14 @@ class ODataRequestReadTest
 
         final StructuredQuery structuredQuery =
             StructuredQuery
-                .onEntity(entityName, ODataProtocol.V2)
+                .onEntity(entityName, V2)
                 .filter(FieldReference.of("philosphy").equalTo("Yin & Yang"))
                 .orderBy(OrderExpression.of("name", Order.ASC).and("ID", Order.ASC))
                 .withInlineCount();
 
         final String encodedQuery = structuredQuery.getEncodedQueryString();
 
-        final URI relativeUri =
-            new ODataRequestRead(servicePath, entityName, encodedQuery, ODataProtocol.V2).getRelativeUri();
+        final URI relativeUri = new ODataRequestRead(servicePath, entityName, encodedQuery, V2).getRelativeUri();
 
         final String expectedUri =
             "/odata/v2/Service/Authors?$filter=(philosphy%20eq%20'Yin%20%26%20Yang')&$orderby=name%20asc,ID%20asc&$inlinecount=allpages";
@@ -232,15 +259,14 @@ class ODataRequestReadTest
 
         final StructuredQuery structuredQuery =
             StructuredQuery
-                .onEntity(entityName, ODataProtocol.V4)
+                .onEntity(entityName, V4)
                 .filter(FieldReference.of("philosphy").equalTo("Yin & Yang"))
                 .orderBy(OrderExpression.of("name", Order.ASC).and("ID", Order.ASC))
                 .withInlineCount();
 
         final String encodedQuery = structuredQuery.getEncodedQueryString();
 
-        final URI relativeUri =
-            new ODataRequestRead(servicePath, entityName, encodedQuery, ODataProtocol.V4).getRelativeUri();
+        final URI relativeUri = new ODataRequestRead(servicePath, entityName, encodedQuery, V4).getRelativeUri();
 
         final String expectedUri =
             "/odata/v4/Service/Authors?$filter=(philosphy%20eq%20'Yin%20%26%20Yang')&$orderby=name%20asc,ID%20asc&$count=true";
@@ -257,7 +283,7 @@ class ODataRequestReadTest
 
         final StructuredQuery structuredQuery =
             StructuredQuery
-                .onEntity(entityName, ODataProtocol.V4)
+                .onEntity(entityName, V4)
                 .filter(FieldReference.of("philosophy").equalTo("Yin & Yang"))
                 .withCustomParameter(customKey, customValue);
 
@@ -270,7 +296,7 @@ class ODataRequestReadTest
     @Test
     void testCustomParametersOnNestedQuery()
     {
-        final StructuredQuery query = StructuredQuery.asNestedQueryOnProperty("name", ODataProtocol.V4);
+        final StructuredQuery query = StructuredQuery.asNestedQueryOnProperty("name", V4);
 
         assertThatThrownBy(() -> query.withCustomParameter("key", "value")).isInstanceOf(IllegalStateException.class);
     }
@@ -278,7 +304,7 @@ class ODataRequestReadTest
     @Test
     void testCustomParametersWithEmptyKey()
     {
-        final StructuredQuery query = StructuredQuery.onEntity("name", ODataProtocol.V4);
+        final StructuredQuery query = StructuredQuery.onEntity("name", V4);
 
         assertThatThrownBy(() -> query.withCustomParameter("", "value")).isInstanceOf(IllegalArgumentException.class);
     }
@@ -288,22 +314,29 @@ class ODataRequestReadTest
     {
         final StructuredQuery structuredQuery =
             StructuredQuery
-                .onEntity("Authors", ODataProtocol.V4)
+                .onEntity("Authors", V4)
                 .filter(FieldReference.of("philosphy").equalTo("Yin & Yang"))
                 .orderBy(OrderExpression.of("name", Order.ASC).and("ID", Order.ASC))
                 .withInlineCount();
 
         final ODataRequestRead expected =
-            new ODataRequestRead(
-                "/some/service/path",
-                "Authors",
-                structuredQuery.getEncodedQueryString(),
-                ODataProtocol.V4);
+            new ODataRequestRead("/some/service/path", "Authors", structuredQuery.getEncodedQueryString(), V4);
 
         final ODataRequestRead actual =
             new ODataRequestRead("/some/service/path", new ODataResourcePath(), structuredQuery);
 
         assertThat(actual).isEqualTo(expected);
         assertThat(actual.getQueryString()).isEqualTo(expected.getQueryString());
+    }
+
+    @Test
+    void testConstructorWithStructuredQueryDoesNotMutateResourcePath()
+    {
+        final StructuredQuery structuredQuery = StructuredQuery.onEntity("Authors", V4).withInlineCount();
+        final ODataResourcePath resourcePath = ODataResourcePath.of("Authors");
+
+        new ODataRequestRead("/some/service/path", resourcePath, structuredQuery);
+
+        assertThat(resourcePath.toString()).isEqualTo("/Authors");
     }
 }

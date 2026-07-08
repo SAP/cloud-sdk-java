@@ -96,7 +96,7 @@ public class ODataRequestReadByKey extends ODataRequestGeneric
     {
         this(
             servicePath,
-            entityPath.addParameterToLastSegment(entityKey),
+            entityPath.copy().addParameterToLastSegment(entityKey),
             query.getEncodedQueryString(),
             query.getProtocol());
     }

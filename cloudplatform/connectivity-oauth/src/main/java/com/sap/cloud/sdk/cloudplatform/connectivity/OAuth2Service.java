@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -33,10 +33,8 @@ import com.sap.cloud.sdk.cloudplatform.security.exception.TokenRequestFailedExce
 import com.sap.cloud.sdk.cloudplatform.tenant.Tenant;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantAccessor;
 import com.sap.cloud.sdk.cloudplatform.tenant.TenantWithSubdomain;
-import com.sap.cloud.security.client.HttpClientFactory;
 import com.sap.cloud.security.config.ClientIdentity;
 import com.sap.cloud.security.token.Token;
-import com.sap.cloud.security.xsuaa.client.DefaultOAuth2TokenService;
 import com.sap.cloud.security.xsuaa.client.OAuth2ServiceException;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenResponse;
 import com.sap.cloud.security.xsuaa.client.OAuth2TokenService;
@@ -93,12 +91,21 @@ class OAuth2Service
     private final ResilienceConfiguration resilienceConfiguration;
     @Nonnull
     private final TokenCacheParameters tokenCacheParameters;
+    @Nullable
+    private final URI btpTenantApiUri;
+    @Nonnull
+    private IasTenantHostResolver iasTenantHostResolver;
 
     // package-private for testing
     @Nonnull
     OAuth2TokenService getTokenService( @Nullable final String tenantId )
     {
         final CacheKey key = CacheKey.fromIds(tenantId, null).append(identity);
+        // ZTIS certificates rotate at runtime, thus we explicitly add the current KeyStore as cache key
+        // once the certificate rotates, this produces a cache miss, ensuring we construct a new HTTP client with a new certificate
+        if( identity instanceof final ZtisClientIdentity ztisIdentity ) {
+            key.append(ztisIdentity.getKeyStore());
+        }
         return tokenServiceCache.get(key, this::createTokenService);
     }
 
@@ -113,29 +120,13 @@ class OAuth2Service
                     tokenCacheParameters.getTokenExpirationDelta(),
                     false); // disable cache statistics
 
-        if( !(identity instanceof ZtisClientIdentity) ) {
-            return new DefaultOAuth2TokenService(HttpClientFactory.create(identity), tokenCacheConfiguration);
-        }
+        // For ZTIS, use the KeyStore directly from the identity
+        final CloseableHttpClient httpClient =
+            identity instanceof final ZtisClientIdentity ztisIdentity
+                ? HttpClient5OAuth2TokenService.createHttpClient(identity, ztisIdentity.getKeyStore())
+                : HttpClient5OAuth2TokenService.createHttpClient(identity);
 
-        final DefaultHttpDestination destination =
-            DefaultHttpDestination
-                // Giving an empty URL here as a workaround
-                // If we were to give the token URL here we can't change the subdomain later
-                // But the subdomain represents the tenant in case of IAS, so we have to change the subdomain per-tenant
-                .builder("")
-                .name("oauth-destination-ztis-" + identity.getId().hashCode())
-                .keyStore(((ZtisClientIdentity) identity).getKeyStore())
-                .build();
-        try {
-            return new DefaultOAuth2TokenService(
-                (CloseableHttpClient) HttpClientAccessor.getHttpClient(destination),
-                tokenCacheConfiguration);
-        }
-        catch( final ClassCastException e ) {
-            final String msg =
-                "For the X509_ATTESTED credential type the 'HttpClientAccessor' must return instances of 'CloseableHttpClient'";
-            throw new DestinationAccessException(msg, e);
-        }
+        return new HttpClient5OAuth2TokenService(httpClient, tokenCacheConfiguration);
     }
 
     @Nonnull
@@ -262,16 +253,16 @@ class OAuth2Service
             return null;
         }
 
-        if( !(tenant instanceof TenantWithSubdomain tenantWithSubdomain) ) {
-            final String msg = "Unable to get subdomain of tenant '%s' because the instance is not an instance of %s.";
-            throw new DestinationAccessException(msg.formatted(tenant, TenantWithSubdomain.class.getSimpleName()));
+        if( tenant instanceof TenantWithSubdomain tenantWithSubdomain && tenantWithSubdomain.getSubdomain() != null ) {
+            return tenantWithSubdomain.getSubdomain();
         }
-        final var subdomain = tenantWithSubdomain.getSubdomain();
-        if( subdomain == null ) {
+        log.debug("IAS tenant host is unknown for tenant {}. Performing IAS host lookup.", tenant.getTenantId());
+        if( btpTenantApiUri == null ) {
             throw new DestinationAccessException(
-                "The given tenant '%s' does not have a subdomain defined.".formatted(tenant));
+                "Failed to dynamically resolve IAS tenant host: The BTP API URL is not given. "
+                    + "Ensure your IAS service binding contains the BTP tenant API URL in the property 'btp-tenant-api'.");
         }
-        return subdomain;
+        return iasTenantHostResolver.resolve(btpTenantApiUri, tenant.getTenantId());
     }
 
     @Nullable
@@ -354,6 +345,10 @@ class OAuth2Service
         private final Map<String, String> additionalParameters = new HashMap<>();
         private ResilienceConfiguration.TimeLimiterConfiguration timeLimiter = OAuth2Options.DEFAULT_TIMEOUT;
         private TokenCacheParameters tokenCacheParameters = OAuth2Options.DEFAULT_TOKEN_CACHE_PARAMETERS;
+        @Nullable
+        private URI btpTenantApiUri;
+        @Nullable
+        private IasTenantHostResolver iasTenantHostResolver;
 
         @Nonnull
         Builder withTokenUri( @Nonnull final String tokenUri )
@@ -439,6 +434,20 @@ class OAuth2Service
         }
 
         @Nonnull
+        Builder withBtpTenantApiUri( @Nullable final URI btpTenantApiBaseUri )
+        {
+            this.btpTenantApiUri = btpTenantApiBaseUri;
+            return this;
+        }
+
+        @Nonnull
+        Builder withIasTenantHostResolver( @Nullable final IasTenantHostResolver iasTenantHostResolver )
+        {
+            this.iasTenantHostResolver = iasTenantHostResolver;
+            return this;
+        }
+
+        @Nonnull
         OAuth2Service build()
         {
             if( tokenUri == null || identity == null ) {
@@ -461,6 +470,9 @@ class OAuth2Service
             // copy the additional parameters to prevent accidental manipulation after the `OAuth2Service` instance has been created.
             final Map<String, String> additionalParameters = new HashMap<>(this.additionalParameters);
 
+            final var resolver =
+                iasTenantHostResolver != null ? iasTenantHostResolver : IasTenantHostResolver.DEFAULT_INSTANCE;
+
             return new OAuth2Service(
                 tokenUri,
                 identity,
@@ -468,7 +480,9 @@ class OAuth2Service
                 tenantPropagationStrategy,
                 additionalParameters,
                 resilienceConfig,
-                tokenCacheParameters);
+                tokenCacheParameters,
+                btpTenantApiUri,
+                resolver);
         }
     }
 

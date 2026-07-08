@@ -101,7 +101,7 @@ public class ODataRequestRead extends ODataRequestGeneric
     {
         this(
             servicePath,
-            entityPath.addSegment(query.getEntityOrPropertyName()),
+            entityPath.copy().addSegment(query.getEntityOrPropertyName()),
             query.getEncodedQueryString(),
             query.getProtocol());
     }

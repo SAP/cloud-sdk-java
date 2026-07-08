@@ -55,6 +55,8 @@ public class DefaultCircuitBreakerProvider implements CircuitBreakerProvider, Ge
                 .slidingWindowSize(configuration.circuitBreakerConfiguration().closedBufferSize())
                 .minimumNumberOfCalls(configuration.circuitBreakerConfiguration().closedBufferSize())
                 .permittedNumberOfCallsInHalfOpenState(configuration.circuitBreakerConfiguration().halfOpenBufferSize())
+                .slowCallDurationThreshold(configuration.circuitBreakerConfiguration().slowCallDurationThreshold())
+                .slowCallRateThreshold(configuration.circuitBreakerConfiguration().slowCallRateThreshold())
                 .build();
 
         val circuitBreaker = circuitBreakerRegistry.circuitBreaker(identifier, customCircuitBreakerConfig);

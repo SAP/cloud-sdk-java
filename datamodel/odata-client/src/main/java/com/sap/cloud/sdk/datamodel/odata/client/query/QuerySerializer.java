@@ -49,10 +49,11 @@ class QuerySerializer
                     .map(q -> String.format(parameterString, q))
                     .forEach(parameters::add));
 
-        if( query.isRoot() ) {
-            query
-                .getCustomParameters()
-                .forEach(( key, value ) -> parameters.add(key + "=" + conditionalEncode(value, applyEncoding)));
+        for( final Map.Entry<String, String> customParam : query.getCustomParameters().entrySet() ) {
+            final String key = customParam.getKey();
+            if( query.getProtocol().allowCustomQueryParameter(query.isRoot(), key) ) {
+                parameters.add(key + "=" + conditionalEncode(customParam.getValue(), applyEncoding));
+            }
         }
 
         final String queryElementSeparator = query.isRoot() ? SEPARATOR_ROOT_QUERY : SEPARATOR_SUB_QUERY;

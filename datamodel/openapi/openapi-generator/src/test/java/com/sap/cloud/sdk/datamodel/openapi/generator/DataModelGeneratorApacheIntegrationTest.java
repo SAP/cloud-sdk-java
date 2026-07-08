@@ -57,7 +57,8 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
-                .additionalProperty("library", LIBRARY);
+                .additionalProperty("library", LIBRARY)
+                .typeMappings(testCase.typeMappings);
 
         testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
@@ -103,7 +104,8 @@ class DataModelGeneratorApacheIntegrationTest extends DataModelGeneratorIntegrat
                 .withSapCopyrightHeader(true)
                 .oneOfAnyOfGenerationEnabled(testCase.anyOfOneOfGenerationEnabled)
                 .additionalProperty("useAbstractionForFiles", "true")
-                .additionalProperty("library", LIBRARY);
+                .additionalProperty("library", LIBRARY)
+                .typeMappings(testCase.typeMappings);
         testCase.additionalProperties.forEach(generationConfiguration::additionalProperty);
 
         GenerationConfiguration build = generationConfiguration.build();

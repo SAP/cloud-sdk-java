@@ -29,13 +29,6 @@ public class OrdersApi extends BaseApi
 {
 
     /**
-     * Instantiates this API class to invoke operations on the SodaStore API
-     */
-    public OrdersApi()
-    {
-    }
-
-    /**
      * Instantiates this API class to invoke operations on the SodaStore API.
      *
      * @param httpDestination
@@ -55,6 +48,21 @@ public class OrdersApi extends BaseApi
     public OrdersApi( @Nonnull final ApiClient apiClient )
     {
         super(apiClient);
+    }
+
+    /**
+     * Creates a new API instance with additional default headers.
+     *
+     * @param defaultHeaders
+     *            Additional headers to include in all requests
+     * @return A new API instance with the combined headers
+     */
+    public OrdersApi withDefaultHeaders( @Nonnull final Map<String, String> defaultHeaders )
+    {
+        final var api = new OrdersApi(apiClient);
+        api.defaultHeaders.putAll(this.defaultHeaders);
+        api.defaultHeaders.putAll(defaultHeaders);
+        return api;
     }
 
     /**
@@ -87,7 +95,7 @@ public class OrdersApi extends BaseApi
         final StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
         final List<Pair> localVarQueryParams = new ArrayList<Pair>();
         final List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        final Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        final Map<String, String> localVarHeaderParams = new HashMap<String, String>(defaultHeaders);
         final Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = { "application/json" };

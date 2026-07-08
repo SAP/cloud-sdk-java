@@ -53,7 +53,7 @@ class KeyStoreReader
             Try.of(() -> loadCertificates(certReader)).getOrElseThrow(e -> new DestinationAccessException(MSG_CERT, e));
         final PrivateKey privateKey =
             Try.of(() -> loadKey(keyReader, password)).getOrElseThrow(e -> new DestinationAccessException(MSG_KEY, e));
-        final KeyStore keyStore = KeyStore.getInstance("JKS");
+        final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null);
         keyStore.setKeyEntry(alias, privateKey, password, clientCertificates);
         return keyStore;
@@ -65,7 +65,7 @@ class KeyStoreReader
             IOException
     {
         final List<Certificate> certs = new ArrayList<>();
-        final CertificateFactory factory = CertificateFactory.getInstance("X509");
+        final CertificateFactory factory = CertificateFactory.getInstance("X.509");
 
         try( PEMParser pemParser = new PEMParser(certReader) ) {
             PemObject object;

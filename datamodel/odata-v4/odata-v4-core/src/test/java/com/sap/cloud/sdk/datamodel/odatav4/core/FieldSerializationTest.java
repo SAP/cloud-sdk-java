@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -158,6 +159,15 @@ class FieldSerializationTest
             "GeographyPoint":{"type":"Point","coordinates":[142.1,64.1]}\
             }\
             """;
+
+        private static final String PAYLOAD_ODATA_REFERENCE_BASE64URL =
+            PAYLOAD_ODATA_REFERENCE.replace("\"BinaryValue\":\"AQID\"", "\"BinaryValue\":\"-__v\"");
+
+        private static final String PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET =
+            PAYLOAD_ODATA_REFERENCE.replace("\"BinaryValue\":\"AQID\"", "\"BinaryValue\":\"+__v\"");
+
+        static final String Base_64 = "+//v";
+        static final String Base_64_Url = "-__v";
     }
 
     @Test
@@ -175,6 +185,21 @@ class FieldSerializationTest
     }
 
     @Test
+    void testBinaryFieldParsingFromBase64UrlResponsePayload()
+    {
+        final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE_BASE64URL);
+        final ReferenceObject referenceResult = result.as(ReferenceObject.class);
+
+        Objects.requireNonNull(referenceResult);
+        assertThat(referenceResult.getBinaryValue())
+            .isEqualTo(Base64.getUrlDecoder().decode(ReferenceObject.Base_64_Url));
+
+        final String ser =
+            new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
+        assertThat(ser).contains("\"BinaryValue\":\"" + ReferenceObject.Base_64 + "\"");
+    }
+
+    @Test
     void testCustomFieldParsingFromResponsePayload()
     {
         final ODataRequestResultGeneric result = mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE);
@@ -184,6 +209,21 @@ class FieldSerializationTest
         Objects.requireNonNull(referenceResult);
         assertThat(referenceResult.getCustomFieldNames()).containsExactly("GeographyPoint");
         assertThat(referenceResult.<Object> getCustomField("GeographyPoint")).isInstanceOf(Map.class);
+    }
+
+    @Test
+    void testBinaryFieldParsingFromMixedBase64AlphabetNormalized()
+    {
+        final ODataRequestResultGeneric result =
+            mockRequestResult(ReferenceObject.PAYLOAD_ODATA_REFERENCE_MIXED_BASE64_ALPHABET);
+        final ReferenceObject referenceResult = result.as(ReferenceObject.class);
+
+        Objects.requireNonNull(referenceResult);
+        assertThat(referenceResult.getBinaryValue()).isEqualTo(Base64.getDecoder().decode(ReferenceObject.Base_64));
+
+        final String ser =
+            new CreateRequestBuilder<>("/", referenceResult, "EntityCollection").toRequest().getSerializedEntity();
+        assertThat(ser).contains("\"BinaryValue\":\"" + ReferenceObject.Base_64 + "\"");
     }
 
     @SneakyThrows

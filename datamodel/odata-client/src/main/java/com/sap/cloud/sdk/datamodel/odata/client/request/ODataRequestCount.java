@@ -54,7 +54,7 @@ public class ODataRequestCount extends ODataRequestRead
         @Nullable final String encodedQuery,
         @Nonnull final ODataProtocol protocol )
     {
-        super(servicePath, resourcePath.addSegment("$count"), encodedQuery, protocol);
+        super(servicePath, resourcePath.copy().addSegment("$count"), encodedQuery, protocol);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ODataRequestCount extends ODataRequestRead
     {
         this(
             servicePath,
-            resourcePath.addSegment(query.getEntityOrPropertyName()),
+            resourcePath.copy().addSegment(query.getEntityOrPropertyName()),
             query.getEncodedQueryString(),
             query.getProtocol());
     }

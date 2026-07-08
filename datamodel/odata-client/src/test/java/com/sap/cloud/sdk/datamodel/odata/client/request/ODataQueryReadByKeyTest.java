@@ -144,4 +144,16 @@ class ODataQueryReadByKeyTest
         assertThat(actual).isEqualTo(expected);
         assertThat(actual.getQueryString()).isEqualTo(expected.getQueryString());
     }
+
+    @Test
+    void testConstructorWithStructuredQueryDoesNotMutateResourcePath()
+    {
+        final StructuredQuery structuredQuery =
+            StructuredQuery.onEntity(ENTITY_COLLECTION, ODataProtocol.V4).withInlineCount();
+        final ODataResourcePath resourcePath = ODataResourcePath.of(ENTITY_COLLECTION);
+
+        new ODataRequestReadByKey(SERVICE_PATH, resourcePath, ENTITY_KEY, structuredQuery);
+
+        assertThat(resourcePath.toString()).isEqualTo("/" + ENTITY_COLLECTION);
+    }
 }

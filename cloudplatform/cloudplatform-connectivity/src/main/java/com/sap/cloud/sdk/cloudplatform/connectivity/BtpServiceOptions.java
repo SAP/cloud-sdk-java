@@ -325,6 +325,23 @@ public final class BtpServiceOptions
         }
 
         /**
+         * Specifies the token format to request from IAS during token exchange.
+         * <p>
+         * If not specified, the {@code token_format} parameter is not included in the token exchange request, and IAS
+         * will use its default behavior (SAML). Explicitly set to {@code "jwt"} if the target service requires JWT
+         * tokens.
+         *
+         * @param format
+         *            The token format to request. Typically {@code "jwt"} or {@code "saml"}.
+         * @return An instance of {@link OptionsEnhancer} for the token format.
+         */
+        @Nonnull
+        public static OptionsEnhancer<?> withTokenFormat( @Nonnull final String format )
+        {
+            return new TokenFormat(format);
+        }
+
+        /**
          * An {@link OptionsEnhancer} that contains the target URI for an IAS-based destination. Also refer to
          * {@link #withTargetUri(String)}.
          *
@@ -381,6 +398,19 @@ public final class BtpServiceOptions
             {
                 return this;
             }
+        }
+
+        /**
+         * An {@link OptionsEnhancer} that specifies the token format for IAS token requests. If not provided, the
+         * {@code token_format} parameter is not included in the token exchange request. Also refer to
+         * {@link #withTokenFormat(String)}.
+         */
+        @Value
+        @AllArgsConstructor( access = AccessLevel.PRIVATE )
+        public static class TokenFormat implements OptionsEnhancer<String>
+        {
+            @Nonnull
+            String value;
         }
     }
 }

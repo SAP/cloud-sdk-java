@@ -68,6 +68,7 @@ class GenerationConfigurationConverter
         config.additionalProperties().putAll(getAdditionalProperties(generationConfiguration));
         config.typeMapping().putAll(generationConfiguration.getTypeMappings());
         config.importMapping().putAll(generationConfiguration.getImportMappings());
+        config.openapiNormalizer().put("NORMALIZER_CLASS", CustomOpenAPINormalizer.class.getName());
 
         final var openAPI = parseOpenApiSpec(inputSpecFile, generationConfiguration);
 
