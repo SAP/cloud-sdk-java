@@ -30,7 +30,7 @@
 	</developers>
 	<properties>
 		<bc-fips.version>2.1.2</bc-fips.version>
-		<bcpkix-fips.version>2.1.11</bcpkix-fips.version>
+		<bcpkix-fips.version>2.1.12</bcpkix-fips.version>
 	</properties>
 	<dependencies>
 		<dependency>
