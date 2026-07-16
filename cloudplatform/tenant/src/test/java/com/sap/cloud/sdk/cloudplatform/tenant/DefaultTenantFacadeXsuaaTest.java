@@ -47,7 +47,7 @@ class DefaultTenantFacadeXsuaaTest
     }
 
     @Test
-    @DisplayName("Subdomains don't resolve from issuers without an http prefix")
+    @DisplayName( "Subdomains don't resolve from issuers without an http prefix" )
     void givenIssuerWithoutSchemeThenExceptionIsReturned()
     {
         final String userTenant = "someUserTenant";
@@ -60,9 +60,11 @@ class DefaultTenantFacadeXsuaaTest
 
         final Try<Tenant> tenantTry = new DefaultTenantFacade().tryGetCurrentTenant();
 
-        VavrAssertions.assertThat(tenantTry)
-                .describedAs("issuers without an https:// prefix should lead to a failure")
-                .isFailure().failBecauseOf(TenantAccessException.class);
+        VavrAssertions
+            .assertThat(tenantTry)
+            .describedAs("issuers without an https:// prefix should lead to a failure")
+            .isFailure()
+            .failBecauseOf(TenantAccessException.class);
     }
 
     private DefaultAuthTokenFacade mockCurrentTenant( final String userTenant )
