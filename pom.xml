@@ -88,7 +88,7 @@
 		<codeAnalysisExclusions>**/testclasses/**</codeAnalysisExclusions>
 		<!--  Non-essential dependencies  -->
 		<jco-api.version>4.87.9</jco-api.version>
-		<jackson.version>2.22.0</jackson.version>
+		<jackson.version>2.22.1</jackson.version>
 		<jackson.annotations.version>2.22</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
 		<json.version>20260522</json.version>
@@ -105,7 +105,7 @@
 		<assertj-vavr.version>0.5.1</assertj-vavr.version>
 		<mockito.version>5.23.0</mockito.version>
 		<jsonassert.version>1.5.3</jsonassert.version>
-		<junit.jupiter.version>6.1.1</junit.jupiter.version>
+		<junit.jupiter.version>6.1.2</junit.jupiter.version>
 		<codemodel.version>2.6</codemodel.version>
 		<olingo-v4.version>5.0.0</olingo-v4.version>
 		<olingo-v2.version>2.0.13</olingo-v2.version>
@@ -119,7 +119,7 @@
 		<io-swagger-core.version>1.6.11</io-swagger-core.version>
 		<!--  sync plexus version with transitive dependency coming from "org.twadata.maven:mojo-executor"  -->
 		<stax2-api.version>4.3.0</stax2-api.version>
-		<bouncycastle.version>1.84</bouncycastle.version>
+		<bouncycastle.version>1.85</bouncycastle.version>
 		<jakarta-activation.version>2.1.0</jakarta-activation.version>
 		<qdox.version>2.2.0</qdox.version>
 		<wiremock.version>3.13.2</wiremock.version>
@@ -922,7 +922,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.10.2.0</version>
+				<version>4.10.3.0</version>
 				<configuration>
 					<includeFilterFile>${project.rootdir}/codestyle/findbugs.xml</includeFilterFile>
 					<excludeFilterFile>${project.rootdir}/codestyle/spotbugs-exclusions.xml</excludeFilterFile>
