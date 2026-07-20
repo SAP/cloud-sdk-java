@@ -91,7 +91,7 @@
 		<jackson.version>2.22.1</jackson.version>
 		<jackson.annotations.version>2.22</jackson.annotations.version>
 		<!--  WordUtils used twice in OData generator  -->
-		<json.version>20260522</json.version>
+		<json.version>20260719</json.version>
 		<!--  XML used once in SOAP payload deserialisation  -->
 		<!--  End of non-essential dependencies  -->
 		<!--  Fully internal (test) dependencies  -->
