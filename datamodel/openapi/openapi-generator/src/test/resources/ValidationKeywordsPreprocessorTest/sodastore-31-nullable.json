@@ -1,0 +1,67 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OAS 3.1 Nullable Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/sodas": {
+      "post": {
+        "operationId": "addSoda",
+        "summary": "Add a soda with nullable fields",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "brand": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/Brand" },
+                      { "type": "null" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Brand": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "NullableRef": {
+        "type": "object",
+        "properties": {
+          "optionalBrand": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Brand" },
+              { "type": "null" }
+            ]
+          },
+          "requiredName": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
