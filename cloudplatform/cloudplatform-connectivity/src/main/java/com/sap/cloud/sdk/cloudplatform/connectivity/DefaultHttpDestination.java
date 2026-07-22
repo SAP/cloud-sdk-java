@@ -542,7 +542,7 @@ public final class DefaultHttpDestination implements HttpDestination
                 resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
                 resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
             .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
-            .append(customHeaderProviders, that.customHeaderProviders)
+            .append(areHeaderProvidersEqual(this.customHeaderProviders, that.customHeaderProviders), true)
             .isEquals();
     }
 
@@ -574,6 +574,34 @@ public final class DefaultHttpDestination implements HttpDestination
             result = 31 * result + System.identityHashCode(provider);
         }
         return result;
+    }
+
+    /**
+     * Compares two lists of header providers using identity-based equality. Since header providers can be lambda
+     * functions that don't have meaningful equals/hashCode implementations, we compare them by identity.
+     *
+     * @param providers1
+     *            the first list of header providers
+     * @param providers2
+     *            the second list of header providers
+     * @return true if both lists have the same size and all providers are the same instance (by identity); false
+     *         otherwise
+     */
+    private static boolean areHeaderProvidersEqual(
+        @Nonnull final List<DestinationHeaderProvider> providers1,
+        @Nonnull final List<DestinationHeaderProvider> providers2 )
+    {
+        if( providers1.size() != providers2.size() ) {
+            return false;
+        }
+
+        for( int i = 0; i < providers1.size(); i++ ) {
+            if( providers1.get(i) != providers2.get(i) ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
