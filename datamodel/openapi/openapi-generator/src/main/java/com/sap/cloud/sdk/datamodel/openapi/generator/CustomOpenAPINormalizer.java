@@ -131,7 +131,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
 
         // map OAS 3.1 contentEncoding/contentMediaType to legacy format keyword
         // so that downstream type-mapping (File -> byte[]) continues to work.
-        if( schema.getFormat() == null ) {
+        if( isOas31 && schema.getFormat() == null ) {
             if( "base64".equalsIgnoreCase(schema.getContentEncoding()) ) {
                 schema.setFormat("byte");
             } else if( schema.getContentEncoding() != null ) {
