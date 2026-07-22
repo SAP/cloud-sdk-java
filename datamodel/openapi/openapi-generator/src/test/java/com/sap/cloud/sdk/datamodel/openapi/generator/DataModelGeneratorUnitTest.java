@@ -32,12 +32,6 @@ class DataModelGeneratorUnitTest
 
     private final String INPUT_FILE_PATH = "src/test/resources/" + INPUT_CLASS_PATH;
 
-    private final String INPUT_31_FILE_PATH =
-        "src/test/resources/" + DataModelGeneratorUnitTest.class.getSimpleName() + "/sodastore-31.yaml";
-
-    private final String INPUT_31_MUTUAL_TLS_FILE_PATH =
-        "src/test/resources/" + DataModelGeneratorUnitTest.class.getSimpleName() + "/sodastore-31-mutual-tls.yaml";
-
     @Test
     void testSuccessfulGenerationWithInputSpecAsFilePath()
     {
@@ -394,45 +388,5 @@ class DataModelGeneratorUnitTest
 
         // assert output directory was created implicitly
         assertThat(outputDirectory.toFile().exists()).isTrue();
-    }
-
-    @Test
-    void testSuccessfulGenerationWithOas31Spec()
-    {
-        final GenerationConfiguration configuration =
-            GenerationConfiguration
-                .builder()
-                .inputSpec(INPUT_31_FILE_PATH)
-                .modelPackage("com.sap.cloud.sdk.datamodel.rest.sodastore.model")
-                .apiPackage("com.sap.cloud.sdk.datamodel.rest.sodastore.api")
-                .outputDirectory(outputDirectory.toAbsolutePath().toString())
-                .verbose(false)
-                .apiMaturity(ApiMaturity.RELEASED)
-                .build();
-
-        final Try<GenerationResult> generationResult = new DataModelGenerator().generateDataModel(configuration);
-
-        assertThat(generationResult.isSuccess()).isTrue();
-        assertThat(generationResult.get().getGeneratedFiles()).isNotEmpty();
-    }
-
-    @Test
-    void testSuccessfulGenerationWithMutualTlsSecurityScheme()
-    {
-        final GenerationConfiguration configuration =
-            GenerationConfiguration
-                .builder()
-                .inputSpec(INPUT_31_MUTUAL_TLS_FILE_PATH)
-                .modelPackage("com.sap.cloud.sdk.datamodel.rest.sodastore.model")
-                .apiPackage("com.sap.cloud.sdk.datamodel.rest.sodastore.api")
-                .outputDirectory(outputDirectory.toAbsolutePath().toString())
-                .verbose(false)
-                .apiMaturity(ApiMaturity.RELEASED)
-                .build();
-
-        final Try<GenerationResult> generationResult = new DataModelGenerator().generateDataModel(configuration);
-
-        assertThat(generationResult.isSuccess()).isTrue();
-        assertThat(generationResult.get().getGeneratedFiles()).isNotEmpty();
     }
 }

@@ -109,10 +109,10 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    *
    * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
    {{#minimum}}
-   * Minimum: {{minimum}}
+   * Minimum: {{minimum}}{{#exclusiveMinimum}} (exclusive){{/exclusiveMinimum}}
    {{/minimum}}
    {{#maximum}}
-   * Maximum: {{maximum}}
+   * Maximum: {{maximum}}{{#exclusiveMaximum}} (exclusive){{/exclusiveMaximum}}
    {{/maximum}}
    * @return The same instance of this {@link {{classname}}} class
    */
@@ -190,10 +190,10 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    * Get {{name}}
   {{/description}}
   {{#minimum}}
-   * minimum: {{.}}
+   * minimum: {{.}}{{#exclusiveMinimum}} (exclusive){{/exclusiveMinimum}}
   {{/minimum}}
   {{#maximum}}
-   * maximum: {{.}}
+   * maximum: {{.}}{{#exclusiveMaximum}} (exclusive){{/exclusiveMaximum}}
   {{/maximum}}
    * @return {{name}}  The {{name}} of this {@link {{classname}}} instance.
    {{#deprecated}}
@@ -234,10 +234,10 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
    *
    * @param {{name}}  {{#description}}{{description}}{{/description}}{{^description}}The {{name}} of this {@link {{classname}}}{{/description}}
    {{#minimum}}
-   * Minimum: {{minimum}}
+   * Minimum: {{minimum}}{{#exclusiveMinimum}} (exclusive){{/exclusiveMinimum}}
    {{/minimum}}
    {{#maximum}}
-   * Maximum: {{maximum}}
+   * Maximum: {{maximum}}{{#exclusiveMaximum}} (exclusive){{/exclusiveMaximum}}
    {{/maximum}}
    */
   public void {{setter}}( {{#isNullable}}@Nullable{{/isNullable}}{{^isNullable}}{{#required}}@Nonnull{{/required}}{{^required}}@Nullable{{/required}}{{/isNullable}} final {{{datatypeWithEnum}}} {{name}}) {

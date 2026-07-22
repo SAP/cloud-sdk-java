@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: OAS 3.0 Boolean exclusiveMinimum and exclusiveMaximum
+  version: 1.0.0
+
+paths:
+  /sodas:
+    get:
+      operationId: getSodas
+      responses:
+        '200':
+          description: A soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+
+components:
+  schemas:
+    Soda:
+      type: object
+      properties:
+        name:
+          type: string
+        rating:
+          # OAS 3.0: boolean exclusiveMinimum/exclusiveMaximum as flags alongside minimum/maximum
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          maximum: 5
+          exclusiveMaximum: true
+        score:
+          # OAS 3.0: non-exclusive minimum/maximum (no boolean flags)
+          type: number
+          minimum: 0
+          maximum: 100
+      required:
+        - name

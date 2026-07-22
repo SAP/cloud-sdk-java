@@ -1,0 +1,31 @@
+openapi: 3.1.0
+info:
+  title: OAS 3.1 Nullable Type Array
+  version: 1.0.0
+
+paths:
+  /sodas:
+    get:
+      operationId: getSodas
+      responses:
+        '200':
+          description: A soda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Soda'
+
+components:
+  schemas:
+    Soda:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          # Gap 1: nullable via type array instead of nullable: true
+          type:
+            - string
+            - "null"
+      required:
+        - name
