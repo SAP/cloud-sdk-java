@@ -117,6 +117,7 @@ public class CustomOpenAPINormalizer extends OpenAPINormalizer
      * </ul>
      */
     @Override
+    @Nonnull
     @SuppressWarnings( { "rawtypes" } )
     public Schema normalizeSchema( final @Nonnull Schema schema, final @Nonnull Set<Schema> visitedSchemas )
     {
