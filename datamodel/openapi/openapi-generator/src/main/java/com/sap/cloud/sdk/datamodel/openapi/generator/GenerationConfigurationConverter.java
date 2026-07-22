@@ -115,13 +115,7 @@ class GenerationConfigurationConverter
             log.warn("Parsing the specification yielded the following messages: {}", spec.getMessages());
         }
         final var result = spec.getOpenAPI();
-        if( OasVersionUtil.isOas31(result) ) {
-            log
-                .info(
-                    "Detected OAS 3.1 specification (version: {}). "
-                        + "OAS 3.1 support is available with known limitations documented in OAS31_GAPS.md.",
-                    result.getOpenapi());
-        }
+        log.info("Detected OpenAPI specification version {}.", result.getOpenapi());
         preprocessSpecification(result, config);
         return result;
     }
