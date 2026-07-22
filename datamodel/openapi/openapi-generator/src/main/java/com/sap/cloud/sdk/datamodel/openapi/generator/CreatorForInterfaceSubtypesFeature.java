@@ -34,8 +34,10 @@ class CreatorForInterfaceSubtypesFeature
 
         final var creators = new HashSet<CreatorDetails>();
         for( final String candidate : Sets.union(m.anyOf, m.oneOf) ) {
-            final var creator = processCandidate(candidate);
-            creators.add(creator);
+            if( candidate != null ) {
+                final var creator = processCandidate(candidate);
+                creators.add(creator);
+            }
         }
 
         final var hasArray = creators.stream().anyMatch(CreatorDetails::isArray);
@@ -52,7 +54,7 @@ class CreatorForInterfaceSubtypesFeature
             log.warn(msg, m.name);
         }
         if( hasArray ) {
-            final var msg = "Field can be oneOf %d array types. Deserialization may not work as expected.";
+            final var msg = "Object contains oneOf with array types: {}. Deserialization may not work as expected.";
             log.warn(msg, m.name);
         }
 
