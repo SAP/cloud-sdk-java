@@ -50,6 +50,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class DefaultHttpDestination implements HttpDestination
 {
+    /**
+     * Cached header providers from class loading. These are loaded once at class initialization time and reused across
+     * all destination instances to ensure stable identities for cache key generation. This ensures that two
+     * destinations with identical configurations will have the same header provider instances, enabling proper HTTP
+     * client caching.
+     */
+    @Nonnull
+    private static final ImmutableList<DestinationHeaderProvider> CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING =
+        ImmutableList
+            .<DestinationHeaderProvider> builder()
+            .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
+            .build();
+
     @Delegate
     private final DestinationProperties baseProperties;
 
@@ -66,9 +79,6 @@ public final class DefaultHttpDestination implements HttpDestination
     @Getter( AccessLevel.PACKAGE )
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
 
-    @Nonnull
-    private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
-
     // the following 'cached' fields are ALWAYS derived from the baseProperties and stored in the corresponding fields
     // to avoid additional computation at runtime ONLY.
     // this is why we are calling them 'cached'.
@@ -77,6 +87,12 @@ public final class DefaultHttpDestination implements HttpDestination
     // in other words: caching the values is safe and will not lead to any inconsistencies.
     // furthermore, it is safe to exclude these fields from the equals and hashCode methods because their values are
     // purely derived from the baseProperties, which are included in the equals and hashCode methods.
+    //
+    // NOTE: customHeaderProviders and headerProvidersFromClassLoading are intentionally excluded from equals() and hashCode()
+    // because header providers are called at request time to generate dynamic headers. Two destinations with identical
+    // configurations but different provider instances should still share the same HTTP client, as the providers generate
+    // headers when the client executes the request. By caching header providers globally (see CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING),
+    // we ensure that identical destinations will have the same provider instances anyway.
     @Nonnull
     private final Option<ProxyConfiguration> cachedProxyConfiguration;
 
@@ -113,11 +129,6 @@ public final class DefaultHttpDestination implements HttpDestination
 
         this.customHeaders =
             customHeaders != null ? ImmutableList.<Header> builder().addAll(customHeaders).build() : ImmutableList.of();
-
-        final Collection<DestinationHeaderProvider> headerProvidersFromClassLoading =
-            FacadeLocator.getFacades(DestinationHeaderProvider.class);
-        this.headerProvidersFromClassLoading =
-            ImmutableList.<DestinationHeaderProvider> builder().addAll(headerProvidersFromClassLoading).build();
 
         this.customHeaderProviders =
             customHeaderProviders != null
@@ -176,7 +187,7 @@ public final class DefaultHttpDestination implements HttpDestination
                     this,
                     requestUri,
                     customHeaderProviders,
-                    headerProvidersFromClassLoading));
+                    CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING));
         allHeaders.addAll(cachedHeadersFromProperties);
         if( allHeaders.stream().noneMatch(header -> header.getName().equalsIgnoreCase(HttpHeaders.AUTHORIZATION)) ) {
             allHeaders.addAll(getHeadersForAuthType());
@@ -542,7 +553,6 @@ public final class DefaultHttpDestination implements HttpDestination
                 resolveCertificatesOnly(keyStoreSupplier.get().getOrNull()),
                 resolveCertificatesOnly(that.keyStoreSupplier.get().getOrNull()))
             .append(resolveCertificatesOnly(trustStore), resolveCertificatesOnly(that.trustStore))
-            .append(areHeaderProvidersEqual(this.customHeaderProviders, that.customHeaderProviders), true)
             .isEquals();
     }
 
@@ -554,54 +564,7 @@ public final class DefaultHttpDestination implements HttpDestination
             .append(customHeaders)
             .append(resolveKeyStoreHashCode(keyStoreSupplier.get().getOrNull()))
             .append(resolveKeyStoreHashCode(trustStore))
-            .append(computeHeaderProvidersHashCode(customHeaderProviders))
             .toHashCode();
-    }
-
-    /**
-     * Computes a hash code for the custom header providers list. Since header providers can be lambda functions that
-     * don't have meaningful equals/hashCode implementations, we use the identity hash code of each provider to uniquely
-     * identify them.
-     *
-     * @param providers
-     *            the list of header providers
-     * @return a hash code based on the identity of each provider
-     */
-    private static int computeHeaderProvidersHashCode( @Nonnull final List<DestinationHeaderProvider> providers )
-    {
-        int result = 0;
-        for( final DestinationHeaderProvider provider : providers ) {
-            result = 31 * result + System.identityHashCode(provider);
-        }
-        return result;
-    }
-
-    /**
-     * Compares two lists of header providers using identity-based equality. Since header providers can be lambda
-     * functions that don't have meaningful equals/hashCode implementations, we compare them by identity.
-     *
-     * @param providers1
-     *            the first list of header providers
-     * @param providers2
-     *            the second list of header providers
-     * @return true if both lists have the same size and all providers are the same instance (by identity); false
-     *         otherwise
-     */
-    private static boolean areHeaderProvidersEqual(
-        @Nonnull final List<DestinationHeaderProvider> providers1,
-        @Nonnull final List<DestinationHeaderProvider> providers2 )
-    {
-        if( providers1.size() != providers2.size() ) {
-            return false;
-        }
-
-        for( int i = 0; i < providers1.size(); i++ ) {
-            if( providers1.get(i) != providers2.get(i) ) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**

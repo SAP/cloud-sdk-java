@@ -56,6 +56,17 @@ public class TransparentProxyDestination implements HttpDestination
     static final String CHAIN_VAR_SAML_PROVIDER_DESTINATION_NAME_HEADER_KEY = "x-chain-var-samlProviderDestinationName";
     static final String TENANT_ID_AND_TENANT_SUBDOMAIN_BOTH_PASSED_ERROR_MESSAGE =
         "Tenant id and tenant subdomain cannot be passed at the same time.";
+
+    /**
+     * Cached header providers from class loading. These are loaded once at class initialization time
+     * and reused across all destination instances to ensure stable identities for cache key generation.
+     */
+    @Nonnull
+    private static final ImmutableList<DestinationHeaderProvider> CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING =
+        ImmutableList.<DestinationHeaderProvider> builder()
+            .addAll(FacadeLocator.getFacades(DestinationHeaderProvider.class))
+            .build();
+
     @Nonnull
     final ImmutableList<Header> customHeaders;
     @Delegate
@@ -64,8 +75,6 @@ public class TransparentProxyDestination implements HttpDestination
     @Getter( AccessLevel.PACKAGE )
     private final ImmutableList<DestinationHeaderProvider> customHeaderProviders;
 
-    @Nonnull
-    private final ImmutableList<DestinationHeaderProvider> headerProvidersFromClassLoading;
 
     private TransparentProxyDestination(
         @Nonnull final DestinationProperties baseProperties,
@@ -76,10 +85,6 @@ public class TransparentProxyDestination implements HttpDestination
         this.customHeaders =
             customHeaders != null ? ImmutableList.<Header> builder().addAll(customHeaders).build() : ImmutableList.of();
 
-        final Collection<DestinationHeaderProvider> headerProvidersFromClassLoading =
-            FacadeLocator.getFacades(DestinationHeaderProvider.class);
-        this.headerProvidersFromClassLoading =
-            ImmutableList.<DestinationHeaderProvider> builder().addAll(headerProvidersFromClassLoading).build();
 
         this.customHeaderProviders =
             customHeaderProviders != null
@@ -144,7 +149,7 @@ public class TransparentProxyDestination implements HttpDestination
                         this,
                         requestUri,
                         customHeaderProviders,
-                        headerProvidersFromClassLoading));
+                        CACHED_HEADER_PROVIDERS_FROM_CLASS_LOADING));
 
         // Automatically add tenant id if not already present
         TenantAccessor.tryGetCurrentTenant().onSuccess(tenant -> {
