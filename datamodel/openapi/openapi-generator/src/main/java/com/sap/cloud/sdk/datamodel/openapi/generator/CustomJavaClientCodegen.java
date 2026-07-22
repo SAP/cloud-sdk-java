@@ -60,9 +60,7 @@ class CustomJavaClientCodegen extends JavaClientCodegen
             final String[] exclusions = USE_EXCLUDE_PATHS.getValue(config).trim().split("[,\\s]+");
             if( openAPI.getPaths() != null ) {
                 for( final String exclusion : exclusions ) {
-                    if( !openAPI.getPaths().keySet().remove(exclusion) ) {
-                        log.error("Could not remove path {}", exclusion);
-                    }
+                    openAPI.getPaths().remove(exclusion);
                 }
             }
         }
@@ -205,7 +203,6 @@ class CustomJavaClientCodegen extends JavaClientCodegen
 
         // Gap 5: OAS 3.1 documents may have no paths (webhooks-only or components-only).
         if( openAPI.getPaths() == null || openAPI.getPaths().isEmpty() ) {
-            log.warn("No paths found in OpenAPI spec; skipping unused-component removal.");
             return;
         }
 
